@@ -23,7 +23,6 @@
     "e2e": "npm run postinstall:web && ng e2e"
   },
   "dependencies": {
-    "@octokit/rest": "^16.8.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.11.4",
