@@ -1,0 +1,12 @@
+.container {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.title {
+  color: black;
+  margin:0;
+  padding:30px 20px;
+}
