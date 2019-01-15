@@ -21,7 +21,8 @@ export class AuthService {
   startOAuthProcess() {
     this.state = uuid();
     const oauthURL = this.getOAuthAuthorizationURL(this.state);
-    this.electronService.getCurrentWIndow().loadURL(oauthURL);
+    this.electronService.getCurrentWindow().loadURL(oauthURL);
+    this.electronService.getCurrentUrl();
   }
 
   /**
@@ -49,7 +50,6 @@ export class AuthService {
     if (error && error.length > 1) {
       alert(`Error when handling callback: ${error[1]}`);
     }
-
     const result = await this.httpClient.get(`http://localhost:9999/authenticate/${code}`)
       .pipe(first()).toPromise();
     this.accessToken = result['token'];

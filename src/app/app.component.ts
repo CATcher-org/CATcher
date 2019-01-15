@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ElectronService } from './services/electron.service';
 import { AppConfig } from '../environments/environment';
+import {fromEvent, merge, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,8 @@ import { AppConfig } from '../environments/environment';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  isNetworkOnline$ = this.createOnlineStatus$();
+
   constructor(public electronService: ElectronService) {
 
     console.log('AppConfig', AppConfig);
@@ -19,5 +23,16 @@ export class AppComponent {
     } else {
       console.log('Mode web');
     }
+  }
+
+  createOnlineStatus$() {
+    return merge(
+      fromEvent(window, 'offline').pipe(map(() => false)),
+      fromEvent(window, 'online').pipe(map(() => true)),
+      // start the observable stream with the initial online status
+      Observable.create(sub => {
+        sub.next(navigator.onLine);
+        sub.complete();
+      }));
   }
 }
