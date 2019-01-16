@@ -73,7 +73,7 @@ try {
     getAccessToken(win).then((data) => {
       event.sender.send('github-oauth-reply', data.token);
     }).catch((error) => {
-      alert(error);
+      console.log(error);
     });
   });
 

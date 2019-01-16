@@ -23,8 +23,8 @@ export function getAccessToken(win): Promise<any> {
       .catch((error) => {
         throw new Error('Server response: invalid code.');
       });
-  }).catch((error) => {
-    throw new Error(error);
+  }).catch((error: Error) => {
+    throw error;
   });
 }
 
@@ -68,9 +68,9 @@ function getAuthorizationCode(win): Promise<any> {
       if (error !== undefined) {
         reject(error);
       } else if (state !== undefined && expectedState !== state) {
-        reject('Uninitialized OAuth process detected.');
+        reject(new Error('Uninitialized OAuth process detected.'));
       } else if (!code) {
-        reject('Unable to obtain OAuth code.');
+        reject(new Error('Unable to obtain OAuth code.'));
       }
 
       resolve(code);

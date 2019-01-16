@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ElectronService } from './services/electron.service';
 import { AppConfig } from '../environments/environment';
-import {fromEvent, merge, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {BehaviorSubject, fromEvent, merge, Observable, of} from 'rxjs';
+import {map, mapTo} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +10,7 @@ import {map} from 'rxjs/operators';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  isNetworkOnline$ = this.createOnlineStatus$();
+  isNetworkOnline$: Observable<boolean>;
 
   constructor(public electronService: ElectronService) {
 
@@ -23,16 +23,10 @@ export class AppComponent {
     } else {
       console.log('Mode web');
     }
-  }
-
-  createOnlineStatus$() {
-    return merge(
-      fromEvent(window, 'offline').pipe(map(() => false)),
-      fromEvent(window, 'online').pipe(map(() => true)),
-      // start the observable stream with the initial online status
-      Observable.create(sub => {
-        sub.next(navigator.onLine);
-        sub.complete();
-      }));
-  }
+    this.isNetworkOnline$ = merge(
+      of(navigator.onLine),
+      fromEvent(window, 'online').pipe(mapTo(true)),
+      fromEvent(window, 'offline').pipe(mapTo(false))
+    );
+   }
 }

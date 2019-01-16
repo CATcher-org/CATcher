@@ -1,4 +1,4 @@
-<div *ngIf="!(isNetworkOnline$ | async)">
-  <p>You are not connected to internet.</p>
+<div>
+  <p *ngIf="!(isNetworkOnline$ | async)">You are not connected to internet.</p>
 </div>
 <router-outlet></router-outlet>

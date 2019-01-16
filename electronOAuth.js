@@ -22,7 +22,7 @@ function getAccessToken(win) {
             throw new Error('Server response: invalid code.');
         });
     }).catch(function (error) {
-        throw new Error(error);
+        throw error;
     });
 }
 exports.getAccessToken = getAccessToken;
@@ -60,10 +60,10 @@ function getAuthorizationCode(win) {
                 reject(error);
             }
             else if (state !== undefined && expectedState !== state) {
-                reject('Uninitialized OAuth process detected.');
+                reject(new Error('Uninitialized OAuth process detected.'));
             }
             else if (!code) {
-                reject('Unable to obtain OAuth code.');
+                reject(new Error('Unable to obtain OAuth code.'));
             }
             resolve(code);
             setImmediate(function () {
