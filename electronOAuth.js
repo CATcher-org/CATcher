@@ -4,13 +4,7 @@ var electron_1 = require("electron");
 var nodeUrl = require('url');
 var fetch = require('node-fetch');
 var crypto_1 = require("crypto");
-// Work around synchronously seeding of random buffer in the v1
-// version of uuid by explicitly only requiring v4. As far as I'm
-// aware we cannot use an import statement here without causing webpack
-// to load the v1 version as well.
-//
-// See
-//  https://github.com/kelektiv/node-uuid/issues/189
+// https://github.com/kelektiv/node-uuid#version-4
 var guid = require('uuid/v4');
 var CLIENT_ID = 'Iv1.1c0eb539036890b0';
 var BASE_URL = 'https://github.com';
@@ -23,7 +17,12 @@ var authWindow;
 function getAccessToken(win) {
     return getAuthorizationCode(win).then(function (code) {
         var url = "http://localhost:9999/authenticate/" + code;
-        return fetch(url).then(function (res) { return res.json(); });
+        return fetch(url).then(function (res) { return res.json(); })
+            .catch(function (error) {
+            throw new Error('Server response: invalid code.');
+        });
+    }).catch(function (error) {
+        throw new Error(error);
     });
 }
 exports.getAccessToken = getAccessToken;
@@ -57,12 +56,16 @@ function getAuthorizationCode(win) {
             var code = query.code;
             var error = query.error;
             var state = query.state;
-            if (error !== undefined && state !== undefined && expectedState !== state) {
+            if (error !== undefined) {
                 reject(error);
             }
-            else if (code) {
-                resolve(code);
+            else if (state !== undefined && expectedState !== state) {
+                reject('Uninitialized OAuth process detected.');
             }
+            else if (!code) {
+                reject('Unable to obtain OAuth code.');
+            }
+            resolve(code);
             setImmediate(function () {
                 authWindow.close();
                 authWindow.on('closed', function () {

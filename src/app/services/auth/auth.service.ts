@@ -15,15 +15,16 @@ export class AuthService {
   currentAuthState = this.authStateSource.asObservable();
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone) {
+    // When OAuth process is completed ipcMain from electron will send the access_token through this channel.
     this.electronService.ipcRenderer.on('github-oauth-reply', (event, access_token) => {
       this.changeAuthState(AuthState.Authenticated);
       this.initializeLoggedInUser(access_token);
     });
   }
 
-  initializeLoggedInUser(access_token: string): void {
-    this.accessToken = access_token;
-    this.ngZone.run(() => this.router.navigate(['/']));
+  startOAuthProcess() {
+    this.changeAuthState(AuthState.AwaitingAuthentication);
+    this.electronService.ipcRenderer.send('github-oauth');
   }
 
   logOut(): void {
@@ -32,16 +33,16 @@ export class AuthService {
     this.ngZone.run(() => this.router.navigate(['/login']));
   }
 
-  startOAuthProcess() {
-    this.changeAuthState(AuthState.AwaitingAuthentication);
-    this.electronService.ipcRenderer.send('github-oauth');
-  }
-
   isAuthenticated(): boolean {
     return !!this.accessToken;
   }
 
-  changeAuthState(newAuthState: AuthState) {
+  private initializeLoggedInUser(access_token: string): void {
+    this.accessToken = access_token;
+    this.ngZone.run(() => this.router.navigate(['/']));
+  }
+
+  private changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
   }
 }

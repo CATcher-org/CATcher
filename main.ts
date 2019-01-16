@@ -72,6 +72,8 @@ try {
   ipcMain.on('github-oauth', (event, arg) => {
     getAccessToken(win).then((data) => {
       event.sender.send('github-oauth-reply', data.token);
+    }).catch((error) => {
+      alert(error);
     });
   });
 
