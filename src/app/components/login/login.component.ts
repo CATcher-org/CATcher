@@ -1,20 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-import {ElectronService} from '../../services/electron.service';
-import {AuthService} from '../../services/auth/auth.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AuthService, AuthState} from '../../services/auth/auth.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+  authState: AuthState;
+  authStateSubscription: Subscription;
 
-  constructor(private electronService: ElectronService, private auth: AuthService) { }
+  constructor(private auth: AuthService) { }
 
   ngOnInit() {
+    this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
+      this.authState = state;
+    });
+  }
+
+  ngOnDestroy() {
+    this.authStateSubscription.unsubscribe();
   }
 
   logInWithGithub() {
     this.auth.startOAuthProcess();
+  }
+
+  get isNotLoggedIn(): boolean {
+    return this.authState === AuthState.NotAuthenticated;
   }
 }

@@ -1,6 +1,7 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { getAccessToken } from './electronOAuth';
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -66,6 +67,12 @@ try {
     if (win === null) {
       createWindow();
     }
+  });
+
+  ipcMain.on('github-oauth', (event, arg) => {
+    getAccessToken(win).then((data) => {
+      event.sender.send('github-oauth-reply', data.token);
+    });
   });
 
 } catch (e) {

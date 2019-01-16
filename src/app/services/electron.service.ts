@@ -37,7 +37,6 @@ export class ElectronService {
     return this.remote.getCurrentWebContents().getURL();
   }
 
-
   getCurrentWindow(): BrowserWindow {
     return this.remote.getCurrentWindow();
   }

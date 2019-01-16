@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {ElectronService} from '../../services/electron.service';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private electronService: ElectronService, private auth: AuthService) { }
 
-  ngOnInit() {
+  ngOnInit() { }
+
+  logOut() {
+    this.auth.logOut();
   }
 
 }
