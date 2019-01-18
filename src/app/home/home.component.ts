@@ -3,6 +3,7 @@ import {GithubService} from '../core/services/github.service';
 import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material';
 import {first} from 'rxjs/operators';
 import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../core/models/issue.model';
+import {IssueService} from '../core/services/issue.service';
 
 @Component({
   selector: 'app-home',
@@ -24,11 +25,11 @@ export class HomeComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private githubService: GithubService) { }
+  constructor(private githubService: GithubService, private issueService: IssueService) { }
 
   ngOnInit() {
-    this.githubService.getIssues().pipe(first()).subscribe((issues: Issue[]) => {
-      this.issues = new MatTableDataSource(issues);
+    this.issueService.getAllIssues().pipe(first()).subscribe((issues: {}) => {
+      this.issues = new MatTableDataSource(Object.values(issues));
       this.isPageLoaded = true;
       this.issues.sort = this.sort;
       this.issues.paginator = this.paginator;

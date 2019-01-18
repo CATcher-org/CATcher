@@ -5,6 +5,7 @@ export interface Issue {
   title: string;
   type: string;
   severity: string;
+  description?: string;
   response?: string;
   assignee?: Assignee;
 }

@@ -46,7 +46,9 @@
     <ng-container matColumnDef="actions" >
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let issue">
-        <mat-icon>more_vert</mat-icon>
+        <button mat-stroked-button color="primary" [routerLink]="'issues/' + issue.id">
+          View
+        </button>
       </td>
     </ng-container>
 

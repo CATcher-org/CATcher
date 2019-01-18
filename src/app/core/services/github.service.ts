@@ -12,24 +12,41 @@ export class GithubService {
 
   constructor() { }
 
-  getIssues(): Observable<Array<Issue>> {
+  /**
+   * Will return an Observable with JSON object conforming with the following structure:
+   * data = { [issue.id]: Issue }
+   */
+  fetchIssues(): Observable<{}> {
     return from(octokit.issues.listForRepo({owner: 'testathor', repo: 'pe'})).pipe(
       map((response) => {
-        const mappedResult = new Array<Issue>();
+        let mappedResult = {};
         for (const issue of response['data']) {
-          mappedResult.push(<Issue>{
-            id: +issue['number'],
-            title: issue['title'],
-            ...this.getFormattedLabels(issue['labels'], LABELS_IN_BUG_REPORTING),
-          });
+          const issueModel = this.createIssueModel(issue);
+          mappedResult = {
+            ...mappedResult,
+            [issueModel.id]: issueModel,
+          };
         }
-        // sort according to its id in ascending order.
-        mappedResult.sort((a, b) => {
-          return a.id > b.id ? 1 : a.id < b.id ? -1 : 0;
-        });
         return mappedResult;
       }),
     );
+  }
+
+  fetchIssue(id: number): Observable<any> {
+    return from(octokit.issues.get({owner: 'testathor', repo: 'pe', number: id})).pipe(
+      map((response) => {
+        return this.createIssueModel(response['data']);
+      })
+    );
+  }
+
+  private createIssueModel(issueInJson: {}): Issue {
+    return <Issue>{
+      id: +issueInJson['number'],
+      title: issueInJson['title'],
+      description: issueInJson['body'],
+      ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_BUG_REPORTING),
+    };
   }
 
   /**
