@@ -12,9 +12,4 @@ export class HomeComponent implements OnInit {
   constructor(private electronService: ElectronService, private auth: AuthService) { }
 
   ngOnInit() { }
-
-  logOut() {
-    this.auth.logOut();
-  }
-
 }
