@@ -1,3 +1,6 @@
 <app-layout-header></app-layout-header>
+<div>
+  <p *ngIf="!(isNetworkOnline$ | async)">You are not connected to internet.</p>
+</div>
 
 <router-outlet></router-outlet>

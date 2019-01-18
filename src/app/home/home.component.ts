@@ -1,8 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {GithubService} from '../core/services/github.service';
-import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {first} from 'rxjs/operators';
-import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../core/models/issue.model';
+import {ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
 
 @Component({
