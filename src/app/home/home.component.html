@@ -3,3 +3,56 @@
     Testathor
   </h1>
 </div>
+<div class="table-container">
+
+  <mat-grid-list cols="3" rowHeight="80px">
+    <mat-grid-tile>
+      <div class="grid-flush-left"> <h1 class="mat-headline" style="margin: 0px"> Issues </h1> </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <mat-form-field>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+      </mat-form-field>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <div class="grid-flush-right"><button mat-stroked-button color="primary"> New Issue</button></div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <table *ngIf="isPageLoaded" mat-table [dataSource]="issues" matSort class="mat-elevation-z8">
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef> ID </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef> Title </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.title}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.type}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="severity">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.severity}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions" >
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let issue">
+        <mat-icon>more_vert</mat-icon>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let issue; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+
+</div>

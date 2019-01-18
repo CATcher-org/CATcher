@@ -5,8 +5,34 @@
   text-align: center;
 }
 
+.table-container {
+  padding: 50px;
+}
+
 .title {
   color: black;
   margin:0;
   padding:30px 20px;
+}
+
+table {
+  width: 100%;
+}
+
+td.mat-column-actions {
+  width: 20px;
+  text-align: center;
+}
+
+tr:nth-child(even) {background: #E8E8EE}
+tr:nth-child(odd) {background: #FFF}
+
+.grid-flush-left {
+  position: absolute;
+  left: 5px;
+}
+
+.grid-flush-right {
+  position: absolute;
+  right: 5px;
 }
