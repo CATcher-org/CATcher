@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {AuthService} from '../core/services/auth.service';
+import {ElectronService} from '../core/services/electron.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private electronService: ElectronService, private auth: AuthService) { }
 
-  ngOnInit() {
-  }
-
+  ngOnInit() { }
 }
