@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {ElectronService} from '../electron.service';
 import {Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {NgZone} from '@angular/core';
+import {ElectronService} from './electron.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 

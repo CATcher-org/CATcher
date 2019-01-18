@@ -1,13 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService, AuthState} from '../../services/auth/auth.service';
+import {AuthService, AuthState} from '../core/services/auth.service';
 import {Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: 'app-auth',
+  templateUrl: './auth.component.html',
+  styleUrls: ['./auth.component.css']
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class AuthComponent implements OnInit, OnDestroy {
   authState: AuthState;
   authStateSubscription: Subscription;
 

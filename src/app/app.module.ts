@@ -2,31 +2,24 @@ import 'reflect-metadata';
 import '../polyfills';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-import { HttpClientModule } from '@angular/common/http';
-
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './components/home/home.component';
-import { LoginComponent } from './components/login/login.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule} from './modules/material.module';
+import { HomeModule } from './home/home.module';
+import { SharedModule } from './shared/shared.module';
+import { HeaderComponent } from './shared/layout';
+import {AuthModule} from './auth/auth.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HomeComponent,
-    LoginComponent,
+    AppComponent, HeaderComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    HttpClientModule,
+    HomeModule,
+    AuthModule,
+    SharedModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
-    MaterialModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {ElectronService} from '../../services/electron.service';
-import {AuthService} from '../../services/auth/auth.service';
+import {AuthService} from '../core/services/auth.service';
+import {ElectronService} from '../core/services/electron.service';
 
 @Component({
   selector: 'app-home',
