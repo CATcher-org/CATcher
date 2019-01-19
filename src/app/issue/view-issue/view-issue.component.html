@@ -1,3 +1,22 @@
 <div *ngIf="!isPageLoading">
-  <h1 class="mat-display-1">{{issue.title}}</h1>
+
+  <h1 class="mat-display-1 title">{{issue.title}}</h1>
+  <button mat-stroked-button color="primary" class="title-button">New Issue</button>
+  <button mat-stroked-button color="primary" class="title-button">Edit</button>
+
+  <mat-divider></mat-divider>
+
+  <div class="row">
+    <div class="column left vertical-border">
+      <h2>Description</h2>
+      <p>{{issue.description}}</p>
+    </div>
+    <div class="column right">
+      <h2>Severity</h2>
+      <p>{{issue.severity}}</p>
+      <h2>Type</h2>
+      <p>{{issue.type}}</p>
+    </div>
+  </div>
+
 </div>

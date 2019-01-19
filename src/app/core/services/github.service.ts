@@ -10,34 +10,45 @@ const octokit = require('@octokit/rest')();
 })
 export class GithubService {
 
-  constructor() { }
+  constructor() {
+    octokit.authenticate({
+      type: 'basic',
+      username: 'testathorStudent',
+      password: 'studentPassword1',
+    });
+  }
 
   /**
    * Will return an Observable with JSON object conforming with the following structure:
    * data = { [issue.id]: Issue }
    */
-  fetchIssues(): Observable<{}> {
-    return from(octokit.issues.listForRepo({owner: 'testathor', repo: 'pe'})).pipe(
+  fetchIssues(): Observable<Issue[]> {
+    return from(octokit.issues.listForRepo({owner: 'testathor', repo: 'pe', sort: 'created', direction: 'asc'})).pipe(
       map((response) => {
-        let mappedResult = {};
+        const mappedResult = new Array<Issue>();
         for (const issue of response['data']) {
           const issueModel = this.createIssueModel(issue);
-          mappedResult = {
-            ...mappedResult,
-            [issueModel.id]: issueModel,
-          };
+          mappedResult.push(issueModel);
         }
         return mappedResult;
       }),
     );
   }
 
-  fetchIssue(id: number): Observable<any> {
+  fetchIssue(id: number): Observable<Issue> {
     return from(octokit.issues.get({owner: 'testathor', repo: 'pe', number: id})).pipe(
       map((response) => {
         return this.createIssueModel(response['data']);
       })
     );
+  }
+
+  closeIssue(id: number): Observable<Issue> {
+    return from(octokit.issues.update({owner: 'testathor', repo: 'pe', number: id, state: 'closed'})).pipe(
+      map((response) => {
+        return this.createIssueModel(response['data']);
+      }
+    ));
   }
 
   private createIssueModel(issueInJson: {}): Issue {
