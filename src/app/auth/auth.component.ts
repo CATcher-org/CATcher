@@ -10,6 +10,8 @@ import {Subscription} from 'rxjs';
 export class AuthComponent implements OnInit, OnDestroy {
   authState: AuthState;
   authStateSubscription: Subscription;
+  username: string;
+  password: string;
 
   constructor(private auth: AuthService) { }
 
