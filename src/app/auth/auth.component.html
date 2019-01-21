@@ -1,3 +1,29 @@
 <div class="container">
   <button *ngIf="isNotLoggedIn" (click)="this.logInWithGithub()"> Log in with Github </button>
-</div>
+</div><br>
+<br>
+<mat-card class="login-card">
+  <mat-card-header>
+    <mat-card-title>Login</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="login-form">
+      <table class="table-form" cellspacing="0">
+        <tr>
+          <td>
+            <mat-form-field class="login-field">
+              <input matInput placeholder="Username" name="username" required>
+            </mat-form-field>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <mat-form-field class="login-field">
+              <input matInput placeholder="Password" type="password" name="password" required>
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </mat-card-content>
+</mat-card>
