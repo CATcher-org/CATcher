@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {GithubService} from './github.service';
-import {first, map} from 'rxjs/operators';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {catchError, first, map} from 'rxjs/operators';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {Issue} from '../models/issue.model';
-import {MatSnackBar} from '@angular/material';
+import {ErrorHandlingService} from './error-handling.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class IssueService {
   issues: {};
   issues$: BehaviorSubject<Issue[]>;
 
-  constructor(private githubService: GithubService, private errorMessage: MatSnackBar) {
+  constructor(private githubService: GithubService, private errorHandlingService: ErrorHandlingService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -29,37 +29,32 @@ export class IssueService {
     return this.issues$;
   }
 
-  // TODO Error when there isn't the issue id.
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
       this.initializeData();
       return this.githubService.fetchIssue(id).pipe(first());
     } else {
-      return this.issues$.pipe(map((issues) => {
-        return issues.filter((issue) => issue.id === id)[0];
-      }));
+      return of(this.issues[id]);
     }
   }
 
-  // TODO Error Toaster for this.
   createNewIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
     return this.githubService.createNewIssue(title, description, labelsArray);
   }
 
-  // TODO Error Toaster for this.
   editIssue(id: number, title: string, description: string, severity: string, type: string) {
     const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
     return this.githubService.editIssue(id, title, description, labelsArray);
   }
 
-  // TODO Error Toaster for this.
   deleteIssue(id: number): void {
-    const newIssues = this.issues$.getValue().filter((issue) => {
-      return issue.id !== id;
+    const { [id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
+    this.githubService.closeIssue(id).subscribe((removedIssue) => {
+      this.issues$.next(Object.values(withoutIssueToRemove));
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
     });
-    this.issues$.next(newIssues);
-    this.githubService.closeIssue(id);
   }
 
   updateLocalStore(issueToUpdate: Issue) {
@@ -74,9 +69,7 @@ export class IssueService {
     this.githubService.fetchIssues().pipe(first()).subscribe((issues: Issue[]) => {
       this.issues = issues;
       this.issues$.next(Object.values(this.issues));
-    }, (error) => {
-      console.log(error);
-    });
+    }, (error) => this.errorHandlingService.handleHttpError(error));
   }
 
   private createSeverityLabel(value: string) {

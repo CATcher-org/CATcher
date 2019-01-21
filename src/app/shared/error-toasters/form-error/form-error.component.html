@@ -1,0 +1,9 @@
+<div *ngFor="let error of data" style="display: inline-block;">
+  Validation Error:
+  <ul>
+    <li> {{ error.code + ' in ' + error.field }} </li>
+  </ul>
+</div>
+<button style="position: absolute; top: 30%; bottom: 30%; left: 75%; height: 40%" mat-button
+        color="accent"
+        (click)="snackBarRef.dismiss()"> Close </button>

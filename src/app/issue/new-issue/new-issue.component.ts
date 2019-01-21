@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ISSUE_TYPES, SEVERITIES} from '../../core/models/issue.model';
+import {ErrorHandlingService} from '../../core/services/error-handling.service';
 
 @Component({
   selector: 'app-new-issue',
@@ -13,7 +14,7 @@ export class NewIssueComponent implements OnInit {
   severityValues = SEVERITIES;
   issueTypeValues = ISSUE_TYPES;
 
-  constructor(private issueService: IssueService, private formBuilder: FormBuilder) { }
+  constructor(private issueService: IssueService, private formBuilder: FormBuilder, private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
     this.newIssueForm = this.formBuilder.group({
@@ -32,7 +33,7 @@ export class NewIssueComponent implements OnInit {
       this.issueService.updateLocalStore(newIssue);
       form.resetForm();
     }, (error) => {
-      console.log(error);
+      this.errorHandlingService.handleHttpError(error);
     });
   }
 

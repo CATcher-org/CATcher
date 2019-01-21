@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {Issue, ISSUE_TYPES, SEVERITIES} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
+import {ErrorHandlingService} from '../core/services/error-handling.service';
 
 @Component({
   selector: 'app-issue',
@@ -18,13 +19,18 @@ export class IssueComponent implements OnInit {
   issue: Issue;
   editIssueForm: FormGroup;
 
-  constructor(private issueService: IssueService, private route: ActivatedRoute, private formBuilder: FormBuilder) { }
+  constructor(private issueService: IssueService,
+              private route: ActivatedRoute,
+              private formBuilder: FormBuilder,
+              private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
     const id = +this.route.snapshot.paramMap.get('issue_id');
     this.issueService.getIssue(id).subscribe((issue) => {
       this.issue = issue;
       this.isPageLoading = false;
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
     });
     this.editIssueForm = this.formBuilder.group({
       title: ['', Validators.required],
@@ -46,13 +52,17 @@ export class IssueComponent implements OnInit {
 
   cancelEditMode() {
     this.isInEditMode = false;
+    this.editIssueForm.reset();
   }
 
   submitForm(form: NgForm) {
     this.issueService.editIssue(this.issue.id, this.title, this.description, this.severity, this.type).subscribe((editedIssue: Issue) => {
       this.issue = editedIssue;
       this.issueService.updateLocalStore(editedIssue);
+      form.resetForm();
       this.isInEditMode = false;
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
     });
   }
 

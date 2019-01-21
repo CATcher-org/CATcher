@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from './material.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ErrorToasterModule} from './error-toasters/error-toaster.module';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     RouterModule,
     MaterialModule,
     BrowserAnimationsModule,
+    ErrorToasterModule,
   ],
   declarations: [],
   exports: [
@@ -25,6 +27,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     RouterModule,
     MaterialModule,
     BrowserAnimationsModule,
+    ErrorToasterModule,
   ]
 })
 export class SharedModule {}
