@@ -10,13 +10,7 @@ const octokit = require('@octokit/rest')();
 })
 export class GithubService {
 
-  constructor() {
-    octokit.authenticate({
-      type: 'basic',
-      username: 'testathorStudent',
-      password: 'studentPassword1',
-    });
-  }
+  constructor() {}
 
   /**
    * Will return an Observable with JSON object conforming with the following structure:
