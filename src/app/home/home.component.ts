@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import {AuthService} from '../core/services/auth.service';
-import {ElectronService} from '../core/services/electron.service';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../core/models/issue.model';
+import {IssueService} from '../core/services/issue.service';
 
 @Component({
   selector: 'app-home',
@@ -8,8 +9,43 @@ import {ElectronService} from '../core/services/electron.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  isPageLoaded = false;
+  issues: any;
+  displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
 
-  constructor(private electronService: ElectronService, private auth: AuthService) { }
+  sort: ElementRef;
+  @ViewChild(MatSort) set sortContent(content: ElementRef) {
+    this.sort = content;
+    if (this.sort) {
+      this.issues.sort = this.sort;
+    }
+  }
 
-  ngOnInit() { }
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  constructor(private issueService: IssueService) { }
+
+  ngOnInit() {
+    this.issueService.getAllIssues().subscribe((issues: Issue[]) => {
+      this.issues = new MatTableDataSource(issues);
+      this.isPageLoaded = true;
+      this.issues.sort = this.sort;
+      this.issues.paginator = this.paginator;
+      this.issues.sortingDataAccessor = (issue, property) => {
+        switch (property) {
+          case 'severity': return SEVERITY_ORDER[issue.severity];
+          case 'type': return ISSUE_TYPE_ORDER[issue.type];
+          default: return issue[property];
+        }
+      };
+    });
+  }
+
+  applyFilter(filterValue: string) {
+    this.issues.filter = filterValue.trim().toLowerCase();
+  }
+
+  deleteIssue(id: number) {
+    this.issueService.deleteIssue(id);
+  }
 }

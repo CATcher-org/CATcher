@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
 import { SharedModule } from './shared/shared.module';
 import { HeaderComponent } from './shared/layout';
+import {IssueModule} from './issue/issue.module';
 import {AuthModule} from './auth/auth.module';
 
 @NgModule({
@@ -17,6 +18,7 @@ import {AuthModule} from './auth/auth.module';
   imports: [
     BrowserModule,
     HomeModule,
+    IssueModule,
     AuthModule,
     SharedModule,
     AppRoutingModule,

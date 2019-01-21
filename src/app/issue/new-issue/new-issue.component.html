@@ -1,0 +1,32 @@
+<h1 class="mat-display-1 title">New Issue</h1>
+
+<form [formGroup]="newIssueForm" #myForm="ngForm" (ngSubmit)="submitNewIssue(myForm)">
+  <mat-form-field>
+    <input id="title" formControlName="title" matInput placeholder="Title" required>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input id="description" formControlName="description" matInput placeholder="Description" required>
+  </mat-form-field>
+
+
+  <mat-form-field>
+    <mat-select formControlName="severity" placeholder="Severity">
+      <mat-option *ngFor="let value of severityValues" [value]="value">
+        {{value}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select formControlName="type" placeholder="Type">
+      <mat-option *ngFor="let value of issueTypeValues" [value]="value">
+        {{value}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button type="submit" mat-stroked-button color="primary">
+    Submit
+  </button>
+</form>
