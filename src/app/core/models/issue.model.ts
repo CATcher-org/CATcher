@@ -18,4 +18,7 @@ export interface Issue {
 export const LABELS_IN_BUG_REPORTING = ['severity', 'type'];
 
 export const SEVERITY_ORDER = { Low: 0, Medium: 1, High: 2 };
+export const SEVERITIES = Object.keys(SEVERITY_ORDER);
+
 export const ISSUE_TYPE_ORDER = { DocumentationBug: 0, FunctionalityBug: 1 };
+export const ISSUE_TYPES = Object.keys(ISSUE_TYPE_ORDER);

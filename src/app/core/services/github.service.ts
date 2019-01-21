@@ -22,13 +22,16 @@ export class GithubService {
    * Will return an Observable with JSON object conforming with the following structure:
    * data = { [issue.id]: Issue }
    */
-  fetchIssues(): Observable<Issue[]> {
+  fetchIssues(): Observable<{}> {
     return from(octokit.issues.listForRepo({owner: 'testathor', repo: 'pe', sort: 'created', direction: 'asc'})).pipe(
       map((response) => {
-        const mappedResult = new Array<Issue>();
+        let mappedResult = {};
         for (const issue of response['data']) {
           const issueModel = this.createIssueModel(issue);
-          mappedResult.push(issueModel);
+          mappedResult = {
+            ...mappedResult,
+            [issueModel.id]: issueModel,
+          };
         }
         return mappedResult;
       }),
@@ -49,6 +52,22 @@ export class GithubService {
         return this.createIssueModel(response['data']);
       }
     ));
+  }
+
+  createNewIssue(title: string, description: string, labels: string[]): Observable<Issue> {
+    return from(octokit.issues.create({owner: 'testathor', repo: 'pe', title: title, body: description, labels: labels})).pipe(
+      map((response) => {
+        return this.createIssueModel(response['data']);
+      })
+    );
+  }
+
+  editIssue(id: number, title: string, description: string, labels: string[]) {
+    return from(octokit.issues.update({owner: 'testathor', repo: 'pe', number: id, title: title, body: description, labels: labels})).pipe(
+      map((response) => {
+        return this.createIssueModel(response['data']);
+      })
+    );
   }
 
   private createIssueModel(issueInJson: {}): Issue {

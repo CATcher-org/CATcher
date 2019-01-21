@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 
 import {IssueRoutingModule} from './issue-routing.module';
 import {SharedModule} from '../shared/shared.module';
-import {ViewIssueComponent} from './view-issue/view-issue.component';
+import {IssueComponent} from './issue.component';
+import {NewIssueComponent} from './new-issue/new-issue.component';
 
 @NgModule({
   imports: [
@@ -10,7 +11,8 @@ import {ViewIssueComponent} from './view-issue/view-issue.component';
     SharedModule
   ],
   declarations: [
-    ViewIssueComponent
+    IssueComponent,
+    NewIssueComponent,
   ],
 })
 export class IssueModule {}

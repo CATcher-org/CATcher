@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import {GithubService} from './github.service';
 import {first, map} from 'rxjs/operators';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {Issue} from '../models/issue.model';
+import {MatSnackBar} from '@angular/material';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IssueService {
-  isInitialized = false;
+  issues: {};
   issues$: BehaviorSubject<Issue[]>;
 
-  constructor(private githubService: GithubService) {
+  constructor(private githubService: GithubService, private errorMessage: MatSnackBar) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -22,7 +23,7 @@ export class IssueService {
    * If the issues have been fetched before, the function will return the existing issues instead of calling from Github API.
    */
   getAllIssues(): Observable<Issue[]> {
-    if (!this.isInitialized) {
+    if (this.issues === undefined) {
       this.initializeData();
     }
     return this.issues$;
@@ -30,16 +31,26 @@ export class IssueService {
 
   // TODO Error when there isn't the issue id.
   getIssue(id: number): Observable<Issue> {
-    if (!this.isInitialized) {
+    if (this.issues === undefined) {
       this.initializeData();
       return this.githubService.fetchIssue(id).pipe(first());
     } else {
       return this.issues$.pipe(map((issues) => {
-        return issues.filter((issue) => {
-          return issue.id === id;
-        })[0];
+        return issues.filter((issue) => issue.id === id)[0];
       }));
     }
+  }
+
+  // TODO Error Toaster for this.
+  createNewIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
+    const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
+    return this.githubService.createNewIssue(title, description, labelsArray);
+  }
+
+  // TODO Error Toaster for this.
+  editIssue(id: number, title: string, description: string, severity: string, type: string) {
+    const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
+    return this.githubService.editIssue(id, title, description, labelsArray);
   }
 
   // TODO Error Toaster for this.
@@ -51,10 +62,28 @@ export class IssueService {
     this.githubService.closeIssue(id);
   }
 
+  updateLocalStore(issueToUpdate: Issue) {
+    this.issues = {
+      ...this.issues,
+      [issueToUpdate.id]: issueToUpdate,
+    };
+    this.issues$.next(Object.values(this.issues));
+  }
+
   private initializeData() {
     this.githubService.fetchIssues().pipe(first()).subscribe((issues: Issue[]) => {
-      this.isInitialized = true;
-      this.issues$.next(issues);
+      this.issues = issues;
+      this.issues$.next(Object.values(this.issues));
+    }, (error) => {
+      console.log(error);
     });
+  }
+
+  private createSeverityLabel(value: string) {
+    return `severity.${value}`;
+  }
+
+  private createTypeLabel(value: string) {
+    return `type.${value}`;
   }
 }
