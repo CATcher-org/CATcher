@@ -32,4 +32,8 @@ export class AuthComponent implements OnInit, OnDestroy {
   get isNotLoggedIn(): boolean {
     return this.authState === AuthState.NotAuthenticated;
   }
+
+  signIn() {
+    console.log('Works');
+  }
 }
