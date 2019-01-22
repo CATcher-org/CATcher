@@ -56,7 +56,13 @@ export class IssueComponent implements OnInit {
   }
 
   submitForm(form: NgForm) {
-    this.issueService.editIssue(this.issue.id, this.title, this.description, this.severity, this.type).subscribe((editedIssue: Issue) => {
+    if (this.editIssueForm.invalid) {
+      return;
+    }
+
+    this.issueService.editIssue(this.issue.id, this.title.value, this.description.value,
+        this.severity.value, this.type.value).subscribe((editedIssue: Issue) => {
+
       this.issue = editedIssue;
       this.issueService.updateLocalStore(editedIssue);
       form.resetForm();
@@ -67,18 +73,18 @@ export class IssueComponent implements OnInit {
   }
 
   get title() {
-    return this.editIssueForm.get('title').value;
+    return this.editIssueForm.get('title');
   }
 
   get description() {
-    return this.editIssueForm.get('description').value;
+    return this.editIssueForm.get('description');
   }
 
   get severity() {
-    return this.editIssueForm.get('severity').value;
+    return this.editIssueForm.get('severity');
   }
 
   get type() {
-    return this.editIssueForm.get('type').value;
+    return this.editIssueForm.get('type');
   }
 }

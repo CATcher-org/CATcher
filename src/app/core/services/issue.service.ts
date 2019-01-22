@@ -49,9 +49,10 @@ export class IssueService {
   }
 
   deleteIssue(id: number): void {
-    const { [id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
     this.githubService.closeIssue(id).subscribe((removedIssue) => {
-      this.issues$.next(Object.values(withoutIssueToRemove));
+      const { [id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
+      this.issues = withoutIssueToRemove;
+      this.issues$.next(Object.values(this.issues));
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });

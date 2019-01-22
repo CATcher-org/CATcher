@@ -26,6 +26,7 @@ export class ErrorHandlingService {
         this.snackBar.openFromComponent(FormErrorComponent, {data: formErrors});
         break;
       case 400:
+      case 401:
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         break;
       default:

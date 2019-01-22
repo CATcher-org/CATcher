@@ -29,7 +29,9 @@ export class NewIssueComponent implements OnInit {
     if (this.newIssueForm.invalid) {
       return;
     }
-    this.issueService.createNewIssue(this.title, this.description, this.severity, this.type).subscribe((newIssue) => {
+    this.issueService.createNewIssue(this.title.value, this.description.value,
+        this.severity.value, this.type.value).subscribe((newIssue) => {
+
       this.issueService.updateLocalStore(newIssue);
       form.resetForm();
     }, (error) => {
@@ -38,18 +40,18 @@ export class NewIssueComponent implements OnInit {
   }
 
   get title() {
-    return this.newIssueForm.get('title').value;
+    return this.newIssueForm.get('title');
   }
 
   get description() {
-    return this.newIssueForm.get('description').value;
+    return this.newIssueForm.get('description');
   }
 
   get severity() {
-    return this.newIssueForm.get('severity').value;
+    return this.newIssueForm.get('severity');
   }
 
   get type() {
-    return this.newIssueForm.get('type').value;
+    return this.newIssueForm.get('type');
   }
 }

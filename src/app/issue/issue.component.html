@@ -10,9 +10,13 @@
   <div *ngIf="isInEditMode">
     <mat-form-field>
       <input id="title" formControlName="title" matInput placeholder="Title" required>
+      <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
+        Title required.
+      </mat-error>
     </mat-form-field>
-    <button mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
-    <button type="submit" mat-stroked-button color="primary" class="title-button">Save</button>
+
+    <button type="button" mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
+    <button type="submit" [disabled]="!editIssueForm.valid" mat-stroked-button color="primary" class="title-button">Save</button>
   </div>
 
   <mat-divider></mat-divider>
@@ -27,6 +31,9 @@
       <div *ngIf="isInEditMode">
         <mat-form-field>
           <input id="description" formControlName="description" matInput placeholder="Description" required>
+          <mat-error *ngIf="description.errors && description.errors['required'] && description.touched">
+            Description required.
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -46,6 +53,9 @@
               {{value}}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
+            Severity required.
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-select formControlName="type" placeholder="Type">
@@ -53,6 +63,9 @@
               {{value}}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
+            Type required.
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
