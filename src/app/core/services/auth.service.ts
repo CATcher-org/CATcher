@@ -27,6 +27,10 @@ export class AuthService {
     this.electronService.ipcRenderer.send('github-oauth');
   }
 
+  startAuthentication(username: String, password: String) {
+
+  }
+
   logOut(): void {
     this.accessToken = null;
     this.changeAuthState(AuthState.NotAuthenticated);

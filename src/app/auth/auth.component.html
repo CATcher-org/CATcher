@@ -27,6 +27,6 @@
     </form>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button (click)="signIn()">Sign In</button>
+    <button mat-raised-button (click)="signIn()" [disabled]="this.username == null || this.password == null || this.username == ''||  this.password == ''" class = "btn btn-block mb-3">Sign In</button>
   </mat-card-actions>
 </mat-card>

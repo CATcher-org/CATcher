@@ -33,12 +33,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     return this.authState === AuthState.NotAuthenticated;
   }
 
-  signIn(event, username, password) {
+  signIn() {
     console.log('Works');
-    if (this.username == 'admin' && this.password == 'pass') {
-      console.log("ok");
-    } else {
-      console.log("nope");
-    }
+    this.auth.startAuthentication(this.username, this.password);
   }
 }
