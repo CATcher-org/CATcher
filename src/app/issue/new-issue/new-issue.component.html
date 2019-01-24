@@ -1,66 +1,61 @@
 <h1 class="mat-display-1 title">New Issue</h1>
 
 <form [formGroup]="newIssueForm" #myForm="ngForm" (ngSubmit)="submitNewIssue(myForm)">
-  <div>
-    <mat-grid-list cols="8" rowHeight="80px">
+  <div class="form">
+    <mat-form-field>
+      <input id="title" formControlName="title" matInput placeholder="Title" required>
+      <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
+        Title required.
+      </mat-error>
+    </mat-form-field>
 
-      <mat-grid-tile colspan="8" rowspan="1">
-        <mat-form-field>
-          <input id="title" formControlName="title" matInput placeholder="Title" required>
-          <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
-            Title required.
-          </mat-error>
-        </mat-form-field>
-      </mat-grid-tile>
-
-      <mat-grid-tile colspan="8" rowspan="2">
-        <div style="position: absolute; top: 1px; width: 100%">
+    <div>
+      <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Write">
           <mat-form-field>
+            <mat-label></mat-label>
             <textarea id="description" formControlName="description" matInput placeholder="Description"
-                      required cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5"
+                      cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5"
                       cdkAutosizeMaxRows="6"></textarea>
             <mat-error *ngIf="description.errors && description.errors['required'] && description.touched">
               Description required.
             </mat-error>
           </mat-form-field>
-        </div>
-      </mat-grid-tile>
+        </mat-tab>
+        <mat-tab label="Preview">
+          <div style="min-height: 138px">
+            <markdown [data]="description.value"></markdown>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
 
-      <mat-grid-tile colspan="4" rowspan="1">
-        <mat-form-field>
-          <mat-select formControlName="severity" placeholder="Severity">
-            <mat-option *ngFor="let value of severityValues" [value]="value">
-              {{value}}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
-            Severity required.
-          </mat-error>
-        </mat-form-field>
-      </mat-grid-tile>
+    <div class="container">
+      <mat-form-field class="left-half">
+        <mat-select formControlName="severity" placeholder="Severity">
+          <mat-option *ngFor="let value of severityValues" [value]="value">
+            {{value}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
+          Severity required.
+        </mat-error>
+      </mat-form-field>
 
-      <mat-grid-tile colspan="4" rowspan="1">
-        <mat-form-field>
-          <mat-select formControlName="type" placeholder="Type">
-            <mat-option *ngFor="let value of issueTypeValues" [value]="value">
-              {{value}}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
-            Type required.
-          </mat-error>
-        </mat-form-field>
-      </mat-grid-tile>
-
-      <mat-grid-tile colspan="6" rowspan="1"></mat-grid-tile>
-      <mat-grid-tile colspan="2" rowspan="1">
-        <div style="right: 1px; position: absolute">
-          <button type="submit" mat-stroked-button color="primary" [disabled]="!newIssueForm.valid">
-            Submit
-          </button>
-        </div>
-      </mat-grid-tile>
-    </mat-grid-list>
+      <mat-form-field class="right-half">
+        <mat-select formControlName="type" placeholder="Type">
+          <mat-option *ngFor="let value of issueTypeValues" [value]="value">
+            {{value}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
+          Type required.
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <button style="float: right" type="submit" mat-stroked-button color="primary" [disabled]="!newIssueForm.valid">
+      Submit
+    </button>
   </div>
 </form>
 

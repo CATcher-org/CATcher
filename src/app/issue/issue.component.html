@@ -1,77 +1,98 @@
 <div *ngIf="!isPageLoading">
 
-  <form [formGroup]="editIssueForm" #myForm="ngForm" (ngSubmit)="submitForm(myForm)">
-  <div *ngIf="!isInEditMode">
-    <h1 class="mat-display-1 title">{{issue.title}}</h1>
-    <button mat-stroked-button color="primary" class="title-button" routerLink="/issues/new">New Issue</button>
-    <button mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">Edit</button>
-  </div>
+  <div *ngIf="!isInEditMode; else editModeTemplate">
+    <div>
+      <h1 class="mat-display-1 title">{{issue.title}}</h1>
+      <button mat-stroked-button color="primary" class="title-button" routerLink="/issues/new">New Issue</button>
+      <button mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">Edit</button>
+    </div>
 
-  <div *ngIf="isInEditMode">
-    <mat-form-field>
-      <input id="title" formControlName="title" matInput placeholder="Title" required>
-      <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
-        Title required.
-      </mat-error>
-    </mat-form-field>
+    <mat-divider></mat-divider>
 
-    <button type="button" mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
-    <button type="submit" [disabled]="!editIssueForm.valid" mat-stroked-button color="primary" class="title-button">Save</button>
-  </div>
-
-  <mat-divider></mat-divider>
-
-  <div class="row">
-    <div class="column left vertical-border">
-      <div *ngIf="!isInEditMode" style="overflow: auto">
-        <h2>Description</h2>
+    <div class="row">
+      <div class="column left vertical-border">
+        <div *ngIf="!isInEditMode" style="overflow: auto">
+          <h2>Description</h2>
           <markdown [data]="issue.description"></markdown>
+        </div>
       </div>
 
-      <div *ngIf="isInEditMode">
-        <mat-form-field style="width: 80%">
-          <textarea id="description" formControlName="description" matInput placeholder="Description"
-                    required cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
-                    cdkAutosizeMaxRows="20"></textarea>
-          <mat-error *ngIf="description.errors && description.errors['required'] && description.touched">
-            Description required.
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="column right">
-      <div *ngIf="!isInEditMode">
-        <h2>Severity</h2>
-        <p>{{issue.severity}}</p>
-        <h2>Type</h2>
-        <p>{{issue.type}}</p>
-      </div>
-
-      <div *ngIf="isInEditMode">
-        <mat-form-field>
-          <mat-select formControlName="severity" placeholder="Severity">
-            <mat-option *ngFor="let value of severityValues" [value]="value">
-              {{value}}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
-            Severity required.
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select formControlName="type" placeholder="Type">
-            <mat-option *ngFor="let value of issueTypeValues" [value]="value">
-              {{value}}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
-            Type required.
-          </mat-error>
-        </mat-form-field>
+      <div class="column right">
+        <div *ngIf="!isInEditMode">
+          <h2>Severity</h2>
+          <p>{{issue.severity}}</p>
+          <h2>Type</h2>
+          <p>{{issue.type}}</p>
+        </div>
       </div>
     </div>
   </div>
-  </form>
+
+
+  <ng-template #editModeTemplate>
+
+    <form [formGroup]="editIssueForm" #myForm="ngForm" (ngSubmit)="submitForm(myForm)">
+        <div>
+          <mat-form-field>
+            <input id="title" formControlName="title" matInput placeholder="Title" required>
+            <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
+              Title required.
+            </mat-error>
+          </mat-form-field>
+
+          <button type="button" mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
+          <button type="submit" [disabled]="!editIssueForm.valid" mat-stroked-button color="primary" class="title-button">Save</button>
+        </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="row">
+        <div class="column left vertical-border">
+          <mat-tab-group animationDuration="0ms" style="width: 80%">
+            <mat-tab label="Write">
+              <mat-form-field style="width: 80%">
+                <mat-label></mat-label>
+                <textarea id="description" formControlName="description" matInput placeholder="Description"
+                        cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
+                        cdkAutosizeMaxRows="20"></textarea>
+                <mat-error *ngIf="description.errors && description.errors['required'] && description.touched">
+                  Description required.
+                </mat-error>
+              </mat-form-field>
+            </mat-tab>
+            <mat-tab label="Preview">
+              <markdown [data]="description.value"></markdown>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+
+        <div class="column right">
+          <div>
+            <mat-form-field>
+              <mat-select formControlName="severity" placeholder="Severity">
+                <mat-option *ngFor="let value of severityValues" [value]="value">
+                  {{value}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
+                Severity required.
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="type" placeholder="Type">
+                <mat-option *ngFor="let value of issueTypeValues" [value]="value">
+                  {{value}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
+                Type required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </ng-template>
 
 </div>
