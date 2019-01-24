@@ -10,9 +10,5 @@ export class NoInternetConnectionComponent implements OnInit {
     public snackBarRef: MatSnackBarRef<NoInternetConnectionComponent>,
     @Inject(MAT_SNACK_BAR_DATA) public data: any) {}
 
-  ngOnInit() {
-    this.snackBarRef.onAction().subscribe(() => {
-      window.location.reload();
-    });
-  }
+  ngOnInit() {}
 }

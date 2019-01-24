@@ -70,7 +70,7 @@ export class IssueService {
     this.githubService.fetchIssues().pipe(first()).subscribe((issues: Issue[]) => {
       this.issues = issues;
       this.issues$.next(Object.values(this.issues));
-    }, (error) => this.errorHandlingService.handleHttpError(error));
+    }, (error) => this.errorHandlingService.handleHttpError(error, () => this.getAllIssues()));
   }
 
   private createSeverityLabel(value: string) {

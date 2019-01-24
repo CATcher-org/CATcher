@@ -4,11 +4,13 @@ import {IssueRoutingModule} from './issue-routing.module';
 import {SharedModule} from '../shared/shared.module';
 import {IssueComponent} from './issue.component';
 import {NewIssueComponent} from './new-issue/new-issue.component';
+import {MarkdownModule} from 'ngx-markdown';
 
 @NgModule({
   imports: [
     IssueRoutingModule,
-    SharedModule
+    SharedModule,
+    MarkdownModule.forChild(),
   ],
   declarations: [
     IssueComponent,

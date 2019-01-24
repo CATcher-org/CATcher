@@ -23,14 +23,16 @@
 
   <div class="row">
     <div class="column left vertical-border">
-      <div *ngIf="!isInEditMode">
+      <div *ngIf="!isInEditMode" style="overflow: auto">
         <h2>Description</h2>
-        <p>{{issue.description}}</p>
+          <markdown [data]="issue.description"></markdown>
       </div>
 
       <div *ngIf="isInEditMode">
-        <mat-form-field>
-          <input id="description" formControlName="description" matInput placeholder="Description" required>
+        <mat-form-field style="width: 80%">
+          <textarea id="description" formControlName="description" matInput placeholder="Description"
+                    required cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
+                    cdkAutosizeMaxRows="20"></textarea>
           <mat-error *ngIf="description.errors && description.errors['required'] && description.touched">
             Description required.
           </mat-error>

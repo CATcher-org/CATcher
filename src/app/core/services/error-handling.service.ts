@@ -12,13 +12,14 @@ export class ErrorHandlingService {
   constructor(private snackBar: MatSnackBar) {}
 
   // Ref: https://developer.github.com/v3/#client-errors
-  handleHttpError(error) {
+  handleHttpError(error, actionCallback?: () => void) {
     switch (error.status) {
       case 500:
         if (navigator.onLine) {
           this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         } else {
-          this.snackBar.openFromComponent(NoInternetConnectionComponent, {data: error.request.method});
+          const snackbarRef = this.snackBar.openFromComponent(NoInternetConnectionComponent, {data: error.request.method});
+          snackbarRef.onAction().subscribe(actionCallback);
         }
         break;
       case 422:

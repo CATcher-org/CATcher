@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Issue, ISSUE_TYPES, SEVERITIES} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';

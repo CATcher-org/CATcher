@@ -3,6 +3,7 @@ import '../polyfills';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
@@ -17,6 +18,20 @@ import {AuthModule} from './auth/auth.module';
   ],
   imports: [
     BrowserModule,
+    MarkdownModule.forRoot({
+      markedOptions: {
+        provide: MarkedOptions,
+        useValue: {
+          gfm: true,
+          tables: true,
+          breaks: true,
+          pedantic: false,
+          sanitize: false,
+          smartLists: true,
+          smartypants: true,
+        },
+      },
+    }),
     HomeModule,
     IssueModule,
     AuthModule,
