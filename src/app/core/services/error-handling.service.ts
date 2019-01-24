@@ -14,7 +14,7 @@ export class ErrorHandlingService {
   // Ref: https://developer.github.com/v3/#client-errors
   handleHttpError(error, actionCallback?: () => void) {
     switch (error.status) {
-      case 500:
+      case 500: // Internal Server Error. Could also be due to user not having internet connection.
         if (navigator.onLine) {
           this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         } else {
@@ -22,15 +22,17 @@ export class ErrorHandlingService {
           snackbarRef.onAction().subscribe(actionCallback);
         }
         break;
-      case 422:
+      case 422: // Form errors
         const formErrors = error.errors;
         this.snackBar.openFromComponent(FormErrorComponent, {data: formErrors});
         break;
-      case 400:
-      case 401:
+      case 400: // Bad request
+      case 401: // Unauthorized
+      case 404: // Not found
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         break;
       default:
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         return;
     }
   }
