@@ -3,7 +3,11 @@ import {from, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Issue, LABELS_IN_BUG_REPORTING} from '../models/issue.model';
 
-const octokit = require('@octokit/rest')();
+
+const Octokit = require('@octokit/rest');
+let octokit;
+let username;
+let password;
 
 @Injectable({
   providedIn: 'root',
@@ -12,12 +16,23 @@ export class GithubService {
 
   constructor() {}
 
+  storeCredentials(user: String, passw: String) {
+    username = user;
+    password = passw;
+
+    octokit = new Octokit({
+      auth: {
+        username: user,
+        password: passw
+      }
+    });
+  }
   /**
    * Will return an Observable with JSON object conforming with the following structure:
    * data = { [issue.id]: Issue }
    */
   fetchIssues(): Observable<{}> {
-    return from(octokit.issues.listForRepo({owner: 'testathor', repo: 'pe', sort: 'created', direction: 'asc'})).pipe(
+    return from(octokit.issues.listForRepo({creator: username, owner: 'testathor', repo: 'pe', sort: 'created', direction: 'asc'})).pipe(
       map((response) => {
         let mappedResult = {};
         for (const issue of response['data']) {
