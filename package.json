@@ -33,7 +33,7 @@
     "@angular/platform-browser": "7.1.4",
     "@angular/platform-browser-dynamic": "7.1.4",
     "@angular/router": "7.1.4",
-    "@octokit/rest": "^16.9.0",
+    "@octokit/rest": "^16.13.1",
     "core-js": "2.6.1",
     "node-fetch": "^2.3.0",
     "rxjs": "6.3.3",
