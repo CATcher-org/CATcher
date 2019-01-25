@@ -10,24 +10,7 @@
     </mat-form-field>
 
     <div>
-      <mat-tab-group animationDuration="0ms">
-        <mat-tab label="Write">
-          <mat-form-field>
-            <mat-label></mat-label>
-            <textarea id="description" formControlName="description" matInput placeholder="Description"
-                      cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5"
-                      cdkAutosizeMaxRows="6"></textarea>
-            <mat-error *ngIf="description.errors && description.errors['required'] && description.touched">
-              Description required.
-            </mat-error>
-          </mat-form-field>
-        </mat-tab>
-        <mat-tab label="Preview">
-          <div style="min-height: 138px">
-            <markdown [data]="description.value"></markdown>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
+      <app-comment-editor [commentField]="description" [commentForm]="newIssueForm"></app-comment-editor>
     </div>
 
     <div class="container">

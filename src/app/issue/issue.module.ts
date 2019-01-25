@@ -5,6 +5,7 @@ import {SharedModule} from '../shared/shared.module';
 import {IssueComponent} from './issue.component';
 import {NewIssueComponent} from './new-issue/new-issue.component';
 import {MarkdownModule} from 'ngx-markdown';
+import {CommentEditorComponent} from '../shared/comment-editor/comment-editor.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import {MarkdownModule} from 'ngx-markdown';
   declarations: [
     IssueComponent,
     NewIssueComponent,
+    CommentEditorComponent,
   ],
 })
 export class IssueModule {}

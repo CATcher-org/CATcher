@@ -1,5 +1,4 @@
 <div *ngIf="!isPageLoading">
-
   <div *ngIf="!isInEditMode; else editModeTemplate">
     <div>
       <h1 class="mat-display-1 title">{{issue.title}}</h1>
@@ -48,22 +47,9 @@
 
       <div class="row">
         <div class="column left vertical-border">
-          <mat-tab-group animationDuration="0ms" style="width: 80%">
-            <mat-tab label="Write">
-              <mat-form-field style="width: 80%">
-                <mat-label></mat-label>
-                <textarea id="description" formControlName="description" matInput placeholder="Description"
-                        cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
-                        cdkAutosizeMaxRows="20"></textarea>
-                <mat-error *ngIf="description.errors && description.errors['required'] && description.touched">
-                  Description required.
-                </mat-error>
-              </mat-form-field>
-            </mat-tab>
-            <mat-tab label="Preview">
-              <markdown [data]="description.value"></markdown>
-            </mat-tab>
-          </mat-tab-group>
+          <div style="width: 80%">
+            <app-comment-editor [commentField]="description" [commentForm]="editIssueForm"></app-comment-editor>
+          </div>
         </div>
 
         <div class="column right">
