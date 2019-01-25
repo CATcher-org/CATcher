@@ -1,18 +1,20 @@
 <form [formGroup]="commentForm">
-  <mat-tab-group animationDuration="0ms">
+  <mat-tab-group class="mat-elevation-z4" animationDuration="0ms">
     <mat-tab label="Write">
-      <mat-form-field style="width: 100%">
-        <mat-label></mat-label>
-        <textarea id="description" formControlName="description" matInput placeholder="Description"
-                  cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
-                  cdkAutosizeMaxRows="20"></textarea>
-        <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">
-          Description required.
-        </mat-error>
-      </mat-form-field>
+      <div class="tab-content" >
+        <mat-form-field style="width: 100%">
+          <mat-label></mat-label>
+          <textarea id="description" formControlName="description" matInput placeholder="Description"
+                    cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
+                    cdkAutosizeMaxRows="20"></textarea>
+          <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">
+            Description required.
+          </mat-error>
+        </mat-form-field>
+      </div>
     </mat-tab>
     <mat-tab label="Preview">
-      <div style="min-height: 228px">
+      <div class="tab-content" style="min-height: 228px">
         <markdown *ngIf="commentField.value !== ''" [data]="commentField.value"></markdown>
         <div *ngIf="commentField.value ===''"> Nothing to preview. </div>
       </div>

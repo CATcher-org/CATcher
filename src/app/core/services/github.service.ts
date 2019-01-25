@@ -11,7 +11,6 @@ const octokit = require('@octokit/rest')();
 export class GithubService {
 
   constructor() {
-
   }
 
   /**

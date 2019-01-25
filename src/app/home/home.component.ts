@@ -2,6 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
+import {ElectronService} from '../core/services/electron.service';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,7 @@ export class HomeComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService) { }
+  constructor(private issueService: IssueService, private electronService: ElectronService) { }
 
   ngOnInit() {
     this.issueService.getAllIssues().subscribe((issues: Issue[]) => {
