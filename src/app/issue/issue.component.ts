@@ -30,7 +30,7 @@ export class IssueComponent implements OnInit {
       this.issue = issue;
       this.isPageLoading = false;
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleHttpError(error, () => this.ngOnInit());
     });
     this.editIssueForm = this.formBuilder.group({
       title: ['', Validators.required],

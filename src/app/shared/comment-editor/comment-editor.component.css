@@ -1,3 +1,36 @@
 .tab-content {
   padding: 10px
 }
+
+.highlight-drag-box {
+  border-style: dashed;
+  border-color: #98FB98;
+  border-width: 2px;
+}
+
+.drag-and-drop {
+  color: #586069;
+  font-size: 13px;
+  line-height: 16px;
+
+  position: relative;
+  border-top-style: dashed;
+  border-top-color: #3f51b5;
+  border-top-width: 2px;
+  margin-top: 5px;
+  padding-top: 5px;
+}
+
+.error {
+  color: #B22222;
+}
+
+.file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width:100%;
+  height:100%;
+  cursor: pointer
+}

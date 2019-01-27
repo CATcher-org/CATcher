@@ -23,8 +23,7 @@ export class ErrorHandlingService {
         }
         break;
       case 422: // Form errors
-        const formErrors = error.errors;
-        this.snackBar.openFromComponent(FormErrorComponent, {data: formErrors});
+        this.snackBar.openFromComponent(FormErrorComponent, {data: error});
         break;
       case 400: // Bad request
       case 401: // Unauthorized

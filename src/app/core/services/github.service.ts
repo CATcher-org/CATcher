@@ -65,6 +65,11 @@ export class GithubService {
     );
   }
 
+  uploadImage(filename: string, base64String: string): Observable<any> {
+    return from(octokit.repos.createFile({owner: 'testathor', repo: 'pe', path: `images/${filename}`,
+      message: 'upload image', content: base64String}));
+  }
+
   private createIssueModel(issueInJson: {}): Issue {
     return <Issue>{
       id: +issueInJson['number'],
