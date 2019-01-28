@@ -1,10 +1,13 @@
 <form [formGroup]="commentForm">
   <mat-tab-group class="mat-elevation-z4" animationDuration="0ms">
     <mat-tab label="Write">
-      <div #dropArea class="tab-content" (dragleave)="onDragExit($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event)">
+      <div #dropArea class="tab-content"
+           (dragleave)="onDragExit($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event)"
+           (dragover)="enableFileDrop($event)">
+
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
-          <textarea #commentTextArea (dragover)="onDragOver($event)"
+          <textarea #commentTextArea (dragover)="disableCaretMovement($event)"
                     id="description" formControlName="description" matInput placeholder="Description"
                     cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
                     cdkAutosizeMaxRows="20"></textarea>
@@ -14,11 +17,11 @@
 
           <div class="drag-and-drop">
             <span *ngIf="!isInErrorState"> Attach files by dragging & dropping. </span>
-            <span *ngIf="isInErrorState" class="error"> {{this.uploadErrorMessage}} </span>
+            <span *ngIf="isInErrorState" class="error"> {{uploadErrorMessage}} </span>
             <input [accept]="['.png', '.jpg', 'jpeg']" type="file" class="file">
           </div>
         </mat-form-field>
-      </div>
+        </div>
     </mat-tab>
     <mat-tab label="Preview">
       <div class="tab-content" style="min-height: 228px">

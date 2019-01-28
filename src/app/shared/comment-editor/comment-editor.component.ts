@@ -1,14 +1,15 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {UploadService} from '../../core/services/upload.service';
+import {ErrorHandlingService} from '../../core/services/error-handling.service';
 
 @Component({
   selector: 'app-comment-editor',
   templateUrl: './comment-editor.component.html',
-  styleUrls: ['./comment-editor.component.css']
+  styleUrls: ['./comment-editor.component.css'],
 })
 export class CommentEditorComponent implements OnInit {
-  constructor(private uploadService: UploadService) {}
+  constructor(private uploadService: UploadService, private errorHandlingService: ErrorHandlingService) {}
 
   @Input() commentField: AbstractControl;
   @Input() commentForm: FormGroup;
@@ -35,7 +36,12 @@ export class CommentEditorComponent implements OnInit {
   }
 
   // Prevent cursor in textarea from moving when file is dragged over it.
-  onDragOver(event) {
+  disableCaretMovement(event) {
+    event.preventDefault();
+  }
+
+  // To enable file drop in non-input elements, the dragOver event must be cancelled.
+  enableFileDrop(event) {
     event.preventDefault();
   }
 
@@ -78,8 +84,11 @@ export class CommentEditorComponent implements OnInit {
   }
 
   private handleUploadError(error) {
-    console.log('here');
-    this.uploadErrorMessage = error;
+    if (error.constructor.name === 'HttpError') {
+      this.errorHandlingService.handleHttpError(error);
+    } else {
+      this.uploadErrorMessage = error;
+    }
   }
 
   private insertUploadingText(filename: string) {
