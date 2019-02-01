@@ -1,7 +1,9 @@
-import {Component, Input, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {UploadService} from '../../core/services/upload.service';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
+
+const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 
 @Component({
   selector: 'app-comment-editor',
@@ -9,12 +11,15 @@ import {ErrorHandlingService} from '../../core/services/error-handling.service';
   styleUrls: ['./comment-editor.component.css'],
 })
 export class CommentEditorComponent implements OnInit {
-  constructor(private uploadService: UploadService, private errorHandlingService: ErrorHandlingService) {}
+  constructor(private uploadService: UploadService,
+              private errorHandlingService: ErrorHandlingService) {}
 
   @Input() commentField: AbstractControl;
   @Input() commentForm: FormGroup;
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
+  @ViewChild('markdownArea') markdownArea;
+
   dragActiveCounter = 0;
   cursorPosition = 0;
   uploadErrorMessage: string;
@@ -53,6 +58,7 @@ export class CommentEditorComponent implements OnInit {
     if (files.length > 0) {
       this.readAndUploadFile(files[0]);
       this.removeHighlightBorderStyle();
+      this.commentTextArea.nativeElement.focus();
     }
   }
 
@@ -80,9 +86,9 @@ export class CommentEditorComponent implements OnInit {
     const insertedText = this.insertUploadingText(filename);
 
     reader.onload = () => {
-      this.uploadService.uploadImage(reader.result).subscribe((response) => {
+      this.uploadService.uploadImage(reader.result, filename).subscribe((response) => {
         this.uploadErrorMessage = null;
-        this.insertUploadUrl(filename, response.data.content.html_url);
+        this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);
       });
@@ -106,7 +112,14 @@ export class CommentEditorComponent implements OnInit {
   private insertUploadingText(filename: string): string {
     const originalDescription = this.commentField.value;
     const endOfLineIndex = originalDescription.indexOf('\n', this.cursorPosition);
-    const toInsert = `![Uploading ${filename}...]()\n`;
+
+    const fileType = filename.split('.')[1];
+    let toInsert: string;
+    if (DISPLAYABLE_CONTENT.includes(fileType)) {
+      toInsert = `![Uploading ${filename}...]()\n`;
+    } else {
+      toInsert = `[Uploading ${filename}...]()\n`;
+    }
 
     if (endOfLineIndex === -1) {
       if (this.commentField.value === '') {
@@ -124,7 +137,7 @@ export class CommentEditorComponent implements OnInit {
 
   private insertUploadUrl(filename: string, uploadUrl: string) {
     this.commentField.setValue(
-      this.commentField.value.replace(`![Uploading ${filename}...]()`, `![${filename}](${uploadUrl}?raw=true)`));
+      this.commentField.value.replace(`[Uploading ${filename}...]()`, `[${filename}](${uploadUrl})`));
   }
 
   private removeHighlightBorderStyle() {

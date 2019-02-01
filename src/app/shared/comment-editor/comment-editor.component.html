@@ -25,7 +25,7 @@
     </mat-tab>
     <mat-tab label="Preview">
       <div class="tab-content" style="min-height: 228px">
-        <markdown *ngIf="commentField.value !== ''" [data]="commentField.value"></markdown>
+        <markdown #markdownArea *ngIf="commentField.value !== ''" [data]="commentField.value"></markdown>
         <div *ngIf="commentField.value ===''"> Nothing to preview. </div>
       </div>
     </mat-tab>
