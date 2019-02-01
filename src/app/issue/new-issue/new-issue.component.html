@@ -9,10 +9,6 @@
       </mat-error>
     </mat-form-field>
 
-    <div style="margin-bottom: 10px;">
-      <app-comment-editor [commentField]="description" [commentForm]="newIssueForm"></app-comment-editor>
-    </div>
-
     <div class="container">
       <mat-form-field class="left-half">
         <mat-select formControlName="severity" placeholder="Severity">
@@ -36,6 +32,11 @@
         </mat-error>
       </mat-form-field>
     </div>
+
+    <div style="margin-bottom: 10px;">
+      <app-comment-editor [commentField]="description" [commentForm]="newIssueForm"></app-comment-editor>
+    </div>
+
     <button style="float: right" type="submit" mat-stroked-button color="primary" [disabled]="!newIssueForm.valid">
       Submit
     </button>

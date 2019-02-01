@@ -16,9 +16,9 @@
           </mat-error>
 
           <div class="drag-and-drop">
-            <span *ngIf="!isInErrorState"> Attach files by dragging & dropping. </span>
+            <span *ngIf="!isInErrorState"> Attach files by dragging & dropping or select them by clicking here. </span>
             <span *ngIf="isInErrorState" class="error"> {{uploadErrorMessage}} </span>
-            <input [accept]="['.png', '.jpg', 'jpeg']" type="file" class="file">
+            <input #fileInput [accept]="['.png', '.jpg', 'jpeg']" type="file" class="file" (change)="onFileInputUpload($event, fileInput)">
           </div>
         </mat-form-field>
         </div>

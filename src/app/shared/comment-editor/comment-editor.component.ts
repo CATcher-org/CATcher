@@ -63,17 +63,28 @@ export class CommentEditorComponent implements OnInit {
     this.removeHighlightBorderStyle();
   }
 
+  onFileInputUpload(event, fileInput) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const files = fileInput.files;
+    if (files.length > 0) {
+      this.readAndUploadFile(files[0]);
+      fileInput.value = '';
+    }
+  }
+
   readAndUploadFile(file: File): void {
     const reader = new FileReader();
     const filename = file.name;
-    this.insertUploadingText(filename);
+    const insertedText = this.insertUploadingText(filename);
 
     reader.onload = () => {
       this.uploadService.uploadImage(reader.result).subscribe((response) => {
         this.uploadErrorMessage = null;
         this.insertUploadUrl(filename, response.data.content.html_url);
       }, (error) => {
-        this.handleUploadError(error);
+        this.handleUploadError(error, insertedText);
       });
     };
     reader.readAsDataURL(file);
@@ -83,15 +94,16 @@ export class CommentEditorComponent implements OnInit {
     return !!this.uploadErrorMessage;
   }
 
-  private handleUploadError(error) {
+  private handleUploadError(error, insertedText: string) {
     if (error.constructor.name === 'HttpError') {
       this.errorHandlingService.handleHttpError(error);
     } else {
       this.uploadErrorMessage = error;
     }
+    this.commentField.setValue(this.commentField.value.replace(insertedText, ''));
   }
 
-  private insertUploadingText(filename: string) {
+  private insertUploadingText(filename: string): string {
     const originalDescription = this.commentField.value;
     const endOfLineIndex = originalDescription.indexOf('\n', this.cursorPosition);
     const toInsert = `![Uploading ${filename}...]()\n`;
@@ -107,6 +119,7 @@ export class CommentEditorComponent implements OnInit {
       const newlineTillEnd = originalDescription.slice(endOfLineIndex);
       this.commentField.setValue(`${startTillNewline + toInsert + newlineTillEnd}`);
     }
+    return toInsert;
   }
 
   private insertUploadUrl(filename: string, uploadUrl: string) {
