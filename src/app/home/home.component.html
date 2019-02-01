@@ -17,7 +17,7 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <table *ngIf="isPageLoaded" mat-table [dataSource]="issues" matSort class="mat-elevation-z8">
+  <table mat-table [dataSource]="issuesDataSource" matSort class="mat-elevation-z8">
 
     <ng-container matColumnDef="id">
       <th mat-header-cell mat-sort-header *matHeaderCellDef> ID </th>
@@ -52,5 +52,5 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let issue; columns: displayedColumns;"></tr>
   </table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+  <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 </div>

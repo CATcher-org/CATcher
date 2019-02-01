@@ -10,8 +10,7 @@ const octokit = require('@octokit/rest')();
 })
 export class GithubService {
 
-  constructor() {
-  }
+  constructor() {}
 
   /**
    * Will return an Observable with JSON object conforming with the following structure:

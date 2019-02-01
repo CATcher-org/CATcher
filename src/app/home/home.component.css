@@ -13,9 +13,10 @@
 
 table {
   width: 100%;
+  table-layout: fixed;
 }
 
-td.mat-column-actions {
+.mat-column-actions {
   width: 80px;
   text-align: center;
 }
@@ -23,6 +24,21 @@ td.mat-column-actions {
 tr:nth-child(even) {background: #E8E8EE}
 tr:nth-child(odd) {background: #FFF}
 
+.mat-column-id {
+  width: 10%;
+}
+
+.mat-column-title {
+  width: 40%
+}
+
+.mat-column-type {
+  width: 30%
+}
+
+.mat-column-severity {
+  width: 12%;
+}
 .grid-flush-left {
   position: absolute;
   left: 5px;
@@ -32,3 +48,4 @@ tr:nth-child(odd) {background: #FFF}
   position: absolute;
   right: 5px;
 }
+

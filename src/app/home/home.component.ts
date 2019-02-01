@@ -1,8 +1,9 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../core/models/issue.model';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator, MatSort} from '@angular/material';
+import {Issue} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
-import {ElectronService} from '../core/services/electron.service';
+import {BehaviorSubject} from 'rxjs';
+import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
 
 @Component({
   selector: 'app-home',
@@ -10,40 +11,23 @@ import {ElectronService} from '../core/services/electron.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  isPageLoaded = false;
-  issues: any;
+  issues: BehaviorSubject<Issue[]>;
+  issuesDataSource;
   displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
 
-  sort: ElementRef;
-  @ViewChild(MatSort) set sortContent(content: ElementRef) {
-    this.sort = content;
-    if (this.sort) {
-      this.issues.sort = this.sort;
-    }
-  }
-
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService, private electronService: ElectronService) { }
+  constructor(private issueService: IssueService) {
+  }
 
   ngOnInit() {
-    this.issueService.getAllIssues().subscribe((issues: Issue[]) => {
-      this.issues = new MatTableDataSource(issues);
-      this.isPageLoaded = true;
-      this.issues.sort = this.sort;
-      this.issues.paginator = this.paginator;
-      this.issues.sortingDataAccessor = (issue, property) => {
-        switch (property) {
-          case 'severity': return SEVERITY_ORDER[issue.severity];
-          case 'type': return ISSUE_TYPE_ORDER[issue.type];
-          default: return issue[property];
-        }
-      };
-    });
+    this.issues = this.issueService.issues$;
+    this.issuesDataSource = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.displayedColumns);
   }
 
   applyFilter(filterValue: string) {
-    this.issues.filter = filterValue.trim().toLowerCase();
+    this.issuesDataSource.filter = filterValue;
   }
 
   deleteIssue(id: number) {
