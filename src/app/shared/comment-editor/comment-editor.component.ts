@@ -4,6 +4,7 @@ import {UploadService} from '../../core/services/upload.service';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
+const MAX_UPLOAD_SIZE = 10000000; // 10MB
 
 @Component({
   selector: 'app-comment-editor',
@@ -81,13 +82,18 @@ export class CommentEditorComponent implements OnInit {
   }
 
   readAndUploadFile(file: File): void {
+    this.uploadErrorMessage = null;
     const reader = new FileReader();
     const filename = file.name;
     const insertedText = this.insertUploadingText(filename);
 
+    if (file.size >= MAX_UPLOAD_SIZE) {
+      this.handleUploadError('Oops, file is too big. Keep it under 10MB.', insertedText);
+      return;
+    }
+
     reader.onload = () => {
       this.uploadService.uploadImage(reader.result, filename).subscribe((response) => {
-        this.uploadErrorMessage = null;
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);
@@ -103,6 +109,7 @@ export class CommentEditorComponent implements OnInit {
   private handleUploadError(error, insertedText: string) {
     if (error.constructor.name === 'HttpError') {
       this.errorHandlingService.handleHttpError(error);
+      this.uploadErrorMessage = 'Something went wrong while uploading your file. Please try again.';
     } else {
       this.uploadErrorMessage = error;
     }
