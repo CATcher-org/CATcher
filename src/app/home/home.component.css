@@ -11,18 +11,10 @@
   padding:30px 20px;
 }
 
-table {
-  width: 100%;
-  table-layout: fixed;
-}
-
 .mat-column-actions {
   width: 80px;
   text-align: center;
 }
-
-tr:nth-child(even) {background: #E8E8EE}
-tr:nth-child(odd) {background: #FFF}
 
 .mat-column-id {
   width: 10%;
@@ -48,4 +40,3 @@ tr:nth-child(odd) {background: #FFF}
   position: absolute;
   right: 5px;
 }
-
