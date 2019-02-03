@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders} from "@angular/common/http";
-import {Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
-import {NgZone} from '@angular/core';
-import {ElectronService} from './electron.service';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {GithubService} from "../../core/services/github.service";
+import { HttpClient, HttpHeaders} from '@angular/common/http';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { NgZone } from '@angular/core';
+import { ElectronService } from './electron.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { GithubService } from '../../core/services/github.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -34,7 +34,7 @@ export class AuthService {
 
   startAuthentication(username: String, password: String) {
     this.changeAuthState(AuthState.AwaitingAuthentication);
-    let header = new HttpHeaders().set("Authorization", "Basic "+ btoa(username + ':' + password));
+    const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
     this.http.get('https://api.github.com/user', { headers: header })
       .subscribe(
         response => {
@@ -59,7 +59,7 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     console.log(this.authStateSource.getValue().toString());
-    return !!(this.authStateSource.getValue() == 2);
+    return !!(this.authStateSource.getValue() === 2);
   }
 
   private initializeLoggedInUser(access_token: string): void {

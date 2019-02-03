@@ -1,32 +1,28 @@
-<div class="container">
-  <button *ngIf="isNotLoggedIn" (click)="this.logInWithGithub()"> Log in with Github </button>
-</div><br>
-<br>
 <mat-card class="login-card">
   <mat-card-header>
     <mat-card-title>Login</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <form class="login-form">
+    <form [formGroup]="loginForm" #myForm="ngForm" (ngSubmit)="login(myForm)">
       <table class="table-form" cellspacing="0">
         <tr>
           <td>
             <mat-form-field class="login-field">
-              <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+              <input matInput placeholder="Username" formControlName="username" required>
             </mat-form-field>
           </td>
         </tr>
         <tr>
           <td>
             <mat-form-field class="login-field">
-              <input matInput placeholder="Password" [(ngModel)]="password" type="password" name="password" required>
+              <input matInput placeholder="Password" formControlName="password" type="password" required>
             </mat-form-field>
           </td>
         </tr>
       </table>
+      <mat-card-actions>
+        <button type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">Sign In</button>
+      </mat-card-actions>
     </form>
   </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button (click)="signIn()" [disabled]="this.username == null || this.password == null || this.username == ''||  this.password == ''" class = "btn btn-block mb-3">Sign In</button>
-  </mat-card-actions>
 </mat-card>
