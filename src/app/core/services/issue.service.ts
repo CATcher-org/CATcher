@@ -48,16 +48,19 @@ export class IssueService {
     return this.githubService.editIssue(id, title, description, labelsArray);
   }
 
-  deleteIssue(id: number): void {
-    this.githubService.closeIssue(id).subscribe((removedIssue) => {
-      const { [id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
-      this.issues = withoutIssueToRemove;
-      this.issues$.next(Object.values(this.issues));
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+  deleteIssue(id: number): Observable<Issue> {
+    return this.githubService.closeIssue(id);
   }
 
+  deleteFromLocalStore(issueToDelete: Issue) {
+    const { [issueToDelete.id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
+    this.issues = withoutIssueToRemove;
+    this.issues$.next(Object.values(this.issues));
+  }
+
+  /**
+   * To add/update an issue.
+   */
   updateLocalStore(issueToUpdate: Issue) {
     this.issues = {
       ...this.issues,

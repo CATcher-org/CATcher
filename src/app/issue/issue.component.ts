@@ -4,6 +4,7 @@ import {Issue, ISSUE_TYPES, SEVERITIES} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-issue',
@@ -13,6 +14,7 @@ import {ErrorHandlingService} from '../core/services/error-handling.service';
 export class IssueComponent implements OnInit {
   isPageLoading = true;
   isInEditMode = false;
+  isFormPending = false;
   severityValues = SEVERITIES;
   issueTypeValues = ISSUE_TYPES;
 
@@ -59,17 +61,17 @@ export class IssueComponent implements OnInit {
     if (this.editIssueForm.invalid) {
       return;
     }
-
+    this.isFormPending = true;
     this.issueService.editIssue(this.issue.id, this.title.value, this.description.value,
-        this.severity.value, this.type.value).subscribe((editedIssue: Issue) => {
-
-      this.issue = editedIssue;
-      this.issueService.updateLocalStore(editedIssue);
-      form.resetForm();
-      this.isInEditMode = false;
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+      this.severity.value, this.type.value).pipe(finalize(() => this.isFormPending = false))
+      .subscribe((editedIssue: Issue) => {
+        this.issue = editedIssue;
+        this.issueService.updateLocalStore(editedIssue);
+        form.resetForm();
+        this.isInEditMode = false;
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error);
+      });
   }
 
   get title() {

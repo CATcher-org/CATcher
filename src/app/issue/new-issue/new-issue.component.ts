@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ISSUE_TYPES, SEVERITIES} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {Router} from '@angular/router';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-issue',
@@ -14,6 +15,7 @@ export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
   severityValues = SEVERITIES;
   issueTypeValues = ISSUE_TYPES;
+  isFormPending = false;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
@@ -32,15 +34,18 @@ export class NewIssueComponent implements OnInit {
     if (this.newIssueForm.invalid) {
       return;
     }
+    this.isFormPending = true;
     this.issueService.createNewIssue(this.title.value, this.description.value,
-        this.severity.value, this.type.value).subscribe((newIssue) => {
-
-      this.issueService.updateLocalStore(newIssue);
-      this.router.navigateByUrl(`issues/${newIssue.id}`)
-      form.resetForm();
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+      this.severity.value, this.type.value).pipe(finalize(() => this.isFormPending = false))
+      .subscribe(
+        newIssue => {
+          this.issueService.updateLocalStore(newIssue);
+          this.router.navigateByUrl(`issues/${newIssue.id}`);
+          form.resetForm();
+          },
+          error => {
+          this.errorHandlingService.handleHttpError(error);
+        });
   }
 
   get title() {

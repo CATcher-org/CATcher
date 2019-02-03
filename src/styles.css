@@ -23,7 +23,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   text-decoration: none!important;
 }
 
-tr:hover td {
+.mat-table tbody tr:hover td {
   background-color: #E8E8EE;
 }
 

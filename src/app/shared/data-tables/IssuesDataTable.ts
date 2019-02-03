@@ -5,7 +5,7 @@ import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.m
 import {MatPaginator, MatSort} from '@angular/material';
 import {map} from 'rxjs/operators';
 
-export class IssuesDataTable extends DataSource<any> {
+export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
 
   constructor(private issueService: IssueService, private sort: MatSort,

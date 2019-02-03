@@ -6,28 +6,22 @@ import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 
 const ORG_NAME = 'testathor';
 const REPO = 'pe';
-const Octokit = require('@octokit/rest');
-let octokit;
-let username;
-let password;
+const octokit = require('@octokit/rest')();
+let username = 'testathorStudent';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GithubService {
 
-  constructor() {
-  }
+  constructor() {}
 
   storeCredentials(user: String, passw: String) {
-    username = user;
-    password = passw;
-
-    octokit = new Octokit({
-      auth: {
-        username: user,
-        password: passw
-      }
+    username = user.valueOf();
+    octokit.authenticate({
+      type: 'basic',
+      username: user,
+      password: passw,
     });
   }
   /**
@@ -37,7 +31,6 @@ export class GithubService {
   fetchIssues(): Observable<{}> {
     return this.getNumberOfPages().pipe(
       mergeMap((numOfPages) => {
-        console.log(numOfPages);
         const apiCalls = [];
         for (let i = 0; i <= numOfPages; i++) {
           apiCalls.push(from(octokit.issues.listForRepo({creator: username, owner: ORG_NAME, repo: REPO, sort: 'created',
@@ -148,7 +141,6 @@ export class GithubService {
     return from(octokit.issues.listForRepo({creator: username, owner: ORG_NAME, repo: REPO, sort: 'created', direction: 'asc',
       per_page: 100, page: 1})).pipe(
         map((response) => {
-          console.log(response);
           if (!response['headers'].link) {
             return 1;
           }

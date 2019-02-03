@@ -32,7 +32,7 @@
 
     <form [formGroup]="editIssueForm" #myForm="ngForm" (ngSubmit)="submitForm(myForm)">
         <div>
-          <mat-form-field>
+          <mat-form-field style="width: 80%">
             <input id="title" formControlName="title" matInput placeholder="Title" required>
             <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
               Title required.
@@ -40,7 +40,7 @@
           </mat-form-field>
 
           <button type="button" mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
-          <button type="submit" [disabled]="!editIssueForm.valid" mat-stroked-button color="primary" class="title-button">Save</button>
+          <button type="submit" [disabled]="editIssueForm.invalid || isFormPending" mat-stroked-button color="primary" class="title-button">Save</button>
         </div>
 
       <mat-divider></mat-divider>

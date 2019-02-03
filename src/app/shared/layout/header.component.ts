@@ -6,7 +6,7 @@ import {AuthService} from '../../core/services/auth.service';
   templateUrl: './header.component.html'
 })
 export class HeaderComponent implements OnInit {
-  constructor(private auth: AuthService) {}
+  constructor(public auth: AuthService) {}
 
   ngOnInit() {}
 
