@@ -42,10 +42,10 @@ export class IssueComponent implements OnInit {
 
   changeToEditMode() {
     this.editIssueForm.setValue({
-      title: this.issue.title,
-      description: this.issue.description,
-      severity: this.issue.severity,
-      type: this.issue.type,
+      title: this.issue.title || '',
+      description: this.issue.description || '',
+      severity: this.issue.severity || '',
+      type: this.issue.type || '',
     });
     this.isInEditMode = true;
   }

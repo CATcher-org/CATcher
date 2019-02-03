@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import {from, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {forkJoin, from, Observable, of} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {Issue, LABELS_IN_BUG_REPORTING} from '../models/issue.model';
+import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 
 const octokit = require('@octokit/rest')();
+const ORG_NAME = 'testathor';
+const REPO = 'pe';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +14,11 @@ const octokit = require('@octokit/rest')();
 export class GithubService {
 
   constructor() {
+    octokit.authenticate({
+      type: 'basic',
+      username: 'testathorStudent',
+      password: 'studentPassword1',
+    });
   }
 
   /**
@@ -18,10 +26,26 @@ export class GithubService {
    * data = { [issue.id]: Issue }
    */
   fetchIssues(): Observable<{}> {
-    return from(octokit.issues.listForRepo({owner: 'testathor', repo: 'pe', sort: 'created', direction: 'asc'})).pipe(
-      map((response) => {
+    return this.getNumberOfPages().pipe(
+      mergeMap((numOfPages) => {
+        console.log(numOfPages);
+        const apiCalls = [];
+        for (let i = 0; i <= numOfPages; i++) {
+          apiCalls.push(from(octokit.issues.listForRepo({owner: ORG_NAME, repo: REPO, sort: 'created',
+            direction: 'asc', per_page: 100, page: i})));
+        }
+        return forkJoin(apiCalls);
+      }),
+      map((resultArray) => {
+        let collatedData = [];
+        for (const response of resultArray) {
+          collatedData = [
+            ...collatedData,
+            ...response['data'],
+          ];
+        }
         let mappedResult = {};
-        for (const issue of response['data']) {
+        for (const issue of collatedData) {
           const issueModel = this.createIssueModel(issue);
           mappedResult = {
             ...mappedResult,
@@ -29,12 +53,12 @@ export class GithubService {
           };
         }
         return mappedResult;
-      }),
+      })
     );
   }
 
   fetchIssue(id: number): Observable<Issue> {
-    return from(octokit.issues.get({owner: 'testathor', repo: 'pe', number: id})).pipe(
+    return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, number: id})).pipe(
       map((response) => {
         return this.createIssueModel(response['data']);
       })
@@ -42,7 +66,7 @@ export class GithubService {
   }
 
   closeIssue(id: number): Observable<Issue> {
-    return from(octokit.issues.update({owner: 'testathor', repo: 'pe', number: id, state: 'closed'})).pipe(
+    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, state: 'closed'})).pipe(
       map((response) => {
         return this.createIssueModel(response['data']);
       }
@@ -50,7 +74,7 @@ export class GithubService {
   }
 
   createNewIssue(title: string, description: string, labels: string[]): Observable<Issue> {
-    return from(octokit.issues.create({owner: 'testathor', repo: 'pe', title: title, body: description, labels: labels})).pipe(
+    return from(octokit.issues.create({owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels})).pipe(
       map((response) => {
         return this.createIssueModel(response['data']);
       })
@@ -58,7 +82,7 @@ export class GithubService {
   }
 
   editIssue(id: number, title: string, description: string, labels: string[]) {
-    return from(octokit.issues.update({owner: 'testathor', repo: 'pe', number: id, title: title, body: description, labels: labels})).pipe(
+    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, title: title, body: description, labels: labels})).pipe(
       map((response) => {
         return this.createIssueModel(response['data']);
       })
@@ -66,7 +90,7 @@ export class GithubService {
   }
 
   uploadImage(filename: string, base64String: string): Observable<any> {
-    return from(octokit.repos.createFile({owner: 'testathor', repo: 'pe', path: `images/${filename}`,
+    return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `images/${filename}`,
       message: 'upload image', content: base64String}));
   }
 
@@ -109,5 +133,19 @@ export class GithubService {
       }
     }
     return result;
+  }
+
+  private getNumberOfPages(): Observable<number> {
+    return from(octokit.issues.listForRepo({owner: ORG_NAME, repo: REPO, sort: 'created', direction: 'asc',
+      per_page: 100, page: 1})).pipe(
+        map((response) => {
+          console.log(response);
+          if (!response['headers'].link) {
+            return 1;
+          }
+          const paginatedData = githubPaginatorParser(response['headers'].link);
+          return +paginatedData['last'] || 1;
+        })
+    );
   }
 }

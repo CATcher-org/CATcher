@@ -19,9 +19,9 @@
       <div class="column right">
         <div *ngIf="!isInEditMode">
           <h2>Severity</h2>
-          <p>{{issue.severity}}</p>
+          <p>{{issue.severity || '-'}}</p>
           <h2>Type</h2>
-          <p>{{issue.type}}</p>
+          <p>{{issue.type || '-'}}</p>
         </div>
       </div>
     </div>
