@@ -33,7 +33,7 @@
     "@angular/platform-browser": "7.1.4",
     "@angular/platform-browser-dynamic": "7.1.4",
     "@angular/router": "7.1.4",
-    "@octokit/rest": "^16.9.0",
+    "@octokit/rest": "^16.13.1",
     "core-js": "2.6.1",
     "ngx-markdown": "^7.1.1",
     "node-fetch": "^2.3.0",
@@ -42,7 +42,7 @@
     "zone.js": "0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "0.11.4",
+    "@angular-devkit/build-angular": "^0.12.2",
     "@angular/cli": "7.1.4",
     "@angular/compiler-cli": "7.1.4",
     "@angular/http": "7.1.4",

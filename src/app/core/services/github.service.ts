@@ -4,9 +4,12 @@ import {map, mergeMap} from 'rxjs/operators';
 import {Issue, LABELS_IN_BUG_REPORTING} from '../models/issue.model';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 
-const octokit = require('@octokit/rest')();
 const ORG_NAME = 'testathor';
 const REPO = 'pe';
+const Octokit = require('@octokit/rest');
+let octokit;
+let username;
+let password;
 
 @Injectable({
   providedIn: 'root',
@@ -14,13 +17,19 @@ const REPO = 'pe';
 export class GithubService {
 
   constructor() {
-    octokit.authenticate({
-      type: 'basic',
-      username: 'testathorStudent',
-      password: 'studentPassword1',
-    });
   }
 
+  storeCredentials(user: String, passw: String) {
+    username = user;
+    password = passw;
+
+    octokit = new Octokit({
+      auth: {
+        username: user,
+        password: passw
+      }
+    });
+  }
   /**
    * Will return an Observable with JSON object conforming with the following structure:
    * data = { [issue.id]: Issue }
@@ -31,7 +40,7 @@ export class GithubService {
         console.log(numOfPages);
         const apiCalls = [];
         for (let i = 0; i <= numOfPages; i++) {
-          apiCalls.push(from(octokit.issues.listForRepo({owner: ORG_NAME, repo: REPO, sort: 'created',
+          apiCalls.push(from(octokit.issues.listForRepo({creator: username, owner: ORG_NAME, repo: REPO, sort: 'created',
             direction: 'asc', per_page: 100, page: i})));
         }
         return forkJoin(apiCalls);
@@ -136,7 +145,7 @@ export class GithubService {
   }
 
   private getNumberOfPages(): Observable<number> {
-    return from(octokit.issues.listForRepo({owner: ORG_NAME, repo: REPO, sort: 'created', direction: 'asc',
+    return from(octokit.issues.listForRepo({creator: username, owner: ORG_NAME, repo: REPO, sort: 'created', direction: 'asc',
       per_page: 100, page: 1})).pipe(
         map((response) => {
           console.log(response);

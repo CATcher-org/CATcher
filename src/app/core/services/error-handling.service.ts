@@ -3,6 +3,7 @@ import {MatSnackBar} from '@angular/material';
 import {NoInternetConnectionComponent} from '../../shared/error-toasters/no-internet-connection/no-internet-connection.component';
 import {GeneralMessageErrorComponent} from '../../shared/error-toasters/general-message-error/general-message-error.component';
 import {FormErrorComponent} from '../../shared/error-toasters/form-error/form-error.component';
+import {InvalidCredentialsErrorComponent} from '../../shared/error-toasters/invalid-credentials-error/invalid-credentials-error.component';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +30,9 @@ export class ErrorHandlingService {
       case 401: // Unauthorized
       case 404: // Not found
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        break;
+      case 401:
+        this.snackBar.openFromComponent(InvalidCredentialsErrorComponent);
         break;
       default:
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});

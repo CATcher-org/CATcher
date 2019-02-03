@@ -40,10 +40,10 @@ export class AppComponent implements AfterViewInit {
    */
   addListenerForHttpLinks() {
     document.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
       const elem = (<HTMLLinkElement>(<HTMLElement>event.target).closest('a[href^="http"]'));
       if (elem) {
+        event.preventDefault();
+        event.stopPropagation();
         this.electronService.remote.shell.openExternal(elem.href);
       }
     }, false);
