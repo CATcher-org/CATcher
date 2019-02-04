@@ -1,0 +1,10 @@
+.title {
+  margin: 0 0 16px;
+  display: inline-block;
+}
+
+.title-button {
+  display: inline-block;
+  float: right;
+  margin: 5px
+}

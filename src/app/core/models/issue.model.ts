@@ -2,6 +2,7 @@ import {Assignee} from './assignee.model';
 
 export interface Issue {
   id: number;
+  created_at: string;
   title: string;
   type: string;
   severity: string;
@@ -22,3 +23,15 @@ export const SEVERITIES = Object.keys(SEVERITY_ORDER);
 
 export const ISSUE_TYPE_ORDER = { DocumentationBug: 0, FunctionalityBug: 1 };
 export const ISSUE_TYPES = Object.keys(ISSUE_TYPE_ORDER);
+
+export const ISSUE_LABELS = {
+  severity: {
+    'Low': true,
+    'Medium': true,
+    'High': true,
+  },
+  type: {
+    'DocumentationBug': true,
+    'FunctionalityBug': true,
+  }
+};

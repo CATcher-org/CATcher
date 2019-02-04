@@ -43,9 +43,9 @@ export class IssueService {
     return this.githubService.createNewIssue(title, description, labelsArray);
   }
 
-  editIssue(id: number, title: string, description: string, severity: string, type: string) {
-    const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
-    return this.githubService.editIssue(id, title, description, labelsArray);
+  updateIssue(issue: Issue) {
+    const labelsArray = [this.createSeverityLabel(issue.severity), this.createTypeLabel(issue.type)];
+    return this.githubService.updateIssue(issue.id, issue.title, issue.description, labelsArray);
   }
 
   deleteIssue(id: number): Observable<Issue> {

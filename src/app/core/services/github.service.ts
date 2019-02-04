@@ -3,18 +3,20 @@ import {forkJoin, from, Observable, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {Issue, LABELS_IN_BUG_REPORTING} from '../models/issue.model';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
+import * as moment from 'moment';
 
 const ORG_NAME = 'testathor';
 const REPO = 'pe';
 const octokit = require('@octokit/rest')();
-let username = 'testathorStudent';
+let username;
 
 @Injectable({
   providedIn: 'root',
 })
 export class GithubService {
 
-  constructor() {}
+  constructor() {
+  }
 
   storeCredentials(user: String, passw: String) {
     username = user.valueOf();
@@ -62,6 +64,7 @@ export class GithubService {
   fetchIssue(id: number): Observable<Issue> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, number: id})).pipe(
       map((response) => {
+        console.log(response);
         return this.createIssueModel(response['data']);
       })
     );
@@ -83,7 +86,7 @@ export class GithubService {
     );
   }
 
-  editIssue(id: number, title: string, description: string, labels: string[]) {
+  updateIssue(id: number, title: string, description: string, labels: string[]) {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, title: title, body: description, labels: labels})).pipe(
       map((response) => {
         return this.createIssueModel(response['data']);
@@ -99,6 +102,7 @@ export class GithubService {
   private createIssueModel(issueInJson: {}): Issue {
     return <Issue>{
       id: +issueInJson['number'],
+      created_at: moment(issueInJson['created_at']).format('lll'),
       title: issueInJson['title'],
       description: issueInJson['body'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_BUG_REPORTING),

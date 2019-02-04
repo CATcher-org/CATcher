@@ -1,84 +1,19 @@
 <div *ngIf="!isPageLoading">
-  <div *ngIf="!isInEditMode; else editModeTemplate">
-    <div>
-      <h1 class="mat-display-1 title">{{issue.title}}</h1>
-      <button mat-stroked-button color="primary" class="title-button" routerLink="/issues/new">New Issue</button>
-      <button mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">Edit</button>
-    </div>
+  <div>
+    <app-issue-title [issue]="issue" (issueUpdated)="updateIssue($event)"></app-issue-title>
 
     <mat-divider></mat-divider>
 
     <div class="row">
-      <div class="column left vertical-border">
-        <div *ngIf="!isInEditMode" style="overflow: auto">
-          <h2>Description</h2>
-          <markdown [data]="issue.description"></markdown>
-        </div>
+      <div class="column left">
+        <app-issue-comment [issue]="issue" (issueUpdated)="updateIssue($event)"></app-issue-comment>
       </div>
 
       <div class="column right">
-        <div *ngIf="!isInEditMode">
-          <h2>Severity</h2>
-          <p>{{issue.severity || '-'}}</p>
-          <h2>Type</h2>
-          <p>{{issue.type || '-'}}</p>
-        </div>
+        <app-issue-label [issue]="issue" labelName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        <mat-divider></mat-divider>
+        <app-issue-label [issue]="issue" labelName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
       </div>
     </div>
   </div>
-
-
-  <ng-template #editModeTemplate>
-
-    <form [formGroup]="editIssueForm" #myForm="ngForm" (ngSubmit)="submitForm(myForm)">
-        <div>
-          <mat-form-field style="width: 80%">
-            <input id="title" formControlName="title" matInput placeholder="Title" required>
-            <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
-              Title required.
-            </mat-error>
-          </mat-form-field>
-
-          <button type="button" mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
-          <button type="submit" [disabled]="editIssueForm.invalid || isFormPending" mat-stroked-button color="primary" class="title-button">Save</button>
-        </div>
-
-      <mat-divider></mat-divider>
-
-      <div class="row">
-        <div class="column left vertical-border">
-          <div style="width: 80%">
-            <app-comment-editor [commentField]="description" [commentForm]="editIssueForm"></app-comment-editor>
-          </div>
-        </div>
-
-        <div class="column right">
-          <div>
-            <mat-form-field>
-              <mat-select formControlName="severity" placeholder="Severity">
-                <mat-option *ngFor="let value of severityValues" [value]="value">
-                  {{value}}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
-                Severity required.
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field>
-              <mat-select formControlName="type" placeholder="Type">
-                <mat-option *ngFor="let value of issueTypeValues" [value]="value">
-                  {{value}}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
-                Type required.
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-      </div>
-    </form>
-
-  </ng-template>
-
 </div>

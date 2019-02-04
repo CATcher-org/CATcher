@@ -13,13 +13,7 @@ import {finalize} from 'rxjs/operators';
 })
 export class IssueComponent implements OnInit {
   isPageLoading = true;
-  isInEditMode = false;
-  isFormPending = false;
-  severityValues = SEVERITIES;
-  issueTypeValues = ISSUE_TYPES;
-
   issue: Issue;
-  editIssueForm: FormGroup;
 
   constructor(private issueService: IssueService,
               private route: ActivatedRoute,
@@ -29,64 +23,16 @@ export class IssueComponent implements OnInit {
   ngOnInit() {
     const id = +this.route.snapshot.paramMap.get('issue_id');
     this.issueService.getIssue(id).subscribe((issue) => {
+      console.log(issue);
       this.issue = issue;
       this.isPageLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.ngOnInit());
     });
-    this.editIssueForm = this.formBuilder.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      severity: ['', Validators.required],
-      type: ['', Validators.required],
-    });
   }
 
-  changeToEditMode() {
-    this.editIssueForm.setValue({
-      title: this.issue.title || '',
-      description: this.issue.description || '',
-      severity: this.issue.severity || '',
-      type: this.issue.type || '',
-    });
-    this.isInEditMode = true;
-  }
 
-  cancelEditMode() {
-    this.isInEditMode = false;
-    this.editIssueForm.reset();
-  }
-
-  submitForm(form: NgForm) {
-    if (this.editIssueForm.invalid) {
-      return;
-    }
-    this.isFormPending = true;
-    this.issueService.editIssue(this.issue.id, this.title.value, this.description.value,
-      this.severity.value, this.type.value).pipe(finalize(() => this.isFormPending = false))
-      .subscribe((editedIssue: Issue) => {
-        this.issue = editedIssue;
-        this.issueService.updateLocalStore(editedIssue);
-        form.resetForm();
-        this.isInEditMode = false;
-      }, (error) => {
-        this.errorHandlingService.handleHttpError(error);
-      });
-  }
-
-  get title() {
-    return this.editIssueForm.get('title');
-  }
-
-  get description() {
-    return this.editIssueForm.get('description');
-  }
-
-  get severity() {
-    return this.editIssueForm.get('severity');
-  }
-
-  get type() {
-    return this.editIssueForm.get('type');
+  updateIssue(newIssue: Issue) {
+    this.issue = newIssue;
   }
 }

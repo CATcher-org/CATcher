@@ -4,8 +4,9 @@ import {IssueComponent} from './issue.component';
 import {NewIssueComponent} from './new-issue/new-issue.component';
 import {AuthGuard} from '../auth/auth.guard';
 
+
 const routes: Routes = [
-  { path: 'issues/new', component: NewIssueComponent, canActivate: [AuthGuard] },
+  { path: 'issues/new', component: NewIssueComponent, canActivate: [AuthGuard]},
   { path: 'issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard] },
 ];
 

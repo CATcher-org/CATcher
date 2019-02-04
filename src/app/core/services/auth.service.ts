@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { GithubService } from '../../core/services/github.service';
+import {ErrorHandlingService} from './error-handling.service';
+import {GithubService} from './github.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
