@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService, AuthState} from '../core/services/auth.service';
 import {Subscription} from 'rxjs';
-import {FormBuilder, FormGroup, NgForm, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-auth',
@@ -34,7 +34,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   login(form: NgForm) {
-    console.log("yes");
     if (this.loginForm.invalid) {
       return;
     } else {

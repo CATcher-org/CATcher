@@ -8,3 +8,26 @@ html, body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.link-grey-dark {
+  color: #24292e;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.link-grey-dark:hover {
+  color: #0366d6;
+}
+
+.no-underline {
+  text-decoration: none!important;
+}
+
+.mat-table tbody tr:hover td {
+  background-color: #E8E8EE;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}

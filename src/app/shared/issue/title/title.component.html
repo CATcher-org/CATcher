@@ -1,0 +1,21 @@
+<div *ngIf="!isEditing">
+  <h1 class="mat-display-1 title">{{issue.title}}</h1>
+  <button mat-stroked-button color="primary" class="title-button" routerLink="/issues/new">New Issue</button>
+  <button mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">Edit</button>
+</div>
+
+
+<div *ngIf="isEditing">
+  <form [formGroup]="issueTitleForm" #myForm="ngForm" (ngSubmit)="updateTitle(myForm)">
+    <mat-form-field style="width: 80%">
+      <input id="title" formControlName="title" matInput placeholder="Title" required>
+      <mat-error *ngIf="issueTitleForm.errors && issueTitleForm.errors['required'] && issueTitleForm.touched">
+        Title required.
+      </mat-error>
+    </mat-form-field>
+
+    <button type="button" mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
+    <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary"
+            class="title-button">Save</button>
+  </form>
+</div>

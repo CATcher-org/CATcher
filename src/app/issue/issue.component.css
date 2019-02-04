@@ -1,20 +1,3 @@
-.title {
-  margin: 0 0 16px;
-  display: inline-block;
-}
-
-.title-button {
-  display: inline-block;
-  float: right;
-  margin: 5px
-}
-
-.vertical-border {
-  border-right-style: solid;
-  border-right-color: rgba(0,0,0,.12);
-  border-right-width: 1px;
-}
-
 .grid-flush-left {
   position: absolute;
   left: 5px;
@@ -22,11 +5,9 @@
 
 .row {
   display: flex;
-  height: 100vh;
 }
 
 .column {
-  float: left;
   padding: 10px;
   height: 100%;
 }

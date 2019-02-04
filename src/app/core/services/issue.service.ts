@@ -43,20 +43,24 @@ export class IssueService {
     return this.githubService.createNewIssue(title, description, labelsArray);
   }
 
-  editIssue(id: number, title: string, description: string, severity: string, type: string) {
-    const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
-    return this.githubService.editIssue(id, title, description, labelsArray);
+  updateIssue(issue: Issue) {
+    const labelsArray = [this.createSeverityLabel(issue.severity), this.createTypeLabel(issue.type)];
+    return this.githubService.updateIssue(issue.id, issue.title, issue.description, labelsArray);
   }
 
-  deleteIssue(id: number): void {
-    const { [id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
-    this.githubService.closeIssue(id).subscribe((removedIssue) => {
-      this.issues$.next(Object.values(withoutIssueToRemove));
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+  deleteIssue(id: number): Observable<Issue> {
+    return this.githubService.closeIssue(id);
   }
 
+  deleteFromLocalStore(issueToDelete: Issue) {
+    const { [issueToDelete.id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
+    this.issues = withoutIssueToRemove;
+    this.issues$.next(Object.values(this.issues));
+  }
+
+  /**
+   * To add/update an issue.
+   */
   updateLocalStore(issueToUpdate: Issue) {
     this.issues = {
       ...this.issues,
@@ -69,7 +73,7 @@ export class IssueService {
     this.githubService.fetchIssues().pipe(first()).subscribe((issues: Issue[]) => {
       this.issues = issues;
       this.issues$.next(Object.values(this.issues));
-    }, (error) => this.errorHandlingService.handleHttpError(error));
+    }, (error) => this.errorHandlingService.handleHttpError(error, () => this.getAllIssues()));
   }
 
   private createSeverityLabel(value: string) {

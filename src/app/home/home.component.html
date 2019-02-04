@@ -17,7 +17,7 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <table *ngIf="isPageLoaded" mat-table [dataSource]="issues" matSort class="mat-elevation-z8">
+  <table mat-table [dataSource]="issuesDataSource" matSort class="mat-elevation-z8">
 
     <ng-container matColumnDef="id">
       <th mat-header-cell mat-sort-header *matHeaderCellDef> ID </th>
@@ -26,31 +26,32 @@
 
     <ng-container matColumnDef="title">
       <th mat-header-cell mat-sort-header *matHeaderCellDef> Title </th>
-      <td mat-cell *matCellDef="let issue"> {{issue.title}} </td>
+      <td mat-cell *matCellDef="let issue">
+        <a class="no-underline link-grey-dark" [routerLink]="'issues/' + issue.id"> {{issue.title}} </a>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
-      <td mat-cell *matCellDef="let issue"> {{issue.type}} </td>
+      <td mat-cell *matCellDef="let issue"> {{issue.type || '-'}} </td>
     </ng-container>
 
     <ng-container matColumnDef="severity">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity </th>
-      <td mat-cell *matCellDef="let issue"> {{issue.severity}} </td>
+      <td mat-cell *matCellDef="let issue"> {{issue.severity || '-'}} </td>
     </ng-container>
 
     <ng-container matColumnDef="actions" >
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let issue">
-        <button mat-icon-button [routerLink]="'issues/' + issue.id">
-          <mat-icon>remove_red_eye</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteIssue(issue.id)"> <mat-icon>delete</mat-icon> </button>
+        <button mat-button color="warn" *ngIf="!issuesPendingDeletion[issue.id]" (click)="deleteIssue(issue.id)"> Delete </button>
+        <mat-spinner color="warn" [diameter]="25" style="display: inline; padding-right: 30px; margin-left: 5px"
+                     *ngIf="issuesPendingDeletion[issue.id]" ></mat-spinner>
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let issue; columns: displayedColumns;"></tr>
   </table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 </div>

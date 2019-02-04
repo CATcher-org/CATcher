@@ -1,0 +1,25 @@
+.timeline-header {
+  background-color: #f1f8ff;
+  border-bottom: 1px solid #c0d3eb;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  color: #586069;
+  height: 35px;
+  padding: 5px;
+}
+
+.timeline-comment {
+  overflow: auto;
+  border: 1px solid #c0d3eb;
+  background-color: #fff;
+  border-radius: 3px;
+}
+
+.comment {
+  padding: 15px;
+}
+
+.bold-name {
+  font-weight: 500;
+  font-size: 17px;
+}

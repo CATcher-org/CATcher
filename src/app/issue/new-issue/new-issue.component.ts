@@ -3,6 +3,8 @@ import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ISSUE_TYPES, SEVERITIES} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import {Router} from '@angular/router';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-issue',
@@ -13,8 +15,11 @@ export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
   severityValues = SEVERITIES;
   issueTypeValues = ISSUE_TYPES;
+  isFormPending = false;
 
-  constructor(private issueService: IssueService, private formBuilder: FormBuilder, private errorHandlingService: ErrorHandlingService) { }
+  constructor(private issueService: IssueService, private formBuilder: FormBuilder,
+              private errorHandlingService: ErrorHandlingService,
+              private router: Router) { }
 
   ngOnInit() {
     this.newIssueForm = this.formBuilder.group({
@@ -29,27 +34,33 @@ export class NewIssueComponent implements OnInit {
     if (this.newIssueForm.invalid) {
       return;
     }
-    this.issueService.createNewIssue(this.title, this.description, this.severity, this.type).subscribe((newIssue) => {
-      this.issueService.updateLocalStore(newIssue);
-      form.resetForm();
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+    this.isFormPending = true;
+    this.issueService.createNewIssue(this.title.value, this.description.value,
+      this.severity.value, this.type.value).pipe(finalize(() => this.isFormPending = false))
+      .subscribe(
+        newIssue => {
+          this.issueService.updateLocalStore(newIssue);
+          this.router.navigateByUrl(`issues/${newIssue.id}`);
+          form.resetForm();
+          },
+          error => {
+          this.errorHandlingService.handleHttpError(error);
+        });
   }
 
   get title() {
-    return this.newIssueForm.get('title').value;
+    return this.newIssueForm.get('title');
   }
 
   get description() {
-    return this.newIssueForm.get('description').value;
+    return this.newIssueForm.get('description');
   }
 
   get severity() {
-    return this.newIssueForm.get('severity').value;
+    return this.newIssueForm.get('severity');
   }
 
   get type() {
-    return this.newIssueForm.get('type').value;
+    return this.newIssueForm.get('type');
   }
 }

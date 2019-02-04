@@ -1,7 +1,11 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../core/models/issue.model';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator, MatSort} from '@angular/material';
+import {Issue} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
+import {BehaviorSubject} from 'rxjs';
+import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
+import {ErrorHandlingService} from '../core/services/error-handling.service';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -9,43 +13,38 @@ import {IssueService} from '../core/services/issue.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  isPageLoaded = false;
-  issues: any;
+  issues: BehaviorSubject<Issue[]>;
+  issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
+  issuesPendingDeletion = {};
 
-  sort: ElementRef;
-  @ViewChild(MatSort) set sortContent(content: ElementRef) {
-    this.sort = content;
-    if (this.sort) {
-      this.issues.sort = this.sort;
-    }
-  }
-
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService) { }
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
+  }
 
   ngOnInit() {
-    this.issueService.getAllIssues().subscribe((issues: Issue[]) => {
-      this.issues = new MatTableDataSource(issues);
-      this.isPageLoaded = true;
-      this.issues.sort = this.sort;
-      this.issues.paginator = this.paginator;
-      this.issues.sortingDataAccessor = (issue, property) => {
-        switch (property) {
-          case 'severity': return SEVERITY_ORDER[issue.severity];
-          case 'type': return ISSUE_TYPE_ORDER[issue.type];
-          default: return issue[property];
-        }
-      };
-    });
+    this.issues = this.issueService.issues$;
+    this.issuesDataSource = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.displayedColumns);
   }
 
   applyFilter(filterValue: string) {
-    this.issues.filter = filterValue.trim().toLowerCase();
+    this.issuesDataSource.filter = filterValue;
   }
 
   deleteIssue(id: number) {
-    this.issueService.deleteIssue(id);
+    this.issuesPendingDeletion = {
+      ...this.issuesPendingDeletion,
+      [id]: true,
+    };
+    this.issueService.deleteIssue(id).pipe(finalize(() => {
+      const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
+      this.issuesPendingDeletion = theRest;
+    })).subscribe((removedIssue) => {
+      this.issueService.deleteFromLocalStore(removedIssue);
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
+    });
   }
 }
