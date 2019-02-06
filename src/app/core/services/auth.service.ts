@@ -30,7 +30,7 @@ export class AuthService {
         response => {
           this.changeAuthState(AuthState.Authenticated);
           this.githubService.storeCredentials(username, password);
-          this.ngZone.run(() => this.router.navigate(['']));
+          this.ngZone.run(() => this.router.navigate(['/tutor']));
         },
         error => {
           this.errorHandlingService.handleHttpError(error.error);

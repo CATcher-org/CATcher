@@ -11,7 +11,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: '/student-second-phase',
+    path: 'student-second-phase',
     component: SecondPhaseComponent,
     canActivate: [AuthGuard],
   }
