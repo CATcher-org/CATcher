@@ -34,8 +34,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (this.loginForm.invalid) {
       return;
     } else {
+      this.auth.determineRoleAndPhase(this.loginForm.get('encodedText').value);
       this.auth.startAuthentication(this.loginForm.get('username').value,
-        this.loginForm.get('password').value, this.loginForm.get('encodedText').value);
+        this.loginForm.get('password').value);
     }
     form.resetForm();
   }

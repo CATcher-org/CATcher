@@ -22,7 +22,7 @@ export class AuthService {
               private githubService: GithubService) {
   }
 
-  startAuthentication(username: String, password: String, encodedText: String) {
+  startAuthentication(username: String, password: String) {
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
     this.http.get('https://api.github.com/user', { headers: header })
@@ -36,6 +36,10 @@ export class AuthService {
           this.errorHandlingService.handleHttpError(error.error);
         }
       );
+  }
+
+  determineRoleAndPhase(encodedText: String) {
+    console.log(encodedText);
   }
 
   logOut(): void {
