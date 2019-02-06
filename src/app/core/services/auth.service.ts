@@ -22,7 +22,7 @@ export class AuthService {
               private githubService: GithubService) {
   }
 
-  startAuthentication(username: String, password: String) {
+  startAuthentication(username: String, password: String, encodedText: String) {
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
     this.http.get('https://api.github.com/user', { headers: header })

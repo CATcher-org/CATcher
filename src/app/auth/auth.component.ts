@@ -29,15 +29,12 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.authStateSubscription.unsubscribe();
   }
 
-  get isNotLoggedIn(): boolean {
-    return this.authState === AuthState.NotAuthenticated;
-  }
-
   login(form: NgForm) {
     if (this.loginForm.invalid) {
       return;
     } else {
-      this.auth.startAuthentication(this.loginForm.get('username').value, this.loginForm.get('password').value);
+      this.auth.startAuthentication(this.loginForm.get('username').value,
+        this.loginForm.get('password').value, this.loginForm.get('encodedText').value);
     }
     form.resetForm();
   }
