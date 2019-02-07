@@ -35,4 +35,8 @@ export class ErrorHandlingService {
         return;
     }
   }
+
+  handleGeneralError(error: string) {
+    this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: {message: error}});
+  }
 }
