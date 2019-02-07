@@ -8,6 +8,7 @@ import {UserService} from './user.service';
 import {ErrorHandlingService} from './error-handling.service';
 import {GithubService} from './github.service';
 import {flatMap} from 'rxjs/operators';
+import {IssueService} from './issue.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -15,14 +16,14 @@ export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authentic
   providedIn: 'root'
 })
 export class AuthService {
-  private accessToken: string;
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
-              private userService: UserService) {
+              private userService: UserService,
+              private issueService: IssueService) {
   }
 
   startAuthentication(username: String, password: String) {
@@ -45,13 +46,15 @@ export class AuthService {
   }
 
   logOut(): void {
-    this.accessToken = null;
+    this.userService.reset();
+    this.issueService.reset();
+
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['/login']));
   }
 
   isAuthenticated(): boolean {
-    return !!(this.authStateSource.getValue() === 2);
+    return !!(this.authStateSource.getValue() === AuthState.Authenticated);
   }
 
   private changeAuthState(newAuthState: AuthState) {

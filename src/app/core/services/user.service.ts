@@ -21,6 +21,10 @@ export class UserService {
     }));
   }
 
+  reset() {
+    this.currentUser = undefined;
+  }
+
   private createUser(data: {}, userLoginId: string): Student | Tutor | Admin {
     const userRole = this.parseUserRole(data, userLoginId);
     switch (userRole) {
