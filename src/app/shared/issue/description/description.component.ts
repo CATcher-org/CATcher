@@ -1,21 +1,22 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {IssueService} from '../../../core/services/issue.service';
-import {Issue} from '../../../core/models/issue.model';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
+import {Issue} from '../../../core/models/issue.model';
+import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-issue-title',
-  templateUrl: './title.component.html',
-  styleUrls: ['./title.component.css'],
+  selector: 'app-issue-description',
+  templateUrl: './description.component.html',
+  styleUrls: ['./description.component.css'],
 })
-export class TitleComponent implements OnInit {
+export class DescriptionComponent implements OnInit {
   isEditing = false;
   isSavePending = false;
-  issueTitleForm: FormGroup;
+  issueDescriptionForm: FormGroup;
 
   @Input() issue: Issue;
+  @Input() title: string;
   @Output() issueUpdated = new EventEmitter<Issue>();
 
   constructor(private issueService: IssueService,
@@ -24,15 +25,15 @@ export class TitleComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.issueTitleForm = this.formBuilder.group({
-      title: ['', Validators.required],
+    this.issueDescriptionForm = this.formBuilder.group({
+      description: ['', Validators.required],
     });
   }
 
   changeToEditMode() {
     this.isEditing = true;
-    this.issueTitleForm.setValue({
-      title: this.issue.title || ''
+    this.issueDescriptionForm.setValue({
+      description: this.issue['description'] || ''
     });
   }
 
@@ -40,16 +41,13 @@ export class TitleComponent implements OnInit {
     this.isEditing = false;
   }
 
-  updateTitle(form: NgForm) {
-    if (this.issueTitleForm.invalid) {
+  updateDescription(form: NgForm) {
+    if (this.issueDescriptionForm.invalid) {
       return;
     }
 
     this.isSavePending = true;
-    this.issueService.updateIssue({
-      ...this.issue,
-      title: this.issueTitleForm.get('title').value,
-    }).pipe(finalize(() => {
+    this.issueService.updateIssue(this.getUpdatedIssue()).pipe(finalize(() => {
       this.isEditing = false;
       this.isSavePending = false;
     })).subscribe((editedIssue: Issue) => {
@@ -58,5 +56,12 @@ export class TitleComponent implements OnInit {
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+  }
+
+  private getUpdatedIssue(): Issue {
+    return <Issue> {
+      ...this.issue,
+      ['description']: this.issueDescriptionForm.get('description').value
+    };
   }
 }

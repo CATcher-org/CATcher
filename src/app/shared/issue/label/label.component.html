@@ -1,13 +1,13 @@
-<span class="mat-title"> {{labelName.charAt(0).toUpperCase() + labelName.substr(1)}} </span>
+<span class="mat-title"> {{attributeName.charAt(0).toUpperCase() + attributeName.substr(1)}} </span>
 <button [matMenuTriggerFor]="labelList" mat-icon-button>
   <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
 </button>
 
 <mat-menu #labelList>
   <button mat-menu-item *ngFor="let value of labelValues" (click)="updateLabel(value)"
-          [disabled]="value === this.issue[labelName]">
+          [disabled]="value === this.issue[attributeName]">
     <span> {{value}}</span>
   </button>
 </mat-menu>
 
-<p style="margin-top: 5px">{{issue[labelName] || '-'}}</p>
+<p style="margin-top: 5px">{{issue[attributeName] || '-'}}</p>

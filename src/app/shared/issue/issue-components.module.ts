@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import {TitleComponent} from './title/title.component';
 import {SharedModule} from '../shared.module';
-import {CommentComponent} from './comment/comment.component';
+import {DescriptionComponent} from './description/description.component';
 import {MarkdownModule} from 'ngx-markdown';
 import {CommentEditorModule} from '../comment-editor/comment-editor.module';
 import {LabelComponent} from './label/label.component';
+import {CommentComponent} from './comment/comment.component';
 
 @NgModule({
   imports: [
@@ -14,13 +15,15 @@ import {LabelComponent} from './label/label.component';
   ],
   declarations: [
     TitleComponent,
-    CommentComponent,
-    LabelComponent
+    DescriptionComponent,
+    LabelComponent,
+    CommentComponent
   ],
   exports: [
     TitleComponent,
-    CommentComponent,
-    LabelComponent
+    DescriptionComponent,
+    LabelComponent,
+    CommentComponent
   ]
 })
 export class IssueComponentsModule { }

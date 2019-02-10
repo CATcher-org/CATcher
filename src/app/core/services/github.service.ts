@@ -5,6 +5,7 @@ import {map, mergeMap, catchError} from 'rxjs/operators';
 import {Issue, LABELS_IN_BUG_REPORTING} from '../models/issue.model';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import * as moment from 'moment';
+import {IssueComment} from '../models/comment.model';
 
 let ORG_NAME = 'testathor';
 let REPO = 'pe';
@@ -41,7 +42,7 @@ export class GithubService {
     return this.getNumberOfPages().pipe(
       mergeMap((numOfPages) => {
         const apiCalls = [];
-        for (let i = 0; i <= numOfPages; i++) {
+        for (let i = 1; i <= numOfPages; i++) {
           apiCalls.push(from(octokit.issues.listForRepo({creator: username, owner: ORG_NAME, repo: REPO, sort: 'created',
             direction: 'asc', per_page: 100, page: i})));
         }
@@ -55,6 +56,9 @@ export class GithubService {
             ...response['data'],
           ];
         }
+        return collatedData;
+      }),
+      map((collatedData) => {
         let mappedResult = {};
         for (const issue of collatedData) {
           const issueModel = this.createIssueModel(issue);
@@ -76,6 +80,18 @@ export class GithubService {
     );
   }
 
+  fetchIssueComments(issueId: number): Observable<IssueComment[]> {
+    return from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, number: issueId, per_page: 3, page: 1})).pipe(
+      map((response) => {
+        const issueComments = new Array<IssueComment>();
+        for (const comment of response['data']) {
+          issueComments.push(this.createIssueCommentModel(comment));
+        }
+        return issueComments;
+      })
+    );
+  }
+
   closeIssue(id: number): Observable<Issue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, state: 'closed'})).pipe(
       map((response) => {
@@ -92,11 +108,20 @@ export class GithubService {
     );
   }
 
-  updateIssue(id: number, title: string, description: string, labels: string[]) {
+  updateIssue(id: number, title: string, description: string, labels: string[]): Observable<Issue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, title: title, body: description, labels: labels})).pipe(
       map((response) => {
         return this.createIssueModel(response['data']);
       })
+    );
+  }
+
+  updateIssueComment(issueComment: IssueComment) {
+    return from(octokit.issues.updateComment({owner: ORG_NAME, repo: REPO, comment_id: issueComment.id,
+      body: issueComment.description})).pipe(
+        map((response) => {
+          return this.createIssueCommentModel(response['data']);
+        })
     );
   }
 
@@ -118,6 +143,15 @@ export class GithubService {
       title: issueInJson['title'],
       description: issueInJson['body'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_BUG_REPORTING),
+    };
+  }
+
+  private createIssueCommentModel(issueCommentInJson: {}): IssueComment {
+    return <IssueComment>{
+      id: issueCommentInJson['id'],
+      description: issueCommentInJson['body'],
+      createdAt: moment(issueCommentInJson['created_at']).format('lll'),
+      updatedAt: moment(issueCommentInJson['updated_at']).format('lll')
     };
   }
 

@@ -55,10 +55,10 @@ export class CommentEditorComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     const files = event.dataTransfer.files;
+    this.removeHighlightBorderStyle();
 
     if (files.length > 0) {
       this.readAndUploadFile(files[0]);
-      this.removeHighlightBorderStyle();
       this.commentTextArea.nativeElement.focus();
     }
   }

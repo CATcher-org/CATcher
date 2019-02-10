@@ -14,7 +14,7 @@ export class LabelComponent implements OnInit {
   labelValues: string[];
 
   @Input() issue: Issue;
-  @Input() labelName: string;
+  @Input() attributeName: string;
   @Output() issueUpdated = new EventEmitter<Issue>();
 
   constructor(private issueService: IssueService,
@@ -23,16 +23,15 @@ export class LabelComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.labelValues = Object.keys(ISSUE_LABELS[this.labelName]);
+    this.labelValues = Object.keys(ISSUE_LABELS[this.attributeName]);
   }
 
   updateLabel(value: string) {
     this.issueService.updateIssue({
       ...this.issue,
-      [this.labelName]: value,
+      [this.attributeName]: value,
     }).pipe(finalize(() => {
     })).subscribe((editedIssue: Issue) => {
-      this.issueService.updateLocalStore(editedIssue);
       this.issueUpdated.emit(editedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);

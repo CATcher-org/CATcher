@@ -1,4 +1,5 @@
 import {Assignee} from './assignee.model';
+import {IssueComment} from './comment.model';
 
 export interface Issue {
   id: number;
@@ -7,7 +8,9 @@ export interface Issue {
   type: string;
   severity: string;
   description?: string;
-  response?: string;
+  teamResponse?: IssueComment;
+  testerObjection?: IssueComment;
+  tutorResponse?: IssueComment;
   assignee?: Assignee;
 }
 

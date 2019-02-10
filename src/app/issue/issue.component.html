@@ -6,13 +6,15 @@
 
     <div class="row">
       <div class="column left">
-        <app-issue-comment [issue]="issue" (issueUpdated)="updateIssue($event)"></app-issue-comment>
+        <app-issue-description [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)"></app-issue-description>
+
+        <app-issue-comment *ngIf="issue.teamResponse" [issue]="issue" attributeName="teamResponse" title="Team's Response" (issueUpdated)="updateIssue($event)"></app-issue-comment>
       </div>
 
       <div class="column right">
-        <app-issue-label [issue]="issue" labelName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
-        <app-issue-label [issue]="issue" labelName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
       </div>
     </div>
   </div>

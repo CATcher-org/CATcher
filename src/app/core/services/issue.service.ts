@@ -4,6 +4,7 @@ import {catchError, first, map} from 'rxjs/operators';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {Issue} from '../models/issue.model';
 import {ErrorHandlingService} from './error-handling.service';
+import {IssueComment} from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -38,14 +39,22 @@ export class IssueService {
     }
   }
 
+  getIssueComments(id: number): Observable<IssueComment[]> {
+    return this.githubService.fetchIssueComments(id);
+  }
+
   createNewIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
     return this.githubService.createNewIssue(title, description, labelsArray);
   }
 
-  updateIssue(issue: Issue) {
+  updateIssue(issue: Issue): Observable<Issue> {
     const labelsArray = [this.createSeverityLabel(issue.severity), this.createTypeLabel(issue.type)];
     return this.githubService.updateIssue(issue.id, issue.title, issue.description, labelsArray);
+  }
+
+  updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
+    return this.githubService.updateIssueComment(issueComment);
   }
 
   deleteIssue(id: number): Observable<Issue> {
