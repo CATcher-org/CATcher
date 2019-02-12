@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {ISSUE_TYPES, SEVERITIES} from '../../core/models/issue.model';
+import {ISSUE_LABELS} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {Router} from '@angular/router';
 import {finalize} from 'rxjs/operators';
@@ -13,8 +13,8 @@ import {finalize} from 'rxjs/operators';
 })
 export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
-  severityValues = SEVERITIES;
-  issueTypeValues = ISSUE_TYPES;
+  severityValues = Object.keys(ISSUE_LABELS['severity']);
+  issueTypeValues = Object.keys(ISSUE_LABELS['type']);
   isFormPending = false;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,

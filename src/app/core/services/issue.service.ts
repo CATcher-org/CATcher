@@ -69,6 +69,11 @@ export class IssueService {
     this.issues$.next(Object.values(this.issues));
   }
 
+  reset() {
+    this.issues = undefined;
+    this.issues$.next(new Array<Issue>());
+  }
+
   private initializeData() {
     this.githubService.fetchIssues().pipe(first()).subscribe((issues: Issue[]) => {
       this.issues = issues;

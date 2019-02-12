@@ -1,90 +1,60 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, of, throwError} from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
+import {UserService} from './user.service';
 import {ErrorHandlingService} from './error-handling.service';
 import {GithubService} from './github.service';
+import {flatMap} from 'rxjs/operators';
+import {IssueService} from './issue.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
-enum StudentRoutes { '', '/student-second-phase'}
-enum TutorRoutes {'/tutor', '/tutor-second-phase'}
-
-const STUDENT: string = 'student'
-const TUTOR: string = 'tutor'
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private accessToken: string;
-  private userRole: string;
-  private phaseNumber: string;
-  private routingPageUrl: string;
-
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
-              private githubService: GithubService) {
+              private githubService: GithubService,
+              private userService: UserService,
+              private issueService: IssueService) {
   }
 
   startAuthentication(username: String, password: String) {
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
-    this.http.get('https://api.github.com/user', { headers: header })
-      .subscribe(
-        response => {
+
+    return this.http.get('https://api.github.com/user', { headers: header }).pipe(
+      flatMap((githubResponse) => {
+        this.githubService.storeCredentials(username, password);
+        return this.userService.createUserModel(githubResponse);
+      }),
+      flatMap((user) => {
+        if (user) {
           this.changeAuthState(AuthState.Authenticated);
-          this.githubService.storeCredentials(username, password);
-          this.ngZone.run(() => this.router.navigate([this.routingPageUrl]));
-        },
-        error => {
-          this.errorHandlingService.handleHttpError(error.error);
-        }
-      );
-  }
-
-  determineRoutingPage(encodedText: String) {
-    this.parseEncodedText(encodedText);
-    console.log(this.phaseNumber);
-    switch (this.userRole.toLowerCase()) {
-      case STUDENT:
-        if (this.phaseNumber.toLowerCase() === 'phase1') {
-          this.routingPageUrl = StudentRoutes[0];
+          return of(user);
         } else {
-          this.routingPageUrl = StudentRoutes[1];
+          return throwError('Unauthorized user.');
         }
-        break;
-      case TUTOR:
-        if (this.phaseNumber.toLowerCase() === 'phase1') {
-          this.routingPageUrl = TutorRoutes[0];
-        } else {
-          this.routingPageUrl = TutorRoutes[1];
-        }
-        break;
-      default:
-        this.routingPageUrl = '';
-        return;
-    }
-  }
-
-  parseEncodedText(encodedText: String): void {
-      let splitted = encodedText.split("@");
-      this.userRole = splitted[0];
-      this.phaseNumber = splitted[1];
+      }));
   }
 
   logOut(): void {
-    this.accessToken = null;
+    this.userService.reset();
+    this.issueService.reset();
+
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['/login']));
   }
 
   isAuthenticated(): boolean {
-    return !!(this.authStateSource.getValue() === 2);
+    return !!(this.authStateSource.getValue() === AuthState.Authenticated);
   }
 
   private changeAuthState(newAuthState: AuthState) {

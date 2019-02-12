@@ -7,6 +7,7 @@ import * as moment from 'moment';
 
 const ORG_NAME = 'testathor';
 const REPO = 'pe';
+const DATA_REPO = 'public_data';
 const octokit = require('@octokit/rest')();
 let username;
 
@@ -64,7 +65,6 @@ export class GithubService {
   fetchIssue(id: number): Observable<Issue> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, number: id})).pipe(
       map((response) => {
-        console.log(response);
         return this.createIssueModel(response['data']);
       })
     );
@@ -97,6 +97,12 @@ export class GithubService {
   uploadImage(filename: string, base64String: string): Observable<any> {
     return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `images/${filename}`,
       message: 'upload image', content: base64String}));
+  }
+
+  getDataFile(): Observable<{}> {
+    return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
+      return JSON.parse(atob(resp['data']['content']));
+    }));
   }
 
   private createIssueModel(issueInJson: {}): Issue {
