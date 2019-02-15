@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
-import {BehaviorSubject, of, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, of, throwError, from, forkJoin} from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import {UserService} from './user.service';
 import {ErrorHandlingService} from './error-handling.service';
 import {GithubService} from './github.service';
-import {flatMap} from 'rxjs/operators';
+import {catchError, flatMap, map} from 'rxjs/operators';
 import {IssueService} from './issue.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
@@ -26,7 +26,42 @@ export class AuthService {
               private issueService: IssueService) {
   }
 
-  startAuthentication(username: String, password: String) {
+  parseEncodedPhase(encodedText: String): string[] {
+      const phase = encodedText.split('@', 2);
+      const phaseOneUrl = phase[0].split('=', 2)[1];
+      const phaseTwoUrl = phase[1].split('=', 2)[1];
+
+      let separator = phaseOneUrl.lastIndexOf('/');
+      const repoName = phaseOneUrl.substring(separator + 1);
+
+      let separatorOrg = phaseOneUrl.indexOf('.com');
+      const orgName = phaseOneUrl.substring(separatorOrg + 5, separator);
+
+      separator = phaseTwoUrl.lastIndexOf('/');
+      const repoNameSecond = phaseTwoUrl.substring(separator + 1);
+      separatorOrg = phaseTwoUrl.indexOf('.com');
+      const orgNameSecond = phaseTwoUrl.substring(separatorOrg + 5, separator);
+
+      return new Array(repoName, orgName, repoNameSecond, orgNameSecond);
+  }
+
+  checkIfReposAccessible(array: any): any {
+
+    const url1 = 'https://api.github.com/repos/' + array[1] + '/' + array[0];
+    const url2 = 'https://api.github.com/repos/' + array[3] + '/' + array[2];
+
+    const value = forkJoin(
+      this.http.get(url1).pipe(map((res) => res), catchError(e => of('Oops!'))),
+      this.http.get(url2).pipe(map((res) => res), catchError(e => of('Oops!')))
+    ).pipe(
+      map(([first, second]) => {
+        return {first, second};
+      })
+    );
+    return value;
+  }
+
+  startAuthentication(username: String, password: String, encodedText: String) {
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
 
@@ -37,12 +72,14 @@ export class AuthService {
       }),
       flatMap((user) => {
         if (user) {
+          const array = this.parseEncodedPhase(encodedText);
           this.changeAuthState(AuthState.Authenticated);
-          return of(user);
+          return (this.checkIfReposAccessible(array));
         } else {
           return throwError('Unauthorized user.');
         }
-      }));
+      }),
+    );
   }
 
   logOut(): void {

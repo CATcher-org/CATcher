@@ -3,7 +3,9 @@ import { NgModule } from '@angular/core';
 import { HomeComponent } from './home.component';
 import {HomeRoutingModule} from './home-routing.module';
 import {SharedModule} from '../shared/shared.module';
-import { SecondPhaseComponent } from './second-phase/second-phase.component';
+import { Phase2Component } from './phase2/phase2.component';
+import { Phase3Component } from './phase3/phase3.component';
+import { Phase4Component } from './phase4/phase4.component';
 
 @NgModule({
   imports: [
@@ -12,7 +14,9 @@ import { SecondPhaseComponent } from './second-phase/second-phase.component';
   ],
   declarations: [
     HomeComponent,
-    SecondPhaseComponent
+    Phase2Component,
+    Phase3Component,
+    Phase4Component,
   ],
 })
 export class HomeModule {}

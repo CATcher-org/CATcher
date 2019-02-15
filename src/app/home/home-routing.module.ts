@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home.component';
 import { AuthGuard } from '../auth/auth.guard';
-import { SecondPhaseComponent } from './second-phase/second-phase.component';
+import { Phase2Component} from './phase2/phase2.component';
+import { Phase3Component } from './phase3/phase3.component';
+import { Phase4Component } from './phase4/phase4.component';
 
 const routes: Routes = [
   {
@@ -11,8 +13,18 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'student-second-phase',
-    component: SecondPhaseComponent,
+    path: 'phase2',
+    component: Phase2Component,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'phase3',
+    component: Phase3Component,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'phase4',
+    component: Phase4Component,
     canActivate: [AuthGuard],
   }
 ];
