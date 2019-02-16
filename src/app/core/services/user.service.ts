@@ -9,9 +9,13 @@ import {Observable} from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private currentUser: Student | Tutor | Admin;
+  currentUser: Student | Tutor | Admin;
 
   constructor(private githubService: GithubService) {}
+
+  getUserLoginId() {
+    this.currentUser.loginId;
+  }
 
   createUserModel(authResponse: {}): Observable<User> {
     return this.githubService.getDataFile().pipe(map((jsonData: {}) => {

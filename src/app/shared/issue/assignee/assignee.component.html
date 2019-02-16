@@ -1,0 +1,16 @@
+<div>
+  <span class="mat-title"> Assignees </span>
+  <button  (click)="openSelector()" mat-icon-button>
+    <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
+  </button>
+
+  <mat-select class="no-arrow" placeholder="-" multiple [value]="issue.assignees" (selectionChange)="updateAssignee($event)">
+    <mat-select-trigger>
+      <mat-list style="padding-top: 0" dense *ngIf="issue.assignees.length !== 0">
+        <mat-list-item *ngFor="let assignee of issue.assignees">{{assignee}}</mat-list-item>
+      </mat-list>
+      <span *ngIf="issue.assignees.length === 0"> - </span>
+    </mat-select-trigger>
+    <mat-option *ngFor="let assignee of teamMembers" [value]="assignee">{{assignee}}</mat-option>
+  </mat-select>
+</div>

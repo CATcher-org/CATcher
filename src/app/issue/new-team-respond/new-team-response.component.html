@@ -1,0 +1,62 @@
+<form [formGroup]="newTeamResponseForm" #myForm="ngForm" (ngSubmit)="submitNewTeamResponse(myForm)">
+  <div class="timeline-comment">
+    <div class="timeline-header">
+      <span style="vertical-align: middle; margin-left: 10px"> Post your team's response here. </span>
+
+      <div style="float: right;">
+        <button type="submit" style="margin-left: 10px" [disabled]="newTeamResponseForm.invalid || isFormPending" mat-button color="primary">Submit</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="container">
+        <mat-form-field class="left-half">
+          <mat-select formControlName="severity" placeholder="Severity">
+            <mat-option *ngFor="let value of severityValues" [value]="value">
+              {{value}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
+            Severity required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="right-half">
+          <mat-select formControlName="type" placeholder="Type">
+            <mat-option *ngFor="let value of issueTypeValues" [value]="value">
+              {{value}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
+            Type required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="container">
+        <mat-form-field class="left-half">
+          <mat-select placeholder="Assignees" formControlName="assignees" multiple>
+            <mat-option *ngFor="let member of teamMembers" [value]="member">{{member}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="assignees.errors && assignees.errors['required'] && assignees.touched">
+            Assignee(s) required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="right-half">
+          <mat-select formControlName="responseTag" placeholder="Response">
+            <mat-option *ngFor="let value of responseList" [value]="value">
+              {{value}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="responseTag.errors && responseTag.errors['required'] && responseTag.touched">
+            Response required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <app-comment-editor [commentField]="newTeamResponseForm.get('description')" [commentForm]="newTeamResponseForm"></app-comment-editor>
+    </div>
+
+  </div>
+</form>

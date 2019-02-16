@@ -93,7 +93,7 @@ export class CommentEditorComponent implements OnInit {
     }
 
     reader.onload = () => {
-      this.uploadService.uploadImage(reader.result, filename).subscribe((response) => {
+      this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);

@@ -23,15 +23,14 @@ export class LabelComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.labelValues = Object.keys(ISSUE_LABELS[this.attributeName]);
+    this.labelValues = ISSUE_LABELS[this.attributeName];
   }
 
   updateLabel(value: string) {
     this.issueService.updateIssue({
       ...this.issue,
       [this.attributeName]: value,
-    }).pipe(finalize(() => {
-    })).subscribe((editedIssue: Issue) => {
+    }).subscribe((editedIssue: Issue) => {
       this.issueUpdated.emit(editedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);

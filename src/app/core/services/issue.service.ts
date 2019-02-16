@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import {GithubService} from './github.service';
-import {catchError, first, map} from 'rxjs/operators';
+import {first} from 'rxjs/operators';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {Issue} from '../models/issue.model';
 import {ErrorHandlingService} from './error-handling.service';
-import {IssueComment} from '../models/comment.model';
+import {UserService} from './user.service';
+import {Student} from '../models/user.model';
+import {Team} from '../models/team.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +15,9 @@ export class IssueService {
   issues: {};
   issues$: BehaviorSubject<Issue[]>;
 
-  constructor(private githubService: GithubService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private githubService: GithubService,
+              private userService: UserService,
+              private errorHandlingService: ErrorHandlingService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -39,22 +43,13 @@ export class IssueService {
     }
   }
 
-  getIssueComments(id: number): Observable<IssueComment[]> {
-    return this.githubService.fetchIssueComments(id);
-  }
-
-  createNewIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
-    const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
-    return this.githubService.createNewIssue(title, description, labelsArray);
+  createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
+    const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
+    return this.githubService.createIssue(title, description, labelsArray);
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
-    const labelsArray = [this.createSeverityLabel(issue.severity), this.createTypeLabel(issue.type)];
-    return this.githubService.updateIssue(issue.id, issue.title, issue.description, labelsArray);
-  }
-
-  updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
-    return this.githubService.updateIssueComment(issueComment);
+    return this.githubService.updateIssue(issue.id, issue.title, issue.description, this.createLabelsForIssue(issue), issue.assignees);
   }
 
   deleteIssue(id: number): Observable<Issue> {
@@ -84,17 +79,43 @@ export class IssueService {
   }
 
   private initializeData() {
-    this.githubService.fetchIssues().pipe(first()).subscribe((issues: Issue[]) => {
+    // TODO check the phase the filter accordingly
+    // filterByCreator = 'FILTER_BY_CREATOR',
+    // filterByTeam = 'FILTER_BY_TEAM',
+    // filterByTeamsAssigned = 'FILTER_BY_TEAM_ASSIGNED'
+
+    const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+    const issuesFilter = {
+      labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
+    };
+    this.githubService.fetchIssues(issuesFilter).pipe(first()).subscribe((issues: Issue[]) => {
       this.issues = issues;
       this.issues$.next(Object.values(this.issues));
     }, (error) => this.errorHandlingService.handleHttpError(error, () => this.getAllIssues()));
   }
 
-  private createSeverityLabel(value: string) {
-    return `severity.${value}`;
+  private createLabelsForIssue(issue: Issue): string[] {
+    const result = [];
+
+    // TODO If phase 2 then do this
+    const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+    result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
+
+    if (issue.severity) {
+      result.push(this.createLabel('severity', issue.severity));
+    }
+
+    if (issue.type) {
+      result.push(this.createLabel('type', issue.type));
+    }
+
+    if (issue.responseTag) {
+      result.push(this.createLabel('response', issue.responseTag));
+    }
+    return result;
   }
 
-  private createTypeLabel(value: string) {
-    return `type.${value}`;
+  private createLabel(prepend: string, value: string) {
+    return `${prepend}.${value}`;
   }
 }

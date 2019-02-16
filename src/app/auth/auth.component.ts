@@ -32,7 +32,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.loginForm = this.formBuilder.group({
       username: ['testathorStudent', Validators.required],
       password: ['studPwd1', Validators.required],
-      encodedText: ['phase1=https://github.com/testathor/pe@phase2=https://github.com/testathor/p1' +
+      encodedText: ['phase1=https://github.com/testathor/pe1@phase2=https://github.com/testathor/pe-results' +
       '@phase3=https://github.com/testathor/p3', Validators.required],
     });
   }
@@ -49,6 +49,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.loginForm.get('encodedText').value).subscribe((res) => {
         const phase = this.phaseService.determinePhaseNumber(res);
         this.router.navigateByUrl(phase);
+        form.resetForm();
       }, (error) => {
         if (error instanceof HttpErrorResponse) {
           this.errorHandlingService.handleHttpError(error.error);
@@ -57,6 +58,5 @@ export class AuthComponent implements OnInit, OnDestroy {
         }
       });
     }
-    form.resetForm();
   }
 }

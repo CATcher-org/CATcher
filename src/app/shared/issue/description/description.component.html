@@ -3,7 +3,7 @@
   <div class="timeline-comment">
     <div class="timeline-header">
       <span style="vertical-align: middle; margin-left: 10px"> <span class="bold-name"> Tester </span> posted on {{issue.created_at}}. </span>
-      <button *ngIf="!isEditing" class="small" mat-button style="float: right;" (click)="changeToEditMode()">
+      <button *ngIf="!isEditing" mat-button style="float: right;" (click)="changeToEditMode()">
         Edit
       </button>
       <div *ngIf="isEditing" style="float: right;">

@@ -1,0 +1,8 @@
+.no-arrow .mat-select-arrow {
+  visibility: hidden;
+}
+
+/* TODO: currently not working as intended */
+mat-list-item div.mat-list-item-content {
+  padding-left: 0;
+}
