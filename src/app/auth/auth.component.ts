@@ -50,7 +50,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.loginForm.get('encodedText').value).subscribe((res) => {
         let phase;
         if (res['first']['id'] != null) {
-          this.phaseUrl = '';
+          this.phaseUrl = 'phase1';
           phase = 'first';
         } else if (res['second']['id'] != null) {
           this.phaseUrl = 'phase2';

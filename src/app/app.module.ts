@@ -12,7 +12,6 @@ import { HeaderComponent } from './shared/layout';
 import {IssueModule } from './issue/issue.module';
 import {AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
-import { TutorModule } from './tutor/tutor.module';
 
 @NgModule({
   declarations: [
@@ -39,7 +38,6 @@ import { TutorModule } from './tutor/tutor.module';
     AuthModule,
     SharedModule,
     AppRoutingModule,
-    TutorModule,
     HttpClientModule
   ],
   providers: [],
