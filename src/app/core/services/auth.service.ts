@@ -27,9 +27,10 @@ export class AuthService {
   }
 
   parseEncodedPhase(encodedText: String): string[] {
-      const phase = encodedText.split('@', 2);
+      const phase = encodedText.split('@', 3);
       const phaseOneUrl = phase[0].split('=', 2)[1];
       const phaseTwoUrl = phase[1].split('=', 2)[1];
+      const phaseThreeUrl = phase[2].split('=', 2)[1];
 
       let separator = phaseOneUrl.lastIndexOf('/');
       const repoName = phaseOneUrl.substring(separator + 1);
@@ -42,20 +43,27 @@ export class AuthService {
       separatorOrg = phaseTwoUrl.indexOf('.com');
       const orgNameSecond = phaseTwoUrl.substring(separatorOrg + 5, separator);
 
-      return new Array(repoName, orgName, repoNameSecond, orgNameSecond);
+    separator = phaseThreeUrl.lastIndexOf('/');
+    const repoNameThird = phaseThreeUrl.substring(separator + 1);
+    separatorOrg = phaseThreeUrl.indexOf('.com');
+    const orgNameThird = phaseThreeUrl.substring(separatorOrg + 5, separator);
+
+      return new Array(repoName, orgName, repoNameSecond, orgNameSecond, repoNameThird, orgNameThird);
   }
 
   checkIfReposAccessible(array: any): any {
 
     const url1 = 'https://api.github.com/repos/' + array[1] + '/' + array[0];
     const url2 = 'https://api.github.com/repos/' + array[3] + '/' + array[2];
+    const url3 = 'https://api.github.com/repos/' + array[5] + '/' + array[4];
 
     const value = forkJoin(
       this.http.get(url1).pipe(map((res) => res), catchError(e => of('Oops!'))),
-      this.http.get(url2).pipe(map((res) => res), catchError(e => of('Oops!')))
+      this.http.get(url2).pipe(map((res) => res), catchError(e => of('Oops!'))),
+      this.http.get(url3).pipe(map((res) => res), catchError(e => of('Oops!'))),
     ).pipe(
-      map(([first, second]) => {
-        return {first, second};
+      map(([first, second, third]) => {
+        return {first, second, third};
       })
     );
     return value;

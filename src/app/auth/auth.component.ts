@@ -33,7 +33,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.loginForm = this.formBuilder.group({
       username: ['testathorStudent', Validators.required],
       password: ['studPwd1', Validators.required],
-      encodedText: ['phase1=https://github.com/testathor/pe@phase2=https://github.com/testathor/p1', Validators.required],
+      encodedText: ['phase1=https://github.com/testathor/pe@phase2=https://github.com/testathor/p1@phase3=https://github.com/testathor/p3', Validators.required],
     });
   }
 
@@ -55,6 +55,9 @@ export class AuthComponent implements OnInit, OnDestroy {
         } else if (res['second']['id'] != null) {
           this.phaseUrl = 'phase2';
           phase = 'second';
+        } else if (res['third']['id'] != null) {
+          this.phaseUrl = 'phase3';
+          phase = 'third';
         }
         if (this.phaseUrl == null) {
           this.errorHandlingService.handleGeneralError('Repo is not ready');
