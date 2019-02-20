@@ -12,13 +12,16 @@ import {ErrorHandlingService} from '../../../core/services/error-handling.servic
   encapsulation: ViewEncapsulation.None
 })
 export class AssigneeComponent implements OnInit {
+  teamMembers: string[];
+  isInEditMode = false;
 
   @Input() issue: Issue;
   @Input() team: Team;
+  @Input() editable: boolean;
+
   @ViewChild(MatSelect) assigneeSelection: MatSelect;
+
   @Output() issueUpdated = new EventEmitter<Issue>();
-  teamMembers: string[];
-  isInEditMode = false;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
   }

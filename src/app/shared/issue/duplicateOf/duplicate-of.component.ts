@@ -20,8 +20,10 @@ export class DuplicateOfComponent implements OnInit {
 
   @Input() issue: Issue;
   @Input() comments: IssueComments;
+
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() commentsUpdated = new EventEmitter<IssueComments>();
+
   @ViewChild(MatSelect) duplicateOfSelection: MatSelect;
   @ViewChild(MatCheckbox) duplicatedCheckbox: MatCheckbox;
 

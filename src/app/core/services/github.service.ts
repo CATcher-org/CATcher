@@ -132,7 +132,6 @@ export class GithubService {
     return from(octokit.issues.updateComment({owner: ORG_NAME, repo: REPO, comment_id: issueComment.id,
       body: issueComment.description})).pipe(
         map((response) => {
-          console.log(response);
           return this.createIssueCommentModel(response['data']);
         })
     );

@@ -3,7 +3,6 @@ import {FormBuilder} from '@angular/forms';
 import {Issue, ISSUE_LABELS} from '../../../core/models/issue.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-issue-label',
@@ -15,6 +14,7 @@ export class LabelComponent implements OnInit {
 
   @Input() issue: Issue;
   @Input() attributeName: string;
+
   @Output() issueUpdated = new EventEmitter<Issue>();
 
   constructor(private issueService: IssueService,
