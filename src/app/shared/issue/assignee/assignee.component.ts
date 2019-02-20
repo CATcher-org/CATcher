@@ -18,6 +18,7 @@ export class AssigneeComponent implements OnInit {
   @ViewChild(MatSelect) assigneeSelection: MatSelect;
   @Output() issueUpdated = new EventEmitter<Issue>();
   teamMembers: string[];
+  isInEditMode = false;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
   }
@@ -27,7 +28,14 @@ export class AssigneeComponent implements OnInit {
   }
 
   openSelector() {
+    this.isInEditMode = true;
     this.assigneeSelection.open();
+  }
+
+  handleEditMode(isOpen) {
+    if (!isOpen) {
+      this.isInEditMode = false;
+    }
   }
 
   updateAssignee(event): void {

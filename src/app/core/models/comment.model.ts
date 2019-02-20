@@ -3,6 +3,7 @@ export interface IssueComment {
   description: string;
   createdAt: string;
   updatedAt: string;
+  duplicateOf?: number;
 }
 
 export interface IssueComments {

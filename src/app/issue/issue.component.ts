@@ -33,7 +33,14 @@ export class IssueComponent implements OnInit {
 
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
-    this.issueService.updateLocalStore(newIssue);
+    // overwrite the duplicateOf value with the most updated duplicateOf value that is provided the by latest comment.
+    if (this.comments.teamResponse && this.comments.teamResponse.duplicateOf) {
+      this.issue = {
+        ...this.issue,
+        duplicateOf: this.comments.teamResponse.duplicateOf,
+      };
+    }
+    this.issueService.updateLocalStore(this.issue);
   }
 
   updateComments(newComments: IssueComments) {
@@ -50,6 +57,8 @@ export class IssueComponent implements OnInit {
     forkJoin(this.issueService.getIssue(id), this.issueCommentService.getIssueComments(id)).subscribe((res) => {
       this.issue = res[0];
       this.comments = res[1];
+      this.updateIssue(this.issue);
+
       this.isPageLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());

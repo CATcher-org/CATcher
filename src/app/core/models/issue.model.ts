@@ -7,6 +7,8 @@ export interface Issue {
   description?: string;
   responseTag?: string;
   assignees?: string[];
+  duplicated?: boolean;
+  duplicateOf?: number;
 }
 
 /**
@@ -15,7 +17,7 @@ export interface Issue {
  * And `Value` represent the value that is associated to the `Type` (e.g. for severity Type, it could be Low, Medium, High)
  */
 export const LABELS_IN_PHASE_1 = ['severity', 'type'];
-export const LABELS_IN_PHASE_2 = ['severity', 'type', 'response'];
+export const LABELS_IN_PHASE_2 = ['severity', 'type', 'response', 'duplicate'];
 
 export const labelsToAttributeMapping = {
   'severity': 'severity',
@@ -43,7 +45,6 @@ export enum RESPONSE {
   Rejected = 'Rejected',
   IssueUnclear = 'IssueUnclear',
   CannotReproduce = 'CannotReproduce',
-  Duplicate = 'Duplicate'
 }
 
 export const ISSUE_LABELS = {

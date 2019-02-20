@@ -4,6 +4,7 @@ import {GithubService} from './github.service';
 import {ErrorHandlingService} from './error-handling.service';
 import {IssueComment, IssueComments} from '../models/comment.model';
 import {map} from 'rxjs/operators';
+import {Issue} from '../models/issue.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ import {map} from 'rxjs/operators';
 export class IssueCommentService {
   comments = new Map<number, IssueComments>();
 
-  constructor(private githubService: GithubService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private githubService: GithubService) {
   }
 
   getIssueComments(issueId: number): Observable<IssueComments> {
@@ -22,12 +23,44 @@ export class IssueCommentService {
     }
   }
 
-  createIssueComment(issueId: number, description: string) {
-    return this.githubService.createIssueComment(issueId, description);
+  createIssueComment(issueId: number, description: string, duplicatedOf: Issue) {
+    return this.githubService.createIssueComment(issueId, description, duplicatedOf);
   }
 
   updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
     return this.githubService.updateIssueComment(issueComment);
+  }
+
+  updateWithDuplicateOfValue(issueId: number, duplicateOfNumber: number): Observable<IssueComment> {
+    const issueComment = this.comments.get(issueId).teamResponse;
+    const regex = /(duplicate of\s*#)(\d+)/i;
+    const duplicateOfArray = regex.exec(issueComment.description);
+    let updatedDescription = issueComment.description;
+
+    if (duplicateOfArray && duplicateOfArray.length >= 2) { // search and replace existing duplicateOf string
+      updatedDescription = updatedDescription.replace(/(duplicate of\s*#)(\d+)/i, `$1${duplicateOfNumber}`);
+    } else { // Add duplicateOf value into comment
+      updatedDescription = `Duplicate of #${duplicateOfNumber}\n` + updatedDescription;
+    }
+    return this.githubService.updateIssueComment({
+      ...issueComment,
+      description: updatedDescription,
+    });
+  }
+
+  removeDuplicateOfValue(issueId: number): Observable<IssueComment> {
+    const issueComment = this.comments.get(issueId).teamResponse;
+    const regex = /(duplicate of\s*#)(\d+)/i;
+    const duplicateOfArray = regex.exec(issueComment.description);
+    let updatedDescription = issueComment.description;
+
+    if (duplicateOfArray && duplicateOfArray.length >= 2) { // search and replace existing duplicateOf string
+      updatedDescription = updatedDescription.replace(/(duplicate of\s*#)(\d+)/i, '');
+    }
+    return this.githubService.updateIssueComment({
+      ...issueComment,
+      description: updatedDescription,
+    });
   }
 
   private initializeIssueComments(issueId: number): Observable<IssueComments> {

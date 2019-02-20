@@ -110,9 +110,10 @@ export class GithubService {
     );
   }
 
-  createIssueComment(issueId: number, description: string) {
-    return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, number: issueId, body: description})).pipe(
-      map((response) => {
+  createIssueComment(issueId: number, description: string, duplicateOf: Issue) {
+    return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, number: issueId,
+                body: this.processCommentForGithub(description, duplicateOf)}))
+      .pipe(map((response) => {
         return this.createIssueCommentModel(response['data']);
       })
     );
@@ -153,8 +154,9 @@ export class GithubService {
       id: +issueInJson['number'],
       created_at: moment(issueInJson['created_at']).format('lll'),
       title: issueInJson['title'],
-      description: issueInJson['body'],
       assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
+      description: issueInJson['body'],
+      duplicateOf: this.parseDuplicateOfValue(issueInJson['body']),
       ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_PHASE_2),
     };
   }
@@ -164,7 +166,8 @@ export class GithubService {
       id: issueCommentInJson['id'],
       description: issueCommentInJson['body'],
       createdAt: moment(issueCommentInJson['created_at']).format('lll'),
-      updatedAt: moment(issueCommentInJson['updated_at']).format('lll')
+      updatedAt: moment(issueCommentInJson['updated_at']).format('lll'),
+      duplicateOf: this.parseDuplicateOfValue(issueCommentInJson['body']),
     };
   }
 
@@ -190,7 +193,12 @@ export class GithubService {
       const labelType = labelName[0];
       const labelValue = labelName[1];
 
-      if (desiredLabels.includes(labelType)) {
+      if (label['name'] === 'duplicate') {
+        result = {
+          ...result,
+          duplicated: true,
+        };
+      } else if (desiredLabels.includes(labelType)) {
         result = {
           ...result,
           [labelsToAttributeMapping[labelType]]: labelValue,
@@ -213,5 +221,23 @@ export class GithubService {
           return +paginatedData['last'] || 1;
         })
     );
+  }
+
+  private processCommentForGithub(description: string, duplicateOf: Issue): string {
+    let comment = description;
+    if (duplicateOf) {
+      comment = `Duplicate of #${duplicateOf.id}\n` + comment;
+    }
+    return comment;
+  }
+
+  private parseDuplicateOfValue(toParse: string): number {
+    const regex = /duplicate of\s*#(\d+)/i;
+    const result = regex.exec(toParse);
+    if (result && result.length >= 2) {
+      return +regex.exec(toParse)[1];
+    } else {
+      return null;
+    }
   }
 }

@@ -10,6 +10,26 @@
 
     <div>
       <div class="container">
+        <div>
+          <mat-checkbox style="display: inline-block; width: 20%" formControlName="duplicated" (change)="handleChangeOfDuplicateCheckbox($event)">
+            Duplicated Issue
+          </mat-checkbox>
+
+          <mat-form-field [style.visibility]="!duplicated.value ? 'hidden' : 'visible'" style="display: inline-block; width: 50%">
+            <mat-select formControlName="duplicateOf" placeholder="Duplicate of">
+              <mat-option *ngFor="let issue of duplicatedIssueList | async" [disabled]="dupIssueOptionIsDisabled(issue)" [value]="issue">
+                <span class="mat-body-strong"> #{{issue.id}}: </span>  <span class="mat-body">{{issue.title}}</span>
+                <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="color: #f44336"> ({{getDisabledDupOptionErrorText(issue)}}) </span>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="duplicateOf.errors && duplicateOf.errors['required'] && duplicateOf.touched">
+              Need to specify the duplicated issue.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
         <mat-form-field class="left-half">
           <mat-select formControlName="severity" placeholder="Severity">
             <mat-option *ngFor="let value of severityValues" [value]="value">
@@ -33,7 +53,7 @@
         </mat-form-field>
       </div>
 
-      <div class="container">
+      <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
         <mat-form-field class="left-half">
           <mat-select placeholder="Assignees" formControlName="assignees" multiple>
             <mat-option *ngFor="let member of teamMembers" [value]="member">{{member}}</mat-option>

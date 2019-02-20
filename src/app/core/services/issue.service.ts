@@ -112,6 +112,10 @@ export class IssueService {
     if (issue.responseTag) {
       result.push(this.createLabel('response', issue.responseTag));
     }
+
+    if (issue.duplicated) {
+      result.push('duplicate');
+    }
     return result;
   }
 
