@@ -3,7 +3,7 @@ import {GithubService} from './github.service';
 import {Admin, Student, Tutor, User, UserRole} from '../models/user.model';
 import {map} from 'rxjs/operators';
 import {Team} from '../models/team.model';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -14,10 +14,11 @@ export class UserService {
   constructor(private githubService: GithubService) {}
 
   getUserLoginId() {
-    this.currentUser.loginId;
+    return this.currentUser.loginId;
   }
 
   createUserModel(authResponse: {}): Observable<User> {
+    // return of(<User>{loginId: 'JunWei', role: 'Student'});
     return this.githubService.getDataFile().pipe(map((jsonData: {}) => {
       const userLoginId = authResponse['login'];
       this.currentUser = this.createUser(jsonData, userLoginId);

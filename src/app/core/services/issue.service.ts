@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {GithubService} from './github.service';
-import {first} from 'rxjs/operators';
+import {first, map} from 'rxjs/operators';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {Issue} from '../models/issue.model';
 import {ErrorHandlingService} from './error-handling.service';
@@ -16,8 +16,7 @@ export class IssueService {
   issues$: BehaviorSubject<Issue[]>;
 
   constructor(private githubService: GithubService,
-              private userService: UserService,
-              private errorHandlingService: ErrorHandlingService) {
+              private userService: UserService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -29,15 +28,14 @@ export class IssueService {
    */
   getAllIssues(): Observable<Issue[]> {
     if (this.issues === undefined) {
-      this.initializeData();
+      return this.initializeData();
     }
     return this.issues$;
   }
 
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
-      this.initializeData();
-      return this.githubService.fetchIssue(id).pipe(first());
+      return this.githubService.fetchIssue(id);
     } else {
       return of(this.issues[id]);
     }
@@ -78,7 +76,7 @@ export class IssueService {
     this.issues$.next(new Array<Issue>());
   }
 
-  private initializeData() {
+  private initializeData(): Observable<Issue[]> {
     // TODO check the phase the filter accordingly
     // filterByCreator = 'FILTER_BY_CREATOR',
     // filterByTeam = 'FILTER_BY_TEAM',
@@ -88,10 +86,11 @@ export class IssueService {
     const issuesFilter = {
       labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
     };
-    this.githubService.fetchIssues(issuesFilter).pipe(first()).subscribe((issues: Issue[]) => {
+    return this.githubService.fetchIssues(issuesFilter).pipe(map((issues) => {
       this.issues = issues;
       this.issues$.next(Object.values(this.issues));
-    }, (error) => this.errorHandlingService.handleHttpError(error, () => this.getAllIssues()));
+      return Object.values(this.issues);
+    }));
   }
 
   private createLabelsForIssue(issue: Issue): string[] {

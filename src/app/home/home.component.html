@@ -53,5 +53,10 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let issue; columns: displayedColumns;"></tr>
   </table>
+
+  <mat-card *ngIf="issuesDataSource.isLoading$ | async"
+            style="display: flex; justify-content: center; align-items: center">
+    <mat-progress-spinner color="primary" mode="indeterminate" diameter="50" strokeWidth="5"></mat-progress-spinner>
+  </mat-card>
   <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 </div>

@@ -1,19 +1,26 @@
-<div *ngIf="!isPageLoading">
-  <div>
-    <app-issue-title [issue]="issue" (issueUpdated)="updateIssue($event)"></app-issue-title>
+<div>
+  <app-issue-title *ngIf="!isIssueLoading" [issue]="issue" (issueUpdated)="updateIssue($event)"></app-issue-title>
 
-    <mat-divider></mat-divider>
+  <mat-divider></mat-divider>
 
-    <div class="row">
-      <div class="column left">
-        <app-issue-description [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)"></app-issue-description>
+  <div class="row">
+    <div class="column left">
+      <app-issue-description *ngIf="!isIssueLoading" [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)"></app-issue-description>
 
+      <div *ngIf="!isCommentsLoading">
         <app-issue-comment *ngIf="comments.teamResponse" [comments]="comments" attributeName="teamResponse" (commentsUpdated)="updateComments($event)"></app-issue-comment>
         <app-new-team-response *ngIf="!comments.teamResponse" [comments]="comments" [issue]="issue" (issueUpdated)="updateIssue($event)"
                                (commentsUpdated)="updateComments($event)"></app-new-team-response>
       </div>
 
-      <div class="column right" [style.visibility]="comments.teamResponse ? 'visible' : 'hidden'">
+      <div *ngIf="isCommentsLoading"
+                style="display: flex; justify-content: center; align-items: center">
+        <mat-progress-spinner color="primary" mode="indeterminate" diameter="50" strokeWidth="5"></mat-progress-spinner>
+      </div>
+    </div>
+
+    <div class="column right" [style.visibility]="comments.teamResponse ? 'visible' : 'hidden'">
+      <div *ngIf="!isCommentsLoading">
         <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
         <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
@@ -24,6 +31,11 @@
         <mat-divider></mat-divider>
         <app-duplicate-of-component [issue]="issue" [comments]="comments" (issueUpdated)="updateIssue($event)"
                                     (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>
+      </div>
+
+      <div *ngIf="isCommentsLoading"
+           style="display: flex; justify-content: center; align-items: center">
+        <mat-progress-spinner color="primary" mode="indeterminate" diameter="50" strokeWidth="5"></mat-progress-spinner>
       </div>
     </div>
   </div>

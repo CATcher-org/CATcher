@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatSort} from '@angular/material';
 import {Issue} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
@@ -13,7 +13,6 @@ import {finalize} from 'rxjs/operators';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
   issuesPendingDeletion = {};
@@ -25,8 +24,9 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.issues = this.issueService.issues$;
-    this.issuesDataSource = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.displayedColumns);
+    this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
+      this.paginator, this.displayedColumns);
+    this.issuesDataSource.loadIssues();
   }
 
   applyFilter(filterValue: string) {

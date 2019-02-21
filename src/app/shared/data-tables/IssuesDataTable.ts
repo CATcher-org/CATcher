@@ -3,36 +3,60 @@ import {DataSource} from '@angular/cdk/table';
 import {IssueService} from '../../core/services/issue.service';
 import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.model';
 import {MatPaginator, MatSort} from '@angular/material';
-import {map} from 'rxjs/operators';
+import {delay, flatMap, map, tap} from 'rxjs/operators';
+import {ErrorHandlingService} from '../../core/services/error-handling.service';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
+  private issuesSubject = new BehaviorSubject<Issue[]>([]);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
 
-  constructor(private issueService: IssueService, private sort: MatSort,
+  public isLoading$ = this.loadingSubject.asObservable();
+
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private sort: MatSort,
               private paginator: MatPaginator, private displayedColumn: string[]) {
     super();
   }
 
   connect(): Observable<Issue[]> {
+    return this.issuesSubject.asObservable();
+  }
+
+  disconnect() {}
+
+  loadIssues() {
     const displayDataChanges = [
-      this.issueService.getAllIssues(),
+      this.issueService.issues$,
       this.paginator.page,
       this.sort.sortChange,
       this.filterChange
     ];
 
-    return merge(...displayDataChanges).pipe(map(() => {
-      let data = <Issue[]>Object.values(this.issueService.issues$.getValue());
+    this.loadingSubject.next(true);
 
-      data = this.getSortedData(data);
-      data = this.getFilteredData(data);
-      data = this.getPaginatedData(data);
+    this.issueService.getAllIssues().pipe(
+      delay(0),
+      tap(() => {
+        this.loadingSubject.next(false);
+      }),
+      flatMap(() => {
+        return merge(...displayDataChanges).pipe(
+          map(() => {
+            let data = <Issue[]>Object.values(this.issueService.issues$.getValue());
 
-      return data;
-    }));
+            data = this.getSortedData(data);
+            data = this.getFilteredData(data);
+            data = this.getPaginatedData(data);
+
+            return data;
+          }));
+      })
+    ).subscribe((issues) => {
+      this.issuesSubject.next(issues);
+    },
+      (error) => this.errorHandlingService.handleHttpError(error, () => this.issueService.getAllIssues())
+    );
   }
-
-  disconnect() {}
 
   get filter(): string {
     return this.filterChange.value;

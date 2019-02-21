@@ -6,7 +6,6 @@ import {FormBuilder} from '@angular/forms';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {IssueComments} from '../core/models/comment.model';
 import {IssueCommentService} from '../core/services/issue-comment.service';
-import {forkJoin} from 'rxjs';
 import {UserService} from '../core/services/user.service';
 
 @Component({
@@ -15,9 +14,10 @@ import {UserService} from '../core/services/user.service';
   styleUrls: ['./issue.component.css']
 })
 export class IssueComponent implements OnInit {
-  isPageLoading = true;
   issue: Issue;
   comments: IssueComments;
+  isIssueLoading = true;
+  isCommentsLoading = true;
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -54,12 +54,24 @@ export class IssueComponent implements OnInit {
    */
   private initializeIssue() {
     const id = +this.route.snapshot.paramMap.get('issue_id');
-    forkJoin(this.issueService.getIssue(id), this.issueCommentService.getIssueComments(id)).subscribe((res) => {
-      this.issue = res[0];
-      this.comments = res[1];
-      this.updateIssue(this.issue);
+    this.getIssue(id);
+    this.getComments(id);
+  }
 
-      this.isPageLoading = false;
+  private getIssue(id: number) {
+    this.issueService.getIssue(id).subscribe((issue) => {
+      this.issue = issue;
+      this.isIssueLoading = false;
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
+    });
+  }
+
+  private getComments(id: number) {
+    this.issueCommentService.getIssueComments(id).subscribe((comments) => {
+      this.comments = comments;
+      this.updateIssue(this.issue);
+      this.isCommentsLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
     });
