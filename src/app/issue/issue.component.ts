@@ -7,6 +7,7 @@ import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {IssueComments} from '../core/models/comment.model';
 import {IssueCommentService} from '../core/services/issue-comment.service';
 import {UserService} from '../core/services/user.service';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-issue',
@@ -46,6 +47,7 @@ export class IssueComponent implements OnInit {
   updateComments(newComments: IssueComments) {
     this.comments = newComments;
     this.issueCommentService.updateLocalStore(newComments);
+    this.updateIssue(this.issue);
   }
 
   /**
@@ -59,19 +61,17 @@ export class IssueComponent implements OnInit {
   }
 
   private getIssue(id: number) {
-    this.issueService.getIssue(id).subscribe((issue) => {
+    this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
       this.issue = issue;
-      this.isIssueLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
     });
   }
 
   private getComments(id: number) {
-    this.issueCommentService.getIssueComments(id).subscribe((comments) => {
+    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading =  false)).subscribe((comments) => {
       this.comments = comments;
       this.updateIssue(this.issue);
-      this.isCommentsLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
     });

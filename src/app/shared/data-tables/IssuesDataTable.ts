@@ -43,7 +43,6 @@ export class IssuesDataTable extends DataSource<Issue> {
         return merge(...displayDataChanges).pipe(
           map(() => {
             let data = <Issue[]>Object.values(this.issueService.issues$.getValue());
-
             data = this.getSortedData(data);
             data = this.getFilteredData(data);
             data = this.getPaginatedData(data);
@@ -67,6 +66,9 @@ export class IssuesDataTable extends DataSource<Issue> {
   }
 
   private getSortedData(data: Issue[]): Issue[] {
+    if (!this.sort.active) {
+      return data;
+    }
     return data.sort((a, b) => {
       let valueA: number | string = '';
       let valueB: number | string = '';

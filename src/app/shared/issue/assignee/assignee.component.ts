@@ -17,7 +17,6 @@ export class AssigneeComponent implements OnInit {
 
   @Input() issue: Issue;
   @Input() team: Team;
-  @Input() editable: boolean;
 
   @ViewChild(MatSelect) assigneeSelection: MatSelect;
 
