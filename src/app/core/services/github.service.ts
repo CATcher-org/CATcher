@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
 import {forkJoin, from, Observable, of} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, mergeMap, catchError} from 'rxjs/operators';
 import {Issue, LABELS_IN_BUG_REPORTING} from '../models/issue.model';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import * as moment from 'moment';
 
-const ORG_NAME = 'testathor';
-const REPO = 'pe';
+let ORG_NAME = 'testathor';
+let REPO = 'pe';
 const DATA_REPO = 'public_data';
 const octokit = require('@octokit/rest')();
 let username;
@@ -16,7 +17,7 @@ let username;
 })
 export class GithubService {
 
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
   storeCredentials(user: String, passw: String) {
@@ -26,6 +27,11 @@ export class GithubService {
       username: user,
       password: passw,
     });
+  }
+
+  updatePhaseDetails(repoName: string, orgName: string) {
+    ORG_NAME = orgName;
+    REPO = repoName;
   }
   /**
    * Will return an Observable with JSON object conforming with the following structure:

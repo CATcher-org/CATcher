@@ -19,6 +19,13 @@
             </mat-form-field>
           </td>
         </tr>
+        <tr>
+          <td>
+            <mat-form-field class="login-field">
+              <input matInput placeholder="Encoded Text" formControlName="encodedText" required>
+            </mat-form-field>
+          </td>
+        </tr>
       </table>
       <mat-card-actions>
         <button type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">Sign In</button>

@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
-import {BehaviorSubject, of, throwError} from 'rxjs';
+import {BehaviorSubject, throwError} from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import {UserService} from './user.service';
+import {PhaseService} from './phase.service';
 import {ErrorHandlingService} from './error-handling.service';
 import {GithubService} from './github.service';
-import {flatMap} from 'rxjs/operators';
+import { flatMap} from 'rxjs/operators';
 import {IssueService} from './issue.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
@@ -23,10 +24,11 @@ export class AuthService {
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
               private userService: UserService,
-              private issueService: IssueService) {
+              private issueService: IssueService,
+              private phaseService: PhaseService) {
   }
 
-  startAuthentication(username: String, password: String) {
+  startAuthentication(username: String, password: String, encodedText: String) {
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
 
@@ -37,12 +39,14 @@ export class AuthService {
       }),
       flatMap((user) => {
         if (user) {
+          const array = this.phaseService.parseEncodedPhase(encodedText);
           this.changeAuthState(AuthState.Authenticated);
-          return of(user);
+          return (this.phaseService.checkIfReposAccessible(array));
         } else {
           return throwError('Unauthorized user.');
         }
-      }));
+      }),
+    );
   }
 
   logOut(): void {
