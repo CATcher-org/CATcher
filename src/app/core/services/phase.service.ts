@@ -61,7 +61,6 @@ export class PhaseService {
   }
 
   determinePhaseNumber(response: any) {
-    console.log(response);
 
     let org = '';
     let repo = '';
