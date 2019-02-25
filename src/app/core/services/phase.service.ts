@@ -10,7 +10,7 @@ import {ErrorHandlingService} from './error-handling.service';
 })
 export class PhaseService {
 
-  private phaseUrl: string;
+  currentPhaseUrl: string;
   private phaseNum: string;
 
   constructor(private http: HttpClient,
@@ -61,30 +61,34 @@ export class PhaseService {
   }
 
   determinePhaseNumber(response: any) {
-    console.log(response);
-
     let org = '';
     let repo = '';
+    let copyUrl = '';
 
     if (response['first']['id'] != null) {
-      this.phaseUrl = '';
+      this.currentPhaseUrl = 'phase1';
       this.phaseNum = 'first';
     } else if (response['second']['id'] != null) {
-      this.phaseUrl = 'phase2';
+      this.currentPhaseUrl = 'phase2';
       this.phaseNum = 'second';
     } else if (response['third']['id'] != null) {
-      this.phaseUrl = 'phase3';
+      this.currentPhaseUrl = 'phase3';
       this.phaseNum = 'third';
     }
-    if (this.phaseUrl == null) {
+    if (this.currentPhaseUrl == null) {
       this.errorHandlingService.handleGeneralError('Repo is not ready');
+      return ('not accessible');
     } else {
+      copyUrl = this.currentPhaseUrl;
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
       this.github.updatePhaseDetails(repo, org);
-      return (this.phaseUrl);
+      return (copyUrl);
     }
+  }
 
+  reset() {
+    this.currentPhaseUrl = null;
   }
 
 }

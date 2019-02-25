@@ -55,9 +55,10 @@ export class AuthService {
     this.userService.reset();
     this.issueService.reset();
     this.issueCommentService.reset();
+    this.phaseService.reset();
 
     this.changeAuthState(AuthState.NotAuthenticated);
-    this.ngZone.run(() => this.router.navigate(['/login']));
+    this.ngZone.run(() => this.router.navigate(['']));
   }
 
   isAuthenticated(): boolean {

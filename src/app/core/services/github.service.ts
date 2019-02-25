@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
-import {forkJoin, from, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {Issue, labelsToAttributeMapping, LABELS_IN_PHASE_2} from '../models/issue.model';
+import {forkJoin, from, Observable } from 'rxjs';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import * as moment from 'moment';
 import {IssueComment} from '../models/comment.model';
@@ -19,7 +18,7 @@ let octokit;
 })
 export class GithubService {
 
-  constructor(private http: HttpClient) {
+  constructor() {
   }
 
   storeCredentials(user: String, passw: String) {

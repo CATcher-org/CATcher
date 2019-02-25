@@ -4,13 +4,16 @@ import {IssueService} from '../core/services/issue.service';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
+import {Issue} from '../core/models/issue.model';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-phase1',
+  templateUrl: './phase1.component.html',
+  styleUrls: ['./phase1.component.css']
 })
-export class HomeComponent implements OnInit {
+export class Phase1Component implements OnInit {
+  issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
   issuesPendingDeletion = {};
