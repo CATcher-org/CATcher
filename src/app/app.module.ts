@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import {Phase2Module} from './phase2/phase2.module';
 import {Phase3Module} from './phase3/phase3.module';
 import {Phase1Module} from './phase1/phase1.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import {Phase1Module} from './phase1/phase1.module';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AuthModule,
     Phase1Module,
     Phase2Module,
