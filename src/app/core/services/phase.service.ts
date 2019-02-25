@@ -65,24 +65,28 @@ export class PhaseService {
 
     let org = '';
     let repo = '';
+    let copyUrl = 'intial';
 
-    if (response['first']['id'] != null) {
+    if (response['first'] != 'Oops!') {
       this.phaseUrl = '';
       this.phaseNum = 'first';
-    } else if (response['second']['id'] != null) {
+    } else if (response['second'] != 'Oops!') {
       this.phaseUrl = 'phase2';
       this.phaseNum = 'second';
-    } else if (response['third']['id'] != null) {
+    } else if (response['third'] != 'Oops!') {
       this.phaseUrl = 'phase3';
       this.phaseNum = 'third';
     }
     if (this.phaseUrl == null) {
       this.errorHandlingService.handleGeneralError('Repo is not ready');
+      return ('not accessible');
     } else {
+      copyUrl = this.phaseUrl;
+      this.phaseUrl = null;
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
       this.github.updatePhaseDetails(repo, org);
-      return (this.phaseUrl);
+      return (copyUrl);
     }
 
   }
