@@ -4,6 +4,7 @@ import {Issue} from '../../core/models/issue.model';
 import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder} from '@angular/forms';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import {PhaseService} from '../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue',

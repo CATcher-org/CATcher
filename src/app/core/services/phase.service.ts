@@ -61,8 +61,6 @@ export class PhaseService {
   }
 
   determinePhaseNumber(response: any) {
-    console.log(response);
-
     let org = '';
     let repo = '';
     let copyUrl = '';
@@ -82,13 +80,15 @@ export class PhaseService {
       return ('not accessible');
     } else {
       copyUrl = this.currentPhaseUrl;
-      this.currentPhaseUrl = null;
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
       this.github.updatePhaseDetails(repo, org);
       return (copyUrl);
     }
+  }
 
+  reset() {
+    this.currentPhaseUrl = null;
   }
 
 }
