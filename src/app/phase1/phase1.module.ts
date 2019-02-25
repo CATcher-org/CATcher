@@ -3,16 +3,24 @@ import { NgModule } from '@angular/core';
 import {SharedModule} from '../shared/shared.module';
 import {Phase1RoutingModule} from './phase1-routing.module';
 import {Phase1Component} from './phase1.component';
-import {IssueModule} from './issue/issue.module';
+import {NewIssueComponent} from './new-issue/new-issue.component';
+import {IssueComponent} from './issue/issue.component';
+import {CommentEditorModule} from '../shared/comment-editor/comment-editor.module';
+import {MarkdownModule} from 'ngx-markdown';
+import {IssueComponentsModule} from '../shared/issue/issue-components.module';
 
 @NgModule({
   imports: [
     Phase1RoutingModule,
     SharedModule,
-    IssueModule,
+    IssueComponentsModule,
+    CommentEditorModule,
+    MarkdownModule.forChild(),
   ],
   declarations: [
     Phase1Component,
+    NewIssueComponent,
+    IssueComponent,
   ],
 })
 export class Phase1Module {}

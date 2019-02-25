@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders} from '@angular/common/http';
-import {forkJoin, from, Observable, of} from 'rxjs';
-import {map, mergeMap, catchError} from 'rxjs/operators';
+import {forkJoin, from, Observable } from 'rxjs';
+import {map, mergeMap } from 'rxjs/operators';
 import {Issue, LABELS_IN_BUG_REPORTING} from '../models/issue.model';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import * as moment from 'moment';
@@ -17,7 +16,7 @@ let username;
 })
 export class GithubService {
 
-  constructor(private http: HttpClient) {
+  constructor() {
   }
 
   storeCredentials(user: String, passw: String) {

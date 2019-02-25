@@ -15,7 +15,6 @@ import {ErrorToasterModule} from './error-toasters/error-toaster.module';
     HttpClientModule,
     RouterModule,
     MaterialModule,
-    BrowserAnimationsModule,
     ErrorToasterModule,
   ],
   declarations: [],
@@ -26,7 +25,6 @@ import {ErrorToasterModule} from './error-toasters/error-toaster.module';
     HttpClientModule,
     RouterModule,
     MaterialModule,
-    BrowserAnimationsModule,
     ErrorToasterModule,
   ]
 })
