@@ -54,7 +54,7 @@ export class AuthService {
     this.issueService.reset();
 
     this.changeAuthState(AuthState.NotAuthenticated);
-    this.ngZone.run(() => this.router.navigate(['/login']));
+    this.ngZone.run(() => this.router.navigate(['']));
   }
 
   isAuthenticated(): boolean {
