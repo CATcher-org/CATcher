@@ -10,7 +10,7 @@ import {ErrorHandlingService} from './error-handling.service';
 })
 export class PhaseService {
 
-  private phaseUrl: string;
+  currentPhaseUrl: string;
   private phaseNum: string;
 
   constructor(private http: HttpClient,
@@ -65,24 +65,24 @@ export class PhaseService {
 
     let org = '';
     let repo = '';
-    let copyUrl = 'intial';
+    let copyUrl = '';
 
-    if (response['first'] != 'Oops!') {
-      this.phaseUrl = '';
+    if (response['first']['id'] != null) {
+      this.currentPhaseUrl = 'phase1';
       this.phaseNum = 'first';
-    } else if (response['second'] != 'Oops!') {
-      this.phaseUrl = 'phase2';
+    } else if (response['second']['id'] != null) {
+      this.currentPhaseUrl = 'phase2';
       this.phaseNum = 'second';
-    } else if (response['third'] != 'Oops!') {
-      this.phaseUrl = 'phase3';
+    } else if (response['third']['id'] != null) {
+      this.currentPhaseUrl = 'phase3';
       this.phaseNum = 'third';
     }
-    if (this.phaseUrl == null) {
+    if (this.currentPhaseUrl == null) {
       this.errorHandlingService.handleGeneralError('Repo is not ready');
       return ('not accessible');
     } else {
-      copyUrl = this.phaseUrl;
-      this.phaseUrl = null;
+      copyUrl = this.currentPhaseUrl;
+      this.currentPhaseUrl = null;
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
       this.github.updatePhaseDetails(repo, org);
