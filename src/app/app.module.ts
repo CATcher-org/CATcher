@@ -6,12 +6,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 import { AppComponent } from './app.component';
-import { HomeModule } from './home/home.module';
 import { SharedModule } from './shared/shared.module';
 import { HeaderComponent } from './shared/layout';
-import {IssueModule } from './issue/issue.module';
 import {AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
+import {Phase2Module} from './phase2/phase2.module';
+import {Phase3Module} from './phase3/phase3.module';
+import {Phase1Module} from './phase1/phase1.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,12 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   imports: [
     BrowserModule,
+    AuthModule,
+    Phase1Module,
+    Phase2Module,
+    Phase3Module,
+    SharedModule,
+    HttpClientModule,
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,
@@ -33,12 +40,7 @@ import { HttpClientModule } from '@angular/common/http';
         },
       },
     }),
-    HomeModule,
-    IssueModule,
-    AuthModule,
-    SharedModule,
     AppRoutingModule,
-    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

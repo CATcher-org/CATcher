@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Issue} from '../core/models/issue.model';
-import {IssueService} from '../core/services/issue.service';
+import {Issue} from '../../core/models/issue.model';
+import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder} from '@angular/forms';
-import {ErrorHandlingService} from '../core/services/error-handling.service';
+import {ErrorHandlingService} from '../../core/services/error-handling.service';
 
 @Component({
   selector: 'app-issue',
