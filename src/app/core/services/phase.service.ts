@@ -65,6 +65,7 @@ export class PhaseService {
 
     let org = '';
     let repo = '';
+    let copyUrl = '';
 
     if (response['first']['id'] != null) {
       this.currentPhaseUrl = 'phase1';
@@ -78,11 +79,14 @@ export class PhaseService {
     }
     if (this.currentPhaseUrl == null) {
       this.errorHandlingService.handleGeneralError('Repo is not ready');
+      return ('not accessible');
     } else {
+      copyUrl = this.currentPhaseUrl;
+      this.currentPhaseUrl = null;
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
       this.github.updatePhaseDetails(repo, org);
-      return (this.currentPhaseUrl);
+      return (copyUrl);
     }
 
   }
