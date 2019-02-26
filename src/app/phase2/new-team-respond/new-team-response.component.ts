@@ -77,7 +77,7 @@ export class NewTeamResponseComponent implements OnInit {
     })).pipe(finalize(() => this.isFormPending = false)).subscribe((res) => {
       this.commentsUpdated.emit({
         ...this.comments,
-        ['teamResponse']: res[0],
+        teamResponse: res[0],
       });
       this.issueUpdated.emit({
         ...res[1],

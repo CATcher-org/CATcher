@@ -3,7 +3,6 @@ import {Observable, of} from 'rxjs';
 import {GithubService} from './github.service';
 import {IssueComment, IssueComments, phase2ResponseTemplate} from '../models/comment.model';
 import {map} from 'rxjs/operators';
-import {Issue} from '../models/issue.model';
 import {Phase, PhaseService} from './phase.service';
 
 @Injectable({
@@ -23,12 +22,23 @@ export class IssueCommentService {
     }
   }
 
-  createIssueComment(issueId: number, description: string, duplicatedOf: Issue) {
-    return this.githubService.createIssueComment(issueId, description, duplicatedOf);
+  createIssueComment(issueId: number, description: string, duplicatedOf: number) {
+    return this.githubService.createIssueComment(<IssueComment>{
+      id: issueId,
+      description: this.createGithubResponse(description, `Duplicate of #${duplicatedOf}`),
+      duplicateOf: duplicatedOf,
+    }).pipe(map((comment: IssueComment) => {
+      return this.parseResponse(comment);
+    }));
   }
 
   updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
-    return this.githubService.updateIssueComment(issueComment);
+    return this.githubService.updateIssueComment({
+      ...issueComment,
+      description: this.createGithubResponse(issueComment.description, `Duplicate of #${issueComment.duplicateOf}`),
+    }).pipe(map((comment: IssueComment) => {
+      return this.parseResponse(comment);
+    }));
   }
 
   updateWithDuplicateOfValue(issueId: number, duplicateOfNumber: number): Observable<IssueComment> {
@@ -136,7 +146,7 @@ export class IssueCommentService {
     }
   }
 
-  private createGithubResponse(description: string, duplicateOf: string) {
+  private createGithubResponse(description: string, duplicateOf: string): string {
     switch (this.phaseService.currentPhase) {
       case Phase.phase2:
         return `## Team\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;

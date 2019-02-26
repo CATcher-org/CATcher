@@ -108,9 +108,9 @@ export class GithubService {
     );
   }
 
-  createIssueComment(issueId: number, description: string, duplicateOf: Issue) {
-    return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, number: issueId,
-                body: this.processCommentForGithub(description, duplicateOf)}))
+  createIssueComment(comment: IssueComment): Observable<IssueComment> {
+    return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, number: comment.id,
+                body: comment.description}))
       .pipe(map((response) => {
         return this.createIssueCommentModel(response['data']);
       })
@@ -153,7 +153,6 @@ export class GithubService {
       title: issueInJson['title'],
       assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
       description: issueInJson['body'],
-      duplicateOf: this.parseDuplicateOfValue(issueInJson['body']),
       ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_PHASE_2),
     };
   }
@@ -215,23 +214,5 @@ export class GithubService {
           return +paginatedData['last'] || 1;
         })
     );
-  }
-
-  private processCommentForGithub(description: string, duplicateOf: Issue): string {
-    let comment = description;
-    if (duplicateOf) {
-      comment = `Duplicate of #${duplicateOf.id}\n` + comment;
-    }
-    return comment;
-  }
-
-  private parseDuplicateOfValue(toParse: string): number {
-    const regex = /duplicate of\s*#(\d+)/i;
-    const result = regex.exec(toParse);
-    if (result && result.length >= 2) {
-      return +regex.exec(toParse)[1];
-    } else {
-      return null;
-    }
   }
 }
