@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, throwError} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {GithubService} from './github.service';
-import {ErrorHandlingService} from './error-handling.service';
 import {IssueComment, IssueComments, phase2ResponseTemplate} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import {Issue} from '../models/issue.model';
@@ -34,34 +33,28 @@ export class IssueCommentService {
 
   updateWithDuplicateOfValue(issueId: number, duplicateOfNumber: number): Observable<IssueComment> {
     const issueComment = this.comments.get(issueId).teamResponse;
-    const regex = /(duplicate of\s*#)(\d+)/i;
-    const duplicateOfArray = regex.exec(issueComment.description);
-    let updatedDescription = issueComment.description;
 
-    if (duplicateOfArray && duplicateOfArray.length >= 2) { // search and replace existing duplicateOf string
-      updatedDescription = updatedDescription.replace(/(duplicate of\s*#)(\d+)/i, `$1${duplicateOfNumber}`);
-    } else { // Add duplicateOf value into comment
-      updatedDescription = `Duplicate of #${duplicateOfNumber}\n` + updatedDescription;
-    }
     return this.githubService.updateIssueComment({
       ...issueComment,
-      description: updatedDescription,
-    });
+      description: this.createGithubResponse(issueComment.description, `Duplicate of #${duplicateOfNumber}`),
+    }).pipe(
+      map((comment: IssueComment) => {
+        return this.parseResponse(comment);
+      })
+    );
   }
 
   removeDuplicateOfValue(issueId: number): Observable<IssueComment> {
     const issueComment = this.comments.get(issueId).teamResponse;
-    const regex = /(duplicate of\s*#)(\d+)/i;
-    const duplicateOfArray = regex.exec(issueComment.description);
-    let updatedDescription = issueComment.description;
 
-    if (duplicateOfArray && duplicateOfArray.length >= 2) { // search and replace existing duplicateOf string
-      updatedDescription = updatedDescription.replace(/(duplicate of\s*#)(\d+)/i, '');
-    }
     return this.githubService.updateIssueComment({
       ...issueComment,
-      description: updatedDescription,
-    });
+      description: this.createGithubResponse(issueComment.description, 'Not a duplicated issue.'),
+    }).pipe(
+      map((comment: IssueComment) => {
+        return this.parseResponse(comment);
+      })
+    );
   }
 
   private initializeIssueComments(issueId: number): Observable<IssueComments> {
@@ -96,7 +89,7 @@ export class IssueCommentService {
     this.comments.clear();
   }
 
-  private parseResponse(comment: IssueComment): {} {
+  private parseResponse(comment: IssueComment): IssueComment {
     const toParse = comment.description;
 
     switch (this.phaseService.currentPhase) {
@@ -140,6 +133,15 @@ export class IssueCommentService {
       return +regex.exec(toParse)[1];
     } else {
       return null;
+    }
+  }
+
+  private createGithubResponse(description: string, duplicateOf: string) {
+    switch (this.phaseService.currentPhase) {
+      case Phase.phase2:
+        return `## Team\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;
+      case Phase.phase3:
+        // TODO: Ronak
     }
   }
 }

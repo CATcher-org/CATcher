@@ -4,8 +4,7 @@ import {Issue, labelsToAttributeMapping, LABELS_IN_PHASE_2} from '../models/issu
 import {forkJoin, from, Observable } from 'rxjs';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import * as moment from 'moment';
-import {IssueComment, phase2ResponseTemplate} from '../models/comment.model';
-import {Phase} from './phase.service';
+import {IssueComment} from '../models/comment.model';
 const Octokit = require('@octokit/rest');
 
 
@@ -206,7 +205,6 @@ export class GithubService {
   }
 
   private getNumberOfPages(filter?: {}): Observable<number> {
-    // return from(octokit.issues.listForRepo({creator: this.userService.getUserLoginId(), owner: ORG_NAME, repo: REPO, sort: 'created',
     return from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
       direction: 'asc', per_page: 100, page: 1})).pipe(
         map((response) => {
