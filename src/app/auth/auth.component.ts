@@ -50,7 +50,8 @@ export class AuthComponent implements OnInit, OnDestroy {
         const phase = this.phaseService.determinePhaseNumber(res);
         this.router.navigateByUrl(phase);
         form.resetForm();
-        if (phase !== 'not accesible') {
+
+        if (phase != 'not accessible') {
           this.router.navigateByUrl(phase);
         }
       }, (error) => {
