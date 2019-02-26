@@ -4,6 +4,7 @@ import {Issue} from '../../../core/models/issue.model';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
+import {PhaseService} from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue-title',
@@ -20,7 +21,8 @@ export class TitleComponent implements OnInit {
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService) {
+              private errorHandlingService: ErrorHandlingService,
+              private phaseService: PhaseService) {
   }
 
   ngOnInit() {

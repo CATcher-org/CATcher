@@ -4,12 +4,13 @@ import {Issue, labelsToAttributeMapping, LABELS_IN_PHASE_2} from '../models/issu
 import {forkJoin, from, Observable } from 'rxjs';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import * as moment from 'moment';
-import {IssueComment} from '../models/comment.model';
+import {IssueComment, phase2ResponseTemplate} from '../models/comment.model';
+import {Phase} from './phase.service';
 const Octokit = require('@octokit/rest');
 
 
-let ORG_NAME = '';
-let REPO = '';
+let ORG_NAME = 'testathor';
+let REPO = 'pe-results';
 const DATA_REPO = 'public_data';
 let octokit;
 
@@ -43,7 +44,6 @@ export class GithubService {
       mergeMap((numOfPages) => {
         const apiCalls = [];
         for (let i = 1; i <= numOfPages; i++) {
-          // apiCalls.push(from(octokit.issues.listForRepo({creator: this.userService.getUserLoginId(), owner: ORG_NAME, repo: REPO,
           apiCalls.push(from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO,
             sort: 'created', direction: 'asc', per_page: 100, page: i})));
         }
@@ -162,10 +162,9 @@ export class GithubService {
   private createIssueCommentModel(issueCommentInJson: {}): IssueComment {
     return <IssueComment>{
       id: issueCommentInJson['id'],
-      description: issueCommentInJson['body'],
       createdAt: moment(issueCommentInJson['created_at']).format('lll'),
       updatedAt: moment(issueCommentInJson['updated_at']).format('lll'),
-      duplicateOf: this.parseDuplicateOfValue(issueCommentInJson['body']),
+      description: issueCommentInJson['body'],
     };
   }
 
@@ -211,7 +210,6 @@ export class GithubService {
     return from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
       direction: 'asc', per_page: 100, page: 1})).pipe(
         map((response) => {
-          console.log(response);
           if (!response['headers'].link) {
             return 1;
           }

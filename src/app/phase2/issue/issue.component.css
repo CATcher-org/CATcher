@@ -1,0 +1,21 @@
+.grid-flush-left {
+  position: absolute;
+  left: 5px;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  padding: 10px;
+  height: 100%;
+}
+
+.left {
+  width: 85%;
+}
+
+.right {
+  width: 15%;
+}

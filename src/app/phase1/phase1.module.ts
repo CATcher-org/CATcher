@@ -8,7 +8,6 @@ import {IssueComponent} from './issue/issue.component';
 import {CommentEditorModule} from '../shared/comment-editor/comment-editor.module';
 import {MarkdownModule} from 'ngx-markdown';
 import {IssueComponentsModule} from '../shared/issue/issue-components.module';
-import {NewTeamResponseComponent} from '../issue/new-team-respond/new-team-response.component';
 
 @NgModule({
   imports: [
@@ -21,7 +20,6 @@ import {NewTeamResponseComponent} from '../issue/new-team-respond/new-team-respo
   declarations: [
     Phase1Component,
     NewIssueComponent,
-    NewTeamResponseComponent,
     IssueComponent,
   ],
 })

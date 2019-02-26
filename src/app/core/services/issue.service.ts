@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
-import {first, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {Issue} from '../models/issue.model';
-import {ErrorHandlingService} from './error-handling.service';
+import {Issue, IssuesFilter} from '../models/issue.model';
 import {UserService} from './user.service';
-import {Student} from '../models/user.model';
-import {Team} from '../models/team.model';
+import {Student, UserRole} from '../models/user.model';
+import {Phase, PhaseService} from './phase.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +15,8 @@ export class IssueService {
   issues$: BehaviorSubject<Issue[]>;
 
   constructor(private githubService: GithubService,
-              private userService: UserService) {
+              private userService: UserService,
+              private phaseService: PhaseService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -77,16 +77,28 @@ export class IssueService {
   }
 
   private initializeData(): Observable<Issue[]> {
-    // TODO check the phase the filter accordingly
-    // filterByCreator = 'FILTER_BY_CREATOR',
-    // filterByTeam = 'FILTER_BY_TEAM',
-    // filterByTeamsAssigned = 'FILTER_BY_TEAM_ASSIGNED'
+    let filter = {};
 
-    const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
-    const issuesFilter = {
-      labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
-    };
-    return this.githubService.fetchIssues(issuesFilter).pipe(map((issues) => {
+    switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
+      case 'FILTER_BY_CREATOR':
+        filter = {creator: this.userService.currentUser.loginId};
+        break;
+      case 'FILTER_BY_TEAM':
+        const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+        filter = {
+          labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
+        };
+        break;
+      case 'FILTER_BY_TEAM_ASSIGNED':
+        break;
+      case 'NO_FILTER':
+        break;
+      case 'NO_ACCESS':
+      default:
+        return of([]);
+    }
+
+    return this.githubService.fetchIssues(filter).pipe(map((issues) => {
       this.issues = issues;
       this.issues$.next(Object.values(this.issues));
       return Object.values(this.issues);
@@ -96,9 +108,10 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    // TODO If phase 2 then do this
-    const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
-    result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
+    if (this.phaseService.currentPhase === Phase.phase2 && this.userService.currentUser.role === UserRole.Student) {
+      const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+      result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
+    }
 
     if (issue.severity) {
       result.push(this.createLabel('severity', issue.severity));

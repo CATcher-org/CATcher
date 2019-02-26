@@ -6,34 +6,12 @@
   <div class="row">
     <div class="column left">
       <app-issue-description *ngIf="!isIssueLoading" [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)"></app-issue-description>
-
-      <div *ngIf="comments">
-        <app-issue-comment *ngIf="!isCommentsLoading && comments.teamResponse" [comments]="comments"
-                           attributeName="teamResponse" (commentsUpdated)="updateComments($event)"></app-issue-comment>
-        <app-new-team-response *ngIf="!isCommentsLoading  && !comments.teamResponse" [comments]="comments"
-                               [issue]="issue" (issueUpdated)="updateIssue($event)"
-                               (commentsUpdated)="updateComments($event)"></app-new-team-response>
-      </div>
-
-      <div *ngIf="isCommentsLoading"
-                style="display: flex; justify-content: center; align-items: center">
-        <mat-progress-spinner color="primary" mode="indeterminate" diameter="50" strokeWidth="5"></mat-progress-spinner>
-      </div>
     </div>
 
     <div class="column right">
-      <div *ngIf="!isCommentsLoading" [style.visibility]="comments.teamResponse ? 'visible' : 'hidden'">
-        <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
-        <mat-divider></mat-divider>
-        <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
-        <mat-divider></mat-divider>
-        <app-issue-label [issue]="issue" attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
-        <mat-divider></mat-divider>
-        <app-assignee-component [issue]="issue" [team]="userService.currentUser.team" (issueUpdated)="updateIssue($event)"></app-assignee-component>
-        <mat-divider></mat-divider>
-        <app-duplicate-of-component [issue]="issue" [comments]="comments" (issueUpdated)="updateIssue($event)"
-                                    (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>
-      </div>
+      <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
+      <mat-divider></mat-divider>
+      <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
     </div>
   </div>
 </div>

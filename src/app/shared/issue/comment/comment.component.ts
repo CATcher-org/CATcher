@@ -18,19 +18,16 @@ export class CommentComponent implements OnInit {
 
   readonly TITLE = {
     'teamResponse': 'Team\'s Response',
-    'testerObjection': 'Tester\'s Objection',
     'tutorResponse': 'Tutor\'s Response'
   };
 
   readonly POSTER = {
     'teamResponse': 'Team',
-    'testerObjection': 'Tester',
     'tutorResponse': 'Tutor'
   };
 
   readonly ACTION = {
     'teamResponse': 'responded',
-    'testerObjection': 'objected',
     'tutorResponse': 'responded'
   };
 

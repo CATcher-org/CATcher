@@ -53,8 +53,20 @@ export const ISSUE_LABELS = {
   responseTag: Object.keys(RESPONSE),
 };
 
-export enum IssuesFilter {
-  filterByCreator = 'FILTER_BY_CREATOR',
-  filterByTeam = 'FILTER_BY_TEAM',
-  filterByTeamsAssigned = 'FILTER_BY_TEAM_ASSIGNED'
-}
+export const IssuesFilter = {
+  phase1: {
+    Student: 'FILTER_BY_CREATOR',
+    Tutor: 'NO_FILTER',
+    Admin: 'NO_FILTER',
+  },
+  phase2: {
+    Student: 'FILTER_BY_TEAM',
+    Tutor: 'FILTER_BY_TEAM_ASSIGNED',
+    Admin: 'NO_FILTER',
+  },
+  phase3: {
+    Student: 'NO_ACCESS',
+    Tutor: 'FILTER_BY_TEAM_ASSIGNED',
+    Admin: 'NO_FILTER',
+  }
+};

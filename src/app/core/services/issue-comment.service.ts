@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import {GithubService} from './github.service';
 import {ErrorHandlingService} from './error-handling.service';
-import {IssueComment, IssueComments} from '../models/comment.model';
+import {IssueComment, IssueComments, phase2ResponseTemplate} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import {Issue} from '../models/issue.model';
+import {Phase, PhaseService} from './phase.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ import {Issue} from '../models/issue.model';
 export class IssueCommentService {
   comments = new Map<number, IssueComments>();
 
-  constructor(private githubService: GithubService) {
+  constructor(private githubService: GithubService, private phaseService: PhaseService) {
   }
 
   getIssueComments(issueId: number): Observable<IssueComments> {
@@ -66,14 +67,18 @@ export class IssueCommentService {
   private initializeIssueComments(issueId: number): Observable<IssueComments> {
     return this.githubService.fetchIssueComments(issueId).pipe(map((comments: IssueComment[]) => {
       const newIssueComments = {};
+
       if (comments.length > 0) {
-        newIssueComments['teamResponse'] = comments[0];
-      }
-      if (comments.length > 1) {
-        newIssueComments['testerObjection'] = comments[1];
-      }
-      if (comments.length > 2) {
-        newIssueComments['tutorResponse'] = comments[2];
+        switch (this.phaseService.currentPhase) {
+          case Phase.phase2:
+            newIssueComments['teamResponse'] = this.parseResponse(comments[0]);
+            break;
+          case Phase.phase3:
+            // TODO: Ronak
+            break;
+          default:
+            break;
+        }
       }
       this.comments.set(issueId, <IssueComments>{...newIssueComments, issueId: issueId});
       return this.comments.get(issueId);
@@ -89,5 +94,52 @@ export class IssueCommentService {
 
   reset() {
     this.comments.clear();
+  }
+
+  private parseResponse(comment: IssueComment): {} {
+    const toParse = comment.description;
+
+    switch (this.phaseService.currentPhase) {
+      case Phase.phase2:
+        if (!phase2ResponseTemplate.test(toParse)) {
+          return comment;
+        }
+
+        const matches = toParse.match(phase2ResponseTemplate);
+        const response = comment;
+        for (const match of matches) {
+          const groups = phase2ResponseTemplate.exec(match)['groups'];
+          switch (groups['header']) {
+            case '## Team\'s Response':
+              if (groups['description'].trim() === 'Write your response here.') {
+                return null;
+              }
+              response.description = groups['description'];
+              break;
+            case '## State the duplicated issue here, if any':
+              response.duplicateOf = this.parseDuplicateOfValue(groups['description']);
+              break;
+            default:
+              return null;
+          }
+          // reset regex because of Javascript's behaviour of retaining regex's state that has 'global' flag.
+          phase2ResponseTemplate.lastIndex = 0;
+        }
+        return response;
+      case Phase.phase3:
+        // TODO: Ronak
+      default:
+        return null;
+    }
+  }
+
+  private parseDuplicateOfValue(toParse: string): number {
+    const regex = /duplicate of\s*#(\d+)/i;
+    const result = regex.exec(toParse);
+    if (result && result.length >= 2) {
+      return +regex.exec(toParse)[1];
+    } else {
+      return null;
+    }
   }
 }
