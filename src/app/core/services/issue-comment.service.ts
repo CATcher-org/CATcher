@@ -25,7 +25,7 @@ export class IssueCommentService {
   createIssueComment(issueId: number, description: string, duplicatedOf: number) {
     return this.githubService.createIssueComment(<IssueComment>{
       id: issueId,
-      description: this.createGithubResponse(description, `Duplicate of #${duplicatedOf}`),
+      description: this.createGithubResponse(description, duplicatedOf ? `Duplicate of #${duplicatedOf}` : `-`),
       duplicateOf: duplicatedOf,
     }).pipe(map((comment: IssueComment) => {
       return this.parseResponse(comment);
@@ -59,7 +59,7 @@ export class IssueCommentService {
 
     return this.githubService.updateIssueComment({
       ...issueComment,
-      description: this.createGithubResponse(issueComment.description, 'Not a duplicated issue.'),
+      description: this.createGithubResponse(issueComment.description, '-'),
     }).pipe(
       map((comment: IssueComment) => {
         return this.parseResponse(comment);
@@ -69,20 +69,22 @@ export class IssueCommentService {
 
   private initializeIssueComments(issueId: number): Observable<IssueComments> {
     return this.githubService.fetchIssueComments(issueId).pipe(map((comments: IssueComment[]) => {
-      const newIssueComments = {};
+      const newIssueComments = <IssueComments>{
+        issueId: issueId,
+        teamResponse: null,
+        tutorResponse: null,
+        comments: [],
+      };
 
-      if (comments.length > 0) {
-        switch (this.phaseService.currentPhase) {
-          case Phase.phase2:
-            newIssueComments['teamResponse'] = this.parseResponse(comments[0]);
-            break;
-          case Phase.phase3:
-            // TODO: Ronak
-            break;
-          default:
-            break;
+      for (const comment of comments) {
+        const response = this.parseResponse(comment);
+        if (response) {
+          newIssueComments[this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse'] = response;
+        } else {
+          newIssueComments.comments.push(comment);
         }
       }
+
       this.comments.set(issueId, <IssueComments>{...newIssueComments, issueId: issueId});
       return this.comments.get(issueId);
     }));
@@ -105,7 +107,7 @@ export class IssueCommentService {
     switch (this.phaseService.currentPhase) {
       case Phase.phase2:
         if (!phase2ResponseTemplate.test(toParse)) {
-          return comment;
+          return null;
         }
 
         const matches = toParse.match(phase2ResponseTemplate);

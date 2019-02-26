@@ -10,6 +10,7 @@ export interface IssueComments {
   issueId: number;
   teamResponse?: IssueComment;
   tutorResponse?: IssueComment;
+  comments?: IssueComment[];
 }
 
 // tslint:disable-next-line
