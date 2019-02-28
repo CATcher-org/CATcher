@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import {TitleComponent} from './title/title.component';
 import {SharedModule} from '../shared.module';
-import {CommentComponent} from './comment/comment.component';
+import {DescriptionComponent} from './description/description.component';
 import {MarkdownModule} from 'ngx-markdown';
 import {CommentEditorModule} from '../comment-editor/comment-editor.module';
 import {LabelComponent} from './label/label.component';
+import {CommentComponent} from './comment/comment.component';
+import {AssigneeComponent} from './assignee/assignee.component';
+import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
 
 @NgModule({
   imports: [
@@ -14,13 +17,19 @@ import {LabelComponent} from './label/label.component';
   ],
   declarations: [
     TitleComponent,
+    DescriptionComponent,
+    LabelComponent,
     CommentComponent,
-    LabelComponent
+    AssigneeComponent,
+    DuplicateOfComponent,
   ],
   exports: [
     TitleComponent,
+    DescriptionComponent,
+    LabelComponent,
     CommentComponent,
-    LabelComponent
+    AssigneeComponent,
+    DuplicateOfComponent,
   ]
 })
 export class IssueComponentsModule { }

@@ -1,11 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatSort} from '@angular/material';
-import {Issue} from '../core/models/issue.model';
 import {IssueService} from '../core/services/issue.service';
-import {BehaviorSubject} from 'rxjs';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
+import {Issue} from '../core/models/issue.model';
 
 @Component({
   selector: 'app-phase1',
@@ -25,8 +25,9 @@ export class Phase1Component implements OnInit {
   }
 
   ngOnInit() {
-    this.issues = this.issueService.issues$;
-    this.issuesDataSource = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.displayedColumns);
+    this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
+      this.paginator, this.displayedColumns);
+    this.issuesDataSource.loadIssues();
   }
 
   applyFilter(filterValue: string) {

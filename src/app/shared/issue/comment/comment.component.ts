@@ -1,9 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {Issue} from '../../../core/models/issue.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
+import {IssueComment, IssueComments} from '../../../core/models/comment.model';
+import {IssueCommentService} from '../../../core/services/issue-comment.service';
 
 @Component({
   selector: 'app-issue-comment',
@@ -15,10 +16,27 @@ export class CommentComponent implements OnInit {
   isSavePending = false;
   issueCommentForm: FormGroup;
 
-  @Input() issue: Issue;
-  @Output() issueUpdated = new EventEmitter<Issue>();
+  readonly TITLE = {
+    'teamResponse': 'Team\'s Response',
+    'tutorResponse': 'Tutor\'s Response'
+  };
+
+  readonly POSTER = {
+    'teamResponse': 'Team',
+    'tutorResponse': 'Tutor'
+  };
+
+  readonly ACTION = {
+    'teamResponse': 'responded',
+    'tutorResponse': 'responded'
+  };
+
+  @Input() comments: IssueComments;
+  @Input() attributeName: string;
+  @Output() commentsUpdated = new EventEmitter<IssueComments>();
 
   constructor(private issueService: IssueService,
+              private issueCommentService: IssueCommentService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService) {
   }
@@ -32,7 +50,7 @@ export class CommentComponent implements OnInit {
   changeToEditMode() {
     this.isEditing = true;
     this.issueCommentForm.setValue({
-      description: this.issue.description || ''
+      description: this.comments[this.attributeName]['description'] || ''
     });
   }
 
@@ -40,24 +58,34 @@ export class CommentComponent implements OnInit {
     this.isEditing = false;
   }
 
-  updateComment(form: NgForm) {
+  updateIssueComment(form: NgForm) {
     if (this.issueCommentForm.invalid) {
       return;
     }
 
     this.isSavePending = true;
-    this.issueService.updateIssue({
-      ...this.issue,
-      description: this.issueCommentForm.get('description').value,
-    }).pipe(finalize(() => {
+    this.issueCommentService.updateIssueComment(this.getUpdatedIssueComment()).pipe(finalize(() => {
       this.isEditing = false;
       this.isSavePending = false;
-    })).subscribe((editedIssue: Issue) => {
-      this.issueService.updateLocalStore(editedIssue);
-      this.issueUpdated.emit(editedIssue);
+    })).subscribe((updatedIssueComment: IssueComment) => {
+      this.commentsUpdated.emit(this.createUpdatedIssue(updatedIssueComment));
       form.resetForm();
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+  }
+
+  private createUpdatedIssue(updatedIssueComment: IssueComment) {
+    return <IssueComments>{
+      ...this.comments,
+      [this.attributeName]: updatedIssueComment
+    };
+  }
+
+  private getUpdatedIssueComment(): IssueComment {
+    return <IssueComment> {
+      ...this.comments[this.attributeName],
+      ['description']: this.issueCommentForm.get('description').value
+    };
   }
 }

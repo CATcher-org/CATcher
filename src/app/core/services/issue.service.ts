@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
-import {catchError, first, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {Issue} from '../models/issue.model';
-import {ErrorHandlingService} from './error-handling.service';
+import {Issue, IssuesFilter} from '../models/issue.model';
+import {UserService} from './user.service';
+import {Student, UserRole} from '../models/user.model';
+import {Phase, PhaseService} from './phase.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +14,9 @@ export class IssueService {
   issues: {};
   issues$: BehaviorSubject<Issue[]>;
 
-  constructor(private githubService: GithubService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private githubService: GithubService,
+              private userService: UserService,
+              private phaseService: PhaseService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -24,28 +28,26 @@ export class IssueService {
    */
   getAllIssues(): Observable<Issue[]> {
     if (this.issues === undefined) {
-      this.initializeData();
+      return this.initializeData();
     }
     return this.issues$;
   }
 
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
-      this.initializeData();
-      return this.githubService.fetchIssue(id).pipe(first());
+      return this.githubService.fetchIssue(id);
     } else {
       return of(this.issues[id]);
     }
   }
 
-  createNewIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
-    const labelsArray = [this.createSeverityLabel(severity), this.createTypeLabel(type)];
-    return this.githubService.createNewIssue(title, description, labelsArray);
+  createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
+    const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
+    return this.githubService.createIssue(title, description, labelsArray);
   }
 
-  updateIssue(issue: Issue) {
-    const labelsArray = [this.createSeverityLabel(issue.severity), this.createTypeLabel(issue.type)];
-    return this.githubService.updateIssue(issue.id, issue.title, issue.description, labelsArray);
+  updateIssue(issue: Issue): Observable<Issue> {
+    return this.githubService.updateIssue(issue.id, issue.title, issue.description, this.createLabelsForIssue(issue), issue.assignees);
   }
 
   deleteIssue(id: number): Observable<Issue> {
@@ -74,18 +76,62 @@ export class IssueService {
     this.issues$.next(new Array<Issue>());
   }
 
-  private initializeData() {
-    this.githubService.fetchIssues().pipe(first()).subscribe((issues: Issue[]) => {
+  private initializeData(): Observable<Issue[]> {
+    let filter = {};
+
+    switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
+      case 'FILTER_BY_CREATOR':
+        filter = {creator: this.userService.currentUser.loginId};
+        break;
+      case 'FILTER_BY_TEAM':
+        const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+        filter = {
+          labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
+        };
+        break;
+      case 'FILTER_BY_TEAM_ASSIGNED':
+        break;
+      case 'NO_FILTER':
+        break;
+      case 'NO_ACCESS':
+      default:
+        return of([]);
+    }
+
+    return this.githubService.fetchIssues(filter).pipe(map((issues) => {
       this.issues = issues;
       this.issues$.next(Object.values(this.issues));
-    }, (error) => this.errorHandlingService.handleHttpError(error, () => this.getAllIssues()));
+      return Object.values(this.issues);
+    }));
   }
 
-  private createSeverityLabel(value: string) {
-    return `severity.${value}`;
+  private createLabelsForIssue(issue: Issue): string[] {
+    const result = [];
+
+    if (this.phaseService.currentPhase === Phase.phase2 && this.userService.currentUser.role === UserRole.Student) {
+      const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+      result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
+    }
+
+    if (issue.severity) {
+      result.push(this.createLabel('severity', issue.severity));
+    }
+
+    if (issue.type) {
+      result.push(this.createLabel('type', issue.type));
+    }
+
+    if (issue.responseTag) {
+      result.push(this.createLabel('response', issue.responseTag));
+    }
+
+    if (issue.duplicated) {
+      result.push('duplicate');
+    }
+    return result;
   }
 
-  private createTypeLabel(value: string) {
-    return `type.${value}`;
+  private createLabel(prepend: string, value: string) {
+    return `${prepend}.${value}`;
   }
 }

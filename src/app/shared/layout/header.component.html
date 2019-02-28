@@ -1,5 +1,9 @@
 <mat-toolbar color="primary">
-  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhaseUrl">Testathor</a>
+  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">Testathor</a>
+  <span *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
+    ({{phaseService.phaseDescription[phaseService.currentPhase]}})
+  </span>
+
   <span style="flex: 1 1 auto"></span>
   <button *ngIf="auth.isAuthenticated()" mat-icon-button matTooltip="Log out" (click)="logOut()">
     <mat-icon>exit_to_app</mat-icon>

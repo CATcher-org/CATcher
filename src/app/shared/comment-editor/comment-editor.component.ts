@@ -55,10 +55,10 @@ export class CommentEditorComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     const files = event.dataTransfer.files;
+    this.removeHighlightBorderStyle();
 
     if (files.length > 0) {
       this.readAndUploadFile(files[0]);
-      this.removeHighlightBorderStyle();
       this.commentTextArea.nativeElement.focus();
     }
   }
@@ -93,7 +93,7 @@ export class CommentEditorComponent implements OnInit {
     }
 
     reader.onload = () => {
-      this.uploadService.uploadImage(reader.result, filename).subscribe((response) => {
+      this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);

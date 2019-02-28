@@ -5,12 +5,19 @@ import {forkJoin, of} from 'rxjs';
 import {GithubService} from './github.service';
 import {ErrorHandlingService} from './error-handling.service';
 
+export enum Phase { phase1 = 'phase1', phase2 = 'phase2', phase3 = 'phase3' }
+
 @Injectable({
   providedIn: 'root',
 })
 export class PhaseService {
 
-  currentPhaseUrl: string;
+  public currentPhase: Phase;
+  public readonly phaseDescription = {
+    'phase1': 'Bug Reporting Phase',
+    'phase2': 'Team\'s Response Phase',
+    'phase3': 'Moderation Phase',
+  };
   private phaseNum: string;
 
   constructor(private http: HttpClient,
@@ -66,20 +73,20 @@ export class PhaseService {
     let copyUrl = '';
 
     if (response['first']['id'] != null) {
-      this.currentPhaseUrl = 'phase1';
+      this.currentPhase = Phase.phase1;
       this.phaseNum = 'first';
     } else if (response['second']['id'] != null) {
-      this.currentPhaseUrl = 'phase2';
+      this.currentPhase = Phase.phase2;
       this.phaseNum = 'second';
     } else if (response['third']['id'] != null) {
-      this.currentPhaseUrl = 'phase3';
+      this.currentPhase = Phase.phase3;
       this.phaseNum = 'third';
     }
-    if (this.currentPhaseUrl == null) {
+    if (this.currentPhase == null) {
       this.errorHandlingService.handleGeneralError('Repo is not ready');
       return ('not accessible');
     } else {
-      copyUrl = this.currentPhaseUrl;
+      copyUrl = this.currentPhase;
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
       this.github.updatePhaseDetails(repo, org);
@@ -88,7 +95,7 @@ export class PhaseService {
   }
 
   reset() {
-    this.currentPhaseUrl = null;
+    this.currentPhase = null;
   }
 
 }

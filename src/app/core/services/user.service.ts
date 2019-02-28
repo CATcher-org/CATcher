@@ -3,13 +3,13 @@ import {GithubService} from './github.service';
 import {Admin, Student, Tutor, User, UserRole} from '../models/user.model';
 import {map} from 'rxjs/operators';
 import {Team} from '../models/team.model';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private currentUser: Student | Tutor | Admin;
+  public currentUser: Student | Tutor | Admin;
 
   constructor(private githubService: GithubService) {}
 
