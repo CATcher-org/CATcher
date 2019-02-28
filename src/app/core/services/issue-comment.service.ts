@@ -107,13 +107,19 @@ export class IssueCommentService {
     switch (this.phaseService.currentPhase) {
       case Phase.phase2:
         if (!phase2ResponseTemplate.test(toParse)) {
+          // reset regex because of Javascript's behaviour of retaining regex's state that has 'global' flag.
+          phase2ResponseTemplate.lastIndex = 0;
           return null;
         }
+        phase2ResponseTemplate.lastIndex = 0;
 
         const matches = toParse.match(phase2ResponseTemplate);
+        phase2ResponseTemplate.lastIndex = 0;
+
         const response = comment;
         for (const match of matches) {
           const groups = phase2ResponseTemplate.exec(match)['groups'];
+          phase2ResponseTemplate.lastIndex = 0;
           switch (groups['header']) {
             case '## Team\'s Response':
               if (groups['description'].trim() === 'Write your response here.') {
@@ -127,8 +133,6 @@ export class IssueCommentService {
             default:
               return null;
           }
-          // reset regex because of Javascript's behaviour of retaining regex's state that has 'global' flag.
-          phase2ResponseTemplate.lastIndex = 0;
         }
         return response;
       case Phase.phase3:

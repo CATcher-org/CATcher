@@ -13,5 +13,10 @@ export interface IssueComments {
   comments?: IssueComment[];
 }
 
+export enum RespondType {
+  teamResponse = 'teamResponse',
+  tutorResponse = 'tutorResponse',
+}
+
 // tslint:disable-next-line
 export const phase2ResponseTemplate = /(?<header>## Team's Response|## State the duplicated issue here, if any)\s+(?<description>[\s\S]*?)(?=## Team's Response|## State the duplicated issue here, if any|$)/gi;

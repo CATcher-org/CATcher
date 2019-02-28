@@ -1,11 +1,13 @@
 import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
-import {map} from 'rxjs/operators';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {flatMap, map} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
 import {Issue, IssuesFilter} from '../models/issue.model';
 import {UserService} from './user.service';
 import {Student, UserRole} from '../models/user.model';
 import {Phase, PhaseService} from './phase.service';
+import {IssueCommentService} from './issue-comment.service';
+import {RespondType} from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,8 @@ export class IssueService {
 
   constructor(private githubService: GithubService,
               private userService: UserService,
-              private phaseService: PhaseService) {
+              private phaseService: PhaseService,
+              private issueCommentService: IssueCommentService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -71,6 +74,10 @@ export class IssueService {
     this.issues$.next(Object.values(this.issues));
   }
 
+  hasResponse(issueId: number, responseType: RespondType): boolean {
+    return !!this.issueCommentService.comments.get(issueId)[responseType];
+  }
+
   reset() {
     this.issues = undefined;
     this.issues$.next(new Array<Issue>());
@@ -98,11 +105,33 @@ export class IssueService {
         return of([]);
     }
 
-    return this.githubService.fetchIssues(filter).pipe(map((issues) => {
-      this.issues = issues;
-      this.issues$.next(Object.values(this.issues));
-      return Object.values(this.issues);
-    }));
+    return this.githubService.fetchIssues(filter).pipe(
+      map((issues) => {
+        this.issues = issues;
+        this.issues$.next(Object.values(this.issues));
+        return Object.values(this.issues);
+      }),
+      flatMap((issues: Issue[]) => {
+        const commentsToFetch = [];
+        for (const issue of issues) {
+          commentsToFetch.push(this.issueCommentService.getIssueComments(issue.id));
+        }
+        return forkJoin(commentsToFetch);
+      }),
+      map(() => {
+        for (const issue of <Issue[]>Object.values(this.issues)) {
+          const commentsOfIssue = this.issueCommentService.comments.get(issue.id);
+          if (commentsOfIssue.teamResponse && commentsOfIssue.teamResponse.duplicateOf) {
+            const updatedIssue = {
+              ...issue,
+              duplicateOf: commentsOfIssue.teamResponse.duplicateOf,
+            };
+            this.updateLocalStore(updatedIssue);
+          }
+        }
+        return Object.values(this.issues);
+      })
+    );
   }
 
   private createLabelsForIssue(issue: Issue): string[] {

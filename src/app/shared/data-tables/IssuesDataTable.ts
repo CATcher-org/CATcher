@@ -14,7 +14,7 @@ export class IssuesDataTable extends DataSource<Issue> {
   public isLoading$ = this.loadingSubject.asObservable();
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private sort: MatSort,
-              private paginator: MatPaginator, private displayedColumn: string[]) {
+              private paginator: MatPaginator, private displayedColumn: string[], private defaultFilter?: (issue: Issue) => boolean) {
     super();
   }
 
@@ -43,6 +43,10 @@ export class IssuesDataTable extends DataSource<Issue> {
         return merge(...displayDataChanges).pipe(
           map(() => {
             let data = <Issue[]>Object.values(this.issueService.issues$.getValue());
+            if (this.defaultFilter) {
+              data = data.filter(this.defaultFilter);
+            }
+
             data = this.getSortedData(data);
             data = this.getFilteredData(data);
             data = this.getPaginatedData(data);
@@ -70,24 +74,15 @@ export class IssuesDataTable extends DataSource<Issue> {
       return data;
     }
     return data.sort((a, b) => {
-      let valueA: number | string = '';
-      let valueB: number | string = '';
-
       switch (this.sort.active) {
-        case 'id':
-          [valueA, valueB] = [a.id, b.id];
-          return this.compareValue(valueA, valueB);
-        case 'title':
-          [valueA, valueB] = [a.title, b.title];
-          return this.compareValue(valueA, valueB);
         case 'type':
-          [valueA, valueB] = [a.type, b.type];
           return this.compareValue(ISSUE_TYPE_ORDER[a.type], ISSUE_TYPE_ORDER[b.type]);
         case 'severity':
-          [valueA, valueB] = [a.severity, b.severity];
           return this.compareValue(SEVERITY_ORDER[a.severity], SEVERITY_ORDER[b.severity]);
-        default:
-          break;
+        case 'assignees':
+          return this.compareValue(a.assignees.join(', '), b.assignees.join(', '));
+        default: // id, title, responseTag
+          return this.compareValue(a[this.sort.active], b[this.sort.active]);
       }
     });
   }
@@ -104,11 +99,23 @@ export class IssuesDataTable extends DataSource<Issue> {
   }
 
   private getFilteredData(data: Issue[]): Issue[] {
+    const searchKey = this.filter.toLowerCase();
     const result = data.slice().filter((issue: Issue) => {
       for (const column of this.displayedColumn) {
-        const searchStr = String(issue[column]).toLowerCase();
-        if (searchStr.indexOf(this.filter.toLowerCase()) !== -1) {
-          return true;
+        switch (column) {
+          case 'assignees':
+            for (const assignee of issue.assignees) {
+              if (assignee.toLowerCase().indexOf(searchKey) !== -1) {
+                return true;
+              }
+            }
+            break;
+          default:
+            const searchStr = String(issue[column]).toLowerCase();
+            if (searchStr.indexOf(searchKey) !== -1) {
+              return true;
+            }
+            break;
         }
       }
       return false;
@@ -118,6 +125,8 @@ export class IssuesDataTable extends DataSource<Issue> {
   }
 
   private compareValue(valueA, valueB): number {
-    return (valueA < valueB ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
+    const a = valueA || '';
+    const b = valueB || '';
+    return (a < b ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
   }
 }
