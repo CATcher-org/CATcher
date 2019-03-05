@@ -11,6 +11,10 @@ export interface Issue {
   duplicateOf?: number;
 }
 
+export interface Issues {
+  [id: number]: Issue;
+}
+
 /**
  * The types of labels in Issue must follow the format of `Type`.`Value`.
  * Where `Type` represent the type of the label. (e.g. severity, type, response)

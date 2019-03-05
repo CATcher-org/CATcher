@@ -5,7 +5,7 @@ import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
 import {BehaviorSubject} from 'rxjs';
-import {Issue} from '../core/models/issue.model';
+import {Issue, Issues} from '../core/models/issue.model';
 
 @Component({
   selector: 'app-phase1',
@@ -16,7 +16,7 @@ export class Phase1Component implements OnInit {
   issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
-  issuesPendingDeletion = {};
+  issuesPendingDeletion: {[id: number]: boolean};
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -28,6 +28,7 @@ export class Phase1Component implements OnInit {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
+    this.issuesPendingDeletion = {};
   }
 
   applyFilter(filterValue: string) {

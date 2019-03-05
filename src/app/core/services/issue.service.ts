@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
 import {flatMap, map} from 'rxjs/operators';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
-import {Issue, IssuesFilter} from '../models/issue.model';
+import {Issue, Issues, IssuesFilter} from '../models/issue.model';
 import {UserService} from './user.service';
 import {Student, UserRole} from '../models/user.model';
 import {Phase, PhaseService} from './phase.service';
@@ -13,7 +13,7 @@ import {RespondType} from '../models/comment.model';
   providedIn: 'root',
 })
 export class IssueService {
-  issues: {};
+  issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
 
   constructor(private githubService: GithubService,
