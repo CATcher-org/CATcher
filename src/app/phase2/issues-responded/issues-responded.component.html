@@ -24,9 +24,9 @@
         <a class="no-underline link-grey-dark" [routerLink]="'issues/' + issue.id"> {{issue.title}} </a>
         <mat-chip-list *ngIf="issue.duplicated" style="display: inline-block; margin-left: 5px;">
           <mat-chip [routerLink]="issue.duplicateOf ? ['issues/' + issue.duplicateOf] : []"
-                    [matTooltip]="issue.duplicateOf ? '#' + issue.duplicateOf : 'Not specified'" matTooltipPosition="above"
-                    style="font-size: 12px; cursor: pointer">
-            Duplicate
+                    [matTooltip]="issue.duplicateOf ? '' : 'Not specified'" matTooltipPosition="above"
+                    style="font-size: 12px; cursor: pointer" [color]="!issue.duplicateOf ? 'accent' : ''" [selected]="!issue.duplicateOf">
+            {{issue.duplicateOf ? 'Duplicate of #' + issue.duplicateOf : 'Duplicate'}}
           </mat-chip>
         </mat-chip-list>
       </td>
