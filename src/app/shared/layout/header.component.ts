@@ -7,7 +7,7 @@ import {PhaseService} from '../../core/services/phase.service';
   templateUrl: './header.component.html'
 })
 export class HeaderComponent implements OnInit {
-  constructor(public auth: AuthService, private phaseService: PhaseService) {}
+  constructor(public auth: AuthService, public phaseService: PhaseService) {}
 
   ngOnInit() {}
 
