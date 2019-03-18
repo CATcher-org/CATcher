@@ -1,7 +1,7 @@
 import { AngularElectronPage } from './app.po';
 import { browser, element, by } from 'protractor';
 
-describe('Testathor App', () => {
+describe('CATcher App', () => {
   let page: AngularElectronPage;
 
   beforeEach(() => {
