@@ -1,13 +1,14 @@
 export interface IssueComment {
   id: number;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   duplicateOf?: number;
 }
 
 export interface IssueComments {
   issueId: number;
+  responseId: number;
   teamResponse?: IssueComment;
   tutorResponse?: IssueComment;
   comments?: IssueComment[];
