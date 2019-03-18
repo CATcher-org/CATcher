@@ -105,33 +105,38 @@ export class IssueService {
         return of([]);
     }
 
-    return this.githubService.fetchIssues(filter).pipe(
+    const fetchedIssues = this.githubService.fetchIssues(filter).pipe(
       map((issues) => {
         this.issues = issues;
         this.issues$.next(Object.values(this.issues));
         return Object.values(this.issues);
-      }),
-      flatMap((issues: Issue[]) => {
+      })
+    );
+    if (this.phaseService.currentPhase === Phase.phase1) {
+      return fetchedIssues;
+    } else { // Fetch the comments related to all the issues which will be used to populate the issue table
+      fetchedIssues.pipe(flatMap((issues: Issue[]) => {
         const commentsToFetch = [];
         for (const issue of issues) {
           commentsToFetch.push(this.issueCommentService.getIssueComments(issue.id));
         }
         return forkJoin(commentsToFetch);
       }),
-      map(() => {
-        for (const issue of <Issue[]>Object.values(this.issues)) {
-          const commentsOfIssue = this.issueCommentService.comments.get(issue.id);
-          if (commentsOfIssue.teamResponse && commentsOfIssue.teamResponse.duplicateOf) {
-            const updatedIssue = {
-              ...issue,
-              duplicateOf: commentsOfIssue.teamResponse.duplicateOf,
-            };
-            this.updateLocalStore(updatedIssue);
+        map(() => {
+          for (const issue of <Issue[]>Object.values(this.issues)) {
+            const commentsOfIssue = this.issueCommentService.comments.get(issue.id);
+            if (commentsOfIssue.teamResponse && commentsOfIssue.teamResponse.duplicateOf) {
+              const updatedIssue = {
+                ...issue,
+                duplicateOf: commentsOfIssue.teamResponse.duplicateOf,
+              };
+              this.updateLocalStore(updatedIssue);
+            }
           }
-        }
-        return Object.values(this.issues);
-      })
-    );
+          return Object.values(this.issues);
+        })
+      );
+    }
   }
 
   private createLabelsForIssue(issue: Issue): string[] {
