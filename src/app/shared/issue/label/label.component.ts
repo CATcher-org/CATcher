@@ -3,6 +3,7 @@ import {FormBuilder} from '@angular/forms';
 import {Issue, ISSUE_LABELS} from '../../../core/models/issue.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
+import {PermissionService} from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-issue-label',
@@ -19,7 +20,8 @@ export class LabelComponent implements OnInit {
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService) {
+              private errorHandlingService: ErrorHandlingService,
+              public permissions: PermissionService) {
   }
 
   ngOnInit() {

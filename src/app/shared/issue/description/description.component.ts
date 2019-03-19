@@ -4,6 +4,7 @@ import {Issue} from '../../../core/models/issue.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
+import {PermissionService} from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-issue-description',
@@ -21,7 +22,8 @@ export class DescriptionComponent implements OnInit {
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService) {
+              private errorHandlingService: ErrorHandlingService,
+              public permissions: PermissionService) {
   }
 
   ngOnInit() {

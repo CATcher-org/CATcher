@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {map, mergeMap} from 'rxjs/operators';
-import {Issue, labelsToAttributeMapping, LABELS_IN_PHASE_2} from '../models/issue.model';
+import {Issue, labelsToAttributeMapping, LABELS} from '../models/issue.model';
 import {forkJoin, from, Observable } from 'rxjs';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import * as moment from 'moment';
@@ -153,7 +153,7 @@ export class GithubService {
       title: issueInJson['title'],
       assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
       description: issueInJson['body'],
-      ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_PHASE_2),
+      ...this.getFormattedLabels(issueInJson['labels'], LABELS),
     };
   }
 

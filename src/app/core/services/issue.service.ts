@@ -8,6 +8,7 @@ import {Student, UserRole} from '../models/user.model';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
 import {RespondType} from '../models/comment.model';
+import {PermissionService} from './permission.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,8 @@ export class IssueService {
   constructor(private githubService: GithubService,
               private userService: UserService,
               private phaseService: PhaseService,
-              private issueCommentService: IssueCommentService) {
+              private issueCommentService: IssueCommentService,
+              private permissionService: PermissionService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -112,10 +114,10 @@ export class IssueService {
         return Object.values(this.issues);
       })
     );
-    if (this.phaseService.currentPhase === Phase.phase1) {
+    if (!this.permissionService.requireComments()) {
       return fetchedIssues;
     } else { // Fetch the comments related to all the issues which will be used to populate the issue table
-      fetchedIssues.pipe(flatMap((issues: Issue[]) => {
+      return fetchedIssues.pipe(flatMap((issues: Issue[]) => {
         const commentsToFetch = [];
         for (const issue of issues) {
           commentsToFetch.push(this.issueCommentService.getIssueComments(issue.id));

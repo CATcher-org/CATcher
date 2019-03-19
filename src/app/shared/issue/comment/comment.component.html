@@ -3,7 +3,7 @@
   <div class="timeline-comment">
     <div class="timeline-header">
       <span style="vertical-align: middle; margin-left: 10px"> <span class="bold-name"> {{POSTER[attributeName]}} </span> {{ACTION[attributeName]}} on {{comments[attributeName].createdAt}}. </span>
-      <button *ngIf="!isEditing" mat-button style="float: right;" (click)="changeToEditMode()">
+      <button *ngIf="canEditComment() && !isEditing" mat-button style="float: right;" (click)="changeToEditMode()">
         Edit
       </button>
       <div *ngIf="isEditing" style="float: right;">
