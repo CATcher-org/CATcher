@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {GithubService} from './github.service';
-import {IssueComment, IssueComments, phase2ResponseTemplate} from '../models/comment.model';
+import {IssueComment, IssueComments, phase2ResponseTemplate, phase3ResponseTemplate} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import {Phase, PhaseService} from './phase.service';
 
@@ -133,6 +133,31 @@ export class IssueCommentService {
         return response;
       case Phase.phase3:
         // TODO: Ronak
+        if (!phase3ResponseTemplate.test(toParse)) {
+          return null;
+        }
+
+        const matchesTutor = toParse.match(phase3ResponseTemplate);
+        const responseTutor = comment;
+        for (const match of matchesTutor) {
+          const groups = phase3ResponseTemplate.exec(match)['groups'];
+          switch (groups['header']) {
+            case '## Tutor\'s Response':
+              if (groups['description'].trim() === 'Write your response here.') {
+                return null;
+              }
+              responseTutor.description = groups['description'];
+              break;
+            case '## State the duplicated issue here, if any':
+              responseTutor.duplicateOf = this.parseDuplicateOfValue(groups['description']);
+              break;
+            default:
+              return null;
+          }
+          // reset regex because of Javascript's behaviour of retaining regex's state that has 'global' flag.
+          phase3ResponseTemplate.lastIndex = 0;
+        }
+        return responseTutor;
       default:
         return null;
     }
@@ -153,7 +178,7 @@ export class IssueCommentService {
       case Phase.phase2:
         return `## Team\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;
       case Phase.phase3:
-        // TODO: Ronak
+        return `## Tutor\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;
     }
   }
 }
