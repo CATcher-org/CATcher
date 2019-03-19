@@ -1,6 +1,6 @@
 # Introduction
 
-Testathor is an online application for peer-testing of software projects.
+CATcher is an online application for peer-testing of software projects.
 
 Project structure cloned and modified from https://github.com/maximegris/angular-electron.
 

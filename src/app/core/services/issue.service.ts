@@ -2,13 +2,16 @@ import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
 import {flatMap, map} from 'rxjs/operators';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
-import {Issue, Issues, IssuesFilter} from '../models/issue.model';
+import {Issue, Issues, IssuesFilter, LABELS_IN_PHASE_2, labelsToAttributeMapping} from '../models/issue.model';
 import {UserService} from './user.service';
-import {Student, UserRole} from '../models/user.model';
+import {Student} from '../models/user.model';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
 import {RespondType} from '../models/comment.model';
 import {PermissionService} from './permission.service';
+import * as moment from 'moment';
+import {Team} from '../models/team.model';
+import {DataService} from './data.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +24,8 @@ export class IssueService {
               private userService: UserService,
               private phaseService: PhaseService,
               private issueCommentService: IssueCommentService,
-              private permissionService: PermissionService) {
+              private permissionService: PermissionService,
+              private dataService: DataService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -40,7 +44,11 @@ export class IssueService {
 
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
-      return this.githubService.fetchIssue(id);
+      return this.githubService.fetchIssue(id).pipe(
+        map((response) => {
+          return this.createIssueModel(response);
+        })
+      );
     } else {
       return of(this.issues[id]);
     }
@@ -48,15 +56,27 @@ export class IssueService {
 
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
-    return this.githubService.createIssue(title, description, labelsArray);
+    return this.githubService.createIssue(title, description, labelsArray).pipe(
+      map((response) => {
+        return this.createIssueModel(response);
+      })
+    );
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
-    return this.githubService.updateIssue(issue.id, issue.title, issue.description, this.createLabelsForIssue(issue), issue.assignees);
+    return this.githubService.updateIssue(issue.id, issue.title, issue.description, this.createLabelsForIssue(issue), issue.assignees).pipe(
+      map((response) => {
+        return this.createIssueModel(response);
+      })
+    );
   }
 
   deleteIssue(id: number): Observable<Issue> {
-    return this.githubService.closeIssue(id);
+    return this.githubService.closeIssue(id).pipe(
+      map((response) => {
+        return this.createIssueModel(response);
+      })
+    );
   }
 
   deleteFromLocalStore(issueToDelete: Issue) {
@@ -92,7 +112,7 @@ export class IssueService {
       case 'FILTER_BY_CREATOR':
         filter = {creator: this.userService.currentUser.loginId};
         break;
-      case 'FILTER_BY_TEAM':
+      case 'FILTER_BY_TEAM': // Only student has this filter
         const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
         filter = {
           labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
@@ -108,6 +128,17 @@ export class IssueService {
     }
 
     const fetchedIssues = this.githubService.fetchIssues(filter).pipe(
+      map((issues) => {
+        let mappedResult = {};
+        for (const issue of issues) {
+          const issueModel = this.createIssueModel(issue);
+          mappedResult = {
+            ...mappedResult,
+            [issueModel.id]: issueModel,
+          };
+        }
+        return mappedResult;
+      }),
       map((issues) => {
         this.issues = issues;
         this.issues$.next(Object.values(this.issues));
@@ -144,8 +175,8 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase === Phase.phase2 && this.userService.currentUser.role === UserRole.Student) {
-      const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+    if (this.phaseService.currentPhase !== Phase.phase1) {
+      const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
     }
 
@@ -169,5 +200,78 @@ export class IssueService {
 
   private createLabel(prepend: string, value: string) {
     return `${prepend}.${value}`;
+  }
+
+  private createIssueModel(issueInJson: {}): Issue {
+    return <Issue>{
+      id: +issueInJson['number'],
+      created_at: moment(issueInJson['created_at']).format('lll'),
+      title: issueInJson['title'],
+      assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
+      description: issueInJson['body'],
+      teamAssigned: this.getTeamAssignedToIssue(issueInJson),
+      ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_PHASE_2),
+    };
+  }
+
+  getTeamAssignedToIssue(issueInJson: {}): Team {
+    if (this.phaseService.currentPhase === Phase.phase1) {
+      return null;
+    }
+
+    let tutorial = '';
+    let team = '';
+    issueInJson['labels'].map((label) => {
+      const labelName = String(label['name']).split('.');
+      const labelType = labelName[0];
+      const labelValue = labelName[1];
+      if (labelType === 'team') {
+        team = labelValue;
+      } else if (labelType === 'tutorial') {
+        tutorial = labelValue;
+      }
+    });
+
+    const teamId = `${tutorial}-${team}`;
+    return this.dataService.getTeam(teamId);
+  }
+
+
+  /**
+   * Based on the kind labels specified in `desiredLabels` field, this function will produce a neatly formatted JSON object.
+   *
+   * For example:
+   * desiredLabels = ['severity', 'type']
+   * Output = {severity: High, type: FunctionalityBug}
+   *
+   * TODO: Add error handling for these assumptions.
+   * Assumptions:
+   * 1) The `labels` which were received from github has all the `desiredLabels` type we want.
+   * 2) There are no duplicates for example labels will not contain `severity.High` and `severity.Low` at the same time.
+   *
+   * @param labels defines the raw label array from which is obtained from github.
+   * @param desiredLabels defines the type of labels you want to be parsed out.
+   */
+
+  private getFormattedLabels(labels: Array<{}>, desiredLabels: Array<string>): {} {
+    let result = {};
+    for (const label of labels) {
+      const labelName = String(label['name']).split('.');
+      const labelType = labelName[0];
+      const labelValue = labelName[1];
+
+      if (label['name'] === 'duplicate') {
+        result = {
+          ...result,
+          duplicated: true,
+        };
+      } else if (desiredLabels.includes(labelType)) {
+        result = {
+          ...result,
+          [labelsToAttributeMapping[labelType]]: labelValue,
+        };
+      }
+    }
+    return result;
   }
 }

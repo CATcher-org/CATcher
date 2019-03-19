@@ -29,7 +29,7 @@
         <mat-divider></mat-divider>
         <app-issue-label [issue]="issue" attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
-        <app-assignee-component [issue]="issue" [team]="userService.currentUser.team" (issueUpdated)="updateIssue($event)"></app-assignee-component>
+        <app-assignee-component [issue]="issue" [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)"></app-assignee-component>
         <mat-divider></mat-divider>
         <app-duplicate-of-component [issue]="issue" [comments]="comments" (issueUpdated)="updateIssue($event)"
                                     (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>

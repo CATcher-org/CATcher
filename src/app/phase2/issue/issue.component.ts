@@ -7,7 +7,6 @@ import {finalize} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
 import {IssueComments} from '../../core/models/comment.model';
-import {UserService} from '../../core/services/user.service';
 import {PermissionService} from '../../core/services/permission.service';
 
 @Component({
@@ -26,7 +25,6 @@ export class IssueComponent implements OnInit {
               private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
-              public userService: UserService,
               public permissions: PermissionService) { }
 
   ngOnInit() {
