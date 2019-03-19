@@ -7,7 +7,6 @@ import {finalize} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
 import {IssueComments} from '../../core/models/comment.model';
-import {UserService} from '../../core/services/user.service';
 
 @Component({
   selector: 'app-issue',
@@ -24,8 +23,7 @@ export class IssueComponent implements OnInit {
               private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              public userService: UserService) { }
+              private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
     this.initializeIssue();

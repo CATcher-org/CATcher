@@ -11,6 +11,7 @@ import {GithubService} from './github.service';
 import { flatMap} from 'rxjs/operators';
 import {IssueService} from './issue.service';
 import {IssueCommentService} from './issue-comment.service';
+import {DataService} from './data.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -27,7 +28,8 @@ export class AuthService {
               private userService: UserService,
               private issueService: IssueService,
               private phaseService: PhaseService,
-              private issueCommentService: IssueCommentService) {
+              private issueCommentService: IssueCommentService,
+              private dataService: DataService) {
   }
 
   startAuthentication(username: String, password: String, encodedText: String) {
@@ -56,6 +58,7 @@ export class AuthService {
     this.issueService.reset();
     this.issueCommentService.reset();
     this.phaseService.reset();
+    this.dataService.reset();
 
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));

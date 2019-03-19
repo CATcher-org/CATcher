@@ -4,6 +4,7 @@ import {Admin, Student, Tutor, User, UserRole} from '../models/user.model';
 import {map} from 'rxjs/operators';
 import {Team} from '../models/team.model';
 import {Observable, of} from 'rxjs';
+import {DataService} from './data.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,10 @@ import {Observable, of} from 'rxjs';
 export class UserService {
   public currentUser: Student | Tutor | Admin;
 
-  constructor(private githubService: GithubService) {}
+  constructor(private githubService: GithubService, private dataService: DataService) {}
 
   createUserModel(authResponse: {}): Observable<User> {
-    return this.githubService.getDataFile().pipe(map((jsonData: {}) => {
+    return this.dataService.getDataFile().pipe(map((jsonData: {}) => {
       const userLoginId = authResponse['login'];
       this.currentUser = this.createUser(jsonData, userLoginId);
       return this.currentUser;

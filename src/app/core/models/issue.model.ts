@@ -1,3 +1,5 @@
+import {Team} from './team.model';
+
 export interface Issue {
   readonly id: number;
   readonly created_at: string;
@@ -9,6 +11,7 @@ export interface Issue {
   assignees?: string[];
   duplicated?: boolean;
   duplicateOf?: number;
+  teamAssigned?: Team;
 }
 
 export interface Issues {
