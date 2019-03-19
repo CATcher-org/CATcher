@@ -1,0 +1,48 @@
+.container {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.title {
+  color: black;
+  margin:0;
+  padding:30px 20px;
+}
+
+.mat-column-actions {
+  width: 80px;
+  text-align: center;
+}
+
+.mat-column-id {
+  width: 7%;
+}
+
+.mat-column-title {
+  width: 33%
+}
+
+.mat-column-type {
+  width: 20%
+}
+
+.mat-column-severity {
+  width: 12%;
+}
+.mat-column-respondTag {
+  width: 10%
+}
+.mat-column-assignees {
+  width: 10%
+}
+.grid-flush-left {
+  position: absolute;
+  left: 5px;
+}
+
+.grid-flush-right {
+  position: absolute;
+  right: 5px;
+}

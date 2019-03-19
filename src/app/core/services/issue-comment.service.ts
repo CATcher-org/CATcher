@@ -9,6 +9,7 @@ import {Phase, PhaseService} from './phase.service';
   providedIn: 'root',
 })
 export class IssueCommentService {
+  // A map from issueId to their respective issue comments.
   comments = new Map<number, IssueComments>();
 
   constructor(private githubService: GithubService, private phaseService: PhaseService) {
@@ -22,20 +23,28 @@ export class IssueCommentService {
     }
   }
 
-  createIssueComment(issueId: number, description: string, duplicatedOf: number) {
-    return this.githubService.createIssueComment(<IssueComment>{
-      id: issueId,
-      description: this.createGithubResponse(description, duplicatedOf ? `Duplicate of #${duplicatedOf}` : `-`),
-      duplicateOf: duplicatedOf,
-    }).pipe(map((comment: IssueComment) => {
-      return this.parseResponse(comment);
-    }));
+  createIssueComment(issueId: number, description: string, duplicatedOf: number): Observable<IssueComment> {
+    if (this.comments.get(issueId).responseId) {
+      return this.updateIssueComment({
+        id: this.comments.get(issueId).responseId,
+        description: description,
+        duplicateOf: duplicatedOf,
+      });
+    } else {
+      return this.githubService.createIssueComment(<IssueComment>{
+        id: issueId,
+        description: this.createGithubResponse(description, duplicatedOf),
+        duplicateOf: duplicatedOf,
+      }).pipe(map((comment: IssueComment) => {
+        return this.parseResponse(comment);
+      }));
+    }
   }
 
   updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
     return this.githubService.updateIssueComment({
       ...issueComment,
-      description: this.createGithubResponse(issueComment.description, `Duplicate of #${issueComment.duplicateOf}`),
+      description: this.createGithubResponse(issueComment.description, issueComment.duplicateOf),
     }).pipe(map((comment: IssueComment) => {
       return this.parseResponse(comment);
     }));
@@ -46,7 +55,7 @@ export class IssueCommentService {
 
     return this.githubService.updateIssueComment({
       ...issueComment,
-      description: this.createGithubResponse(issueComment.description, `Duplicate of #${duplicateOfNumber}`),
+      description: this.createGithubResponse(issueComment.description, duplicateOfNumber),
     }).pipe(
       map((comment: IssueComment) => {
         return this.parseResponse(comment);
@@ -59,7 +68,7 @@ export class IssueCommentService {
 
     return this.githubService.updateIssueComment({
       ...issueComment,
-      description: this.createGithubResponse(issueComment.description, '-'),
+      description: this.createGithubResponse(issueComment.description, null),
     }).pipe(
       map((comment: IssueComment) => {
         return this.parseResponse(comment);
@@ -71,15 +80,17 @@ export class IssueCommentService {
     return this.githubService.fetchIssueComments(issueId).pipe(map((comments: IssueComment[]) => {
       const newIssueComments = <IssueComments>{
         issueId: issueId,
+        responseId: null,
         teamResponse: null,
         tutorResponse: null,
         comments: [],
       };
-
       for (const comment of comments) {
         const response = this.parseResponse(comment);
         if (response) {
           newIssueComments[this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse'] = response;
+        } else if (this.isDefaultResponse(comment)) {
+          newIssueComments['responseId'] = comment.id;
         } else {
           newIssueComments.comments.push(comment);
         }
@@ -101,19 +112,48 @@ export class IssueCommentService {
     this.comments.clear();
   }
 
+  /**
+   * Determine whether the response is the default response produced by the bot.
+   */
+  private isDefaultResponse(comment: IssueComment): boolean {
+    if (!phase2ResponseTemplate.test(comment.description)) {
+      phase2ResponseTemplate.lastIndex = 0;
+      return false;
+    }
+    phase2ResponseTemplate.lastIndex = 0;
+
+    const matches = comment.description.match(phase2ResponseTemplate);
+    phase2ResponseTemplate.lastIndex = 0;
+
+    for (const match of matches) {
+      const groups = phase2ResponseTemplate.exec(match)['groups'];
+      phase2ResponseTemplate.lastIndex = 0;
+      if (groups['header'] === '## Team\'s Response' && groups['description'].trim() === 'Write your response here.') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private parseResponse(comment: IssueComment): IssueComment {
     const toParse = comment.description;
 
     switch (this.phaseService.currentPhase) {
       case Phase.phase2:
         if (!phase2ResponseTemplate.test(toParse)) {
+          // reset regex because of Javascript's behaviour of retaining regex's state that has 'global' flag.
+          phase2ResponseTemplate.lastIndex = 0;
           return null;
         }
+        phase2ResponseTemplate.lastIndex = 0;
 
         const matches = toParse.match(phase2ResponseTemplate);
+        phase2ResponseTemplate.lastIndex = 0;
+
         const response = comment;
         for (const match of matches) {
           const groups = phase2ResponseTemplate.exec(match)['groups'];
+          phase2ResponseTemplate.lastIndex = 0;
           switch (groups['header']) {
             case '## Team\'s Response':
               if (groups['description'].trim() === 'Write your response here.') {
@@ -127,8 +167,6 @@ export class IssueCommentService {
             default:
               return null;
           }
-          // reset regex because of Javascript's behaviour of retaining regex's state that has 'global' flag.
-          phase2ResponseTemplate.lastIndex = 0;
         }
         return response;
       case Phase.phase3:
@@ -173,10 +211,11 @@ export class IssueCommentService {
     }
   }
 
-  private createGithubResponse(description: string, duplicateOf: string): string {
+  private createGithubResponse(description: string, duplicateOf: number): string {
     switch (this.phaseService.currentPhase) {
       case Phase.phase2:
-        return `## Team\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;
+        return `## Team\'s Response\n${description}\n## State the duplicated issue here, if ` +
+          `any\n${duplicateOf ? `Duplicate of #${duplicateOf}` : `--`}`;
       case Phase.phase3:
         return `## Tutor\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;
     }

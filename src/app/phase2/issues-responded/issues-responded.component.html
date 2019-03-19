@@ -1,0 +1,70 @@
+<div>
+  <mat-grid-list cols="3" rowHeight="80px">
+    <mat-grid-tile>
+      <div class="grid-flush-left"> <h1 class="mat-headline" style="margin: 0px"> Issues Responded </h1> </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <mat-form-field>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+      </mat-form-field>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <table mat-table [dataSource]="issuesDataSource" matSort class="mat-elevation-z8">
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef> ID </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef> Title </th>
+      <td mat-cell *matCellDef="let issue">
+        <a class="no-underline link-grey-dark" [routerLink]="'issues/' + issue.id"> {{issue.title}} </a>
+        <mat-chip-list *ngIf="issue.duplicated" style="display: inline-block; margin-left: 5px;">
+          <mat-chip [routerLink]="issue.duplicateOf ? ['issues/' + issue.duplicateOf] : []"
+                    [matTooltip]="issue.duplicateOf ? '' : 'Not specified'" matTooltipPosition="above"
+                    style="font-size: 12px; cursor: pointer" [color]="!issue.duplicateOf ? 'accent' : ''" [selected]="!issue.duplicateOf">
+            {{issue.duplicateOf ? 'Duplicate of #' + issue.duplicateOf : 'Duplicate'}}
+          </mat-chip>
+        </mat-chip-list>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.type || '-'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="severity">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.severity || '-'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="responseTag">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Response </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.responseTag || '-'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="assignees">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Assignees </th>
+      <td mat-cell *matCellDef="let issue"> {{issue.assignees.join(', ') || '-'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions" >
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let issue">
+        <button mat-button color="primary" [routerLink]="'/phase2/issues/' + issue.id"> View </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let issue; columns: displayedColumns;"></tr>
+  </table>
+  <mat-card *ngIf="issuesDataSource.isLoading$ | async"
+            style="display: flex; justify-content: center; align-items: center">
+    <mat-progress-spinner color="primary" mode="indeterminate" diameter="50" strokeWidth="5"></mat-progress-spinner>
+  </mat-card>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+</div>

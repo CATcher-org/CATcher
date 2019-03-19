@@ -1,0 +1,42 @@
+.container {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.title {
+  color: black;
+  margin:0;
+  padding:30px 20px;
+}
+
+.mat-column-actions {
+  width: 80px;
+  text-align: center;
+}
+
+.mat-column-id {
+  width: 10%;
+}
+
+.mat-column-title {
+  width: 40%
+}
+
+.mat-column-type {
+  width: 30%
+}
+
+.mat-column-severity {
+  width: 12%;
+}
+.grid-flush-left {
+  position: absolute;
+  left: 5px;
+}
+
+.grid-flush-right {
+  position: absolute;
+  right: 5px;
+}
