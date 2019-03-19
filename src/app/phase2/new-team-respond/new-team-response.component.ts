@@ -31,11 +31,10 @@ export class NewTeamResponseComponent implements OnInit {
 
   constructor(private issueService: IssueService, private issueCommentService: IssueCommentService,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              private userService: UserService) { }
+              private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
-    this.teamMembers = (<Student>this.userService.currentUser).team.teamMembers.map((member) => {
+    this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
       return member.loginId;
     });
     this.duplicatedIssueList = this.getDupIssueList();
