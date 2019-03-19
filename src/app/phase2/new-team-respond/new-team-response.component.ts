@@ -34,7 +34,6 @@ export class NewTeamResponseComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
-    console.log(this.issue);
     this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
       return member.loginId;
     });
