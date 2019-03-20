@@ -1,13 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
-import {FormBuilder, FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, TYPE} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {finalize, map} from 'rxjs/operators';
-import {IssueComment, IssueComments} from '../../core/models/comment.model';
-import {UserService} from '../../core/services/user.service';
-import {Student} from '../../core/models/user.model';
-import {BehaviorSubject, forkJoin, Observable} from 'rxjs';
+import {IssueComments} from '../../core/models/comment.model';
+import {forkJoin, Observable} from 'rxjs';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
 
 @Component({
