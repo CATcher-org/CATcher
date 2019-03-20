@@ -117,7 +117,15 @@ export class IssueService {
           labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
         };
         break;
-      case 'FILTER_BY_TEAM_ASSIGNED':
+      case 'FILTER_BY_TEAM_ASSIGNED': // Only for Tutors and Admins
+        const allocatedTeams = this.userService.currentUser.allocatedTeams;
+        const labels = [];
+        for (const allocatedTeam of allocatedTeams) {
+          const team = allocatedTeam.id.split('-');
+          labels.push(this.createLabel('tutorial', team[0]));
+          labels.push(this.createLabel('team', team[1]));
+        }
+        filter = { labels: labels };
         break;
       case 'NO_FILTER':
         break;
