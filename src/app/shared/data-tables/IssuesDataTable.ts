@@ -8,13 +8,15 @@ import {ErrorHandlingService} from '../../core/services/error-handling.service';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
+  private teamFilterChange = new BehaviorSubject('');
   private issuesSubject = new BehaviorSubject<Issue[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
   public isLoading$ = this.loadingSubject.asObservable();
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private sort: MatSort,
-              private paginator: MatPaginator, private displayedColumn: string[], private defaultFilter?: (issue: Issue) => boolean) {
+              private paginator: MatPaginator, private displayedColumn: string[],
+              private defaultFilter?: (issue: Issue) => boolean) {
     super();
   }
 
@@ -29,7 +31,8 @@ export class IssuesDataTable extends DataSource<Issue> {
       this.issueService.issues$,
       this.paginator.page,
       this.sort.sortChange,
-      this.filterChange
+      this.filterChange,
+      this.teamFilterChange,
     ];
 
     this.loadingSubject.next(true);
@@ -48,6 +51,7 @@ export class IssuesDataTable extends DataSource<Issue> {
             }
 
             data = this.getSortedData(data);
+            data = this.getFilteredTeamData(data);
             data = this.getFilteredData(data);
             data = this.getPaginatedData(data);
 
@@ -67,6 +71,23 @@ export class IssuesDataTable extends DataSource<Issue> {
 
   set filter(filter: string) {
     this.filterChange.next(filter);
+  }
+
+  get teamFilter(): string {
+    return this.teamFilterChange.value;
+  }
+
+  set teamFilter(teamFilter: string) {
+    this.teamFilterChange.next(teamFilter);
+  }
+
+  private getFilteredTeamData(data: Issue[]): Issue[] {
+    return data.filter((issue) => {
+      if (!this.teamFilter || this.teamFilter === 'All Teams') {
+        return true;
+      }
+      return issue.teamAssigned.id === this.teamFilter;
+    });
   }
 
   private getSortedData(data: Issue[]): Issue[] {

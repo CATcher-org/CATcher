@@ -25,6 +25,10 @@ export class DataService {
     return this.dataFile.teamStructure.get(teamId);
   }
 
+  getTeams(): string[] {
+    return Array.from(this.dataFile.teamStructure.keys());
+  }
+
   // returns a mapping from teamId to their respective team structure.
   private extractTeamStructure(jsonData: {}): Map<string, Team> {
     const teamStructure = new Map<string, Team>();

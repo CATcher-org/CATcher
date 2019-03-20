@@ -1,7 +1,7 @@
 <div *ngIf="!isEditing">
   <h1 class="mat-display-1 title">{{issue.title}}</h1>
   <button *ngIf="permissions.canCreateNewIssue()" mat-stroked-button color="primary" class="title-button"
-          routerLink="/issues/new">New Issue</button>
+          [routerLink]="'/' + phaseService.currentPhase + '/issues/new'">New Issue</button>
   <button *ngIf="permissions.canEditIssueTitle()" mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">Edit</button>
 </div>
 

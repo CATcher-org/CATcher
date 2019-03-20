@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
@@ -11,15 +11,23 @@ import {RespondType} from '../../core/models/comment.model';
   templateUrl: './issues-responded.component.html',
   styleUrls: ['./issues-responded.component.css']
 })
-export class IssuesRespondedComponent implements OnInit {
+export class IssuesRespondedComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
 
   displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'actions'];
+
+  @Input() teamFilter: string;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.teamFilter.isFirstChange()) {
+      this.issuesDataSource.teamFilter = changes.teamFilter.currentValue;
+    }
   }
 
   ngOnInit() {

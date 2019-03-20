@@ -105,27 +105,27 @@ export class IssueService {
   }
 
   private initializeData(): Observable<Issue[]> {
-    let filter = {};
+    const filters = [];
 
     switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
       case 'FILTER_BY_CREATOR':
-        filter = {creator: this.userService.currentUser.loginId};
+        filters.push({creator: this.userService.currentUser.loginId});
         break;
       case 'FILTER_BY_TEAM': // Only student has this filter
         const studentTeam = this.userService.currentUser.team.id.split('-');
-        filter = {
+        filters.push({
           labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
-        };
+        });
         break;
       case 'FILTER_BY_TEAM_ASSIGNED': // Only for Tutors and Admins
         const allocatedTeams = this.userService.currentUser.allocatedTeams;
-        const labels = [];
-        for (const allocatedTeam of allocatedTeams) {
-          const team = allocatedTeam.id.split('-');
+        for (let i = 0; i < allocatedTeams.length; i++) {
+          const labels = [];
+          const team = allocatedTeams[i].id.split('-');
           labels.push(this.createLabel('tutorial', team[0]));
           labels.push(this.createLabel('team', team[1]));
+          filters.push({ labels: labels });
         }
-        filter = { labels: labels };
         break;
       case 'NO_FILTER':
         break;
@@ -134,34 +134,46 @@ export class IssueService {
         return of([]);
     }
 
-    const fetchedIssues = this.githubService.fetchIssues(filter).pipe(
-      map((issues) => {
+    const issuesPerFilter = [];
+    if (filters.length === 0) {
+      issuesPerFilter.push(this.githubService.fetchIssues({}));
+    }
+    for (const filter of filters) {
+      issuesPerFilter.push(this.githubService.fetchIssues(filter));
+    }
+
+    const fetchedIssues = forkJoin(issuesPerFilter).pipe(
+      map((issuesByFilter: [][]) => {
         let mappedResult = {};
-        for (const issue of issues) {
-          const issueModel = this.createIssueModel(issue);
-          mappedResult = {
-            ...mappedResult,
-            [issueModel.id]: issueModel,
-          };
+        for (const issues of issuesByFilter) {
+          for (const issue of issues) {
+            const issueModel = this.createIssueModel(issue);
+            mappedResult = {
+              ...mappedResult,
+              [issueModel.id]: issueModel,
+            };
+          }
         }
         return mappedResult;
       }),
-      map((issues) => {
+      map((issues: Issues) => {
+        this.issues = { ...this.issues, ...issues }
         this.issues = issues;
         this.issues$.next(Object.values(this.issues));
         return Object.values(this.issues);
       })
     );
+
     if (!this.permissionService.requireComments()) {
       return fetchedIssues;
     } else { // Fetch the comments related to all the issues which will be used to populate the issue table
       return fetchedIssues.pipe(flatMap((issues: Issue[]) => {
-        const commentsToFetch = [];
-        for (const issue of issues) {
-          commentsToFetch.push(this.issueCommentService.getIssueComments(issue.id));
-        }
-        return forkJoin(commentsToFetch);
-      }),
+          const commentsToFetch = [];
+          for (const issue of issues) {
+            commentsToFetch.push(this.issueCommentService.getIssueComments(issue.id));
+          }
+          return forkJoin(commentsToFetch);
+        }),
         map(() => {
           for (const issue of <Issue[]>Object.values(this.issues)) {
             const commentsOfIssue = this.issueCommentService.comments.get(issue.id);

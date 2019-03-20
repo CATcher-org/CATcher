@@ -111,7 +111,7 @@ export class DuplicateOfComponent implements OnInit {
   private getDupIssueList(): Observable<Issue[]> {
     return this.issueService.issues$.pipe(map((issues) => {
       return issues.filter((issue) => {
-        return this.issue.id !== issue.id;
+        return this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id;
       });
     }));
   }
