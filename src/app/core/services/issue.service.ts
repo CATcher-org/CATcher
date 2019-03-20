@@ -4,7 +4,6 @@ import {flatMap, map} from 'rxjs/operators';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
 import {Issue, Issues, IssuesFilter, LABELS_IN_PHASE_2, labelsToAttributeMapping} from '../models/issue.model';
 import {UserService} from './user.service';
-import {Student, UserRole} from '../models/user.model';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
 import {RespondType} from '../models/comment.model';
@@ -111,7 +110,7 @@ export class IssueService {
         filter = {creator: this.userService.currentUser.loginId};
         break;
       case 'FILTER_BY_TEAM': // Only student has this filter
-        const studentTeam = (<Student>this.userService.currentUser).team.id.split('-');
+        const studentTeam = this.userService.currentUser.team.id.split('-');
         filter = {
           labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
         };
