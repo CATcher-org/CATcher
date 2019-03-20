@@ -1,13 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
-import {FormBuilder, FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, TYPE} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {finalize, map} from 'rxjs/operators';
-import {IssueComment, IssueComments} from '../../core/models/comment.model';
-import {UserService} from '../../core/services/user.service';
-import {Student} from '../../core/models/user.model';
-import {BehaviorSubject, forkJoin, Observable} from 'rxjs';
+import {IssueComments} from '../../core/models/comment.model';
+import {forkJoin, Observable} from 'rxjs';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
 
 @Component({
@@ -31,11 +29,10 @@ export class NewTeamResponseComponent implements OnInit {
 
   constructor(private issueService: IssueService, private issueCommentService: IssueCommentService,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              private userService: UserService) { }
+              private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
-    this.teamMembers = (<Student>this.userService.currentUser).team.teamMembers.map((member) => {
+    this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
       return member.loginId;
     });
     this.duplicatedIssueList = this.getDupIssueList();

@@ -4,6 +4,7 @@ import {GithubService} from './github.service';
 import {IssueComment, IssueComments, phase2ResponseTemplate, phase3ResponseTemplate} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import {Phase, PhaseService} from './phase.service';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -35,9 +36,14 @@ export class IssueCommentService {
         id: issueId,
         description: this.createGithubResponse(description, duplicatedOf),
         duplicateOf: duplicatedOf,
-      }).pipe(map((comment: IssueComment) => {
-        return this.parseResponse(comment);
-      }));
+      }).pipe(
+        map((response) => {
+          return this.createIssueCommentModel(response);
+        }),
+        map((comment: IssueComment) => {
+          return this.parseResponse(comment);
+        })
+      );
     }
   }
 
@@ -45,9 +51,14 @@ export class IssueCommentService {
     return this.githubService.updateIssueComment({
       ...issueComment,
       description: this.createGithubResponse(issueComment.description, issueComment.duplicateOf),
-    }).pipe(map((comment: IssueComment) => {
-      return this.parseResponse(comment);
-    }));
+    }).pipe(
+      map((response) => {
+        return this.createIssueCommentModel(response);
+      }),
+      map((comment: IssueComment) => {
+        return this.parseResponse(comment);
+      })
+    );
   }
 
   updateWithDuplicateOfValue(issueId: number, duplicateOfNumber: number): Observable<IssueComment> {
@@ -57,6 +68,9 @@ export class IssueCommentService {
       ...issueComment,
       description: this.createGithubResponse(issueComment.description, duplicateOfNumber),
     }).pipe(
+      map((response) => {
+        return this.createIssueCommentModel(response);
+      }),
       map((comment: IssueComment) => {
         return this.parseResponse(comment);
       })
@@ -70,6 +84,9 @@ export class IssueCommentService {
       ...issueComment,
       description: this.createGithubResponse(issueComment.description, null),
     }).pipe(
+      map((response) => {
+        return this.createIssueCommentModel(response);
+      }),
       map((comment: IssueComment) => {
         return this.parseResponse(comment);
       })
@@ -77,27 +94,35 @@ export class IssueCommentService {
   }
 
   private initializeIssueComments(issueId: number): Observable<IssueComments> {
-    return this.githubService.fetchIssueComments(issueId).pipe(map((comments: IssueComment[]) => {
-      const newIssueComments = <IssueComments>{
-        issueId: issueId,
-        responseId: null,
-        teamResponse: null,
-        tutorResponse: null,
-        comments: [],
-      };
-      for (const comment of comments) {
-        const response = this.parseResponse(comment);
-        if (response) {
-          newIssueComments[this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse'] = response;
-        } else if (this.isDefaultResponse(comment)) {
-          newIssueComments['responseId'] = comment.id;
-        } else {
-          newIssueComments.comments.push(comment);
+    return this.githubService.fetchIssueComments(issueId).pipe(
+      map((comments: []) => {
+        const issueComments = new Array<IssueComment>();
+        for (const comment of comments) {
+          issueComments.push(this.createIssueCommentModel(comment));
         }
-      }
+        return issueComments;
+      }),
+      map((comments: IssueComment[]) => {
+        const newIssueComments = <IssueComments>{
+          issueId: issueId,
+          responseId: null,
+          teamResponse: null,
+          tutorResponse: null,
+          comments: [],
+        };
+        for (const comment of comments) {
+          const response = this.parseResponse(comment);
+          if (response) {
+            newIssueComments[this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse'] = response;
+          } else if (this.isDefaultResponse(comment)) {
+            newIssueComments['responseId'] = comment.id;
+          } else {
+            newIssueComments.comments.push(comment);
+          }
+        }
 
-      this.comments.set(issueId, <IssueComments>{...newIssueComments, issueId: issueId});
-      return this.comments.get(issueId);
+        this.comments.set(issueId, <IssueComments>{...newIssueComments, issueId: issueId});
+        return this.comments.get(issueId);
     }));
   }
 
@@ -219,5 +244,14 @@ export class IssueCommentService {
       case Phase.phase3:
         return `## Tutor\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;
     }
+  }
+
+  private createIssueCommentModel(issueCommentInJson: {}): IssueComment {
+    return <IssueComment>{
+      id: issueCommentInJson['id'],
+      createdAt: moment(issueCommentInJson['created_at']).format('lll'),
+      updatedAt: moment(issueCommentInJson['updated_at']).format('lll'),
+      description: issueCommentInJson['body'],
+    };
   }
 }

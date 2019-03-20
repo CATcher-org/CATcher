@@ -1,20 +1,21 @@
 import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
-import {Admin, Student, Tutor, User, UserRole} from '../models/user.model';
+import {User, UserRole} from '../models/user.model';
 import {map} from 'rxjs/operators';
 import {Team} from '../models/team.model';
 import {Observable, of} from 'rxjs';
+import {DataService} from './data.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  public currentUser: Student | Tutor | Admin;
+  public currentUser: User;
 
-  constructor(private githubService: GithubService) {}
+  constructor(private githubService: GithubService, private dataService: DataService) {}
 
   createUserModel(authResponse: {}): Observable<User> {
-    return this.githubService.getDataFile().pipe(map((jsonData: {}) => {
+    return this.dataService.getDataFile().pipe(map((jsonData: {}) => {
       const userLoginId = authResponse['login'];
       this.currentUser = this.createUser(jsonData, userLoginId);
       return this.currentUser;
@@ -25,28 +26,28 @@ export class UserService {
     this.currentUser = undefined;
   }
 
-  private createUser(data: {}, userLoginId: string): Student | Tutor | Admin {
+  private createUser(data: {}, userLoginId: string): User {
     const userRole = this.parseUserRole(data, userLoginId);
     switch (userRole) {
 
       case UserRole.Student:
         const teamId = data['students-allocation'][userLoginId]['teamId'];
         const studentTeam = this.createTeamModel(data['team-structure'], teamId);
-        return <Student>{loginId: userLoginId, role: userRole, team: studentTeam};
+        return <User>{loginId: userLoginId, role: userRole, team: studentTeam};
 
       case UserRole.Tutor:
         const tutorTeams = new Array<Team>();
         for (const allocatedTeamId of Object.keys(data['tutors-allocation'][userLoginId])) {
           tutorTeams.push(this.createTeamModel(data['team-structure'], allocatedTeamId));
         }
-        return <Tutor>{loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams};
+        return <User>{loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams};
 
       case UserRole.Admin:
         const studentTeams = new Array<Team>();
         for (const allocatedTeamId of Object.keys(data['admins-allocation'][userLoginId])) {
           studentTeams.push(this.createTeamModel(data['team-structure'], allocatedTeamId));
         }
-        return <Admin>{loginId: userLoginId, role: userRole, allocatedTeams: studentTeams};
+        return <User>{loginId: userLoginId, role: userRole, allocatedTeams: studentTeams};
       default:
         return null;
     }
