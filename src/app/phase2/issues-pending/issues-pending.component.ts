@@ -5,6 +5,7 @@ import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue} from '../../core/models/issue.model';
 import {RespondType} from '../../core/models/comment.model';
+import {PermissionService} from '../../core/services/permission.service';
 
 @Component({
   selector: 'app-issues-pending',
@@ -19,7 +20,8 @@ export class IssuesPendingComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
+              public permissions: PermissionService) {
   }
 
   ngOnInit() {

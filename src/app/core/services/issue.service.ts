@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
 import {flatMap, map} from 'rxjs/operators';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
-import {Issue, Issues, IssuesFilter, LABELS_IN_PHASE_2, labelsToAttributeMapping} from '../models/issue.model';
+import {Issue, Issues, IssuesFilter, LABELS, labelsToAttributeMapping} from '../models/issue.model';
 import {UserService} from './user.service';
 import {Student} from '../models/user.model';
 import {Phase, PhaseService} from './phase.service';
@@ -210,7 +210,7 @@ export class IssueService {
       assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
       description: issueInJson['body'],
       teamAssigned: this.getTeamAssignedToIssue(issueInJson),
-      ...this.getFormattedLabels(issueInJson['labels'], LABELS_IN_PHASE_2),
+      ...this.getFormattedLabels(issueInJson['labels'], LABELS),
     };
   }
 
@@ -231,7 +231,6 @@ export class IssueService {
         tutorial = labelValue;
       }
     });
-
     const teamId = `${tutorial}-${team}`;
     return this.dataService.getTeam(teamId);
   }
