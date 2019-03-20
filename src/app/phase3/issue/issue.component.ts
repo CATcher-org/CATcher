@@ -31,8 +31,8 @@ export class IssueComponent implements OnInit {
   ngOnInit() {
     this.initializeIssue();
   }
-//testathorTutor
-  //tutorPwd1
+// testathorTutor
+  // tutorPwd1
   private initializeIssue() {
     const id = +this.route.snapshot.paramMap.get('issue_id');
     this.getIssue(id);

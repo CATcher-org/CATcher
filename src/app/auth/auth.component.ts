@@ -36,8 +36,8 @@ export class AuthComponent implements OnInit, OnDestroy {
       '@phase3=https://github.com/testathor/pe-evaluation' , Validators.required],
     });
   }
-  //testathorStudent
-  //studPwd1
+  // testathorStudent
+  // studPwd1
   ngOnDestroy() {
     this.authStateSubscription.unsubscribe();
   }
@@ -52,7 +52,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl(phase);
         form.resetForm();
 
-        if (phase != 'not accessible') {
+        if (phase !== 'not accessible') {
           this.router.navigateByUrl(phase);
         }
       }, (error) => {

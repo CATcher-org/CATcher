@@ -1,13 +1,13 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, NgForm, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, TYPE} from '../../core/models/issue.model';
-import {forkJoin, Observable} from "rxjs";
-import {IssueComments} from "../../core/models/comment.model";
-import {IssueService} from "../../core/services/issue.service";
-import {IssueCommentService} from "../../core/services/issue-comment.service";
-import {ErrorHandlingService} from "../../core/services/error-handling.service";
-import {UserService} from "../../core/services/user.service";
-import {finalize, map} from "rxjs/operators";
+import {forkJoin, Observable} from 'rxjs';
+import {IssueComments} from '../../core/models/comment.model';
+import {IssueService} from '../../core/services/issue.service';
+import {IssueCommentService} from '../../core/services/issue-comment.service';
+import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import {UserService} from '../../core/services/user.service';
+import {finalize, map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-tutor-response',
