@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
@@ -12,16 +12,24 @@ import {PermissionService} from '../../core/services/permission.service';
   templateUrl: './issues-pending.component.html',
   styleUrls: ['./issues-pending.component.css']
 })
-export class IssuesPendingComponent implements OnInit {
+export class IssuesPendingComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
 
   displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
+
+  @Input() teamFilter: string;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService) {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.teamFilter.isFirstChange()) {
+      this.issuesDataSource.teamFilter = changes.teamFilter.currentValue;
+    }
   }
 
   ngOnInit() {

@@ -1,7 +1,7 @@
 <div>
-  <div *ngIf="teamList" style="text-align: center; margin-bottom: 20px">
-    <span class="mat-display-1"> {{teamFilter}} </span>
-    <button [matMenuTriggerFor]="teamMenu" mat-icon-button>
+  <div style="text-align: center; margin-bottom: 20px">
+    <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id}} </span>
+    <button *ngIf="teamList" [matMenuTriggerFor]="teamMenu" mat-icon-button>
       <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> settings </mat-icon>
     </button>
 
@@ -13,6 +13,6 @@
     </mat-menu>
   </div>
 
-  <app-issues-pending></app-issues-pending>
+  <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
   <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
 </div>

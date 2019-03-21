@@ -5,6 +5,8 @@ import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue} from '../../core/models/issue.model';
 import {RespondType} from '../../core/models/comment.model';
+import {UserService} from '../../core/services/user.service';
+import {UserRole} from '../../core/models/user.model';
 
 @Component({
   selector: 'app-issues-responded',
@@ -13,15 +15,19 @@ import {RespondType} from '../../core/models/comment.model';
 })
 export class IssuesRespondedComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
-
-  displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'actions'];
+  displayedColumns: string[];
 
   @Input() teamFilter: string;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private userService: UserService) {
+    if (userService.currentUser.role === UserRole.Student) {
+      this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees'];
+    } else {
+      this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'responseTag', 'assignees'];
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {

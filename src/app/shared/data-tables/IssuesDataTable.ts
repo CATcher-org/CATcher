@@ -102,6 +102,8 @@ export class IssuesDataTable extends DataSource<Issue> {
           return this.compareValue(SEVERITY_ORDER[a.severity], SEVERITY_ORDER[b.severity]);
         case 'assignees':
           return this.compareValue(a.assignees.join(', '), b.assignees.join(', '));
+        case 'teamAssigned':
+          return this.compareValue(a.teamAssigned.id, b.teamAssigned.id);
         default: // id, title, responseTag
           return this.compareValue(a[this.sort.active], b[this.sort.active]);
       }
