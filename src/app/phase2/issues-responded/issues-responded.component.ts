@@ -22,7 +22,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private userService: UserService) {
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees'];
     } else {
