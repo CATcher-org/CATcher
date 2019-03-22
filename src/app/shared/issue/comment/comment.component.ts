@@ -5,6 +5,8 @@ import {ErrorHandlingService} from '../../../core/services/error-handling.servic
 import {finalize} from 'rxjs/operators';
 import {IssueComment, IssueComments} from '../../../core/models/comment.model';
 import {IssueCommentService} from '../../../core/services/issue-comment.service';
+import {PermissionService} from '../../../core/services/permission.service';
+import {Phase, PhaseService} from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue-comment',
@@ -38,7 +40,9 @@ export class CommentComponent implements OnInit {
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService) {
+              private errorHandlingService: ErrorHandlingService,
+              private permissions: PermissionService,
+              private phaseService: PhaseService) {
   }
 
   ngOnInit() {
@@ -73,6 +77,17 @@ export class CommentComponent implements OnInit {
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+  }
+
+  canEditComment(): boolean {
+    switch (this.phaseService.currentPhase) {
+      case Phase.phase2:
+        return this.permissions.canCRUDTeamResponse();
+      case Phase.phase3:
+        return this.permissions.canCRUDTutorResponse();
+      default:
+        return false;
+    }
   }
 
   private createUpdatedIssue(updatedIssueComment: IssueComment) {

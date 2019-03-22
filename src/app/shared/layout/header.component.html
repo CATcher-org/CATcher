@@ -1,11 +1,15 @@
 <mat-toolbar color="primary">
+  <button *ngIf="needToShowBackButton()" mat-icon-button class="mat-toolbar mat-primary" style="transform: scale(0.9)" [routerLink]="phaseService.currentPhase">
+    <mat-icon>arrow_back_ios</mat-icon>
+  </button>
   <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher</a>
   <span *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
     ({{phaseService.phaseDescription[phaseService.currentPhase]}})
   </span>
 
   <span style="flex: 1 1 auto"></span>
-  <button *ngIf="auth.isAuthenticated()" mat-icon-button matTooltip="Log out" (click)="logOut()">
-    <mat-icon>exit_to_app</mat-icon>
+  <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" (click)="logOut()">
+    ({{userService.currentUser.loginId}})
+    <mat-icon style="margin-left: 2px">exit_to_app</mat-icon>
   </button>
 </mat-toolbar>

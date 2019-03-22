@@ -3,7 +3,7 @@ import {GithubService} from './github.service';
 import {User, UserRole} from '../models/user.model';
 import {map} from 'rxjs/operators';
 import {Team} from '../models/team.model';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {DataService} from './data.service';
 
 @Injectable({

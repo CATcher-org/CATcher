@@ -7,6 +7,7 @@ import {IssueCommentService} from '../../../core/services/issue-comment.service'
 import {IssueComments} from '../../../core/models/comment.model';
 import {forkJoin, Observable} from 'rxjs';
 import {MatCheckbox, MatSelect} from '@angular/material';
+import {PermissionService} from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-duplicate-of-component',
@@ -29,7 +30,8 @@ export class DuplicateOfComponent implements OnInit {
 
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
-              private errorHandlingService: ErrorHandlingService) {
+              private errorHandlingService: ErrorHandlingService,
+              public permissions: PermissionService) {
   }
 
   ngOnInit() {
@@ -109,7 +111,7 @@ export class DuplicateOfComponent implements OnInit {
   private getDupIssueList(): Observable<Issue[]> {
     return this.issueService.issues$.pipe(map((issues) => {
       return issues.filter((issue) => {
-        return this.issue.id !== issue.id;
+        return this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id;
       });
     }));
   }

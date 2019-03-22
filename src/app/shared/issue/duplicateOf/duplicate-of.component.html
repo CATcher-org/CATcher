@@ -1,8 +1,8 @@
 <div>
-  <mat-checkbox labelPosition="before" [checked]="issue.duplicated" (change)="handleCheckboxChange($event)">
+  <mat-checkbox [disabled]="!permissions.canCRUDTeamResponse()" labelPosition="before" [checked]="issue.duplicated" (change)="handleCheckboxChange($event)">
     <span class="mat-title"> Duplicate Status </span>
   </mat-checkbox>
-  <button [style.visibility]="issue.duplicated ? 'inherit' : 'hidden'" style="float: right" (click)="openSelection()" mat-icon-button>
+  <button *ngIf="permissions.canEditIssueLabels()" [style.visibility]="issue.duplicated ? 'inherit' : 'hidden'" style="float: right" (click)="openSelection()" mat-icon-button>
     <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
   </button>
 

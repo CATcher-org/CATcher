@@ -4,6 +4,7 @@ import {Issue} from '../../../core/models/issue.model';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
+import {PermissionService} from '../../../core/services/permission.service';
 import {PhaseService} from '../../../core/services/phase.service';
 
 @Component({
@@ -22,7 +23,8 @@ export class TitleComponent implements OnInit {
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
-              private phaseService: PhaseService) {
+              public permissions: PermissionService,
+              public phaseService: PhaseService) {
   }
 
   ngOnInit() {

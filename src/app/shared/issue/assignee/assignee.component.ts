@@ -4,6 +4,7 @@ import {MatSelect} from '@angular/material';
 import {Team} from '../../../core/models/team.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
+import {PermissionService} from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-assignee-component',
@@ -22,7 +23,8 @@ export class AssigneeComponent implements OnInit {
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
+              public permissions: PermissionService) {
   }
 
   ngOnInit(): void {

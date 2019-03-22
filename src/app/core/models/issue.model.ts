@@ -23,8 +23,7 @@ export interface Issues {
  * Where `Type` represent the type of the label. (e.g. severity, type, response)
  * And `Value` represent the value that is associated to the `Type` (e.g. for severity Type, it could be Low, Medium, High)
  */
-export const LABELS_IN_PHASE_1 = ['severity', 'type'];
-export const LABELS_IN_PHASE_2 = ['severity', 'type', 'response', 'duplicate'];
+export const LABELS = ['severity', 'type', 'response', 'duplicate'];
 
 export const labelsToAttributeMapping = {
   'severity': 'severity',

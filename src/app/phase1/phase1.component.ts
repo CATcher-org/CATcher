@@ -5,7 +5,9 @@ import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
 import {BehaviorSubject} from 'rxjs';
-import {Issue, Issues} from '../core/models/issue.model';
+import {Issue} from '../core/models/issue.model';
+import {PermissionService} from '../core/services/permission.service';
+import {UserService} from '../core/services/user.service';
 
 @Component({
   selector: 'app-phase1',
@@ -21,7 +23,9 @@ export class Phase1Component implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
+              public permissions: PermissionService,
+              public userService: UserService) {
   }
 
   ngOnInit() {
