@@ -242,7 +242,8 @@ export class IssueCommentService {
         return `## Team\'s Response\n${description}\n## State the duplicated issue here, if ` +
           `any\n${duplicateOf ? `Duplicate of #${duplicateOf}` : `--`}`;
       case Phase.phase3:
-        return `## Tutor\'s Response\n${description}\n## State the duplicated issue here, if any\n${duplicateOf}`;
+        return `## Tutor\'s Response\n${description}\n## State the duplicated issue here, if ` +
+          `any\n${duplicateOf ? `Duplicate of #${duplicateOf}` : `--`}`;
     }
   }
 

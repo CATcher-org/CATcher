@@ -6,8 +6,8 @@ import {Issue, Issues, IssuesFilter, LABELS, labelsToAttributeMapping} from '../
 import {UserService} from './user.service';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
-import {RespondType} from '../models/comment.model';
 import {PermissionService} from './permission.service';
+import {phase2ResponseTemplate, RespondType} from '../models/comment.model';
 import * as moment from 'moment';
 import {Team} from '../models/team.model';
 import {DataService} from './data.service';
@@ -188,6 +188,26 @@ export class IssueService {
           return Object.values(this.issues);
         })
       );
+    }
+  }
+
+  private getParsedBody(issues: any) {
+    for (const issue of issues) {
+      issue.todoList = this.parseBody(issue['body']);
+    }
+    console.log(issues);
+  }
+
+  private parseBody(body: string): any {
+    const regexExp = new RegExp('(?<header>## Tutor to check:)\\s+(?<check>[\\s\\S]*?)(?=## Tutor to check|$)', 'gi');
+    regexExp.lastIndex = 0;
+    const matches = body.match(regexExp);
+    regexExp.lastIndex = 0;
+    if (matches != null) {
+      const groups = regexExp.exec(matches[0])['groups'];
+      return groups.check.split(/\r?\n/);
+    } else {
+      return Array();
     }
   }
 
