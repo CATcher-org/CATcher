@@ -7,7 +7,7 @@
 
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
-          <textarea #commentTextArea (dragover)="disableCaretMovement($event)"
+          <textarea ctrlKeys (ctrlV)="onPaste()" #commentTextArea (dragover)="disableCaretMovement($event)"
                     id="description" formControlName="description" matInput placeholder="Description"
                     cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
                     cdkAutosizeMaxRows="20"></textarea>

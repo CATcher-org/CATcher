@@ -118,7 +118,7 @@ export class GithubService {
   }
 
   uploadFile(filename: string, base64String: string): Observable<any> {
-    return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `images/${filename}`,
+    return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `files/${filename}`,
       message: 'upload file', content: base64String}));
   }
 

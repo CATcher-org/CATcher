@@ -2,6 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {UploadService} from '../../core/services/upload.service';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import {clipboard} from 'electron';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
@@ -100,6 +101,24 @@ export class CommentEditorComponent implements OnInit {
       });
     };
     reader.readAsDataURL(file);
+  }
+
+  onPaste() {
+    this.uploadErrorMessage = null;
+
+    const imageFileType = clipboard.availableFormats().filter(type => type.includes('image'));
+    if (imageFileType.length === 0) {
+      return;
+    }
+
+    const filename = `image.${imageFileType[0].split('/')[1]}`;
+    const insertedText = this.insertUploadingText(filename);
+
+    this.uploadService.uploadFile(clipboard.readImage().toDataURL(), filename).subscribe((response) => {
+      this.insertUploadUrl(filename, response.data.content.download_url);
+    }, (error) => {
+      this.handleUploadError(error, insertedText);
+    });
   }
 
   get isInErrorState(): boolean {
