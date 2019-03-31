@@ -12,7 +12,7 @@ import {DataService} from '../core/services/data.service';
 export class Phase2Component implements OnInit {
   public teamFilter = 'All Teams';
 
-  constructor(private userService: UserService, private dataService: DataService) {}
+  constructor(public userService: UserService, private dataService: DataService) {}
 
   ngOnInit() {}
 
