@@ -34,6 +34,8 @@
         <mat-divider></mat-divider>
         <app-duplicate-of-component [issue]="issue" [comments]="comments" (issueUpdated)="updateIssue($event)"
                                     (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>
+        <mat-divider></mat-divider>
+        <app-todo-list [issue]="issue" (issueUpdated)="updateIssue($event)"></app-todo-list>
     </div>
     </div>
 

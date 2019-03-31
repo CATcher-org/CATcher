@@ -7,7 +7,7 @@ import {UserService} from './user.service';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
 import {PermissionService} from './permission.service';
-import {phase2ResponseTemplate, RespondType} from '../models/comment.model';
+import {RespondType} from '../models/comment.model';
 import * as moment from 'moment';
 import {Team} from '../models/team.model';
 import {DataService} from './data.service';
@@ -63,6 +63,17 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
+    if (this.phaseService.currentPhase === Phase.phase3) {
+      let desc = "## Description\n" + issue.description + "## Tutor to check: \n\n";
+      for (const todo of issue.todoList) {
+        desc += todo + "\n";
+      }
+      return this.githubService.updateIssue(issue.id, issue.title, desc, this.createLabelsForIssue(issue), issue.assignees).pipe(
+        map((response) => {
+          return this.createIssueModel(response);
+        })
+      );
+    }
     return this.githubService.updateIssue(issue.id, issue.title, issue.description, this.createLabelsForIssue(issue), issue.assignees).pipe(
       map((response) => {
         return this.createIssueModel(response);
@@ -191,21 +202,26 @@ export class IssueService {
     }
   }
 
-  private getParsedBody(issues: any) {
-    for (const issue of issues) {
-      issue.todoList = this.parseBody(issue['body']);
-    }
-    console.log(issues);
+  private getParsedBody(issue: any) {
+    const array = this.parseBody(issue['body']);
+      issue.todoList = array[0];
+      issue.description = array[1];
   }
 
   private parseBody(body: string): any {
-    const regexExp = new RegExp('(?<header>## Tutor to check:)\\s+(?<check>[\\s\\S]*?)(?=## Tutor to check|$)', 'gi');
+    const regexExp = new RegExp('(?<header>## Tutor to check:|## Description)\\s+(?<check>[\\s\\S]*?)(?=## Tutor to check|## Description|$)', 'gi');
     regexExp.lastIndex = 0;
     const matches = body.match(regexExp);
     regexExp.lastIndex = 0;
     if (matches != null) {
-      const groups = regexExp.exec(matches[0])['groups'];
-      return groups.check.split(/\r?\n/);
+      const description = regexExp.exec(matches[0])['groups'];
+      regexExp.lastIndex = 0;
+      const groupsTodo = regexExp.exec(matches[1])['groups'];
+      const todoList = groupsTodo.check.split(/\r?\n/);
+      let filtered = todoList.filter(function (todo) {
+        return todo.trim() !== "";
+      });
+      return Array(filtered, description.check);
     } else {
       return Array();
     }
@@ -242,13 +258,17 @@ export class IssueService {
   }
 
   private createIssueModel(issueInJson: {}): Issue {
+    if (this.phaseService.currentPhase === Phase.phase3) {
+      this.getParsedBody(issueInJson);
+    }
     return <Issue>{
       id: +issueInJson['number'],
       created_at: moment(issueInJson['created_at']).format('lll'),
       title: issueInJson['title'],
       assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
-      description: issueInJson['body'],
+      description: issueInJson['description'],
       teamAssigned: this.getTeamAssignedToIssue(issueInJson),
+      todoList: issueInJson['todoList'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS),
     };
   }

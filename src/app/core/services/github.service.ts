@@ -102,7 +102,7 @@ export class GithubService {
   updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<{}> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
-      map(response => {console.log(response);
+      map(response => {
         return response['data'];
       })
     );
