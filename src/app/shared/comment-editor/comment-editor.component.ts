@@ -23,7 +23,6 @@ export class CommentEditorComponent implements OnInit {
   @ViewChild('markdownArea') markdownArea;
 
   dragActiveCounter = 0;
-  cursorPosition = 0;
   uploadErrorMessage: string;
 
   ngOnInit() {}
@@ -34,12 +33,6 @@ export class CommentEditorComponent implements OnInit {
 
     this.dragActiveCounter++;
     this.dropArea.nativeElement.classList.add('highlight-drag-box');
-
-    if (this.commentField.touched) {
-      this.cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    } else {
-      this.cursorPosition = 0;
-    }
   }
 
   // Prevent cursor in textarea from moving when file is dragged over it.
@@ -137,7 +130,6 @@ export class CommentEditorComponent implements OnInit {
 
   private insertUploadingText(filename: string): string {
     const originalDescription = this.commentField.value;
-    const endOfLineIndex = originalDescription.indexOf('\n', this.cursorPosition);
 
     const fileType = filename.split('.')[1];
     let toInsert: string;
@@ -146,6 +138,10 @@ export class CommentEditorComponent implements OnInit {
     } else {
       toInsert = `[Uploading ${filename}...]()\n`;
     }
+
+    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
+    const endOfLineIndex = originalDescription.indexOf('\n', cursorPosition);
+    const nextCursorPosition = cursorPosition + toInsert.length;
 
     if (endOfLineIndex === -1) {
       if (this.commentField.value === '') {
@@ -158,12 +154,25 @@ export class CommentEditorComponent implements OnInit {
       const newlineTillEnd = originalDescription.slice(endOfLineIndex);
       this.commentField.setValue(`${startTillNewline + toInsert + newlineTillEnd}`);
     }
+
+    this.commentTextArea.nativeElement.setSelectionRange(nextCursorPosition, nextCursorPosition);
     return toInsert;
   }
 
   private insertUploadUrl(filename: string, uploadUrl: string) {
+    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
+    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]()`);
+    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]()`.length;
+    const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
+
     this.commentField.setValue(
       this.commentField.value.replace(`[Uploading ${filename}...]()`, `[${filename}](${uploadUrl})`));
+
+    if (cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString) { // within the range of uploading text
+      this.commentTextArea.nativeElement.setSelectionRange(endOfInsertedString, endOfInsertedString);
+    } else {
+      this.commentTextArea.nativeElement.setSelectionRange(cursorPosition, cursorPosition);
+    }
   }
 
   private removeHighlightBorderStyle() {
