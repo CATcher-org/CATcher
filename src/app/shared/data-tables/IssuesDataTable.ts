@@ -45,7 +45,7 @@ export class IssuesDataTable extends DataSource<Issue> {
       flatMap(() => {
         return merge(...displayDataChanges).pipe(
           map(() => {
-            let data = <Issue[]>Object.values(this.issueService.issues$.getValue());
+            let data = <Issue[]>Object.values(this.issueService.issues$.getValue()).reverse();
             if (this.defaultFilter) {
               data = data.filter(this.defaultFilter);
             }

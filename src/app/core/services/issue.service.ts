@@ -157,7 +157,7 @@ export class IssueService {
         return mappedResult;
       }),
       map((issues: Issues) => {
-        this.issues = { ...this.issues, ...issues }
+        this.issues = { ...this.issues, ...issues };
         this.issues = issues;
         this.issues$.next(Object.values(this.issues));
         return Object.values(this.issues);
