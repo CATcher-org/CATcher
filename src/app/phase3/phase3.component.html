@@ -4,11 +4,25 @@
       <div class="grid-flush-left"> <h1 class="mat-headline" style="margin: 0px"> Issues Submitted by Students </h1> </div>
     </mat-grid-tile>
 
-    <mat-grid-tile>
-      <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
-      </mat-form-field>
-    </mat-grid-tile>
+    <div style="text-align: center; margin-bottom: 20px">
+      <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id}} </span>
+      <button *ngIf="teamList" [matMenuTriggerFor]="teamMenu" mat-icon-button>
+        <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> settings </mat-icon>
+      </button>
+
+      <mat-menu #teamMenu>
+        <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList"
+                (click)="updateDisplayedTeam(team)">
+          <span> {{team}} </span>
+        </button>
+      </mat-menu>
+    </div>
+    <br/>
+    <!--<mat-grid-tile>-->
+      <!--<mat-form-field>-->
+        <!--<input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">-->
+      <!--</mat-form-field>-->
+    <!--</mat-grid-tile>-->
   </mat-grid-list>
 
 <table mat-table [dataSource]="issuesDataSource" matSort class="mat-elevation-z8">
