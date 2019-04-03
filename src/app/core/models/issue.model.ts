@@ -6,12 +6,13 @@ export interface Issue {
   title: string;
   type: string;
   severity: string;
-  description?: string;
+  description?: string; // description regex
   responseTag?: string;
   assignees?: string[];
   duplicated?: boolean;
   duplicateOf?: number;
   teamAssigned?: Team;
+  todoList?: string[];
 }
 
 export interface Issues {

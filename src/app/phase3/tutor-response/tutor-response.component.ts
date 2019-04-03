@@ -152,4 +152,23 @@ export class TutorResponseComponent implements OnInit {
     }
   }
 
+  handleChangeOfTodoCheckbox(event, todo, index) {
+    if (event.checked) {
+      this.issue.todoList[index] = '- [x]' + todo.substring(5);
+    } else {
+      this.issue.todoList[index] = '- [ ]' + todo.substring(5);
+    }
+  }
+
+  trackTodoList(index: number, item: string[]): string {
+    return item[index];
+  }
+
+  isTodoChecked(todo): boolean {
+    if (todo.charAt(3) === 'x') {
+      return true;
+    }
+    return false;
+  }
+
 }
