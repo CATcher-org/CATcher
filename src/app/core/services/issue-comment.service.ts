@@ -195,7 +195,6 @@ export class IssueCommentService {
         }
         return response;
       case Phase.phase3:
-        // TODO: Ronak
         if (!phase3ResponseTemplate.test(toParse)) {
           return null;
         }
