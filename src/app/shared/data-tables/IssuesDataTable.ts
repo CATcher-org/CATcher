@@ -133,6 +133,12 @@ export class IssuesDataTable extends DataSource<Issue> {
               }
             }
             break;
+          case 'duplicatedIssues':
+            const duplicatedIssues = this.issueService.issues$.getValue().filter(el => el.duplicateOf === issue.id);
+            if (duplicatedIssues.filter(el => `#${String(el.id)}`.includes(searchKey)).length !== 0) {
+              return true;
+            }
+            break;
           default:
             const searchStr = String(issue[column]).toLowerCase();
             if (searchStr.indexOf(searchKey) !== -1) {
