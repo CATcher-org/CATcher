@@ -63,6 +63,10 @@ export class TodoListComponent implements OnInit {
 
   get todoFinished(): number {
     let count = 0;
+    if (!this.isTodoListExists) {
+      return count;
+    }
+
     for (const todo of this.issue.todoList) {
       if (todo.charAt(3) === 'x') {
         count += 1;
@@ -71,8 +75,12 @@ export class TodoListComponent implements OnInit {
     return count;
   }
 
+  get isTodoListExists(): boolean {
+    return this.issue.todoList !== undefined;
+  }
+
   get isTodoListChecked(): boolean {
-    if (this.todoFinished === this.issue.todoList.length) {
+    if (this.isTodoListExists && this.todoFinished === this.issue.todoList.length) {
       return true;
     }
     return false;

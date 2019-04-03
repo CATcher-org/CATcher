@@ -65,6 +65,9 @@ export class IssueService {
   updateIssue(issue: Issue): Observable<Issue> {
     if (this.phaseService.currentPhase === Phase.phase3) {
       let desc = "## Description\n" + issue.description + "## Tutor to check: \n\n";
+      if (issue.todoList === undefined) {
+        issue.todoList = [];
+      }
       for (const todo of issue.todoList) {
         desc += todo + "\n";
       }
