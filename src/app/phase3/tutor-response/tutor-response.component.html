@@ -32,7 +32,7 @@
       <div class="container" *ngFor="let todo of issue.todoList; index as i; trackBy: trackTodoList">
         <div>
           <mat-checkbox style="display: inline-block; width: 20%" [checked]="isTodoChecked(todo)" (change)="handleChangeOfTodoCheckbox($event, todo, i)">
-            {{ todo }}
+            {{ todo.substring(6) }}
           </mat-checkbox>
         </div>
       </div>
