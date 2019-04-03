@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation} from '@angular/core';
-import {Issue} from "../../../core/models/issue.model";
-import {IssueService} from "../../../core/services/issue.service";
-import {MatSelect} from "@angular/material";
+import {Issue} from '../../../core/models/issue.model';
+import {IssueService} from '../../../core/services/issue.service';
+import {MatSelect} from '@angular/material';
 
 @Component({
   selector: 'app-todo-list',
@@ -36,7 +36,7 @@ export class TodoListComponent implements OnInit {
   }
 
   isTodoChecked(index): boolean {
-    if (this.issue.todoList[index].charAt(3) == 'x') {
+    if (this.issue.todoList[index].charAt(3) === 'x') {
       return true;
     }
     return false;

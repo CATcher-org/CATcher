@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {MatProgressBarModule} from '@angular/material'
+import {MatProgressBarModule} from '@angular/material';
 import {TitleComponent} from './title/title.component';
 import {SharedModule} from '../shared.module';
 import {DescriptionComponent} from './description/description.component';

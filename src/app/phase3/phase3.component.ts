@@ -6,9 +6,9 @@ import {MatPaginator, MatSort} from '@angular/material';
 import {IssueService} from '../core/services/issue.service';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
-import {UserService} from "../core/services/user.service";
-import {Phase} from "../core/services/phase.service";
-import {DataService} from "../core/services/data.service";
+import {UserService} from '../core/services/user.service';
+import {Phase} from '../core/services/phase.service';
+import {DataService} from '../core/services/data.service';
 
 @Component({
   selector: 'app-phase3',

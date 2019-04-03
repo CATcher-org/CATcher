@@ -4,56 +4,6 @@ import {UserService} from './user.service';
 import {Phase, PhaseService} from './phase.service';
 import {UserRole} from '../models/user.model';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class PermissionService {
-  constructor(private githubService: GithubService, private userService: UserService, private phaseService: PhaseService) {}
-
-  canCreateNewIssue(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canCreateNewIssue');
-  }
-
-  canDeleteIssue(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canDeleteIssue');
-  }
-
-  canEditIssueTitle(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canEditIssueTitle');
-  }
-
-  canEditIssueDescription(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canEditIssueDescription');
-  }
-
-  canEditIssueLabels(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canEditIssueLabels');
-  }
-
-  canCRUDTeamResponse(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canCRUDTeamResponse');
-  }
-
-  canCRUDTutorResponse(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canCRUDTutorResponse');
-  }
-
-  requireComments(): boolean {
-    return this.askForPermission(PermissionLevel.Phase, 'requireComments');
-  }
-
-  private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {
-    switch (permissionLevel) {
-      case PermissionLevel.Phase:
-        return PERMISSIONS[this.phaseService.currentPhase][permissionType];
-      case PermissionLevel.User:
-        return PERMISSIONS[this.phaseService.currentPhase][this.userService.currentUser.role][permissionType];
-      default:
-        return false;
-    }
-  }
-}
-
 const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 
 const PERMISSIONS = {
@@ -153,3 +103,53 @@ const PERMISSIONS = {
     }
   }
 };
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PermissionService {
+  constructor(private githubService: GithubService, private userService: UserService, private phaseService: PhaseService) {}
+
+  canCreateNewIssue(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'canCreateNewIssue');
+  }
+
+  canDeleteIssue(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'canDeleteIssue');
+  }
+
+  canEditIssueTitle(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'canEditIssueTitle');
+  }
+
+  canEditIssueDescription(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'canEditIssueDescription');
+  }
+
+  canEditIssueLabels(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'canEditIssueLabels');
+  }
+
+  canCRUDTeamResponse(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'canCRUDTeamResponse');
+  }
+
+  canCRUDTutorResponse(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'canCRUDTutorResponse');
+  }
+
+  requireComments(): boolean {
+    return this.askForPermission(PermissionLevel.Phase, 'requireComments');
+  }
+
+  private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {
+    switch (permissionLevel) {
+      case PermissionLevel.Phase:
+        return PERMISSIONS[this.phaseService.currentPhase][permissionType];
+      case PermissionLevel.User:
+        return PERMISSIONS[this.phaseService.currentPhase][this.userService.currentUser.role][permissionType];
+      default:
+        return false;
+    }
+  }
+}

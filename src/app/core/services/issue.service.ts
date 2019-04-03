@@ -64,12 +64,12 @@ export class IssueService {
 
   updateIssue(issue: Issue): Observable<Issue> {
     if (this.phaseService.currentPhase === Phase.phase3) {
-      let desc = "## Description\n" + issue.description + "## Tutor to check: \n\n";
+      let desc = '## Description\n' + issue.description + '## Tutor to check: \n\n';
       if (issue.todoList === undefined) {
         issue.todoList = [];
       }
       for (const todo of issue.todoList) {
-        desc += todo + "\n";
+        desc += todo + '\n';
       }
       return this.githubService.updateIssue(issue.id, issue.title, desc, this.createLabelsForIssue(issue), issue.assignees).pipe(
         map((response) => {
@@ -171,7 +171,7 @@ export class IssueService {
         return mappedResult;
       }),
       map((issues: Issues) => {
-        this.issues = { ...this.issues, ...issues }
+        this.issues = { ...this.issues, ...issues };
         this.issues = issues;
         this.issues$.next(Object.values(this.issues));
         return Object.values(this.issues);
@@ -212,6 +212,7 @@ export class IssueService {
   }
 
   private parseBody(body: string): any {
+    // tslint:disable-next-line
     const regexExp = new RegExp('(?<header>## Tutor to check:|## Description)\\s+(?<check>[\\s\\S]*?)(?=## Tutor to check|## Description|$)', 'gi');
     regexExp.lastIndex = 0;
     const matches = body.match(regexExp);
@@ -221,8 +222,8 @@ export class IssueService {
       regexExp.lastIndex = 0;
       const groupsTodo = regexExp.exec(matches[1])['groups'];
       const todoList = groupsTodo.check.split(/\r?\n/);
-      let filtered = todoList.filter(function (todo) {
-        return todo.trim() !== "";
+      const filtered = todoList.filter(function (todo) {
+        return todo.trim() !== '';
       });
       return Array(filtered, description.check);
     } else {

@@ -165,7 +165,7 @@ export class TutorResponseComponent implements OnInit {
   }
 
   isTodoChecked(todo): boolean {
-    if (todo.charAt(3) == 'x') {
+    if (todo.charAt(3) === 'x') {
       return true;
     }
     return false;
