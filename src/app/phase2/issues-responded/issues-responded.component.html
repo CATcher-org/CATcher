@@ -38,22 +38,48 @@
 
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
-      <td mat-cell *matCellDef="let issue"> {{issue.type || '-'}} </td>
+      <td mat-cell *matCellDef="let issue">
+        <span *ngIf="issue.type">
+          {{issue.type}}
+        </span>
+        <span *ngIf="!issue.type" style="margin-left: 10%">
+          <mat-icon matTooltip="Should not be empty" matTooltipPosition="above" color="warn">warning</mat-icon>
+        </span>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="severity">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity </th>
-      <td mat-cell *matCellDef="let issue"> {{issue.severity || '-'}} </td>
+      <td mat-cell *matCellDef="let issue">
+        <span *ngIf="issue.severity">
+          {{issue.severity}}
+        </span>
+        <span *ngIf="!issue.severity" style="margin-left: 10%">
+          <mat-icon matTooltip="Should not be empty" matTooltipPosition="above" color="warn">warning</mat-icon>
+        </span>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="responseTag">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Response </th>
-      <td mat-cell *matCellDef="let issue"> {{issue.responseTag || '-'}} </td>
+      <td mat-cell *matCellDef="let issue">
+        <span *ngIf="issue.responseTag">
+          {{issue.responseTag}}
+        </span>
+        <span *ngIf="!issue.responseTag" style="margin-left: 10%">
+          <mat-icon matTooltip="Should not be empty" matTooltipPosition="above" color="warn">warning</mat-icon>
+        </span>
     </ng-container>
 
     <ng-container matColumnDef="assignees">
       <th [style.width]="userService.currentUser.role === 'Student' ? '15%' : '10%'" mat-header-cell *matHeaderCellDef mat-sort-header> Assignees </th>
-      <td mat-cell *matCellDef="let issue"> {{issue.assignees.join(', ') || '-'}} </td>
+      <td mat-cell *matCellDef="let issue">
+        <span *ngIf="issue.assignees.length !== 0">
+          {{issue.assignees.join(', ')}}
+        </span>
+        <span *ngIf="issue.assignees.length === 0" style="margin-left: 10%">
+          <mat-icon matTooltip="Should not be empty" matTooltipPosition="above" color="warn">warning</mat-icon>
+        </span>
     </ng-container>
 
     <ng-container matColumnDef="duplicatedIssues">
