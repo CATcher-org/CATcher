@@ -29,6 +29,16 @@
         </div>
       </div>
 
+      <div class="container" *ngFor="let todo of issue.todoList; index as i; trackBy: trackTodoList">
+        <div>
+          <mat-checkbox style="display: inline-block; width: 20%" [checked]="isTodoChecked(todo)" (change)="handleChangeOfTodoCheckbox($event, todo, i)">
+            {{ todo.substring(6) }}
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <br>
+
       <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
         <mat-form-field class="left-half">
           <mat-select formControlName="severity" placeholder="Severity">
@@ -56,7 +66,7 @@
       <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
         <mat-form-field class="left-half">
           <mat-select placeholder="Assignees" formControlName="assignees" multiple>
-            <mat-option *ngFor="let member of issue.teamAssigned.teamMembers" [value]="member">{{member.loginId}}</mat-option>
+            <mat-option *ngFor="let member of issue.teamAssigned.teamMembers" [value]="member.loginId">{{member.loginId}}</mat-option>
           </mat-select>
           <mat-error *ngIf="assignees.errors && assignees.errors['required'] && assignees.touched">
             Assignee(s) required.

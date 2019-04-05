@@ -82,7 +82,6 @@ export class TutorResponseComponent implements OnInit {
         responseTag: this.responseTag.value,
         duplicated: this.duplicated.value,
       })).pipe(finalize(() => this.isFormPending = false)).subscribe((res) => {
-        console.log(res);
       this.commentsUpdated.emit({
         ...this.comments,
         tutorResponse: res[0],
@@ -150,6 +149,25 @@ export class TutorResponseComponent implements OnInit {
       this.duplicateOf.setValue('');
       this.duplicateOf.markAsUntouched();
     }
+  }
+
+  handleChangeOfTodoCheckbox(event, todo, index) {
+    if (event.checked) {
+      this.issue.todoList[index] = '- [x]' + todo.substring(5);
+    } else {
+      this.issue.todoList[index] = '- [ ]' + todo.substring(5);
+    }
+  }
+
+  trackTodoList(index: number, item: string[]): string {
+    return item[index];
+  }
+
+  isTodoChecked(todo): boolean {
+    if (todo.charAt(3) === 'x') {
+      return true;
+    }
+    return false;
   }
 
 }

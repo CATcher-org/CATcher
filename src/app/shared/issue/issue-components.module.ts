@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import {MatProgressBarModule} from '@angular/material';
 import {TitleComponent} from './title/title.component';
 import {SharedModule} from '../shared.module';
 import {DescriptionComponent} from './description/description.component';
@@ -9,11 +10,13 @@ import {CommentComponent} from './comment/comment.component';
 import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
 import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
+import { TodoListComponent } from './todo-list/todo-list.component';
 
 @NgModule({
   imports: [
     SharedModule,
     CommentEditorModule,
+    MatProgressBarModule,
     MarkdownModule.forChild(),
   ],
   declarations: [
@@ -24,6 +27,7 @@ import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.co
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
+    TodoListComponent,
   ],
   exports: [
     TitleComponent,
@@ -33,6 +37,7 @@ import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.co
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
+    TodoListComponent,
   ]
 })
 export class IssueComponentsModule { }
