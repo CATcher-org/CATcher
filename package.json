@@ -21,35 +21,6 @@
     "test": "npm run postinstall:web && ng test",
     "e2e": "npm run postinstall:web && ng e2e"
   },
-  "build": {
-    "appId": "com.github.Testathor.CATcher",
-    "win": {
-      "icon": "dist",
-      "target": [
-        "portable"
-      ]
-    },
-    "mac": {
-      "icon": "dist",
-      "target": [
-        "dmg"
-      ]
-    },
-    "linux": {
-      "icon": "dist",
-      "category": "CATcher.category.Development",
-      "target": [
-        "AppImage"
-      ]
-    },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "Testathor",
-        "repo": "CATcher"
-      }
-    ]
-  },
   "dependencies": {
     "@angular/animations": "~7.2.7",
     "@angular/cdk": "7.2.1",
