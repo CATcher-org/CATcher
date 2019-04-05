@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
+      <div class="container">
         <mat-form-field class="left-half">
           <mat-select formControlName="severity" placeholder="Severity">
             <mat-option *ngFor="let value of severityValues" [value]="value">

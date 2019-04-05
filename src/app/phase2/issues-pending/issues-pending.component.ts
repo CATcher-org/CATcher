@@ -7,6 +7,8 @@ import {Issue, STATUS} from '../../core/models/issue.model';
 import {RespondType} from '../../core/models/comment.model';
 import {PermissionService} from '../../core/services/permission.service';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
+import {UserService} from '../../core/services/user.service';
+import {UserRole} from '../../core/models/user.model';
 
 @Component({
   selector: 'app-issues-pending',
@@ -24,9 +26,13 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService, private issueCommentService: IssueCommentService) {
+              public permissions: PermissionService, private issueCommentService: IssueCommentService, public userService: UserService) {
     if (permissions.canCRUDTeamResponse()) {
-      this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues', 'actions'];
+      if (userService.currentUser.role !== UserRole.Student) {
+        this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'duplicatedIssues', 'actions'];
+      } else {
+        this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues', 'actions'];
+      }
     } else {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues'];
     }
@@ -41,7 +47,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   ngOnInit() {
     const filter = (issue: Issue) => {
       return (!this.issueService.hasResponse(issue.id) || (!issue.status || issue.status === 'Incomplete')) &&
-        (!issue.duplicated && !issue.duplicateOf);
+        !issue.duplicateOf;
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns, filter);

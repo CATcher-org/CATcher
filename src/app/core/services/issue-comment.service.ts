@@ -62,7 +62,8 @@ export class IssueCommentService {
   }
 
   updateWithDuplicateOfValue(issueId: number, duplicateOfNumber: number): Observable<IssueComment> {
-    const issueComment = this.comments.get(issueId).teamResponse;
+    const issueComment = this.phaseService.currentPhase === Phase.phase2 ? this.comments.get(issueId).teamResponse
+                                                                         : this.comments.get(issueId).tutorResponse;
 
     return this.githubService.updateIssueComment({
       ...issueComment,
@@ -78,7 +79,8 @@ export class IssueCommentService {
   }
 
   removeDuplicateOfValue(issueId: number): Observable<IssueComment> {
-    const issueComment = this.comments.get(issueId).teamResponse;
+    const issueComment = this.phaseService.currentPhase === Phase.phase2 ? this.comments.get(issueId).teamResponse
+                                                                         : this.comments.get(issueId).tutorResponse;
 
     return this.githubService.updateIssueComment({
       ...issueComment,
@@ -141,19 +143,22 @@ export class IssueCommentService {
    * Determine whether the response is the default response produced by the bot.
    */
   private isDefaultResponse(comment: IssueComment): boolean {
-    if (!phase2ResponseTemplate.test(comment.description)) {
-      phase2ResponseTemplate.lastIndex = 0;
+    const template = this.phaseService.currentPhase === Phase.phase2 ? phase2ResponseTemplate : phase3ResponseTemplate;
+    if (!template.test(comment.description)) {
+      template.lastIndex = 0;
       return false;
     }
-    phase2ResponseTemplate.lastIndex = 0;
+    template.lastIndex = 0;
 
-    const matches = comment.description.match(phase2ResponseTemplate);
-    phase2ResponseTemplate.lastIndex = 0;
+    const matches = comment.description.match(template);
+    template.lastIndex = 0;
 
     for (const match of matches) {
-      const groups = phase2ResponseTemplate.exec(match)['groups'];
-      phase2ResponseTemplate.lastIndex = 0;
-      if (groups['header'] === '## Team\'s Response' && groups['description'].trim() === 'Write your response here.') {
+      const groups = template.exec(match)['groups'];
+      template.lastIndex = 0;
+      if ((this.phaseService.currentPhase === Phase.phase2 && groups['header'] === '## Team\'s Response') ||
+        (this.phaseService.currentPhase === Phase.phase3 && groups['header'] === '## Tutor\'s Response') &&
+        groups['description'].trim() === 'Write your response here.') {
         return true;
       }
     }

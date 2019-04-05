@@ -23,7 +23,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
+  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
               private issueCommentService: IssueCommentService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
@@ -43,7 +43,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     const filter = (issue: Issue): boolean => {
-      return this.issueService.hasResponse(issue.id) && (!issue.duplicated && !issue.duplicateOf) &&
+      return this.issueService.hasResponse(issue.id) && !issue.duplicateOf &&
         (issue.status === 'Done');
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
