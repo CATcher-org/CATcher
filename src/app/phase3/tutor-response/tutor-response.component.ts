@@ -82,7 +82,6 @@ export class TutorResponseComponent implements OnInit {
         responseTag: this.responseTag.value,
         duplicated: this.duplicated.value,
       })).pipe(finalize(() => this.isFormPending = false)).subscribe((res) => {
-        console.log(res);
       this.commentsUpdated.emit({
         ...this.comments,
         tutorResponse: res[0],

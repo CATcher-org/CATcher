@@ -18,7 +18,7 @@ import {DataService} from '../core/services/data.service';
 export class Phase3Component implements OnInit {
   issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
-  displayedColumns = ['id', 'title', 'type', 'severity'];
+  displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining'];
   public teamFilter = 'All Teams';
 
   @ViewChild(MatSort) sort: MatSort;
@@ -54,6 +54,35 @@ export class Phase3Component implements OnInit {
   updateDisplayedTeam(newTeam: string) {
     this.teamFilter = newTeam;
     this.issuesDataSource.teamFilter = this.teamFilter;
+  }
+
+  isTodoListExists(issue): boolean {
+    return issue.todoList.length !== 0;
+  }
+
+  todoFinished(issue): number {
+    let count = 0;
+    if (!this.isTodoListExists(issue)) {
+      return count;
+    }
+
+    for (const todo of issue.todoList) {
+      if (todo.charAt(3) === 'x') {
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  isTodoListChecked(issue): boolean {
+    if (!this.isTodoListExists(issue)) {
+      return true;
+    }
+
+    if (this.todoFinished(issue) === issue.todoList.length) {
+      return true;
+    }
+    return false;
   }
 
 }
