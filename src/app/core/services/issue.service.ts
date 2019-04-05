@@ -208,7 +208,7 @@ export class IssueService {
   private getParsedBody(issue: any) {
     const array = this.parseBody(issue['body']);
       issue.todoList = array[0];
-      issue.description = array[1];
+      issue.body = array[1];
   }
 
   private parseBody(body: string): any {
@@ -270,7 +270,7 @@ export class IssueService {
       created_at: moment(issueInJson['created_at']).format('lll'),
       title: issueInJson['title'],
       assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
-      description: issueInJson['description'],
+      description: issueInJson['body'],
       teamAssigned: this.getTeamAssignedToIssue(issueInJson),
       todoList: issueInJson['todoList'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS),
