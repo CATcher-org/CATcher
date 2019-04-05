@@ -49,8 +49,12 @@ export class NewTeamResponseComponent implements OnInit {
       if (checked) {
         this.duplicateOf.setValidators(Validators.required);
         this.responseTag.setValidators(null);
+        this.severity.setValidators(null);
+        this.type.setValidators(null);
       } else {
         this.duplicateOf.setValidators(null);
+        this.severity.setValidators(Validators.required);
+        this.type.setValidators(Validators.required);
         this.responseTag.setValidators(Validators.required);
       }
       this.duplicateOf.updateValueAndValidity();
@@ -94,7 +98,7 @@ export class NewTeamResponseComponent implements OnInit {
     const reason = new Array<string>();
     if (this.dupIssueOptionIsDisabled(issue)) {
       if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
-        reason.push('Cannot set \'duplicate of\' to an issue of lower priority');
+        reason.push('Issue of lower priority');
       }
     }
     return reason.join(', ');

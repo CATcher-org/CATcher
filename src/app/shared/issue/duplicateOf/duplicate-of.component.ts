@@ -79,7 +79,7 @@ export class DuplicateOfComponent implements OnInit {
     const reason = new Array<string>();
     if (this.dupIssueOptionIsDisabled(issue)) {
       if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
-        reason.push('Cannot set \'duplicate of\' to an issue of lower priority');
+        reason.push('Issue of lower priority');
       }
     }
     return reason.join(', ');
