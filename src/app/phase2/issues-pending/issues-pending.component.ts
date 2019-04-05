@@ -3,7 +3,7 @@ import {IssueService} from '../../core/services/issue.service';
 import {MatPaginator, MatSort} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
-import {Issue} from '../../core/models/issue.model';
+import {Issue, STATUS} from '../../core/models/issue.model';
 import {RespondType} from '../../core/models/comment.model';
 import {PermissionService} from '../../core/services/permission.service';
 
@@ -15,7 +15,7 @@ import {PermissionService} from '../../core/services/permission.service';
 export class IssuesPendingComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
 
-  displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
+  displayedColumns;
 
   @Input() teamFilter: string;
 
@@ -24,6 +24,11 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService) {
+    if (permissions.canCRUDTeamResponse()) {
+      this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues', 'actions'];
+    } else {
+      this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues'];
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -34,7 +39,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     const filter = (issue: Issue) => {
-      return !this.issueService.hasResponse(issue.id, RespondType.teamResponse);
+      return !this.issueService.hasResponse(issue.id, RespondType.teamResponse) || (!issue.status || issue.status === 'Incomplete');
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns, filter);
@@ -43,5 +48,22 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   applyFilter(filterValue: string) {
     this.issuesDataSource.filter = filterValue;
+  }
+
+  getDuplicateIssuesFor(issueId: number) {
+    return this.issueService.issues$.getValue().filter(issue => {
+      return issue.duplicateOf === issueId;
+    });
+  }
+
+  markAsResponded(issue: Issue) {
+    this.issueService.updateIssue({
+      ...issue,
+      status: STATUS.Done
+    }).subscribe((updatedIssue) => {
+      this.issueService.updateLocalStore(updatedIssue);
+    }, error => {
+      this.errorHandlingService.handleHttpError(error);
+    });
   }
 }

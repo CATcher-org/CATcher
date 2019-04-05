@@ -16,7 +16,7 @@
 }
 
 .mat-column-title {
-  width: 30%
+  width: 25%;
 }
 
 .mat-column-type {
@@ -24,7 +24,7 @@
 }
 
 .mat-column-severity {
-  width: 15%;
+  width: 10%;
 }
 .mat-column-responseTag {
   width: 10%
@@ -37,6 +37,10 @@
 }
 .mat-column-duplicatedIssues {
   width: 10%
+}
+.mat-column-actions {
+  width: 15%;
+  text-align: center;
 }
 
 .grid-flush-left {

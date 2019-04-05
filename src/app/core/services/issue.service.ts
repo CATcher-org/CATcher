@@ -214,6 +214,11 @@ export class IssueService {
     if (issue.duplicated) {
       result.push('duplicate');
     }
+
+    if (issue.status) {
+      result.push(this.createLabel('status', issue.status));
+    }
+
     return result;
   }
 

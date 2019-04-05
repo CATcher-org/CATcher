@@ -11,6 +11,7 @@ export interface Issue {
   assignees?: string[];
   duplicated?: boolean;
   duplicateOf?: number;
+  status?: string;
   teamAssigned?: Team;
 }
 
@@ -23,17 +24,23 @@ export interface Issues {
  * Where `Type` represent the type of the label. (e.g. severity, type, response)
  * And `Value` represent the value that is associated to the `Type` (e.g. for severity Type, it could be Low, Medium, High)
  */
-export const LABELS = ['severity', 'type', 'response', 'duplicate'];
+export const LABELS = ['severity', 'type', 'response', 'duplicate', 'status'];
 
 export const labelsToAttributeMapping = {
   'severity': 'severity',
   'type': 'type',
   'response': 'responseTag',
+  'status': 'status',
 };
 
 export const SEVERITY_ORDER = { Low: 0, Medium: 1, High: 2 };
 
 export const ISSUE_TYPE_ORDER = { DocumentationBug: 0, FunctionalityBug: 1 };
+
+export enum STATUS {
+  Incomplete = 'Incomplete',
+  Done = 'Done',
+}
 
 export enum SEVERITY {
   Low = 'Low',
