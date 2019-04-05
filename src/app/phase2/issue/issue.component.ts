@@ -28,7 +28,12 @@ export class IssueComponent implements OnInit {
               public permissions: PermissionService) { }
 
   ngOnInit() {
-    this.initializeIssue();
+    this.route.params.subscribe(
+      params => {
+        const id = +params['issue_id'];
+        this.initializeIssue(id);
+      }
+    );
   }
 
 
@@ -54,8 +59,7 @@ export class IssueComponent implements OnInit {
    * Will obtain the issue from IssueService and then check whether the responses (aka comments) has been loaded into the application.
    * If they are not loaded, retrieve the comments from github. Else just use the already retrieved comments.
    */
-  private initializeIssue() {
-    const id = +this.route.snapshot.paramMap.get('issue_id');
+  private initializeIssue(id: number) {
     this.getIssue(id);
     this.getComments(id);
   }
@@ -64,7 +68,7 @@ export class IssueComponent implements OnInit {
     this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
       this.issue = issue;
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
+      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });
   }
 
@@ -73,7 +77,7 @@ export class IssueComponent implements OnInit {
       this.comments = comments;
       this.updateIssue(this.issue);
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
+      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });
   }
 }

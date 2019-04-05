@@ -9,6 +9,7 @@ import {LabelComponent} from './label/label.component';
 import {CommentComponent} from './comment/comment.component';
 import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
+import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
 
 @NgModule({
@@ -25,6 +26,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
     CommentComponent,
     AssigneeComponent,
     DuplicateOfComponent,
+    DuplicatedIssuesComponent,
     TodoListComponent,
   ],
   exports: [
@@ -34,6 +36,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
     CommentComponent,
     AssigneeComponent,
     DuplicateOfComponent,
+    DuplicatedIssuesComponent,
     TodoListComponent,
   ]
 })

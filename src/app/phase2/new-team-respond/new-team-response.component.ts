@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, TYPE} from '../../core/models/issue.model';
+import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, STATUS, TYPE} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {finalize, map} from 'rxjs/operators';
 import {IssueComments} from '../../core/models/comment.model';
@@ -66,12 +66,13 @@ export class NewTeamResponseComponent implements OnInit {
     forkJoin(this.issueCommentService.createIssueComment(this.issue.id, this.description.value, this.duplicateOf.value),
              this.issueService.updateIssue({
                ...this.issue,
-              severity: this.severity.value,
-              type: this.type.value,
-              assignees: this.assignees.value,
-              responseTag: this.responseTag.value,
-              duplicated: this.duplicated.value,
-    })).pipe(finalize(() => this.isFormPending = false)).subscribe((res) => {
+               severity: this.severity.value,
+               type: this.type.value,
+               assignees: this.assignees.value,
+               responseTag: this.responseTag.value,
+               duplicated: this.duplicated.value,
+               status: STATUS.Done,
+             })).pipe(finalize(() => this.isFormPending = false)).subscribe((res) => {
       this.commentsUpdated.emit({
         ...this.comments,
         teamResponse: res[0],
@@ -87,14 +88,16 @@ export class NewTeamResponseComponent implements OnInit {
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
-    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity];
+    return SEVERITY_ORDER[this.severity.value] > SEVERITY_ORDER[issue.severity] || (issue.duplicated || !!issue.duplicateOf);
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
     const reason = new Array<string>();
     if (this.dupIssueOptionIsDisabled(issue)) {
-      if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
-        reason.push('Cannot set \'duplicate of\' to an issue of lower priority');
+      if (SEVERITY_ORDER[this.severity.value] > SEVERITY_ORDER[issue.severity]) {
+        reason.push('Issue of lower priority');
+      } else if (issue.duplicated || !!issue.duplicateOf) {
+        reason.push('A duplicated issue');
       }
     }
     return reason.join(', ');
@@ -102,8 +105,6 @@ export class NewTeamResponseComponent implements OnInit {
 
   handleChangeOfDuplicateCheckbox(event) {
     if (event.checked) {
-      this.severity.setValue(this.issue.severity);
-      this.type.setValue(this.issue.type);
       this.responseTag.setValue('');
       this.assignees.setValue([]);
       this.responseTag.markAsUntouched();

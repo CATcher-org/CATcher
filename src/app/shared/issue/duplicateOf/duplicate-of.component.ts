@@ -8,6 +8,7 @@ import {IssueComments} from '../../../core/models/comment.model';
 import {forkJoin, Observable} from 'rxjs';
 import {MatCheckbox, MatSelect} from '@angular/material';
 import {PermissionService} from '../../../core/services/permission.service';
+import {Phase, PhaseService} from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-duplicate-of-component',
@@ -31,7 +32,8 @@ export class DuplicateOfComponent implements OnInit {
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService) {
+              public permissions: PermissionService,
+              private phaseService: PhaseService) {
   }
 
   ngOnInit() {
@@ -41,13 +43,14 @@ export class DuplicateOfComponent implements OnInit {
   updateDuplicateStatus(event) {
     if (event) {
       const duplicateOfNumber = event.value;
+      const responseType = this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse';
       forkJoin(this.issueCommentService.updateWithDuplicateOfValue(this.issue.id, duplicateOfNumber), this.issueService.updateIssue({
         ...this.issue,
         duplicated: true,
       })).subscribe((res) => {
         this.commentsUpdated.emit({
           ...this.comments,
-          teamResponse: {
+          [responseType]: {
             ...res[0],
             duplicateOf: duplicateOfNumber,
           },
@@ -58,13 +61,14 @@ export class DuplicateOfComponent implements OnInit {
         });
       });
     } else {
+      const responseType = this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse';
       forkJoin(this.issueCommentService.removeDuplicateOfValue(this.issue.id), this.issueService.updateIssue({
         ...this.issue,
         duplicated: false
       })).subscribe((res) => {
         this.commentsUpdated.emit({
           ...this.comments,
-          teamResponse: res[0],
+          [responseType]: res[0],
         });
         this.issueUpdated.emit(res[1]);
       });
@@ -72,14 +76,16 @@ export class DuplicateOfComponent implements OnInit {
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
-    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity];
+    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity] || (issue.duplicated || !!issue.duplicateOf);
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
     const reason = new Array<string>();
     if (this.dupIssueOptionIsDisabled(issue)) {
       if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
-        reason.push('Cannot set \'duplicate of\' to an issue of lower priority');
+        reason.push('Issue of lower priority');
+      } else if (issue.duplicated || !!issue.duplicateOf) {
+        reason.push('A duplicated issue');
       }
     }
     return reason.join(', ');

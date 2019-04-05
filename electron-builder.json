@@ -1,5 +1,6 @@
 {
-  "productName": "CATcher",
+  "appId": "CATcher",
+  "productName": "org.Testathor.CATcher",
   "directories": {
     "output": "release/"
   },

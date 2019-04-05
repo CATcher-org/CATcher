@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-  <button *ngIf="needToShowBackButton()" mat-icon-button class="mat-toolbar mat-primary" style="transform: scale(0.9)" [routerLink]="phaseService.currentPhase">
+  <button *ngIf="needToShowBackButton()" mat-icon-button class="mat-toolbar mat-primary" style="transform: scale(0.9)" (click)="goBack()">
     <mat-icon>arrow_back_ios</mat-icon>
   </button>
   <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher</a>

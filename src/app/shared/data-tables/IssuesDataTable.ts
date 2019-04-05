@@ -45,7 +45,7 @@ export class IssuesDataTable extends DataSource<Issue> {
       flatMap(() => {
         return merge(...displayDataChanges).pipe(
           map(() => {
-            let data = <Issue[]>Object.values(this.issueService.issues$.getValue());
+            let data = <Issue[]>Object.values(this.issueService.issues$.getValue()).reverse();
             if (this.defaultFilter) {
               data = data.filter(this.defaultFilter);
             }
@@ -131,6 +131,12 @@ export class IssuesDataTable extends DataSource<Issue> {
               if (assignee.toLowerCase().indexOf(searchKey) !== -1) {
                 return true;
               }
+            }
+            break;
+          case 'duplicatedIssues':
+            const duplicatedIssues = this.issueService.issues$.getValue().filter(el => el.duplicateOf === issue.id);
+            if (duplicatedIssues.filter(el => `#${String(el.id)}`.includes(searchKey)).length !== 0) {
+              return true;
             }
             break;
           default:

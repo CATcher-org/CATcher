@@ -2,6 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormGroup} from '@angular/forms';
 import {UploadService} from '../../core/services/upload.service';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import {clipboard} from 'electron';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
@@ -22,7 +23,6 @@ export class CommentEditorComponent implements OnInit {
   @ViewChild('markdownArea') markdownArea;
 
   dragActiveCounter = 0;
-  cursorPosition = 0;
   uploadErrorMessage: string;
 
   ngOnInit() {}
@@ -33,12 +33,6 @@ export class CommentEditorComponent implements OnInit {
 
     this.dragActiveCounter++;
     this.dropArea.nativeElement.classList.add('highlight-drag-box');
-
-    if (this.commentField.touched) {
-      this.cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    } else {
-      this.cursorPosition = 0;
-    }
   }
 
   // Prevent cursor in textarea from moving when file is dragged over it.
@@ -102,6 +96,24 @@ export class CommentEditorComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  onPaste() {
+    this.uploadErrorMessage = null;
+
+    const imageFileType = clipboard.availableFormats().filter(type => type.includes('image'));
+    if (imageFileType.length === 0) {
+      return;
+    }
+
+    const filename = `image.${imageFileType[0].split('/')[1]}`;
+    const insertedText = this.insertUploadingText(filename);
+
+    this.uploadService.uploadFile(clipboard.readImage().toDataURL(), filename).subscribe((response) => {
+      this.insertUploadUrl(filename, response.data.content.download_url);
+    }, (error) => {
+      this.handleUploadError(error, insertedText);
+    });
+  }
+
   get isInErrorState(): boolean {
     return !!this.uploadErrorMessage;
   }
@@ -118,7 +130,6 @@ export class CommentEditorComponent implements OnInit {
 
   private insertUploadingText(filename: string): string {
     const originalDescription = this.commentField.value;
-    const endOfLineIndex = originalDescription.indexOf('\n', this.cursorPosition);
 
     const fileType = filename.split('.')[1];
     let toInsert: string;
@@ -127,6 +138,10 @@ export class CommentEditorComponent implements OnInit {
     } else {
       toInsert = `[Uploading ${filename}...]()\n`;
     }
+
+    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
+    const endOfLineIndex = originalDescription.indexOf('\n', cursorPosition);
+    const nextCursorPosition = cursorPosition + toInsert.length;
 
     if (endOfLineIndex === -1) {
       if (this.commentField.value === '') {
@@ -139,12 +154,25 @@ export class CommentEditorComponent implements OnInit {
       const newlineTillEnd = originalDescription.slice(endOfLineIndex);
       this.commentField.setValue(`${startTillNewline + toInsert + newlineTillEnd}`);
     }
+
+    this.commentTextArea.nativeElement.setSelectionRange(nextCursorPosition, nextCursorPosition);
     return toInsert;
   }
 
   private insertUploadUrl(filename: string, uploadUrl: string) {
+    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
+    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]()`);
+    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]()`.length;
+    const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
+
     this.commentField.setValue(
       this.commentField.value.replace(`[Uploading ${filename}...]()`, `[${filename}](${uploadUrl})`));
+
+    if (cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString) { // within the range of uploading text
+      this.commentTextArea.nativeElement.setSelectionRange(endOfInsertedString, endOfInsertedString);
+    } else {
+      this.commentTextArea.nativeElement.setSelectionRange(cursorPosition, cursorPosition);
+    }
   }
 
   private removeHighlightBorderStyle() {

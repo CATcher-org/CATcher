@@ -41,7 +41,7 @@ export class GithubService {
         const apiCalls = [];
         for (let i = 1; i <= numOfPages; i++) {
           apiCalls.push(from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO,
-            sort: 'created', direction: 'asc', per_page: 100, page: i})));
+            sort: 'created', direction: 'desc', per_page: 100, page: i})));
         }
         return forkJoin(apiCalls);
       }),
@@ -118,7 +118,7 @@ export class GithubService {
   }
 
   uploadFile(filename: string, base64String: string): Observable<any> {
-    return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `images/${filename}`,
+    return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `files/${filename}`,
       message: 'upload file', content: base64String}));
   }
 
@@ -130,7 +130,7 @@ export class GithubService {
 
   private getNumberOfPages(filter?: {}): Observable<number> {
     return from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
-      direction: 'asc', per_page: 100, page: 1})).pipe(
+      direction: 'desc', per_page: 100, page: 1})).pipe(
         map((response) => {
           if (!response['headers'].link) {
             return 1;

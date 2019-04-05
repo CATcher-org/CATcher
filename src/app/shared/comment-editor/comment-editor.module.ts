@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import {SharedModule} from '../shared.module';
 import {MarkdownModule} from 'ngx-markdown';
 import {CommentEditorComponent} from './comment-editor.component';
+import {CtrlKeysDirective} from '../../core/directives/ctrl-key.directive';
 
 @NgModule({
   imports: [
@@ -10,6 +11,7 @@ import {CommentEditorComponent} from './comment-editor.component';
   ],
   declarations: [
     CommentEditorComponent,
+    CtrlKeysDirective,
   ],
   exports: [
     CommentEditorComponent
