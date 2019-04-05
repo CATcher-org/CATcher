@@ -88,8 +88,8 @@
         <div *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length === 0">
           -
         </div>
-        <mat-chip-list *ngFor="let duplicateIssue of (issueService.getDuplicateIssuesFor(issue) | async)" style="display: inline-block; margin-left: 5px;">
-          <mat-chip [routerLink]="['issues/' + duplicateIssue.id]"
+        <mat-chip-list *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length !== 0">
+          <mat-chip *ngFor="let duplicateIssue of (issueService.getDuplicateIssuesFor(issue) | async)"  [routerLink]="['issues/' + duplicateIssue.id]"
                     [matTooltip]="duplicateIssue.title" matTooltipPosition="above"
                     style="font-size: 12px; cursor: pointer">
             #{{duplicateIssue.id}}

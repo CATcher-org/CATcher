@@ -6,6 +6,7 @@ import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
 import {RespondType} from '../../core/models/comment.model';
 import {PermissionService} from '../../core/services/permission.service';
+import {IssueCommentService} from '../../core/services/issue-comment.service';
 
 @Component({
   selector: 'app-issues-pending',
@@ -23,7 +24,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService) {
+              public permissions: PermissionService, private issueCommentService: IssueCommentService) {
     if (permissions.canCRUDTeamResponse()) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues', 'actions'];
     } else {
@@ -39,7 +40,8 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     const filter = (issue: Issue) => {
-      return !this.issueService.hasResponse(issue.id) || (!issue.status || issue.status === 'Incomplete');
+      return (!this.issueService.hasResponse(issue.id) || (!issue.status || issue.status === 'Incomplete')) &&
+        (!issue.duplicated && !issue.duplicateOf);
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns, filter);
@@ -55,9 +57,18 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
       ...issue,
       status: STATUS.Done
     }).subscribe((updatedIssue) => {
-      this.issueService.updateLocalStore(updatedIssue);
-    }, error => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+      this.issueCommentService.getIssueComments(updatedIssue.id).subscribe(comments => {
+        let newIssue = updatedIssue;
+        if (comments.teamResponse && comments.teamResponse.duplicateOf) {
+          newIssue = {
+            ...updatedIssue,
+            duplicateOf: comments.teamResponse.duplicateOf,
+          };
+        }
+        this.issueService.updateLocalStore(newIssue);
+        }, error => {
+          this.errorHandlingService.handleHttpError(error);
+        });
+      });
   }
 }
