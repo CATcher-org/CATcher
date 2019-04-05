@@ -8,6 +8,7 @@ import {LabelComponent} from './label/label.component';
 import {CommentComponent} from './comment/comment.component';
 import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
+import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
     CommentComponent,
     AssigneeComponent,
     DuplicateOfComponent,
+    DuplicatedIssuesComponent,
   ],
   exports: [
     TitleComponent,
@@ -30,6 +32,7 @@ import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
     CommentComponent,
     AssigneeComponent,
     DuplicateOfComponent,
+    DuplicatedIssuesComponent,
   ]
 })
 export class IssueComponentsModule { }

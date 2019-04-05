@@ -41,7 +41,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     const filter = (issue: Issue): boolean => {
-      return this.issueService.hasResponse(issue.id, RespondType.teamResponse) && (!issue.duplicated && !issue.duplicateOf) &&
+      return this.issueService.hasResponse(issue.id) && (!issue.duplicated && !issue.duplicateOf) &&
         (issue.status === 'Done');
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
@@ -51,12 +51,6 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
 
   applyFilter(filterValue: string) {
     this.issuesDataSource.filter = filterValue;
-  }
-
-  getDuplicateIssuesFor(issueId: number) {
-    return this.issueService.issues$.getValue().filter(issue => {
-      return issue.duplicateOf === issueId;
-    });
   }
 
   markAsPending(issue: Issue) {

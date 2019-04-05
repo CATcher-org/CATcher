@@ -95,8 +95,20 @@ export class IssueService {
     this.issues$.next(Object.values(this.issues));
   }
 
-  hasResponse(issueId: number, responseType: RespondType): boolean {
+  hasResponse(issueId: number): boolean {
+    const responseType = this.phaseService.currentPhase === Phase.phase2 ? RespondType.teamResponse : RespondType.tutorResponse;
     return !!this.issueCommentService.comments.get(issueId)[responseType];
+  }
+
+  /**
+   * Obtain an Observable array of issues that are duplicate of the given issue.
+   */
+  getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
+    return this.issues$.pipe(map((issues) => {
+      return issues.filter(issue => {
+        return issue.duplicateOf === parentIssue.id;
+      });
+    }));
   }
 
   reset() {

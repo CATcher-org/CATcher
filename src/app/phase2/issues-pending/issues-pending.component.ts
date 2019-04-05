@@ -22,7 +22,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
+  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService) {
     if (permissions.canCRUDTeamResponse()) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues', 'actions'];
@@ -39,7 +39,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     const filter = (issue: Issue) => {
-      return !this.issueService.hasResponse(issue.id, RespondType.teamResponse) || (!issue.status || issue.status === 'Incomplete');
+      return !this.issueService.hasResponse(issue.id) || (!issue.status || issue.status === 'Incomplete');
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns, filter);
@@ -48,12 +48,6 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   applyFilter(filterValue: string) {
     this.issuesDataSource.filter = filterValue;
-  }
-
-  getDuplicateIssuesFor(issueId: number) {
-    return this.issueService.issues$.getValue().filter(issue => {
-      return issue.duplicateOf === issueId;
-    });
   }
 
   markAsResponded(issue: Issue) {
