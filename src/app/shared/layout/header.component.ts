@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import {Location} from '@angular/common';
 import {AuthService} from '../../core/services/auth.service';
 import {PhaseService} from '../../core/services/phase.service';
 import {UserService} from '../../core/services/user.service';
 import {Router} from '@angular/router';
-import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-layout-header',

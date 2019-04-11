@@ -10,6 +10,7 @@
 
       <div *ngIf="comments">
         <app-issue-comment *ngIf="!isCommentsLoading && comments.tutorResponse" [comments]="comments"
+                           [isEditing]="isEditing" (updateEditState)="updateEditState($event)"
                            attributeName="tutorResponse" (commentsUpdated)="updateComments($event)"></app-issue-comment>
         <app-tutor-response *ngIf="!isCommentsLoading  && !comments.tutorResponse" [comments]="comments"
                                [issue]="issue" (issueUpdated)="updateIssue($event)"

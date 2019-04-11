@@ -9,6 +9,7 @@
 
       <div *ngIf="comments">
         <app-issue-comment *ngIf="!isCommentsLoading && comments.teamResponse" [comments]="comments"
+                           [isEditing]="isEditing" (updateEditState)="updateEditState($event)"
                            attributeName="teamResponse" (commentsUpdated)="updateComments($event)"></app-issue-comment>
         <app-new-team-response *ngIf="permissions.canCRUDTeamResponse() && !isCommentsLoading && !comments.teamResponse"
                                [comments]="comments" [issue]="issue" (issueUpdated)="updateIssue($event)"
