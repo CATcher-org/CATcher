@@ -15,6 +15,7 @@ import {IssueCommentService} from '../../core/services/issue-comment.service';
 export class IssueComponent implements OnInit {
   issue: Issue;
   isIssueLoading = true;
+  isEditing = false;
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -26,10 +27,13 @@ export class IssueComponent implements OnInit {
     this.initializeIssue();
   }
 
-
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
     this.issueService.updateLocalStore(this.issue);
+  }
+
+  updateEditState(newState: boolean) {
+    this.isEditing = newState;
   }
 
   /**

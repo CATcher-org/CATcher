@@ -12,13 +12,14 @@ import {PermissionService} from '../../../core/services/permission.service';
   styleUrls: ['./description.component.css'],
 })
 export class DescriptionComponent implements OnInit {
-  isEditing = false;
   isSavePending = false;
   issueDescriptionForm: FormGroup;
 
   @Input() issue: Issue;
   @Input() title: string;
+  @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
+  @Output() changeEditState = new EventEmitter<boolean>();
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
@@ -33,14 +34,14 @@ export class DescriptionComponent implements OnInit {
   }
 
   changeToEditMode() {
-    this.isEditing = true;
+    this.changeEditState.emit(true);
     this.issueDescriptionForm.setValue({
       description: this.issue['description'] || ''
     });
   }
 
   cancelEditMode() {
-    this.isEditing = false;
+    this.changeEditState.emit(false);
   }
 
   updateDescription(form: NgForm) {
@@ -50,7 +51,7 @@ export class DescriptionComponent implements OnInit {
 
     this.isSavePending = true;
     this.issueService.updateIssue(this.getUpdatedIssue()).pipe(finalize(() => {
-      this.isEditing = false;
+      this.changeEditState.emit(false);
       this.isSavePending = false;
     })).subscribe((editedIssue: Issue) => {
       this.issueUpdated.emit(editedIssue);

@@ -14,7 +14,6 @@ import {Phase, PhaseService} from '../../../core/services/phase.service';
   styleUrls: ['./comment.component.css'],
 })
 export class CommentComponent implements OnInit {
-  isEditing = false;
   isSavePending = false;
   issueCommentForm: FormGroup;
 
@@ -35,7 +34,9 @@ export class CommentComponent implements OnInit {
 
   @Input() comments: IssueComments;
   @Input() attributeName: string;
+  @Input() isEditing: boolean;
   @Output() commentsUpdated = new EventEmitter<IssueComments>();
+  @Output() updateEditState = new EventEmitter<boolean>();
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -52,14 +53,14 @@ export class CommentComponent implements OnInit {
   }
 
   changeToEditMode() {
-    this.isEditing = true;
+    this.updateEditState.emit(true);
     this.issueCommentForm.setValue({
       description: this.comments[this.attributeName]['description'] || ''
     });
   }
 
   cancelEditMode() {
-    this.isEditing = false;
+    this.updateEditState.emit(false);
   }
 
   updateIssueComment(form: NgForm) {
@@ -69,7 +70,7 @@ export class CommentComponent implements OnInit {
 
     this.isSavePending = true;
     this.issueCommentService.updateIssueComment(this.getUpdatedIssueComment()).pipe(finalize(() => {
-      this.isEditing = false;
+      this.updateEditState.emit(false);
       this.isSavePending = false;
     })).subscribe((updatedIssueComment: IssueComment) => {
       this.commentsUpdated.emit(this.createUpdatedIssue(updatedIssueComment));

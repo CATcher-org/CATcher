@@ -20,6 +20,7 @@ export class IssueComponent implements OnInit {
   comments: IssueComments;
   isIssueLoading = true;
   isCommentsLoading = true;
+  isEditing = false;
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -73,8 +74,7 @@ export class IssueComponent implements OnInit {
     this.updateIssue(this.issue);
   }
 
-
-
-
-
+  updateEditState(updatedState: boolean) {
+    this.isEditing = updatedState;
+  }
 }

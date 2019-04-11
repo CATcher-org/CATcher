@@ -5,7 +5,9 @@
 
   <div class="row">
     <div class="column left">
-      <app-issue-description *ngIf="!isIssueLoading" [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)"></app-issue-description>
+      <app-issue-description [isEditing]="isEditing" (changeEditState)="updateEditState($event)" *ngIf="!isIssueLoading"
+                             [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)">
+      </app-issue-description>
     </div>
 
     <div class="column right">
