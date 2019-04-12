@@ -10,6 +10,7 @@ import {MarkdownModule} from 'ngx-markdown';
 import {NewTeamResponseComponent} from './new-team-respond/new-team-response.component';
 import {IssuesPendingComponent} from './issues-pending/issues-pending.component';
 import {IssuesRespondedComponent} from './issues-responded/issues-responded.component';
+import {IssuesFaultyComponent} from './issues-faulty/issues-faulty.component';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import {IssuesRespondedComponent} from './issues-responded/issues-responded.comp
     NewTeamResponseComponent,
     IssuesPendingComponent,
     IssuesRespondedComponent,
+    IssuesFaultyComponent,
   ],
 })
 export class Phase2Module {}

@@ -31,12 +31,20 @@
         <app-issue-label [issue]="issue" attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
         <app-assignee-component [issue]="issue" [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)"></app-assignee-component>
-        <mat-divider></mat-divider>
-        <app-duplicate-of-component *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length === 0" [issue]="issue"
-                                    [comments]="comments" (issueUpdated)="updateIssue($event)"
-                                    (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>
-        <app-duplicated-issues-component *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length !== 0"
-                                          [issue]="issue" [comments]="comments"></app-duplicated-issues-component>
+
+        <div *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length !== 0" style="margin-bottom: 15px;">
+          <mat-divider></mat-divider>
+          <app-duplicated-issues-component [issue]="issue" [comments]="comments"></app-duplicated-issues-component>
+        </div>
+        <div *ngIf="!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0">
+          <mat-divider></mat-divider>
+          <app-duplicate-of-component [issue]="issue" [comments]="comments" (issueUpdated)="updateIssue($event)"
+                                      (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>
+        </div>
+        <div style="margin-top: 15px; color: red" *ngIf="((issueService.getDuplicateIssuesFor(issue) | async).length !== 0) &&
+            (!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
+          * Need your resolution. An issue cannot have both duplicated issues and duplicated status.
+        </div>
       </div>
     </div>
   </div>

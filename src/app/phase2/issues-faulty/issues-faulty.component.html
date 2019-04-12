@@ -1,7 +1,7 @@
 <div>
   <mat-grid-list cols="3" rowHeight="80px">
     <mat-grid-tile>
-      <div class="grid-flush-left"> <h1 class="mat-headline" style="margin: 0px"> Issues Responded </h1> </div>
+      <div class="grid-flush-left"> <h1 class="mat-headline" style="margin: 0px"> Faulty Issues </h1> </div>
     </mat-grid-tile>
 
     <mat-grid-tile>
@@ -22,8 +22,7 @@
       <th mat-header-cell mat-sort-header *matHeaderCellDef> Title </th>
       <td mat-cell *matCellDef="let issue">
         <a class="no-underline link-grey-dark" [routerLink]="'issues/' + issue.id"> {{issue.title}} </a>
-        <mat-chip-list *ngIf="issue.duplicated && !issue.duplicateOf && (issueService.getDuplicateIssuesFor(issue) | async).length === 0"
-                       style="display: inline-block; margin-left: 5px;">
+        <mat-chip-list *ngIf="issue.duplicated && !issue.duplicateOf" style="display: inline-block; margin-left: 5px;">
           <mat-chip style="font-size: 12px; cursor: pointer" [color]="'accent'"
                     matTooltip="Issue marked as duplicated but duplicated issue not specified." matTooltipPosition="above">
             Duplicate value not specified
