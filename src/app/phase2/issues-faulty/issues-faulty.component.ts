@@ -6,7 +6,7 @@ import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
+import {PermissionService} from '../../core/services/permission.service';
 
 @Component({
   selector: 'app-issues-faulty',
@@ -23,7 +23,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
-              private issueCommentService: IssueCommentService) {
+              public permissions: PermissionService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {
@@ -54,25 +54,5 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   applyFilter(filterValue: string) {
     this.issuesDataSource.filter = filterValue;
-  }
-
-  markAsPending(issue: Issue) {
-    this.issueService.updateIssue({
-      ...issue,
-      status: STATUS.Incomplete
-    }).subscribe((updatedIssue) => {
-      this.issueCommentService.getIssueComments(updatedIssue.id).subscribe(comments => {
-        let newIssue = updatedIssue;
-        if (comments.teamResponse && comments.teamResponse.duplicateOf) {
-          newIssue = {
-            ...updatedIssue,
-            duplicateOf: comments.teamResponse.duplicateOf,
-          };
-        }
-        this.issueService.updateLocalStore(newIssue);
-      }, error => {
-        this.errorHandlingService.handleHttpError(error);
-      });
-    });
   }
 }

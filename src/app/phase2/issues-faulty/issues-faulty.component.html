@@ -100,7 +100,12 @@
 
     <ng-container *ngIf="userService.currentUser.role === 'Student' || userService.currentUser.role === 'Admin'" matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Action </th>
-      <td mat-cell *matCellDef="let issue"> <button color="primary" mat-button (click)="markAsPending(issue)">Mark as pending</button> </td>
+      <td mat-cell *matCellDef="let issue">
+        <button *ngIf="permissions.canCRUDTeamResponse()"
+                [routerLink]="'/phase2/issues/' + issue.id" mat-button color="accent">
+          Fix
+        </button>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
