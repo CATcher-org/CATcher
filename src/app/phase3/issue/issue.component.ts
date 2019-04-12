@@ -20,7 +20,8 @@ export class IssueComponent implements OnInit {
   comments: IssueComments;
   isIssueLoading = true;
   isCommentsLoading = true;
-  isEditing = false;
+  isCommentEditing = false;
+  isIssueDescriptionEditing = false;
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -31,6 +32,10 @@ export class IssueComponent implements OnInit {
 
   ngOnInit() {
     this.initializeIssue();
+  }
+
+  canDeactivate() {
+    return !this.isCommentEditing && !this.isIssueDescriptionEditing;
   }
 
   private initializeIssue() {
@@ -74,7 +79,11 @@ export class IssueComponent implements OnInit {
     this.updateIssue(this.issue);
   }
 
-  updateEditState(updatedState: boolean) {
-    this.isEditing = updatedState;
+  updateCommentEditState(updatedState: boolean) {
+    this.isCommentEditing = updatedState;
+  }
+
+  updateDescriptionEditState(updatedState: boolean) {
+    this.isIssueDescriptionEditing = updatedState;
   }
 }

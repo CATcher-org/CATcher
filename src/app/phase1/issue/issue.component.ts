@@ -27,6 +27,10 @@ export class IssueComponent implements OnInit {
     this.initializeIssue();
   }
 
+  canDeactivate() {
+    return !this.isEditing;
+  }
+
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
     this.issueService.updateLocalStore(this.issue);

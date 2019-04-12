@@ -37,6 +37,10 @@ export class IssueComponent implements OnInit {
     );
   }
 
+  canDeactivate() {
+    return !this.isEditing;
+  }
+
 
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
