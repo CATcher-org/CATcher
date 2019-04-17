@@ -76,7 +76,7 @@ export class TodoListComponent implements OnInit {
   }
 
   get isTodoListExists(): boolean {
-    return this.issue.todoList !== undefined;
+    return this.issue.todoList.length !== 0;
   }
 
   get isTodoListChecked(): boolean {
