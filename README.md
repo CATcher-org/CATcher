@@ -15,7 +15,7 @@ This application will support the following order of workflow:
 2. **Team's Response**: Teams would be able to respond to the bugs that are reported during the bug reporting phase.
 3. **Evaluation**: Tutors and Admins will be able to view the bug reports and their respective team's response and evaluate them accordingly, changing the severity and status of the bug reports accordingly.
 
-## Getting Started
+# Getting Started
 
 1. Clone this repository locally.
 
@@ -36,9 +36,9 @@ A Github organization must be created first. The organization must have the foll
 
 
 ## Set up Github Repositories
-This application assumes 4 repositories will be created (Note that the naming of repository must follow **exactly** as what is specified below.
+This application assumes 4 repositories will be created under the above organization (the naming of repository must follow **exactly** as what is specified.
 
-Note that for each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue's description and comments in a form of a link. As for images, the actual image will be displayed.
+For each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue's description and comments in a form of a link. As for images, the actual image will be displayed.
 
 ### `public_data` Repository
 This repository must contain 1 file called `data.json`. In this JSON file, it will contain the following information:
@@ -84,10 +84,9 @@ This repository must include the following issue tags:
 1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
 2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
 3. **Response**: `response.Accepted`, `response.CannotReproduce`, `response.IssueUnclear`, `response.Rejected`
-4. **Status**: `status.Done`, `status.Incomplete`
-5. **Team**: `team.*`
-6. **Tutorial**: `tutorial.*`
-7. **Duplicate**: `duplicate`
+4. **Team**: `team.*`
+5. **Tutorial**: `tutorial.*`
+6. **Duplicate**: `duplicate`
 
 ## Set up access rights
 For each of the teams, follow the steps below to assign the right access level to the repositories. 
@@ -114,7 +113,7 @@ The application code is managed by `main.ts`. In this sample, the app runs with 
 The Angular component contains an example of Electron and NodeJS native lib import.
 You can disable "Developer Tools" by commenting `win.webContents.openDevTools();` in `main.ts`.
 
-## Commands
+# Commands
 
 |Command|Description|
 |--|--|
@@ -124,3 +123,18 @@ You can disable "Developer Tools" by commenting `win.webContents.openDevTools();
 |`npm run electron:linux`| Builds your application and creates an app consumable on linux system |
 |`npm run electron:windows`| On a Windows OS, builds your application and creates an app consumable in windows 32/64 bit systems |
 |`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
+
+# Future Developments
+Here are a few suggestions that future developers can work on to improve this application!
+
+## Support Commenting
+Currently, the application only support 1 response for each phase. So a commenting section would be good to allow discussions between team members as well as between tutors and admins. 
+
+## Poll for updates
+The state of the application is based on the initial log in in which the data will be pulled from Github. However, this state is not updated as the user uses the application. This might lead to problems where the user is shown an outdated version of an issue.
+
+## Add Tester's response phase (Right after the Team's Response)
+The rational for this phase is to ease the workload of tutors and admins during the evaluation phase. In this phase, testers who lodged the bug will be able to look at the team's response to their bug report. If they think that the response is unjust, they can object it.
+
+During the evaluation phase, the tutors and admins just need focus on those bug reports with objections. Those without objections will not be moderated.
+
