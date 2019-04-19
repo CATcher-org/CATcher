@@ -88,7 +88,7 @@ This repository must include the following issue tags:
 5. **Tutorial**: `tutorial.*`
 6. **Duplicate**: `duplicate`
 
-## 2.2.5. Set up access rights
+## 2.3. Set up access rights
 For each of the teams, follow the steps below to assign the right access level to the repositories. 
 1. Go to their respective team page on Github.
 2. Click on `Repositories` navigation tab.
@@ -105,7 +105,7 @@ For each of the teams, follow the steps below to assign the right access level t
         2. pe-results: `Read`
         3. pe-evaluation: `Write`
 
-## 2.3. Start development!
+## 2.4. Start development!
 
 - **in a terminal window** -> `npm start`
 
