@@ -1,0 +1,54 @@
+.container {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.title {
+  color: black;
+  margin:0;
+  padding:30px 20px;
+}
+
+.mat-column-id {
+  width: 7%;
+}
+
+.mat-column-title {
+  width: 25%;
+}
+
+.mat-column-type {
+  width: 15%
+}
+
+.mat-column-severity {
+  width: 10%;
+}
+.mat-column-responseTag {
+  width: 10%
+}
+.mat-column-assignees {
+  width: 15%
+}
+.mat-column-teamAssigned {
+  width: 12%
+}
+.mat-column-duplicatedIssues {
+  width: 10%
+}
+.mat-column-actions {
+  width: 15%;
+  text-align: center;
+}
+
+.grid-flush-left {
+  position: absolute;
+  left: 5px;
+}
+
+.grid-flush-right {
+  position: absolute;
+  right: 5px;
+}

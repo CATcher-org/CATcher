@@ -203,10 +203,12 @@ export class IssueService {
         map(() => {
           for (const issue of <Issue[]>Object.values(this.issues)) {
             const commentsOfIssue = this.issueCommentService.comments.get(issue.id);
-            if (commentsOfIssue.teamResponse && commentsOfIssue.teamResponse.duplicateOf) {
+            if ((commentsOfIssue.teamResponse && commentsOfIssue.teamResponse.duplicateOf) ||
+              (commentsOfIssue.tutorResponse && commentsOfIssue.tutorResponse.duplicateOf)) {
               const updatedIssue = {
                 ...issue,
-                duplicateOf: commentsOfIssue.teamResponse.duplicateOf,
+                duplicateOf: this.phaseService.currentPhase === Phase.phase2 ? commentsOfIssue.teamResponse.duplicateOf
+                  : commentsOfIssue.tutorResponse.duplicateOf,
               };
               this.updateLocalStore(updatedIssue);
             }

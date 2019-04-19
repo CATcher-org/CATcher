@@ -23,7 +23,8 @@ export class AuthComponent implements OnInit, OnDestroy {
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
-              private phaseService: PhaseService) { }
+              private phaseService: PhaseService,
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
@@ -46,20 +47,21 @@ export class AuthComponent implements OnInit, OnDestroy {
       return;
     } else {
       this.auth.startAuthentication(this.loginForm.get('username').value, this.loginForm.get('password').value,
-        this.loginForm.get('encodedText').value).subscribe((res) => {
-        const phase = this.phaseService.determinePhaseNumber(res);
-        this.router.navigateByUrl(phase);
-        form.resetForm();
-
-        if (phase !== 'not accessible') {
-          this.router.navigateByUrl(phase);
-        }
-      }, (error) => {
-        if (error instanceof HttpErrorResponse) {
-          this.errorHandlingService.handleHttpError(error.error);
-        } else {
-          this.errorHandlingService.handleGeneralError(error);
-        }
+        this.loginForm.get('encodedText').value)
+        .subscribe(
+          (res) => {
+          const phase = this.phaseService.determinePhaseNumber(res);
+          if (phase !== 'not accessible') {
+            this.authService.changeAuthState(AuthState.Authenticated);
+            form.resetForm();
+            this.router.navigateByUrl(phase);
+          }},
+          (error) => {
+          if (error instanceof HttpErrorResponse) {
+            this.errorHandlingService.handleHttpError(error.error);
+          } else {
+            this.errorHandlingService.handleGeneralError(error);
+          }
       });
     }
   }

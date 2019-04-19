@@ -1,4 +1,4 @@
-import {BehaviorSubject, merge, Observable} from 'rxjs';
+import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
 import {DataSource} from '@angular/cdk/table';
 import {IssueService} from '../../core/services/issue.service';
 import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.model';
@@ -11,6 +11,7 @@ export class IssuesDataTable extends DataSource<Issue> {
   private teamFilterChange = new BehaviorSubject('');
   private issuesSubject = new BehaviorSubject<Issue[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
+  private issueSubscription: Subscription;
 
   public isLoading$ = this.loadingSubject.asObservable();
 
@@ -24,7 +25,13 @@ export class IssuesDataTable extends DataSource<Issue> {
     return this.issuesSubject.asObservable();
   }
 
-  disconnect() {}
+  disconnect() {
+    this.filterChange.complete();
+    this.teamFilterChange.complete();
+    this.issuesSubject.complete();
+    this.loadingSubject.complete();
+    this.issueSubscription.unsubscribe();
+  }
 
   loadIssues() {
     const displayDataChanges = [
@@ -37,7 +44,7 @@ export class IssuesDataTable extends DataSource<Issue> {
 
     this.loadingSubject.next(true);
 
-    this.issueService.getAllIssues().pipe(
+    this.issueSubscription = this.issueService.getAllIssues().pipe(
       delay(0),
       tap(() => {
         this.loadingSubject.next(false);
