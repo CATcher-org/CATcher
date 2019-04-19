@@ -2,13 +2,18 @@
 
 CATcher is a desktop application for peer-testing of software projects.
 
-Project structure cloned and modified from https://github.com/maximegris/angular-electron.
+Project structure adapted from, https://angular.io/guide/styleguide#overall-structural-guidelines and https://github.com/maximegris/angular-electron.
 
 Currently runs with:
 
 - Angular v7.2.10
 - Electron v4.0.0
 - Electron Builder v20.28.1
+
+This application will support the following order of workflow:
+1. **Bug Reporting**: Testers which have already been informed of the teams which they will be testing will be able to start creating new bug reports during this phase.
+2. **Team's Response**: Teams would be able to respond to the bugs that are reported during the bug reporting phase.
+3. **Evaluation**: Tutors and Admins will be able to view the bug reports and their respective team's response and evaluate them accordingly, changing the severity and status of the bug reports accordingly.
 
 ## Getting Started
 
@@ -33,7 +38,7 @@ A Github organization must be created first. The organization must have the foll
 ## Set up Github Repositories
 This application assumes 4 repositories will be created (Note that the naming of repository must follow **exactly** as what is specified below.
 
-Note that for each repository, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue's description and comments in a form of a link. As for images, the actual image will be displayed.
+Note that for each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue's description and comments in a form of a link. As for images, the actual image will be displayed.
 
 ### `public_data` Repository
 This repository must contain 1 file called `data.json`. In this JSON file, it will contain the following information:
@@ -42,20 +47,47 @@ This repository must contain 1 file called `data.json`. In this JSON file, it wi
 3. Student's team allocation. For each student, the JSON must specify which team the student is in.
 4. Tutor's team allocation. For each tutor, the JSON must specify which team the tutor is responsible for.
 5. Admin's team allocation. For each admin, the JSON must specify which team the admin is responsible for. (The application will still give admin full access to the repository.)
-### `pe` Repository
-This repository will be used for the bug reporting where students can report bugs of the team which they are testing.
 
-All the issues that are posted from the application will be posted into this repository.
+### `pe` Repository
+This repository will be used for the **Bug Reporting** phase where students can report bugs of the team which they are testing.
+
+All the bug reports that are created from the application will be posted into this repository.
+
+This repository must include the following issue tags:
+1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
+2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
 
 ### `pe-results` Repository
-After bug reporting phase is completed, the issues posted during that stage will be transferred over to this repository (Note that the poster of the issue will be anonymized).
+This repository will be used for the **Team's Response** phase.
+
+After the bug reporting phase, the issues posted during that phase will be transferred over to this repository, with the identity of the poster anonymized.
 
 This repository will then be used by the application for individual teams to respond to the bugs that are discovered by the testers testing their application.
 
+This repository must include the following issue tags:
+1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
+2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
+3. **Response**: `response.Accepted`, `response.CannotReproduce`, `response.IssueUnclear`, `response.Rejected`
+4. **Status**: `status.Done`, `status.Incomplete`
+5. **Team**: `team.*`
+6. **Tutorial**: `tutorial.*`
+7. **Duplicate**: `duplicate`
+
 ### `pe-evaluation` Repository
+This repository will be used for the **Evaluation** phase.
+
 After the teams have responded to the bugs reported by their testers. The issues and their respective responses from `pe-results` will be transferred over to this repository. 
 
 The application will then use this repository to post tutor's or admin's evaluation of each team's response and their respective bug report.
+
+This repository must include the following issue tags:
+1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
+2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
+3. **Response**: `response.Accepted`, `response.CannotReproduce`, `response.IssueUnclear`, `response.Rejected`
+4. **Status**: `status.Done`, `status.Incomplete`
+5. **Team**: `team.*`
+6. **Tutorial**: `tutorial.*`
+7. **Duplicate**: `duplicate`
 
 ## Set up access rights
 For each of the teams, follow the steps below to assign the right access level to the repositories. 
