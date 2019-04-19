@@ -31,6 +31,7 @@ export class ErrorHandlingService {
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         break;
       default:
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         return;
     }
   }

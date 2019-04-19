@@ -44,7 +44,6 @@ export class AuthService {
       flatMap((user) => {
         if (user) {
           const array = this.phaseService.parseEncodedPhase(encodedText);
-          this.changeAuthState(AuthState.Authenticated);
           return (this.phaseService.checkIfReposAccessible(array));
         } else {
           return throwError('Unauthorized user.');
@@ -68,7 +67,7 @@ export class AuthService {
     return !!(this.authStateSource.getValue() === AuthState.Authenticated);
   }
 
-  private changeAuthState(newAuthState: AuthState) {
+  changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
   }
 }
