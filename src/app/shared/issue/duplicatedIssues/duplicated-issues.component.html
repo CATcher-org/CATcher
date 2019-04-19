@@ -5,7 +5,7 @@
                 style="cursor: pointer" [matTooltip]="duplicatedIssue.title"
                 matTooltipPosition="above" (removed)="removeDuplicateStatus(duplicatedIssue)">
         <a class="no-underline link-grey-dark" [routerLink]="['../' + duplicatedIssue.id]"> #{{duplicatedIssue.id}} </a>
-        <mat-icon matChipRemove>cancel</mat-icon>
+        <mat-icon *ngIf="permissions.canCRUDTeamResponse() || permissions.canCRUDTutorResponse()" matChipRemove>cancel</mat-icon>
       </mat-chip>
     </mat-chip-list>
 </div>

@@ -1,11 +1,11 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {Issue} from '../../../core/models/issue.model';
 import {IssueService} from '../../../core/services/issue.service';
-import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {IssueCommentService} from '../../../core/services/issue-comment.service';
 import {IssueComments} from '../../../core/models/comment.model';
 import {PermissionService} from '../../../core/services/permission.service';
 import {forkJoin, Observable} from 'rxjs';
+import {Phase, PhaseService} from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-duplicated-issues-component',
@@ -21,12 +21,13 @@ export class DuplicatedIssuesComponent implements OnInit {
 
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
-              private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService) {
+              public permissions: PermissionService,
+              private phaseService: PhaseService) {
   }
 
   ngOnInit() {
     this.duplicatedIssues = this.issueService.getDuplicateIssuesFor(this.issue);
+    this.duplicatedIssues.subscribe(e => console.log(e));
   }
 
   removeDuplicateStatus(duplicatedIssue: Issue) {
@@ -36,7 +37,7 @@ export class DuplicatedIssuesComponent implements OnInit {
     })).subscribe((res) => {
       this.issueCommentService.updateLocalStore({
         ...this.issueCommentService.comments.get(duplicatedIssue.id),
-        teamResponse: res[0],
+        [this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse']: res[0],
       });
       this.issueService.updateLocalStore(res[1]);
     });
