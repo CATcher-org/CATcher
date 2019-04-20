@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import { HttpClient} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
+import {forkJoin, Observable, of, throwError} from 'rxjs';
 import {GithubService} from './github.service';
 import {ErrorHandlingService} from './error-handling.service';
 
@@ -50,15 +50,14 @@ export class PhaseService {
   }
 
   checkIfReposAccessible(array: any): any {
-
-    const url1 = 'https://api.github.com/repos/' + array[1] + '/' + array[0];
-    const url2 = 'https://api.github.com/repos/' + array[3] + '/' + array[2];
-    const url3 = 'https://api.github.com/repos/' + array[5] + '/' + array[4];
+    if (array[1] !== array[3] || array[1] !== array[5]) {
+      return throwError('All 3 repos must have same organization name.');
+    }
 
     const value = forkJoin(
-      this.http.get(url1).pipe(map((res) => res), catchError(e => of('Oops!'))),
-      this.http.get(url2).pipe(map((res) => res), catchError(e => of('Oops!'))),
-      this.http.get(url3).pipe(map((res) => res), catchError(e => of('Oops!'))),
+      this.github.getRepo(array[1], array[0]).pipe(map(res => res), catchError(e => of('Oops'))),
+      this.github.getRepo(array[3], array[2]).pipe(map(res => res), catchError(e => of('Oops'))),
+      this.github.getRepo(array[5], array[4]).pipe(map(res => res), catchError(e => of('Oops'))),
     ).pipe(
       map(([first, second, third]) => {
         return {first, second, third};
@@ -83,7 +82,6 @@ export class PhaseService {
       this.phaseNum = 'third';
     }
     if (this.currentPhase == null) {
-      this.errorHandlingService.handleGeneralError('Repo is not ready');
       return ('not accessible');
     } else {
       copyUrl = this.currentPhase;

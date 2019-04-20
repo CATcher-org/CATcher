@@ -6,8 +6,8 @@ import {IssueComment} from '../models/comment.model';
 const Octokit = require('@octokit/rest');
 
 
-let ORG_NAME = 'testathor';
-let REPO = 'pe-results';
+let ORG_NAME = '';
+let REPO = '';
 const DATA_REPO = 'public_data';
 let octokit;
 
@@ -120,6 +120,14 @@ export class GithubService {
   uploadFile(filename: string, base64String: string): Observable<any> {
     return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `files/${filename}`,
       message: 'upload file', content: base64String}));
+  }
+
+  getRepo(orgName: string, repoName: string) {
+    return from(octokit.repos.get({owner: orgName, repo: repoName})).pipe(
+      map(response => {
+        return response['data'];
+      })
+    );
   }
 
   fetchDataFile(): Observable<{}> {

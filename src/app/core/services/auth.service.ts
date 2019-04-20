@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
-import {BehaviorSubject, throwError} from 'rxjs';
+import {BehaviorSubject, of, throwError} from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import {UserService} from './user.service';
@@ -35,20 +35,23 @@ export class AuthService {
   startAuthentication(username: String, password: String, encodedText: String) {
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
+    let userLoginId;
 
     return this.http.get('https://api.github.com/user', { headers: header }).pipe(
       flatMap((githubResponse) => {
+        userLoginId = githubResponse['login'];
         this.githubService.storeCredentials(username, password);
-        return this.userService.createUserModel(githubResponse);
+        const array = this.phaseService.parseEncodedPhase(encodedText);
+        return (this.phaseService.checkIfReposAccessible(array));
       }),
-      flatMap((user) => {
-        if (user) {
-          const array = this.phaseService.parseEncodedPhase(encodedText);
-          return (this.phaseService.checkIfReposAccessible(array));
+      flatMap((phaseResponse) => {
+        const phase = this.phaseService.determinePhaseNumber(phaseResponse);
+        if (phase === 'not accessible') {
+          return throwError('Repo is not ready.');
         } else {
-          return throwError('Unauthorized user.');
+          return this.userService.createUserModel(userLoginId);
         }
-      }),
+      })
     );
   }
 

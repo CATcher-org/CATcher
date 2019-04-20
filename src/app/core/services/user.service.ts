@@ -3,8 +3,9 @@ import {GithubService} from './github.service';
 import {User, UserRole} from '../models/user.model';
 import {map} from 'rxjs/operators';
 import {Team} from '../models/team.model';
-import {Observable} from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import {DataService} from './data.service';
+import {flatMap} from 'rxjs/internal/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +15,20 @@ export class UserService {
 
   constructor(private githubService: GithubService, private dataService: DataService) {}
 
-  createUserModel(authResponse: {}): Observable<User> {
-    return this.dataService.getDataFile().pipe(map((jsonData: {}) => {
-      const userLoginId = authResponse['login'];
-      this.currentUser = this.createUser(jsonData, userLoginId);
-      return this.currentUser;
-    }));
+  createUserModel(userLoginId: string): Observable<User> {
+    return this.dataService.getDataFile().pipe(
+      map((jsonData: {}) => {
+        this.currentUser = this.createUser(jsonData, userLoginId);
+        return this.currentUser;
+      }),
+      flatMap((user) => {
+        if (user) { // valid user
+          return of(user);
+        } else {
+          return throwError('Unauthorized user.');
+        }
+      })
+    );
   }
 
   reset() {
