@@ -122,6 +122,14 @@ export class GithubService {
       message: 'upload file', content: base64String}));
   }
 
+  getRepo(orgName: string, repoName: string) {
+    return from(octokit.repos.get({owner: orgName, repo: repoName})).pipe(
+      map(response => {
+        return response['data'];
+      })
+    );
+  }
+
   fetchDataFile(): Observable<{}> {
     return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
       return JSON.parse(atob(resp['data']['content']));

@@ -49,13 +49,11 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.auth.startAuthentication(this.loginForm.get('username').value, this.loginForm.get('password').value,
         this.loginForm.get('encodedText').value)
         .subscribe(
-          (res) => {
-          const phase = this.phaseService.determinePhaseNumber(res);
-          if (phase !== 'not accessible') {
+          (user) => {
             this.authService.changeAuthState(AuthState.Authenticated);
             form.resetForm();
-            this.router.navigateByUrl(phase);
-          }},
+            this.router.navigateByUrl(this.phaseService.currentPhase);
+          },
           (error) => {
           if (error instanceof HttpErrorResponse) {
             this.errorHandlingService.handleHttpError(error.error);
