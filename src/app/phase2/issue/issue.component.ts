@@ -21,7 +21,7 @@ export class IssueComponent implements OnInit {
   isCommentsLoading = true;
   isEditing = false;
 
-  constructor(private issueService: IssueService,
+  constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
               private formBuilder: FormBuilder,

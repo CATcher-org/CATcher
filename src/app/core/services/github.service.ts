@@ -6,8 +6,8 @@ import {IssueComment} from '../models/comment.model';
 const Octokit = require('@octokit/rest');
 
 
-let ORG_NAME = 'testathor';
-let REPO = 'pe-results';
+let ORG_NAME = '';
+let REPO = '';
 const DATA_REPO = 'public_data';
 let octokit;
 
