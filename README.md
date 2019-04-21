@@ -2,7 +2,7 @@
 
 CATcher is a desktop application for peer-testing of software projects.
 
-Project structure adapted from, https://angular.io/guide/styleguide#overall-structural-guidelines and https://github.com/maximegris/angular-electron.
+Project structure is adapted from, https://angular.io/guide/styleguide#overall-structural-guidelines and https://github.com/maximegris/angular-electron.
 
 Currently runs with:
 
@@ -11,9 +11,9 @@ Currently runs with:
 - Electron Builder v20.28.1
 
 This application will support the following order of workflow:
-1. **Bug Reporting**: Testers which have already been informed of the teams which they will be testing will be able to start creating new bug reports during this phase.
-2. **Team's Response**: Teams would be able to respond to the bugs that are reported during the bug reporting phase.
-3. **Evaluation**: Tutors and Admins will be able to view the bug reports and their respective team's response and evaluate them accordingly, changing the severity and status of the bug reports accordingly.
+1. **Bug Reporting**: Testers will be informed of the teams they will be testing. Following which, they will be able to start creating new bug reports during this phase.
+2. **Team's Response**: Teams will be able to respond to the bugs that are reported during the bug _reporting phase_.
+3. **Evaluation**: Tutors and Admins will be able to view the bug reports and their respective teams' response. They can evaluate the responses, change the severity and status of the bug reports if needed.
 
 # 2. Getting Started
 
@@ -31,14 +31,14 @@ A Github organization must be created first. The organization must have the foll
 ## 2.2. Set up Github Repositories
 This application assumes 4 repositories will be created under the above organization.
 
-For each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue's description and comments in a form of a link. As for images, the actual image will be displayed.
+For each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue description and comments in a form of a link. As for images, the actual image will be displayed.
 
 ### 2.2.1. `public_data` Repository
 The name of this repository must be **exactly** `public_data`. This repository must contain 1 file called `data.json`. In this JSON file, it will contain the following information:
 1. Roles of users. (Student, Tutor, Admin)
 2. Team structure. For each team, the JSON must specify which student is in that team.
 3. Student's team allocation. For each student, the JSON must specify which team the student is in.
-4. Tutor's team allocation. For each tutor, the JSON must specify which team the tutor is responsible for.
+4. Tutor's team allocation. For each tutor, the JSON must specify which team the tutor is assigned to.
 5. Admin's team allocation. For each admin, the JSON must specify which team the admin is responsible for. (The application will still give admin full access to the repository.)
 
 An example of `data.json`: https://github.com/testathor/public_data/blob/master/data.json
@@ -79,7 +79,7 @@ This repository must include the following issue tags:
 5. **Tutorial**: `tutorial.*`, with the star representing tutorial name.
 6. **Duplicate**: `duplicate`
 
-**Team** and **Tutorial** tags are compulsory tags for each issue.
+**Team** and **Tutorial** tags are compulsory for each issue.
 
 ## 2.3. Set up access rights
 For each of the teams, follow the steps below to assign the right access level to the repositories. 
@@ -140,7 +140,7 @@ Currently, the application only support 1 response for each phase. So a commenti
 The state of the application is based on the initial log-in in which the data will be pulled from Github. However, this state is not updated as the user uses the application. This might lead to problems where the user is shown an outdated version of an issue.
 
 ## 5.3. Add Tester's response phase (Right after the Team's Response)
-The rational for this phase is to ease the workload of tutors and admins during the evaluation phase. In this phase, testers who lodged the bug will be able to look at the team's response to their bug report. If they think that the response is unjust, they can object it.
+The rational for this phase is to ease the workload of tutors and admins during the evaluation phase. In this phase, testers who reported the bug will be able to look at the team's response to their bug report. If they think that the response is unjust, they can object it.
 
 During the evaluation phase, the tutors and admins just need focus on those bug reports with objections. Those without objections will not be moderated.
 
