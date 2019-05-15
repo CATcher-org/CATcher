@@ -41,7 +41,7 @@ The name of this repository must be **exactly** `public_data`. This repository m
 4. Tutor's team allocation. For each tutor, the JSON must specify which team the tutor is assigned to.
 5. Admin's team allocation. For each admin, the JSON must specify which team the admin is responsible for. (The application will still give admin full access to the repository.)
 
-An example of `data.json`: https://github.com/testathor/public_data/blob/master/data.json
+An example of `data.json`: https://github.com/CATcher-org/public_data/blob/master/data.json
 
 ### 2.2.2. Bug Reporting Repository
 All the bug reports that are created from the application will be posted into this repository.
@@ -99,7 +99,7 @@ For each of the teams, follow the steps below to assign the right access level t
         3. pe-evaluation: `Write`
 
 ## 2.4. The Application
-You can download the latest release from https://github.com/testathor/CATcher/releases
+You can download the latest release from https://github.com/CATcher-org/CATcher/releases
 
 Start the application by clicking on the executable file, no installation is required.
 
