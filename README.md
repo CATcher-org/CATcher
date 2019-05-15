@@ -1,6 +1,6 @@
 # 1. Introduction
 
-**CAT**cher is a desktop application for **C**rowed-sourced **A**noymous **T**esting software. It uses GitHub as the backend for hosting bug reports.
+**CAT**cher is a desktop application for **C**rowed-sourced **A**nonymous **T**esting software. It uses GitHub as the backend for hosting bug reports.
 
 Project structure is adapted from, https://angular.io/guide/styleguide#overall-structural-guidelines and https://github.com/maximegris/angular-electron.
 
