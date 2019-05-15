@@ -1,10 +1,15 @@
-import { app, BrowserWindow, screen } from 'electron';
+// import { app, BrowserWindow, screen } from 'electron';
+import { screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+// import Menu = Electron.Menu;
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
+
+const electron = require('electron');
+const {app, BrowserWindow, Menu } = electron;
 
 function createWindow() {
 
@@ -44,14 +49,71 @@ function createWindow() {
 
 }
 
+// Edited version of template menu provided by electron API,
+// refer to https://electronjs.org/docs/api/menu for more information.
+const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Quit CATcher',
+        accelerator: 'CmdOrCtrl+Q',
+        click() {
+          app.quit();
+        }
+      }
+    ]
+  },
+  {
+    label: 'Edit',
+    submenu: [
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'selectAll' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      { role: 'delete' },
+      {
+        label: 'Speech',
+        submenu: [
+          { role: 'startspeaking' },
+          { role: 'stopspeaking' }
+        ]
+      }
+    ]
+  },
+  {
+    label: 'View',
+    submenu: [
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  },
+  {
+    role: 'help',
+    submenu: [
+      {
+        label: 'Learn More',
+        // TODO: Change below url to course-site / application github site.
+        click () { require('electron').shell.openExternal('https://electronjs.org'); }
+      }
+    ]
+  }
+];
+
 try {
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', () => {
-    // const menu = Menu.buildFromTemplate(template);
-    // Menu.setApplicationMenu(menu);
+    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+    Menu.setApplicationMenu(mainMenu);
     createWindow();
   });
 
