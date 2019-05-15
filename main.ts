@@ -66,13 +66,6 @@ const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
       { role: 'copy' },
       { role: 'paste' },
       { role: 'delete' },
-      {
-        label: 'Speech',
-        submenu: [
-          { role: 'startspeaking' },
-          { role: 'stopspeaking' }
-        ]
-      }
     ]
   },
   {
