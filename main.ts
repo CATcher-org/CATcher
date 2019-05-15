@@ -1,15 +1,10 @@
-// import { app, BrowserWindow, screen } from 'electron';
-import { screen } from 'electron';
+import { app, BrowserWindow, screen, Menu } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-// import Menu = Electron.Menu;
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
-
-const electron = require('electron');
-const {app, BrowserWindow, Menu } = electron;
 
 function createWindow() {
 
@@ -49,18 +44,14 @@ function createWindow() {
 
 }
 
-// Edited version of template menu provided by electron API,
+// Edited version of a template menu-bar provided by the electron API,
 // refer to https://electronjs.org/docs/api/menu for more information.
 const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
     label: 'File',
     submenu: [
       {
-        label: 'Quit CATcher',
-        accelerator: 'CmdOrCtrl+Q',
-        click() {
-          app.quit();
-        }
+        label: 'Quit CATcher', accelerator: 'CmdOrCtrl+Q', click() { app.quit(); }
       }
     ]
   },
@@ -112,8 +103,11 @@ try {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', () => {
+
+    // Build and Attach Menu-bar template to application.
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
+
     createWindow();
   });
 
