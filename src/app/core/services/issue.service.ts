@@ -112,7 +112,7 @@ export class IssueService {
   hasResponse(issueId: number): boolean {
     const responseType = this.phaseService.currentPhase === Phase.phase2 ? RespondType.teamResponse : RespondType.tutorResponse;
     return !!this.issueCommentService.comments.get(issueId)[responseType];
-}
+  }
 
   /**
    * Obtain an Observable array of issues that are duplicate of the given issue.
