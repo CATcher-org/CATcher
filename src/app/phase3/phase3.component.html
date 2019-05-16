@@ -41,12 +41,20 @@
 
   <ng-container matColumnDef="type">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
-    <td mat-cell *matCellDef="let issue"> {{issue.type || '-'}} </td>
+    <td mat-cell *matCellDef="let issue"> 
+      <span [ngStyle]="issuesDataSource.setLabelStyle(issue.typeColor)">
+        {{issue.type || '-'}}
+      </span>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="severity">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity </th>
-    <td mat-cell *matCellDef="let issue"> {{issue.severity || '-'}} </td>
+    <td mat-cell *matCellDef="let issue">
+      <span [ngStyle]="issuesDataSource.setLabelStyle(issue.severityColor)">
+        {{issue.severity || '-'}} 
+      </span>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="Todo Remaining">

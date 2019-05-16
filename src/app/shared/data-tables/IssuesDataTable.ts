@@ -165,4 +165,13 @@ export class IssuesDataTable extends DataSource<Issue> {
     const b = valueB || '';
     return (a < b ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
   }
+
+  public setLabelStyle(color: string) {
+    const styles = {
+      'background-color' : '#'.concat(color),
+      'border-radius' : '3px',
+      'padding' : '3px',
+    };
+    return styles;
+  }
 }

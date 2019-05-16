@@ -15,6 +15,7 @@ export class LabelComponent implements OnInit {
 
   @Input() issue: Issue;
   @Input() attributeName: string;
+  @Input() attributeColor: string;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
@@ -26,6 +27,16 @@ export class LabelComponent implements OnInit {
 
   ngOnInit() {
     this.labelValues = ISSUE_LABELS[this.attributeName];
+  }
+
+  setLabelStyle(color: string) {
+    const styles = {
+      'background-color' : '#'.concat(color),
+      'margin-top' : '5px',
+      'border-radius' : '3px',
+      'padding' : '3px',
+    };
+    return styles;
   }
 
   updateLabel(value: string) {

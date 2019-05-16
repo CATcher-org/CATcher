@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
 import {flatMap, map} from 'rxjs/operators';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
-import {Issue, Issues, IssuesFilter, LABELS, labelsToAttributeMapping} from '../models/issue.model';
+import {Issue, Issues, IssuesFilter, LABELS, labelsToAttributeMapping, labelsToColorMapping} from '../models/issue.model';
 import {UserService} from './user.service';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
@@ -341,6 +341,9 @@ export class IssueService {
       const labelType = labelName[0];
       const labelValue = labelName[1];
 
+      const labelColorType = String(labelType).concat('Color');
+      const labelColorValue = String(label['color']);
+
       if (label['name'] === 'duplicate') {
         result = {
           ...result,
@@ -350,6 +353,7 @@ export class IssueService {
         result = {
           ...result,
           [labelsToAttributeMapping[labelType]]: labelValue,
+          [labelsToColorMapping[labelColorType]]: labelColorValue,
         };
       }
     }
