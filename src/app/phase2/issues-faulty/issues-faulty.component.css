@@ -11,6 +11,10 @@
   padding:30px 20px;
 }
 
+.full-grid-width {
+  width: 100%;
+}
+
 .mat-column-id {
   width: 7%;
 }
