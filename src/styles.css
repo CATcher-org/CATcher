@@ -60,3 +60,6 @@ table {
   font-size: 17px;
 }
 
+.full-grid-width {
+  width: 100%;
+}
