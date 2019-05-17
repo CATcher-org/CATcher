@@ -10,8 +10,10 @@
               (selectionChange)="updateDuplicateStatus($event)" (openedChange)="handleSelectionOpenChange($event)">
     <mat-select-trigger></mat-select-trigger>
     <mat-option *ngFor="let issue of duplicatedIssueList | async" [disabled]="dupIssueOptionIsDisabled(issue)" [value]="issue.id">
-      <span class="mat-body-strong"> #{{issue.id}}: </span>  <span class="mat-body">{{issue.title}}</span>
-      <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="color: #f44336"> ({{getDisabledDupOptionErrorText(issue)}}) </span>
+      <div id="duplicate-dropdown-issuedetails" [ngStyle]="{'width': dupIssueOptionIsDisabled(issue) ? '170px' : 'auto'}">
+        <span class="mat-body-strong"> #{{issue.id}}: </span>  <span class="mat-body">{{issue.title}}</span>
+      </div>
+      <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="display: inline-block; color: #f44336"> ({{getDisabledDupOptionErrorText(issue)}}) </span>
     </mat-option>
   </mat-select>
 
