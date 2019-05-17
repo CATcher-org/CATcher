@@ -19,7 +19,8 @@ export class IssueComponent implements OnInit {
   comments: IssueComments;
   isIssueLoading = true;
   isCommentsLoading = true;
-  isEditing = false;
+  isCommentEditing = false;
+  isDescriptionEditing = false;
 
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -38,7 +39,7 @@ export class IssueComponent implements OnInit {
   }
 
   canDeactivate() {
-    return !this.isEditing;
+    return !this.isCommentEditing && !this.isDescriptionEditing;
   }
 
 
@@ -60,8 +61,12 @@ export class IssueComponent implements OnInit {
     this.updateIssue(this.issue);
   }
 
-  updateEditState(updatedState: boolean) {
-    this.isEditing = updatedState;
+  updateCommentEditState(updatedState: boolean) {
+    this.isCommentEditing = updatedState;
+  }
+
+  updateDescriptionEditState(updatedState: boolean) {
+    this.isDescriptionEditing = updatedState;
   }
 
   /**
