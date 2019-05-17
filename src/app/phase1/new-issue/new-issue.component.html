@@ -2,45 +2,52 @@
 
 <form [formGroup]="newIssueForm" #myForm="ngForm" (ngSubmit)="submitNewIssue(myForm)">
   <div class="form">
-    <mat-form-field>
-      <input id="title" formControlName="title" matInput placeholder="Title" required>
-      <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
-        Title required.
-      </mat-error>
-    </mat-form-field>
 
-    <div class="container">
-      <mat-form-field class="left-half">
-        <mat-select formControlName="severity" placeholder="Severity">
-          <mat-option *ngFor="let value of severityValues" [value]="value">
-            {{value}}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
-          Severity required.
-        </mat-error>
-      </mat-form-field>
+    <div class="row">
 
-      <mat-form-field class="right-half">
-        <mat-select formControlName="type" placeholder="Type">
-          <mat-option *ngFor="let value of issueTypeValues" [value]="value">
-            {{value}}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
-          Type required.
-        </mat-error>
-      </mat-form-field>
+      <div class="column left">
+        <mat-form-field>
+          <input id="title" formControlName="title" matInput placeholder="Title" required>
+          <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
+            Title required.
+          </mat-error>
+        </mat-form-field>
+
+        <div style="margin: 10px 0 10px 0;">
+          <app-comment-editor [commentField]="description" [commentForm]="newIssueForm"></app-comment-editor>
+        </div>
+
+        <button style="float: right" type="submit" mat-stroked-button color="primary"
+          [disabled]="!newIssueForm.valid || isFormPending">
+          Submit new issue
+        </button>
+      </div>
+
+      <div class="column right">
+        <mat-form-field class="left-half">
+          <mat-select formControlName="severity" placeholder="Severity">
+            <mat-option *ngFor="let value of severityValues" [value]="value">
+              {{value}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
+            Severity required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="right-half">
+          <mat-select formControlName="type" placeholder="Type">
+            <mat-option *ngFor="let value of issueTypeValues" [value]="value">
+              {{value}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
+            Type required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
     </div>
 
-    <div style="margin: 10px 0 10px 0;">
-      <app-comment-editor [commentField]="description" [commentForm]="newIssueForm"></app-comment-editor>
-    </div>
-
-    <button style="float: right" type="submit" mat-stroked-button color="primary"
-            [disabled]="!newIssueForm.valid || isFormPending">
-      Submit
-    </button>
   </div>
 </form>
-

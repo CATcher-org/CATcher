@@ -1,5 +1,5 @@
 .form {
-  width: 50%;
+  width: 80%;
   margin:0 auto;
 }
 
@@ -7,16 +7,19 @@ mat-form-field {
   width: 100%;
 }
 
-.left-half {
-  grid-column: 1;
-  padding-right: 5px;
+.row {
+  display: flex;
 }
 
-.right-half {
-  grid-column: 2;
-  padding-left: 5px;
+.column {
+  padding: 10px;
+  height: 100%;
 }
 
-.container {
-  display: grid;
+.left {
+  width: 75%;
+}
+
+.right {
+  width: 25%;
 }
