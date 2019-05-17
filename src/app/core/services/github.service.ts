@@ -74,6 +74,22 @@ export class GithubService {
     );
   }
 
+  fetchIssueLabels(issueId: number) {
+    return from(octokit.issues.listLabelsOnIssue({owner: ORG_NAME, repo: REPO, number: issueId})).pipe(
+      map(response => {
+        return response['data'];
+      })
+    );
+  }
+
+  fetchAllLabels() {
+    return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
+      map(response => {
+        return response['data'];
+      })
+    );
+  }
+
   closeIssue(id: number): Observable<{}> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, state: 'closed'})).pipe(
       map(response => {
