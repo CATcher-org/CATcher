@@ -9,7 +9,8 @@ import {
   LABELS,
   labelsToAttributeMapping,
   phase2DescriptionTemplate,
-  phase3DescriptionTemplate, RespondType
+  phase3DescriptionTemplate,
+  RespondType
 } from '../models/issue.model';
 import {UserService} from './user.service';
 import {Phase, PhaseService} from './phase.service';
@@ -70,8 +71,9 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
+    const assignees = this.phaseService.currentPhase === Phase.phase3 ? [] : issue.assignees;
     return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
-      this.createLabelsForIssue(issue), issue.assignees).pipe(
+      this.createLabelsForIssue(issue), assignees).pipe(
         map((response) => {
           return this.createIssueModel(response);
         })
@@ -94,6 +96,7 @@ export class IssueService {
         }
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
+          `## Proposed Assignees\n${issue.assignees.length === 0 ? '--' : issue.assignees.join(', ')}\n` +
           `# Tutor\'s Response\n${issue.tutorResponse}\n## Tutor to check\n${todoString}`;
       default:
         return issue.description;
@@ -212,25 +215,27 @@ export class IssueService {
       return;
     }
 
-    const array = this.parseBody(issue['body']);
+    const array = this.parseBody(issue);
     issue.body = array[0];
     issue.teamResponse = array[1];
     issue.duplicateOf = array[2];
     issue.tutorResponse = array[3];
     issue.todoList = array[4];
+    issue.proposedAssignees = array[5];
   }
 
-  private parseBody(body: string): any {
+  private parseBody(issue: {}): any {
+    const body = issue['body'];
     // tslint:disable-next-line
     const regexExp = this.phaseService.currentPhase == Phase.phase2 ? phase2DescriptionTemplate : phase3DescriptionTemplate;
     const matches = body.match(regexExp);
     regexExp.lastIndex = 0;
 
     if (matches == null) {
-      return Array('', null, null, null, null);
+      return Array('', null, null, null, null, null);
     }
 
-    let description; let teamResponse; let duplicateOf; let tutorResponse; let todoList;
+    let description; let teamResponse; let duplicateOf; let tutorResponse; let todoList; let assignees;
 
     for (const match of matches) {
       const groups = regexExp.exec(match)['groups'];
@@ -262,11 +267,16 @@ export class IssueService {
             return todo.trim() !== '';
           });
           break;
+        case '## Proposed Assignees':
+          const proposedAssignees = groups['description'].split(',').map(a => a.toLowerCase().trim()) || [];
+          const teamMembers = this.getTeamAssignedToIssue(issue).teamMembers.map(m => m.loginId);
+          assignees = teamMembers.filter(m => proposedAssignees.includes(m.toLowerCase()));
+          break;
         default:
           break;
       }
     }
-    return Array(description, teamResponse, duplicateOf, tutorResponse, todoList);
+    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || []);
   }
 
   private createLabelsForIssue(issue: Issue): string[] {
@@ -310,7 +320,8 @@ export class IssueService {
       id: +issueInJson['number'],
       created_at: moment(issueInJson['created_at']).format('lll'),
       title: issueInJson['title'],
-      assignees: issueInJson['assignees'].map((assignee) => assignee['login']),
+      assignees: this.phaseService.currentPhase === Phase.phase3 ? issueInJson['proposedAssignees'] :
+        issueInJson['assignees'].map((assignee) => assignee['login']),
       description: issueInJson['body'],
       teamAssigned: this.getTeamAssignedToIssue(issueInJson),
       todoList: issueInJson['todoList'],

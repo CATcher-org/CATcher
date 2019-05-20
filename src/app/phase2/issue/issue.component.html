@@ -5,10 +5,12 @@
 
   <div class="row">
     <div class="column left">
-      <app-issue-description *ngIf="!isIssueLoading" [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)"></app-issue-description>
+      <app-issue-description *ngIf="!isIssueLoading" [issue]="issue" title="Description of Issue"
+                             (changeEditState)="updateDescriptionEditState($event)" [isEditing]="isDescriptionEditing"
+                             (issueUpdated)="updateIssue($event)"></app-issue-description>
 
       <app-issue-response *ngIf="issue.teamResponse" [issue]="issue"
-                          [isEditing]="isEditing" (updateEditState)="updateEditState($event)"
+                          [isEditing]="isResponseEditing" (updateEditState)="updateResponseEditState($event)"
                           attributeName="teamResponse" (issueUpdated)="updateIssue($event)"></app-issue-response>
       <app-new-team-response *ngIf="permissions.canCRUDTeamResponse() && !issue.teamResponse"
                              [issue]="issue" (issueUpdated)="updateIssue($event)"></app-new-team-response>

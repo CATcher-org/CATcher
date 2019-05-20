@@ -6,7 +6,7 @@ import {FormBuilder} from '@angular/forms';
 import {finalize} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
-import {IssueComments} from '../../core/models/comment.model';
+import {IssueComment, IssueComments} from '../../core/models/comment.model';
 import {PermissionService} from '../../core/services/permission.service';
 
 @Component({
@@ -16,10 +16,11 @@ import {PermissionService} from '../../core/services/permission.service';
 })
 export class IssueComponent implements OnInit {
   issue: Issue;
-  comments: IssueComments;
+  comments: IssueComment[];
   isIssueLoading = true;
-  isCommentsLoading = false;
-  isEditing = false;
+  isCommentsLoading = true;
+  isResponseEditing = false;
+  isDescriptionEditing = false;
 
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -33,12 +34,13 @@ export class IssueComponent implements OnInit {
       params => {
         const id = +params['issue_id'];
         this.initializeIssue(id);
+        this.initializeComments(id);
       }
     );
   }
 
   canDeactivate() {
-    return !this.isEditing;
+    return !this.isResponseEditing && !this.isDescriptionEditing;
   }
 
   updateIssue(newIssue: Issue) {
@@ -46,23 +48,29 @@ export class IssueComponent implements OnInit {
     this.issueService.updateLocalStore(this.issue);
   }
 
-  updateEditState(updatedState: boolean) {
-    this.isEditing = updatedState;
+  updateResponseEditState(updatedState: boolean) {
+    this.isResponseEditing = updatedState;
   }
 
-  /**
-   * Will obtain the issue from IssueService and then check whether the responses (aka comments) has been loaded into the application.
-   * If they are not loaded, retrieve the comments from github. Else just use the already retrieved comments.
-   */
+  updateDescriptionEditState(updatedState: boolean) {
+    this.isDescriptionEditing = updatedState;
+  }
+
   private initializeIssue(id: number) {
-    this.getIssue(id);
-  }
-
-  private getIssue(id: number) {
     this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
       this.issue = issue;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });
+  }
+
+  private initializeComments(id: number) {
+    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
+      .subscribe((issueComments: IssueComments) => {
+        this.comments = issueComments.comments;
+        console.log('Comments: ', issueComments);
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
+      });
   }
 }

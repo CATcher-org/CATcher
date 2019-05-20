@@ -3,7 +3,6 @@ import {Observable, of} from 'rxjs';
 import {GithubService} from './github.service';
 import {IssueComment, IssueComments} from '../models/comment.model';
 import {map} from 'rxjs/operators';
-import {PhaseService} from './phase.service';
 import * as moment from 'moment';
 
 @Injectable({
@@ -13,7 +12,7 @@ export class IssueCommentService {
   // A map from issueId to their respective issue comments.
   comments = new Map<number, IssueComments>();
 
-  constructor(private githubService: GithubService, private phaseService: PhaseService) {
+  constructor(private githubService: GithubService) {
   }
 
   getIssueComments(issueId: number): Observable<IssueComments> {
@@ -49,24 +48,17 @@ export class IssueCommentService {
   private initializeIssueComments(issueId: number): Observable<IssueComments> {
     return this.githubService.fetchIssueComments(issueId).pipe(
       map((comments: []) => {
-        const issueComments = new Array<IssueComment>();
-        for (const comment of comments) {
-          issueComments.push(this.createIssueCommentModel(comment));
-        }
-        return issueComments;
-      }),
-      map((comments: IssueComment[]) => {
-        const newIssueComments = <IssueComments>{
+        const issueComments = <IssueComments>{
           issueId: issueId,
           comments: [],
         };
         for (const comment of comments) {
-          newIssueComments.comments.push(comment);
+          issueComments.comments.push(this.createIssueCommentModel(comment));
         }
-
-        this.comments.set(issueId, <IssueComments>{...newIssueComments, issueId: issueId});
+        this.comments.set(issueId, <IssueComments>{...issueComments, issueId: issueId});
         return this.comments.get(issueId);
-    }));
+      })
+    );
   }
 
   /**

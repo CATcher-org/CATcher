@@ -6,7 +6,7 @@ import {FormBuilder} from '@angular/forms';
 import {finalize} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
-import {IssueComments} from '../../core/models/comment.model';
+import {IssueComment, IssueComments} from '../../core/models/comment.model';
 import {UserService} from '../../core/services/user.service';
 
 @Component({
@@ -17,9 +17,9 @@ import {UserService} from '../../core/services/user.service';
 export class IssueComponent implements OnInit {
 
   issue: Issue;
-  comments: IssueComments;
+  comments: IssueComment[];
   isIssueLoading = true;
-  isCommentsLoading = false;
+  isCommentsLoading = true;
   isTutorResponseEditing = false;
   isTeamResponseEditing = false;
   isIssueDescriptionEditing = false;
@@ -36,6 +36,7 @@ export class IssueComponent implements OnInit {
       params => {
         const id = +params['issue_id'];
         this.initializeIssue(id);
+        this.initializeComments(id);
       }
     );
   }
@@ -68,7 +69,18 @@ export class IssueComponent implements OnInit {
   updateDescriptionEditState(updatedState: boolean) {
     this.isIssueDescriptionEditing = updatedState;
   }
+
   updateTeamResponseEditState(updatedState: boolean) {
     this.isTeamResponseEditing = updatedState;
+  }
+
+  private initializeComments(id: number) {
+    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
+      .subscribe((issueComments: IssueComments) => {
+        this.comments = issueComments.comments;
+        console.log('Comments: ', this.comments);
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
+      });
   }
 }

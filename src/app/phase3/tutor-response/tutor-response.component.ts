@@ -78,7 +78,6 @@ export class TutorResponseComponent implements OnInit {
       this.isFormPending = false;
       form.resetForm();
     })).subscribe((updatedIssue) => {
-      console.log(updatedIssue);
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
