@@ -1,12 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, TYPE} from '../../core/models/issue.model';
-import {forkJoin, Observable} from 'rxjs';
-import {IssueComments} from '../../core/models/comment.model';
+import {Observable} from 'rxjs';
 import {IssueService} from '../../core/services/issue.service';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {UserService} from '../../core/services/user.service';
 import {finalize, map} from 'rxjs/operators';
 
 @Component({
@@ -25,16 +22,11 @@ export class TutorResponseComponent implements OnInit {
 
   isFormPending = false;
   @Input() issue: Issue;
-  @Input() comments: IssueComments;
-  @Output() commentsUpdated = new EventEmitter<IssueComments>();
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-
-
-  constructor(private issueService: IssueService, private issueCommentService: IssueCommentService,
+  constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              private userService: UserService) { }
+              private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
     this.duplicatedIssueList = this.getDupIssueList();
@@ -73,24 +65,21 @@ export class TutorResponseComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    forkJoin(this.issueCommentService.createIssueComment(this.issue.id, this.description.value, this.duplicateOf.value),
-      this.issueService.updateIssue({
-        ...this.issue,
-        severity: this.severity.value,
-        type: this.type.value,
-        assignees: this.assignees.value,
-        responseTag: this.responseTag.value,
-        duplicated: this.duplicated.value,
-      })).pipe(finalize(() => this.isFormPending = false)).subscribe((res) => {
-      this.commentsUpdated.emit({
-        ...this.comments,
-        tutorResponse: res[0],
-      });
-      this.issueUpdated.emit({
-        ...res[1],
-        duplicateOf: res[0]['duplicateOf'],
-      });
+    this.issueService.updateIssue({
+      ...this.issue,
+      severity: this.severity.value,
+      type: this.type.value,
+      assignees: this.assignees.value,
+      responseTag: this.responseTag.value,
+      duplicated: this.duplicated.value,
+      duplicateOf: this.duplicateOf.value,
+      tutorResponse: this.description.value,
+    }).pipe(finalize(() => {
+      this.isFormPending = false;
       form.resetForm();
+    })).subscribe((updatedIssue) => {
+      console.log(updatedIssue);
+      this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });

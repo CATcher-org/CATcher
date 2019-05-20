@@ -1,8 +1,16 @@
 import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
-import {flatMap, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
-import {Issue, Issues, IssuesFilter, LABELS, labelsToAttributeMapping} from '../models/issue.model';
+import {
+  Issue,
+  Issues,
+  IssuesFilter,
+  LABELS,
+  labelsToAttributeMapping,
+  phase2DescriptionTemplate,
+  phase3DescriptionTemplate
+} from '../models/issue.model';
 import {UserService} from './user.service';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
@@ -63,25 +71,34 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
-    if (this.phaseService.currentPhase === Phase.phase3) {
-      let desc = '## Description\n' + issue.description + '## Tutor to check: \n\n';
-      if (issue.todoList === undefined) {
-        issue.todoList = [];
-      }
-      for (const todo of issue.todoList) {
-        desc += todo + '\n';
-      }
-      return this.githubService.updateIssue(issue.id, issue.title, desc, this.createLabelsForIssue(issue), issue.assignees).pipe(
+    return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
+      this.createLabelsForIssue(issue), issue.assignees).pipe(
         map((response) => {
           return this.createIssueModel(response);
         })
-      );
-    }
-    return this.githubService.updateIssue(issue.id, issue.title, issue.description, this.createLabelsForIssue(issue), issue.assignees).pipe(
-      map((response) => {
-        return this.createIssueModel(response);
-      })
     );
+  }
+
+  // Returns a string that represents the description of the issue as represented in github.
+  private createGithubIssueDescription(issue: Issue): string {
+    switch (this.phaseService.currentPhase) {
+      case Phase.phase2:
+        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
+          `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
+      case Phase.phase3:
+        if (!issue.todoList) {
+          issue.todoList = [];
+        }
+        let todoString = '';
+        for (const todo of issue.todoList) {
+          todoString += todo + '\n';
+        }
+        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
+          `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
+          `# Tutor\'s Response\n${issue.tutorResponse}\n## Tutor to check\n${todoString}`;
+      default:
+        return issue.description;
+    }
   }
 
   deleteIssue(id: number): Observable<Issue> {
@@ -111,7 +128,7 @@ export class IssueService {
 
   hasResponse(issueId: number): boolean {
     const responseType = this.phaseService.currentPhase === Phase.phase2 ? RespondType.teamResponse : RespondType.tutorResponse;
-    return !!this.issueCommentService.comments.get(issueId)[responseType];
+    return !!this.issues[issueId][responseType];
   }
 
   /**
@@ -168,7 +185,7 @@ export class IssueService {
       issuesPerFilter.push(this.githubService.fetchIssues(filter));
     }
 
-    const fetchedIssues = forkJoin(issuesPerFilter).pipe(
+    return forkJoin(issuesPerFilter).pipe(
       map((issuesByFilter: [][]) => {
         let mappedResult = {};
         for (const issues of issuesByFilter) {
@@ -189,60 +206,68 @@ export class IssueService {
         return Object.values(this.issues);
       })
     );
-
-    if (!this.permissionService.requireComments()) {
-      return fetchedIssues;
-    } else { // Fetch the comments related to all the issues which will be used to populate the issue table
-      return fetchedIssues.pipe(flatMap((issues: Issue[]) => {
-          const commentsToFetch = [];
-          for (const issue of issues) {
-            commentsToFetch.push(this.issueCommentService.getIssueComments(issue.id));
-          }
-          return forkJoin(commentsToFetch);
-        }),
-        map(() => {
-          for (const issue of <Issue[]>Object.values(this.issues)) {
-            const commentsOfIssue = this.issueCommentService.comments.get(issue.id);
-            if ((commentsOfIssue.teamResponse && commentsOfIssue.teamResponse.duplicateOf) ||
-              (commentsOfIssue.tutorResponse && commentsOfIssue.tutorResponse.duplicateOf)) {
-              const updatedIssue = {
-                ...issue,
-                duplicateOf: this.phaseService.currentPhase === Phase.phase2 ? commentsOfIssue.teamResponse.duplicateOf
-                  : commentsOfIssue.tutorResponse.duplicateOf,
-              };
-              this.updateLocalStore(updatedIssue);
-            }
-          }
-          return Object.values(this.issues);
-        })
-      );
-    }
   }
 
   private getParsedBody(issue: any) {
+    if (this.phaseService.currentPhase === Phase.phase1) {
+      return;
+    }
+
     const array = this.parseBody(issue['body']);
-      issue.todoList = array[0];
-      issue.body = array[1];
+    issue.body = array[0];
+    issue.teamResponse = array[1];
+    issue.duplicateOf = array[2];
+    issue.tutorResponse = array[3];
+    issue.todoList = array[4];
   }
 
   private parseBody(body: string): any {
     // tslint:disable-next-line
-    const regexExp = new RegExp('(?<header>## Tutor to check:|## Description)\\s+(?<check>[\\s\\S]*?)(?=## Tutor to check|## Description|$)', 'gi');
-    regexExp.lastIndex = 0;
+    const regexExp = this.phaseService.currentPhase == Phase.phase2 ? phase2DescriptionTemplate : phase3DescriptionTemplate;
     const matches = body.match(regexExp);
     regexExp.lastIndex = 0;
-    if (matches != null) {
-      const description = regexExp.exec(matches[0])['groups'];
-      regexExp.lastIndex = 0;
-      const groupsTodo = regexExp.exec(matches[1])['groups'];
-      const todoList = groupsTodo.check.split(/\r?\n/);
-      const filtered = todoList.filter(function (todo) {
-        return todo.trim() !== '';
-      });
-      return Array(filtered, description.check);
-    } else {
-      return Array();
+
+    if (matches == null) {
+      return Array('', null, null, null, null);
     }
+
+    let description; let teamResponse; let duplicateOf; let tutorResponse; let todoList;
+
+    for (const match of matches) {
+      const groups = regexExp.exec(match)['groups'];
+      regexExp.lastIndex = 0;
+      switch (groups['header']) {
+        case '# Description':
+          description = groups['description'].trim();
+          break;
+        case '# Team\'s Response':
+          if (groups['description'].trim() === 'Write your response here.') {
+            teamResponse = null;
+          } else {
+            teamResponse = groups['description'].trim();
+          }
+          break;
+        case '## State the duplicated issue here, if any':
+          duplicateOf = this.parseDuplicateOfValue(groups['description']);
+          break;
+        case '# Tutor\'s Response':
+          if (groups['description'].trim() === 'Write your response here.') {
+            tutorResponse = null;
+          } else {
+            tutorResponse = groups['description'].trim();
+          }
+          break;
+        case '## Tutor to check':
+          todoList = groups['description'].split(/\r?\n/);
+          todoList = todoList.filter(function (todo) {
+            return todo.trim() !== '';
+          });
+          break;
+        default:
+          break;
+      }
+    }
+    return Array(description, teamResponse, duplicateOf, tutorResponse, todoList);
   }
 
   private createLabelsForIssue(issue: Issue): string[] {
@@ -281,9 +306,7 @@ export class IssueService {
   }
 
   private createIssueModel(issueInJson: {}): Issue {
-    if (this.phaseService.currentPhase === Phase.phase3) {
-      this.getParsedBody(issueInJson);
-    }
+    this.getParsedBody(issueInJson);
     return <Issue>{
       id: +issueInJson['number'],
       created_at: moment(issueInJson['created_at']).format('lll'),
@@ -292,6 +315,9 @@ export class IssueService {
       description: issueInJson['body'],
       teamAssigned: this.getTeamAssignedToIssue(issueInJson),
       todoList: issueInJson['todoList'],
+      teamResponse: issueInJson['teamResponse'],
+      tutorResponse: issueInJson['tutorResponse'],
+      duplicateOf: issueInJson['duplicateOf'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS),
     };
   }
@@ -315,6 +341,16 @@ export class IssueService {
     });
     const teamId = `${tutorial}-${team}`;
     return this.dataService.getTeam(teamId);
+  }
+
+  private parseDuplicateOfValue(toParse: string): number {
+    const regex = /duplicate of\s*#(\d+)/i;
+    const result = regex.exec(toParse);
+    if (result && result.length >= 2) {
+      return +regex.exec(toParse)[1];
+    } else {
+      return null;
+    }
   }
 
 

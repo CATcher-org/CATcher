@@ -47,44 +47,10 @@ export class IssueCommentService {
     }
   }
 
-  updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
+  private updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
     return this.githubService.updateIssueComment({
       ...issueComment,
       description: this.createGithubResponse(issueComment.description, issueComment.duplicateOf),
-    }).pipe(
-      map((response) => {
-        return this.createIssueCommentModel(response);
-      }),
-      map((comment: IssueComment) => {
-        return this.parseResponse(comment);
-      })
-    );
-  }
-
-  updateWithDuplicateOfValue(issueId: number, duplicateOfNumber: number): Observable<IssueComment> {
-    const issueComment = this.phaseService.currentPhase === Phase.phase2 ? this.comments.get(issueId).teamResponse
-                                                                         : this.comments.get(issueId).tutorResponse;
-
-    return this.githubService.updateIssueComment({
-      ...issueComment,
-      description: this.createGithubResponse(issueComment.description, duplicateOfNumber),
-    }).pipe(
-      map((response) => {
-        return this.createIssueCommentModel(response);
-      }),
-      map((comment: IssueComment) => {
-        return this.parseResponse(comment);
-      })
-    );
-  }
-
-  removeDuplicateOfValue(issueId: number): Observable<IssueComment> {
-    const issueComment = this.phaseService.currentPhase === Phase.phase2 ? this.comments.get(issueId).teamResponse
-                                                                         : this.comments.get(issueId).tutorResponse;
-
-    return this.githubService.updateIssueComment({
-      ...issueComment,
-      description: this.createGithubResponse(issueComment.description, null),
     }).pipe(
       map((response) => {
         return this.createIssueCommentModel(response);

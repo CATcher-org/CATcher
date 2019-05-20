@@ -23,8 +23,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
-              private issueCommentService: IssueCommentService) {
+  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {
@@ -60,18 +59,9 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
       ...issue,
       status: STATUS.Incomplete
     }).subscribe((updatedIssue) => {
-      this.issueCommentService.getIssueComments(updatedIssue.id).subscribe(comments => {
-        let newIssue = updatedIssue;
-        if (comments.teamResponse && comments.teamResponse.duplicateOf) {
-          newIssue = {
-            ...updatedIssue,
-            duplicateOf: comments.teamResponse.duplicateOf,
-          };
-        }
-        this.issueService.updateLocalStore(newIssue);
-      }, error => {
+      this.issueService.updateLocalStore(updatedIssue);
+    }, error => {
         this.errorHandlingService.handleHttpError(error);
-      });
     });
   }
 }

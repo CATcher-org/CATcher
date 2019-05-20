@@ -3,12 +3,9 @@ import {Issue, SEVERITY_ORDER} from '../../../core/models/issue.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {map} from 'rxjs/operators';
-import {IssueCommentService} from '../../../core/services/issue-comment.service';
-import {IssueComments} from '../../../core/models/comment.model';
-import {forkJoin, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {MatCheckbox, MatSelect} from '@angular/material';
 import {PermissionService} from '../../../core/services/permission.service';
-import {Phase, PhaseService} from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-duplicate-of-component',
@@ -21,19 +18,15 @@ export class DuplicateOfComponent implements OnInit {
   duplicatedIssueList: Observable<Issue[]>;
 
   @Input() issue: Issue;
-  @Input() comments: IssueComments;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
-  @Output() commentsUpdated = new EventEmitter<IssueComments>();
 
   @ViewChild(MatSelect) duplicateOfSelection: MatSelect;
   @ViewChild(MatCheckbox) duplicatedCheckbox: MatCheckbox;
 
   constructor(public issueService: IssueService,
-              private issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService,
-              private phaseService: PhaseService) {
+              public permissions: PermissionService) {
   }
 
   ngOnInit() {
@@ -41,38 +34,15 @@ export class DuplicateOfComponent implements OnInit {
   }
 
   updateDuplicateStatus(event) {
-    if (event) {
-      const duplicateOfNumber = event.value;
-      const responseType = this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse';
-      forkJoin(this.issueCommentService.updateWithDuplicateOfValue(this.issue.id, duplicateOfNumber), this.issueService.updateIssue({
-        ...this.issue,
-        duplicated: true,
-      })).subscribe((res) => {
-        this.commentsUpdated.emit({
-          ...this.comments,
-          [responseType]: {
-            ...res[0],
-            duplicateOf: duplicateOfNumber,
-          },
-        });
-        this.issueUpdated.emit({
-          ...res[1],
-          duplicateOf: duplicateOfNumber,
-        });
-      });
-    } else {
-      const responseType = this.phaseService.currentPhase === Phase.phase2 ? 'teamResponse' : 'tutorResponse';
-      forkJoin(this.issueCommentService.removeDuplicateOfValue(this.issue.id), this.issueService.updateIssue({
-        ...this.issue,
-        duplicated: false
-      })).subscribe((res) => {
-        this.commentsUpdated.emit({
-          ...this.comments,
-          [responseType]: res[0],
-        });
-        this.issueUpdated.emit(res[1]);
-      });
-    }
+    this.issueService.updateIssue({
+      ...this.issue,
+      duplicated: !!event,
+      duplicateOf: event ? event.value : null,
+    }).subscribe((updatedIssue) => {
+      this.issueUpdated.emit(updatedIssue);
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
+    });
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {

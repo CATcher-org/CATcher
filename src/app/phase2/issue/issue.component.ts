@@ -18,7 +18,7 @@ export class IssueComponent implements OnInit {
   issue: Issue;
   comments: IssueComments;
   isIssueLoading = true;
-  isCommentsLoading = true;
+  isCommentsLoading = false;
   isEditing = false;
 
   constructor(public issueService: IssueService,
@@ -41,23 +41,9 @@ export class IssueComponent implements OnInit {
     return !this.isEditing;
   }
 
-
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
-    // overwrite the duplicateOf value with the most updated duplicateOf value that is provided the by latest comment.
-    if (this.comments.teamResponse && this.comments.teamResponse.duplicateOf) {
-      this.issue = {
-        ...this.issue,
-        duplicateOf: this.comments.teamResponse.duplicateOf,
-      };
-    }
     this.issueService.updateLocalStore(this.issue);
-  }
-
-  updateComments(newComments: IssueComments) {
-    this.comments = newComments;
-    this.issueCommentService.updateLocalStore(newComments);
-    this.updateIssue(this.issue);
   }
 
   updateEditState(updatedState: boolean) {
@@ -70,21 +56,11 @@ export class IssueComponent implements OnInit {
    */
   private initializeIssue(id: number) {
     this.getIssue(id);
-    this.getComments(id);
   }
 
   private getIssue(id: number) {
     this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
       this.issue = issue;
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
-    });
-  }
-
-  private getComments(id: number) {
-    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading =  false)).subscribe((comments) => {
-      this.comments = comments;
-      this.updateIssue(this.issue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });
