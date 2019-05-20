@@ -9,13 +9,12 @@ import {
   LABELS,
   labelsToAttributeMapping,
   phase2DescriptionTemplate,
-  phase3DescriptionTemplate
+  phase3DescriptionTemplate, RespondType
 } from '../models/issue.model';
 import {UserService} from './user.service';
 import {Phase, PhaseService} from './phase.service';
 import {IssueCommentService} from './issue-comment.service';
 import {PermissionService} from './permission.service';
-import {RespondType} from '../models/comment.model';
 import * as moment from 'moment';
 import {Team} from '../models/team.model';
 import {DataService} from './data.service';

@@ -4,10 +4,8 @@ import {MatPaginator, MatSort} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
-import {RespondType} from '../../core/models/comment.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
 
 @Component({
   selector: 'app-issues-responded',

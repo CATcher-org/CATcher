@@ -87,6 +87,11 @@ export const IssuesFilter = {
   }
 };
 
+export enum RespondType {
+  teamResponse = 'teamResponse',
+  tutorResponse = 'tutorResponse',
+}
+
 // tslint:disable-next-line
 export const phase2DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue here, if any)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|$)', 'gi');
 // tslint:disable-next-line
