@@ -36,8 +36,8 @@ export class TutorResponseComponent implements OnInit {
       type: [this.issue.type, Validators.required],
       responseTag: [this.issue.responseTag, Validators.required],
       assignees: [this.issue.assignees],
-      duplicated: [false],
-      duplicateOf: ['']
+      duplicated: [this.issue.duplicated && !!this.issue.duplicateOf],
+      duplicateOf: [this.issue.duplicated ? this.issue.duplicateOf || '' : '']
     });
     this.duplicated.valueChanges.subscribe(checked => {
       if (checked) {
