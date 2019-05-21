@@ -7,6 +7,7 @@ import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {Router} from '@angular/router';
 import {GithubService} from '../core/services/github.service';
 import {PhaseService} from '../core/services/phase.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-auth',
@@ -24,7 +25,8 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-              private authService: AuthService) { }
+              private authService: AuthService,
+              private titleService: Title) { }
 
   ngOnInit() {
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
@@ -52,6 +54,7 @@ export class AuthComponent implements OnInit, OnDestroy {
           (user) => {
             this.authService.changeAuthState(AuthState.Authenticated);
             form.resetForm();
+            this.titleService.setTitle('CATcher '.concat(this.phaseService.getPhaseDetail()));
             this.router.navigateByUrl(this.phaseService.currentPhase);
           },
           (error) => {
