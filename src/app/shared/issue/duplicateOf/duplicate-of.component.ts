@@ -29,11 +29,31 @@ export class DuplicateOfComponent implements OnInit {
   @ViewChild(MatSelect) duplicateOfSelection: MatSelect;
   @ViewChild(MatCheckbox) duplicatedCheckbox: MatCheckbox;
 
+  // Max chars visible for a duplicate entry in duplicates dropdown list.
+  readonly MAX_CHAR_VISIBLE_DUPLICATE = 17;
+  // Max chars visible for a non-duplicate entry in duplicates dropdown list.
+  readonly MAX_CHAR_VISIBLE_NONDUPLICATE = 40;
+
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,
               private phaseService: PhaseService) {
+  }
+
+  /**
+   * Method checks if the supplied issue requires a tooltip
+   * in the UI as some information may be hidden due to truncation.
+   * @param issue - Displayed issue that may need a tooltip.
+   */
+  needsTooltip(issue: Issue): boolean {
+    // Duplicated issues contain a postfix that reduce the screen-space
+    // available to display the issue title.
+    if (issue.duplicated) {
+      return (issue.title.length < this.MAX_CHAR_VISIBLE_DUPLICATE);
+    } else {
+      return (issue.title.length < this.MAX_CHAR_VISIBLE_NONDUPLICATE);
+    }
   }
 
   ngOnInit() {
