@@ -45,11 +45,14 @@ export class DuplicateOfComponent implements OnInit {
    * Method checks if the supplied issue requires a tooltip
    * in the UI as some information may be hidden due to truncation.
    * @param issue - Displayed issue that may need a tooltip.
+   * @return - false (to enable tooltip) / true (to disable tooltip)
    */
-  needsTooltip(issue: Issue): boolean {
+  disableTooltip(issue: Issue): boolean {
     // Duplicated issues contain a postfix that reduce the screen-space
     // available to display the issue title.
     if (issue.duplicated) {
+      // If length of issue title is less than threshold, it does not need
+      // a tooltip hence the tooltip can be disabled, vice-versa.
       return (issue.title.length < this.MAX_CHAR_VISIBLE_DUPLICATE);
     } else {
       return (issue.title.length < this.MAX_CHAR_VISIBLE_NONDUPLICATE);
