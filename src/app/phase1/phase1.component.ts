@@ -48,7 +48,6 @@ export class Phase1Component implements OnInit {
       const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
       this.issuesPendingDeletion = theRest;
     })).subscribe((removedIssue) => {
-      this.issueService.deleteFromLocalStore(removedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });

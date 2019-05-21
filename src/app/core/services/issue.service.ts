@@ -37,10 +37,11 @@ export class IssueService {
   }
 
   /**
-   * Will return an Observable with JSON object conforming with the following structure:
-   * issues = { [issue.id]: Issue }
+   * Fetch all the necessary issues. If the issues have been fetched before, the function will return the existing issues instead
+   * of calling from Github API.
    *
-   * If the issues have been fetched before, the function will return the existing issues instead of calling from Github API.
+   * @return An Observable containing an array of Issues.
+   *
    */
   getAllIssues(): Observable<Issue[]> {
     if (this.issues === undefined) {
@@ -80,7 +81,11 @@ export class IssueService {
     );
   }
 
-  // Returns a string that represents the description of the issue as represented in github.
+  /**
+   * This function will create a github representation of issue's description. Given the issue model, it will piece together the different
+   * attributes to create the github's description.
+   *
+   */
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
       case Phase.phase2:
@@ -106,11 +111,16 @@ export class IssueService {
   deleteIssue(id: number): Observable<Issue> {
     return this.githubService.closeIssue(id).pipe(
       map((response) => {
-        return this.createIssueModel(response);
+        const deletedIssue = this.createIssueModel(response);
+        this.deleteFromLocalStore(deletedIssue);
+        return deletedIssue;
       })
     );
   }
 
+  /**
+   * This function will update the issue's state of the application. This function needs to be called whenever a issue is deleted.
+   */
   deleteFromLocalStore(issueToDelete: Issue) {
     const { [issueToDelete.id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
     this.issues = withoutIssueToRemove;
@@ -118,7 +128,7 @@ export class IssueService {
   }
 
   /**
-   * To add/update an issue.
+   * This function will update the issue's state of the application. This function needs to be called whenever a issue is added/updated.
    */
   updateLocalStore(issueToUpdate: Issue) {
     this.issues = {
@@ -128,13 +138,16 @@ export class IssueService {
     this.issues$.next(Object.values(this.issues));
   }
 
+  /**
+   * Check whether the issue has been responded in the phase 2/3.
+   */
   hasResponse(issueId: number): boolean {
     const responseType = this.phaseService.currentPhase === Phase.phase2 ? RespondType.teamResponse : RespondType.tutorResponse;
     return !!this.issues[issueId][responseType];
   }
 
   /**
-   * Obtain an Observable array of issues that are duplicate of the given issue.
+   * Obtain an observable containing an array of issues that are duplicates of the parentIssue.
    */
   getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
     return this.issues$.pipe(map((issues) => {
@@ -142,6 +155,30 @@ export class IssueService {
         return issue.duplicateOf === parentIssue.id;
       });
     }));
+  }
+
+  /**
+   * Obtain the team that is assigned to the given issue.
+   */
+  getTeamAssignedToIssue(issueInJson: {}): Team {
+    if (this.phaseService.currentPhase === Phase.phase1) {
+      return null;
+    }
+
+    let tutorial = '';
+    let team = '';
+    issueInJson['labels'].map((label) => {
+      const labelName = String(label['name']).split('.');
+      const labelType = labelName[0];
+      const labelValue = labelName[1];
+      if (labelType === 'team') {
+        team = labelValue;
+      } else if (labelType === 'tutorial') {
+        tutorial = labelValue;
+      }
+    });
+    const teamId = `${tutorial}-${team}`;
+    return this.dataService.getTeam(teamId);
   }
 
   reset() {
@@ -210,6 +247,9 @@ export class IssueService {
     );
   }
 
+  /**
+   * Will be used to parse the github representation of the issue's description
+   */
   private getParsedBody(issue: any) {
     if (this.phaseService.currentPhase === Phase.phase1) {
       return;
@@ -224,6 +264,9 @@ export class IssueService {
     issue.proposedAssignees = array[5];
   }
 
+  /**
+   * Actual implementation of using regex to extract out the data from github's representation of the issue's description.
+   */
   private parseBody(issue: {}): any {
     const body = issue['body'];
     // tslint:disable-next-line
@@ -279,6 +322,9 @@ export class IssueService {
     return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || []);
   }
 
+  /**
+   * Given an issue model, create the necessary labels for github.
+   */
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
@@ -330,27 +376,6 @@ export class IssueService {
       duplicateOf: issueInJson['duplicateOf'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS),
     };
-  }
-
-  getTeamAssignedToIssue(issueInJson: {}): Team {
-    if (this.phaseService.currentPhase === Phase.phase1) {
-      return null;
-    }
-
-    let tutorial = '';
-    let team = '';
-    issueInJson['labels'].map((label) => {
-      const labelName = String(label['name']).split('.');
-      const labelType = labelName[0];
-      const labelValue = labelName[1];
-      if (labelType === 'team') {
-        team = labelValue;
-      } else if (labelType === 'tutorial') {
-        tutorial = labelValue;
-      }
-    });
-    const teamId = `${tutorial}-${team}`;
-    return this.dataService.getTeam(teamId);
   }
 
   private parseDuplicateOfValue(toParse: string): number {
