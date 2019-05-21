@@ -84,7 +84,7 @@
     </ng-container>
 
     <ng-container matColumnDef="duplicatedIssues">
-      <th mat-header-cell *matHeaderCellDef> Duplicated Issues </th>
+      <th mat-header-cell *matHeaderCellDef> Duplicates </th>
       <td mat-cell *matCellDef="let issue">
         <div *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length === 0">
           -
