@@ -4,10 +4,8 @@ import {MatPaginator, MatSort} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
-import {RespondType} from '../../core/models/comment.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
 
 @Component({
   selector: 'app-issues-responded',
@@ -23,8 +21,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
-              private issueCommentService: IssueCommentService) {
+  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {
@@ -60,18 +57,9 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
       ...issue,
       status: STATUS.Incomplete
     }).subscribe((updatedIssue) => {
-      this.issueCommentService.getIssueComments(updatedIssue.id).subscribe(comments => {
-        let newIssue = updatedIssue;
-        if (comments.teamResponse && comments.teamResponse.duplicateOf) {
-          newIssue = {
-            ...updatedIssue,
-            duplicateOf: comments.teamResponse.duplicateOf,
-          };
-        }
-        this.issueService.updateLocalStore(newIssue);
-      }, error => {
+      this.issueService.updateLocalStore(updatedIssue);
+    }, error => {
         this.errorHandlingService.handleHttpError(error);
-      });
     });
   }
 }

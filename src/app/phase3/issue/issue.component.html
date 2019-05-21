@@ -10,14 +10,14 @@
                              [isEditing]="isIssueDescriptionEditing" (changeEditState)="updateDescriptionEditState($event)"
                              (issueUpdated)="updateIssue($event)"></app-issue-description>
 
-      <div *ngIf="comments">
-        <app-issue-comment *ngIf="!isCommentsLoading && comments.tutorResponse" [comments]="comments"
-                           [isEditing]="isCommentEditing" (updateEditState)="updateCommentEditState($event)"
-                           attributeName="tutorResponse" (commentsUpdated)="updateComments($event)"></app-issue-comment>
-        <app-tutor-response *ngIf="!isCommentsLoading  && !comments.tutorResponse" [comments]="comments"
-                               [issue]="issue" (issueUpdated)="updateIssue($event)"
-                               (commentsUpdated)="updateComments($event)"></app-tutor-response>
-      </div>
+      <app-issue-response *ngIf="issue.teamResponse" [issue]="issue"
+                          [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)"
+                          attributeName="teamResponse" (issueUpdated)="updateIssue($event)"></app-issue-response>
+      <app-issue-response *ngIf="issue.tutorResponse" [issue]="issue"
+                          [isEditing]="isTutorResponseEditing" (updateEditState)="updateTutorResponseEditState($event)"
+                          attributeName="tutorResponse" (issueUpdated)="updateIssue($event)"></app-issue-response>
+      <app-tutor-response *ngIf="!issue.tutorResponse"
+                             [issue]="issue" (issueUpdated)="updateIssue($event)"></app-tutor-response>
 
       <div *ngIf="isCommentsLoading"
            style="display: flex; justify-content: center; align-items: center">
@@ -26,7 +26,7 @@
     </div>
 
     <div class="column right">
-      <div *ngIf="!isCommentsLoading" [style.visibility]="comments.tutorResponse ? 'visible' : 'hidden'">
+      <div *ngIf="!isIssueLoading" [style.visibility]="issue.tutorResponse ? 'visible' : 'hidden'">
         <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
         <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
@@ -35,10 +35,10 @@
         <mat-divider></mat-divider>
         <app-assignee-component [issue]="issue" [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)"></app-assignee-component>
         <mat-divider></mat-divider>
-        <app-duplicate-of-component *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length === 0" [issue]="issue" [comments]="comments" (issueUpdated)="updateIssue($event)"
-                                    (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>
+        <app-duplicate-of-component *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length === 0" [issue]="issue"
+                                    (issueUpdated)="updateIssue($event)"></app-duplicate-of-component>
         <app-duplicated-issues-component *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length !== 0"
-                                         [issue]="issue" [comments]="comments"></app-duplicated-issues-component>
+                                         [issue]="issue"></app-duplicated-issues-component>
         <br>
         <mat-divider></mat-divider>
         <app-todo-list [issue]="issue" (issueUpdated)="updateIssue($event)"></app-todo-list>
