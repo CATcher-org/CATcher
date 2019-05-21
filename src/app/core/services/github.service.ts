@@ -74,15 +74,7 @@ export class GithubService {
     );
   }
 
-  fetchIssueLabels(issueId: number) {
-    return from(octokit.issues.listLabelsOnIssue({owner: ORG_NAME, repo: REPO, number: issueId})).pipe(
-      map(response => {
-        return response['data'];
-      })
-    );
-  }
-
-  fetchAllLabels() {
+  fetchAllLabels(): Observable<Array<{}>> {
     return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
       map(response => {
         return response['data'];

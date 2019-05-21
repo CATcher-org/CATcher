@@ -8,6 +8,7 @@ import {BehaviorSubject} from 'rxjs';
 import {Issue} from '../core/models/issue.model';
 import {PermissionService} from '../core/services/permission.service';
 import {UserService} from '../core/services/user.service';
+import { LabelService } from '../core/services/label.service';
 
 @Component({
   selector: 'app-phase1',
@@ -25,6 +26,7 @@ export class Phase1Component implements OnInit {
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,
+              private labelService: LabelService,
               public userService: UserService) {
   }
 
@@ -33,6 +35,9 @@ export class Phase1Component implements OnInit {
       this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
     this.issuesPendingDeletion = {};
+    if (!this.labelService.checkIfEmpty()) {
+      this.labelService.getAllLabels().subscribe();
+    }
   }
 
   applyFilter(filterValue: string) {

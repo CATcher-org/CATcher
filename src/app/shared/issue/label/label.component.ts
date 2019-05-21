@@ -4,6 +4,8 @@ import {Issue, ISSUE_LABELS} from '../../../core/models/issue.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {PermissionService} from '../../../core/services/permission.service';
+import { Label } from '../../../core/models/label.model';
+import { LabelService } from '../../../core/services/label.service';
 
 @Component({
   selector: 'app-issue-label',
@@ -11,7 +13,7 @@ import {PermissionService} from '../../../core/services/permission.service';
   styleUrls: ['./label.component.css'],
 })
 export class LabelComponent implements OnInit {
-  labelValues: string[];
+  labelValues: Label[];
 
   @Input() issue: Issue;
   @Input() attributeName: string;
@@ -22,11 +24,12 @@ export class LabelComponent implements OnInit {
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
+              private labelService: LabelService,
               public permissions: PermissionService) {
   }
 
   ngOnInit() {
-    this.labelValues = ISSUE_LABELS[this.attributeName];
+    this.labelValues = this.labelService.getLabelList(this.attributeName);
   }
 
   setLabelStyle(color: string) {

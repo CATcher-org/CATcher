@@ -14,6 +14,7 @@ import {Phase2Module} from './phase2/phase2.module';
 import {Phase3Module} from './phase3/phase3.module';
 import {Phase1Module} from './phase1/phase1.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { LabelService } from './core/services/label.service';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     }),
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [LabelService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
