@@ -2,20 +2,18 @@
 <form [formGroup]="issueDescriptionForm" #myForm="ngForm" (ngSubmit)="updateDescription(myForm)">
   <div class="timeline-comment">
     <div class="timeline-header">
-      <span style="vertical-align: middle; margin-left: 10px"> <span class="bold-name"> Tester </span> posted on {{issue.created_at}}. </span>
-      <button *ngIf="permissions.canEditIssueDescription() && !isEditing" mat-button style="float: right;" (click)="changeToEditMode()">
+      <span> <span class="bold-name"> Tester </span> posted on {{issue.created_at}}. </span>
+      <button mat-button *ngIf="permissions.canEditIssueDescription() && !isEditing" (click)="changeToEditMode()">
         Edit
       </button>
-      <div *ngIf="isEditing" style="float: right;">
-        <button type="button" mat-button color="warn" (click)="cancelEditMode()">Cancel</button>
-        <button type="submit" style="margin-left: 10px" [disabled]="issueDescriptionForm.invalid || isSavePending" mat-button color="primary">Save</button>
-      </div>
     </div>
     <div *ngIf="!isEditing" class="comment">
       <markdown [data]="issue.description"></markdown>
     </div>
     <div *ngIf="isEditing">
       <app-comment-editor [commentField]="issueDescriptionForm.get('description')" [commentForm]="issueDescriptionForm"></app-comment-editor>
+      <button type="button" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
+      <button type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending" mat-stroked-button color="primary">Save</button>
     </div>
   </div>
 </form>

@@ -3,7 +3,7 @@ import {UserService} from '../core/services/user.service';
 import {IssuesFilter} from '../core/models/issue.model';
 import {Phase} from '../core/services/phase.service';
 import {DataService} from '../core/services/data.service';
-import { LabelService } from '../core/services/label.service';
+import {LabelService} from '../core/services/label.service';
 
 @Component({
   selector: 'app-phase2',

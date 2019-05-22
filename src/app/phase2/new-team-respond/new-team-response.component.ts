@@ -4,10 +4,8 @@ import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, STATUS, TYPE} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {finalize, map} from 'rxjs/operators';
-import {IssueComments} from '../../core/models/comment.model';
-import {forkJoin, Observable} from 'rxjs';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
-import { LabelService } from '../../core/services/label.service';
+import {Observable} from 'rxjs';
+import {LabelService} from '../../core/services/label.service';
 
 @Component({
   selector: 'app-new-team-response',
@@ -27,12 +25,11 @@ export class NewTeamResponseComponent implements OnInit {
 
   isFormPending = false;
   @Input() issue: Issue;
-  @Input() comments: IssueComments;
-  @Output() commentsUpdated = new EventEmitter<IssueComments>();
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService, private issueCommentService: IssueCommentService,
-              private formBuilder: FormBuilder, private labelService: LabelService,
+  constructor(private issueService: IssueService,
+              private formBuilder: FormBuilder,
+              private labelService: LabelService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
@@ -85,24 +82,18 @@ export class NewTeamResponseComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    forkJoin(this.issueCommentService.createIssueComment(this.issue.id, this.description.value, this.duplicateOf.value),
-             this.issueService.updateIssue({
-               ...this.issue,
-               severity: this.severity.value,
-               type: this.type.value,
-               assignees: this.assignees.value,
-               responseTag: this.responseTag.value,
-               duplicated: this.duplicated.value,
-               status: STATUS.Done,
-             })).pipe(finalize(() => this.isFormPending = false)).subscribe((res) => {
-      this.commentsUpdated.emit({
-        ...this.comments,
-        teamResponse: res[0],
-      });
-      this.issueUpdated.emit({
-        ...res[1],
-        duplicateOf: res[0]['duplicateOf'],
-      });
+    this.issueService.updateIssue({
+      ...this.issue,
+      severity: this.severity.value,
+      type: this.type.value,
+      assignees: this.assignees.value,
+      responseTag: this.responseTag.value,
+      duplicated: this.duplicated.value,
+      status: STATUS.Done,
+      teamResponse: this.description.value,
+      duplicateOf: this.duplicateOf.value,
+    }).pipe(finalize(() => this.isFormPending = false)).subscribe((updatedIssue: Issue) => {
+      this.issueUpdated.emit(updatedIssue);
       form.resetForm();
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);

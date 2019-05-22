@@ -4,12 +4,10 @@ import {MatPaginator, MatSort} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
-import {RespondType} from '../../core/models/comment.model';
 import {PermissionService} from '../../core/services/permission.service';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import { LabelService } from '../../core/services/label.service';
+import {LabelService} from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-pending',
@@ -27,8 +25,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService, private issueCommentService: IssueCommentService,
-              private labelService: LabelService, public userService: UserService) {
+              public permissions: PermissionService, public userService: UserService, private labelService: LabelService) {
     if (permissions.canCRUDTeamResponse()) {
       if (userService.currentUser.role !== UserRole.Student) {
         this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'duplicatedIssues', 'actions'];
@@ -65,18 +62,9 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
       ...issue,
       status: STATUS.Done
     }).subscribe((updatedIssue) => {
-      this.issueCommentService.getIssueComments(updatedIssue.id).subscribe(comments => {
-        let newIssue = updatedIssue;
-        if (comments.teamResponse && comments.teamResponse.duplicateOf) {
-          newIssue = {
-            ...updatedIssue,
-            duplicateOf: comments.teamResponse.duplicateOf,
-          };
-        }
-        this.issueService.updateLocalStore(newIssue);
-        }, error => {
-          this.errorHandlingService.handleHttpError(error);
-        });
-      });
+      this.issueService.updateLocalStore(updatedIssue);
+    }, error => {
+      this.errorHandlingService.handleHttpError(error);
+    });
   }
 }

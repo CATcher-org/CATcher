@@ -9,7 +9,6 @@ const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 const PERMISSIONS = {
   /** Phase 1 Permissions **/
   [Phase.phase1]: {
-    'requireComments': false,
     [UserRole.Student]: {
       'canCreateNewIssue': true,
       'canDeleteIssue': true,
@@ -41,7 +40,6 @@ const PERMISSIONS = {
 
   /** Phase 2 Permissions **/
   [Phase.phase2]: {
-    'requireComments': true,
     [UserRole.Student]: {
       'canCreateNewIssue': false,
       'canDeleteIssue': false,
@@ -73,7 +71,6 @@ const PERMISSIONS = {
 
   /** Phase 3 Permissions **/
   [Phase.phase3]: {
-    'requireComments': true,
     [UserRole.Student]: {
       'canCreateNewIssue': false,
       'canDeleteIssue': false,
@@ -136,10 +133,6 @@ export class PermissionService {
 
   canCRUDTutorResponse(): boolean {
     return this.askForPermission(PermissionLevel.User, 'canCRUDTutorResponse');
-  }
-
-  requireComments(): boolean {
-    return this.askForPermission(PermissionLevel.Phase, 'requireComments');
   }
 
   private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {

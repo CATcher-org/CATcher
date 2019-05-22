@@ -13,6 +13,8 @@ export enum Phase { phase1 = 'phase1', phase2 = 'phase2', phase3 = 'phase3' }
 export class PhaseService {
 
   public currentPhase: Phase;
+  private repoName: string;
+  private orgName: string;
   public readonly phaseDescription = {
     'phase1': 'Bug Reporting Phase',
     'phase2': 'Team\'s Response Phase',
@@ -88,8 +90,18 @@ export class PhaseService {
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
       this.github.updatePhaseDetails(repo, org);
+      this.setPhaseDetail(repo, org);
       return (copyUrl);
     }
+  }
+
+  private setPhaseDetail(repo: string, org: string) {
+    this.repoName = repo;
+    this.orgName = org;
+  }
+
+  public getPhaseDetail() {
+    return this.orgName.concat('/').concat(this.repoName);
   }
 
   reset() {

@@ -6,7 +6,7 @@ import {FormBuilder} from '@angular/forms';
 import {finalize} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
-import {IssueComments} from '../../core/models/comment.model';
+import {IssueComment, IssueComments} from '../../core/models/comment.model';
 import {UserService} from '../../core/services/user.service';
 
 @Component({
@@ -17,73 +17,70 @@ import {UserService} from '../../core/services/user.service';
 export class IssueComponent implements OnInit {
 
   issue: Issue;
-  comments: IssueComments;
+  comments: IssueComment[];
   isIssueLoading = true;
   isCommentsLoading = true;
-  isCommentEditing = false;
+  isTutorResponseEditing = false;
+  isTeamResponseEditing = false;
   isIssueDescriptionEditing = false;
 
-  constructor(private issueService: IssueService,
-              private issueCommentService: IssueCommentService,
+  constructor(private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
-              public userService: UserService) { }
+              public userService: UserService,
+              public issueService: IssueService) { }
 
   ngOnInit() {
-    this.initializeIssue();
+    this.route.params.subscribe(
+      params => {
+        const id = +params['issue_id'];
+        this.initializeIssue(id);
+        this.initializeComments(id);
+      }
+    );
   }
 
   canDeactivate() {
-    return !this.isCommentEditing && !this.isIssueDescriptionEditing;
+    return !this.isTutorResponseEditing && !this.isIssueDescriptionEditing && !this.isTeamResponseEditing;
   }
 
-  private initializeIssue() {
-    const id = +this.route.snapshot.paramMap.get('issue_id');
+  private initializeIssue(id: number) {
     this.getIssue(id);
-    this.getComments(id);
   }
 
   private getIssue(id: number) {
     this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
       this.issue = issue;
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
-    });
-  }
-
-  private getComments(id: number) {
-    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading =  false)).subscribe((comments) => {
-      this.comments = comments;
-      this.updateIssue(this.issue);
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
+      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });
   }
 
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
-    // overwrite the duplicateOf value with the most updated duplicateOf value that is provided the by latest comment.
-    if (this.comments.tutorResponse && this.comments.tutorResponse.duplicateOf) {
-      this.issue = {
-        ...this.issue,
-        duplicateOf: this.comments.tutorResponse.duplicateOf,
-      };
-    }
     this.issueService.updateLocalStore(this.issue);
   }
 
-  updateComments(newComments: IssueComments) {
-    this.comments = newComments;
-    this.issueCommentService.updateLocalStore(newComments);
-    this.updateIssue(this.issue);
-  }
-
-  updateCommentEditState(updatedState: boolean) {
-    this.isCommentEditing = updatedState;
+  updateTutorResponseEditState(updatedState: boolean) {
+    this.isTutorResponseEditing = updatedState;
   }
 
   updateDescriptionEditState(updatedState: boolean) {
     this.isIssueDescriptionEditing = updatedState;
+  }
+
+  updateTeamResponseEditState(updatedState: boolean) {
+    this.isTeamResponseEditing = updatedState;
+  }
+
+  private initializeComments(id: number) {
+    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
+      .subscribe((issueComments: IssueComments) => {
+        this.comments = issueComments.comments;
+        console.log('Comments: ', this.comments);
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
+      });
   }
 }

@@ -6,7 +6,7 @@ export interface Issue {
   title: string;
   type: string;
   severity: string;
-  description?: string; // description regex
+  description?: string;
   responseTag?: string;
   assignees?: string[];
   duplicated?: boolean;
@@ -17,6 +17,8 @@ export interface Issue {
   typeColor: string;
   severityColor: string;
   responseColor?: string;
+  teamResponse?: string;
+  tutorResponse?: string;
 }
 
 export interface Issues {
@@ -93,3 +95,14 @@ export const IssuesFilter = {
     Admin: 'NO_FILTER',
   }
 };
+
+export enum RespondType {
+  teamResponse = 'teamResponse',
+  tutorResponse = 'tutorResponse',
+}
+
+export const phase2DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
+  'here, if any)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|$)', 'gi');
+export const phase3DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
+  'here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|' +
+  '## State the duplicated issue here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check|$)', 'gi');

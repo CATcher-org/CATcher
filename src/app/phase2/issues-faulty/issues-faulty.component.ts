@@ -7,7 +7,7 @@ import {Issue, STATUS} from '../../core/models/issue.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
 import {PermissionService} from '../../core/services/permission.service';
-import { LabelService } from '../../core/services/label.service';
+import {LabelService} from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-faulty',
