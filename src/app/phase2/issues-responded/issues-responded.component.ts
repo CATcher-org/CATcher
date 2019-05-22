@@ -8,6 +8,7 @@ import {RespondType} from '../../core/models/comment.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-responded',
@@ -24,7 +25,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
-              private issueCommentService: IssueCommentService) {
+      private labelService: LabelService, private issueCommentService: IssueCommentService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {

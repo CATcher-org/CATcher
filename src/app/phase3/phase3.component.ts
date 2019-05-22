@@ -9,6 +9,7 @@ import {finalize} from 'rxjs/operators';
 import {UserService} from '../core/services/user.service';
 import {Phase} from '../core/services/phase.service';
 import {DataService} from '../core/services/data.service';
+import { LabelService } from '../core/services/label.service';
 
 @Component({
   selector: 'app-phase3',
@@ -27,12 +28,17 @@ export class Phase3Component implements OnInit {
   constructor(private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
               public userService: UserService,
+              private labelService: LabelService,
               private dataService: DataService) { }
 
   ngOnInit() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
+    // Get all labels in the github repository, labels are stored in the service
+    if (!this.labelService.checkLabelRetrieved()) {
+        this.labelService.getAllLabels().subscribe();
+    }
   }
 
   applyFilter(filterValue: string) {

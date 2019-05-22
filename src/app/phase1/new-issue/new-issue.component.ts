@@ -5,6 +5,7 @@ import {SEVERITY, TYPE} from '../../core/models/issue.model';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {Router} from '@angular/router';
 import {finalize} from 'rxjs/operators';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-new-issue',
@@ -13,12 +14,14 @@ import {finalize} from 'rxjs/operators';
 })
 export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
-  severityValues = Object.keys(SEVERITY);
-  issueTypeValues = Object.keys(TYPE);
+  severityValues = this.labelService.getLabelList('severity');
+  issueTypeValues = this.labelService.getLabelList('type');
   isFormPending = false;
+  selectedSeverityColor: string;
+  selectedTypeColor: string;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
+              private errorHandlingService: ErrorHandlingService, private labelService: LabelService,
               private router: Router) { }
 
   ngOnInit() {
@@ -28,6 +31,8 @@ export class NewIssueComponent implements OnInit {
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
+    this.selectedSeverityColor = 'ffffff';
+    this.selectedTypeColor = 'ffffff';
   }
 
   submitNewIssue(form: NgForm) {
@@ -46,6 +51,17 @@ export class NewIssueComponent implements OnInit {
           error => {
           this.errorHandlingService.handleHttpError(error);
         });
+  }
+
+  setSelectedLabelColor(labelValue: string, labelType: string) {
+    switch (labelType) {
+      case 'severity':
+        this.selectedSeverityColor = this.severityValues.filter(x => x.labelValue === labelValue)[0].labelColor;
+        break;
+      case 'type':
+        this.selectedTypeColor = this.issueTypeValues.filter(x => x.labelValue === labelValue)[0].labelColor;
+        break;
+    }
   }
 
   get title() {

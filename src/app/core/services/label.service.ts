@@ -34,7 +34,7 @@ export class LabelService {
         return this.severityLabels;
       case 'type':
         return this.typeLabels;
-      case 'response':
+      case 'responseTag':
         return this.responseLabels;
     }
   }
@@ -72,6 +72,28 @@ export class LabelService {
     this.typeLabels.length = 0;
     this.responseLabels.length = 0;
     this.labelRetrieved = false;
+  }
+
+  hexToRgb(hex: string) {
+    const rgbResult = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return rgbResult ? {
+      r: parseInt(rgbResult[1], 16),
+      g: parseInt(rgbResult[2], 16),
+      b: parseInt(rgbResult[3], 16)
+    } : null;
+  }
+
+  setLabelStyle(color: string) {
+    const r = this.hexToRgb('#'.concat(color)).r.toString();
+    const g = this.hexToRgb('#'.concat(color)).g.toString();
+    const b = this.hexToRgb('#'.concat(color)).b.toString();
+
+    const styles = {
+      'background-color' : 'rgb('.concat(r).concat(', ').concat(g).concat(', ').concat(b).concat(', 0.6'),
+      'border-radius' : '3px',
+      'padding' : '3px',
+    };
+    return styles;
   }
 
 }

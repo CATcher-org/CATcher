@@ -9,6 +9,7 @@ import {PermissionService} from '../../core/services/permission.service';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-pending',
@@ -26,7 +27,8 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService, private issueCommentService: IssueCommentService, public userService: UserService) {
+              public permissions: PermissionService, private issueCommentService: IssueCommentService,
+              private labelService: LabelService, public userService: UserService) {
     if (permissions.canCRUDTeamResponse()) {
       if (userService.currentUser.role !== UserRole.Student) {
         this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'duplicatedIssues', 'actions'];

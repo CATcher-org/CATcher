@@ -39,7 +39,7 @@
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
       <td mat-cell *matCellDef="let issue">
-        <span *ngIf="issue.type" [ngStyle]="issuesDataSource.setLabelStyle(issue.typeColor)">
+        <span *ngIf="issue.type" [ngStyle]="this.labelService.setLabelStyle(issue.typeColor)">
           {{issue.type}}
         </span>
         <span *ngIf="!issue.type" style="margin-left: 10%">
@@ -51,7 +51,7 @@
     <ng-container matColumnDef="severity">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity </th>
       <td mat-cell *matCellDef="let issue">
-        <span *ngIf="issue.severity" [ngStyle]="issuesDataSource.setLabelStyle(issue.severityColor)">
+        <span *ngIf="issue.severity" [ngStyle]="this.labelService.setLabelStyle(issue.severityColor)">
           {{issue.severity}}
         </span>
         <span *ngIf="!issue.severity" style="margin-left: 10%">
@@ -63,7 +63,7 @@
     <ng-container matColumnDef="responseTag">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Response </th>
       <td mat-cell *matCellDef="let issue">
-        <span *ngIf="issue.responseTag" [ngStyle]="issuesDataSource.setLabelStyle(issue.responseColor)">
+        <span *ngIf="issue.responseTag" [ngStyle]="this.labelService.setLabelStyle(issue.responseColor)">
           {{issue.responseTag}}
         </span>
         <span *ngIf="!issue.responseTag" style="margin-left: 10%">

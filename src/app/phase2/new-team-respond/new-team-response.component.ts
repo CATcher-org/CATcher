@@ -7,6 +7,7 @@ import {finalize, map} from 'rxjs/operators';
 import {IssueComments} from '../../core/models/comment.model';
 import {forkJoin, Observable} from 'rxjs';
 import {IssueCommentService} from '../../core/services/issue-comment.service';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-new-team-response',
@@ -15,11 +16,14 @@ import {IssueCommentService} from '../../core/services/issue-comment.service';
 })
 export class NewTeamResponseComponent implements OnInit {
   newTeamResponseForm: FormGroup;
-  severityValues = Object.keys(SEVERITY);
-  issueTypeValues = Object.keys(TYPE);
-  responseList = Object.keys(RESPONSE);
+  severityValues = this.labelService.getLabelList('severity');
+  issueTypeValues = this.labelService.getLabelList('type');
+  responseList = this.labelService.getLabelList('responseTag');
   teamMembers: string[];
   duplicatedIssueList: Observable<Issue[]>;
+  selectedSeverityColor: string;
+  selectedTypeColor: string;
+  selectedResponseColor: string;
 
   isFormPending = false;
   @Input() issue: Issue;
@@ -28,7 +32,7 @@ export class NewTeamResponseComponent implements OnInit {
   @Output() issueUpdated = new EventEmitter<Issue>();
 
   constructor(private issueService: IssueService, private issueCommentService: IssueCommentService,
-              private formBuilder: FormBuilder,
+              private formBuilder: FormBuilder, private labelService: LabelService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
@@ -56,6 +60,24 @@ export class NewTeamResponseComponent implements OnInit {
       this.duplicateOf.updateValueAndValidity();
       this.responseTag.updateValueAndValidity();
     });
+
+    if (this.issue.severity === '') {
+      this.selectedSeverityColor = 'ffffff';
+    } else {
+      this.selectedSeverityColor = this.issue.severityColor;
+    }
+
+    if (this.issue.type === '') {
+      this.selectedTypeColor = 'ffffff';
+    } else {
+      this.selectedTypeColor = this.issue.typeColor;
+    }
+
+    if (this.issue.responseTag === '') {
+      this.selectedResponseColor = 'ffffff';
+    } else {
+      this.selectedResponseColor = this.issue.responseColor;
+    }
   }
 
   submitNewTeamResponse(form: NgForm) {
@@ -120,6 +142,20 @@ export class NewTeamResponseComponent implements OnInit {
         return this.issue.id !== issue.id;
       });
     }));
+  }
+
+  setSelectedLabelColor(labelValue: string, labelType: string) {
+    switch (labelType) {
+      case 'severity':
+        this.selectedSeverityColor = this.severityValues.filter(x => x.labelValue === labelValue)[0].labelColor;
+        break;
+      case 'type':
+        this.selectedTypeColor = this.issueTypeValues.filter(x => x.labelValue === labelValue)[0].labelColor;
+        break;
+      case 'responseTag':
+        this.selectedResponseColor = this.responseList.filter(x => x.labelValue === labelValue)[0].labelColor;
+        break;
+    }
   }
 
   get description() {

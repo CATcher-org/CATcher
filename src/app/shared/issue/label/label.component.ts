@@ -33,19 +33,6 @@ export class LabelComponent implements OnInit {
     this.labelValues = this.labelService.getLabelList(this.attributeName);
   }
 
-  setLabelStyle(color: string) {
-    const styles = {
-      'background-color' : '#'.concat(color),
-      'margin-top' : '5px',
-      'border-radius' : '3px',
-      'padding' : '3px',
-      'color' : 'white',
-      // To add stroke to text
-      'text-shadow' : '-0.5px -0.5px 0 #505050,  0.5px -0.5px 0 #505050, -0.5px 0.5px 0 #505050, 0.5px 0.5px 0 #505050',
-    };
-    return styles;
-  }
-
   updateLabel(value: string) {
     this.issueService.updateIssue({
       ...this.issue,
