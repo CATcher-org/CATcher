@@ -35,7 +35,8 @@ export class Phase1Component implements OnInit {
       this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
     this.issuesPendingDeletion = {};
-    if (!this.labelService.checkIfEmpty()) {
+    // Get all labels in the github repository, labels are stored in the service
+    if (!this.labelService.checkLabelRetrieved()) {
       this.labelService.getAllLabels().subscribe();
     }
   }

@@ -12,6 +12,7 @@ import { flatMap} from 'rxjs/operators';
 import {IssueService} from './issue.service';
 import {IssueCommentService} from './issue-comment.service';
 import {DataService} from './data.service';
+import { LabelService } from './label.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -29,6 +30,7 @@ export class AuthService {
               private issueService: IssueService,
               private phaseService: PhaseService,
               private issueCommentService: IssueCommentService,
+              private labelService: LabelService,
               private dataService: DataService) {
   }
 
@@ -61,6 +63,7 @@ export class AuthService {
     this.issueCommentService.reset();
     this.phaseService.reset();
     this.dataService.reset();
+    this.labelService.reset();
 
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));

@@ -29,6 +29,7 @@ export class LabelComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Get the list of labels based on their type (severity, type, response)
     this.labelValues = this.labelService.getLabelList(this.attributeName);
   }
 
