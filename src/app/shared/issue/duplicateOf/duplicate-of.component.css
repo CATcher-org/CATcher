@@ -2,7 +2,7 @@
   color: black;
 }
 
-#duplicate-dropdown-issuedetails {
+.duplicate-dropdown-issuedetails {
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;

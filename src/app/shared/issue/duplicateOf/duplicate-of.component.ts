@@ -27,7 +27,7 @@ export class DuplicateOfComponent implements OnInit {
   // Max chars visible for a duplicate entry in duplicates dropdown list.
   readonly MAX_CHAR_VISIBLE_DUPLICATE = 17;
   // Max chars visible for a non-duplicate entry in duplicates dropdown list.
-  readonly MAX_CHAR_VISIBLE_NONDUPLICATE = 40;
+  readonly MAX_CHAR_VISIBLE_NONDUPLICATE = 37;
 
   constructor(public issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,

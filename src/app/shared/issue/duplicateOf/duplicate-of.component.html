@@ -9,8 +9,10 @@
   <mat-select [style.display]="isEditing ? 'block' : 'none'" class="no-arrow" placeholder="-" [value]="issue.duplicateOf"
               (selectionChange)="updateDuplicateStatus($event)" (openedChange)="handleSelectionOpenChange($event)">
     <mat-select-trigger></mat-select-trigger>
-    <mat-option [matTooltip]="issue.title" [matTooltipDisabled]="disableTooltip(issue)" [matTooltipPosition]="'left'" *ngFor="let issue of duplicatedIssueList | async" [disabled]="dupIssueOptionIsDisabled(issue)" [value]="issue.id">
-      <div id="duplicate-dropdown-issuedetails" [ngStyle]="{'width': dupIssueOptionIsDisabled(issue) ? '170px' : 'auto'}">
+    <mat-option [matTooltip]="issue.title" [matTooltipDisabled]="disableTooltip(issue)" [matTooltipPosition]="'left'"
+                *ngFor="let issue of duplicatedIssueList | async" [disabled]="dupIssueOptionIsDisabled(issue)"
+                [value]="issue.id">
+      <div class="duplicate-dropdown-issuedetails" [ngStyle]="{'width': dupIssueOptionIsDisabled(issue) ? '170px' : 'auto'}">
         <span class="mat-body-strong"> #{{issue.id}}: </span>  <span class="mat-body">{{issue.title}}</span>
       </div>
       <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="display: inline-block; color: #f44336"> ({{getDisabledDupOptionErrorText(issue)}}) </span>
