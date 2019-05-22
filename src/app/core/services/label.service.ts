@@ -3,6 +3,7 @@ import {GithubService} from './github.service';
 import {map} from 'rxjs/operators';
 import {Label} from '../models/label.model';
 import { Observable } from 'rxjs';
+import {SEVERITY_ORDER} from '../../core/models/issue.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +21,11 @@ export class LabelService {
     this.labelRetrieved = false;
   }
 
+  // Calls the github api to get all labels from the repository
   getAllLabels(): Observable<void> {
     return this.githubService.fetchAllLabels().pipe(
       map((response) => {
-        return this.formatLabelList(response);
+        return this.populateLabelLists(response);
       })
     );
   }
@@ -39,9 +41,9 @@ export class LabelService {
     }
   }
 
-  private formatLabelList(labels: Array<{}>): void {
+  private populateLabelLists(labels: Array<{}>): void {
     for (const label of labels) {
-
+      // Get the name and color of each label and store them into the service's array list
       const labelName = String(label['name']).split('.');
       const labelType = labelName[0];
       const labelValue = labelName[1];
@@ -60,6 +62,11 @@ export class LabelService {
       }
 
     }
+    // Sort the severity labels from Low to High
+    this.severityLabels.sort((a, b) => {
+      return SEVERITY_ORDER[a.labelValue] - SEVERITY_ORDER[b.labelValue];
+    });
+
     this.labelRetrieved = true;
   }
 
@@ -89,7 +96,7 @@ export class LabelService {
     const b = this.hexToRgb('#'.concat(color)).b.toString();
 
     const styles = {
-      'background-color' : 'rgb('.concat(r).concat(', ').concat(g).concat(', ').concat(b).concat(', 0.6'),
+      'background-color' : 'rgb('.concat(r).concat(', ').concat(g).concat(', ').concat(b).concat(', 0.55'),
       'border-radius' : '3px',
       'padding' : '3px',
     };
