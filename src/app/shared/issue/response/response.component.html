@@ -1,0 +1,19 @@
+<h3 class="mat-title">{{TITLE[attributeName]}}</h3>
+<form [formGroup]="responseForm" #myForm="ngForm" (ngSubmit)="updateResponse(myForm)">
+  <div class="timeline-comment">
+    <div class="timeline-header">
+      <span> <span class="bold-name"> {{POSTER[attributeName]}} </span> {{ACTION[attributeName]}}. </span>
+      <button mat-button *ngIf="canEditIssue() && !isEditing" (click)="changeToEditMode()">
+        Edit
+      </button>
+    </div>
+    <div *ngIf="!isEditing" class="comment">
+      <markdown [data]="issue[attributeName]"></markdown>
+    </div>
+    <div *ngIf="isEditing">
+      <app-comment-editor [commentField]="responseForm.get('description')" [commentForm]="responseForm"></app-comment-editor>
+      <button type="button" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
+      <button type="submit" [disabled]="responseForm.invalid || isSavePending" mat-stroked-button color="primary">Save</button>
+    </div>
+  </div>
+</form>

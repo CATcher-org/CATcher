@@ -3,19 +3,18 @@ import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
-import {IssueComment, IssueComments} from '../../../core/models/comment.model';
-import {IssueCommentService} from '../../../core/services/issue-comment.service';
 import {PermissionService} from '../../../core/services/permission.service';
 import {Phase, PhaseService} from '../../../core/services/phase.service';
+import {Issue} from '../../../core/models/issue.model';
 
 @Component({
-  selector: 'app-issue-comment',
-  templateUrl: './comment.component.html',
-  styleUrls: ['./comment.component.css'],
+  selector: 'app-issue-response',
+  templateUrl: './response.component.html',
+  styleUrls: ['./response.component.css'],
 })
-export class CommentComponent implements OnInit {
+export class ResponseComponent implements OnInit {
   isSavePending = false;
-  issueCommentForm: FormGroup;
+  responseForm: FormGroup;
 
   readonly TITLE = {
     'teamResponse': 'Team\'s Response',
@@ -32,14 +31,13 @@ export class CommentComponent implements OnInit {
     'tutorResponse': 'responded'
   };
 
-  @Input() comments: IssueComments;
+  @Input() issue: Issue;
   @Input() attributeName: string;
   @Input() isEditing: boolean;
-  @Output() commentsUpdated = new EventEmitter<IssueComments>();
+  @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
 
   constructor(private issueService: IssueService,
-              private issueCommentService: IssueCommentService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private permissions: PermissionService,
@@ -47,15 +45,15 @@ export class CommentComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.issueCommentForm = this.formBuilder.group({
+    this.responseForm = this.formBuilder.group({
       description: ['', Validators.required],
     });
   }
 
   changeToEditMode() {
     this.updateEditState.emit(true);
-    this.issueCommentForm.setValue({
-      description: this.comments[this.attributeName]['description'] || ''
+    this.responseForm.setValue({
+      description: this.issue[this.attributeName] || ''
     });
   }
 
@@ -63,24 +61,24 @@ export class CommentComponent implements OnInit {
     this.updateEditState.emit(false);
   }
 
-  updateIssueComment(form: NgForm) {
-    if (this.issueCommentForm.invalid) {
+  updateResponse(form: NgForm) {
+    if (this.responseForm.invalid) {
       return;
     }
 
     this.isSavePending = true;
-    this.issueCommentService.updateIssueComment(this.getUpdatedIssueComment()).pipe(finalize(() => {
+    this.issueService.updateIssue(this.getUpdatedIssue()).pipe(finalize(() => {
       this.updateEditState.emit(false);
       this.isSavePending = false;
-    })).subscribe((updatedIssueComment: IssueComment) => {
-      this.commentsUpdated.emit(this.createUpdatedIssue(updatedIssueComment));
+    })).subscribe((updatedIssue: Issue) => {
+      this.issueUpdated.emit(updatedIssue);
       form.resetForm();
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
   }
 
-  canEditComment(): boolean {
+  canEditIssue(): boolean {
     switch (this.phaseService.currentPhase) {
       case Phase.phase2:
         return this.permissions.canCRUDTeamResponse();
@@ -91,17 +89,17 @@ export class CommentComponent implements OnInit {
     }
   }
 
-  private createUpdatedIssue(updatedIssueComment: IssueComment) {
-    return <IssueComments>{
-      ...this.comments,
-      [this.attributeName]: updatedIssueComment
+  private createUpdatedIssue(updatedIssue: Issue) {
+    return <Issue>{
+      ...this.issue,
+      [this.attributeName]: updatedIssue
     };
   }
 
-  private getUpdatedIssueComment(): IssueComment {
-    return <IssueComment> {
-      ...this.comments[this.attributeName],
-      ['description']: this.issueCommentForm.get('description').value
+  private getUpdatedIssue(): Issue {
+    return <Issue> {
+      ...this.issue,
+      [this.attributeName]: this.responseForm.get('description').value
     };
   }
 }

@@ -9,14 +9,11 @@
                              (changeEditState)="updateDescriptionEditState($event)" [isEditing]="isDescriptionEditing"
                              (issueUpdated)="updateIssue($event)"></app-issue-description>
 
-      <div *ngIf="comments">
-        <app-issue-comment *ngIf="!isCommentsLoading && comments.teamResponse" [comments]="comments"
-                           [isEditing]="isCommentEditing" (updateEditState)="updateCommentEditState($event)"
-                           attributeName="teamResponse" (commentsUpdated)="updateComments($event)"></app-issue-comment>
-        <app-new-team-response *ngIf="permissions.canCRUDTeamResponse() && !isCommentsLoading && !comments.teamResponse"
-                               [comments]="comments" [issue]="issue" (issueUpdated)="updateIssue($event)"
-                               (commentsUpdated)="updateComments($event)"></app-new-team-response>
-      </div>
+      <app-issue-response *ngIf="issue.teamResponse" [issue]="issue"
+                          [isEditing]="isResponseEditing" (updateEditState)="updateResponseEditState($event)"
+                          attributeName="teamResponse" (issueUpdated)="updateIssue($event)"></app-issue-response>
+      <app-new-team-response *ngIf="permissions.canCRUDTeamResponse() && !issue.teamResponse"
+                             [issue]="issue" (issueUpdated)="updateIssue($event)"></app-new-team-response>
 
       <div *ngIf="isCommentsLoading"
                 style="display: flex; justify-content: center; align-items: center">
@@ -25,7 +22,7 @@
     </div>
 
     <div class="column right">
-      <div *ngIf="!isCommentsLoading" [style.visibility]="comments.teamResponse ? 'visible' : 'hidden'">
+      <div *ngIf="!isIssueLoading" [style.visibility]="issue.teamResponse ? 'visible' : 'hidden'">
         <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
         <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
@@ -36,12 +33,11 @@
 
         <div *ngIf="(issueService.getDuplicateIssuesFor(issue) | async).length !== 0" style="margin-bottom: 15px;">
           <mat-divider></mat-divider>
-          <app-duplicated-issues-component [issue]="issue" [comments]="comments"></app-duplicated-issues-component>
+          <app-duplicated-issues-component [issue]="issue"></app-duplicated-issues-component>
         </div>
         <div *ngIf="!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0">
           <mat-divider></mat-divider>
-          <app-duplicate-of-component [issue]="issue" [comments]="comments" (issueUpdated)="updateIssue($event)"
-                                      (commentsUpdated)="updateComments($event)"></app-duplicate-of-component>
+          <app-duplicate-of-component [issue]="issue" (issueUpdated)="updateIssue($event)"></app-duplicate-of-component>
         </div>
         <div style="margin-top: 15px; color: red" *ngIf="((issueService.getDuplicateIssuesFor(issue) | async).length !== 0) &&
             (!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
