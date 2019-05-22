@@ -8,6 +8,7 @@ import {Router} from '@angular/router';
 import {GithubService} from '../core/services/github.service';
 import {PhaseService} from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
+import {PhaseProfile, UserProfile} from './profiles/profiles.component';
 
 @Component({
   selector: 'app-auth',
@@ -35,13 +36,21 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      encodedText: ['phase1=https://github.com/CATcher-org/pe@phase2=https://github.com/CATcher-org/pe-results' +
-      '@phase3=https://github.com/CATcher-org/pe-evaluation', Validators.required],
+      encodedText: ['', Validators.required],
     });
   }
 
   ngOnDestroy() {
     this.authStateSubscription.unsubscribe();
+  }
+
+  onProfileSelect(profile: UserProfile) {
+    this.loginForm.get('username').setValue(profile.username);
+    this.loginForm.get('password').setValue(profile.password);
+  }
+
+  onPhaseSelect(phase: PhaseProfile) {
+    this.loginForm.get('encodedText').setValue(phase.encodedText);
   }
 
   login(form: NgForm) {

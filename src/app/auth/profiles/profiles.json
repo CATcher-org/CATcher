@@ -1,0 +1,28 @@
+{
+  "profiles": [
+    {
+      "profileName": "Student",
+      "username": "testathorStudent",
+      "password": "studPwd1"
+    },
+    {
+      "profileName": "Tutor",
+      "username": "testathorTutor",
+      "password": "tutorPwd1"
+    }
+  ],
+  "phases": [
+    {
+      "phaseName": "Phase 1",
+      "encodedText": "phase1=https://github.com/CATcher-org/pe@phase2=https://github.com/CATcher-org/pe-results@phase3=https://github.com/CATcher-org/pe-evaluation"
+    },
+    {
+      "phaseName": "Phase 2",
+      "encodedText": "phase1=https://github.com/CATcher-org/pe1@phase2=https://github.com/CATcher-org/pe-results@phase3=https://github.com/CATcher-org/pe-evaluation"
+    },
+    {
+      "phaseName": "Phase 3",
+      "encodedText": "phase1=https://github.com/CATcher-org/pe1@phase2=https://github.com/CATcher-org/pe-results1@phase3=https://github.com/CATcher-org/pe-evaluation"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 <mat-card class="login-card">
+  <app-profiles (selectedProfile)="onProfileSelect($event)" (selectedPhase)="onPhaseSelect($event)"></app-profiles>
   <mat-card-header>
     <mat-card-title>Login</mat-card-title>
   </mat-card-header>
