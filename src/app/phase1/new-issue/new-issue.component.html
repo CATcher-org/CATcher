@@ -25,7 +25,6 @@
 
       <div class="column right">
         <mat-form-field class="left-half">
-          <mat-label>Severity</mat-label>
           <mat-select formControlName="severity" placeholder="Severity"
           (selectionChange)="setSelectedLabelColor($event.value, 'severity')" 
           [ngStyle]="this.labelService.setLabelStyle(this.selectedSeverityColor)">
