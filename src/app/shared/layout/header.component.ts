@@ -4,7 +4,7 @@ import {AuthService} from '../../core/services/auth.service';
 import {PhaseService} from '../../core/services/phase.service';
 import {UserService} from '../../core/services/user.service';
 import {NavigationEnd, Router, RoutesRecognized} from '@angular/router';
-import {filter, pairwise} from 'rxjs/operators';
+import {filter, pairwise, delay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout-header',
@@ -12,6 +12,7 @@ import {filter, pairwise} from 'rxjs/operators';
 })
 export class HeaderComponent implements OnInit {
   private prevUrl;
+  disableButton = false;
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
               private location: Location) {
@@ -29,12 +30,26 @@ export class HeaderComponent implements OnInit {
     return `/${this.phaseService.currentPhase}` !== this.router.url && this.router.url !== '/';
   }
 
+  needToShowReloadButton(): boolean {
+    return this.router.url === '/phase1' || this.router.url === '/phase2' || this.router.url === '/phase3';
+  }
+
   goBack() {
     if (this.prevUrl === `/${this.phaseService.currentPhase}/issues/new`) {
       this.router.navigate(['/phase1']);
     } else {
       this.location.back();
     }
+  }
+
+  refresh() {
+    this.disableButton = true;
+    this.router.navigate([this.router.url]);
+    // Prevent user from spamming the reload button
+    setTimeout(() => {
+      this.disableButton = false;
+    },
+    3000);
   }
 
   logOut() {

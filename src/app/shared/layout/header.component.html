@@ -6,8 +6,11 @@
   <span *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
     ({{phaseService.phaseDescription[phaseService.currentPhase]}})
   </span>
-
   <span style="flex: 1 1 auto"></span>
+  <button *ngIf="auth.isAuthenticated() && needToShowReloadButton()" [disabled]="this.disableButton" 
+    mat-button class="mat-toolbar mat-primary" style="transform: scale(0.9)" (click)="refresh()">
+    <mat-icon>refresh</mat-icon>Sync with Github
+    </button>
   <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" (click)="logOut()">
     ({{userService.currentUser.loginId}})
     <mat-icon style="margin-left: 2px">exit_to_app</mat-icon>

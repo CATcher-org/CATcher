@@ -8,13 +8,13 @@ import {AuthGuard} from './core/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', loadChildren: () => AuthModule},
-  { path: 'phase1', loadChildren: () => Phase1Module, canLoad: [AuthGuard]},
-  { path: 'phase2', loadChildren: () => Phase2Module, canLoad: [AuthGuard]},
-  { path: 'phase3', loadChildren: () => Phase3Module, canLoad: [AuthGuard]},
+  { path: 'phase1', loadChildren: () => Phase1Module, canLoad: [AuthGuard], runGuardsAndResolvers: 'always', },
+  { path: 'phase2', loadChildren: () => Phase2Module, canLoad: [AuthGuard], runGuardsAndResolvers: 'always', },
+  { path: 'phase3', loadChildren: () => Phase3Module, canLoad: [AuthGuard], runGuardsAndResolvers: 'always', },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
