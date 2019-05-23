@@ -1,15 +1,12 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import ProfilesJson from './profiles.json';
+import {AppConfig} from '../../../environments/environment';
 import {MatSnackBar} from '@angular/material';
 
-export interface UserProfile {
+export interface Profile {
   profileName: string;
   username: string;
   password: string;
-}
-
-export interface PhaseProfile {
-  phaseName: string;
   encodedText: string;
 }
 
@@ -20,26 +17,74 @@ export interface PhaseProfile {
 })
 export class ProfilesComponent implements OnInit {
 
-  private profiles: UserProfile[];
-  private phases: PhaseProfile[];
-  @Output() selectedProfile: EventEmitter<UserProfile> =
-    new EventEmitter<UserProfile>();
-  @Output() selectedPhase: EventEmitter<PhaseProfile> =
-    new EventEmitter<PhaseProfile>();
+  profiles: Profile[] = undefined;
+  blankProfile: Profile = {profileName: '', password: '', username: '',
+    encodedText: ''};
 
-  constructor() { }
+  private readonly fs = require('fs');
+  public filePath: string = __dirname.split('CATcher', 1)[0].concat('profiles.json');
+
+  @Output() selectedProfile: EventEmitter<Profile> = new EventEmitter<Profile>();
+
+  constructor(private snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.profiles = ProfilesJson.profiles;
-    this.phases = ProfilesJson.phases;
+
+
+    if (this.isDeveloperMode()) {
+
+      this.profiles = ProfilesJson.profiles;
+      if (!this.profilesCorrectlyConfigured(this.profiles)) {
+       this.openJsonErrorSnackBar();
+       this.profiles = undefined;
+      }
+
+    } else {
+
+      if (this.userProfileFileExists(this.filePath)) {
+        try {
+          this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
+          if (!this.profilesCorrectlyConfigured(this.profiles)) {
+            this.openJsonErrorSnackBar();
+            this.profiles = undefined;
+          }
+        } catch (e) {
+          console.log(e);
+          this.openJsonErrorSnackBar();
+        }
+      }
+    }
+
+
   }
 
-  selectProfile(profile: UserProfile) {
+  openJsonErrorSnackBar() {
+    this.snackBar.open('The profiles.json file is not configured properly\n'.concat(
+      'If you wish to use the preset profiles, please re-configure the profiles.json file and restart the application'
+    ), null, {duration: 5000});
+  }
+
+  profilesCorrectlyConfigured(profiles: Profile[]): boolean {
+    if (profiles === undefined) {
+      return false;
+    } else {
+      return profiles.filter(
+        profile => (profile.profileName === undefined
+          || profile.encodedText === undefined)).length === 0;
+    }
+  }
+
+  userProfileFileExists(filePath: string): boolean {
+    console.log(filePath);
+    return this.fs.existsSync(filePath);
+  }
+
+  selectProfile(profile: Profile) {
     this.selectedProfile.emit(profile);
   }
 
-  selectPhase(phase: PhaseProfile) {
-    this.selectedPhase.emit(phase);
+  isDeveloperMode(): boolean {
+    return AppConfig.production === false;
   }
 
 }

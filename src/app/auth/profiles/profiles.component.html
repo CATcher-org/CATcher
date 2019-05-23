@@ -1,18 +1,8 @@
 <mat-form-field>
   <mat-label>Select Profile</mat-label>
   <mat-select>
-    <mat-option (click)="selectProfile({profileName: 'None', username: '', password: ''})">None</mat-option>
-    <mat-option *ngFor="let profile of profiles" (click)="this.selectProfile(profile)"
-    [value]="profile.profileName">{{ profile.profileName }}</mat-option>
+    <mat-option (click)="selectProfile(this.blankProfile)">None</mat-option>
+    <mat-option *ngFor="let profile of profiles" (click)="selectProfile(profile)"
+                [value]="profile.profileName">{{ profile.profileName }}</mat-option>
   </mat-select>
 </mat-form-field>
-
-<mat-form-field style="margin-left: 20px">
-  <mat-label>Select Phase</mat-label>
-  <mat-select>
-    <mat-option (click)="selectPhase({phaseName: '', encodedText:''})">None</mat-option>
-    <mat-option *ngFor="let phase of phases" (click)="this.selectPhase(phase)"
-                [value]="phase.phaseName">{{ phase.phaseName }}</mat-option>
-  </mat-select>
-</mat-form-field>
-

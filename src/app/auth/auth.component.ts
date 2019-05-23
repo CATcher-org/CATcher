@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService, AuthState} from '../core/services/auth.service';
-import {Subscription} from 'rxjs';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {HttpErrorResponse} from '@angular/common/http';
-import {ErrorHandlingService} from '../core/services/error-handling.service';
-import {Router} from '@angular/router';
-import {GithubService} from '../core/services/github.service';
-import {PhaseService} from '../core/services/phase.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AuthService, AuthState } from '../core/services/auth.service';
+import { Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorHandlingService } from '../core/services/error-handling.service';
+import { Router } from '@angular/router';
+import { GithubService } from '../core/services/github.service';
+import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
-import {PhaseProfile, UserProfile} from './profiles/profiles.component';
+import { Profile } from './profiles/profiles.component';
 
 @Component({
   selector: 'app-auth',
@@ -44,13 +44,10 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.authStateSubscription.unsubscribe();
   }
 
-  onProfileSelect(profile: UserProfile) {
+  onProfileSelect(profile: Profile) {
     this.loginForm.get('username').setValue(profile.username);
     this.loginForm.get('password').setValue(profile.password);
-  }
-
-  onPhaseSelect(phase: PhaseProfile) {
-    this.loginForm.get('encodedText').setValue(phase.encodedText);
+    this.loginForm.get('encodedText').setValue(profile.encodedText);
   }
 
   login(form: NgForm) {
