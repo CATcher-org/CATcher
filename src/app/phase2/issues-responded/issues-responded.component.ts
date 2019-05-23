@@ -1,11 +1,12 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator, MatSort, MatTable} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-issues-responded',
@@ -15,13 +16,17 @@ import {UserRole} from '../../core/models/user.model';
 export class IssuesRespondedComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
   displayedColumns: string[];
+  private navigationSubscription;
+  private runOnce = false;
 
   @Input() teamFilter: string;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatTable) table: MatTable<any>;
 
-  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService) {
+  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
+    public userService: UserService, private router: Router) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {
@@ -30,6 +35,17 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
       this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues',
         'actions'];
     }
+
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the data
+      if (e instanceof NavigationEnd) {
+        if (this.runOnce) {
+          this.issueService.reset();
+          this.initialiseData();
+          this.table.renderRows();
+        }
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -39,6 +55,11 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.initialiseData();
+    this.runOnce = true;
+  }
+
+  initialiseData() {
     const filter = (issue: Issue): boolean => {
       return this.issueService.hasResponse(issue.id) && !issue.duplicateOf &&
         (issue.status === 'Done');
@@ -61,5 +82,11 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
     }, error => {
         this.errorHandlingService.handleHttpError(error);
     });
+  }
+
+  ngOnDestroy() {
+    if (this.navigationSubscription) {
+       this.navigationSubscription.unsubscribe();
+    }
   }
 }
