@@ -10,6 +10,7 @@ import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
 
+
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
@@ -44,7 +45,12 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.authStateSubscription.unsubscribe();
   }
 
-  onProfileSelect(profile: Profile) {
+  /**
+   * Takes the listened user selected Profile and use its parameters
+   * to fill information in the login form.
+   * @param profile - User selected profile.
+   */
+  onProfileSelect(profile: Profile): void {
     this.loginForm.get('username').setValue(profile.username);
     this.loginForm.get('password').setValue(profile.password);
     this.loginForm.get('encodedText').setValue(profile.encodedText);
