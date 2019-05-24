@@ -1,10 +1,15 @@
 import { app, BrowserWindow, screen, Menu } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
+import { enableProdMode, isDevMode } from '@angular/core';
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
+
+// TODO: enableProdMode() prior to release.
+// enableProdMode();
 
 function createWindow() {
 
@@ -89,6 +94,15 @@ const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     ]
   }
 ];
+
+if (isDevMode()) {
+  let viewSubMenu: MenuItemConstructorOptions[];
+  viewSubMenu = mainMenuTemplate[2].submenu as MenuItemConstructorOptions[];
+  viewSubMenu.push(
+    { type: 'separator' },
+    { role: 'toggledevtools'}
+  );
+}
 
 try {
 
