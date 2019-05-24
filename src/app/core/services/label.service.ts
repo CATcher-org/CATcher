@@ -21,7 +21,10 @@ export class LabelService {
     this.labelRetrieved = false;
   }
 
-  // Calls the github api to get all labels from the repository
+  /**
+   * Calls the Github service api to get all labels from the repository and
+   * store it in a list of arrays in this label service
+   */
   getAllLabels(): Observable<void> {
     return this.githubService.fetchAllLabels().pipe(
       map((response) => {
@@ -30,6 +33,11 @@ export class LabelService {
     );
   }
 
+  /**
+   * Get all the labels of a certain type (e.g severity)
+   * @param attributeName: the type of the label
+   * @return an array of label of that type
+   */
   getLabelList(attributeName: string): Label[] {
     switch (attributeName) {
       case 'severity':
@@ -41,6 +49,10 @@ export class LabelService {
     }
   }
 
+  /**
+   * Store the json data from Github api into the list of arrays in this service
+   * @param labels: the json data of the label
+   */
   private populateLabelLists(labels: Array<{}>): void {
     for (const label of labels) {
       // Get the name and color of each label and store them into the service's array list
@@ -70,6 +82,9 @@ export class LabelService {
     this.labelRetrieved = true;
   }
 
+  /**
+   * Check if the labels have already been retrieved from Github
+   */
   checkLabelRetrieved(): boolean {
     return this.labelRetrieved;
   }
@@ -81,6 +96,10 @@ export class LabelService {
     this.labelRetrieved = false;
   }
 
+  /**
+   * Converts the (color) hex value into RGB format
+   * @param hex: the hex value
+   */
   hexToRgb(hex: string) {
     const rgbResult = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return rgbResult ? {
@@ -90,6 +109,11 @@ export class LabelService {
     } : null;
   }
 
+  /**
+   * Generate a style for each label
+   * @param color: the color of the label
+   * @return the style for the label
+   */
   setLabelStyle(color: string) {
     const r = this.hexToRgb('#'.concat(color)).r.toString();
     const g = this.hexToRgb('#'.concat(color)).g.toString();
