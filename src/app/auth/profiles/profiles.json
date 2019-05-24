@@ -1,18 +1,6 @@
 {
   "profiles": [
     {
-      "profileName": "DevStudent",
-      "username": "testathorStudent",
-      "password": "studPwd1",
-      "encodedText": "phase1=https://github.com/testathor/pe@phase2=https://github.com/testathor/pe-results@phase3=https://github.com/testathor/pe-evaluation"
-    },
-    {
-      "profileName": "DevTutor",
-      "username": "testathorTutor",
-      "password": "tutorPwd1",
-      "encodedText": "phase1=https://github.com/testathor/pe@phase2=https://github.com/testathor/pe-results@phase3=https://github.com/testathor/pe-evaluation"
-    },
-    {
       "profileName": "Production User",
       "encodedText": "phase1=https://github.com/testathor/pe@phase2=https://github.com/testathor/pe-results@phase3=https://github.com/testathor/pe-evaluation"
     }
