@@ -2,13 +2,14 @@ import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/c
 import {BehaviorSubject} from 'rxjs';
 import {Issue, IssuesFilter} from '../core/models/issue.model';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatPaginator, MatSort, MatTable} from '@angular/material';
 import {IssueService} from '../core/services/issue.service';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
 import {UserService} from '../core/services/user.service';
 import {Phase} from '../core/services/phase.service';
 import {DataService} from '../core/services/data.service';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-phase3',
@@ -20,16 +21,36 @@ export class Phase3Component implements OnInit {
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining'];
   public teamFilter = 'All Teams';
+  private navigationSubscription;
+  private runOnce = false;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
               public userService: UserService,
-              private dataService: DataService) { }
+              private router: Router,
+              private dataService: DataService) {
+                this.navigationSubscription = this.router.events.subscribe((e: any) => {
+                  // If it is a NavigationEnd event re-initalise the data
+                  if (e instanceof NavigationEnd) {
+                    if (this.runOnce) {
+                      this.issueService.reset();
+                      this.initialiseData();
+                      this.table.renderRows();
+                    }
+                  }
+                });
+              }
 
   ngOnInit() {
+    this.initialiseData();
+    this.runOnce = true;
+  }
+
+  initialiseData() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
@@ -85,4 +106,9 @@ export class Phase3Component implements OnInit {
     return false;
   }
 
+  ngOnDestroy() {
+    if (this.navigationSubscription) {
+       this.navigationSubscription.unsubscribe();
+    }
+  }
 }
