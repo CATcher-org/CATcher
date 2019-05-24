@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router, NavigationEnd} from '@angular/router';
 import {Issue} from '../../core/models/issue.model';
 import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder} from '@angular/forms';
@@ -16,15 +16,29 @@ export class IssueComponent implements OnInit {
   issue: Issue;
   isIssueLoading = true;
   isEditing = false;
+  private navigationSubscription;
+  private runOnce = false;
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
+              private router: Router,
               private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService) { }
+              private errorHandlingService: ErrorHandlingService) {
+                this.navigationSubscription = this.router.events.subscribe((e: any) => {
+                  // If it is a NavigationEnd event re-initalise the data
+                  if (e instanceof NavigationEnd) {
+                    if (this.runOnce) {
+                      this.issueService.reset();
+                      this.initializeIssue();
+                    }
+                  }
+                });
+              }
 
   ngOnInit() {
     this.initializeIssue();
+    this.runOnce = true;
   }
 
   canDeactivate() {
@@ -55,5 +69,11 @@ export class IssueComponent implements OnInit {
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
     });
+  }
+
+  ngOnDestroy() {
+    if (this.navigationSubscription) {
+       this.navigationSubscription.unsubscribe();
+    }
   }
 }

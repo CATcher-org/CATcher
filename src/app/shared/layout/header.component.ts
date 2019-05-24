@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
   }
 
   needToShowReloadButton(): boolean {
-    return this.router.url === '/phase1' || this.router.url === '/phase2' || this.router.url === '/phase3';
+    return this.router.url !== '/phase1/issues/new';
   }
 
   goBack() {

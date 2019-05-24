@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router, NavigationEnd} from '@angular/router';
 import {Issue} from '../../core/models/issue.model';
 import {IssueService} from '../../core/services/issue.service';
 import {FormBuilder} from '@angular/forms';
@@ -21,15 +21,34 @@ export class IssueComponent implements OnInit {
   isCommentsLoading = true;
   isResponseEditing = false;
   isDescriptionEditing = false;
+  private navigationSubscription;
+  private runOnce = false;
 
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
               private formBuilder: FormBuilder,
+              private router: Router,
               private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService) { }
+              public permissions: PermissionService) {
+                this.navigationSubscription = this.router.events.subscribe((e: any) => {
+                  // If it is a NavigationEnd event re-initalise the data
+                  if (e instanceof NavigationEnd) {
+                    if (this.runOnce) {
+                      this.issueService.reset();
+                      this.issueCommentService.reset();
+                      this.initialiseData();
+                    }
+                  }
+                });
+              }
 
   ngOnInit() {
+    this.initialiseData();
+    this.runOnce = true;
+  }
+
+  initialiseData() {
     this.route.params.subscribe(
       params => {
         const id = +params['issue_id'];
@@ -72,5 +91,11 @@ export class IssueComponent implements OnInit {
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
       });
+  }
+
+  ngOnDestroy() {
+    if (this.navigationSubscription) {
+       this.navigationSubscription.unsubscribe();
+    }
   }
 }
