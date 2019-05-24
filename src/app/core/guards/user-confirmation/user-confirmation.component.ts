@@ -21,6 +21,9 @@ export class UserConfirmationComponent implements OnInit {
   ngOnInit() {
   }
 
+  /**
+   * Closes the dialog.
+   */
   onNoClick(): void {
     this.dialogRef.close(false);
   }
