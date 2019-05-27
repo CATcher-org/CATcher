@@ -144,6 +144,14 @@ export class GithubService {
     );
   }
 
+  fetchEventsForRepo() {
+    return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
+      map(response => {
+        return response['data'];
+      })
+    );
+  }
+
   fetchDataFile(): Observable<{}> {
     return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
       return JSON.parse(atob(resp['data']['content']));
