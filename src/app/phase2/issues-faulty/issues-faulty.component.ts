@@ -49,7 +49,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
         }).length !== 0);
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, filter);
+      this.paginator, this.displayedColumns, this.labelService, filter);
     this.issuesDataSource.loadIssues();
   }
 

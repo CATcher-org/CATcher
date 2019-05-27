@@ -49,7 +49,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
         !issue.duplicateOf;
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, filter);
+      this.paginator, this.displayedColumns, this.labelService, filter);
     this.issuesDataSource.loadIssues();
   }
 

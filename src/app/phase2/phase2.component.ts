@@ -15,12 +15,7 @@ export class Phase2Component implements OnInit {
 
   constructor(public userService: UserService, private dataService: DataService, private labelService: LabelService) {}
 
-  ngOnInit() {
-      // Get all labels in the github repository, labels are stored in the service
-      if (!this.labelService.checkLabelRetrieved()) {
-        this.labelService.getAllLabels().subscribe();
-      }
-  }
+  ngOnInit() {}
 
   get teamList(): string[] {
     const teams = this.dataService.getTeams();

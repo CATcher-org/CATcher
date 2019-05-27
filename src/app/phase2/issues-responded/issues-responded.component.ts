@@ -46,7 +46,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
         (issue.status === 'Done');
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, filter);
+      this.paginator, this.displayedColumns, this.labelService, filter);
     this.issuesDataSource.loadIssues();
   }
 

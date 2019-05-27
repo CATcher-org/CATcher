@@ -32,13 +32,9 @@ export class Phase1Component implements OnInit {
 
   ngOnInit() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns);
+      this.paginator, this.displayedColumns, this.labelService);
     this.issuesDataSource.loadIssues();
     this.issuesPendingDeletion = {};
-    // Get all labels in the github repository, labels are stored in the service
-    if (!this.labelService.checkLabelRetrieved()) {
-      this.labelService.getAllLabels().subscribe();
-    }
   }
 
   applyFilter(filterValue: string) {

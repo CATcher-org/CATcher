@@ -5,6 +5,7 @@ import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.m
 import {MatPaginator, MatSort} from '@angular/material';
 import {delay, flatMap, map, tap} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import { LabelService } from '../../core/services/label.service';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
@@ -16,7 +17,7 @@ export class IssuesDataTable extends DataSource<Issue> {
   public isLoading$ = this.loadingSubject.asObservable();
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private sort: MatSort,
-              private paginator: MatPaginator, private displayedColumn: string[],
+              private paginator: MatPaginator, private displayedColumn: string[], private labelService: LabelService,
               private defaultFilter?: (issue: Issue) => boolean) {
     super();
   }
@@ -70,6 +71,14 @@ export class IssuesDataTable extends DataSource<Issue> {
     },
       (error) => this.errorHandlingService.handleHttpError(error, () => this.issueService.getAllIssues())
     );
+
+    // Get all labels in the github repository, the labels are stored inside the service
+    if (!this.labelService.checkLabelRetrieved()) {
+      this.labelService.getAllLabels().subscribe(
+        (error) => this.errorHandlingService.handleHttpError(error, () => this.labelService.getAllLabels())
+      );
+    }
+
   }
 
   get filter(): string {
