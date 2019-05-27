@@ -33,12 +33,10 @@ export class IssueComponent implements OnInit, OnDestroy {
               public permissions: PermissionService) {
                 this.navigationSubscription = this.router.events.subscribe((e: any) => {
                   // If it is a NavigationEnd event re-initalise the data
-                  if (e instanceof NavigationEnd) {
-                    if (this.runOnce) {
+                  if (e instanceof NavigationEnd && this.runOnce) {
                       this.issueService.reset();
                       this.issueCommentService.reset();
                       this.initialiseData();
-                    }
                   }
                 });
               }

@@ -32,12 +32,10 @@ export class Phase1Component implements OnInit, OnDestroy {
               public userService: UserService) {
               this.navigationSubscription = this.router.events.subscribe((e: any) => {
                 // If it is a NavigationEnd event re-initalise the data
-                if (e instanceof NavigationEnd) {
-                  if (this.runOnce) {
+                if (e instanceof NavigationEnd && this.runOnce) {
                     this.issueService.reset();
                     this.initialiseData();
                     this.table.renderRows();
-                  }
                 }
               });
     }
