@@ -12,13 +12,14 @@ export class LabelService {
   private severityLabels: Label[];
   private typeLabels: Label[];
   private responseLabels: Label[];
-  private labelRetrieved: boolean;
+  private duplicateLabelMap: Map<string, boolean>;
+
 
   constructor(private githubService: GithubService) {
     this.severityLabels = new Array();
     this.typeLabels = new Array();
     this.responseLabels = new Array();
-    this.labelRetrieved = false;
+    this.duplicateLabelMap = new Map();
   }
 
   /**
@@ -54,6 +55,7 @@ export class LabelService {
    * @param labels: the json data of the label
    */
   private populateLabelLists(labels: Array<{}>): void {
+
     for (const label of labels) {
       // Get the name and color of each label and store them into the service's array list
       const labelName = String(label['name']).split('.');
@@ -61,16 +63,20 @@ export class LabelService {
       const labelValue = labelName[1];
       const labelColor = String(label['color']);
 
-      switch (labelType) {
-        case 'severity':
-          this.severityLabels.push({labelValue: labelValue, labelColor: labelColor});
-          break;
-        case 'type':
-          this.typeLabels.push({labelValue: labelValue, labelColor: labelColor});
-          break;
-        case 'response':
-          this.responseLabels.push({labelValue: labelValue, labelColor: labelColor});
-          break;
+      if (!this.duplicateLabelMap.has(labelValue)) {
+        this.duplicateLabelMap.set(labelValue, true);
+
+        switch (labelType) {
+          case 'severity':
+            this.severityLabels.push({labelValue: labelValue, labelColor: labelColor});
+            break;
+          case 'type':
+            this.typeLabels.push({labelValue: labelValue, labelColor: labelColor});
+            break;
+          case 'response':
+            this.responseLabels.push({labelValue: labelValue, labelColor: labelColor});
+            break;
+        }
       }
 
     }
@@ -79,21 +85,13 @@ export class LabelService {
       return SEVERITY_ORDER[a.labelValue] - SEVERITY_ORDER[b.labelValue];
     });
 
-    this.labelRetrieved = true;
-  }
-
-  /**
-   * Check if the labels have already been retrieved from Github
-   */
-  checkLabelRetrieved(): boolean {
-    return this.labelRetrieved;
   }
 
   reset(): void {
     this.severityLabels.length = 0;
     this.typeLabels.length = 0;
     this.responseLabels.length = 0;
-    this.labelRetrieved = false;
+    this.duplicateLabelMap.clear();
   }
 
   /**
