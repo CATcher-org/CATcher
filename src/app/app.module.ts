@@ -45,7 +45,7 @@ import { LabelService } from './core/services/label.service';
     }),
     AppRoutingModule,
   ],
-  providers: [LabelService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
