@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import {MatPaginator, MatSort, MatTable} from '@angular/material';
 import {IssueService} from '../core/services/issue.service';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
@@ -15,7 +15,7 @@ import { Router, NavigationEnd, ActivationEnd } from '@angular/router';
   templateUrl: './phase1.component.html',
   styleUrls: ['./phase1.component.css']
 })
-export class Phase1Component implements OnInit {
+export class Phase1Component implements OnInit, OnDestroy {
   issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];

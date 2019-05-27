@@ -1,4 +1,4 @@
-import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {Issue, IssuesFilter} from '../core/models/issue.model';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
@@ -16,7 +16,7 @@ import { Router, NavigationEnd } from '@angular/router';
   templateUrl: './phase3.component.html',
   styleUrls: ['./phase3.component.css']
 })
-export class Phase3Component implements OnInit {
+export class Phase3Component implements OnInit, OnDestroy {
   issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining'];

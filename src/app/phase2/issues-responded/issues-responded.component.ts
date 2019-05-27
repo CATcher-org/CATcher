@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {MatPaginator, MatSort, MatTable} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
@@ -13,7 +13,7 @@ import { Router, NavigationEnd } from '@angular/router';
   templateUrl: './issues-responded.component.html',
   styleUrls: ['./issues-responded.component.css'],
 })
-export class IssuesRespondedComponent implements OnInit, OnChanges {
+export class IssuesRespondedComponent implements OnInit, OnChanges, OnDestroy {
   issuesDataSource: IssuesDataTable;
   displayedColumns: string[];
   private navigationSubscription;

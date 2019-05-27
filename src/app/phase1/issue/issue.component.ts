@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, NavigationEnd} from '@angular/router';
 import {Issue} from '../../core/models/issue.model';
 import {IssueService} from '../../core/services/issue.service';
@@ -12,7 +12,7 @@ import {IssueCommentService} from '../../core/services/issue-comment.service';
   templateUrl: './issue.component.html',
   styleUrls: ['./issue.component.css']
 })
-export class IssueComponent implements OnInit {
+export class IssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   isIssueLoading = true;
   isEditing = false;
