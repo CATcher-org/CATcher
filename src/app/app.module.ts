@@ -14,11 +14,11 @@ import {Phase2Module} from './phase2/phase2.module';
 import {Phase3Module} from './phase3/phase3.module';
 import {Phase1Module} from './phase1/phase1.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { LabelService } from './core/services/label.service';
+import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
 
 @NgModule({
   declarations: [
-    AppComponent, HeaderComponent,
+    AppComponent, HeaderComponent, UserConfirmationComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,6 +46,9 @@ import { LabelService } from './core/services/label.service';
     AppRoutingModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    UserConfirmationComponent
+  ]
 })
 export class AppModule { }
