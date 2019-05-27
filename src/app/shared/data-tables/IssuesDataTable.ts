@@ -73,9 +73,7 @@ export class IssuesDataTable extends DataSource<Issue> {
     );
 
     // Get all labels in the github repository, the labels are stored inside the service
-      this.labelService.getAllLabels().subscribe(
-        (error) => this.errorHandlingService.handleHttpError(error, () => this.labelService.getAllLabels())
-      );
+      this.labelService.getAllLabels().subscribe();
 
   }
 
