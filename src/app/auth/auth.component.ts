@@ -1,13 +1,15 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService, AuthState} from '../core/services/auth.service';
-import {Subscription} from 'rxjs';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {HttpErrorResponse} from '@angular/common/http';
-import {ErrorHandlingService} from '../core/services/error-handling.service';
-import {Router} from '@angular/router';
-import {GithubService} from '../core/services/github.service';
-import {PhaseService} from '../core/services/phase.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AuthService, AuthState } from '../core/services/auth.service';
+import { Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorHandlingService } from '../core/services/error-handling.service';
+import { Router } from '@angular/router';
+import { GithubService } from '../core/services/github.service';
+import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
+import { Profile } from './profiles/profiles.component';
+
 
 @Component({
   selector: 'app-auth',
@@ -35,13 +37,23 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      encodedText: ['phase1=https://github.com/CATcher-org/pe@phase2=https://github.com/CATcher-org/pe-results' +
-      '@phase3=https://github.com/CATcher-org/pe-evaluation', Validators.required],
+      encodedText: ['', Validators.required],
     });
   }
 
   ngOnDestroy() {
     this.authStateSubscription.unsubscribe();
+  }
+
+  /**
+   * Takes the listened user selected Profile and use its parameters
+   * to fill information in the login form.
+   * @param profile - User selected profile.
+   */
+  onProfileSelect(profile: Profile): void {
+    this.loginForm.get('username').setValue(profile.username);
+    this.loginForm.get('password').setValue(profile.password);
+    this.loginForm.get('encodedText').setValue(profile.encodedText);
   }
 
   login(form: NgForm) {
