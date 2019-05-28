@@ -54,9 +54,9 @@ export class DuplicateOfComponent implements OnInit {
     // Maximum Possible Title length varies based on whether the issue
     // is a duplicate. (Whether the Duplicate Issue Tag is visible)
     let maxTitleLength: number;
-    issue.duplicated ?
-      maxTitleLength = this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE
-      : maxTitleLength = this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
+    maxTitleLength = issue.duplicated
+      ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE
+      : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
 
     return issue.title.length > maxTitleLength;
   }
