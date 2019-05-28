@@ -28,15 +28,11 @@ export class LabelService {
    * store it in a list of arrays in this label service
    */
   getAllLabels(): Observable<void> {
-    try {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
           return this.populateLabelLists(response);
         })
       );
-    } catch (e) {
-      this.errorHandlingService.handleHttpError(e);
-    }
   }
 
   /**
