@@ -122,11 +122,9 @@ export class LabelService {
       const r = this.hexToRgb('#'.concat(color)).r.toString();
       const g = this.hexToRgb('#'.concat(color)).g.toString();
       const b = this.hexToRgb('#'.concat(color)).b.toString();
-      const rgb = r.concat(', ').concat(g).concat(', ').concat(b).concat(', ');
-      const opacity = '0.55';
 
       const styles = {
-        'background-color' : 'rgb('.concat(rgb).concat(opacity).concat(')'),
+        'background-color' : `rgb(${r}, ${g}, ${b}, 0.55)`,
         'border-radius' : '3px',
         'padding' : '3px',
       };
