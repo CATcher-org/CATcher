@@ -4,7 +4,6 @@ import {map} from 'rxjs/operators';
 import {Label} from '../models/label.model';
 import { Observable } from 'rxjs';
 import {SEVERITY_ORDER} from '../../core/models/issue.model';
-import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +15,7 @@ export class LabelService {
   private duplicateLabelMap: Map<string, boolean>;
 
 
-  constructor(private githubService: GithubService, private errorHandlingService: ErrorHandlingService) {
+  constructor(private githubService: GithubService) {
     this.severityLabels = new Array();
     this.typeLabels = new Array();
     this.responseLabels = new Array();

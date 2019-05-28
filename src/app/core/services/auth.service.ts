@@ -81,11 +81,10 @@ export class AuthService {
   }
 
   startLabelService() {
-    try {
-      this.labelService.getAllLabels().subscribe();
-    } catch (e) {
-      this.errorHandlingService.handleHttpError(e);
-    }
+    this.labelService.getAllLabels().subscribe(
+        res => res,
+        err => this.errorHandlingService.handleHttpError(err)
+    );
   }
 
 }
