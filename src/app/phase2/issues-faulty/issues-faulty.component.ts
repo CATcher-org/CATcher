@@ -7,7 +7,7 @@ import {Issue, STATUS} from '../../core/models/issue.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
 import {PermissionService} from '../../core/services/permission.service';
-import {LabelService} from '../../core/services/label.service';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-faulty',
@@ -24,7 +24,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
-      private labelService: LabelService, public permissions: PermissionService) {
+    public permissions: PermissionService, private labelService: LabelService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {
@@ -49,7 +49,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
         }).length !== 0);
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, this.labelService, filter);
+      this.paginator, this.displayedColumns, filter);
     this.issuesDataSource.loadIssues();
   }
 

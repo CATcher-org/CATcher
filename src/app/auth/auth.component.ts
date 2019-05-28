@@ -55,6 +55,7 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.authService.changeAuthState(AuthState.Authenticated);
             form.resetForm();
             this.titleService.setTitle('CATcher '.concat(this.phaseService.getPhaseDetail()));
+            this.authService.startLabelService();
             this.router.navigateByUrl(this.phaseService.currentPhase);
           },
           (error) => {

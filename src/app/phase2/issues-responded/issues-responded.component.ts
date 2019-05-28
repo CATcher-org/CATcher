@@ -6,7 +6,7 @@ import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import {LabelService} from '../../core/services/label.service';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-responded',
@@ -46,7 +46,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
         (issue.status === 'Done');
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, this.labelService, filter);
+      this.paginator, this.displayedColumns, filter);
     this.issuesDataSource.loadIssues();
   }
 

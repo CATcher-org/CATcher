@@ -7,7 +7,7 @@ import {Issue, STATUS} from '../../core/models/issue.model';
 import {PermissionService} from '../../core/services/permission.service';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import {LabelService} from '../../core/services/label.service';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-pending',
@@ -49,7 +49,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
         !issue.duplicateOf;
     };
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, this.labelService, filter);
+      this.paginator, this.displayedColumns, filter);
     this.issuesDataSource.loadIssues();
   }
 

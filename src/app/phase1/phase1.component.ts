@@ -25,14 +25,13 @@ export class Phase1Component implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService,
-              private labelService: LabelService,
+              public permissions: PermissionService, private labelService: LabelService,
               public userService: UserService) {
   }
 
   ngOnInit() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, this.labelService);
+      this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
     this.issuesPendingDeletion = {};
   }

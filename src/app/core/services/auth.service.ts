@@ -79,4 +79,8 @@ export class AuthService {
   changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
   }
+
+  startLabelService() {
+    this.labelService.getAllLabels().subscribe();
+  }
 }

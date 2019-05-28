@@ -27,13 +27,12 @@ export class Phase3Component implements OnInit {
 
   constructor(private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
-              public userService: UserService,
-              private labelService: LabelService,
+              public userService: UserService, private labelService: LabelService,
               private dataService: DataService) { }
 
   ngOnInit() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, this.labelService);
+      this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
   }
 
