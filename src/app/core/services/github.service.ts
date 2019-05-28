@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {map, mergeMap} from 'rxjs/operators';
-import {forkJoin, from, Observable } from 'rxjs';
+import {forkJoin, from, Observable} from 'rxjs';
 import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
 import {IssueComment} from '../models/comment.model';
 const Octokit = require('@octokit/rest');
@@ -145,6 +145,9 @@ export class GithubService {
   }
 
   fetchDataFile(): Observable<{}> {
+    from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'roles.csv'})).subscribe(resp => {
+      console.log(atob(resp['data']['content']));
+    });
     return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
       return JSON.parse(atob(resp['data']['content']));
     }));
