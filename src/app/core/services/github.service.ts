@@ -106,7 +106,7 @@ export class GithubService {
 
   createIssueComment(comment: IssueComment): Observable<{}> {
     return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, number: comment.id,
-                body: comment.description})).pipe(
+      body: comment.description})).pipe(
       map(response => {
         return response['data'];
       })
@@ -144,25 +144,89 @@ export class GithubService {
     );
   }
 
+  parseRolesData(csvInput: string): {} {
+    const CSV_HEADER_USER_TYPE = 'role';
+    const CSV_HEADER_USER_NAME = 'member';
+
+    const roles = {
+      'roles' : {
+        'students': {},
+        'tutors' : {},
+        'admins' : {}
+      }
+    };
+    const students = {};
+    const tutors = {};
+    const admins = {};
+    const rolesOutput = this.csvToObject(csvInput);
+
+    rolesOutput.forEach(entry => {
+      if (entry[CSV_HEADER_USER_TYPE] === 'student') {
+        students[entry[CSV_HEADER_USER_NAME]] = 'true';
+      } else if (entry[CSV_HEADER_USER_TYPE] === 'tutor') {
+        tutors[entry[CSV_HEADER_USER_NAME]] = 'true';
+      } else {
+        admins[entry[CSV_HEADER_USER_NAME]] = 'true';
+      }
+    });
+
+    roles['roles']['students'] = students;
+    roles['roles']['tutors'] = tutors;
+    roles['roles']['admins'] = admins;
+
+    return roles;
+  }
+
   fetchDataFile(): Observable<{}> {
+    // roles information
     from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'roles.csv'})).subscribe(resp => {
-      console.log(atob(resp['data']['content']));
+      // const parser = require('csv-parse');
+      console.log(this.parseRolesData(atob(resp['data']['content'])));
     });
     return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
+      console.log(JSON.parse(atob(resp['data']['content'])));
       return JSON.parse(atob(resp['data']['content']));
     }));
+  }
+
+  /**
+   * Converts the input csv information to an array of
+   * objects marked by the header values of the csv.
+   * @param csvText - csv information.
+   * @return - array of objects representing input csv info.
+   */
+  csvToObject(csvText) {
+    // Split all the text into seperate lines on new lines and carriage return feeds
+    const allTextLines = csvText.split(/\r\n|\n/);
+    // Split per line on tabs and commas
+    const headers = allTextLines[0].split(/\t|,/);
+    const entries = [];
+
+    for (let i = 1; i < allTextLines.length; i++) {
+
+      const data = allTextLines[i].split(/\t|,/);
+
+      if (data.length === headers.length) {
+
+        const location = { 'roles' : data[0], 'members' : data[1] };
+        entries.push(location);
+
+      }
+
+    }
+    return entries;
   }
 
   private getNumberOfIssuePages(filter?: {}): Observable<number> {
     return from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
       direction: 'desc', per_page: 100, page: 1})).pipe(
-        map((response) => {
-          if (!response['headers'].link) {
-            return 1;
-          }
-          const paginatedData = githubPaginatorParser(response['headers'].link);
-          return +paginatedData['last'] || 1;
-        })
+      map((response) => {
+        if (!response['headers'].link) {
+          return 1;
+        }
+        const paginatedData = githubPaginatorParser(response['headers'].link);
+        return +paginatedData['last'] || 1;
+      })
     );
   }
 
