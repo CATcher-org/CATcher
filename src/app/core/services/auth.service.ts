@@ -13,6 +13,7 @@ import {IssueService} from './issue.service';
 import {IssueCommentService} from './issue-comment.service';
 import {DataService} from './data.service';
 import { Title } from '@angular/platform-browser';
+import { GithubEventService } from './githubevent.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -31,6 +32,7 @@ export class AuthService {
               private phaseService: PhaseService,
               private issueCommentService: IssueCommentService,
               private dataService: DataService,
+              private githubeventService: GithubEventService,
               private titleService: Title) {
   }
 
@@ -63,6 +65,7 @@ export class AuthService {
     this.issueCommentService.reset();
     this.phaseService.reset();
     this.dataService.reset();
+    this.githubeventService.reset();
     this.titleService.setTitle('CATcher');
 
     this.changeAuthState(AuthState.NotAuthenticated);
@@ -75,5 +78,15 @@ export class AuthService {
 
   changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
+  }
+
+  startGithubEventService() {
+    // Initialise last modified time for this repo
+    this.githubeventService.getLatestChangeEvent().subscribe((response) => {
+      this.githubeventService.setLastModifiedTime(response['created_at']);
+      this.githubeventService.setLastModifiedCommentTime(response['issue']['updated_at']);
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error, () => this.githubeventService.getLatestChangeEvent());
+      });
   }
 }
