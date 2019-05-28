@@ -1,3 +1,11 @@
 .mat-checkbox-disabled .mat-checkbox-label {
   color: black;
 }
+
+.duplicate-dropdown-issuedetails {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom !important;
+}

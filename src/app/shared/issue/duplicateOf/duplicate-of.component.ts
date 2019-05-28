@@ -1,11 +1,21 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation} from '@angular/core';
-import {Issue, SEVERITY_ORDER} from '../../../core/models/issue.model';
-import {IssueService} from '../../../core/services/issue.service';
-import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
-import {MatCheckbox, MatSelect} from '@angular/material';
-import {PermissionService} from '../../../core/services/permission.service';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewEncapsulation
+} from '@angular/core';
+import {
+  ErrorHandlingService
+} from '../../../core/services/error-handling.service';
+import { Issue, SEVERITY_ORDER } from '../../../core/models/issue.model';
+import { IssueService } from '../../../core/services/issue.service';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { MatCheckbox, MatSelect } from '@angular/material';
+import { PermissionService } from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-duplicate-of-component',
@@ -24,9 +34,31 @@ export class DuplicateOfComponent implements OnInit {
   @ViewChild(MatSelect) duplicateOfSelection: MatSelect;
   @ViewChild(MatCheckbox) duplicatedCheckbox: MatCheckbox;
 
+  // Max chars visible for a duplicate entry in duplicates dropdown list.
+  readonly MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE = 17;
+  // Max chars visible for a non-duplicate entry in duplicates dropdown list.
+  readonly MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE = 37;
+
   constructor(public issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService) {
+  }
+
+  /**
+   * Checks if the supplied issue requires a tooltip
+   * in the UI as some information may be hidden due to truncation.
+   * @param issue - Displayed issue that may need a tooltip.
+   * @return - true (to enable tooltip) / false (to disable tooltip)
+   */
+  isTooltipNecessary(issue: Issue): boolean {
+    // Maximum Possible Title length varies based on whether the issue
+    // is a duplicate. (Whether the Duplicate Issue Tag is visible)
+    let maxTitleLength: number;
+    maxTitleLength = issue.duplicated
+      ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE
+      : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
+
+    return issue.title.length > maxTitleLength;
   }
 
   ngOnInit() {
@@ -46,16 +78,22 @@ export class DuplicateOfComponent implements OnInit {
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
-    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity] || (issue.duplicated || !!issue.duplicateOf);
+    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]
+      || (issue.duplicated || !!issue.duplicateOf);
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
     const reason = new Array<string>();
     if (this.dupIssueOptionIsDisabled(issue)) {
-      if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
+      if (SEVERITY_ORDER[this.issue.severity]
+        > SEVERITY_ORDER[issue.severity]) {
+
         reason.push('Issue of lower priority');
+
       } else if (issue.duplicated || !!issue.duplicateOf) {
+
         reason.push('A duplicated issue');
+
       }
     }
     return reason.join(', ');
@@ -87,7 +125,8 @@ export class DuplicateOfComponent implements OnInit {
   private getDupIssueList(): Observable<Issue[]> {
     return this.issueService.issues$.pipe(map((issues) => {
       return issues.filter((issue) => {
-        return this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id;
+        return this.issue.id !== issue.id
+          && this.issue.teamAssigned.id === issue.teamAssigned.id;
       });
     }));
   }
