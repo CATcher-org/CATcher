@@ -4,6 +4,7 @@ import {map} from 'rxjs/operators';
 import {Label} from '../models/label.model';
 import { Observable } from 'rxjs';
 import {SEVERITY_ORDER} from '../../core/models/issue.model';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,10 +27,11 @@ export class LabelService {
    * Calls the Github service api to get all labels from the repository and
    * store it in a list of arrays in this label service
    */
-  getAllLabels(): Observable<void> {
+  getAllLabels(userResponse: User): Observable<User> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          return this.populateLabelLists(response);
+          this.populateLabelLists(response);
+          return userResponse;
         })
       );
   }

@@ -23,6 +23,7 @@ export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authentic
 export class AuthService {
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
+  private userObj;
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -55,6 +56,9 @@ export class AuthService {
         } else {
           return this.userService.createUserModel(userLoginId);
         }
+      }),
+      flatMap((userResponse) => {
+        return this.labelService.getAllLabels(userResponse);
       })
     );
   }
@@ -78,13 +82,6 @@ export class AuthService {
 
   changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
-  }
-
-  startLabelService() {
-    this.labelService.getAllLabels().subscribe(
-        res => res,
-        err => this.errorHandlingService.handleHttpError(err)
-    );
   }
 
 }
