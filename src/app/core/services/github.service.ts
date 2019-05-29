@@ -7,6 +7,7 @@ const Octokit = require('@octokit/rest');
 
 
 let ORG_NAME = '';
+let MOD_ORG = '';
 let REPO = '';
 const DATA_REPO = 'public_data';
 let octokit;
@@ -28,9 +29,10 @@ export class GithubService {
     });
   }
 
-  updatePhaseDetails(repoName: string, orgName: string) {
+  updatePhaseDetails(repoName: string, orgName: string, modOrg: string) {
     ORG_NAME = orgName;
     REPO = repoName;
+    MOD_ORG = modOrg;
   }
   /**
    * Will return an Observable with array of issues in JSON format.
@@ -145,7 +147,7 @@ export class GithubService {
   }
 
   fetchDataFile(): Observable<{}> {
-    return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
       return JSON.parse(atob(resp['data']['content']));
     }));
   }
