@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
-import {BehaviorSubject, of, throwError} from 'rxjs';
+import {BehaviorSubject, of, throwError, Observable} from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import {UserService} from './user.service';
@@ -14,6 +14,7 @@ import {IssueCommentService} from './issue-comment.service';
 import {DataService} from './data.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
+import { User } from '../models/user.model';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -55,6 +56,10 @@ export class AuthService {
         } else {
           return this.userService.createUserModel(userLoginId);
         }
+      }),
+      flatMap((userResponse) =>  {
+        // Initialise last modified time for this repo
+        return this.githubeventService.setLatestChangeEvent(userResponse);
       })
     );
   }
@@ -78,15 +83,5 @@ export class AuthService {
 
   changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
-  }
-
-  startGithubEventService() {
-    // Initialise last modified time for this repo
-    this.githubeventService.getLatestChangeEvent().subscribe((response) => {
-      this.githubeventService.setLastModifiedTime(response['created_at']);
-      this.githubeventService.setLastModifiedCommentTime(response['issue']['updated_at']);
-      }, (error) => {
-        this.errorHandlingService.handleHttpError(error, () => this.githubeventService.getLatestChangeEvent());
-      });
   }
 }

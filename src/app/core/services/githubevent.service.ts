@@ -3,6 +3,7 @@ import { GithubService } from './github.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +15,22 @@ export class GithubEventService {
 
   constructor(private githubService: GithubService, private errorHandlingService: ErrorHandlingService) { }
 
-  getLatestChangeEvent(): Observable<any> {
+  setLatestChangeEvent(userResponse: User): Observable<User> {
       return this.githubService.fetchEventsForRepo().pipe(
         map((response) => {
-          return response[0];
+          this.setLastModifiedTime(response[0]['created_at']);
+          this.setLastModifiedCommentTime(response[0]['issue']['updated_at']);
+          return userResponse;
         })
       );
+  }
+
+  getLatestChangeEvent(): Observable<any> {
+    return this.githubService.fetchEventsForRepo().pipe(
+      map((response) => {
+        return response[0];
+      })
+    );
   }
 
   setLastModifiedTime(lastModified: string) {

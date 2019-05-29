@@ -51,21 +51,20 @@ export class HeaderComponent implements OnInit {
     this.disableButton = true;
 
     // Get the latest modify event time
-    this.githubeventService.getLatestChangeEvent().subscribe((response) => {
-        this.latestModifiedTime = response['created_at'];
-        this.latestModifiedCommentTime = response['issue']['updated_at'];
+    this.githubeventService.getLatestChangeEvent().subscribe((eventResponse) => {
+        this.latestModifiedTime = eventResponse['created_at'];
+        this.latestModifiedCommentTime = eventResponse['issue']['updated_at'];
+        // Will only allow page to reload if the latest modify time is different
+        // from last modified, meaning that some changes to the repo has occured.
+        if (this.latestModifiedTime !== this.githubeventService.getLastModifiedTime() ||
+        this.latestModifiedCommentTime !== this.githubeventService.getLastModifiedCommentTime()) {
+          this.router.navigate([this.router.url]);
+          this.githubeventService.setLastModifiedTime(this.latestModifiedTime);
+          this.githubeventService.setLastModifiedCommentTime(this.latestModifiedCommentTime);
+        }
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.githubeventService.getLatestChangeEvent());
       });
-
-    // Will only allow page to reload if the latest modify time is different
-    // from last modified, meaning that some changes to the repo has occured.
-    if (this.latestModifiedTime !== this.githubeventService.getLastModifiedTime() ||
-      this.latestModifiedCommentTime !== this.githubeventService.getLastModifiedCommentTime()) {
-        this.router.navigate([this.router.url]);
-        this.githubeventService.setLastModifiedTime(this.latestModifiedTime);
-        this.githubeventService.setLastModifiedCommentTime(this.latestModifiedCommentTime);
-    }
 
     // Prevent user from spamming the reload button
     setTimeout(() => {
