@@ -23,7 +23,6 @@ export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authentic
 export class AuthService {
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
-  private userObj;
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
