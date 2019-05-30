@@ -33,7 +33,7 @@ export class AuthService {
               private phaseService: PhaseService,
               private issueCommentService: IssueCommentService,
               private dataService: DataService,
-              private githubeventService: GithubEventService,
+              private githubEventService: GithubEventService,
               private titleService: Title) {
   }
 
@@ -59,7 +59,7 @@ export class AuthService {
       }),
       flatMap((userResponse) =>  {
         // Initialise last modified time for this repo
-        return this.githubeventService.setLatestChangeEvent(userResponse);
+        return this.githubEventService.setLatestChangeEvent(userResponse);
       })
     );
   }
@@ -70,7 +70,7 @@ export class AuthService {
     this.issueCommentService.reset();
     this.phaseService.reset();
     this.dataService.reset();
-    this.githubeventService.reset();
+    this.githubEventService.reset();
     this.titleService.setTitle('CATcher');
 
     this.changeAuthState(AuthState.NotAuthenticated);

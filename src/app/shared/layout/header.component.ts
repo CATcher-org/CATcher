@@ -16,10 +16,10 @@ export class HeaderComponent implements OnInit {
   private prevUrl;
   private latestModifiedTime: string;
   private latestModifiedCommentTime: string;
-  disableButton = false;
+  isSyncButtonDisabled = false;
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
-              private location: Location, private githubeventService: GithubEventService,
+              private location: Location, private githubEventService: GithubEventService,
               private errorHandlingService: ErrorHandlingService) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
@@ -48,27 +48,27 @@ export class HeaderComponent implements OnInit {
   }
 
   refresh() {
-    this.disableButton = true;
+    this.isSyncButtonDisabled = true;
 
     // Get the latest modify event time
-    this.githubeventService.getLatestChangeEvent().subscribe((eventResponse) => {
+    this.githubEventService.getLatestChangeEvent().subscribe((eventResponse) => {
         this.latestModifiedTime = eventResponse['created_at'];
         this.latestModifiedCommentTime = eventResponse['issue']['updated_at'];
         // Will only allow page to reload if the latest modify time is different
         // from last modified, meaning that some changes to the repo has occured.
-        if (this.latestModifiedTime !== this.githubeventService.getLastModifiedTime() ||
-        this.latestModifiedCommentTime !== this.githubeventService.getLastModifiedCommentTime()) {
+        if (this.latestModifiedTime !== this.githubEventService.getLastModifiedTime() ||
+        this.latestModifiedCommentTime !== this.githubEventService.getLastModifiedCommentTime()) {
           this.router.navigate([this.router.url]);
-          this.githubeventService.setLastModifiedTime(this.latestModifiedTime);
-          this.githubeventService.setLastModifiedCommentTime(this.latestModifiedCommentTime);
+          this.githubEventService.setLastModifiedTime(this.latestModifiedTime);
+          this.githubEventService.setLastModifiedCommentTime(this.latestModifiedCommentTime);
         }
       }, (error) => {
-        this.errorHandlingService.handleHttpError(error, () => this.githubeventService.getLatestChangeEvent());
+        this.errorHandlingService.handleHttpError(error, () => this.githubEventService.getLatestChangeEvent());
       });
 
     // Prevent user from spamming the reload button
     setTimeout(() => {
-      this.disableButton = false;
+      this.isSyncButtonDisabled = false;
     },
     3000);
   }

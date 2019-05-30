@@ -7,7 +7,7 @@
     ({{phaseService.phaseDescription[phaseService.currentPhase]}})
   </span>
   <span style="flex: 1 1 auto"></span>
-  <button *ngIf="auth.isAuthenticated() && needToShowReloadButton()" [disabled]="this.disableButton"
+  <button *ngIf="auth.isAuthenticated() && needToShowReloadButton()" [disabled]="this.isSyncButtonDisabled"
     mat-raised-button matTooltip="Synchronize with Github data"
     style="transform: scale(0.9); color: #303F9F" (click)="refresh()">
     Sync
