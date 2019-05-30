@@ -156,8 +156,8 @@ export class GithubService {
       from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'adminsallocation.csv'}))
         .pipe(map(rawData => atob(rawData['data']['content'])))
     ).pipe(
-      map(([first, second, third, fourth]) => {
-        return {first, second, third, fourth};
+      map(([roles, teamStructure, tutorsAllocation, adminsAllocation]) => {
+        return {roles, teamStructure, tutorsAllocation, adminsAllocation};
       })
     );
     // from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'roles.csv'})).subscribe(resp => {
