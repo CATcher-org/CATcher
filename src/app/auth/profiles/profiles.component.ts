@@ -109,7 +109,6 @@ export class ProfilesComponent implements OnInit {
    * @param filePath - Path of file to check.
    */
   userProfileFileExists(filePath: string): boolean {
-    console.log(filePath);
     return this.fs.existsSync(filePath);
   }
 
