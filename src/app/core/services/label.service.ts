@@ -52,6 +52,13 @@ export class LabelService {
     }
   }
 
+  getColorFromList(labelList: Label[], labelValue: string): string {
+    if (labelValue === '') {
+      return 'ffffff';
+    }
+    return labelList.filter(x => x.labelValue === labelValue)[0].labelColor;
+  }
+
   /**
    * Stores the json data from Github api into the list of arrays in this service
    * @param labels: the json data of the label

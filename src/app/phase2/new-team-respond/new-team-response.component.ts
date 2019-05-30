@@ -58,23 +58,9 @@ export class NewTeamResponseComponent implements OnInit {
       this.responseTag.updateValueAndValidity();
     });
 
-    if (this.issue.severity === '') {
-      this.selectedSeverityColor = 'ffffff';
-    } else {
-      this.selectedSeverityColor = this.issue.severityColor;
-    }
-
-    if (this.issue.type === '') {
-      this.selectedTypeColor = 'ffffff';
-    } else {
-      this.selectedTypeColor = this.issue.typeColor;
-    }
-
-    if (this.issue.responseTag === '') {
-      this.selectedResponseColor = 'ffffff';
-    } else {
-      this.selectedResponseColor = this.issue.responseColor;
-    }
+    this.selectedSeverityColor = this.labelService.getColorFromList(this.severityValues, this.issue.severity);
+    this.selectedTypeColor = this.labelService.getColorFromList(this.issueTypeValues, this.issue.type);
+    this.selectedResponseColor = this.labelService.getColorFromList(this.responseList, this.issue.responseTag);
   }
 
   submitNewTeamResponse(form: NgForm) {
@@ -138,13 +124,13 @@ export class NewTeamResponseComponent implements OnInit {
   setSelectedLabelColor(labelValue: string, labelType: string) {
     switch (labelType) {
       case 'severity':
-        this.selectedSeverityColor = this.severityValues.filter(x => x.labelValue === labelValue)[0].labelColor;
+        this.selectedSeverityColor = this.labelService.getColorFromList(this.severityValues, labelValue);
         break;
       case 'type':
-        this.selectedTypeColor = this.issueTypeValues.filter(x => x.labelValue === labelValue)[0].labelColor;
+        this.selectedTypeColor = this.labelService.getColorFromList(this.issueTypeValues, labelValue);
         break;
       case 'responseTag':
-        this.selectedResponseColor = this.responseList.filter(x => x.labelValue === labelValue)[0].labelColor;
+        this.selectedResponseColor = this.labelService.getColorFromList(this.responseList, labelValue);
         break;
     }
   }
