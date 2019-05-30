@@ -1,17 +1,23 @@
 language: node_js
 node_js:
-  - 8
+  - "8"
 sudo: required
-addons:
-    chrome: stable
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-install:
-  - npm set progress=false
-  - npm install
-script:
-  - ng lint
-  - npm run test
-  - npm run e2e
-  - npm run build
+
+branches:
+  only:
+    - master
+install: true
+cache:
+  directories:
+    - node_modules
+jobs:
+  include:
+    - stage: "Prepare Dependencies"
+      name: "Prepare Dependencies"
+      script:
+        - npm install
+        - npm update
+    - stage: "Lint/Test"
+      name: "Lint"
+      script:
+        - npm run lint
