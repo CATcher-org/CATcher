@@ -180,7 +180,7 @@ export class DataService {
   parseRolesData(csvInput: string): {} {
     // CSV Headers
     const ROLE = 'role';
-    const NAME = 'member';
+    const NAME = 'name';
 
     const roles = {};
     const students = {};
