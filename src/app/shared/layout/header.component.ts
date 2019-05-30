@@ -14,8 +14,6 @@ import { ErrorHandlingService } from '../../core/services/error-handling.service
 })
 export class HeaderComponent implements OnInit {
   private prevUrl;
-  private latestModifiedTime: string;
-  private latestModifiedCommentTime: string;
   isSyncButtonDisabled = false;
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
@@ -50,17 +48,14 @@ export class HeaderComponent implements OnInit {
   refresh() {
     this.isSyncButtonDisabled = true;
 
-    // Get the latest modify event time
     this.githubEventService.getLatestChangeEvent().subscribe((eventResponse) => {
-        this.latestModifiedTime = eventResponse['created_at'];
-        this.latestModifiedCommentTime = eventResponse['issue']['updated_at'];
         // Will only allow page to reload if the latest modify time is different
         // from last modified, meaning that some changes to the repo has occured.
-        if (this.latestModifiedTime !== this.githubEventService.getLastModifiedTime() ||
-        this.latestModifiedCommentTime !== this.githubEventService.getLastModifiedCommentTime()) {
+        if (eventResponse['created_at'] !== this.githubEventService.getLastModifiedTime() ||
+        eventResponse['issue']['updated_at'] !== this.githubEventService.getLastModifiedCommentTime()) {
           this.router.navigate([this.router.url]);
-          this.githubEventService.setLastModifiedTime(this.latestModifiedTime);
-          this.githubEventService.setLastModifiedCommentTime(this.latestModifiedCommentTime);
+          this.githubEventService.setLastModifiedTime(eventResponse['created_at']);
+          this.githubEventService.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
         }
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.githubEventService.getLatestChangeEvent());
