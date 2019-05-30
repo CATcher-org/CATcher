@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
 import {map} from 'rxjs/operators';
 import {Label} from '../models/label.model';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {SEVERITY_ORDER} from '../../core/models/issue.model';
-import { User } from '../models/user.model';
+import {User} from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +37,7 @@ export class LabelService {
   }
 
   /**
-   * Get all the labels of a certain type (e.g severity)
+   * Returns all the labels of a certain type (e.g severity)
    * @param attributeName: the type of the label
    * @return an array of label of that type
    */
@@ -53,7 +53,7 @@ export class LabelService {
   }
 
   /**
-   * Finds the color of a label using the label-color mapping
+   * Returns the color of the label using the label-color mapping
    * @param labelValue:the label's value (e.g Low / Medium / High)
    * @return a string with the color code of the label, or white color if
    * no labelValue was provided or no such mapping was found
@@ -129,9 +129,9 @@ export class LabelService {
   }
 
   /**
-   * Generates a style for each label
+   * Returns a style for each label
    * @param color: the color of the label
-   * @return the style for the label
+   * @return the style for the label with it's color
    * @throws exception if hexToRgb returns null
    */
   setLabelStyle(color: string) {
