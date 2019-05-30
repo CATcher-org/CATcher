@@ -52,6 +52,12 @@ export class LabelService {
     }
   }
 
+  /**
+   * Finds the color of a label from the list using the label's value
+   * @param labelList: the list of labels
+   * @param labelValue:the label's value (e.g Low / Medium / High)
+   * @return a string with the color code of the label
+   */
   getColorFromList(labelList: Label[], labelValue: string): string {
     if (labelValue === '') {
       return 'ffffff';
