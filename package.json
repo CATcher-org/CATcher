@@ -19,7 +19,8 @@
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "test": "npm run postinstall:web && ng test",
-    "e2e": "npm run postinstall:web && ng e2e"
+    "e2e": "npm run postinstall:web && ng e2e",
+    "lint": "ng lint --tslint-config"
   },
   "dependencies": {
     "@angular/animations": "~7.2.7",
@@ -32,11 +33,11 @@
     "@angular/platform-browser": "~7.2.7",
     "@angular/platform-browser-dynamic": "~7.2.7",
     "@angular/router": "~7.2.7",
-    "@octokit/rest": "^16.13.1",
+    "@octokit/rest": "^16.27.0",
     "core-js": "2.6.1",
     "moment": "^2.24.0",
     "ngx-markdown": "^7.1.1",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.0",
     "rxjs": "6.4.0",
     "tslib": "^1.9.0",
     "zone.js": "0.8.29"
