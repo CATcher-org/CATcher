@@ -69,14 +69,6 @@ export class LabelService {
   }
 
   /**
-   * Get the map which contains all mapping of label to colors
-   * @return a Map<string, string> of labels to color
-   */
-  getLabelMap() {
-    return this.allLabelMap;
-  }
-
-  /**
    * Stores the json data from Github api into the list of arrays in this service
    * @param labels: the json data of the label
    */

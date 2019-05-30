@@ -8,7 +8,6 @@ import {
   IssuesFilter,
   LABELS,
   labelsToAttributeMapping,
-  labelsToColorMapping,
   phase2DescriptionTemplate,
   phase3DescriptionTemplate,
   RespondType
@@ -413,9 +412,6 @@ export class IssueService {
       const labelType = labelName[0];
       const labelValue = labelName[1];
 
-      const labelColorType = String(labelType).concat('Color');
-      const labelColorValue = String(label['color']);
-
       if (label['name'] === 'duplicate') {
         result = {
           ...result,
@@ -425,7 +421,6 @@ export class IssueService {
         result = {
           ...result,
           [labelsToAttributeMapping[labelType]]: labelValue,
-          [labelsToColorMapping[labelColorType]]: labelColorValue,
         };
       }
     }

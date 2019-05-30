@@ -14,10 +14,10 @@ import { LabelService } from '../../../core/services/label.service';
 })
 export class LabelComponent implements OnInit {
   labelValues: Label[];
+  labelColor: string;
 
   @Input() issue: Issue;
   @Input() attributeName: string;
-  @Input() attributeColor: string;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
@@ -31,6 +31,7 @@ export class LabelComponent implements OnInit {
   ngOnInit() {
     // Get the list of labels based on their type (severity, type, response)
     this.labelValues = this.labelService.getLabelList(this.attributeName);
+    this.labelColor = this.labelService.getColorOfLabel(this.issue[this.attributeName]);
   }
 
   updateLabel(value: string) {
@@ -39,6 +40,7 @@ export class LabelComponent implements OnInit {
       [this.attributeName]: value,
     }).subscribe((editedIssue: Issue) => {
       this.issueUpdated.emit(editedIssue);
+      this.labelColor = this.labelService.getColorOfLabel(editedIssue[this.attributeName]);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });

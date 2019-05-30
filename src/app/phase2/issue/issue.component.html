@@ -23,11 +23,11 @@
 
     <div class="column right">
       <div *ngIf="!isIssueLoading" [style.visibility]="issue.teamResponse ? 'visible' : 'hidden'">
-        <app-issue-label [issue]="issue" attributeColor="severityColor" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
-        <app-issue-label [issue]="issue" attributeColor="typeColor" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
-        <app-issue-label [issue]="issue" attributeColor="responseColor" attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        <app-issue-label [issue]="issue" attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
         <app-assignee-component [issue]="issue" [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)"></app-assignee-component>
 

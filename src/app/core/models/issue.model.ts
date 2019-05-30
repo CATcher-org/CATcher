@@ -14,9 +14,6 @@ export interface Issue {
   status?: string;
   teamAssigned?: Team;
   todoList?: string[];
-  typeColor: string;
-  severityColor: string;
-  responseColor?: string;
   teamResponse?: string;
   tutorResponse?: string;
 }
@@ -37,12 +34,6 @@ export const labelsToAttributeMapping = {
   'type': 'type',
   'response': 'responseTag',
   'status': 'status',
-};
-
-export const labelsToColorMapping = {
-  'severityColor' : 'severityColor',
-  'typeColor' : 'typeColor',
-  'responseColor' : 'responseColor',
 };
 
 export const SEVERITY_ORDER = { Low: 0, Medium: 1, High: 2 };
