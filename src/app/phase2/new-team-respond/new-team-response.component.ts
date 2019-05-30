@@ -58,9 +58,9 @@ export class NewTeamResponseComponent implements OnInit {
       this.responseTag.updateValueAndValidity();
     });
 
-    this.selectedSeverityColor = this.labelService.getColorFromList(this.severityValues, this.issue.severity);
-    this.selectedTypeColor = this.labelService.getColorFromList(this.issueTypeValues, this.issue.type);
-    this.selectedResponseColor = this.labelService.getColorFromList(this.responseList, this.issue.responseTag);
+    this.selectedSeverityColor = this.labelService.getColorOfLabel(this.issue.severity);
+    this.selectedTypeColor = this.labelService.getColorOfLabel(this.issue.type);
+    this.selectedResponseColor = this.labelService.getColorOfLabel(this.issue.responseTag);
   }
 
   submitNewTeamResponse(form: NgForm) {
@@ -124,13 +124,13 @@ export class NewTeamResponseComponent implements OnInit {
   setSelectedLabelColor(labelValue: string, labelType: string) {
     switch (labelType) {
       case 'severity':
-        this.selectedSeverityColor = this.labelService.getColorFromList(this.severityValues, labelValue);
+        this.selectedSeverityColor = this.labelService.getColorOfLabel(labelValue);
         break;
       case 'type':
-        this.selectedTypeColor = this.labelService.getColorFromList(this.issueTypeValues, labelValue);
+        this.selectedTypeColor = this.labelService.getColorOfLabel(labelValue);
         break;
       case 'responseTag':
-        this.selectedResponseColor = this.labelService.getColorFromList(this.responseList, labelValue);
+        this.selectedResponseColor = this.labelService.getColorOfLabel(labelValue);
         break;
     }
   }

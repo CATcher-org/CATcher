@@ -31,8 +31,8 @@ export class NewIssueComponent implements OnInit {
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
-    this.selectedSeverityColor = this.labelService.getColorFromList(this.severityValues, '');
-    this.selectedTypeColor = this.labelService.getColorFromList(this.severityValues, '');
+    this.selectedSeverityColor = this.labelService.getColorOfLabel('');
+    this.selectedTypeColor = this.labelService.getColorOfLabel('');
   }
 
   submitNewIssue(form: NgForm) {
@@ -56,10 +56,10 @@ export class NewIssueComponent implements OnInit {
   setSelectedLabelColor(labelValue: string, labelType: string) {
     switch (labelType) {
       case 'severity':
-        this.selectedSeverityColor = this.labelService.getColorFromList(this.severityValues, labelValue);
+        this.selectedSeverityColor = this.labelService.getColorOfLabel(labelValue);
         break;
       case 'type':
-        this.selectedTypeColor = this.labelService.getColorFromList(this.issueTypeValues, labelValue);
+        this.selectedTypeColor = this.labelService.getColorOfLabel(labelValue);
         break;
     }
   }

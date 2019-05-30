@@ -13,14 +13,14 @@ export class LabelService {
   private severityLabels: Label[];
   private typeLabels: Label[];
   private responseLabels: Label[];
-  private duplicateLabelMap: Map<string, boolean>;
+  private allLabelMap: Map<string, string>;
 
 
   constructor(private githubService: GithubService) {
     this.severityLabels = new Array();
     this.typeLabels = new Array();
     this.responseLabels = new Array();
-    this.duplicateLabelMap = new Map();
+    this.allLabelMap = new Map();
   }
 
   /**
@@ -53,16 +53,27 @@ export class LabelService {
   }
 
   /**
-   * Finds the color of a label from the list using the label's value
-   * @param labelList: the list of labels
+   * Finds the color of a label using the label-color mapping
    * @param labelValue:the label's value (e.g Low / Medium / High)
-   * @return a string with the color code of the label
+   * @return a string with the color code of the label, or white color if
+   * no labelValue was provided or no such mapping was found
    */
-  getColorFromList(labelList: Label[], labelValue: string): string {
-    if (labelValue === '') {
+  getColorOfLabel(labelValue: string): string {
+    const color = this.allLabelMap.get(labelValue);
+
+    if (color === undefined || labelValue === '') {
       return 'ffffff';
     }
-    return labelList.filter(x => x.labelValue === labelValue)[0].labelColor;
+
+    return color;
+  }
+
+  /**
+   * Get the map which contains all mapping of label to colors
+   * @return a Map<string, string> of labels to color
+   */
+  getLabelMap() {
+    return this.allLabelMap;
   }
 
   /**
@@ -78,11 +89,12 @@ export class LabelService {
       const labelValue = labelName[1];
       const labelColor = String(label['color']);
 
-      if (this.duplicateLabelMap.has(labelValue)) {
+      // Check for duplicate labels
+      if (this.allLabelMap.has(labelValue)) {
         continue;
       }
 
-      this.duplicateLabelMap.set(labelValue, true);
+      this.allLabelMap.set(labelValue, labelColor);
 
       switch (labelType) {
         case 'severity':
@@ -108,7 +120,7 @@ export class LabelService {
     this.severityLabels.length = 0;
     this.typeLabels.length = 0;
     this.responseLabels.length = 0;
-    this.duplicateLabelMap.clear();
+    this.allLabelMap.clear();
   }
 
   /**
