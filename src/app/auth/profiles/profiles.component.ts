@@ -50,10 +50,12 @@ export class ProfilesComponent implements OnInit {
 
       this.profiles = ProfilesJson.profiles;
 
-      if (!this.isValid(this.profiles)) {
-        this.openErrorDialog();
-        this.profiles = undefined;
-      }
+      setTimeout(() => {
+        if (!this.isValid(this.profiles)) {
+          this.openErrorDialog();
+          this.profiles = undefined;
+        }
+      });
 
     // In Production mode the profiles.json is sourced from same folder as app.
     } else {
@@ -67,10 +69,12 @@ export class ProfilesComponent implements OnInit {
           console.log(e);
         }
 
-        if (!this.isValid(this.profiles)) {
-          this.openErrorDialog();
-          this.profiles = undefined;
-        }
+        setTimeout(() => {
+          if (!this.isValid(this.profiles)) {
+            this.openErrorDialog();
+            this.profiles = undefined;
+          }
+        });
       }
       // If profiles.json is not in the same folder as the app, do nothing.
     }
