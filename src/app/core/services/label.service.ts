@@ -53,7 +53,7 @@ export class LabelService {
   }
 
   /**
-   * Store the json data from Github api into the list of arrays in this service
+   * Stores the json data from Github api into the list of arrays in this service
    * @param labels: the json data of the label
    */
   private populateLabelLists(labels: Array<{}>): void {
@@ -65,20 +65,22 @@ export class LabelService {
       const labelValue = labelName[1];
       const labelColor = String(label['color']);
 
-      if (!this.duplicateLabelMap.has(labelValue)) {
-        this.duplicateLabelMap.set(labelValue, true);
+      if (this.duplicateLabelMap.has(labelValue)) {
+        continue;
+      }
 
-        switch (labelType) {
-          case 'severity':
-            this.severityLabels.push({labelValue: labelValue, labelColor: labelColor});
-            break;
-          case 'type':
-            this.typeLabels.push({labelValue: labelValue, labelColor: labelColor});
-            break;
-          case 'response':
-            this.responseLabels.push({labelValue: labelValue, labelColor: labelColor});
-            break;
-        }
+      this.duplicateLabelMap.set(labelValue, true);
+
+      switch (labelType) {
+        case 'severity':
+          this.severityLabels.push({labelValue: labelValue, labelColor: labelColor});
+          break;
+        case 'type':
+          this.typeLabels.push({labelValue: labelValue, labelColor: labelColor});
+          break;
+        case 'response':
+          this.responseLabels.push({labelValue: labelValue, labelColor: labelColor});
+          break;
       }
 
     }
@@ -110,27 +112,34 @@ export class LabelService {
   }
 
   /**
-   * Generate a style for each label
+   * Generates a style for each label
    * @param color: the color of the label
    * @return the style for the label
+   * @throws exception if hexToRgb returns null
    */
   setLabelStyle(color: string) {
+    let r: string;
+    let g: string;
+    let b: string;
+    const white = '255';
+
     try {
-      const r = this.hexToRgb('#'.concat(color)).r.toString();
-      const g = this.hexToRgb('#'.concat(color)).g.toString();
-      const b = this.hexToRgb('#'.concat(color)).b.toString();
-
-      const styles = {
-        'background-color' : `rgb(${r}, ${g}, ${b}, 0.55)`,
-        'border-radius' : '3px',
-        'padding' : '3px',
-      };
-
-      return styles;
-
+      r = this.hexToRgb('#'.concat(color)).r.toString();
+      g = this.hexToRgb('#'.concat(color)).g.toString();
+      b = this.hexToRgb('#'.concat(color)).b.toString();
     } catch (e) {
-      return null;
+      r = white;
+      g = white;
+      b = white;
     }
+
+    const styles = {
+      'background-color' : `rgb(${r}, ${g}, ${b}, 0.55)`,
+      'border-radius' : '3px',
+      'padding' : '3px',
+    };
+
+    return styles;
   }
 
 }
