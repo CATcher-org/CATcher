@@ -1,10 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {IssueService} from '../../core/services/issue.service';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {SEVERITY, TYPE} from '../../core/models/issue.model';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {Router} from '@angular/router';
-import {finalize} from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { IssueService } from '../../core/services/issue.service';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 import { LabelService } from '../../core/services/label.service';
 
 @Component({

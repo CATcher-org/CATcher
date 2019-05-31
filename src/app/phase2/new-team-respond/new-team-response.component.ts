@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {IssueService} from '../../core/services/issue.service';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, STATUS, TYPE} from '../../core/models/issue.model';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {finalize, map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
-import {LabelService} from '../../core/services/label.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IssueService } from '../../core/services/issue.service';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Issue, SEVERITY_ORDER, STATUS } from '../../core/models/issue.model';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { finalize, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-new-team-response',

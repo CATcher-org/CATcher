@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {GithubService} from './github.service';
-import {map} from 'rxjs/operators';
-import {Label} from '../models/label.model';
-import {Observable} from 'rxjs';
-import {SEVERITY_ORDER} from '../../core/models/issue.model';
-import {User} from '../models/user.model';
+import { Injectable } from '@angular/core';
+import { GithubService } from './github.service';
+import { map } from 'rxjs/operators';
+import { Label } from '../models/label.model';
+import { Observable } from 'rxjs';
+import { SEVERITY_ORDER } from '../../core/models/issue.model';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +48,7 @@ export class LabelService {
       case 'type':
         return this.typeLabels;
       case 'responseTag':
+      case 'response':
         return this.responseLabels;
     }
   }
@@ -87,17 +88,9 @@ export class LabelService {
       }
 
       this.allLabelMap.set(labelValue, labelColor);
-
-      switch (labelType) {
-        case 'severity':
-          this.severityLabels.push({labelValue: labelValue, labelColor: labelColor});
-          break;
-        case 'type':
-          this.typeLabels.push({labelValue: labelValue, labelColor: labelColor});
-          break;
-        case 'response':
-          this.responseLabels.push({labelValue: labelValue, labelColor: labelColor});
-          break;
+      const labelList = this.getLabelList(labelType);
+      if (labelList !== undefined) {
+        labelList.push({labelValue: labelValue, labelColor: labelColor});
       }
 
     }

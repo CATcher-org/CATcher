@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder} from '@angular/forms';
-import {Issue, ISSUE_LABELS} from '../../../core/models/issue.model';
-import {IssueService} from '../../../core/services/issue.service';
-import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {PermissionService} from '../../../core/services/permission.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { Issue } from '../../../core/models/issue.model';
+import { IssueService } from '../../../core/services/issue.service';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
 import { LabelService } from '../../../core/services/label.service';
 

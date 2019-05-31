@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import {BehaviorSubject, of, throwError} from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
-import {UserService} from './user.service';
-import {PhaseService} from './phase.service';
-import {ErrorHandlingService} from './error-handling.service';
-import {GithubService} from './github.service';
-import { flatMap} from 'rxjs/operators';
-import {IssueService} from './issue.service';
-import {IssueCommentService} from './issue-comment.service';
-import {DataService} from './data.service';
+import { UserService } from './user.service';
+import { PhaseService } from './phase.service';
+import { ErrorHandlingService } from './error-handling.service';
+import { GithubService} from './github.service';
+import { flatMap } from 'rxjs/operators';
+import { IssueService } from './issue.service';
+import { IssueCommentService } from './issue-comment.service';
+import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 

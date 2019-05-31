@@ -1,12 +1,12 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {IssueService} from '../../core/services/issue.service';
-import {MatPaginator, MatSort} from '@angular/material';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
-import {Issue, STATUS} from '../../core/models/issue.model';
-import {PermissionService} from '../../core/services/permission.service';
-import {UserService} from '../../core/services/user.service';
-import {UserRole} from '../../core/models/user.model';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { IssueService } from '../../core/services/issue.service';
+import { MatPaginator, MatSort } from '@angular/material';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { IssuesDataTable } from '../../shared/data-tables/IssuesDataTable';
+import { Issue, STATUS } from '../../core/models/issue.model';
+import { PermissionService } from '../../core/services/permission.service';
+import { UserService } from '../../core/services/user.service';
+import { UserRole } from '../../core/models/user.model';
 import { LabelService } from '../../core/services/label.service';
 
 @Component({
