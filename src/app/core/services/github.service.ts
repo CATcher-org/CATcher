@@ -147,27 +147,13 @@ export class GithubService {
   fetchDataFile(): Observable<{}> {
     // roles information
     return forkJoin(
-      from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'roles.csv'}))
-        .pipe(map(rawData => atob(rawData['data']['content']))),
-      from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'teamstructure.csv'}))
-        .pipe(map(rawData => atob(rawData['data']['content']))),
-      from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'tutorsallocation.csv'}))
-        .pipe(map(rawData => atob(rawData['data']['content']))),
-      from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'adminsallocation.csv'}))
+      from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.csv'}))
         .pipe(map(rawData => atob(rawData['data']['content'])))
     ).pipe(
-      map(([roles, teamStructure, tutorsAllocation, adminsAllocation]) => {
-        return {roles, teamStructure, tutorsAllocation, adminsAllocation};
+      map(([data]) => {
+        return {data};
       })
     );
-    // from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'roles.csv'})).subscribe(resp => {
-    //   this.parseRolesData(atob(resp['data']['content'])).subscribe(
-    //     output => console.log(output)
-    //   );
-    // });
-    // return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
-    //   return JSON.parse(atob(resp['data']['content']));
-    // }));
   }
 
   private getNumberOfIssuePages(filter?: {}): Observable<number> {

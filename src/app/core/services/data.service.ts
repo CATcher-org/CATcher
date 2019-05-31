@@ -17,8 +17,8 @@ export class DataService {
 
   getDataFile(): Observable<{}> {
     return this.githubService.fetchDataFile().pipe(
-      map((allCsvData: {}) => {
-        return this.mergeCsvData(allCsvData);
+      map((allCsvDataWrapper: {}) => {
+        return this.constructData(allCsvDataWrapper);
       }),
       map((jsonData: {}) => {
         this.dataFile = <DataFile>{
@@ -31,22 +31,18 @@ export class DataService {
   /**
    * Merges all parsed Csv Data into a single readable JSON
    * format.
-   * @param allCsvData - Object containing strings of csv data.
+   * @param allCsvDataWrapper - Object containing strings of csv data.
    * @return jsonData - Object representing merged data file.
    */
-  mergeCsvData(allCsvData: {}): {} {
+  constructData(allCsvDataWrapper: {}): {} {
     const jsonData: {} = {};
+    const allCsvData: string = allCsvDataWrapper['data'];
 
-    jsonData['roles'] =
-      this.parseRolesData(allCsvData['roles']);
-    jsonData['team-structure'] =
-      this.parseTeamStructureData(allCsvData['teamStructure']);
-    jsonData['students-allocation'] =
-      this.parseStudentAllocation(allCsvData['teamStructure']);
-    jsonData['tutors-allocation'] =
-      this.parseTutorAllocation(allCsvData['tutorsAllocation']);
-    jsonData['admins-allocation'] =
-      this.parseAdminAllocation(allCsvData['adminsAllocation']);
+    jsonData['roles'] = this.parseRolesData(allCsvData);
+    jsonData['team-structure'] = this.parseTeamStructureData(allCsvData);
+    jsonData['students-allocation'] = this.parseStudentAllocation(allCsvData);
+    jsonData['tutors-allocation'] = this.parseTutorAllocation(allCsvData);
+    jsonData['admins-allocation'] = this.parseAdminAllocation(allCsvData);
 
     return jsonData;
   }
