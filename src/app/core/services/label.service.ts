@@ -122,10 +122,10 @@ export class LabelService {
   }
 
   /**
-   * Returns a style for each label
+   * Returns a css style for the label to use
    * @param color: the color of the label
-   * @return the style for the label with it's color
-   * @throws exception if hexToRgb returns null
+   * @return the style with background-color in rgb
+   * @throws exception if input is an invalid color code
    */
   setLabelStyle(color: string) {
     let r: string;
@@ -138,6 +138,7 @@ export class LabelService {
       g = this.hexToRgb('#'.concat(color)).g.toString();
       b = this.hexToRgb('#'.concat(color)).b.toString();
     } catch (e) {
+      // Set rgb to white color if hexToRgb returns null
       r = white;
       g = white;
       b = white;
