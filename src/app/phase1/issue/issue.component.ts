@@ -1,11 +1,11 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router, NavigationEnd} from '@angular/router';
-import {Issue} from '../../core/models/issue.model';
-import {IssueService} from '../../core/services/issue.service';
-import {FormBuilder} from '@angular/forms';
-import {finalize} from 'rxjs/operators';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Issue } from '../../core/models/issue.model';
+import { IssueService } from '../../core/services/issue.service';
+import { FormBuilder } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { IssueCommentService } from '../../core/services/issue-comment.service';
 
 @Component({
   selector: 'app-issue',
