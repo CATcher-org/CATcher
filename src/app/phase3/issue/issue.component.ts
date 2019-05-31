@@ -36,8 +36,6 @@ export class IssueComponent implements OnInit, OnDestroy {
                 this.navigationSubscription = this.router.events.subscribe((e: any) => {
                   // If it is a NavigationEnd event re-initalise the data
                   if (e instanceof NavigationEnd && this.runOnce) {
-                      this.issueService.reset();
-                      this.issueCommentService.reset();
                       this.initialiseData();
                   }
                 });
@@ -63,10 +61,6 @@ export class IssueComponent implements OnInit, OnDestroy {
   }
 
   private initializeIssue(id: number) {
-    this.getIssue(id);
-  }
-
-  private getIssue(id: number) {
     this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
       this.issue = issue;
     }, (error) => {

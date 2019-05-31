@@ -1,4 +1,4 @@
-import {Component, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {Issue, IssuesFilter} from '../core/models/issue.model';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
@@ -16,7 +16,7 @@ import { Router, NavigationEnd } from '@angular/router';
   templateUrl: './phase3.component.html',
   styleUrls: ['./phase3.component.css']
 })
-export class Phase3Component implements OnInit, OnDestroy {
+export class Phase3Component implements OnInit {
   issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining'];
@@ -32,23 +32,9 @@ export class Phase3Component implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               public userService: UserService,
               private router: Router,
-              private dataService: DataService) {
-                this.navigationSubscription = this.router.events.subscribe((e: any) => {
-                  // If it is a NavigationEnd event re-initalise the data
-                  if (e instanceof NavigationEnd && this.runOnce) {
-                      this.issueService.reset();
-                      this.initialiseData();
-                      this.table.renderRows();
-                  }
-                });
-              }
+              private dataService: DataService) {}
 
   ngOnInit() {
-    this.initialiseData();
-    this.runOnce = true;
-  }
-
-  initialiseData() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
@@ -102,11 +88,5 @@ export class Phase3Component implements OnInit, OnDestroy {
       return true;
     }
     return false;
-  }
-
-  ngOnDestroy() {
-    if (this.navigationSubscription) {
-       this.navigationSubscription.unsubscribe();
-    }
   }
 }

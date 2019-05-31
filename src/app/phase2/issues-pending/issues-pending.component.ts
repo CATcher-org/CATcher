@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {MatPaginator, MatSort, MatTable} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
@@ -7,19 +7,17 @@ import {Issue, STATUS} from '../../core/models/issue.model';
 import {PermissionService} from '../../core/services/permission.service';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-issues-pending',
   templateUrl: './issues-pending.component.html',
   styleUrls: ['./issues-pending.component.css']
 })
-export class IssuesPendingComponent implements OnInit, OnChanges, OnDestroy {
+export class IssuesPendingComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
 
   displayedColumns;
-  private navigationSubscription;
-  private runOnce = false;
 
   @Input() teamFilter: string;
 
@@ -38,15 +36,6 @@ export class IssuesPendingComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues'];
     }
-
-    this.navigationSubscription = this.router.events.subscribe((e: any) => {
-      // If it is a NavigationEnd event re-initalise the data
-      if (e instanceof NavigationEnd && this.runOnce) {
-          this.issueService.reset();
-          this.initialiseData();
-          this.table.renderRows();
-      }
-    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -56,11 +45,6 @@ export class IssuesPendingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.initialiseData();
-    this.runOnce = true;
-  }
-
-  initialiseData() {
     const filter = (issue: Issue) => {
       return (!this.issueService.hasResponse(issue.id) || (!issue.status || issue.status === 'Incomplete')) &&
         !issue.duplicateOf;
@@ -83,11 +67,5 @@ export class IssuesPendingComponent implements OnInit, OnChanges, OnDestroy {
     }, error => {
       this.errorHandlingService.handleHttpError(error);
     });
-  }
-
-  ngOnDestroy() {
-    if (this.navigationSubscription) {
-       this.navigationSubscription.unsubscribe();
-    }
   }
 }

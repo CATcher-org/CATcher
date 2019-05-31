@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {MatPaginator, MatSort, MatTable} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
@@ -6,18 +6,16 @@ import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-issues-responded',
   templateUrl: './issues-responded.component.html',
   styleUrls: ['./issues-responded.component.css'],
 })
-export class IssuesRespondedComponent implements OnInit, OnChanges, OnDestroy {
+export class IssuesRespondedComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
   displayedColumns: string[];
-  private navigationSubscription;
-  private runOnce = false;
 
   @Input() teamFilter: string;
 
@@ -35,15 +33,6 @@ export class IssuesRespondedComponent implements OnInit, OnChanges, OnDestroy {
       this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues',
         'actions'];
     }
-
-    this.navigationSubscription = this.router.events.subscribe((e: any) => {
-      // If it is a NavigationEnd event re-initalise the data
-      if (e instanceof NavigationEnd && this.runOnce) {
-          this.issueService.reset();
-          this.initialiseData();
-          this.table.renderRows();
-      }
-    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -53,11 +42,6 @@ export class IssuesRespondedComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.initialiseData();
-    this.runOnce = true;
-  }
-
-  initialiseData() {
     const filter = (issue: Issue): boolean => {
       return this.issueService.hasResponse(issue.id) && !issue.duplicateOf &&
         (issue.status === 'Done');
@@ -80,11 +64,5 @@ export class IssuesRespondedComponent implements OnInit, OnChanges, OnDestroy {
     }, error => {
         this.errorHandlingService.handleHttpError(error);
     });
-  }
-
-  ngOnDestroy() {
-    if (this.navigationSubscription) {
-       this.navigationSubscription.unsubscribe();
-    }
   }
 }

@@ -50,6 +50,10 @@ export class IssueService {
     return this.issues$;
   }
 
+  reloadAllIssues() {
+    return this.initializeData().subscribe();
+  }
+
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
       return this.githubService.fetchIssue(id).pipe(

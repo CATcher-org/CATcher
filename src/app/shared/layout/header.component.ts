@@ -3,10 +3,11 @@ import {Location} from '@angular/common';
 import {AuthService} from '../../core/services/auth.service';
 import {PhaseService} from '../../core/services/phase.service';
 import {UserService} from '../../core/services/user.service';
-import {NavigationEnd, Router, RoutesRecognized} from '@angular/router';
+import { Router, RoutesRecognized, ActivatedRoute } from '@angular/router';
 import {filter, pairwise} from 'rxjs/operators';
 import { GithubEventService } from '../../core/services/githubevent.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { IssueService } from '../../core/services/issue.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -17,8 +18,8 @@ export class HeaderComponent implements OnInit {
   isSyncButtonDisabled = false;
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
-              private location: Location, private githubEventService: GithubEventService,
-              private errorHandlingService: ErrorHandlingService) {
+              private location: Location, private githubEventService: GithubEventService, private issueService: IssueService,
+              private errorHandlingService: ErrorHandlingService, private route: ActivatedRoute) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()
@@ -53,7 +54,7 @@ export class HeaderComponent implements OnInit {
         // from last modified, meaning that some changes to the repo has occured.
         if (eventResponse['created_at'] !== this.githubEventService.getLastModifiedTime() ||
         eventResponse['issue']['updated_at'] !== this.githubEventService.getLastModifiedCommentTime()) {
-          this.router.navigate([this.router.url]);
+          this.issueService.reloadAllIssues();
           this.githubEventService.setLastModifiedTime(eventResponse['created_at']);
           this.githubEventService.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
         }

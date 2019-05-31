@@ -10,14 +10,12 @@ const routes: Routes = [
     path: 'phase3',
     component: Phase3Component,
     canActivate: [AuthGuard],
-    runGuardsAndResolvers: 'always',
   },
   {
     path: 'phase3/issues/:issue_id',
     component: IssueComponent,
     canActivate: [AuthGuard],
-    canDeactivate: [CanDeactivateIssueGuard],
-    runGuardsAndResolvers: 'always',
+    canDeactivate: [CanDeactivateIssueGuard]
   }
 ];
 

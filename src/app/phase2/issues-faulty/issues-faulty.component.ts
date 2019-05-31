@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, OnDestroy} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
 import {MatPaginator, MatSort, MatTable} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
@@ -14,11 +14,9 @@ import { Router, NavigationEnd } from '@angular/router';
   templateUrl: './issues-faulty.component.html',
   styleUrls: ['./issues-faulty.component.css'],
 })
-export class IssuesFaultyComponent implements OnInit, OnChanges, OnDestroy {
+export class IssuesFaultyComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
   displayedColumns: string[];
-  private navigationSubscription;
-  private runOnce = false;
 
   @Input() teamFilter: string;
 
@@ -36,15 +34,6 @@ export class IssuesFaultyComponent implements OnInit, OnChanges, OnDestroy {
       this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues',
         'actions'];
     }
-
-    this.navigationSubscription = this.router.events.subscribe((e: any) => {
-      // If it is a NavigationEnd event re-initalise the data
-      if (e instanceof NavigationEnd && this.runOnce) {
-          this.issueService.reset();
-          this.initialiseData();
-          this.table.renderRows();
-      }
-    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -54,11 +43,6 @@ export class IssuesFaultyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.initialiseData();
-    this.runOnce = true;
-  }
-
-  initialiseData() {
     const filter = (issue: Issue): boolean => {
       return this.issueService.hasResponse(issue.id) &&
         (!!issue.duplicateOf && this.issueService.issues$.getValue().filter(childIssue => {
@@ -72,11 +56,5 @@ export class IssuesFaultyComponent implements OnInit, OnChanges, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.issuesDataSource.filter = filterValue;
-  }
-
-  ngOnDestroy() {
-    if (this.navigationSubscription) {
-       this.navigationSubscription.unsubscribe();
-    }
   }
 }
