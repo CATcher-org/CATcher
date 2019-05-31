@@ -3,7 +3,7 @@ import {Location} from '@angular/common';
 import {AuthService} from '../../core/services/auth.service';
 import {PhaseService} from '../../core/services/phase.service';
 import {UserService} from '../../core/services/user.service';
-import { Router, RoutesRecognized, ActivatedRoute } from '@angular/router';
+import { Router, RoutesRecognized } from '@angular/router';
 import {filter, pairwise} from 'rxjs/operators';
 import { GithubEventService } from '../../core/services/githubevent.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
@@ -19,7 +19,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
               private location: Location, private githubEventService: GithubEventService, private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService, private route: ActivatedRoute) {
+              private errorHandlingService: ErrorHandlingService) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()

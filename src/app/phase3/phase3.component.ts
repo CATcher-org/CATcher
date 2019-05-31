@@ -2,14 +2,13 @@ import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/c
 import {BehaviorSubject} from 'rxjs';
 import {Issue, IssuesFilter} from '../core/models/issue.model';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
-import {MatPaginator, MatSort, MatTable} from '@angular/material';
+import {MatPaginator, MatSort} from '@angular/material';
 import {IssueService} from '../core/services/issue.service';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
 import {finalize} from 'rxjs/operators';
 import {UserService} from '../core/services/user.service';
 import {Phase} from '../core/services/phase.service';
 import {DataService} from '../core/services/data.service';
-import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-phase3',
@@ -21,17 +20,13 @@ export class Phase3Component implements OnInit {
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining'];
   public teamFilter = 'All Teams';
-  private navigationSubscription;
-  private runOnce = false;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
               public userService: UserService,
-              private router: Router,
               private dataService: DataService) {}
 
   ngOnInit() {
@@ -89,4 +84,5 @@ export class Phase3Component implements OnInit {
     }
     return false;
   }
+
 }

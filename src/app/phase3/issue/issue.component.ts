@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
 import { FormBuilder } from '@angular/forms';
@@ -14,7 +14,7 @@ import { UserService } from '../../core/services/user.service';
   templateUrl: './issue.component.html',
   styleUrls: ['./issue.component.css']
 })
-export class IssueComponent implements OnInit, OnDestroy {
+export class IssueComponent implements OnInit {
 
   issue: Issue;
   comments: IssueComment[];
@@ -23,27 +23,16 @@ export class IssueComponent implements OnInit, OnDestroy {
   isTutorResponseEditing = false;
   isTeamResponseEditing = false;
   isIssueDescriptionEditing = false;
-  private navigationSubscription;
-  private runOnce = false;
 
   constructor(private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               public userService: UserService,
-              private router: Router,
-              public issueService: IssueService) {
-                this.navigationSubscription = this.router.events.subscribe((e: any) => {
-                  // If it is a NavigationEnd event re-initalise the data
-                  if (e instanceof NavigationEnd && this.runOnce) {
-                      this.initialiseData();
-                  }
-                });
-              }
+              public issueService: IssueService) { }
 
   ngOnInit() {
     this.initialiseData();
-    this.runOnce = true;
   }
 
   initialiseData() {
@@ -95,9 +84,4 @@ export class IssueComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
-    if (this.navigationSubscription) {
-       this.navigationSubscription.unsubscribe();
-    }
-  }
 }

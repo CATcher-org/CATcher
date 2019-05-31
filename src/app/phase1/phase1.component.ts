@@ -1,9 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTable} from '@angular/material';
+import {MatPaginator, MatSort} from '@angular/material';
 import {IssueService} from '../core/services/issue.service';
 import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
 import {ErrorHandlingService} from '../core/services/error-handling.service';
-import {finalize, delay} from 'rxjs/operators';
+import {finalize} from 'rxjs/operators';
 import {BehaviorSubject} from 'rxjs';
 import {Issue} from '../core/models/issue.model';
 import {PermissionService} from '../core/services/permission.service';
@@ -22,11 +22,11 @@ export class Phase1Component implements OnInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,
-              public userService: UserService) {}
+              public userService: UserService) {
+  }
 
   ngOnInit() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,

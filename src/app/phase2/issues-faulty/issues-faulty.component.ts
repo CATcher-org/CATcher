@@ -1,13 +1,12 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {IssueService} from '../../core/services/issue.service';
-import {MatPaginator, MatSort, MatTable} from '@angular/material';
+import {MatPaginator, MatSort} from '@angular/material';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
 import {Issue, STATUS} from '../../core/models/issue.model';
 import {UserService} from '../../core/services/user.service';
 import {UserRole} from '../../core/models/user.model';
 import {PermissionService} from '../../core/services/permission.service';
-import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-issues-faulty',
@@ -22,10 +21,9 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
-              public permissions: PermissionService, private router: Router) {
+              public permissions: PermissionService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {
