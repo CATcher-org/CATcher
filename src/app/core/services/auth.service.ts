@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
-import {BehaviorSubject, of, throwError, Observable} from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
-import {UserService} from './user.service';
-import {PhaseService} from './phase.service';
-import {ErrorHandlingService} from './error-handling.service';
-import {GithubService} from './github.service';
+import { UserService } from './user.service';
+import { PhaseService } from './phase.service';
+import { ErrorHandlingService } from './error-handling.service';
+import { GithubService } from './github.service';
 import { flatMap} from 'rxjs/operators';
-import {IssueService} from './issue.service';
-import {IssueCommentService} from './issue-comment.service';
-import {DataService} from './data.service';
+import { IssueService } from './issue.service';
+import { IssueCommentService } from './issue-comment.service';
+import { DataService } from './data.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
-import { User } from '../models/user.model';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
