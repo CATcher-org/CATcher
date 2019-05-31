@@ -15,6 +15,10 @@ export class GithubEventService {
 
   constructor(private githubService: GithubService, private errorHandlingService: ErrorHandlingService) { }
 
+  /**
+   * Calls the Github service api to get the latest event (e.g renaming issue's title)
+   * of the repository and store the timestamps of the event in this service
+   */
   setLatestChangeEvent(userResponse: User): Observable<User> {
       return this.githubService.fetchEventsForRepo().pipe(
         map((response) => {
@@ -25,6 +29,11 @@ export class GithubEventService {
       );
   }
 
+  /**
+   * Calls the Github service api and return the latest event (e.g renaming issue's title)
+   * of the repository
+   * @returns the json data of the latest event
+   */
   getLatestChangeEvent(): Observable<any> {
     return this.githubService.fetchEventsForRepo().pipe(
       map((response) => {
