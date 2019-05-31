@@ -13,14 +13,14 @@ export class LabelService {
   private severityLabels: Label[];
   private typeLabels: Label[];
   private responseLabels: Label[];
-  private allLabelMap: Map<string, string>;
+  private labelColorMap: Map<string, string>;
 
 
   constructor(private githubService: GithubService) {
     this.severityLabels = new Array();
     this.typeLabels = new Array();
     this.responseLabels = new Array();
-    this.allLabelMap = new Map();
+    this.labelColorMap = new Map();
   }
 
   /**
@@ -55,12 +55,12 @@ export class LabelService {
 
   /**
    * Returns the color of the label using the label-color mapping
-   * @param labelValue:the label's value (e.g Low / Medium / High)
+   * @param labelValue: the label's value (e.g Low / Medium / High)
    * @return a string with the color code of the label, or white color if
    * no labelValue was provided or no such mapping was found
    */
   getColorOfLabel(labelValue: string): string {
-    const color = this.allLabelMap.get(labelValue);
+    const color = this.labelColorMap.get(labelValue);
 
     if (color === undefined || labelValue === '') {
       return 'ffffff';
@@ -83,12 +83,13 @@ export class LabelService {
       const labelColor = String(label['color']);
 
       // Check for duplicate labels
-      if (this.allLabelMap.has(labelValue)) {
+      if (this.labelColorMap.has(labelValue)) {
         continue;
       }
 
-      this.allLabelMap.set(labelValue, labelColor);
+      this.labelColorMap.set(labelValue, labelColor);
       const labelList = this.getLabelList(labelType);
+
       if (labelList !== undefined) {
         labelList.push({labelValue: labelValue, labelColor: labelColor});
       }
@@ -105,7 +106,7 @@ export class LabelService {
     this.severityLabels.length = 0;
     this.typeLabels.length = 0;
     this.responseLabels.length = 0;
-    this.allLabelMap.clear();
+    this.labelColorMap.clear();
   }
 
   /**
