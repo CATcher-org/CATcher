@@ -29,17 +29,14 @@ export interface Profile {
 export class ProfilesComponent implements OnInit {
 
   profiles: Profile[] = undefined; // List of profiles taken from profiles.json
-  blankProfile: Profile = {profileName: '', password: '', username: '',
-    encodedText: ''}; // A blank profile to reset values
+  blankProfile: Profile = {profileName: '', password: '', username: '', encodedText: ''}; // A blank profile to reset values
 
   private readonly fs = require('fs');
 
   // path of profile.json (same folder as app for production)
-  private filePath: string = __dirname.split('CATcher', 1)[0]
-    .concat('profiles.json');
+  private filePath: string = __dirname.split('CATcher', 1)[0].concat('profiles.json');
 
-  @Output() selectedProfile: EventEmitter<Profile>
-    = new EventEmitter<Profile>();
+  @Output() selectedProfile: EventEmitter<Profile> = new EventEmitter<Profile>();
 
   constructor(public errorDialog: MatDialog) { }
 
@@ -105,7 +102,7 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Takes the path of a file and check that it exists in the system.
+   * Takes the path of a file and checks that it exists in the system.
    * @param filePath - Path of file to check.
    */
   userProfileFileExists(filePath: string): boolean {

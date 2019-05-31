@@ -22,7 +22,7 @@ export class JsonParseErrorDialogComponent implements OnInit {
   /**
    * Closes the Dialog
    */
-  onOkClick(): void {
+  onClick(): void {
     this.dialogRef.close();
   }
 
