@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {IssueService} from '../../core/services/issue.service';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {SEVERITY, TYPE} from '../../core/models/issue.model';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {Router} from '@angular/router';
-import {finalize} from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { IssueService } from '../../core/services/issue.service';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-new-issue',
@@ -13,12 +13,14 @@ import {finalize} from 'rxjs/operators';
 })
 export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
-  severityValues = Object.keys(SEVERITY);
-  issueTypeValues = Object.keys(TYPE);
+  severityValues = this.labelService.getLabelList('severity');
+  issueTypeValues = this.labelService.getLabelList('type');
   isFormPending = false;
+  selectedSeverityColor: string;
+  selectedTypeColor: string;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
+              private errorHandlingService: ErrorHandlingService, private labelService: LabelService,
               private router: Router) { }
 
   ngOnInit() {
@@ -28,6 +30,8 @@ export class NewIssueComponent implements OnInit {
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
+    this.selectedSeverityColor = this.labelService.getColorOfLabel('');
+    this.selectedTypeColor = this.labelService.getColorOfLabel('');
   }
 
   submitNewIssue(form: NgForm) {
@@ -46,6 +50,17 @@ export class NewIssueComponent implements OnInit {
           error => {
           this.errorHandlingService.handleHttpError(error);
         });
+  }
+
+  setSelectedLabelColor(labelValue: string, labelType: string) {
+    switch (labelType) {
+      case 'severity':
+        this.selectedSeverityColor = this.labelService.getColorOfLabel(labelValue);
+        break;
+      case 'type':
+        this.selectedTypeColor = this.labelService.getColorOfLabel(labelValue);
+        break;
+    }
   }
 
   get title() {

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {map, mergeMap} from 'rxjs/operators';
-import {forkJoin, from, Observable } from 'rxjs';
-import {githubPaginatorParser} from '../../shared/lib/github-paginator-parser';
-import {IssueComment} from '../models/comment.model';
+import { map, mergeMap } from 'rxjs/operators';
+import { forkJoin, from, Observable } from 'rxjs';
+import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
+import { IssueComment } from '../models/comment.model';
 const Octokit = require('@octokit/rest');
 
 
@@ -84,6 +84,14 @@ export class GithubService {
           ];
         }
         return collatedData;
+      })
+    );
+  }
+
+  fetchAllLabels(): Observable<Array<{}>> {
+    return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
+      map(response => {
+        return response['data'];
       })
     );
   }

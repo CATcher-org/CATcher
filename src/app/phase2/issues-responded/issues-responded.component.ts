@@ -1,11 +1,12 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {IssueService} from '../../core/services/issue.service';
-import {MatPaginator, MatSort} from '@angular/material';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {IssuesDataTable} from '../../shared/data-tables/IssuesDataTable';
-import {Issue, STATUS} from '../../core/models/issue.model';
-import {UserService} from '../../core/services/user.service';
-import {UserRole} from '../../core/models/user.model';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { IssueService } from '../../core/services/issue.service';
+import { MatPaginator, MatSort } from '@angular/material';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { IssuesDataTable } from '../../shared/data-tables/IssuesDataTable';
+import { Issue, STATUS } from '../../core/models/issue.model';
+import { UserService } from '../../core/services/user.service';
+import { UserRole } from '../../core/models/user.model';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-issues-responded',
@@ -21,7 +22,8 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService) {
+  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
+    public userService: UserService, private labelService: LabelService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {

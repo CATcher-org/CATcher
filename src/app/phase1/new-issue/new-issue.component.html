@@ -25,9 +25,12 @@
 
       <div class="column right">
         <mat-form-field class="left-half">
-          <mat-select formControlName="severity" placeholder="Severity">
-            <mat-option *ngFor="let value of severityValues" [value]="value">
-              {{value}}
+          <mat-select formControlName="severity" placeholder="Severity"
+          (selectionChange)="setSelectedLabelColor($event.value, 'severity')" 
+          [ngStyle]="this.labelService.setLabelStyle(this.selectedSeverityColor)">
+            <mat-option *ngFor="let value of severityValues" [value]="value.labelValue"
+            [ngStyle]="this.labelService.setLabelStyle(value.labelColor)">
+              {{value.labelValue}}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
@@ -36,9 +39,12 @@
         </mat-form-field>
 
         <mat-form-field class="right-half">
-          <mat-select formControlName="type" placeholder="Type">
-            <mat-option *ngFor="let value of issueTypeValues" [value]="value">
-              {{value}}
+          <mat-select formControlName="type" placeholder="Type"
+          (selectionChange)="setSelectedLabelColor($event.value, 'type')" 
+          [ngStyle]="this.labelService.setLabelStyle(this.selectedTypeColor)">
+            <mat-option *ngFor="let value of issueTypeValues" [value]="value.labelValue"
+            [ngStyle]="this.labelService.setLabelStyle(value.labelColor)">
+              {{value.labelValue}}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
