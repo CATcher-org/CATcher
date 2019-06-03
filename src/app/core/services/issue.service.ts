@@ -24,8 +24,9 @@ import {DataService} from './data.service';
   providedIn: 'root',
 })
 export class IssueService {
-  issues: Issues;
+  issues: BehaviorSubject<Issues>;
   issues$: BehaviorSubject<Issue[]>;
+  newIssue: Issues;
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -34,6 +35,7 @@ export class IssueService {
               private permissionService: PermissionService,
               private dataService: DataService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
+    this.issues = new BehaviorSubject(this.newIssue);
   }
 
   /**
@@ -44,7 +46,7 @@ export class IssueService {
    *
    */
   getAllIssues(): Observable<Issue[]> {
-    if (this.issues === undefined) {
+    if (this.issues.value === undefined) {
       return this.initializeData();
     }
     return this.issues$;
@@ -52,6 +54,10 @@ export class IssueService {
 
   reloadAllIssues() {
     return this.initializeData().subscribe();
+  }
+
+  getIssues(): Observable<Issues> {
+    return this.issues;
   }
 
   getIssue(id: number): Observable<Issue> {
@@ -62,7 +68,7 @@ export class IssueService {
         })
       );
     } else {
-      return of(this.issues[id]);
+      return of(this.issues.value[id]);
     }
   }
 
@@ -126,20 +132,20 @@ export class IssueService {
    * This function will update the issue's state of the application. This function needs to be called whenever a issue is deleted.
    */
   deleteFromLocalStore(issueToDelete: Issue) {
-    const { [issueToDelete.id]: issueToRemove, ...withoutIssueToRemove } = this.issues;
-    this.issues = withoutIssueToRemove;
-    this.issues$.next(Object.values(this.issues));
+    const { [issueToDelete.id]: issueToRemove, ...withoutIssueToRemove } = this.issues.value;
+    this.issues.next(withoutIssueToRemove);
+    this.issues$.next(Object.values(this.issues.value));
   }
 
   /**
    * This function will update the issue's state of the application. This function needs to be called whenever a issue is added/updated.
    */
   updateLocalStore(issueToUpdate: Issue) {
-    this.issues = {
-      ...this.issues,
+    this.issues.next({
+      ...this.issues.value,
       [issueToUpdate.id]: issueToUpdate,
-    };
-    this.issues$.next(Object.values(this.issues));
+    });
+    this.issues$.next(Object.values(this.issues.value));
   }
 
   /**
@@ -147,7 +153,7 @@ export class IssueService {
    */
   hasResponse(issueId: number): boolean {
     const responseType = this.phaseService.currentPhase === Phase.phase2 ? RespondType.teamResponse : RespondType.tutorResponse;
-    return !!this.issues[issueId][responseType];
+    return !!this.issues.value[issueId][responseType];
   }
 
   /**
@@ -186,7 +192,7 @@ export class IssueService {
   }
 
   reset() {
-    this.issues = undefined;
+    this.issues.next(this.newIssue);
     this.issues$.next(new Array<Issue>());
   }
 
@@ -243,10 +249,10 @@ export class IssueService {
         return mappedResult;
       }),
       map((issues: Issues) => {
-        this.issues = { ...this.issues, ...issues };
-        this.issues = issues;
-        this.issues$.next(Object.values(this.issues));
-        return Object.values(this.issues);
+        this.issues.next({ ...this.issues.value, ...issues });
+        this.issues.next(issues);
+        this.issues$.next(Object.values(this.issues.value));
+        return Object.values(this.issues.value);
       })
     );
   }

@@ -18,7 +18,6 @@ export class IssueComponent implements OnInit {
 
   issue: Issue;
   comments: IssueComment[];
-  isIssueLoading = true;
   isCommentsLoading = true;
   isTutorResponseEditing = false;
   isTeamResponseEditing = false;
@@ -50,8 +49,8 @@ export class IssueComponent implements OnInit {
   }
 
   private initializeIssue(id: number) {
-    this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
-      this.issue = issue;
+    this.issueService.getIssues().subscribe((issue) => {
+      this.issue = issue[id];
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });

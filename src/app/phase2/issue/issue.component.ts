@@ -17,7 +17,6 @@ import { PermissionService } from '../../core/services/permission.service';
 export class IssueComponent implements OnInit {
   issue: Issue;
   comments: IssueComment[];
-  isIssueLoading = true;
   isCommentsLoading = true;
   isResponseEditing = false;
   isDescriptionEditing = false;
@@ -61,8 +60,8 @@ export class IssueComponent implements OnInit {
   }
 
   private initializeIssue(id: number) {
-    this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
-      this.issue = issue;
+    this.issueService.getIssues().subscribe((issue) => {
+      this.issue = issue[id];
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });

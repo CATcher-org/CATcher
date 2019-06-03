@@ -14,7 +14,6 @@ import { IssueCommentService } from '../../core/services/issue-comment.service';
 })
 export class IssueComponent implements OnInit {
   issue: Issue;
-  isIssueLoading = true;
   isEditing = false;
 
   constructor(private issueService: IssueService,
@@ -50,8 +49,8 @@ export class IssueComponent implements OnInit {
   }
 
   private getIssue(id: number) {
-    this.issueService.getIssue(id).pipe(finalize(() => this.isIssueLoading = false)).subscribe((issue) => {
-      this.issue = issue;
+    this.issueService.getIssues().subscribe((issue) => {
+      this.issue = issue[id];
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
     });
