@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {IssueService} from '../../core/services/issue.service';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {Issue, RESPONSE, SEVERITY, SEVERITY_ORDER, STATUS, TYPE} from '../../core/models/issue.model';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {finalize, map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IssueService } from '../../core/services/issue.service';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Issue, SEVERITY_ORDER, STATUS } from '../../core/models/issue.model';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { finalize, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { LabelService } from '../../core/services/label.service';
 
 @Component({
   selector: 'app-new-team-response',
@@ -13,11 +14,14 @@ import {Observable} from 'rxjs';
 })
 export class NewTeamResponseComponent implements OnInit {
   newTeamResponseForm: FormGroup;
-  severityValues = Object.keys(SEVERITY);
-  issueTypeValues = Object.keys(TYPE);
-  responseList = Object.keys(RESPONSE);
+  severityValues = this.labelService.getLabelList('severity');
+  issueTypeValues = this.labelService.getLabelList('type');
+  responseList = this.labelService.getLabelList('responseTag');
   teamMembers: string[];
   duplicatedIssueList: Observable<Issue[]>;
+  selectedSeverityColor: string;
+  selectedTypeColor: string;
+  selectedResponseColor: string;
 
   isFormPending = false;
   @Input() issue: Issue;
@@ -25,6 +29,7 @@ export class NewTeamResponseComponent implements OnInit {
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
+              private labelService: LabelService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
@@ -52,6 +57,10 @@ export class NewTeamResponseComponent implements OnInit {
       this.duplicateOf.updateValueAndValidity();
       this.responseTag.updateValueAndValidity();
     });
+
+    this.selectedSeverityColor = this.labelService.getColorOfLabel(this.issue.severity);
+    this.selectedTypeColor = this.labelService.getColorOfLabel(this.issue.type);
+    this.selectedResponseColor = this.labelService.getColorOfLabel(this.issue.responseTag);
   }
 
   submitNewTeamResponse(form: NgForm) {
@@ -110,6 +119,20 @@ export class NewTeamResponseComponent implements OnInit {
         return this.issue.id !== issue.id;
       });
     }));
+  }
+
+  setSelectedLabelColor(labelValue: string, labelType: string) {
+    switch (labelType) {
+      case 'severity':
+        this.selectedSeverityColor = this.labelService.getColorOfLabel(labelValue);
+        break;
+      case 'type':
+        this.selectedTypeColor = this.labelService.getColorOfLabel(labelValue);
+        break;
+      case 'responseTag':
+        this.selectedResponseColor = this.labelService.getColorOfLabel(labelValue);
+        break;
+    }
   }
 
   get description() {

@@ -4,10 +4,11 @@
 </button>
 
 <mat-menu #labelList>
-  <button mat-menu-item *ngFor="let value of labelValues" (click)="updateLabel(value)"
-          [disabled]="value === this.issue[attributeName]">
-    <span> {{value}}</span>
+  <button mat-menu-item *ngFor="let value of labelValues;" (click)="updateLabel(value.labelValue)"
+          [disabled]="value.labelValue === this.issue[attributeName]"  [ngStyle]="this.labelService.setLabelStyle(value.labelColor)"
+          >
+    <span> {{value.labelValue}}</span>
   </button>
 </mat-menu>
 
-<p style="margin-top: 5px">{{issue[attributeName] || '-'}}</p>
+<p [ngStyle]="this.labelService.setLabelStyle(this.labelColor)">{{issue[attributeName] || '-'}}</p>

@@ -1,14 +1,14 @@
-import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {Issue, IssuesFilter} from '../core/models/issue.model';
-import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
-import {MatPaginator, MatSort} from '@angular/material';
-import {IssueService} from '../core/services/issue.service';
-import {ErrorHandlingService} from '../core/services/error-handling.service';
-import {finalize} from 'rxjs/operators';
-import {UserService} from '../core/services/user.service';
-import {Phase} from '../core/services/phase.service';
-import {DataService} from '../core/services/data.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { Issue, IssuesFilter } from '../core/models/issue.model';
+import { IssuesDataTable } from '../shared/data-tables/IssuesDataTable';
+import { MatPaginator, MatSort } from '@angular/material';
+import { IssueService } from '../core/services/issue.service';
+import { ErrorHandlingService } from '../core/services/error-handling.service';
+import { UserService } from '../core/services/user.service';
+import { Phase } from '../core/services/phase.service';
+import { DataService } from '../core/services/data.service';
+import { LabelService } from '../core/services/label.service';
 
 @Component({
   selector: 'app-phase3',
@@ -26,8 +26,8 @@ export class Phase3Component implements OnInit {
 
   constructor(private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
-              public userService: UserService,
-              private dataService: DataService) {}
+              public userService: UserService, private labelService: LabelService,
+              private dataService: DataService) { }
 
   ngOnInit() {
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
