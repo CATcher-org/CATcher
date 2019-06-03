@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
@@ -8,18 +8,20 @@ import { ErrorHandlingService } from '../../core/services/error-handling.service
 import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { IssueComment, IssueComments } from '../../core/models/comment.model';
 import { PermissionService } from '../../core/services/permission.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-issue',
   templateUrl: './issue.component.html',
   styleUrls: ['./issue.component.css']
 })
-export class IssueComponent implements OnInit {
+export class IssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   comments: IssueComment[];
   isCommentsLoading = true;
   isResponseEditing = false;
   isDescriptionEditing = false;
+  issueSubscription: Subscription;
 
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -60,8 +62,10 @@ export class IssueComponent implements OnInit {
   }
 
   private initializeIssue(id: number) {
-    this.issueService.getIssues().subscribe((issue) => {
-      this.issue = issue[id];
+    this.issueSubscription = this.issueService.getIssues().subscribe((issues) => {
+      if (issues !== undefined) {
+        this.issue = issues[id];
+      }
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });
@@ -75,6 +79,10 @@ export class IssueComponent implements OnInit {
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
       });
+  }
+
+  ngOnDestroy() {
+    this.issueSubscription.unsubscribe();
   }
 
 }
