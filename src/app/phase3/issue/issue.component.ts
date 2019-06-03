@@ -24,6 +24,7 @@ export class IssueComponent implements OnInit, OnDestroy {
   isTeamResponseEditing = false;
   isIssueDescriptionEditing = false;
   issueSubscription: Subscription;
+  isIssueLoading = true;
 
   constructor(private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
@@ -54,6 +55,7 @@ export class IssueComponent implements OnInit, OnDestroy {
     this.issueSubscription = this.issueService.getIssues().subscribe((issues) => {
       if (issues !== undefined) {
         this.issue = issues[id];
+        this.isIssueLoading = false;
       }
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));

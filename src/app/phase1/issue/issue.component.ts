@@ -17,6 +17,7 @@ export class IssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   isEditing = false;
   issueSubscription: Subscription;
+  isIssueLoading = true;
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,
@@ -54,6 +55,7 @@ export class IssueComponent implements OnInit, OnDestroy {
     this.issueSubscription = this.issueService.getIssues().subscribe((issues) => {
       if (issues !== undefined) {
         this.issue = issues[id];
+        this.isIssueLoading = false;
       }
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
