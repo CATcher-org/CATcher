@@ -46,7 +46,6 @@ export class ProfilesComponent implements OnInit {
         .concat(this.PROFILES_FILE_NAME);
 
     if (this.userProfileFileExists(this.filePath)) {
-
       try {
         this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
       } catch (e) {
@@ -75,16 +74,13 @@ export class ProfilesComponent implements OnInit {
   /**
    * Checks that every profile is correctly defined in the array of profiles.
    * @param profiles - Array of profiles sourced from profiles.json
-   * @return true if all profiles are correctly defined, false if otherwise.
    */
   isValid(profiles: Profile[]): boolean {
     if (profiles === undefined) {
       return false;
-    } else {
-      if (profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined)).length === 0) {
-        return true;
-      }
     }
+    return profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined))
+        .length === 0;
   }
 
   /**
