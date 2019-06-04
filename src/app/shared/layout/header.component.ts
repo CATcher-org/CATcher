@@ -15,7 +15,7 @@ import { IssueService } from '../../core/services/issue.service';
 })
 export class HeaderComponent implements OnInit {
   private prevUrl;
-  isSyncButtonDisabled = false;
+  isReloadBtnDisabled = false;
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
               private location: Location, private githubEventService: GithubEventService, private issueService: IssueService,
@@ -46,8 +46,8 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  refresh() {
-    this.isSyncButtonDisabled = true;
+  reload() {
+    this.isReloadBtnDisabled = true;
 
     this.githubEventService.getLatestChangeEvent().subscribe((eventResponse) => {
         // Will only allow page to reload if the latest modify time is different
@@ -64,7 +64,7 @@ export class HeaderComponent implements OnInit {
 
     // Prevent user from spamming the reload button
     setTimeout(() => {
-      this.isSyncButtonDisabled = false;
+      this.isReloadBtnDisabled = false;
     },
     3000);
   }
