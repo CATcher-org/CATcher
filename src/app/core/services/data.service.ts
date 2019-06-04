@@ -91,15 +91,9 @@ export class DataService {
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
       if (entry[ROLE] === UserRole.Tutor.toLowerCase()) {
-        if (entry[NAME] in tutors) {
-          const currTutor = tutors[entry[NAME]];
-          currTutor[entry[TEAM]] = 'true';
-          tutors[entry[NAME]] = currTutor;
-        } else {
-          const newTutor = {};
-          newTutor[entry[TEAM]] = 'true';
-          tutors[entry[NAME]] = newTutor;
-        }
+        const tutor = entry[NAME] in tutors ? tutors[entry[NAME]] : {};
+        tutor[entry[TEAM]] = 'true';
+        tutors[entry[NAME]] = tutor;
       }
     });
 
@@ -155,15 +149,9 @@ export class DataService {
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
       if (entry[ROLE] === UserRole.Student.toLowerCase()) {
-        if (entry[TEAM] in teams) {
-          const currTeam = teams[entry[TEAM]];
-          currTeam[entry[NAME]] = 'true';
-          teams[entry[TEAM]] = currTeam;
-        } else {
-          const newTeam = {};
-          newTeam[entry[NAME]] = 'true';
-          teams[entry[TEAM]] = newTeam;
-        }
+        const team = entry[TEAM] in teams ? teams[entry[TEAM]] : {};
+        team[entry[NAME]] = 'true';
+        teams[entry[TEAM]] = team;
       }
     });
 
