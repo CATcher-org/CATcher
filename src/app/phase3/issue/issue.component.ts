@@ -34,10 +34,6 @@ export class IssueComponent implements OnInit, OnDestroy {
               public issueService: IssueService) { }
 
   ngOnInit() {
-    this.initialiseData();
-  }
-
-  initialiseData() {
     this.route.params.subscribe(
       params => {
         const id = +params['issue_id'];
