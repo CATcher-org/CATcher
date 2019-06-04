@@ -9,13 +9,12 @@
 
   <span style="flex: 1 1 auto"></span>
   <button *ngIf="auth.isAuthenticated() && needToShowReloadButton()" [disabled]="this.isReloadBtnDisabled"
-    mat-raised-button matTooltip="Synchronize with Github data"
-    style="transform: scale(0.9); color: #303F9F" (click)="reload()">
+    mat-button matTooltip="Synchronize with Github data" (click)="reload()">
     Sync
     <mat-icon>refresh</mat-icon>
     </button>
   <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" (click)="logOut()">
-    ({{userService.currentUser.loginId}})
+    {{userService.currentUser.loginId}}
     <mat-icon style="margin-left: 2px">exit_to_app</mat-icon>
   </button>
 </mat-toolbar>
