@@ -1,10 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { AppConfig } from '../../../environments/environment';
 import { MatDialog } from '@angular/material';
-import {
-  JsonParseErrorDialogComponent
-} from './json-parse-error-dialog/json-parse-error-dialog.component';
-import ProfilesJson from './profiles.json';
+import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
 const { ipcRenderer } = require('electron');
 
 /**
@@ -34,22 +30,28 @@ export class ProfilesComponent implements OnInit {
 
   private readonly fs = require('fs');
 
-  // path of profile.json (same folder as app for production)
-  private filePath: string = __dirname.split('CATcher', 1)[0].concat('profiles.json');
+  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /\/*[^\/]+\.(exe|app|AppImage)\/*.*/g;
+  private readonly PROFILES_FILE_NAME = 'profiles.json';
+  private filePath: string;
 
   @Output() selectedProfile: EventEmitter<Profile> = new EventEmitter<Profile>();
 
   constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
-    // Matches with ApplicationName.exe / .app
-    const directoryExtractor: RegExp = /[^\/]+\.(exe|app)\/.+/g;
-    console.log(ipcRenderer.sendSync('synchronous-message', 'ping').replace(directoryExtractor, ''));
 
-    // Developer Mode indicates that the profiles.json is internal.
-    if (this.isDeveloperMode()) {
+    this.filePath = ipcRenderer.sendSync('synchronous-message', 'getDirectory')
+        .replace(this.APPLICATION_AND_SUBDIRECTORIES, '')
+        .concat('/')
+        .concat(this.PROFILES_FILE_NAME);
 
-      this.profiles = ProfilesJson.profiles;
+    if (this.userProfileFileExists(this.filePath)) {
+
+      try {
+        this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
+      } catch (e) {
+        console.log(e);
+      }
 
       setTimeout(() => {
         if (!this.isValid(this.profiles)) {
@@ -57,28 +59,10 @@ export class ProfilesComponent implements OnInit {
           this.profiles = undefined;
         }
       });
-
-    // In Production mode the profiles.json is sourced from same folder as app.
     } else {
-
-      if (this.userProfileFileExists(this.filePath)) {
-
-        try {
-          this.profiles = JSON.parse(
-            this.fs.readFileSync(this.filePath))['profiles'];
-        } catch (e) {
-          console.log(e);
-        }
-
-        setTimeout(() => {
-          if (!this.isValid(this.profiles)) {
-            this.openErrorDialog();
-            this.profiles = undefined;
-          }
-        });
-      }
-      // If profiles.json is not in the same folder as the app, do nothing.
+      console.log(this.filePath + ' does not exist.');
     }
+
   }
 
   /**
@@ -97,9 +81,7 @@ export class ProfilesComponent implements OnInit {
     if (profiles === undefined) {
       return false;
     } else {
-      if (profiles.filter(
-        profile => (profile.profileName === undefined
-          || profile.encodedText === undefined)).length === 0) {
+      if (profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined)).length === 0) {
         return true;
       }
     }
@@ -120,13 +102,4 @@ export class ProfilesComponent implements OnInit {
   selectProfile(profile: Profile): void {
     this.selectedProfile.emit(profile);
   }
-
-  /**
-   * Checks that the applicaton is in Developer Mode.
-   * @return - true if Dev Mode, false if otherwise.
-   */
-  isDeveloperMode(): boolean {
-    return AppConfig.production === false;
-  }
-
 }

@@ -1,8 +1,0 @@
-{
-  "profiles": [
-    {
-      "profileName": "Production User",
-      "encodedText": "phase1=https://github.com/testathor/pe@phase2=https://github.com/testathor/pe-results@phase3=https://github.com/testathor/pe-evaluation"
-    }
-  ]
-}
