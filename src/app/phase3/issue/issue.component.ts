@@ -19,12 +19,12 @@ export class IssueComponent implements OnInit, OnDestroy {
 
   issue: Issue;
   comments: IssueComment[];
+  isIssueLoading = true;
   isCommentsLoading = true;
   isTutorResponseEditing = false;
   isTeamResponseEditing = false;
   isIssueDescriptionEditing = false;
   issueSubscription: Subscription;
-  isIssueLoading = true;
 
   constructor(private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
@@ -52,6 +52,10 @@ export class IssueComponent implements OnInit, OnDestroy {
   }
 
   private initializeIssue(id: number) {
+    this.getIssue(id);
+  }
+
+  private getIssue(id: number) {
     this.issueSubscription = this.issueService.getIssues().subscribe((issues) => {
       if (issues !== undefined) {
         this.issue = issues[id];

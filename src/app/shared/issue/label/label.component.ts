@@ -31,7 +31,6 @@ export class LabelComponent implements OnInit, OnChanges {
   ngOnInit() {
     // Get the list of labels based on their type (severity, type, response)
     this.labelValues = this.labelService.getLabelList(this.attributeName);
-    this.labelColor = this.labelService.getColorOfLabel(this.issue[this.attributeName]);
   }
 
   ngOnChanges() {

@@ -15,9 +15,9 @@ import { Subscription } from 'rxjs';
 })
 export class IssueComponent implements OnInit, OnDestroy {
   issue: Issue;
+  isIssueLoading = true;
   isEditing = false;
   issueSubscription: Subscription;
-  isIssueLoading = true;
 
   constructor(private issueService: IssueService,
               private issueCommentService: IssueCommentService,

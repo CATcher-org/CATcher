@@ -18,11 +18,11 @@ import { Subscription } from 'rxjs';
 export class IssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   comments: IssueComment[];
+  isIssueLoading = true;
   isCommentsLoading = true;
   isResponseEditing = false;
   isDescriptionEditing = false;
   issueSubscription: Subscription;
-  isIssueLoading = true;
 
   constructor(public issueService: IssueService,
               private issueCommentService: IssueCommentService,

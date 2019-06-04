@@ -58,12 +58,12 @@ export class AuthService {
           return this.userService.createUserModel(userLoginId);
         }
       }),
-      flatMap((userResponse) =>  {
-        // Initialise last modified time for this repo
-        return this.githubEventService.setLatestChangeEvent(userResponse);
+      flatMap((userResponse) => {
+        return this.labelService.getAllLabels(userResponse);
       }),
-      flatMap((eventResponse) => {
-        return this.labelService.getAllLabels(eventResponse);
+      flatMap((labelResponse) =>  {
+        // Initialise last modified time for this repo
+        return this.githubEventService.setLatestChangeEvent(labelResponse);
       })
     );
   }
