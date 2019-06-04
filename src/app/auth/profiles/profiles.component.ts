@@ -5,6 +5,7 @@ import {
   JsonParseErrorDialogComponent
 } from './json-parse-error-dialog/json-parse-error-dialog.component';
 import ProfilesJson from './profiles.json';
+const { ipcRenderer } = require('electron');
 
 /**
  * Indicates all the elements that make up a Profile.
@@ -41,6 +42,9 @@ export class ProfilesComponent implements OnInit {
   constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
+    // Matches with ApplicationName.exe / .app
+    const directoryExtractor: RegExp = /[^\/]+\.(exe|app)\/.+/g;
+    console.log(ipcRenderer.sendSync('synchronous-message', 'ping').replace(directoryExtractor, ''));
 
     // Developer Mode indicates that the profiles.json is internal.
     if (this.isDeveloperMode()) {

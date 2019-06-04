@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
 import { enableProdMode, isDevMode } from '@angular/core';
+const { ipcMain } = require('electron');
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -10,6 +11,10 @@ serve = args.some(val => val === '--serve');
 
 // TODO: enableProdMode() prior to release.
 // enableProdMode();
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  event.returnValue = app.getAppPath();
+});
 
 function createWindow() {
 
