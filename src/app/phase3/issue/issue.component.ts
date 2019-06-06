@@ -52,11 +52,9 @@ export class IssueComponent implements OnInit, OnDestroy {
   }
 
   private getIssue(id: number) {
-    this.issueSubscription = this.issueService.getIssues().subscribe((issues) => {
-      if (issues !== undefined) {
-        this.issue = issues[id];
+    this.issueSubscription = this.issueService.getAllIssues().subscribe((issues) => {
+        this.issue = issues.find(issue => issue.id === id);
         this.isIssueLoading = false;
-      }
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });
