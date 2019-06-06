@@ -182,4 +182,8 @@ export class GithubService {
       })
     );
   }
+
+  getRepoURL(): string {
+    return ORG_NAME.concat('/').concat(REPO);
+  }
 }

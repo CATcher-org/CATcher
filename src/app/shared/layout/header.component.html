@@ -8,6 +8,10 @@
   </span>
 
   <span style="flex: 1 1 auto"></span>
+  <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="View current page in web-browser" (click)="viewBrowser()">
+    View in Browser
+    <mat-icon>link</mat-icon>
+  </button>
   <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" (click)="logOut()">
     ({{userService.currentUser.loginId}})
     <mat-icon style="margin-left: 2px">exit_to_app</mat-icon>
