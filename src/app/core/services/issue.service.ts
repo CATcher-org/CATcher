@@ -140,10 +140,10 @@ export class IssueService {
    * This function will update the issue's state of the application. This function needs to be called whenever a issue is added/updated.
    */
   updateLocalStore(issueToUpdate: Issue) {
-    this.issues = ({
+    this.issues = {
       ...this.issues,
       [issueToUpdate.id]: issueToUpdate,
-    });
+    };
     this.issues$.next(Object.values(this.issues));
   }
 
