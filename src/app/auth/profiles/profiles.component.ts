@@ -13,11 +13,6 @@ export interface Profile {
   encodedText: string;
 }
 
-/**
- * This component is responsible allowing the user to select a Profile
- * in the authentication page.
- */
-
 @Component({
   selector: 'app-profiles',
   templateUrl: './profiles.component.html',
@@ -45,22 +40,23 @@ export class ProfilesComponent implements OnInit {
         .concat('/')
         .concat(this.PROFILES_FILE_NAME);
 
-    if (this.userProfileFileExists(this.filePath)) {
-      try {
-        this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
-      } catch (e) {
-        console.log(e);
-      }
-
-      setTimeout(() => {
-        if (!this.isValid(this.profiles)) {
-          this.openErrorDialog();
-          this.profiles = undefined;
-        }
-      });
-    } else {
+    if (!this.userProfileFileExists(this.filePath)) {
       console.log(this.filePath + ' does not exist.');
+      return;
     }
+
+    try {
+      this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
+    } catch (e) {
+      console.log(e);
+    }
+
+    setTimeout(() => {
+      if (!this.isValid(this.profiles)) {
+        this.openErrorDialog();
+        this.profiles = undefined;
+      }
+    });
 
   }
 
@@ -84,7 +80,7 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Takes the path of a file and checks that it exists in the system.
+   * Returns true if the file indicated by the filePath exists.
    * @param filePath - Path of file to check.
    */
   userProfileFileExists(filePath: string): boolean {

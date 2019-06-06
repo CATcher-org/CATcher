@@ -46,9 +46,8 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Takes the listened user selected Profile and use its parameters
-   * to fill information in the login form.
-   * @param profile - User selected profile.
+   * Fills the login form with data from the given Profile.
+   * @param profile - Profile selected by the user.
    */
   onProfileSelect(profile: Profile): void {
     this.loginForm.get('username').setValue(profile.username);
