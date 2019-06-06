@@ -14,7 +14,7 @@
     <mat-icon>refresh</mat-icon>
     </button>
   <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" (click)="logOut()">
-    {{userService.currentUser.loginId}}
+    ({{userService.currentUser.loginId}})
     <mat-icon style="margin-left: 2px">exit_to_app</mat-icon>
   </button>
 </mat-toolbar>
