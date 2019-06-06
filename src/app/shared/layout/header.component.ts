@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {Location} from '@angular/common';
-import {AuthService} from '../../core/services/auth.service';
-import {PhaseService} from '../../core/services/phase.service';
-import {UserService} from '../../core/services/user.service';
+import { Location } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
+import { PhaseService } from '../../core/services/phase.service';
+import { UserService } from '../../core/services/user.service';
 import { Router, RoutesRecognized } from '@angular/router';
-import {filter, pairwise} from 'rxjs/operators';
+import { filter, pairwise } from 'rxjs/operators';
 import { GithubEventService } from '../../core/services/githubevent.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssueService } from '../../core/services/issue.service';

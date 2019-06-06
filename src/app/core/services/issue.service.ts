@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {GithubService} from './github.service';
-import {map} from 'rxjs/operators';
-import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { GithubService } from './github.service';
+import { map } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import {
   Issue,
   Issues,
@@ -12,13 +12,13 @@ import {
   phase3DescriptionTemplate,
   RespondType
 } from '../models/issue.model';
-import {UserService} from './user.service';
-import {Phase, PhaseService} from './phase.service';
-import {IssueCommentService} from './issue-comment.service';
-import {PermissionService} from './permission.service';
+import { UserService } from './user.service';
+import { Phase, PhaseService } from './phase.service';
+import { IssueCommentService } from './issue-comment.service';
+import { PermissionService } from './permission.service';
 import * as moment from 'moment';
-import {Team} from '../models/team.model';
-import {DataService} from './data.service';
+import { Team } from '../models/team.model';
+import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
