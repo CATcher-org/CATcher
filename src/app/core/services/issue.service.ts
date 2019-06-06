@@ -19,23 +19,24 @@ import {PermissionService} from './permission.service';
 import * as moment from 'moment';
 import {Team} from '../models/team.model';
 import {DataService} from './data.service';
+import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IssueService {
-  issues: BehaviorSubject<Issues>;
+  private issues: BehaviorSubject<Issues>;
   issues$: BehaviorSubject<Issue[]>;
-  newIssue: Issues;
 
   constructor(private githubService: GithubService,
               private userService: UserService,
               private phaseService: PhaseService,
               private issueCommentService: IssueCommentService,
               private permissionService: PermissionService,
+              private errorHandlingService: ErrorHandlingService,
               private dataService: DataService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
-    this.issues = new BehaviorSubject(this.newIssue);
+    this.issues = new BehaviorSubject(undefined);
   }
 
   /**
@@ -53,7 +54,10 @@ export class IssueService {
   }
 
   reloadAllIssues() {
-    return this.initializeData().subscribe();
+    return this.initializeData().subscribe(
+    (success) => success,
+    (error) => this.errorHandlingService.handleHttpError(error)
+    );
   }
 
   getIssues(): Observable<Issues> {
@@ -192,7 +196,7 @@ export class IssueService {
   }
 
   reset() {
-    this.issues.next(this.newIssue);
+    this.issues.next(undefined);
     this.issues$.next(new Array<Issue>());
   }
 
