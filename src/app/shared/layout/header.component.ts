@@ -54,7 +54,10 @@ export class HeaderComponent implements OnInit {
         // from last modified, meaning that some changes to the repo has occured.
         if (eventResponse['created_at'] !== this.githubEventService.getLastModifiedTime() ||
         eventResponse['issue']['updated_at'] !== this.githubEventService.getLastModifiedCommentTime()) {
-          this.issueService.reloadAllIssues();
+          this.issueService.reloadAllIssues().subscribe(
+            (success) => success,
+            (error) => this.errorHandlingService.handleHttpError(error)
+            );
           this.githubEventService.setLastModifiedTime(eventResponse['created_at']);
           this.githubEventService.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
         }

@@ -53,10 +53,7 @@ export class IssueService {
   }
 
   reloadAllIssues() {
-    return this.initializeData().subscribe(
-    (success) => success,
-    (error) => this.errorHandlingService.handleHttpError(error)
-    );
+    return this.initializeData();
   }
 
   getIssue(id: number): Observable<Issue> {
