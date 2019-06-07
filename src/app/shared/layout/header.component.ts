@@ -49,20 +49,10 @@ export class HeaderComponent implements OnInit {
   reload() {
     this.isReloadBtnDisabled = true;
 
-    this.githubEventService.getLatestChangeEvent().subscribe((eventResponse) => {
-        // Will only allow page to reload if the latest modify time is different
-        // from last modified, meaning that some changes to the repo has occured.
-        if (eventResponse['created_at'] !== this.githubEventService.getLastModifiedTime() ||
-        eventResponse['issue']['updated_at'] !== this.githubEventService.getLastModifiedCommentTime()) {
-          this.issueService.reloadAllIssues().subscribe(
-            (success) => success,
-            (error) => this.errorHandlingService.handleHttpError(error)
-            );
-          this.githubEventService.setLastModifiedTime(eventResponse['created_at']);
-          this.githubEventService.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
-        }
-      }, (error) => {
-        this.errorHandlingService.handleHttpError(error, () => this.githubEventService.getLatestChangeEvent());
+    this.githubEventService.reloadPage().subscribe(
+      (success) => success,
+      (error) => {
+        this.errorHandlingService.handleHttpError(error, () => this.githubEventService.reloadPage());
       });
 
     // Prevent user from spamming the reload button
