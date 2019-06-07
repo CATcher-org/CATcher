@@ -7,6 +7,7 @@ import {NavigationEnd, Router, RoutesRecognized} from '@angular/router';
 import {filter, pairwise} from 'rxjs/operators';
 import { shell } from 'electron';
 import { GithubService } from '../../core/services/github.service';
+import { IssueService } from '../../core/services/issue.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -16,7 +17,7 @@ export class HeaderComponent implements OnInit {
   private prevUrl;
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
-              private location: Location, private githubService: GithubService) {
+              private location: Location, private githubService: GithubService, private issueService: IssueService) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()
@@ -41,9 +42,15 @@ export class HeaderComponent implements OnInit {
 
   viewBrowser() {
     const repoUrl = this.githubService.getRepoURL();
-    let issueUrl = this.router.url.substring(7); // remove the '/phase' from string
-    if (issueUrl === '') {
-      issueUrl = '/issues';
+    const routerUrl = this.router.url.substring(1); // remove the first '/' from string
+    const issueUrlIndex = routerUrl.indexOf('/'); // find the second '/' index
+    let issueUrl: string;
+
+    if (issueUrlIndex < 0) {
+      const filterValue = '?q=is%3Aissue+is%3Aopen+'.concat(this.issueService.getIssueSearchFilter());
+      issueUrl = '/issues'.concat(filterValue);
+    } else {
+      issueUrl = routerUrl.substring(issueUrlIndex); // issueUrl will be from '/' onwards
     }
     shell.openExternal('https://github.com/'.concat(repoUrl).concat(issueUrl));
   }

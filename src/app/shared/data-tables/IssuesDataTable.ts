@@ -31,6 +31,7 @@ export class IssuesDataTable extends DataSource<Issue> {
     this.issuesSubject.complete();
     this.loadingSubject.complete();
     this.issueSubscription.unsubscribe();
+    this.issueService.setIssueSearchFilter('');
   }
 
   loadIssues() {
@@ -78,6 +79,7 @@ export class IssuesDataTable extends DataSource<Issue> {
 
   set filter(filter: string) {
     this.filterChange.next(filter);
+    this.issueService.setIssueSearchFilter(this.filterChange.value);
   }
 
   get teamFilter(): string {

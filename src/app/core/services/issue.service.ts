@@ -26,6 +26,7 @@ import {DataService} from './data.service';
 export class IssueService {
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
+  private issueSearchFilter = '';
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -425,5 +426,15 @@ export class IssueService {
       }
     }
     return result;
+  }
+
+  setIssueSearchFilter(filterValue: string) {
+    if (filterValue !== undefined) {
+      this.issueSearchFilter = filterValue;
+    }
+  }
+
+  getIssueSearchFilter(): string {
+    return this.issueSearchFilter;
   }
 }
