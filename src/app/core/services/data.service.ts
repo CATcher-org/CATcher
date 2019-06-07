@@ -90,11 +90,12 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (entry[ROLE] === UserRole.Tutor.toLowerCase()) {
-        const tutor = entry[NAME] in tutors ? tutors[entry[NAME]] : {};
-        tutor[entry[TEAM]] = 'true';
-        tutors[entry[NAME]] = tutor;
+      if (!(entry[ROLE] === UserRole.Tutor.toLowerCase())) {
+        return;
       }
+      const tutor = entry[NAME] in tutors ? tutors[entry[NAME]] : {};
+      tutor[entry[TEAM]] = 'true';
+      tutors[entry[NAME]] = tutor;
     });
 
     return tutors;
@@ -120,11 +121,12 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (entry[ROLE] === UserRole.Student.toLowerCase()) {
-        const newStudent = {};
-        newStudent[TEAM_ID] = entry[TEAM];
-        students[entry[NAME]] = newStudent;
+      if (!(entry[ROLE] === UserRole.Student.toLowerCase())) {
+        return;
       }
+      const newStudent = {};
+      newStudent[TEAM_ID] = entry[TEAM];
+      students[entry[NAME]] = newStudent;
     });
 
     return students;
@@ -148,11 +150,12 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (entry[ROLE] === UserRole.Student.toLowerCase()) {
-        const team = entry[TEAM] in teams ? teams[entry[TEAM]] : {};
-        team[entry[NAME]] = 'true';
-        teams[entry[TEAM]] = team;
+      if (!(entry[ROLE] === UserRole.Student.toLowerCase())) {
+        return;
       }
+      const team = entry[TEAM] in teams ? teams[entry[TEAM]] : {};
+      team[entry[NAME]] = 'true';
+      teams[entry[TEAM]] = team;
     });
 
     return teams;
