@@ -2,7 +2,7 @@
   <mat-card-header>
     <mat-card-title>Login</mat-card-title>
   </mat-card-header>
-  <app-profiles (selectedProfile)="onProfileSelect($event)"></app-profiles>
+  <app-profiles (selectedProfile)="onProfileSelect($event)" (profileLocationPrompter)="onProfileMissing($event)"></app-profiles>
   <mat-card-content>
     <form [formGroup]="loginForm" #myForm="ngForm" (ngSubmit)="login(myForm)">
       <table class="table-form" cellspacing="0">
@@ -33,4 +33,5 @@
       </mat-card-actions>
     </form>
   </mat-card-content>
+  <div style="color: #6a737d; font-size: 10px;">{{ this.profileLocationPrompt }}</div>
 </mat-card>

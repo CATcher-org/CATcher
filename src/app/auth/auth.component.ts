@@ -20,6 +20,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   authState: AuthState;
   authStateSubscription: Subscription;
   loginForm: FormGroup;
+  profileLocationPrompt: string;
 
   constructor(private auth: AuthService,
               private github: GithubService,
@@ -43,6 +44,14 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.authStateSubscription.unsubscribe();
+  }
+
+  onProfileMissing(profilesDetails: {}): void {
+    this.profileLocationPrompt = 'No custom '
+        .concat(profilesDetails['fileName'])
+        .concat(' file found in ')
+        .concat(profilesDetails['fileDirectory'])
+        .concat(' .');
   }
 
   /**

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
 const { ipcRenderer } = require('electron');
 
@@ -25,23 +25,29 @@ export class ProfilesComponent implements OnInit {
 
   private readonly fs = require('fs');
 
+
   private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /\/*[^\/]+\.(exe|app|AppImage)\/*.*/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
 
   @Output() selectedProfile: EventEmitter<Profile> = new EventEmitter<Profile>();
+  @Output() profileLocationPrompter: EventEmitter<{}> = new EventEmitter<{}>();
 
-  constructor(public errorDialog: MatDialog) { }
+  constructor(public errorDialog: MatDialog, private snack: MatSnackBar) { }
 
   ngOnInit() {
+    const path = require('path');
+    const temp = ipcRenderer.sendSync('synchronous-message', 'getDirectory');
+    this.snack.open(temp);
+    this.filePath = path.join(
+        temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
+        this.PROFILES_FILE_NAME);
 
-    this.filePath = ipcRenderer.sendSync('synchronous-message', 'getDirectory')
-        .replace(this.APPLICATION_AND_SUBDIRECTORIES, '')
-        .concat('/')
-        .concat(this.PROFILES_FILE_NAME);
-
-    if (!this.userProfileFileExists(this.filePath)) {
-      console.log(this.filePath + ' does not exist.');
+    if (true || !this.userProfileFileExists(this.filePath)) {
+      this.profileLocationPrompter.emit({
+        'fileName': this.PROFILES_FILE_NAME,
+        'fileDirectory': this.filePath.split(this.PROFILES_FILE_NAME)[0]
+      });
       return;
     }
 
