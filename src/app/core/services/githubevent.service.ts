@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, flatMap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { IssueService } from './issue.service';
@@ -45,7 +45,7 @@ export class GithubEventService {
           this.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
           return this.issueService.reloadAllIssues();
         }
-        return response;
+        return of(response);
       })
     );
   }
