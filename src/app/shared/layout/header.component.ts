@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit {
   FILTER_START = '?q=is%3Aissue+is%3Aopen+'; // the filtered list must be an issue and must be open
   TUTORIAL_LABEL = '+label%3Atutorial.';
   TEAM_LABEL = '+label%3Ateam.';
-  EXCLUDE_DUPLICATE_LABEL = '+-label%3Aduplicate'; // exclude duplicate issues
+  EXCLUDE_DUPLICATE = '+-label%3Aduplicate'; // exclude duplicate issues
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
               private location: Location, private githubService: GithubService, private issueService: IssueService) {
@@ -45,18 +45,19 @@ export class HeaderComponent implements OnInit {
   }
 
   viewBrowser() {
-    const repoUrl = this.githubService.getRepoURL();
     const routerUrl = this.router.url.substring(1); // remove the first '/' from string
-    const issueUrlIndex = routerUrl.indexOf('/'); // find the second '/' index
+    const issueUrlIndex = routerUrl.indexOf('/'); // find the index of second '/'
     let issueUrl: string;
 
-    // If issueUrlIndex can't find the second '/', then router is at the /issues page
+    // If can't find the index of second '/', then router is at the /issues (table list) page
     if (issueUrlIndex < 0) {
+      // Apply filters to the issueUrl
       issueUrl = '/issues'.concat(this.getSearchFilterString()).concat(this.getTeamFilterString());
     } else {
-      issueUrl = routerUrl.substring(issueUrlIndex); // issueUrl will be from '/' onwards
+      // issueUrl will be from the second '/'
+      issueUrl = routerUrl.substring(issueUrlIndex);
     }
-    shell.openExternal('https://github.com/'.concat(repoUrl).concat(issueUrl));
+    shell.openExternal('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
   }
 
   private getSearchFilterString() {
@@ -66,15 +67,13 @@ export class HeaderComponent implements OnInit {
   private getTeamFilterString() {
     if (this.issueService.getIssueTeamFilter() === 'All Teams') {
       // Only exclude duplicates for phase 1 and 2
-      return (this.phaseService.currentPhase === 'phase3') ? '' : this.EXCLUDE_DUPLICATE_LABEL;
+      return (this.phaseService.currentPhase === 'phase3') ? '' : this.EXCLUDE_DUPLICATE;
     }
-    const teamFilter = this.issueService.getIssueTeamFilter().split('-');
-    const tutorial = teamFilter[0];
-    const team = teamFilter[1];
+    const teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g W12-4 -> Tutorial W12 Team 4
 
-    const teamLabel = this.TUTORIAL_LABEL.concat(tutorial).concat(this.TEAM_LABEL).concat(team);
+    const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
     // Only exclude duplicates for phase 1 and 2
-    return (this.phaseService.currentPhase === 'phase3') ? teamLabel : this.EXCLUDE_DUPLICATE_LABEL.concat(teamLabel);
+    return (this.phaseService.currentPhase === 'phase3') ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
   logOut() {

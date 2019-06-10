@@ -19,8 +19,6 @@ export class Phase2Component implements OnInit {
     // For Students, they do not have team filter, so the team filter is initialised here.
     if (this.userService.currentUser.team !== undefined) {
       this.issueService.setIssueTeamFilter(this.userService.currentUser.team.id);
-    } else {
-      this.issueService.setIssueTeamFilter('All Teams');
     }
   }
 
