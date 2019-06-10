@@ -152,6 +152,14 @@ export class GithubService {
     );
   }
 
+  fetchEventsForRepo() {
+    return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
+      map(response => {
+        return response['data'];
+      })
+    );
+  }
+
   fetchDataFile(): Observable<{}> {
     // roles information
     return forkJoin(
