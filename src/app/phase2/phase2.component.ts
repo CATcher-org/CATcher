@@ -3,6 +3,7 @@ import {UserService} from '../core/services/user.service';
 import {IssuesFilter} from '../core/models/issue.model';
 import {Phase} from '../core/services/phase.service';
 import {DataService} from '../core/services/data.service';
+import { IssueService } from '../core/services/issue.service';
 
 @Component({
   selector: 'app-phase2',
@@ -12,9 +13,16 @@ import {DataService} from '../core/services/data.service';
 export class Phase2Component implements OnInit {
   public teamFilter = 'All Teams';
 
-  constructor(public userService: UserService, private dataService: DataService) {}
+  constructor(public userService: UserService, private dataService: DataService, private issueService: IssueService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    // For Students, they do not have team filter, so the team filter is initialised here.
+    if (this.userService.currentUser.team !== undefined) {
+      this.issueService.setIssueTeamFilter(this.userService.currentUser.team.id);
+    } else {
+      this.issueService.setIssueTeamFilter('All Teams');
+    }
+  }
 
   get teamList(): string[] {
     const teams = this.dataService.getTeams();

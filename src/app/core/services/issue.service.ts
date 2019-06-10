@@ -27,6 +27,7 @@ export class IssueService {
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
   private issueSearchFilter = '';
+  private issueTeamFilter = 'All Teams';
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -436,5 +437,15 @@ export class IssueService {
 
   getIssueSearchFilter(): string {
     return this.issueSearchFilter;
+  }
+
+  setIssueTeamFilter(filterValue: string) {
+    if (filterValue !== undefined) {
+      this.issueTeamFilter = filterValue;
+    }
+  }
+
+  getIssueTeamFilter(): string {
+    return this.issueTeamFilter;
   }
 }
