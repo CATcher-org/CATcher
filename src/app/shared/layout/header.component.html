@@ -12,6 +12,11 @@
     View in Browser
     <mat-icon>link</mat-icon>
   </button>
+  <button *ngIf="auth.isAuthenticated() && needToShowReloadButton()" [disabled]="this.isReloadBtnDisabled"
+    mat-button matTooltip="Synchronize with Github data" (click)="reload()">
+    Sync
+    <mat-icon>refresh</mat-icon>
+    </button>
   <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" (click)="logOut()">
     ({{userService.currentUser.loginId}})
     <mat-icon style="margin-left: 2px">exit_to_app</mat-icon>

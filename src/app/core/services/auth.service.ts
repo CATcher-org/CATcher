@@ -14,6 +14,7 @@ import { IssueCommentService } from './issue-comment.service';
 import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
+import { GithubEventService } from './githubevent.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -33,6 +34,7 @@ export class AuthService {
               private issueCommentService: IssueCommentService,
               private labelService: LabelService,
               private dataService: DataService,
+              private githubEventService: GithubEventService,
               private titleService: Title) {
   }
 
@@ -58,6 +60,10 @@ export class AuthService {
       }),
       flatMap((userResponse) => {
         return this.labelService.getAllLabels(userResponse);
+      }),
+      flatMap((labelResponse) =>  {
+        // Initialise last modified time for this repo
+        return this.githubEventService.setLatestChangeEvent(labelResponse);
       })
     );
   }
@@ -68,6 +74,7 @@ export class AuthService {
     this.issueCommentService.reset();
     this.phaseService.reset();
     this.dataService.reset();
+    this.githubEventService.reset();
     this.labelService.reset();
     this.titleService.setTitle('CATcher');
 

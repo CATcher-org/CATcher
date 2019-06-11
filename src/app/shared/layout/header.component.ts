@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import {Location} from '@angular/common';
-import {AuthService} from '../../core/services/auth.service';
-import {PhaseService} from '../../core/services/phase.service';
-import {UserService} from '../../core/services/user.service';
-import {NavigationEnd, Router, RoutesRecognized} from '@angular/router';
-import {filter, pairwise} from 'rxjs/operators';
+import { Location } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
+import { PhaseService } from '../../core/services/phase.service';
+import { UserService } from '../../core/services/user.service';
+import { Router, RoutesRecognized } from '@angular/router';
+import { filter, pairwise } from 'rxjs/operators';
+import { GithubEventService } from '../../core/services/githubevent.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { IssueService } from '../../core/services/issue.service';
 import { shell } from 'electron';
 import { GithubService } from '../../core/services/github.service';
-import { IssueService } from '../../core/services/issue.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -15,13 +17,15 @@ import { IssueService } from '../../core/services/issue.service';
 })
 export class HeaderComponent implements OnInit {
   private prevUrl;
+  isReloadBtnDisabled = false;
   FILTER_START = '?q=is%3Aissue+is%3Aopen+'; // the filtered list must be an issue and must be open
   TUTORIAL_LABEL = '+label%3Atutorial.';
   TEAM_LABEL = '+label%3Ateam.';
   EXCLUDE_DUPLICATE = '+-label%3Aduplicate'; // exclude duplicate issues
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
-              private location: Location, private githubService: GithubService, private issueService: IssueService) {
+              private location: Location, private githubService: GithubService, private issueService: IssueService,
+              private githubEventService: GithubEventService, private errorHandlingService: ErrorHandlingService) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()
@@ -34,6 +38,10 @@ export class HeaderComponent implements OnInit {
 
   needToShowBackButton(): boolean {
     return `/${this.phaseService.currentPhase}` !== this.router.url && this.router.url !== '/';
+  }
+
+  needToShowReloadButton(): boolean {
+    return this.router.url !== '/phase1/issues/new';
   }
 
   goBack() {
@@ -74,6 +82,22 @@ export class HeaderComponent implements OnInit {
     const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
     // Only exclude duplicates for phase 1 and 2
     return (this.phaseService.currentPhase === 'phase3') ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
+  }
+
+  reload() {
+    this.isReloadBtnDisabled = true;
+
+    this.githubEventService.reloadPage().subscribe(
+      (success) => success,
+      (error) => {
+        this.errorHandlingService.handleHttpError(error, () => this.githubEventService.reloadPage());
+      });
+
+    // Prevent user from spamming the reload button
+    setTimeout(() => {
+      this.isReloadBtnDisabled = false;
+    },
+    3000);
   }
 
   logOut() {

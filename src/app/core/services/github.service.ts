@@ -114,7 +114,7 @@ export class GithubService {
 
   createIssueComment(comment: IssueComment): Observable<{}> {
     return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, number: comment.id,
-                body: comment.description})).pipe(
+      body: comment.description})).pipe(
       map(response => {
         return response['data'];
       })
@@ -152,22 +152,36 @@ export class GithubService {
     );
   }
 
+  fetchEventsForRepo() {
+    return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
+      map(response => {
+        return response['data'];
+      })
+    );
+  }
+
   fetchDataFile(): Observable<{}> {
-    return from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.json'})).pipe(map((resp) => {
-      return JSON.parse(atob(resp['data']['content']));
-    }));
+    // roles information
+    return forkJoin(
+      from(octokit.repos.getContents({owner: ORG_NAME, repo: DATA_REPO, path: 'data.csv'}))
+        .pipe(map(rawData => atob(rawData['data']['content'])))
+    ).pipe(
+      map(([data]) => {
+        return {data};
+      })
+    );
   }
 
   private getNumberOfIssuePages(filter?: {}): Observable<number> {
     return from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
       direction: 'desc', per_page: 100, page: 1})).pipe(
-        map((response) => {
-          if (!response['headers'].link) {
-            return 1;
-          }
-          const paginatedData = githubPaginatorParser(response['headers'].link);
-          return +paginatedData['last'] || 1;
-        })
+      map((response) => {
+        if (!response['headers'].link) {
+          return 1;
+        }
+        const paginatedData = githubPaginatorParser(response['headers'].link);
+        return +paginatedData['last'] || 1;
+      })
     );
   }
 
