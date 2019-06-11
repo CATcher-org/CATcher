@@ -1,0 +1,8 @@
+<mat-form-field>
+  <mat-label>Select Profile</mat-label>
+  <mat-select>
+    <mat-option (click)="selectProfile(this.blankProfile)">None</mat-option>
+    <mat-option *ngFor="let profile of profiles" (click)="selectProfile(profile)"
+                [value]="profile.profileName">{{ profile.profileName }}</mat-option>
+  </mat-select>
+</mat-form-field>
