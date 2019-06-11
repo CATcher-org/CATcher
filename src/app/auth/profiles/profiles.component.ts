@@ -26,7 +26,7 @@ export class ProfilesComponent implements OnInit {
   private readonly fs = require('fs');
 
 
-  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage)/g;
+  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar)/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
 
@@ -43,7 +43,7 @@ export class ProfilesComponent implements OnInit {
         temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
         this.PROFILES_FILE_NAME);
 
-    if (true || !this.userProfileFileExists(this.filePath)) {
+    if (!this.userProfileFileExists(this.filePath)) {
       this.profileLocationPrompter.emit({
         'fileName': this.PROFILES_FILE_NAME,
         'fileDirectory': this.filePath.split(this.PROFILES_FILE_NAME)[0]

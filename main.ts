@@ -13,7 +13,7 @@ serve = args.some(val => val === '--serve');
 // enableProdMode();
 
 ipcMain.on('synchronous-message', (event, arg) => {
-  event.returnValue = process.platform !== 'darwin'
+  event.returnValue = process.platform === 'win32'
     ? isDevMode()
         ? app.getAppPath()
         : process.env.PORTABLE_EXECUTABLE_FILE
