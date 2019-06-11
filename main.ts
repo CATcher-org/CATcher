@@ -13,9 +13,11 @@ serve = args.some(val => val === '--serve');
 // enableProdMode();
 
 ipcMain.on('synchronous-message', (event, arg) => {
-  event.returnValue = process.platform === 'darwin'
-    ? app.getAppPath()
-    : process.env.PORTABLE_EXECUTABLE_FILE;
+  event.returnValue = process.platform !== 'darwin'
+    ? isDevMode()
+        ? app.getAppPath()
+        : process.env.PORTABLE_EXECUTABLE_FILE
+    : app.getAppPath();
 });
 
 function createWindow() {

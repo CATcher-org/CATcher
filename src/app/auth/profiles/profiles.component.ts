@@ -26,7 +26,7 @@ export class ProfilesComponent implements OnInit {
   private readonly fs = require('fs');
 
 
-  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /\/*[^\/]+\.(exe|app|AppImage)\/*.*/g;
+  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage)/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
 
