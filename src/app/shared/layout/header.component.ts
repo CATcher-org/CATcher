@@ -18,10 +18,10 @@ import { GithubService } from '../../core/services/github.service';
 export class HeaderComponent implements OnInit {
   private prevUrl;
   isReloadBtnDisabled = false;
-  FILTER_START = '?q=is%3Aissue+is%3Aopen+'; // the filtered list must be an issue and must be open
-  TUTORIAL_LABEL = '+label%3Atutorial.';
-  TEAM_LABEL = '+label%3Ateam.';
-  EXCLUDE_DUPLICATE = '+-label%3Aduplicate'; // exclude duplicate issues
+  FILTER_START = '?q=is:issue+is:open+'; // the filtered list must be an issue and must be open
+  TUTORIAL_LABEL = '+label:tutorial.';
+  TEAM_LABEL = '+label:team.';
+  EXCLUDE_DUPLICATE = '+-label:duplicate'; // exclude duplicate issues
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
               private location: Location, private githubService: GithubService, private issueService: IssueService,

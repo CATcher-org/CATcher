@@ -436,7 +436,7 @@ export class IssueService {
   }
 
   setIssueSearchFilter(filterValue: string) {
-    if (filterValue !== undefined) {
+    if (filterValue) {
       this.issueSearchFilter = filterValue;
     }
   }
@@ -446,7 +446,7 @@ export class IssueService {
   }
 
   setIssueTeamFilter(filterValue: string) {
-    if (filterValue !== undefined) {
+    if (filterValue) {
       this.issueTeamFilter = filterValue;
     }
   }
