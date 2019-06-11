@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
-import { PhaseService } from '../../core/services/phase.service';
+import { PhaseService, Phase } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { Router, RoutesRecognized } from '@angular/router';
 import { filter, pairwise } from 'rxjs/operators';
@@ -75,13 +75,13 @@ export class HeaderComponent implements OnInit {
   private getTeamFilterString() {
     if (this.issueService.getIssueTeamFilter() === 'All Teams') {
       // Only exclude duplicates for phase 1 and 2
-      return (this.phaseService.currentPhase === 'phase3') ? '' : this.EXCLUDE_DUPLICATE;
+      return (this.phaseService.currentPhase === Phase.phase3) ? '' : this.EXCLUDE_DUPLICATE;
     }
     const teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g W12-4 -> Tutorial W12 Team 4
 
     const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
     // Only exclude duplicates for phase 1 and 2
-    return (this.phaseService.currentPhase === 'phase3') ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
+    return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
   reload() {
