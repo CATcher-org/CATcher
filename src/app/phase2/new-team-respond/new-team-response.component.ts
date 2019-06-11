@@ -29,7 +29,7 @@ export class NewTeamResponseComponent implements OnInit {
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
-              private labelService: LabelService,
+              public labelService: LabelService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {

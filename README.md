@@ -36,14 +36,12 @@ This application assumes 4 repositories will be created under the above organiza
 For each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue description and comments in a form of a link. As for images, the actual image will be displayed.
 
 ### 2.2.1. `public_data` Repository
-The name of this repository must be **exactly** `public_data`. This repository must contain 1 file called `data.json`. In this JSON file, it will contain the following information:
+The name of this repository must be **exactly** `public_data`. This repository must contain 1 file called `data.csv`. This `.csv` file, will contain the following information:
 1. Roles of users. (Student, Tutor, Admin)
-2. Team structure. For each team, the JSON must specify which student is in that team.
-3. Student's team allocation. For each student, the JSON must specify which team the student is in.
-4. Tutor's team allocation. For each tutor, the JSON must specify which team the tutor is assigned to.
-5. Admin's team allocation. For each admin, the JSON must specify which team the admin is responsible for. (The application will still give admin full access to the repository.)
+2. Student's team allocation. For each student, the `.csv` file must specify which team the student is in.
+3. Tutor's team allocation. For each tutor, the `.csv` must specify which teams the tutor is assigned to.
 
-An example of `data.json`: https://github.com/CATcher-org/public_data/blob/master/data.json
+An example of `data.csv`: https://github.com/CATcher-org/public_data/blob/master/data.csv
 
 ### 2.2.2. Bug Reporting Repository
 All the bug reports that are created from the application will be posted into this repository.

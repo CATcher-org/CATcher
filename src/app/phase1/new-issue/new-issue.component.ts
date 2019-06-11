@@ -20,7 +20,7 @@ export class NewIssueComponent implements OnInit {
   selectedTypeColor: string;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService, private labelService: LabelService,
+              private errorHandlingService: ErrorHandlingService, public labelService: LabelService,
               private router: Router) { }
 
   ngOnInit() {
