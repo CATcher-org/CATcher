@@ -437,7 +437,7 @@ export class IssueService {
 
   setIssueSearchFilter(filterValue: string) {
     if (filterValue) {
-      this.issueSearchFilter = filterValue;
+      this.issueSearchFilter = '+'.concat(filterValue);
     }
   }
 

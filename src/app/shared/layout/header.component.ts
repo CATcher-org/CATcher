@@ -73,14 +73,37 @@ export class HeaderComponent implements OnInit {
   }
 
   private getTeamFilterString() {
-    if (this.issueService.getIssueTeamFilter() === 'All Teams') {
-      // Only exclude duplicates for phase 1 and 2
-      return (this.phaseService.currentPhase === Phase.phase3) ? '' : this.EXCLUDE_DUPLICATE;
-    }
-    const teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g W12-4 -> Tutorial W12 Team 4
 
-    const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
-    // Only exclude duplicates for phase 1 and 2
+    // First Phase does not need team filtering
+    if (this.phaseService.currentPhase === Phase.phase1) {
+      return '';
+    }
+
+    // Initialise the team filter for Students in other Phases
+    if (this.userService.currentUser.team) {
+      this.issueService.setIssueTeamFilter(this.userService.currentUser.team.id); // e.g W12-3
+    }
+
+    let teamFilterString = '';
+    let teamFilter: string[];
+
+    // If there is team filter (e.g Currently viewing team W12-3)
+    if (this.issueService.getIssueTeamFilter() !== 'All Teams') {
+      teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g W12-3 -> W12 and 3
+
+      // E.g "+label:tutorial.W12+label:team.3"
+      teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
+      // Only include duplicate Issue in last Phase
+      return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
+    }
+    /* TODO
+    // For viewing All Teams assigned to tutor
+    this.userService.currentUser.allocatedTeams.forEach((team) => {
+      teamFilter = team.id.split('-'); // e.g W12-4 -> W12 and 4
+      teamFilterString = teamFilterString.concat(this.TUTORIAL_LABEL).concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
+    }); */
+
+    // Only include duplicate Issue in last Phase
     return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
