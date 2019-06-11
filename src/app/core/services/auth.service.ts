@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import {BehaviorSubject, of, throwError} from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
-import {UserService} from './user.service';
-import {PhaseService} from './phase.service';
-import {ErrorHandlingService} from './error-handling.service';
-import {GithubService} from './github.service';
-import { flatMap} from 'rxjs/operators';
-import {IssueService} from './issue.service';
-import {IssueCommentService} from './issue-comment.service';
-import {DataService} from './data.service';
+import { UserService } from './user.service';
+import { PhaseService } from './phase.service';
+import { ErrorHandlingService } from './error-handling.service';
+import { GithubService} from './github.service';
+import { flatMap } from 'rxjs/operators';
+import { IssueService } from './issue.service';
+import { IssueCommentService } from './issue-comment.service';
+import { DataService } from './data.service';
+import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
+import { GithubEventService } from './githubevent.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -30,7 +32,9 @@ export class AuthService {
               private issueService: IssueService,
               private phaseService: PhaseService,
               private issueCommentService: IssueCommentService,
+              private labelService: LabelService,
               private dataService: DataService,
+              private githubEventService: GithubEventService,
               private titleService: Title) {
   }
 
@@ -53,6 +57,13 @@ export class AuthService {
         } else {
           return this.userService.createUserModel(userLoginId);
         }
+      }),
+      flatMap((userResponse) => {
+        return this.labelService.getAllLabels(userResponse);
+      }),
+      flatMap((labelResponse) =>  {
+        // Initialise last modified time for this repo
+        return this.githubEventService.setLatestChangeEvent(labelResponse);
       })
     );
   }
@@ -63,6 +74,8 @@ export class AuthService {
     this.issueCommentService.reset();
     this.phaseService.reset();
     this.dataService.reset();
+    this.githubEventService.reset();
+    this.labelService.reset();
     this.titleService.setTitle('CATcher');
 
     this.changeAuthState(AuthState.NotAuthenticated);
@@ -76,4 +89,5 @@ export class AuthService {
   changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
   }
+
 }

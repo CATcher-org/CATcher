@@ -1,13 +1,14 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort} from '@angular/material';
-import {IssueService} from '../core/services/issue.service';
-import {IssuesDataTable} from '../shared/data-tables/IssuesDataTable';
-import {ErrorHandlingService} from '../core/services/error-handling.service';
-import {finalize} from 'rxjs/operators';
-import {BehaviorSubject} from 'rxjs';
-import {Issue} from '../core/models/issue.model';
-import {PermissionService} from '../core/services/permission.service';
-import {UserService} from '../core/services/user.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, MatSort } from '@angular/material';
+import { IssueService } from '../core/services/issue.service';
+import { IssuesDataTable } from '../shared/data-tables/IssuesDataTable';
+import { ErrorHandlingService } from '../core/services/error-handling.service';
+import { finalize } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { Issue } from '../core/models/issue.model';
+import { PermissionService } from '../core/services/permission.service';
+import { UserService } from '../core/services/user.service';
+import { LabelService } from '../core/services/label.service';
 
 @Component({
   selector: 'app-phase1',
@@ -24,7 +25,7 @@ export class Phase1Component implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService,
+              public permissions: PermissionService, private labelService: LabelService,
               public userService: UserService) {
   }
 
