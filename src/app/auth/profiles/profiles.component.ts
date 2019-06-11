@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {MatDialog, MatSnackBar} from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
 const { ipcRenderer } = require('electron');
 
@@ -25,20 +25,18 @@ export class ProfilesComponent implements OnInit {
 
   private readonly fs = require('fs');
 
-
-  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar)/g;
+  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar).*/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
 
   @Output() selectedProfile: EventEmitter<Profile> = new EventEmitter<Profile>();
   @Output() profileLocationPrompter: EventEmitter<{}> = new EventEmitter<{}>();
 
-  constructor(public errorDialog: MatDialog, private snack: MatSnackBar) { }
+  constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
     const path = require('path');
     const temp = ipcRenderer.sendSync('synchronous-message', 'getDirectory');
-    this.snack.open(temp);
     this.filePath = path.join(
         temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
         this.PROFILES_FILE_NAME);
