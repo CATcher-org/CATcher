@@ -24,7 +24,7 @@ export class LabelComponent implements OnInit, OnChanges {
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
-              private labelService: LabelService,
+              public labelService: LabelService,
               public permissions: PermissionService) {
   }
 
