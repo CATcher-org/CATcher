@@ -96,18 +96,12 @@ export class HeaderComponent implements OnInit {
       this.issueService.setIssueTeamFilter(this.userService.currentUser.team.id); // e.g W12-3
     }
 
-    let teamFilterString = '';
-    let teamFilter: string[];
+    const teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g W12-3 -> W12 and 3
 
-    // If there is team filter (e.g Currently viewing team W12-3)
-    if (this.issueService.getIssueTeamFilter() !== 'All Teams') {
-      teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g W12-3 -> W12 and 3
-
-      // E.g "+label:tutorial.W12+label:team.3"
-      teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
-      // Only include duplicate Issue in last Phase
-      return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
-    }
+    // E.g "+label:tutorial.W12+label:team.3"
+    const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
+    // Only include duplicate Issue in last Phase
+    return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
   reload() {
