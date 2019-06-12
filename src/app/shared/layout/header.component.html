@@ -8,7 +8,7 @@
   </span>
 
   <span style="flex: 1 1 auto"></span>
-  <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="View current page in web-browser" (click)="viewBrowser()">
+  <button *ngIf="auth.isAuthenticated() && needToShowOpenUrlButton()" mat-button matTooltip="View current page in web-browser" (click)="viewBrowser()">
     View in Browser
     <mat-icon>link</mat-icon>
   </button>

@@ -10,6 +10,7 @@ import { ErrorHandlingService } from '../../core/services/error-handling.service
 import { IssueService } from '../../core/services/issue.service';
 import { shell } from 'electron';
 import { GithubService } from '../../core/services/github.service';
+import { UserRole } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-layout-header',
@@ -42,6 +43,12 @@ export class HeaderComponent implements OnInit {
 
   needToShowReloadButton(): boolean {
     return this.router.url !== '/phase1/issues/new';
+  }
+
+  needToShowOpenUrlButton(): boolean {
+    return this.phaseService.currentPhase === Phase.phase1 ||
+    this.userService.currentUser.role === UserRole.Student ||
+    this.issueService.getIssueTeamFilter() !== 'All Teams';
   }
 
   goBack() {
