@@ -6,3 +6,8 @@
                 [value]="profile.profileName">{{ profile.profileName }}</mat-option>
   </mat-select>
 </mat-form-field>
+<input #fileInput type="file" style="display: none;" accept=".json" (change)="this.fileSelected(fileInput)"/>
+<button mat-icon-button (click)="this.fileSelectorInitiation(fileInput)" disableRipple="true" (mousedown)="this.animationActivated = true"
+        (mouseleave)="this.animationActivated = false">
+  <mat-icon [@triggerFileInput]="this.animationActivated ? 'pressed' : 'normal'">folder_open</mat-icon>
+</button>

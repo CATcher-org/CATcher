@@ -1,7 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {MatDialog, MatSnackBar} from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
 const { ipcRenderer } = require('electron');
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition
+} from '@angular/animations';
 
 /**
  * Indicates all the elements that make up a Profile.
@@ -16,54 +23,101 @@ export interface Profile {
 @Component({
   selector: 'app-profiles',
   templateUrl: './profiles.component.html',
-  styleUrls: ['./profiles.component.css']
+  styleUrls: ['./profiles.component.css'],
+  animations: [
+    // animation triggers go here
+    trigger('triggerFileInput', [
+      state('normal', style({})),
+      state('pressed', style({
+        color: 'orange'
+      })),
+      transition('normal => pressed', [
+        animate('0.25s ease')
+      ]),
+      transition('pressed => normal', [
+        animate('0.25s ease')
+      ])
+    ])
+  ]
 })
 export class ProfilesComponent implements OnInit {
 
+  private readonly ANIMATION_DURATION: number = 250;
+
   profiles: Profile[] = undefined; // List of profiles taken from profiles.json
   blankProfile: Profile = {profileName: '', password: '', username: '', encodedText: ''}; // A blank profile to reset values
+  animationActivated = false;
 
   private readonly fs = require('fs');
 
-
-  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /\/*[^\/]+\.(exe|app|AppImage)\/*.*/g;
+  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar).*/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
 
   @Output() selectedProfile: EventEmitter<Profile> = new EventEmitter<Profile>();
-  @Output() profileLocationPrompter: EventEmitter<{}> = new EventEmitter<{}>();
+  @Output() profileDataPrompter: EventEmitter<{}> = new EventEmitter<{}>();
 
-  constructor(public errorDialog: MatDialog, private snack: MatSnackBar) { }
+  profilesData = {
+    'visible': false,
+    'fileName': null,
+    'fileDirectory': null
+  };
+
+  constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
     const path = require('path');
     const temp = ipcRenderer.sendSync('synchronous-message', 'getDirectory');
-    this.snack.open(temp);
     this.filePath = path.join(
         temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
         this.PROFILES_FILE_NAME);
+    this.readProfiles();
+  }
 
-    if (true || !this.userProfileFileExists(this.filePath)) {
-      this.profileLocationPrompter.emit({
-        'fileName': this.PROFILES_FILE_NAME,
-        'fileDirectory': this.filePath.split(this.PROFILES_FILE_NAME)[0]
-      });
-      return;
-    }
+  /**
+   * Activates the button selection animation and opens the file selector.
+   * @param fileInput - OS default file selector.
+   */
+  fileSelectorInitiation(fileInput: HTMLInputElement): void {
+    this.animationActivated = true;
+    setTimeout(() => {
+      this.animationActivated = false;
+      fileInput.click();
+    }, this.ANIMATION_DURATION);
+  }
+
+  /**
+   * Reads the user selected file
+   * @param fileInput - OS default file selector.
+   */
+  fileSelected(fileInput: HTMLInputElement): void {
+    this.filePath = (fileInput.files[0].path);
+    this.readProfiles();
+  }
+
+  /**
+   * Processes the selected profiles JSON file.
+   */
+  readProfiles(): void {
+    // Informing Parent Component (Auth) of file selection
+    this.profilesData.fileName = this.PROFILES_FILE_NAME;
+    this.profilesData.fileDirectory = this.filePath.split(this.PROFILES_FILE_NAME)[0];
+    this.profilesData.visible = !this.userProfileFileExists(this.filePath);
+    this.profileDataPrompter.emit(this.profilesData);
 
     try {
       this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
     } catch (e) {
       console.log(e);
+      this.profiles = undefined;
     }
 
     setTimeout(() => {
-      if (!this.isValid(this.profiles)) {
+      if (!(this.profiles === undefined) && !this.isValid(this.profiles)) {
         this.openErrorDialog();
-        this.profiles = undefined;
+        this.selectProfile(this.blankProfile);
       }
     });
-
   }
 
   /**

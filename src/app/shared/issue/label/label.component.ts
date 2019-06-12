@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
 import { IssueService } from '../../../core/services/issue.service';
@@ -12,7 +12,7 @@ import { LabelService } from '../../../core/services/label.service';
   templateUrl: './label.component.html',
   styleUrls: ['./label.component.css'],
 })
-export class LabelComponent implements OnInit {
+export class LabelComponent implements OnInit, OnChanges {
   labelValues: Label[];
   labelColor: string;
 
@@ -24,13 +24,17 @@ export class LabelComponent implements OnInit {
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
-              private labelService: LabelService,
+              public labelService: LabelService,
               public permissions: PermissionService) {
   }
 
   ngOnInit() {
     // Get the list of labels based on their type (severity, type, response)
     this.labelValues = this.labelService.getLabelList(this.attributeName);
+  }
+
+  ngOnChanges() {
+    // Color will change when @Input issue changes
     this.labelColor = this.labelService.getColorOfLabel(this.issue[this.attributeName]);
   }
 
