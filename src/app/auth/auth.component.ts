@@ -46,12 +46,18 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.authStateSubscription.unsubscribe();
   }
 
-  onProfileMissing(profilesDetails: {}): void {
-    this.profileLocationPrompt = 'No custom '
+  /**
+   * Informs user of missing profiles file.
+   * @param profilesDetails - profiles file information.
+   */
+  onProfilesMissing(profilesDetails: {}): void {
+    this.profileLocationPrompt = profilesDetails['visible']
+      ? 'No custom '
         .concat(profilesDetails['fileName'])
         .concat(' file found in ')
         .concat(profilesDetails['fileDirectory'])
-        .concat(' .');
+        .concat(' .')
+      : '';
   }
 
   /**
