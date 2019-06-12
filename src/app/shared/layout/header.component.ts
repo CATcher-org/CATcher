@@ -18,7 +18,7 @@ import { GithubService } from '../../core/services/github.service';
 export class HeaderComponent implements OnInit {
   private prevUrl;
   isReloadBtnDisabled = false;
-  FILTER_START = '?q=is:issue+is:open+'; // the filtered list must be an issue and must be open
+  ISSUE_FILTER = '/issues?q=is:issue+is:open'; // the filtered list must be an issue and must be open
   TUTORIAL_LABEL = '+label:tutorial.';
   TEAM_LABEL = '+label:team.';
   EXCLUDE_DUPLICATE = '+-label:duplicate'; // exclude duplicate issues
@@ -60,7 +60,7 @@ export class HeaderComponent implements OnInit {
     // If can't find the index of second '/', then router is at the /issues (table list) page
     if (issueUrlIndex < 0) {
       // Apply filters to the issueUrl
-      issueUrl = '/issues'.concat(this.getSearchFilterString()).concat(this.getTeamFilterString());
+      issueUrl = this.ISSUE_FILTER.concat(this.getSearchFilterString()).concat(this.getTeamFilterString());
     } else {
       // issueUrl will be from the second '/'
       issueUrl = routerUrl.substring(issueUrlIndex);
@@ -69,7 +69,12 @@ export class HeaderComponent implements OnInit {
   }
 
   private getSearchFilterString() {
-    return this.FILTER_START.concat(this.issueService.getIssueSearchFilter());
+    const searchFilter = this.issueService.getIssueSearchFilter();
+    // Use search filter if filter length is more than 1
+    if (searchFilter.length > 1) {
+      return '+'.concat(searchFilter);
+    }
+    return '';
   }
 
   private getTeamFilterString() {
@@ -96,15 +101,6 @@ export class HeaderComponent implements OnInit {
       // Only include duplicate Issue in last Phase
       return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
     }
-    /* TODO
-    // For viewing All Teams assigned to tutor
-    this.userService.currentUser.allocatedTeams.forEach((team) => {
-      teamFilter = team.id.split('-'); // e.g W12-4 -> W12 and 4
-      teamFilterString = teamFilterString.concat(this.TUTORIAL_LABEL).concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
-    }); */
-
-    // Only include duplicate Issue in last Phase
-    return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
   reload() {
