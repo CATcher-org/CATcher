@@ -109,11 +109,12 @@ export class ProfilesComponent implements OnInit {
       this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
     } catch (e) {
       console.log(e);
-      this.profiles = undefined;
+      return;
     }
 
     setTimeout(() => {
-      if (!(this.profiles === undefined) && !this.isValid(this.profiles)) {
+      if (!this.isValid(this.profiles)) {
+        this.profiles = undefined;
         this.openErrorDialog();
         this.selectProfile(this.blankProfile);
       }
