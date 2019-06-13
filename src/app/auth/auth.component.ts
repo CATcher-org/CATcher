@@ -35,7 +35,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      encodedText: ['phase1=https://github.com/CATcher-org/pe@phase2=https://github.com/CATcher-org/pe-results' +
+      encodedText: ['CATcher-org@phase1=https://github.com/testathorStudent/pe@phase2=https://github.com/CATcher-org/pe-results' +
       '@phase3=https://github.com/CATcher-org/pe-evaluation', Validators.required],
     });
   }
