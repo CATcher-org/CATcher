@@ -27,7 +27,6 @@ import { ErrorHandlingService } from './error-handling.service';
 export class IssueService {
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
-  private issueSearchFilter = '';
   private issueTeamFilter = 'All Teams';
 
   constructor(private githubService: GithubService,
@@ -433,16 +432,6 @@ export class IssueService {
       }
     }
     return result;
-  }
-
-  setIssueSearchFilter(filterValue: string) {
-    if (filterValue) {
-      this.issueSearchFilter = filterValue;
-    }
-  }
-
-  getIssueSearchFilter(): string {
-    return this.issueSearchFilter;
   }
 
   setIssueTeamFilter(filterValue: string) {

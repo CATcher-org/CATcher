@@ -67,22 +67,13 @@ export class HeaderComponent implements OnInit {
     // If can't find the index of second '/', then router is at the /issues (table list) page
     if (issueUrlIndex < 0) {
       // Apply filters to the issueUrl
-      issueUrl = this.ISSUE_FILTER.concat(this.getSearchFilterString()).concat(this.getTeamFilterString());
+      issueUrl = this.ISSUE_FILTER.concat(this.getTeamFilterString());
     } else {
       // issueUrl will be from the second '/'
       issueUrl = routerUrl.substring(issueUrlIndex);
     }
     // Open the url in user's preferred browser
     shell.openExternal('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
-  }
-
-  private getSearchFilterString() {
-    const searchFilter = this.issueService.getIssueSearchFilter();
-    // Use search filter if filter length is more than 1
-    if (searchFilter.length > 1) {
-      return '+'.concat(searchFilter);
-    }
-    return '';
   }
 
   private getTeamFilterString() {
