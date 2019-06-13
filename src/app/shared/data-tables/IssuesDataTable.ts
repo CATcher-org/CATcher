@@ -31,7 +31,6 @@ export class IssuesDataTable extends DataSource<Issue> {
     this.issuesSubject.complete();
     this.loadingSubject.complete();
     this.issueSubscription.unsubscribe();
-    this.issueService.setIssueTeamFilter('All Teams');
   }
 
   loadIssues() {
