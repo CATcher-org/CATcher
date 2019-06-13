@@ -77,6 +77,7 @@ export class AuthService {
     this.githubEventService.reset();
     this.labelService.reset();
     this.titleService.setTitle('CATcher');
+    this.issueService.setIssueTeamFilter('All Teams');
 
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));

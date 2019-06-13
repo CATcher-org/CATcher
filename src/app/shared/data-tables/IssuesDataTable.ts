@@ -86,6 +86,7 @@ export class IssuesDataTable extends DataSource<Issue> {
 
   set teamFilter(teamFilter: string) {
     this.teamFilterChange.next(teamFilter);
+    this.issueService.setIssueTeamFilter(this.teamFilterChange.value);
   }
 
   private getFilteredTeamData(data: Issue[]): Issue[] {
