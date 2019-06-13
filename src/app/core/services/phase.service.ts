@@ -27,10 +27,11 @@ export class PhaseService {
               private errorHandlingService: ErrorHandlingService) {}
 
   parseEncodedPhase(encodedText: String): string[] {
-    const phase = encodedText.split('@', 3);
-    const phaseOneUrl = phase[0].split('=', 2)[1];
-    const phaseTwoUrl = phase[1].split('=', 2)[1];
-    const phaseThreeUrl = phase[2].split('=', 2)[1];
+    const phase = encodedText.split('@', 4);
+    const moduleOrg = phase[0];
+    const phaseOneUrl = phase[1].split('=', 2)[1];
+    const phaseTwoUrl = phase[2].split('=', 2)[1];
+    const phaseThreeUrl = phase[3].split('=', 2)[1];
 
     let separator = phaseOneUrl.lastIndexOf('/');
     const repoName = phaseOneUrl.substring(separator + 1);
@@ -48,13 +49,10 @@ export class PhaseService {
     separatorOrg = phaseThreeUrl.indexOf('.com');
     const orgNameThird = phaseThreeUrl.substring(separatorOrg + 5, separator);
 
-    return new Array(repoName, orgName, repoNameSecond, orgNameSecond, repoNameThird, orgNameThird);
+    return new Array(repoName, orgName, repoNameSecond, orgNameSecond, repoNameThird, orgNameThird, moduleOrg);
   }
 
   checkIfReposAccessible(array: any): any {
-    if (array[1] !== array[3] || array[1] !== array[5]) {
-      return throwError('All 3 repos must have same organization name.');
-    }
 
     const value = forkJoin(
       this.github.getRepo(array[1], array[0]).pipe(map(res => res), catchError(e => of('Oops'))),
@@ -62,7 +60,7 @@ export class PhaseService {
       this.github.getRepo(array[5], array[4]).pipe(map(res => res), catchError(e => of('Oops'))),
     ).pipe(
       map(([first, second, third]) => {
-        return {first, second, third};
+        return {first, second, third, array};
       })
     );
     return value;
@@ -72,6 +70,7 @@ export class PhaseService {
     let org = '';
     let repo = '';
     let copyUrl = '';
+    const moduleOrg = response['array'][6];
 
     if (response['first']['id'] != null) {
       this.currentPhase = Phase.phase1;
@@ -89,7 +88,7 @@ export class PhaseService {
       copyUrl = this.currentPhase;
       org = response[this.phaseNum]['full_name'].split('/', 2)[0];
       repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
-      this.github.updatePhaseDetails(repo, org);
+      this.github.updatePhaseDetails(repo, org, moduleOrg);
       this.setPhaseDetail(repo, org);
       return (copyUrl);
     }
