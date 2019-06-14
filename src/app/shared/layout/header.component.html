@@ -8,6 +8,10 @@
   </span>
 
   <span style="flex: 1 1 auto"></span>
+  <button *ngIf="auth.isAuthenticated() && needToShowOpenUrlButton()" mat-button matTooltip="View current page in web-browser" (click)="viewBrowser()">
+    View in Browser
+    <mat-icon>link</mat-icon>
+  </button>
   <button *ngIf="auth.isAuthenticated() && needToShowReloadButton()" [disabled]="this.isReloadBtnDisabled"
     mat-button matTooltip="Synchronize with Github data" (click)="reload()">
     Sync
