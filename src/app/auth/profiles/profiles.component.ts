@@ -54,8 +54,9 @@ export class ProfilesComponent implements OnInit {
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
 
-  @Output() selectedProfile: EventEmitter<Profile> = new EventEmitter<Profile>();
-  @Output() profileDataPrompter: EventEmitter<{}> = new EventEmitter<{}>();
+  selectedProfile: Profile = undefined;
+  @Output() selectedProfileEmitter: EventEmitter<Profile> = new EventEmitter<Profile>();
+  @Output() profileDataEmitter: EventEmitter<{}> = new EventEmitter<{}>();
 
   profilesData = {
     'visible': false,
@@ -92,6 +93,7 @@ export class ProfilesComponent implements OnInit {
    */
   fileSelected(fileInput: HTMLInputElement): void {
     this.filePath = (fileInput.files[0].path);
+    fileInput.value = '';
     this.readProfiles();
   }
 
@@ -103,22 +105,23 @@ export class ProfilesComponent implements OnInit {
     this.profilesData.fileName = this.PROFILES_FILE_NAME;
     this.profilesData.fileDirectory = this.filePath.split(this.PROFILES_FILE_NAME)[0];
     this.profilesData.visible = !this.userProfileFileExists(this.filePath);
-    this.profileDataPrompter.emit(this.profilesData);
+    this.profileDataEmitter.emit(this.profilesData);
 
     try {
       this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
+      this.assertProfilesValidity(this.profiles);
     } catch (e) {
       console.log(e);
-      return;
+      setTimeout(() => {
+          this.profiles = undefined;
+          this.openErrorDialog();
+          this.selectProfile(this.blankProfile);
+      });
     }
 
-    setTimeout(() => {
-      if (!this.isValid(this.profiles)) {
-        this.profiles = undefined;
-        this.openErrorDialog();
-        this.selectProfile(this.blankProfile);
-      }
-    });
+    // Set default profile if exists.
+    this.selectedProfile = this.profiles === undefined ? this.blankProfile : this.profiles[0];
+    this.selectProfile(this.selectedProfile);
   }
 
   /**
@@ -129,15 +132,14 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Checks that every profile is correctly defined in the array of profiles.
+   * Verifies that every profile is correctly defined in the array of profiles.
    * @param profiles - Array of profiles sourced from profiles.json
    */
-  isValid(profiles: Profile[]): boolean {
-    if (profiles === undefined) {
-      return false;
+  assertProfilesValidity(profiles: Profile[]): void {
+    if (profiles === undefined
+        || profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined)).length !== 0) {
+      throw new Error();
     }
-    return profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined))
-        .length === 0;
   }
 
   /**
@@ -153,6 +155,6 @@ export class ProfilesComponent implements OnInit {
    * @param profile - Profile selected by user.
    */
   selectProfile(profile: Profile): void {
-    this.selectedProfile.emit(profile);
+    this.selectedProfileEmitter.emit(profile);
   }
 }

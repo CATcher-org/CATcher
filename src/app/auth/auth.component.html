@@ -2,7 +2,7 @@
   <mat-card-header>
     <mat-card-title>Login</mat-card-title>
   </mat-card-header>
-  <app-profiles (selectedProfile)="onProfileSelect($event)" (profileDataPrompter)="onProfilesMissing($event)"></app-profiles>
+  <app-profiles (selectedProfileEmitter)="onProfileSelect($event)" (profileDataEmitter)="onProfilesMissing($event)"></app-profiles>
   <mat-card-content>
     <form [formGroup]="loginForm" #myForm="ngForm" (ngSubmit)="login(myForm)">
       <table class="table-form" cellspacing="0">
