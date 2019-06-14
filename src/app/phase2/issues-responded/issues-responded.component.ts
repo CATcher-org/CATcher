@@ -27,8 +27,6 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
     public userService: UserService, private labelService: LabelService, private githubService: GithubService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
-    } else if (userService.currentUser.role === UserRole.Tutor) {
-      this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues'];
     } else {
       this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues',
         'actions'];

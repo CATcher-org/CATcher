@@ -28,14 +28,10 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService, public userService: UserService, private labelService: LabelService,
               private githubService: GithubService) {
-    if (permissions.canCRUDTeamResponse()) {
-      if (userService.currentUser.role !== UserRole.Student) {
-        this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'duplicatedIssues', 'actions'];
-      } else {
-        this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues', 'actions'];
-      }
+    if (userService.currentUser.role !== UserRole.Student) {
+      this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'duplicatedIssues', 'actions'];
     } else {
-      this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues'];
+      this.displayedColumns = ['id', 'title', 'type', 'severity', 'duplicatedIssues', 'actions'];
     }
   }
 

@@ -12,7 +12,7 @@
 }
 
 .mat-column-actions {
-  width: 15%;
+  width: 10%;
   text-align: center;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .mat-column-title {
-  width: 35%
+  width: 30%
 }
 
 .mat-column-teamAssigned {
@@ -29,7 +29,7 @@
 }
 
 .mat-column-type {
-  width: 15%
+  width: 10%
 }
 
 .mat-column-severity {
