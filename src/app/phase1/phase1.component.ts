@@ -9,6 +9,7 @@ import { Issue } from '../core/models/issue.model';
 import { PermissionService } from '../core/services/permission.service';
 import { UserService } from '../core/services/user.service';
 import { LabelService } from '../core/services/label.service';
+import { GithubService } from '../core/services/github.service';
 
 @Component({
   selector: 'app-phase1',
@@ -26,7 +27,7 @@ export class Phase1Component implements OnInit {
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService, private labelService: LabelService,
-              public userService: UserService) {
+              public userService: UserService, private githubService: GithubService) {
   }
 
   ngOnInit() {

@@ -7,6 +7,7 @@ import { Issue, STATUS } from '../../core/models/issue.model';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
 import { LabelService } from '../../core/services/label.service';
+import { GithubService } from '../../core/services/github.service';
 
 @Component({
   selector: 'app-issues-responded',
@@ -23,7 +24,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-    public userService: UserService, private labelService: LabelService) {
+    public userService: UserService, private labelService: LabelService, private githubService: GithubService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {

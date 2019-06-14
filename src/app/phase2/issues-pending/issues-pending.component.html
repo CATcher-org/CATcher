@@ -67,13 +67,19 @@
     <ng-container matColumnDef="actions" *ngIf="permissions.canCRUDTeamResponse()">
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let issue" (click)="$event.stopPropagation()">
+        <button mat-button matTooltip="View this issue in web-browser" 
+          (click)="this.githubService.viewIssueInBrowser(issue.id)" style="transform: scale(0.8)">
+          <mat-icon>open_in_browser</mat-icon>
+        </button> <br />
         <button *ngIf="permissions.canCRUDTeamResponse() && !issueService.hasResponse(issue.id)"
-          [routerLink]="'/phase2/issues/' + issue.id" mat-button color="accent">
-          Respond
+          [routerLink]="'/phase2/issues/' + issue.id" mat-button color="accent" 
+          style="transform: scale(0.8)" matTooltip="Respond to this Issue">
+          <mat-icon>feedback</mat-icon>
         </button>
         <button *ngIf="permissions.canCRUDTeamResponse() && issueService.hasResponse(issue.id)"
-                mat-button color="primary" (click)="markAsResponded(issue)">
-          Mark as responded
+            mat-button color="primary" (click)="markAsResponded(issue)" 
+            style="transform: scale(0.8)" matTooltip="Mark this Issue as Responded">
+            <mat-icon>redo</mat-icon>
         </button>
       </td>
     </ng-container>

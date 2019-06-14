@@ -8,6 +8,7 @@ import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { LabelService } from '../../core/services/label.service';
+import { GithubService } from '../../core/services/github.service';
 
 @Component({
   selector: 'app-issues-faulty',
@@ -24,7 +25,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService, public userService: UserService,
-    public permissions: PermissionService, private labelService: LabelService) {
+    public permissions: PermissionService, private labelService: LabelService, private githubService: GithubService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'type', 'severity', 'responseTag', 'assignees', 'duplicatedIssues', 'actions'];
     } else if (userService.currentUser.role === UserRole.Tutor) {

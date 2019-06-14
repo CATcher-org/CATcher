@@ -8,6 +8,7 @@ import { PermissionService } from '../../core/services/permission.service';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
 import { LabelService } from '../../core/services/label.service';
+import { GithubService } from '../../core/services/github.service';
 
 @Component({
   selector: 'app-issues-pending',
@@ -25,7 +26,8 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService, public userService: UserService, private labelService: LabelService) {
+              public permissions: PermissionService, public userService: UserService, private labelService: LabelService,
+              private githubService: GithubService) {
     if (permissions.canCRUDTeamResponse()) {
       if (userService.currentUser.role !== UserRole.Student) {
         this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'duplicatedIssues', 'actions'];

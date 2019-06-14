@@ -9,6 +9,7 @@ import { UserService } from '../core/services/user.service';
 import { Phase } from '../core/services/phase.service';
 import { DataService } from '../core/services/data.service';
 import { LabelService } from '../core/services/label.service';
+import { GithubService } from '../core/services/github.service';
 
 @Component({
   selector: 'app-phase3',
@@ -18,7 +19,7 @@ import { LabelService } from '../core/services/label.service';
 export class Phase3Component implements OnInit {
   issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
-  displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining'];
+  displayedColumns = ['id', 'title', 'type', 'severity', 'actions', 'Todo Remaining'];
   public teamFilter = 'All Teams';
 
   @ViewChild(MatSort) sort: MatSort;
@@ -26,7 +27,7 @@ export class Phase3Component implements OnInit {
 
   constructor(private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
-              public userService: UserService, private labelService: LabelService,
+              public userService: UserService, private labelService: LabelService, private githubService: GithubService,
               private dataService: DataService) { }
 
   ngOnInit() {

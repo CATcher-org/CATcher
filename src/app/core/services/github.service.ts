@@ -3,6 +3,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { forkJoin, from, Observable } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
+import { shell } from 'electron';
 const Octokit = require('@octokit/rest');
 
 
@@ -201,5 +202,11 @@ export class GithubService {
 
   getRepoURL(): string {
     return ORG_NAME.concat('/').concat(REPO);
+  }
+
+  viewIssueInBrowser(id: number) {
+    if (id) {
+      shell.openExternal('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
+    }
   }
 }
