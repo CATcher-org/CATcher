@@ -101,10 +101,10 @@ export class GithubService {
   /**
    * Creates a label in the current repository.
    * @param labelName - name of new label.
-   * @param labelColour - colour of new label.
+   * @param labelColor - colour of new label.
    */
-  createLabel(labelName: string, labelColour: string): void {
-    octokit.issues.createLabel({owner: ORG_NAME, repo: REPO, name: labelName, color: labelColour});
+  createLabel(labelName: string, labelColor: string): void {
+    octokit.issues.createLabel({owner: ORG_NAME, repo: REPO, name: labelName, color: labelColor});
   }
 
   closeIssue(id: number): Observable<{}> {
