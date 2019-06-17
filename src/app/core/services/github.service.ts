@@ -29,6 +29,10 @@ export class GithubService {
     });
   }
 
+  storeOrganizationDetails(orgName: string) {
+    MOD_ORG = orgName;
+  }
+
   updatePhaseDetails(repoName: string, orgName: string, modOrg: string) {
     ORG_NAME = orgName;
     REPO = repoName;
@@ -169,9 +173,19 @@ export class GithubService {
         .pipe(map(rawData => atob(rawData['data']['content'])))
     ).pipe(
       map(([data]) => {
+        console.log(data);
         return {data};
       })
     );
+  }
+
+  /**
+   * Fetches phase.json that is responsible for determining the current phase
+   * of the application.
+   */
+  fetchPhaseFile(): Observable<{}> {
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'phase.json'}))
+        .pipe(map(rawData => JSON.parse(atob(rawData['data']['content']))));
   }
 
   private getNumberOfIssuePages(filter?: {}): Observable<number> {

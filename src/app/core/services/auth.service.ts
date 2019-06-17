@@ -5,7 +5,7 @@ import { BehaviorSubject, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
-import { PhaseService } from './phase.service';
+import {EncodedData, PhaseService} from './phase.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { GithubService} from './github.service';
 import { flatMap } from 'rxjs/operators';
@@ -42,11 +42,15 @@ export class AuthService {
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
     let userLoginId;
+    let encodedData: EncodedData;
 
     return this.http.get('https://api.github.com/user', { headers: header }).pipe(
       flatMap((githubResponse) => {
         userLoginId = githubResponse['login'];
+        encodedData = this.phaseService.parseEncodedPhases(encodedText);
         this.githubService.storeCredentials(username, password);
+        this.githubService.storeOrganizationDetails(encodedData.organizationName);
+
         const array = this.phaseService.parseEncodedPhase(encodedText);
         return (this.phaseService.checkIfReposAccessible(array));
       }),
