@@ -38,6 +38,7 @@ npm-debug.log
 testem.log
 /typings
 package-lock.json
+profiles.json
 
 # e2e
 /e2e/*.js
