@@ -3,7 +3,7 @@ import { GithubService } from './github.service';
 import { map } from 'rxjs/operators';
 import { Label } from '../models/label.model';
 import { Observable } from 'rxjs';
-import { SEVERITY_ORDER } from '../../core/models/issue.model';
+import { ISSUE_LABELS, SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -31,6 +31,7 @@ export class LabelService {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
           this.populateLabelLists(response);
+          this.createMissingLabels();
           return userResponse;
         })
       );
@@ -67,6 +68,57 @@ export class LabelService {
     }
 
     return color;
+  }
+
+  /**
+   * Verifies that each label of its corresponding type exists in the current
+   * repository and creates the label if it does not exist.
+   */
+  private createMissingLabels(): void {
+    for (const labelType of Object.keys(ISSUE_LABELS)) {
+      const compulsoryLabels: string[] = ISSUE_LABELS[labelType];
+
+      compulsoryLabels.forEach(labelName => {
+        if (this.labelExists(labelType, labelName)) {
+          return;
+        }
+
+        const colour: string = this.getRandomLabelColour();
+
+        // Update Local Data.
+        this.getLabelList(labelType).push({labelValue: labelName, labelColor: colour});
+        this.labelColorMap.set(labelName, colour);
+
+        // Update Remote Data.
+        this.githubService.createLabel(this.getFormattedLabelName(labelType, labelName), colour);
+      });
+    }
+  }
+
+  /**
+   * Returns the default label name format.
+   * @param labelType - Type that the given label belongs to.
+   * @param labelName - Name of label that is to be formatted.
+   */
+  private getFormattedLabelName(labelType: string, labelName: string): string {
+    return labelType + '.' + labelName;
+  }
+
+  /**
+   * Returns true if specified labelName exists within its allocated type,
+   * false if otherwise.
+   * @param labelType - type of label (e.g. severity, .. )
+   * @param labelName - name of label that is to be checked.
+   */
+  private labelExists(labelType: string, labelName: string): boolean {
+    return this.getLabelList(labelType).filter(label => label.labelValue === labelName).length !== 0;
+  }
+
+  /**
+   * Returns a random colour.
+   */
+  private getRandomLabelColour(): string {
+    return (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
   }
 
   /**
