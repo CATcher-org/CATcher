@@ -16,7 +16,7 @@
 }
 
 .mat-column-title {
-  width: 25%;
+  width: 20%;
 }
 
 .mat-column-type {
@@ -39,7 +39,7 @@
   width: 10%
 }
 .mat-column-actions {
-  width: 7%;
+  width: 15%;
   text-align: center;
 }
 

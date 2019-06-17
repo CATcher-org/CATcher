@@ -106,8 +106,8 @@
       <td mat-cell *matCellDef="let issue" (click)="$event.stopPropagation()">
         <button mat-button matTooltip="View this issue in web-browser" 
             (click)="this.githubService.viewIssueInBrowser(issue.id)" style="transform: scale(0.8)">
-            <mat-icon>open_in_browser</mat-icon>
-        </button> <br />
+            <mat-icon>link</mat-icon>
+        </button>
         <button *ngIf="permissions.canCRUDTeamResponse()"
             [routerLink]="'/phase2/issues/' + issue.id" mat-button color="accent"
             style="transform: scale(0.8)" matTooltip="Fix this Issue" >

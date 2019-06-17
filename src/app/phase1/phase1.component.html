@@ -65,7 +65,7 @@
         <button mat-button matTooltip="View this issue in web-browser" 
             (click)="this.githubService.viewIssueInBrowser(issue.id)" *ngIf="!issuesPendingDeletion[issue.id]"
             style="transform: scale(0.8)">
-          <mat-icon>open_in_browser</mat-icon>
+          <mat-icon>link</mat-icon>
         </button>
         <button mat-button color="warn" *ngIf="permissions.canDeleteIssue() && !issuesPendingDeletion[issue.id]"
             (click)="deleteIssue(issue.id)" matTooltip="Delete this issue" style="transform: scale(0.8)"> 

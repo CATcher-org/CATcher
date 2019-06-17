@@ -20,11 +20,11 @@
 }
 
 .mat-column-type {
-  width: 10%
+  width: 11%
 }
 
 .mat-column-severity {
-  width: 7%;
+  width: 6%;
 }
 .mat-column-responseTag {
   width: 10%
@@ -33,13 +33,13 @@
   width: 10%
 }
 .mat-column-teamAssigned {
-  width: 5%
+  width: 6%
 }
 .mat-column-duplicatedIssues {
-  width: 7%
+  width: 10%
 }
 .mat-column-actions {
-  width: 5%;
+  width: 13%;
   text-align: center;
 }
 

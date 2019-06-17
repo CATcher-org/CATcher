@@ -19,7 +19,7 @@ import { GithubService } from '../core/services/github.service';
 export class Phase3Component implements OnInit {
   issues: BehaviorSubject<Issue[]>;
   issuesDataSource: IssuesDataTable;
-  displayedColumns = ['id', 'title', 'type', 'severity', 'actions', 'Todo Remaining'];
+  displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining', 'actions'];
   public teamFilter = 'All Teams';
 
   @ViewChild(MatSort) sort: MatSort;
