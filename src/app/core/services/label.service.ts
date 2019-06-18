@@ -110,16 +110,26 @@ export class LabelService {
   }
 
   /**
-   * Converts the (color) hex value into RGB format
-   * @param hex: the hex value
+   * Choose black or white text color depending on background color
+   * @param bgColor: the color code of the background
    */
-  hexToRgb(hex: string) {
-    const rgbResult = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return rgbResult ? {
-      r: parseInt(rgbResult[1], 16),
-      g: parseInt(rgbResult[2], 16),
-      b: parseInt(rgbResult[3], 16)
-    } : null;
+  pickTextColorBasedOnBgColorAdvanced(bgColor: string) {
+    const lightColor = 'FFFFFF';
+    const darkColor = '000000';
+    const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
+    const r = parseInt(color.substring(0, 2), 16);
+    const g = parseInt(color.substring(2, 4), 16);
+    const b = parseInt(color.substring(4, 6), 16);
+    const uicolors = [r / 255, g / 255, b / 255];
+    const c = uicolors.map((col) => {
+      if (col <= 0.03928) {
+        return col / 12.92;
+      }
+      return Math.pow((col + 0.055) / 1.055, 2.4);
+    });
+    // Threshold for the color
+    const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
+    return (L > 0.199) ? darkColor : lightColor;
   }
 
   /**
@@ -129,26 +139,14 @@ export class LabelService {
    * @throws exception if input is an invalid color code
    */
   setLabelStyle(color: string) {
-    let r: string;
-    let g: string;
-    let b: string;
-    const white = '255';
-
-    try {
-      r = this.hexToRgb('#'.concat(color)).r.toString();
-      g = this.hexToRgb('#'.concat(color)).g.toString();
-      b = this.hexToRgb('#'.concat(color)).b.toString();
-    } catch (e) {
-      // Set rgb to white color if hexToRgb returns null
-      r = white;
-      g = white;
-      b = white;
-    }
+    const textColor = this.pickTextColorBasedOnBgColorAdvanced(color);
 
     const styles = {
-      'background-color' : `rgb(${r}, ${g}, ${b}, 0.55)`,
+      'background-color' : `#${color}`,
       'border-radius' : '3px',
       'padding' : '3px',
+      'color' : `#${textColor}`,
+      'font-weight' : '410',
     };
 
     return styles;
