@@ -4,6 +4,7 @@ import { forkJoin, from, Observable } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
+import { ErrorHandlingService } from './error-handling.service';
 const Octokit = require('@octokit/rest');
 
 
@@ -18,7 +19,7 @@ let octokit;
 })
 export class GithubService {
 
-  constructor() {
+  constructor(private errorHandlingService: ErrorHandlingService) {
   }
 
   storeCredentials(user: String, passw: String) {
@@ -207,6 +208,8 @@ export class GithubService {
   viewIssueInBrowser(id: number) {
     if (id) {
       shell.openExternal('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
+    } else {
+      this.errorHandlingService.handleGeneralError('Unable to open this issue in Browser');
     }
   }
 }
