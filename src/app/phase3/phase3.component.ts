@@ -30,6 +30,7 @@ export class Phase3Component implements OnInit {
               private dataService: DataService) { }
 
   ngOnInit() {
+    this.issueService.setIssueTeamFilter(this.teamFilter);
     this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.displayedColumns);
     this.issuesDataSource.loadIssues();
