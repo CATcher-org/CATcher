@@ -107,6 +107,15 @@ export class GithubService {
     octokit.issues.createLabel({owner: ORG_NAME, repo: REPO, name: labelName, color: labelColor});
   }
 
+  /**
+   * Updates a label's information in the current repository.
+   * @param labelName - name of existing label
+   * @param labelColor - new color to be assigned to existing label.
+   */
+  updateLabel(labelName: string, labelColor: string): void {
+    octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, current_name: labelName, color: labelColor});
+  }
+
   closeIssue(id: number): Observable<{}> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, state: 'closed'})).pipe(
       map(response => {

@@ -15,6 +15,7 @@ export class LabelService {
   private responseLabels: Label[];
   private labelColorMap: Map<string, string>;
 
+  private readonly DEFAULT_LABEL_COLOR = 'ededed';
 
   constructor(private githubService: GithubService) {
     this.severityLabels = new Array();
@@ -32,6 +33,7 @@ export class LabelService {
         map((response) => {
           this.populateLabelLists(response);
           this.createMissingLabels();
+          this.validateLabelColors();
           return userResponse;
         })
       );
@@ -72,7 +74,7 @@ export class LabelService {
 
   /**
    * Verifies that each label of its corresponding type exists in the current
-   * repository and creates the label if it does not exist.
+   * repository and creates one if it does not exist.
    */
   private createMissingLabels(): void {
     for (const labelType of Object.keys(ISSUE_LABELS)) {
@@ -83,14 +85,38 @@ export class LabelService {
           return;
         }
 
-        const colour: string = this.getRandomLabelColour();
+        const color: string = this.getRandomLabelColour();
 
         // Update Local Data.
-        this.getLabelList(labelType).push({labelValue: labelName, labelColor: colour});
-        this.labelColorMap.set(labelName, colour);
+        this.getLabelList(labelType).push({labelValue: labelName, labelColor: color});
+        this.labelColorMap.set(labelName, color);
 
         // Update Remote Data.
-        this.githubService.createLabel(this.getFormattedLabelName(labelType, labelName), colour);
+        this.githubService.createLabel(this.getFormattedLabelName(labelType, labelName), color);
+      });
+    }
+  }
+
+  /**
+   * Verifies that every label has the correct color and updates a label's color
+   * if otherwise.
+   */
+  private validateLabelColors(): void {
+    for (const labelType of Object.keys(ISSUE_LABELS)) {
+
+      this.getLabelList(labelType).forEach(label => {
+        if (this.labelHasCorrectColor(labelType, label.labelValue)) {
+          return;
+        }
+
+        const color: string = this.getRandomLabelColour();
+
+        // Update Local Data
+        label.labelColor = color;
+        this.labelColorMap.set(label.labelValue, label.labelColor);
+
+        // Update Remote Data.
+        this.githubService.updateLabel(this.getFormattedLabelName(labelType, label.labelValue), color);
       });
     }
   }
@@ -112,6 +138,16 @@ export class LabelService {
    */
   private labelExists(labelType: string, labelName: string): boolean {
     return this.getLabelList(labelType).filter(label => label.labelValue === labelName).length !== 0;
+  }
+
+  /**
+   * Returns true if the specified label has a non-default color.
+   * @param labelType - type of label (e.g. severity, .. )
+   * @param labelName - name of label that is to be checked.
+   */
+  private labelHasCorrectColor(labelType: string, labelName: string): boolean {
+    return this.getLabelList(labelType).filter(label => label.labelValue === labelName)
+        .every(label => label.labelColor !== this.DEFAULT_LABEL_COLOR);
   }
 
   /**
