@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
 import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
-const BGCOLOR_THRESHOLD = 0.199; // The threshold to decide if text color will be black or white
+const BGCOLOR_THRESHOLD = 0.199; // The threshold to decide if color is dark or light
+const LIGHT_COLOR = 'FFFFFF'; // Light color for text with dark background
+const DARK_COLOR = '000000'; // Dark color for text with light background
 
 @Injectable({
   providedIn: 'root'
@@ -112,14 +114,13 @@ export class LabelService {
   }
 
   /**
-   * Chooses light or dark text color depending on background color
-   * @param bgColor: the color code of the background
-   * @return a string with light or dark color code
+   * Determines if the color code provided is "dark" by calculating its luminance and
+   * comparing it with a constant threshold value
+   * @param inputColor: the color code input
+   * @return true if the luminance is less than the threshold (darker), false otherwise
    */
-  pickTextColorBasedOnBgColor(bgColor: string) {
-    const lightColor = 'FFFFFF'; // Light text color (white)
-    const darkColor = '000000'; // Dark text color (black)
-    const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
+  isDarkColor(inputColor: string) {
+    const color = (inputColor.charAt(0) === '#') ? inputColor.substring(1, 7) : inputColor;
     const r = parseInt(color.substring(0, 2), 16);
     const g = parseInt(color.substring(2, 4), 16);
     const b = parseInt(color.substring(4, 6), 16);
@@ -130,10 +131,10 @@ export class LabelService {
       }
       return Math.pow((col + 0.055) / 1.055, 2.4);
     });
-    // Calculate the luminance of the background color
+    // Calculate the luminance of the color
     const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-    // Higher threshold will result in more labels with light color text
-    return (L > BGCOLOR_THRESHOLD) ? darkColor : lightColor;
+    // A higher threshold value will result in more colors determined to be "dark"
+    return (L < BGCOLOR_THRESHOLD);
   }
 
   /**
@@ -143,7 +144,13 @@ export class LabelService {
    * @throws exception if input is an invalid color code
    */
   setLabelStyle(color: string) {
-    const textColor = this.pickTextColorBasedOnBgColor(color);
+    let textColor: string;
+
+    if (this.isDarkColor(color)) {
+      textColor = LIGHT_COLOR;
+    } else {
+      textColor = DARK_COLOR;
+    }
 
     const styles = {
       'background-color' : `#${color}`,
