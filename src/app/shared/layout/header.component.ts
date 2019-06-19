@@ -48,7 +48,7 @@ export class HeaderComponent implements OnInit {
   needToShowOpenUrlButton(): boolean {
     return this.phaseService.currentPhase === Phase.phase1 ||
     this.userService.currentUser.role === UserRole.Student ||
-    this.issueService.getIssueTeamFilter() !== 'All Teams';
+    (this.issueService.getIssueTeamFilter() !== 'All Teams' || this.router.url.includes('/issues'));
   }
 
   goBack() {
