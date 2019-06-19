@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
-const BGCOLOR_THRESHOLD = 0.199; // The threshold to decide if color is dark or light
+const COLOR_DARKNESS_THRESHOLD = 0.199; // The threshold to decide if color is dark or light
 const LIGHT_COLOR = 'FFFFFF'; // Light color for text with dark background
 const DARK_COLOR = '000000'; // Dark color for text with light background
 
@@ -113,13 +113,12 @@ export class LabelService {
     this.labelColorMap.clear();
   }
 
-  /**
-   * Determines if the color code provided is "dark" by calculating its luminance and
-   * comparing it with a constant threshold value
-   * @param inputColor: the color code input
-   * @return true if the luminance is less than the threshold (darker), false otherwise
+   /**
+   * Returns true if the given color is considered "dark"
+   * The color is considered "dark" if its luminance is less than BGCOLOR_THRESHOLD
+   * @param inputColor: the color
    */
-  isDarkColor(inputColor: string) {
+  isDarkColor(inputColor: string): boolean {
     const color = (inputColor.charAt(0) === '#') ? inputColor.substring(1, 7) : inputColor;
     const r = parseInt(color.substring(0, 2), 16);
     const g = parseInt(color.substring(2, 4), 16);
@@ -134,7 +133,7 @@ export class LabelService {
     // Calculate the luminance of the color
     const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
     // A higher threshold value will result in more colors determined to be "dark"
-    return (L < BGCOLOR_THRESHOLD);
+    return (L < COLOR_DARKNESS_THRESHOLD);
   }
 
   /**
@@ -146,11 +145,7 @@ export class LabelService {
   setLabelStyle(color: string) {
     let textColor: string;
 
-    if (this.isDarkColor(color)) {
-      textColor = LIGHT_COLOR;
-    } else {
-      textColor = DARK_COLOR;
-    }
+    textColor = (this.isDarkColor(color)) ? LIGHT_COLOR : DARK_COLOR;
 
     const styles = {
       'background-color' : `#${color}`,
