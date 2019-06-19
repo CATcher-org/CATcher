@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
+const BGCOLOR_THRESHOLD = 0.199; // The threshold to decide if text color will be black or white
+
 @Injectable({
   providedIn: 'root'
 })
@@ -113,23 +115,24 @@ export class LabelService {
    * Choose black or white text color depending on background color
    * @param bgColor: the color code of the background
    */
-  pickTextColorBasedOnBgColorAdvanced(bgColor: string) {
-    const lightColor = 'FFFFFF';
-    const darkColor = '000000';
+  pickTextColorBasedOnBgColor(bgColor: string) {
+    const lightColor = 'FFFFFF'; // Light text color (white)
+    const darkColor = '000000'; // Dark text color (black)
     const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
     const r = parseInt(color.substring(0, 2), 16);
     const g = parseInt(color.substring(2, 4), 16);
     const b = parseInt(color.substring(4, 6), 16);
-    const uicolors = [r / 255, g / 255, b / 255];
-    const c = uicolors.map((col) => {
+    const uiColors = [r / 255, g / 255, b / 255];
+    const c = uiColors.map((col) => {
       if (col <= 0.03928) {
         return col / 12.92;
       }
       return Math.pow((col + 0.055) / 1.055, 2.4);
     });
-    // Threshold for the color
+    // Calculate the luminance of the background color
     const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-    return (L > 0.199) ? darkColor : lightColor;
+    // Higher threshold will result in more labels with light color text
+    return (L > BGCOLOR_THRESHOLD) ? darkColor : lightColor;
   }
 
   /**
@@ -139,7 +142,7 @@ export class LabelService {
    * @throws exception if input is an invalid color code
    */
   setLabelStyle(color: string) {
-    const textColor = this.pickTextColorBasedOnBgColorAdvanced(color);
+    const textColor = this.pickTextColorBasedOnBgColor(color);
 
     const styles = {
       'background-color' : `#${color}`,
