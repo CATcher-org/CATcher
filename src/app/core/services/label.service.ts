@@ -6,7 +6,12 @@ import { Observable } from 'rxjs';
 import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
-const COLOR_DARKNESS_THRESHOLD = 0.199; // The threshold to decide if color is dark or light
+/* The threshold to decide if color is dark or light.
+A higher threshold value will result in more colors determined to be "dark".
+W3C recommendation is 0.179, but 0.184 is chosen so that some colors (like bright red)
+have white text instead of black. Github labels are also red/white instead of red/black */
+const COLOR_DARKNESS_THRESHOLD = 0.184;
+
 const LIGHT_COLOR = 'FFFFFF'; // Light color for text with dark background
 const DARK_COLOR = '000000'; // Dark color for text with light background
 
@@ -123,8 +128,8 @@ export class LabelService {
     const r = parseInt(color.substring(0, 2), 16);
     const g = parseInt(color.substring(2, 4), 16);
     const b = parseInt(color.substring(4, 6), 16);
-    const uiColors = [r / 255, g / 255, b / 255];
-    const c = uiColors.map((col) => {
+    const rgb = [r / 255, g / 255, b / 255];
+    const c = rgb.map((col) => {
       if (col <= 0.03928) {
         return col / 12.92;
       }
@@ -132,7 +137,7 @@ export class LabelService {
     });
     // Calculate the luminance of the color
     const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-    // A higher threshold value will result in more colors determined to be "dark"
+    // The color is "dark" if the luminance is lower than the threshold
     return (L < COLOR_DARKNESS_THRESHOLD);
   }
 
