@@ -116,7 +116,7 @@ export class PhaseService {
   }
 
   fetchPhaseAccessibilityData(): Observable<{}> {
-    return this.github.fetchPhaseFile();
+    return this.github.fetchSettingsFile();
   }
 
   determineCurrentPhaseNumber(accessibilityData: Observable<{}>) {
