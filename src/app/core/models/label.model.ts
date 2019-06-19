@@ -44,7 +44,7 @@ export const LABEL_VALUES = {
 export const DEFAULT_LABEL_COLOR = 'ededed';
 
 enum STATUS_COLORS {
-  Incomplete = 'b3ecff',
+  Incomplete = '1ac6ff',
   Done = 'b3ecff'
 }
 
@@ -56,7 +56,7 @@ enum SEVERITY_COLORS {
 
 enum TYPE_COLORS {
   DocumentationBug = 'ccb3ff',
-  FunctionalityBug = 'ccb3ff'
+  FunctionalityBug = '661aff'
 }
 
 enum RESPONSE_COLORS {

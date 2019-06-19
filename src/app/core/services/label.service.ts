@@ -5,6 +5,7 @@ import { Label, LABEL_CATEGORY, LABEL_COLORS, LABEL_VALUES } from '../models/lab
 import { Observable } from 'rxjs';
 import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
+import remote = Electron.remote;
 
 @Injectable({
   providedIn: 'root'
@@ -87,22 +88,50 @@ export class LabelService {
   private storeLabelData(labels: Array<{}>): void {
 
     // Parse Input Data to Label[]
-    let labelData: Label[] = this.parseLabelData(labels);
+    const labelData: Label[] = this.parseLabelData(labels);
+    const expectedLabels: Label[] = this.getExpectedLabels();
 
-    // Valdiate parsed Label[]
-    labelData = this.validateLabelData(labelData);
+    expectedLabels.forEach(label => {
+      // Checks if remote data set already contains correct label.
+      if (labelData.filter(remoteLabel => remoteLabel.labelCategory === label.labelCategory
+        && remoteLabel.labelColor === label.labelColor && remoteLabel.labelValue === label.labelValue).length !== 0) {
+        this.saveLabelData(label);
+        return;
+      }
 
-    // Populate Color Map
-    this.populateColorMap(labelData);
+      // Finds for a label that has a valid name & type but invalid color.
+      const existingLabel: Label = labelData.find(remoteLabel =>
+          (remoteLabel.labelValue === label.labelValue) && (remoteLabel.labelCategory === label.labelCategory));
+      if (existingLabel === undefined) {
+        // Create new Label (Could not find a label with the same name & category)
+        this.githubService.createLabel(this.getFormattedLabelName(label.labelCategory, label.labelValue), label.labelColor);
+      } else {
+        // Update Label Color (Found a label with same name and category BUT it contains different color.)
+        this.githubService.updateLabel(this.getFormattedLabelName(label.labelCategory, label.labelValue), label.labelColor);
+      }
 
-    // Populate Category Label Arrays
-    this.populateLabelArrays(labelData);
+      this.saveLabelData(label);
+    });
 
-    // Sort Category Label Arrays
     const sortingGroups: {labelArray: Label[], sortingFunction: (a: Label, b: Label) => number}[] = [];
-    sortingGroups
-      .push({labelArray: this.severityLabels, sortingFunction: ((a, b) => SEVERITY_ORDER[a.labelValue] - SEVERITY_ORDER[b.labelValue])});
+    sortingGroups.push({labelArray: this.labelArrays.severity,
+        sortingFunction: ((a, b) => SEVERITY_ORDER[a.labelValue] - SEVERITY_ORDER[b.labelValue])});
     this.sortLabelArrays(sortingGroups);
+  }
+
+  /**
+   * Returns an array of labels that represents the preset label data.
+   */
+  private getExpectedLabels(): Label[] {
+    const expectedLabels: Label[] = [];
+    for (const category of Object.keys(LABEL_CATEGORY)) {
+      for (const name of Object.keys(LABEL_VALUES[category])) {
+        expectedLabels.push({labelValue: name, labelCategory: LABEL_CATEGORY[category],
+            labelColor: this.getCorrectLabelColor(name, LABEL_CATEGORY[category])});
+      }
+    }
+
+    return expectedLabels;
   }
 
   /**
@@ -114,14 +143,12 @@ export class LabelService {
   }
 
   /**
-   * Store labels of each particular category in their respective arrays.
-   * @param labels - Array of all labels.
+   * Saves label data to the relevant app data structures.
+   * @param label - Label that is to be saved.
    */
-  private populateLabelArrays(labels: Label[]): void {
-    for (const category of Object.values(LABEL_CATEGORY)) {
-      const categoryArray: Label[] = this.labelArrays[category];
-      categoryArray.push(...labels.filter(label => label.labelCategory === LABEL_CATEGORY[category]));
-    }
+  private saveLabelData(label: Label) {
+    this.labelArrays[label.labelCategory].push(label);
+    this.labelColorMap.set(label.labelValue, label.labelColor);
   }
 
   /**
@@ -145,114 +172,12 @@ export class LabelService {
   }
 
   /**
-   * Performs several label validation checks.
-   * @param labels - Set of labels that needs validation.
-   */
-  validateLabelData(labels: Label[]): Label[] {
-    // Remove Invalid Labels from Dataset.
-    labels = this.removeInvalidLabels(labels);
-    // Colors Verification.
-    this.verifyLabelColors(labels);
-    // Fill Missing Labels if any
-    this.fillMissingLabels(labels);
-    return labels;
-  }
-
-  /**
-   * Compares the provided array of labels with the required array
-   * and creates any labels that may be missing from the provided set.
-   * @param labels - Provided array of labels.
-   */
-  private fillMissingLabels(labels: Label[]): void {
-    for (const category of Object.keys(LABEL_VALUES)) {
-      const categoryValues: string[] = (Object.values(LABEL_VALUES[category]));
-      const categoryLabels: Label[] = labels.filter(label => label.labelCategory === LABEL_CATEGORY[category]);
-
-      for (const name of categoryValues) {
-        if (categoryLabels.filter(label => label.labelValue === name).length !== 0) {
-          continue;
-        }
-        const newLabel: Label = {labelValue: name, labelCategory: LABEL_CATEGORY[category],
-            labelColor: this.getCorrectLabelColor(name, LABEL_CATEGORY[category])};
-        labels.push(newLabel);
-        this.githubService.createLabel(this.getFormattedLabelName(newLabel.labelCategory, newLabel.labelValue), newLabel.labelColor);
-      }
-
-    }
-  }
-
-  /**
-   * Checks that each label is correctly colored.
-   * @param labels - Set of labels that need color verification.
-   */
-  private verifyLabelColors(labels: Label[]): void {
-    labels.forEach(label => {
-      if (this.isCorrectLabelColor(label)) {
-        return;
-      }
-      label.labelColor = this.getCorrectLabelColor(label.labelValue, label.labelCategory);
-
-      this.githubService.updateLabel(this.getFormattedLabelName(label.labelCategory, label.labelValue), label.labelColor);
-    });
-  }
-
-  /**
-   * Remove labels that are not recognized by the application.
-   * @param labels - Data set of Labels.
-   */
-  private removeInvalidLabels(labels: Label[]): Label[] {
-    return labels.filter(label => this.isValidLabel(label));
-  }
-
-  /**
    * Returns the correct label color for the specific label.
    * @param labelName - Name of label.
    * @param labelCategory - Category that the label belongs to.
    */
   private getCorrectLabelColor(labelName: string, labelCategory: LABEL_CATEGORY): string {
     return LABEL_COLORS[labelCategory][labelName];
-  }
-
-  /**
-   * Returns true if Label is correctly colored.
-   * @param label - Label that needs it's color to be checked.
-   */
-  private isCorrectLabelColor(label: Label): boolean {
-    return LABEL_COLORS[label.labelCategory][label.labelValue] === label.labelColor;
-  }
-
-  /**
-   * Returns true if a Label satisfies a set of validity checks.
-   * @param label - Label that needs to be validated.
-   */
-  private isValidLabel(label: Label): boolean {
-    return this.isValidCategory(label) && this.isValidName(label);
-  }
-
-  /**
-   * Returns true if Label has a valid category.
-   * @param label - Label that needs its category verified.
-   */
-  private isValidCategory(label: Label): boolean {
-    return LABEL_CATEGORY[label.labelCategory] !== undefined;
-  }
-
-  /**
-   * Returns true if Label has a valid name.
-   * @param label - Label that needs its name verified.
-   */
-  private isValidName(label: Label): boolean {
-    return LABEL_VALUES[label.labelCategory][label.labelValue] !== undefined;
-  }
-
-  /**
-   * Populates the labelName to labelColor map.
-   * @param labels - Labels data set.
-   */
-  private populateColorMap(labels: Label[]): void {
-    labels.forEach(label => {
-      this.labelColorMap.set(label.labelValue, label.labelColor);
-    });
   }
 
   reset(): void {
