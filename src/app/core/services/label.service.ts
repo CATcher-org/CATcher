@@ -112,8 +112,9 @@ export class LabelService {
   }
 
   /**
-   * Choose black or white text color depending on background color
+   * Chooses light or dark text color depending on background color
    * @param bgColor: the color code of the background
+   * @return a string with light or dark color code
    */
   pickTextColorBasedOnBgColor(bgColor: string) {
     const lightColor = 'FFFFFF'; // Light text color (white)
