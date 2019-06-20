@@ -22,6 +22,29 @@ export class LabelService {
   };
   private labelColorMap: Map<string, string> = new Map();
 
+  // Preset Labels.
+  private readonly REQUIRED_LABELS = {
+    severity: {
+      Low: new Label('severity', 'Low', 'ffb3b3'),
+      Medium: new Label('severity', 'Medium', 'ff6666'),
+      High: new Label('severity', 'High', 'b30000')
+    },
+    type: {
+      DocumentationBug: new Label('type', 'DocumentationBug', 'ccb3ff'),
+      FunctionalityBug: new Label('type', 'FunctionalityBug', '661aff')
+    },
+    response: {
+      Accepted: new Label('response', 'Accepted', '80ffcc'),
+      Rejected: new Label('response', 'Rejected', 'ff80b3'),
+      IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80'),
+      CannotReproduce: new Label('response', 'CannotReproduce', 'bfbfbf')
+    },
+    status: {
+      Done: new Label('status', 'Done', 'b3ecff'),
+      Incomplete: new Label('status', 'Incomplete', '1ac6ff')
+    }
+  };
+
   constructor(private githubService: GithubService) {
   }
 
@@ -32,7 +55,7 @@ export class LabelService {
   getAllLabels(userResponse: User): Observable<User> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.storeLabelData(response);
+          this.storeLabelData(response, this.getRequiredLabels());
           return userResponse;
         })
       );
@@ -72,14 +95,29 @@ export class LabelService {
   }
 
   /**
+   * Returns an array of Preset Labels.
+   */
+  private getRequiredLabels(): Label[] {
+    const requiredLabels: Label[] = [];
+
+    for (const category of Object.keys(this.REQUIRED_LABELS)) {
+      for (const labels of Object.values(this.REQUIRED_LABELS[category])) {
+        requiredLabels.push(labels as Label);
+      }
+    }
+
+    return requiredLabels;
+  }
+
+  /**
    * Stores the json data from Github api into the list of arrays in this service
    * @param labels: the json data of the label
+   * @param expectedLabels: An array of labels that are required by the application.
    */
-  private storeLabelData(labels: Array<{}>): void {
+  private storeLabelData(labels: Array<{}>, expectedLabels: Label[]): void {
 
     // Parse Input Data to Label[]
     const labelData: Label[] = this.parseLabelData(labels);
-    const expectedLabels: Label[] = Label.getRequiredLabels();
 
     expectedLabels.forEach(label => {
       // Checks if remote data set already contains correct label.
@@ -88,13 +126,15 @@ export class LabelService {
         return;
       }
       // Finds for a label that has a valid name & type but invalid color.
-      const existingLabel: Label = labelData.find(remoteLabel => remoteLabel.getFormattedName() === label.getFormattedName());
-      if (existingLabel === undefined) {
+      const existingLabels: Label[] = labelData.filter(remoteLabel => remoteLabel.getFormattedName() === label.getFormattedName());
+      if (existingLabels.length === 0) {
         // Create new Label (Could not find a label with the same name & category)
         this.githubService.createLabel(label.getFormattedName(), label.labelColor);
-      } else {
+      } else if (existingLabels.length === 1) {
         // Update Label Color (Found a label with same name and category BUT it contains different color.)
         this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
+      } else {
+        throw new Error('Label Assertion Error');
       }
 
       this.saveLabelData(label);
