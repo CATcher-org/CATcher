@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
 import { map } from 'rxjs/operators';
-import { Label, LABEL_CATEGORY, LABEL_COLORS, LABEL_VALUES } from '../models/label.model';
+import { Label } from '../models/label.model';
 import { Observable } from 'rxjs';
 import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
-import remote = Electron.remote;
 
 @Injectable({
   providedIn: 'root'
@@ -73,15 +72,6 @@ export class LabelService {
   }
 
   /**
-   * Returns the default label name format.
-   * @param labelCategory - Type that the given label belongs to.
-   * @param labelName - Name of label that is to be formatted.
-   */
-  private getFormattedLabelName(labelCategory: string, labelName: string): string {
-    return labelCategory + '.' + labelName;
-  }
-
-  /**
    * Stores the json data from Github api into the list of arrays in this service
    * @param labels: the json data of the label
    */
@@ -89,25 +79,22 @@ export class LabelService {
 
     // Parse Input Data to Label[]
     const labelData: Label[] = this.parseLabelData(labels);
-    const expectedLabels: Label[] = this.getExpectedLabels();
+    const expectedLabels: Label[] = Label.getRequiredLabels();
 
     expectedLabels.forEach(label => {
       // Checks if remote data set already contains correct label.
-      if (labelData.filter(remoteLabel => remoteLabel.labelCategory === label.labelCategory
-        && remoteLabel.labelColor === label.labelColor && remoteLabel.labelValue === label.labelValue).length !== 0) {
+      if (labelData.filter(remoteLabel => remoteLabel.equals(label)).length !== 0) {
         this.saveLabelData(label);
         return;
       }
-
       // Finds for a label that has a valid name & type but invalid color.
-      const existingLabel: Label = labelData.find(remoteLabel =>
-          (remoteLabel.labelValue === label.labelValue) && (remoteLabel.labelCategory === label.labelCategory));
+      const existingLabel: Label = labelData.find(remoteLabel => remoteLabel.getFormattedName() === label.getFormattedName());
       if (existingLabel === undefined) {
         // Create new Label (Could not find a label with the same name & category)
-        this.githubService.createLabel(this.getFormattedLabelName(label.labelCategory, label.labelValue), label.labelColor);
+        this.githubService.createLabel(label.getFormattedName(), label.labelColor);
       } else {
         // Update Label Color (Found a label with same name and category BUT it contains different color.)
-        this.githubService.updateLabel(this.getFormattedLabelName(label.labelCategory, label.labelValue), label.labelColor);
+        this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
       }
 
       this.saveLabelData(label);
@@ -117,21 +104,6 @@ export class LabelService {
     sortingGroups.push({labelArray: this.labelArrays.severity,
         sortingFunction: ((a, b) => SEVERITY_ORDER[a.labelValue] - SEVERITY_ORDER[b.labelValue])});
     this.sortLabelArrays(sortingGroups);
-  }
-
-  /**
-   * Returns an array of labels that represents the preset label data.
-   */
-  private getExpectedLabels(): Label[] {
-    const expectedLabels: Label[] = [];
-    for (const category of Object.keys(LABEL_CATEGORY)) {
-      for (const name of Object.keys(LABEL_VALUES[category])) {
-        expectedLabels.push({labelValue: name, labelCategory: LABEL_CATEGORY[category],
-            labelColor: this.getCorrectLabelColor(name, LABEL_CATEGORY[category])});
-      }
-    }
-
-    return expectedLabels;
   }
 
   /**
@@ -161,23 +133,14 @@ export class LabelService {
     const labelData: Label[] = [];
     for (const label of labels) {
       // Get the name and color of each label and store them into the service's array list
-      const labelName = String(label['name']).split('.');
-      const labelCategory = labelName[0];
-      const labelValue = labelName[1];
-      const labelColor = String(label['color']);
+      const labelName: string[] = String(label['name']).split('.');
+      const labelCategory: string = labelName[0];
+      const labelValue: string = labelName[1];
+      const labelColor: string = String(label['color']);
 
-      labelData.push({labelValue: labelValue, labelColor: labelColor, labelCategory: LABEL_CATEGORY[labelCategory]});
+      labelData.push(new Label(labelCategory, labelValue, labelColor));
     }
     return labelData;
-  }
-
-  /**
-   * Returns the correct label color for the specific label.
-   * @param labelName - Name of label.
-   * @param labelCategory - Category that the label belongs to.
-   */
-  private getCorrectLabelColor(labelName: string, labelCategory: LABEL_CATEGORY): string {
-    return LABEL_COLORS[labelCategory][labelName];
   }
 
   reset(): void {
