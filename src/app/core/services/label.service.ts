@@ -9,11 +9,11 @@ import { User } from '../models/user.model';
 /* The threshold to decide if color is dark or light.
 A higher threshold value will result in more colors determined to be "dark".
 W3C recommendation is 0.179, but 0.184 is chosen so that some colors (like bright red)
-have white text instead of black. Github labels are also red/white instead of red/black */
+are considered dark (Github too consider them dark) */
 const COLOR_DARKNESS_THRESHOLD = 0.184;
 
-const LIGHT_COLOR = 'FFFFFF'; // Light color for text with dark background
-const DARK_COLOR = '000000'; // Dark color for text with light background
+const COLOR_DARK_TEXT  = '000000'; // Dark color for text with light background
+const COLOR_LIGHT_TEXT  = 'FFFFFF'; // Light color for text with dark background
 
 @Injectable({
   providedIn: 'root'
@@ -124,21 +124,21 @@ export class LabelService {
    * @param inputColor: the color
    */
   isDarkColor(inputColor: string): boolean {
-    const color = (inputColor.charAt(0) === '#') ? inputColor.substring(1, 7) : inputColor;
-    const r = parseInt(color.substring(0, 2), 16);
-    const g = parseInt(color.substring(2, 4), 16);
-    const b = parseInt(color.substring(4, 6), 16);
-    const rgb = [r / 255, g / 255, b / 255];
-    const c = rgb.map((col) => {
+    const COLOR = (inputColor.charAt(0) === '#') ? inputColor.substring(1, 7) : inputColor;
+    const R = parseInt(COLOR.substring(0, 2), 16);
+    const G = parseInt(COLOR.substring(2, 4), 16);
+    const B = parseInt(COLOR.substring(4, 6), 16);
+    const RGB = [R / 255, G / 255, B / 255];
+    const LINEAR_RGB = RGB.map((col) => {
       if (col <= 0.03928) {
         return col / 12.92;
       }
       return Math.pow((col + 0.055) / 1.055, 2.4);
     });
     // Calculate the luminance of the color
-    const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
+    const LUMINANCE = (0.2126 * LINEAR_RGB[0]) + (0.7152 * LINEAR_RGB[1]) + (0.0722 * LINEAR_RGB[2]);
     // The color is "dark" if the luminance is lower than the threshold
-    return (L < COLOR_DARKNESS_THRESHOLD);
+    return (LUMINANCE < COLOR_DARKNESS_THRESHOLD);
   }
 
   /**
@@ -150,7 +150,7 @@ export class LabelService {
   setLabelStyle(color: string) {
     let textColor: string;
 
-    textColor = (this.isDarkColor(color)) ? LIGHT_COLOR : DARK_COLOR;
+    textColor = (this.isDarkColor(color)) ? COLOR_LIGHT_TEXT : COLOR_DARK_TEXT;
 
     const styles = {
       'background-color' : `#${color}`,
