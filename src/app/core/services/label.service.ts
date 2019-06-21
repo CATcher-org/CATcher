@@ -138,7 +138,7 @@ export class LabelService {
     // Calculate the luminance of the color
     const LUMINANCE = (0.2126 * LINEAR_RGB[0]) + (0.7152 * LINEAR_RGB[1]) + (0.0722 * LINEAR_RGB[2]);
     // The color is "dark" if the luminance is lower than the threshold
-    return (LUMINANCE < COLOR_DARKNESS_THRESHOLD);
+    return LUMINANCE < COLOR_DARKNESS_THRESHOLD;
   }
 
   /**
@@ -150,7 +150,7 @@ export class LabelService {
   setLabelStyle(color: string) {
     let textColor: string;
 
-    textColor = (this.isDarkColor(color)) ? COLOR_LIGHT_TEXT : COLOR_DARK_TEXT;
+    textColor = this.isDarkColor(color) ? COLOR_LIGHT_TEXT : COLOR_DARK_TEXT;
 
     const styles = {
       'background-color' : `#${color}`,
