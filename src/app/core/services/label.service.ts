@@ -47,13 +47,12 @@ export class LabelService {
   }
 
   /**
-   * Calls the Github service api to get all labels from the repository and
-   * store it in a list of arrays in this label service
+   * Synchronizes the labels in github with those required by the application.
    */
   synchronizeRemoteLabels(userResponse: User): Observable<User> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.ensureRepoHasExpectedLabels(this.parseLabelData(response), this.getRequiredLabels());
+          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), this.getRequiredLabelsAsArray());
           return userResponse;
         })
       );
@@ -77,65 +76,48 @@ export class LabelService {
   }
 
   /**
-   * Returns the color of the label by iterating through the list of
-   * available labels.
-   * @param labelValue: the label's value (e.g Low / Medium / High)
-   * @return a string with the color code of the label or a white color if
-   * no labelValue was provided or the color
+   * Returns the color of the label by searching a list of
+   * all available labels.
+   * @param labelValue: the label's value (e.g Low / Medium / High / ...)
    */
   getColorOfLabel(labelValue: string): string {
+    // TODO: Rewrite function - labelValue insufficient to differentiate between labels. Should use `labelCategory.labelValue` format.
     const WHITE_COLOR = 'ffffff';
     if (labelValue === '') {
       return WHITE_COLOR;
     }
 
-    for (const category of Object.keys(this.labelArrays)) {
+    const existingLabel = this.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
 
-      const labels = this.labelArrays[category] as Label[];
-      const existingLabel = labels.find(label => label.labelValue === labelValue);
-
-      if (existingLabel === undefined) {
-        // If requested label cannot be found in current list, move to the next one.
-        continue;
-      } else if (existingLabel.labelColor === undefined) {
-        return WHITE_COLOR;
-      } else {
-        return existingLabel.labelColor;
-      }
+    if (existingLabel === undefined || existingLabel.labelColor === undefined) {
+      return WHITE_COLOR;
+    } else {
+      return existingLabel.labelColor;
     }
-
-    // Finally returns white if the requested label cannot be found in any of the
-    // available list of labels.
-    return WHITE_COLOR;
   }
 
-  /**
-   * Returns an array of Labels required by the application.
-   */
-  private getRequiredLabels(): Label[] {
-    const requiredLabels: Label[] = [];
+  private getRequiredLabelsAsArray(): Label[] {
+    let requiredLabels: Label[] = [];
 
-    for (const category of Object.keys(this.REQUIRED_LABELS)) {
-      for (const labels of Object.values(this.REQUIRED_LABELS[category])) {
-        requiredLabels.push(labels as Label);
-      }
+    for (const category of Object.keys(this.labelArrays)) {
+      requiredLabels = requiredLabels.concat(this.labelArrays[category]);
     }
 
     return requiredLabels;
   }
 
   /**
-   * Ensures that the repo has the expected labels.
-   * Compares the actual labels in the repo with expected labels. If an expected label is missing,
-   * it is added to the repo. If the expected label exists but the label color is not as expected,
-   * the color is updated. Does not delete actual labels that do not match expected labels.
-   * i.e., the repo might have more labels than the expected labels after this operation.
+   * Ensures that the repo has the required labels.
+   * Compares the actual labels in the repo with the required labels. If an required label is missing,
+   * it is added to the repo. If the required label exists but the label color is not as expected,
+   * the color is updated. Does not delete actual labels that do not match required labels.
+   * i.e., the repo might have more labels than the required labels after this operation.
    * @param actualLabels: labels in the repo.
-   * @param expectedLabels: expected labels.
+   * @param requiredLabels: required labels.
    */
-  private ensureRepoHasExpectedLabels(actualLabels: Label[], expectedLabels: Label[]): void {
+  private ensureRepoHasRequiredLabels(actualLabels: Label[], requiredLabels: Label[]): void {
 
-    expectedLabels.forEach(label => {
+    requiredLabels.forEach(label => {
 
       // Finds for a label that has the same name as a required label.
       const nameMatchedLabels: Label[] = actualLabels.filter(remoteLabel =>
@@ -159,15 +141,13 @@ export class LabelService {
   }
 
   /**
-   * Parses label information into Label objects.
-   * @param labels - API Label Information.
-   * @return labelData - Array of parsed labels.
+   * Parses label information and returns an array of Label objects.
+   * @param labels - Label Information from API.
    */
   parseLabelData(labels: Array<{}>): Label[] {
-    // Parse Input Data to Label[]
     const labelData: Label[] = [];
     for (const label of labels) {
-      // Get the name and color of each label and store them into the service's array list
+
       const labelName: string[] = String(label['name']).split('.');
       const labelCategory: string = labelName[0];
       const labelValue: string = labelName[1];
