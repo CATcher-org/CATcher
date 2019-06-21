@@ -6,6 +6,15 @@ import { Observable } from 'rxjs';
 import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
+/* The threshold to decide if color is dark or light.
+A higher threshold value will result in more colors determined to be "dark".
+W3C recommendation is 0.179, but 0.184 is chosen so that some colors (like bright red)
+are considered dark (Github too consider them dark) */
+const COLOR_DARKNESS_THRESHOLD = 0.184;
+
+const COLOR_DARK_TEXT  = '000000'; // Dark color for text with light background
+const COLOR_LIGHT_TEXT  = 'FFFFFF'; // Light color for text with dark background
+
 @Injectable({
   providedIn: 'root'
 })
@@ -109,17 +118,27 @@ export class LabelService {
     this.labelColorMap.clear();
   }
 
-  /**
-   * Converts the (color) hex value into RGB format
-   * @param hex: the hex value
+   /**
+   * Returns true if the given color is considered "dark"
+   * The color is considered "dark" if its luminance is less than COLOR_DARKNESS_THRESHOLD
+   * @param inputColor: the color
    */
-  hexToRgb(hex: string) {
-    const rgbResult = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return rgbResult ? {
-      r: parseInt(rgbResult[1], 16),
-      g: parseInt(rgbResult[2], 16),
-      b: parseInt(rgbResult[3], 16)
-    } : null;
+  isDarkColor(inputColor: string): boolean {
+    const COLOR = (inputColor.charAt(0) === '#') ? inputColor.substring(1, 7) : inputColor;
+    const R = parseInt(COLOR.substring(0, 2), 16);
+    const G = parseInt(COLOR.substring(2, 4), 16);
+    const B = parseInt(COLOR.substring(4, 6), 16);
+    const RGB = [R / 255, G / 255, B / 255];
+    const LINEAR_RGB = RGB.map((col) => {
+      if (col <= 0.03928) {
+        return col / 12.92;
+      }
+      return Math.pow((col + 0.055) / 1.055, 2.4);
+    });
+    // Calculate the luminance of the color
+    const LUMINANCE = (0.2126 * LINEAR_RGB[0]) + (0.7152 * LINEAR_RGB[1]) + (0.0722 * LINEAR_RGB[2]);
+    // The color is "dark" if the luminance is lower than the threshold
+    return LUMINANCE < COLOR_DARKNESS_THRESHOLD;
   }
 
   /**
@@ -129,26 +148,16 @@ export class LabelService {
    * @throws exception if input is an invalid color code
    */
   setLabelStyle(color: string) {
-    let r: string;
-    let g: string;
-    let b: string;
-    const white = '255';
+    let textColor: string;
 
-    try {
-      r = this.hexToRgb('#'.concat(color)).r.toString();
-      g = this.hexToRgb('#'.concat(color)).g.toString();
-      b = this.hexToRgb('#'.concat(color)).b.toString();
-    } catch (e) {
-      // Set rgb to white color if hexToRgb returns null
-      r = white;
-      g = white;
-      b = white;
-    }
+    textColor = this.isDarkColor(color) ? COLOR_LIGHT_TEXT : COLOR_DARK_TEXT;
 
     const styles = {
-      'background-color' : `rgb(${r}, ${g}, ${b}, 0.55)`,
+      'background-color' : `#${color}`,
       'border-radius' : '3px',
       'padding' : '3px',
+      'color' : `#${textColor}`,
+      'font-weight' : '410',
     };
 
     return styles;
