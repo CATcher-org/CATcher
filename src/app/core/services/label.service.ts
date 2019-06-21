@@ -3,24 +3,12 @@ import { GithubService } from './github.service';
 import { map } from 'rxjs/operators';
 import { Label } from '../models/label.model';
 import { Observable } from 'rxjs';
-import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LabelService {
-  private severityLabels: Label[] = [];
-  private typeLabels: Label[] = [];
-  private responseLabels: Label[] = [];
-  private statusLabels: Label[] = [];
-  private labelArrays = {
-    severity: this.severityLabels,
-    type: this.typeLabels,
-    response: this.responseLabels,
-    status: this.statusLabels
-  };
-  private labelColorMap: Map<string, string> = new Map();
 
   private readonly REQUIRED_LABELS = {
     severity: {
@@ -44,6 +32,17 @@ export class LabelService {
     }
   };
 
+  private severityLabels: Label[] = Object.values(this.REQUIRED_LABELS.severity);
+  private typeLabels: Label[] = Object.values(this.REQUIRED_LABELS.type);
+  private responseLabels: Label[] = Object.values(this.REQUIRED_LABELS.response);
+  private statusLabels: Label[] = Object.values(this.REQUIRED_LABELS.status);
+  private labelArrays = {
+    severity: this.severityLabels,
+    type: this.typeLabels,
+    response: this.responseLabels,
+    status: this.statusLabels
+  };
+
   constructor(private githubService: GithubService) {
   }
 
@@ -51,7 +50,7 @@ export class LabelService {
    * Calls the Github service api to get all labels from the repository and
    * store it in a list of arrays in this label service
    */
-  getAllLabels(userResponse: User): Observable<User> {
+  synchronizeRemoteLabels(userResponse: User): Observable<User> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
           this.ensureRepoHasExpectedLabels(this.parseLabelData(response), this.getRequiredLabels());
@@ -78,23 +77,40 @@ export class LabelService {
   }
 
   /**
-   * Returns the color of the label using the label-color mapping
+   * Returns the color of the label by iterating through the list of
+   * available labels.
    * @param labelValue: the label's value (e.g Low / Medium / High)
-   * @return a string with the color code of the label, or white color if
-   * no labelValue was provided or no such mapping was found
+   * @return a string with the color code of the label or a white color if
+   * no labelValue was provided or the color
    */
   getColorOfLabel(labelValue: string): string {
-    const color = this.labelColorMap.get(labelValue);
-
-    if (color === undefined || labelValue === '') {
-      return 'ffffff';
+    const WHITE_COLOR = 'ffffff';
+    if (labelValue === '') {
+      return WHITE_COLOR;
     }
 
-    return color;
+    for (const category of Object.keys(this.labelArrays)) {
+
+      const labels = this.labelArrays[category] as Label[];
+      const existingLabel = labels.find(label => label.labelValue === labelValue);
+
+      if (existingLabel === undefined) {
+        // If requested label cannot be found in current list, move to the next one.
+        continue;
+      } else if (existingLabel.labelColor === undefined) {
+        return WHITE_COLOR;
+      } else {
+        return existingLabel.labelColor;
+      }
+    }
+
+    // Finally returns white if the requested label cannot be found in any of the
+    // available list of labels.
+    return WHITE_COLOR;
   }
 
   /**
-   * Returns an array of Preset Labels.
+   * Returns an array of Labels required by the application.
    */
   private getRequiredLabels(): Label[] {
     const requiredLabels: Label[] = [];
@@ -114,51 +130,32 @@ export class LabelService {
    * it is added to the repo. If the expected label exists but the label color is not as expected,
    * the color is updated. Does not delete actual labels that do not match expected labels.
    * i.e., the repo might have more labels than the expected labels after this operation.
-   * @param labels: JSON data representing labels in the repo.
+   * @param actualLabels: labels in the repo.
    * @param expectedLabels: expected labels.
    */
-  private ensureRepoHasExpectedLabels(labels: Label[], expectedLabels: Label[]): void {
+  private ensureRepoHasExpectedLabels(actualLabels: Label[], expectedLabels: Label[]): void {
 
     expectedLabels.forEach(label => {
 
       // Finds for a label that has the same name as a required label.
-      const nameMatchedLabels: Label[] = labels.filter(remoteLabel =>
+      const nameMatchedLabels: Label[] = actualLabels.filter(remoteLabel =>
           remoteLabel.getFormattedName() === label.getFormattedName());
 
       if (nameMatchedLabels.length === 0) {
         // Create new Label (Could not find a label with the same name & category)
         this.githubService.createLabel(label.getFormattedName(), label.labelColor);
-      } else if (nameMatchedLabels.length === 1 && !nameMatchedLabels[0].equals(label)) {
-        // Update Label Color (Found a label with same name and category BUT different color.)
-        this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
-      } else if (nameMatchedLabels.length > 1) {
+      } else if (nameMatchedLabels.length === 1) {
+        if (nameMatchedLabels[0].equals(label)) {
+          // the label exists exactly as expected -> do nothing
+        } else {
+          // the label exists but the color does not match
+          this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
+        }
+      } else {
         throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());
       }
 
-      this.saveLabelData(label);
     });
-
-    const sortingGroups: {labelArray: Label[], sortingFunction: (a: Label, b: Label) => number}[] = [];
-    sortingGroups.push({labelArray: this.labelArrays.severity,
-        sortingFunction: ((a, b) => SEVERITY_ORDER[a.labelValue] - SEVERITY_ORDER[b.labelValue])});
-    this.sortLabelArrays(sortingGroups);
-  }
-
-  /**
-   * Sorts the given array of Labels with the given callback function.
-   * @param toSort - Array of Objects that contain this Label Array and Callback Function (specific to sorting the labels).
-   */
-  private sortLabelArrays(toSort: {labelArray: Label[], sortingFunction: (a: Label, b: Label) => number}[]): void {
-    toSort.forEach(sortingGroup => sortingGroup.labelArray.sort(sortingGroup.sortingFunction));
-  }
-
-  /**
-   * Saves label data to the relevant app data structures.
-   * @param label - Label that is to be saved.
-   */
-  private saveLabelData(label: Label) {
-    this.labelArrays[label.labelCategory].push(label);
-    this.labelColorMap.set(label.labelValue, label.labelColor);
   }
 
   /**
@@ -185,7 +182,6 @@ export class LabelService {
     this.severityLabels.length = 0;
     this.typeLabels.length = 0;
     this.responseLabels.length = 0;
-    this.labelColorMap.clear();
   }
 
   /**

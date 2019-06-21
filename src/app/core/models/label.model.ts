@@ -1,8 +1,8 @@
 export class Label {
 
+  labelCategory: string;
   labelValue: string;
   labelColor: string;
-  labelCategory: string;
 
   constructor(labelCategory: string, labelValue: string, labelColor: string) {
     this.labelValue = labelValue;
