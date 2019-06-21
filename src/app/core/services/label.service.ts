@@ -3,7 +3,6 @@ import { GithubService } from './github.service';
 import { map } from 'rxjs/operators';
 import { Label } from '../models/label.model';
 import { Observable } from 'rxjs';
-import { SEVERITY_ORDER } from '../../core/models/issue.model';
 import { User } from '../models/user.model';
 
 /* The threshold to decide if color is dark or light.
@@ -19,27 +18,50 @@ const COLOR_LIGHT_TEXT  = 'FFFFFF'; // Light color for text with dark background
   providedIn: 'root'
 })
 export class LabelService {
-  private severityLabels: Label[];
-  private typeLabels: Label[];
-  private responseLabels: Label[];
-  private labelColorMap: Map<string, string>;
 
+  private readonly REQUIRED_LABELS = {
+    severity: {
+      Low: new Label('severity', 'Low', 'ffb3b3'),
+      Medium: new Label('severity', 'Medium', 'ff6666'),
+      High: new Label('severity', 'High', 'b30000')
+    },
+    type: {
+      DocumentationBug: new Label('type', 'DocumentationBug', 'ccb3ff'),
+      FunctionalityBug: new Label('type', 'FunctionalityBug', '661aff')
+    },
+    response: {
+      Accepted: new Label('response', 'Accepted', '80ffcc'),
+      Rejected: new Label('response', 'Rejected', 'ff80b3'),
+      IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80'),
+      CannotReproduce: new Label('response', 'CannotReproduce', 'bfbfbf')
+    },
+    status: {
+      Done: new Label('status', 'Done', 'b3ecff'),
+      Incomplete: new Label('status', 'Incomplete', '1ac6ff')
+    }
+  };
+
+  private severityLabels: Label[] = Object.values(this.REQUIRED_LABELS.severity);
+  private typeLabels: Label[] = Object.values(this.REQUIRED_LABELS.type);
+  private responseLabels: Label[] = Object.values(this.REQUIRED_LABELS.response);
+  private statusLabels: Label[] = Object.values(this.REQUIRED_LABELS.status);
+  private labelArrays = {
+    severity: this.severityLabels,
+    type: this.typeLabels,
+    response: this.responseLabels,
+    status: this.statusLabels
+  };
 
   constructor(private githubService: GithubService) {
-    this.severityLabels = new Array();
-    this.typeLabels = new Array();
-    this.responseLabels = new Array();
-    this.labelColorMap = new Map();
   }
 
   /**
-   * Calls the Github service api to get all labels from the repository and
-   * store it in a list of arrays in this label service
+   * Synchronizes the labels in github with those required by the application.
    */
-  getAllLabels(userResponse: User): Observable<User> {
+  synchronizeRemoteLabels(userResponse: User): Observable<User> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.populateLabelLists(response);
+          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), this.getRequiredLabelsAsArray());
           return userResponse;
         })
       );
@@ -63,59 +85,92 @@ export class LabelService {
   }
 
   /**
-   * Returns the color of the label using the label-color mapping
-   * @param labelValue: the label's value (e.g Low / Medium / High)
-   * @return a string with the color code of the label, or white color if
-   * no labelValue was provided or no such mapping was found
+   * Returns the color of the label by searching a list of
+   * all available labels.
+   * @param labelValue: the label's value (e.g Low / Medium / High / ...)
    */
   getColorOfLabel(labelValue: string): string {
-    const color = this.labelColorMap.get(labelValue);
-
-    if (color === undefined || labelValue === '') {
-      return 'ffffff';
+    // TODO: Rewrite function - labelValue insufficient to differentiate between labels. Should use `labelCategory.labelValue` format.
+    const WHITE_COLOR = 'ffffff';
+    if (labelValue === '') {
+      return WHITE_COLOR;
     }
 
-    return color;
+    const existingLabel = this.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
+
+    if (existingLabel === undefined || existingLabel.labelColor === undefined) {
+      return WHITE_COLOR;
+    } else {
+      return existingLabel.labelColor;
+    }
+  }
+
+  private getRequiredLabelsAsArray(): Label[] {
+    let requiredLabels: Label[] = [];
+
+    for (const category of Object.keys(this.labelArrays)) {
+      requiredLabels = requiredLabels.concat(this.labelArrays[category]);
+    }
+
+    return requiredLabels;
   }
 
   /**
-   * Stores the json data from Github api into the list of arrays in this service
-   * @param labels: the json data of the label
+   * Ensures that the repo has the required labels.
+   * Compares the actual labels in the repo with the required labels. If an required label is missing,
+   * it is added to the repo. If the required label exists but the label color is not as expected,
+   * the color is updated. Does not delete actual labels that do not match required labels.
+   * i.e., the repo might have more labels than the required labels after this operation.
+   * @param actualLabels: labels in the repo.
+   * @param requiredLabels: required labels.
    */
-  private populateLabelLists(labels: Array<{}>): void {
+  private ensureRepoHasRequiredLabels(actualLabels: Label[], requiredLabels: Label[]): void {
 
-    for (const label of labels) {
-      // Get the name and color of each label and store them into the service's array list
-      const labelName = String(label['name']).split('.');
-      const labelType = labelName[0];
-      const labelValue = labelName[1];
-      const labelColor = String(label['color']);
+    requiredLabels.forEach(label => {
 
-      // Check for duplicate labels
-      if (this.labelColorMap.has(labelValue)) {
-        continue;
+      // Finds for a label that has the same name as a required label.
+      const nameMatchedLabels: Label[] = actualLabels.filter(remoteLabel =>
+          remoteLabel.getFormattedName() === label.getFormattedName());
+
+      if (nameMatchedLabels.length === 0) {
+        // Create new Label (Could not find a label with the same name & category)
+        this.githubService.createLabel(label.getFormattedName(), label.labelColor);
+      } else if (nameMatchedLabels.length === 1) {
+        if (nameMatchedLabels[0].equals(label)) {
+          // the label exists exactly as expected -> do nothing
+        } else {
+          // the label exists but the color does not match
+          this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
+        }
+      } else {
+        throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());
       }
 
-      this.labelColorMap.set(labelValue, labelColor);
-      const labelList = this.getLabelList(labelType);
-
-      if (labelList !== undefined) {
-        labelList.push({labelValue: labelValue, labelColor: labelColor});
-      }
-
-    }
-    // Sort the severity labels from Low to High
-    this.severityLabels.sort((a, b) => {
-      return SEVERITY_ORDER[a.labelValue] - SEVERITY_ORDER[b.labelValue];
     });
+  }
 
+  /**
+   * Parses label information and returns an array of Label objects.
+   * @param labels - Label Information from API.
+   */
+  parseLabelData(labels: Array<{}>): Label[] {
+    const labelData: Label[] = [];
+    for (const label of labels) {
+
+      const labelName: string[] = String(label['name']).split('.');
+      const labelCategory: string = labelName[0];
+      const labelValue: string = labelName[1];
+      const labelColor: string = String(label['color']);
+
+      labelData.push(new Label(labelCategory, labelValue, labelColor));
+    }
+    return labelData;
   }
 
   reset(): void {
     this.severityLabels.length = 0;
     this.typeLabels.length = 0;
     this.responseLabels.length = 0;
-    this.labelColorMap.clear();
   }
 
    /**

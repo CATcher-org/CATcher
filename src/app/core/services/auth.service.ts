@@ -59,7 +59,7 @@ export class AuthService {
         }
       }),
       flatMap((userResponse) => {
-        return this.labelService.getAllLabels(userResponse);
+        return this.labelService.synchronizeRemoteLabels(userResponse);
       }),
       flatMap((labelResponse) =>  {
         // Initialise last modified time for this repo
