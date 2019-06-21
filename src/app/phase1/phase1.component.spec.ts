@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Phase1Component } from './home.component';
+import { Phase1Component } from './phase1.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 describe('HomeComponent', () => {
