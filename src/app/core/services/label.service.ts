@@ -54,7 +54,7 @@ export class LabelService {
   getAllLabels(userResponse: User): Observable<User> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.ensureRepoHasExpectedLabels(response, this.getRequiredLabels());
+          this.ensureRepoHasExpectedLabels(this.parseLabelData(response), this.getRequiredLabels());
           return userResponse;
         })
       );
@@ -117,25 +117,22 @@ export class LabelService {
    * @param labels: JSON data representing labels in the repo.
    * @param expectedLabels: expected labels.
    */
-  private ensureRepoHasExpectedLabels(labels: Array<{}>, expectedLabels: Label[]): void {
-
-    // Parse Input Data to Label[]
-    const labelData: Label[] = this.parseLabelData(labels);
+  private ensureRepoHasExpectedLabels(labels: Label[], expectedLabels: Label[]): void {
 
     expectedLabels.forEach(label => {
 
       // Finds for a label that has the same name as a required label.
-      const existingLabels: Label[] = labelData.filter(remoteLabel =>
+      const nameMatchedLabels: Label[] = labels.filter(remoteLabel =>
           remoteLabel.getFormattedName() === label.getFormattedName());
 
-      if (existingLabels.length === 0) {
+      if (nameMatchedLabels.length === 0) {
         // Create new Label (Could not find a label with the same name & category)
         this.githubService.createLabel(label.getFormattedName(), label.labelColor);
-      } else if (existingLabels.length === 1 && !existingLabels[0].equals(label)) {
+      } else if (nameMatchedLabels.length === 1 && !nameMatchedLabels[0].equals(label)) {
         // Update Label Color (Found a label with same name and category BUT different color.)
         this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
-      } else if (existingLabels.length > 1) {
-        throw new Error('Label Assertion Error');
+      } else if (nameMatchedLabels.length > 1) {
+        throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());
       }
 
       this.saveLabelData(label);

@@ -11,7 +11,7 @@ export class Label {
   }
 
   /**
-   * Returns a the name of the label with the format of
+   * Returns the name of the label with the format of
    * 'category'.'value' (e.g. severity.Low)
    */
   public getFormattedName(): string {
