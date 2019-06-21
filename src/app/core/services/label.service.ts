@@ -22,7 +22,6 @@ export class LabelService {
   };
   private labelColorMap: Map<string, string> = new Map();
 
-  // Preset Labels.
   private readonly REQUIRED_LABELS = {
     severity: {
       Low: new Label('severity', 'Low', 'ffb3b3'),
@@ -55,7 +54,7 @@ export class LabelService {
   getAllLabels(userResponse: User): Observable<User> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.storeLabelData(response, this.getRequiredLabels());
+          this.ensureRepoHasExpectedLabels(response, this.getRequiredLabels());
           return userResponse;
         })
       );
@@ -110,30 +109,32 @@ export class LabelService {
   }
 
   /**
-   * Stores the json data from Github api into the list of arrays in this service
-   * @param labels: the json data of the label
-   * @param expectedLabels: An array of labels that are required by the application.
+   * Ensures that the repo has the expected labels.
+   * Compares the actual labels in the repo with expected labels. If an expected label is missing,
+   * it is added to the repo. If the expected label exists but the label color is not as expected,
+   * the color is updated. Does not delete actual labels that do not match expected labels.
+   * i.e., the repo might have more labels than the expected labels after this operation.
+   * @param labels: JSON data representing labels in the repo.
+   * @param expectedLabels: expected labels.
    */
-  private storeLabelData(labels: Array<{}>, expectedLabels: Label[]): void {
+  private ensureRepoHasExpectedLabels(labels: Array<{}>, expectedLabels: Label[]): void {
 
     // Parse Input Data to Label[]
     const labelData: Label[] = this.parseLabelData(labels);
 
     expectedLabels.forEach(label => {
-      // Checks if remote data set already contains correct label.
-      if (labelData.filter(remoteLabel => remoteLabel.equals(label)).length !== 0) {
-        this.saveLabelData(label);
-        return;
-      }
-      // Finds for a label that has a valid name & type but invalid color.
-      const existingLabels: Label[] = labelData.filter(remoteLabel => remoteLabel.getFormattedName() === label.getFormattedName());
+
+      // Finds for a label that has the same name as a required label.
+      const existingLabels: Label[] = labelData.filter(remoteLabel =>
+          remoteLabel.getFormattedName() === label.getFormattedName());
+
       if (existingLabels.length === 0) {
         // Create new Label (Could not find a label with the same name & category)
         this.githubService.createLabel(label.getFormattedName(), label.labelColor);
-      } else if (existingLabels.length === 1) {
-        // Update Label Color (Found a label with same name and category BUT it contains different color.)
+      } else if (existingLabels.length === 1 && !existingLabels[0].equals(label)) {
+        // Update Label Color (Found a label with same name and category BUT different color.)
         this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
-      } else {
+      } else if (existingLabels.length > 1) {
         throw new Error('Label Assertion Error');
       }
 
