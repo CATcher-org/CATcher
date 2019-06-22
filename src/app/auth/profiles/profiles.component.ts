@@ -59,7 +59,7 @@ export class ProfilesComponent implements OnInit {
   @Output() profileDataEmitter: EventEmitter<{}> = new EventEmitter<{}>();
 
   profilesData = {
-    visible: false,
+    isDirectoryMessageVisible: false,
     fileName: null,
     fileDirectory: null
   };
@@ -101,16 +101,14 @@ export class ProfilesComponent implements OnInit {
    * Processes the selected profiles JSON file.
    */
   readProfiles(): void {
-
-    const fileExists: boolean = this.userProfileFileExists(this.filePath);
-
+    const isFileExists: boolean = this.userProfileFileExists(this.filePath);
     // Informing Parent Component (Auth) of file selection
     this.profilesData.fileName = this.PROFILES_FILE_NAME;
     this.profilesData.fileDirectory = this.filePath.split(this.PROFILES_FILE_NAME)[0];
-    this.profilesData.visible = !fileExists;
+    this.profilesData.isDirectoryMessageVisible = !isFileExists;
     this.profileDataEmitter.emit(this.profilesData);
 
-    if (fileExists) {
+    if (isFileExists) {
       try {
         this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
         this.assertProfilesValidity(this.profiles);
