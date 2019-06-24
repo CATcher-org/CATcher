@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
@@ -39,13 +39,22 @@ export class AuthService {
               private titleService: Title) {
   }
 
-  private getOrgDetails(sessionsRepo: string) {
-    return sessionsRepo.split('/')[0];
-  }
-  private getDataRepoDetails(sessionsRepo: string) {
-    return sessionsRepo.split('/')[1];
+  private getOrgDetails(sessionInformation: string) {
+    return sessionInformation.split('/')[0];
   }
 
+  private getDataRepoDetails(sessionInformation: string) {
+    return sessionInformation.split('/')[1];
+  }
+
+  /**
+   * Starts the authentication process by connecting to the github api for login. Following which,
+   * parses the sessionInformation to identify the location of the current session's data.
+   * After retrieving verifying that data, carries out any necessary initialization.
+   * @param username
+   * @param password
+   * @param sessionInformation
+   */
   startAuthentication(username: string, password: string, sessionInformation: string): Observable<any> {
 
     this.changeAuthState(AuthState.AwaitingAuthentication);
@@ -66,16 +75,9 @@ export class AuthService {
         return this.phaseService.fetchSessionData();
       }),
       flatMap((sessionData: SessionData) => {
-        if (sessionData === undefined) {
-          return throwError('Session Data Unavailable.');
-        } else if (this.phaseService.isSessionDataCorrupt(sessionData)) {
-          return throwError('Session Data is Incorrectly Defined');
-        } else if (sessionData.openPhases.length === 0) {
-          return throwError('There are no accessible phases.');
-        }
-
-        this.phaseService.updateSessionData(sessionData);
-        return this.phaseService.setupPhaseData();
+        this.phaseService.assertSessionDataIntegrity(sessionData);
+        this.phaseService.updateSessionParameters(sessionData);
+        return this.phaseService.initializeCurrentPhase();
       }),
       flatMap(() => {
         // Initialise last modified time for this repo

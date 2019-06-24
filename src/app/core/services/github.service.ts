@@ -36,15 +36,11 @@ export class GithubService {
     DATA_REPO = dataRepo;
   }
 
-  storePhaseDetails(repoName: string) {
+  storePhaseDetails(phaseRepoOwner: string, repoName: string) {
     REPO = repoName;
+    ORG_NAME = phaseRepoOwner;
   }
 
-  updatePhaseDetails(repoName: string, orgName: string, modOrg: string) {
-    ORG_NAME = orgName;
-    REPO = repoName;
-    MOD_ORG = modOrg;
-  }
   /**
    * Will return an Observable with array of issues in JSON format.
    */
@@ -102,7 +98,6 @@ export class GithubService {
   }
 
   fetchAllLabels(): Observable<Array<{}>> {
-    console.log('OverHere');
     return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
       map(response => {
         return response['data'];

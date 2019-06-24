@@ -3,11 +3,6 @@
     <mat-icon>arrow_back_ios</mat-icon>
   </button>
   <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher</a>
-  <button mat-raised-button style="margin-left: 10px;" color="primary" [matMenuTriggerFor]="phaseMenu">CurrentPhase</button>
-  <mat-menu #phaseMenu>
-    <button mat-menu-item>Phase1</button>
-    <button mat-menu-item>Phase2</button>
-  </mat-menu>
   <span *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
     ({{phaseService.phaseDescription[phaseService.currentPhase]}})
   </span>
