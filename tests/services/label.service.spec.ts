@@ -28,11 +28,11 @@ describe('LabelService: isDarkColor()', () => {
     });
 
     it('should be true for dark color', () => {
-        expect(labelService.isDarkColor(COLOR_DARK)).toEqual(true);
+        expect(labelService.isDarkColor(COLOR_DARK)).toBeTruthy();
     });
 
     it('should be false for light color', () => {
-        expect(labelService.isDarkColor(COLOR_LIGHT)).toEqual(false);
+        expect(labelService.isDarkColor(COLOR_LIGHT)).toBeFalsy();
     });
 });
 
