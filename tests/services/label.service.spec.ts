@@ -27,29 +27,29 @@ describe('LabelService: isDarkColor()', () => {
         labelService = null;
     });
 
-    it('color should be dark color', () => {
-      expect(labelService.isDarkColor(COLOR_DARK)).toEqual(true);
+    it('should be true for dark color', () => {
+        expect(labelService.isDarkColor(COLOR_DARK)).toEqual(true);
     });
 
-    it('color should be light color', () => {
+    it('should be false for light color', () => {
         expect(labelService.isDarkColor(COLOR_LIGHT)).toEqual(false);
     });
 });
 
 describe('LabelService: setLabelStyle()', () => {
     beforeEach(() => {
-      labelService = new LabelService(null);
+        labelService = new LabelService(null);
     });
 
     afterEach(() => {
         labelService = null;
     });
 
-    it('style should be dark color background with light color text', () => {
+    it('should be dark color background with light color text', () => {
         expect(labelService.setLabelStyle(COLOR_DARK)).toEqual(DARK_BG_LIGHT_TEXT);
     });
 
-    it('style should be light color background with dark color text', () => {
+    it('should be light color background with dark color text', () => {
         expect(labelService.setLabelStyle(COLOR_LIGHT)).toEqual(LIGHT_BG_DARK_TEXT);
     });
 });

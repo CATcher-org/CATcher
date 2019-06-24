@@ -2,4 +2,3 @@
     "spec_dir": "tests",
     "spec_files": ["**/**/*.spec.ts"]
  }
- 
