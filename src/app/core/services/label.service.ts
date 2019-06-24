@@ -167,12 +167,6 @@ export class LabelService {
     return labelData;
   }
 
-  reset(): void {
-    this.severityLabels.length = 0;
-    this.typeLabels.length = 0;
-    this.responseLabels.length = 0;
-  }
-
    /**
    * Returns true if the given color is considered "dark"
    * The color is considered "dark" if its luminance is less than COLOR_DARKNESS_THRESHOLD
