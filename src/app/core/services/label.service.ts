@@ -27,11 +27,11 @@ export class LabelService {
    * Calls the Github service api to get all labels from the repository and
    * store it in a list of arrays in this label service
    */
-  getAllLabels(userResponse: User): Observable<User> {
+  getAllLabels(): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
           this.populateLabelLists(response);
-          return userResponse;
+          return response;
         })
       );
   }

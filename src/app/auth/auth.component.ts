@@ -38,7 +38,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      encodedText: ['', Validators.required],
+      session: ['', Validators.required],
     });
   }
 
@@ -67,7 +67,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   onProfileSelect(profile: Profile): void {
     this.loginForm.get('username').setValue(profile.username);
     this.loginForm.get('password').setValue(profile.password);
-    this.loginForm.get('encodedText').setValue(profile.encodedText);
+    this.loginForm.get('session').setValue(profile.encodedText);
   }
 
   login(form: NgForm) {
@@ -75,7 +75,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       return;
     } else {
       this.auth.startAuthentication(this.loginForm.get('username').value, this.loginForm.get('password').value,
-        this.loginForm.get('encodedText').value)
+        this.loginForm.get('session').value)
         .subscribe(
           (user) => {
             this.authService.changeAuthState(AuthState.Authenticated);
