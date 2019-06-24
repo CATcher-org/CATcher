@@ -116,7 +116,7 @@ export class PhaseService {
   }
 
   setupPhaseData(): Observable<any> {
-    return this.labelService.getAllLabels();
+    return this.labelService.synchronizeRemoteLabels();
   }
 
   determineCurrentPhaseNumber(sessionData: Observable<{}>) {

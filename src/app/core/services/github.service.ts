@@ -3,6 +3,8 @@ import { map, mergeMap } from 'rxjs/operators';
 import { forkJoin, from, Observable } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
+import { shell } from 'electron';
+import { ErrorHandlingService } from './error-handling.service';
 const Octokit = require('@octokit/rest');
 
 
@@ -17,7 +19,7 @@ let octokit;
 })
 export class GithubService {
 
-  constructor() {
+  constructor(private errorHandlingService: ErrorHandlingService) {
   }
 
   storeCredentials(user: String, passw: String) {
@@ -106,6 +108,24 @@ export class GithubService {
         return response['data'];
       })
     );
+  }
+
+  /**
+   * Creates a label in the current repository.
+   * @param formattedLabelName - name of new label.
+   * @param labelColor - colour of new label.
+   */
+  createLabel(formattedLabelName: string, labelColor: string): void {
+    octokit.issues.createLabel({owner: ORG_NAME, repo: REPO, name: formattedLabelName, color: labelColor});
+  }
+
+  /**
+   * Updates a label's information in the current repository.
+   * @param labelName - name of existing label
+   * @param labelColor - new color to be assigned to existing label.
+   */
+  updateLabel(labelName: string, labelColor: string): void {
+    octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, current_name: labelName, color: labelColor});
   }
 
   closeIssue(id: number): Observable<{}> {
@@ -220,5 +240,13 @@ export class GithubService {
 
   getRepoURL(): string {
     return ORG_NAME.concat('/').concat(REPO);
+  }
+
+  viewIssueInBrowser(id: number) {
+    if (id) {
+      shell.openExternal('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
+    } else {
+      this.errorHandlingService.handleGeneralError('Unable to open this issue in Browser');
+    }
   }
 }

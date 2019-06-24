@@ -66,7 +66,7 @@ export enum RESPONSE {
 export const ISSUE_LABELS = {
   severity: Object.keys(SEVERITY),
   type: Object.keys(TYPE),
-  responseTag: Object.keys(RESPONSE),
+  response: Object.keys(RESPONSE),
 };
 
 export const IssuesFilter = {

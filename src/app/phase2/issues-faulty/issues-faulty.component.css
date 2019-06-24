@@ -12,11 +12,11 @@
 }
 
 .mat-column-id {
-  width: 7%;
+  width: 5%;
 }
 
 .mat-column-title {
-  width: 25%;
+  width: 20%;
 }
 
 .mat-column-type {
@@ -30,10 +30,10 @@
   width: 10%
 }
 .mat-column-assignees {
-  width: 15%
+  width: 10%
 }
 .mat-column-teamAssigned {
-  width: 12%
+  width: 7%
 }
 .mat-column-duplicatedIssues {
   width: 10%
