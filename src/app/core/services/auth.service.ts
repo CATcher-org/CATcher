@@ -93,7 +93,6 @@ export class AuthService {
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
-    this.labelService.reset();
     this.titleService.setTitle('CATcher');
     this.issueService.setIssueTeamFilter('All Teams');
 

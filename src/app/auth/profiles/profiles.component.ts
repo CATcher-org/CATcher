@@ -59,9 +59,9 @@ export class ProfilesComponent implements OnInit {
   @Output() profileDataEmitter: EventEmitter<{}> = new EventEmitter<{}>();
 
   profilesData = {
-    'visible': false,
-    'fileName': null,
-    'fileDirectory': null
+    isDirectoryMessageVisible: false,
+    fileName: null,
+    fileDirectory: null
   };
 
   constructor(public errorDialog: MatDialog) { }
@@ -101,22 +101,24 @@ export class ProfilesComponent implements OnInit {
    * Processes the selected profiles JSON file.
    */
   readProfiles(): void {
+    const isFileExists: boolean = this.userProfileFileExists(this.filePath);
     // Informing Parent Component (Auth) of file selection
     this.profilesData.fileName = this.PROFILES_FILE_NAME;
     this.profilesData.fileDirectory = this.filePath.split(this.PROFILES_FILE_NAME)[0];
-    this.profilesData.visible = !this.userProfileFileExists(this.filePath);
+    this.profilesData.isDirectoryMessageVisible = !isFileExists;
     this.profileDataEmitter.emit(this.profilesData);
 
-    try {
-      this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
-      this.assertProfilesValidity(this.profiles);
-    } catch (e) {
-      console.log(e);
-      setTimeout(() => {
+    if (isFileExists) {
+      try {
+        this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
+        this.assertProfilesValidity(this.profiles);
+      } catch (e) {
+        console.log(e);
+        setTimeout(() => {
           this.profiles = undefined;
           this.openErrorDialog();
-          this.selectProfile(this.blankProfile);
-      });
+        });
+      }
     }
 
     // Set default profile if exists.

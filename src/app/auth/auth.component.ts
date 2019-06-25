@@ -50,13 +50,13 @@ export class AuthComponent implements OnInit, OnDestroy {
    * Informs user of missing profiles file.
    * @param profilesDetails - profiles file information.
    */
-  onProfilesMissing(profilesDetails: {}): void {
-    this.profileLocationPrompt = profilesDetails['visible']
+  onProfilesMissing(profilesDetails: {isDirectoryMessageVisible: boolean, fileName: string, fileDirectory: string}): void {
+    this.profileLocationPrompt = profilesDetails.isDirectoryMessageVisible
       ? 'No custom '
-        .concat(profilesDetails['fileName'])
-        .concat(' file found in ')
-        .concat(profilesDetails['fileDirectory'])
-        .concat(' .')
+          .concat(profilesDetails['fileName'])
+          .concat(' file found in ')
+          .concat(profilesDetails['fileDirectory'])
+          .concat(' .')
       : '';
   }
 
