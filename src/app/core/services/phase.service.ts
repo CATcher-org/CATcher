@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import { HttpClient} from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { flatMap, map } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import {GithubService} from './github.service';
 import { LabelService } from './label.service';
@@ -36,7 +36,7 @@ export class PhaseService {
   };
 
   constructor(private http: HttpClient,
-              private github: GithubService,
+              private githubService: GithubService,
               private labelService: LabelService) {}
 
   /**
@@ -53,7 +53,7 @@ export class PhaseService {
   }
 
   fetchSessionData(): Observable<SessionData> {
-    return this.github.fetchSettingsFile().pipe(
+    return this.githubService.fetchSettingsFile().pipe(
       map(data => data as SessionData)
     );
   }
@@ -93,15 +93,17 @@ export class PhaseService {
     this.sessionData = sessionData;
     this.currentPhase = Phase[sessionData.openPhases[0]];
     this.repoName = sessionData[sessionData.openPhases[0]];
-    this.github.storePhaseDetails(this.phaseRepoOwners[this.currentPhase], this.repoName);
+    this.githubService.storePhaseDetails(this.phaseRepoOwners[this.currentPhase], this.repoName);
   }
 
-  /**
-   * Carries out the necessary pre-authentication steps to
-   * set up the currently open phase.
-   */
-  initializeCurrentPhase(): Observable<any> {
-    return this.labelService.synchronizeRemoteLabels();
+  sessionSetup(): Observable<any> {
+    return this.fetchSessionData().pipe(
+      flatMap((sessionData: SessionData) => {
+        this.assertSessionDataIntegrity(sessionData);
+        this.updateSessionParameters(sessionData);
+        return this.labelService.synchronizeRemoteLabels();
+      })
+    );
   }
 
   public getPhaseDetail() {

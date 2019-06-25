@@ -5,17 +5,15 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
-import { SessionData, PhaseService } from './phase.service';
+import { PhaseService } from './phase.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { GithubService} from './github.service';
-import { flatMap } from 'rxjs/operators';
 import { IssueService } from './issue.service';
 import { IssueCommentService } from './issue-comment.service';
 import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
-import { User } from '../models/user.model';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
 
@@ -39,52 +37,22 @@ export class AuthService {
               private titleService: Title) {
   }
 
-  private getOrgDetails(sessionInformation: string) {
-    return sessionInformation.split('/')[0];
-  }
-
-  private getDataRepoDetails(sessionInformation: string) {
-    return sessionInformation.split('/')[1];
-  }
-
   /**
-   * Starts the authentication process by connecting to the github api for login. Following which,
-   * parses the sessionInformation to identify the location of the current session's data.
-   * After retrieving verifying that data, carries out any necessary initialization.
-   * @param username
-   * @param password
-   * @param sessionInformation
+   * Authenticates the user to the github api and stores the necessary credentials in
+   * all remote services.
+   * @param username - User's Username
+   * @param password - User's Password
    */
-  startAuthentication(username: string, password: string, sessionInformation: string): Observable<any> {
+  authenticate(username: string, password: string): Observable<any> {
 
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
-
-    const org: string = this.getOrgDetails(sessionInformation);
-    const dataRepo: string = this.getDataRepoDetails(sessionInformation);
     this.githubService.storeCredentials(username, password);
-    this.githubService.storeOrganizationDetails(org, dataRepo);
-    this.phaseService.setPhaseOwners(this.getOrgDetails(sessionInformation), username);
 
-    return this.http.get('https://api.github.com/user', { headers: header }).pipe(
-      flatMap(() => {
-        return this.userService.createUserModel(username);
-      }),
-      flatMap((user: User) => {
-        this.phaseService.setPhaseOwners(org, user.loginId);
-        return this.phaseService.fetchSessionData();
-      }),
-      flatMap((sessionData: SessionData) => {
-        this.phaseService.assertSessionDataIntegrity(sessionData);
-        this.phaseService.updateSessionParameters(sessionData);
-        return this.phaseService.initializeCurrentPhase();
-      }),
-      flatMap(() => {
-        // Initialise last modified time for this repo
-        return this.githubEventService.setLatestChangeEvent();
-      })
-    );
+    return this.http.get('https://api.github.com/user', { headers: header });
   }
+
+
 
   logOut(): void {
     this.userService.reset();

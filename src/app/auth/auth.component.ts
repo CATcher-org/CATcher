@@ -9,6 +9,10 @@ import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
+import { flatMap } from 'rxjs/operators';
+import { UserService } from '../core/services/user.service';
+import { User } from '../core/models/user.model';
+import { GithubEventService } from '../core/services/githubevent.service';
 
 
 @Component({
@@ -23,7 +27,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   profileLocationPrompt: string;
 
   constructor(private auth: AuthService,
-              private github: GithubService,
+              private githubService: GithubService,
+              private githubEventService: GithubEventService,
+              private userService: UserService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
@@ -74,10 +80,27 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (this.loginForm.invalid) {
       return;
     } else {
-      this.auth.startAuthentication(this.loginForm.get('username').value, this.loginForm.get('password').value,
-        this.loginForm.get('session').value)
-        .subscribe(
-          (user) => {
+      const username: string = this.loginForm.get('username').value;
+      const password: string = this.loginForm.get('password').value;
+      const sessionInformation: string = this.loginForm.get('session').value;
+      const org: string = this.getOrgDetails(sessionInformation);
+      const dataRepo: string = this.getDataRepoDetails(sessionInformation);
+
+      this.githubService.storeOrganizationDetails(org, dataRepo);
+      this.phaseService.setPhaseOwners(org, username);
+
+      this.auth.authenticate(username, password).pipe(
+        flatMap((loginConfirmation: {login: string}) => {
+          return this.userService.createUserModel(loginConfirmation.login);
+        }),
+        flatMap(() => {
+          return this.phaseService.sessionSetup();
+        }),
+        flatMap(() => {
+          return this.githubEventService.setLatestChangeEvent();
+        })
+      ).subscribe(
+          () => {
             this.authService.changeAuthState(AuthState.Authenticated);
             form.resetForm();
             this.titleService.setTitle('CATcher '.concat(this.phaseService.getPhaseDetail()));
@@ -91,5 +114,21 @@ export class AuthComponent implements OnInit, OnDestroy {
           }
       });
     }
+  }
+
+  /**
+   * Extracts the Organization Details from the input sessionInformation.
+   * @param sessionInformation - string in the format of 'orgName/dataRepo'
+   */
+  private getOrgDetails(sessionInformation: string) {
+    return sessionInformation.split('/')[0];
+  }
+
+  /**
+   * Extracts the Data Repository Details from the input sessionInformation.
+   * @param sessionInformation - string in the format of 'orgName/dataRepo'
+   */
+  private getDataRepoDetails(sessionInformation: string) {
+    return sessionInformation.split('/')[1];
   }
 }
