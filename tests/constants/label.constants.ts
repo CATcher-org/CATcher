@@ -1,4 +1,4 @@
-// Label constants
+// Label name constants
 export const SEVERITY_LOW = 'Low';
 export const SEVERITY_MEDIUM = 'Medium';
 export const SEVERITY_HIGH = 'High';
@@ -11,7 +11,13 @@ export const RESPONSE_CANNOT_REPRODUCE = 'CannotReproduce';
 export const STATUS_DONE = 'Done';
 export const STATUS_INCOMPLETE = 'Incomplete';
 
-// Color constants
+// Label category constants
+export const SEVERITY = 'severity';
+export const TYPE = 'type';
+export const RESPONSE = 'response';
+export const STATUS = 'status';
+
+// Label color constants
 export const COLOR_DARK  = '000000';
 export const COLOR_LIGHT  = 'FFFFFF';
 export const COLOR_SEVERITY_LOW = 'ffb3b3';
@@ -41,3 +47,19 @@ export const LIGHT_BG_DARK_TEXT = {
     'color' : `#${COLOR_DARK}`,
     'font-weight' : '410',
 };
+
+// Constant array of labels to simulate Github response
+export const LABEL_ARRAY = [
+    {
+        color: COLOR_RESPONSE_ACCEPTED,
+        name: RESPONSE + '.' + RESPONSE_ACCEPTED
+    },
+    {
+        color: COLOR_SEVERITY_LOW,
+        name: SEVERITY + '.' + SEVERITY_LOW
+    },
+    {
+        color: COLOR_TYPE_FUNCTIONALITY_BUG,
+        name: TYPE + '.' + TYPE_FUNCTIONALITY_BUG
+    }
+];

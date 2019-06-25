@@ -1,7 +1,38 @@
 import { LabelService } from '../../src/app/core/services/label.service';
+import { Label } from '../../src/app/core/models/label.model';
 import * as LabelConstant from '../constants/label.constants';
 
 let labelService: LabelService;
+let labelList: Label[];
+
+describe('LabelService: parseLabelData()', () => {
+    beforeAll(() => {
+        labelService = new LabelService(null);
+        labelList = labelService.parseLabelData(LabelConstant.LABEL_ARRAY);
+    });
+
+    afterAll(() => {
+        labelService = null;
+    });
+
+    it('should be response.Accepted label', () => {
+        expect(labelList[0].labelCategory).toBe(LabelConstant.RESPONSE);
+        expect(labelList[0].labelValue).toBe(LabelConstant.RESPONSE_ACCEPTED);
+        expect(labelList[0].labelColor).toBe(LabelConstant.COLOR_RESPONSE_ACCEPTED);
+    });
+
+    it('should be severity.Low', () => {
+        expect(labelList[1].labelCategory).toBe(LabelConstant.SEVERITY);
+        expect(labelList[1].labelValue).toBe(LabelConstant.SEVERITY_LOW);
+        expect(labelList[1].labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
+    });
+
+    it('should be type.FunctionalityBug', () => {
+        expect(labelList[2].labelCategory).toBe(LabelConstant.TYPE);
+        expect(labelList[2].labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
+        expect(labelList[2].labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
+    });
+});
 
 describe('LabelService: isDarkColor()', () => {
     beforeEach(() => {
