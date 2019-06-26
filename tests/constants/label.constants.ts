@@ -40,6 +40,7 @@ export const DARK_BG_LIGHT_TEXT = {
     'color' : `#${COLOR_LIGHT}`,
     'font-weight' : '410',
 };
+
 export const LIGHT_BG_DARK_TEXT = {
     'background-color' : `#${COLOR_LIGHT}`,
     'border-radius' : '3px',
