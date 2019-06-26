@@ -111,7 +111,7 @@
         </button>
         <button color="primary" matTooltip="Mark this issue as Pending" mat-button (click)="markAsPending(issue)" 
             style="transform: scale(0.8)" *ngIf="userService.currentUser.role === 'Student' || userService.currentUser.role === 'Admin'">
-            <mat-icon>undo</mat-icon> 
+            <mat-icon>cancel</mat-icon> 
         </button>
       </td>
     </ng-container>
