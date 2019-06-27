@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { IssueService } from '../core/services/issue.service';
-import { IssuesDataTable } from '../shared/data-tables/IssuesDataTable';
+import { IssuesDataTable } from '../shared/issue-tables/IssuesDataTable';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { finalize } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';

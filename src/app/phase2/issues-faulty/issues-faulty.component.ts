@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@
 import { IssueService } from '../../core/services/issue.service';
 import { MatPaginator, MatSort } from '@angular/material';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { IssuesDataTable } from '../../shared/data-tables/IssuesDataTable';
+import { IssuesDataTable } from '../../shared/issue-tables/IssuesDataTable';
 import { Issue } from '../../core/models/issue.model';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
