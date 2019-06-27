@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../core/services/user.service';
-import {IssuesFilter} from '../core/models/issue.model';
+import { Issue, IssuesFilter } from '../core/models/issue.model';
 import {Phase} from '../core/services/phase.service';
 import {DataService} from '../core/services/data.service';
 import { IssueService } from '../core/services/issue.service';
@@ -13,10 +13,15 @@ import { IssueService } from '../core/services/issue.service';
 export class Phase2Component implements OnInit {
   public teamFilter = 'All Teams';
 
+  private issues: Issue[];
+  private headers: string[] = ['id', 'title', 'type', 'severity',];
   constructor(public userService: UserService, private dataService: DataService, private issueService: IssueService) {}
 
   ngOnInit() {
     this.issueService.setIssueTeamFilter(this.teamFilter);
+    this.issueService.getAllIssues().subscribe(issues => {
+      this.issues = issues;
+    });
   }
 
   get teamList(): string[] {
