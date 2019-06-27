@@ -14,7 +14,7 @@ export class Phase2Component implements OnInit {
   public teamFilter = 'All Teams';
 
   private issues: Issue[];
-  private headers: string[] = ['id', 'title', 'type', 'severity',];
+  private headers: string[] = ['id', 'title', 'type', 'severity'];
   constructor(public userService: UserService, private dataService: DataService, private issueService: IssueService) {}
 
   ngOnInit() {
