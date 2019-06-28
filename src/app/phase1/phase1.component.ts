@@ -10,6 +10,7 @@ import { PermissionService } from '../core/services/permission.service';
 import { UserService } from '../core/services/user.service';
 import { LabelService } from '../core/services/label.service';
 import { GithubService } from '../core/services/github.service';
+import { ACTION_BUTTONS } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-phase1',
@@ -24,6 +25,8 @@ export class Phase1Component implements OnInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  readonly actionButtons = ACTION_BUTTONS;
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService, private labelService: LabelService,

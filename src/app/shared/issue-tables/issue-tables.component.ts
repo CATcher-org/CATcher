@@ -6,11 +6,14 @@ import { UserService } from '../../core/services/user.service';
 import { GithubService } from '../../core/services/github.service';
 import { IssueService } from '../../core/services/issue.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { finalize } from 'rxjs/operators';
+import { IssuesDataTable } from './IssuesDataTable';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
   MARK_AS_RESPONDED,
-  RESPOND_TO_ISSUE
+  RESPOND_TO_ISSUE,
+  DELETE_ISSUE
 }
 
 @Component({
@@ -20,11 +23,13 @@ export enum ACTION_BUTTONS {
 })
 export class IssueTablesComponent implements OnInit {
 
-  @Input() issues: Issue[];
+  @Input() issues: IssuesDataTable;
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
 
   private readonly action_buttons = ACTION_BUTTONS;
+
+  issuesPendingDeletion: {[id: number]: boolean};
 
   constructor(private permissions: PermissionService,
               private labelService: LabelService,
@@ -34,6 +39,7 @@ export class IssueTablesComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
+    this.issuesPendingDeletion = {};
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {
@@ -78,5 +84,19 @@ export class IssueTablesComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  deleteIssue(id: number) {
+    this.issuesPendingDeletion = {
+      ...this.issuesPendingDeletion,
+      [id]: true,
+    };
+    this.issueService.deleteIssue(id).pipe(finalize(() => {
+      const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
+      this.issuesPendingDeletion = theRest;
+    })).subscribe((removedIssue) => {
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
+    });
   }
 }
