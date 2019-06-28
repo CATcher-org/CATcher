@@ -12,7 +12,9 @@ import { IssuesDataTable } from './IssuesDataTable';
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
   MARK_AS_RESPONDED,
+  MARK_AS_PENDING,
   RESPOND_TO_ISSUE,
+  FIX_ISSUE,
   DELETE_ISSUE
 }
 
@@ -50,6 +52,17 @@ export class IssueTablesComponent implements OnInit {
     this.issueService.updateIssue({
       ...issue,
       status: STATUS.Done
+    }).subscribe((updatedIssue) => {
+      this.issueService.updateLocalStore(updatedIssue);
+    }, error => {
+      this.errorHandlingService.handleHttpError(error);
+    });
+  }
+
+  markAsPending(issue: Issue) {
+    this.issueService.updateIssue({
+      ...issue,
+      status: STATUS.Incomplete
     }).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {

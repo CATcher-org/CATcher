@@ -8,6 +8,7 @@ import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
 import { LabelService } from '../../core/services/label.service';
 import { GithubService } from '../../core/services/github.service';
+import { ACTION_BUTTONS } from '../../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-issues-responded',
@@ -17,6 +18,8 @@ import { GithubService } from '../../core/services/github.service';
 export class IssuesRespondedComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
   displayedColumns: string[];
+
+  readonly actionButtons = ACTION_BUTTONS;
 
   @Input() teamFilter: string;
 

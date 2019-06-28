@@ -9,6 +9,7 @@ import { UserRole } from '../../core/models/user.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { LabelService } from '../../core/services/label.service';
 import { GithubService } from '../../core/services/github.service';
+import { ACTION_BUTTONS } from '../../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-issues-faulty',
@@ -18,6 +19,8 @@ import { GithubService } from '../../core/services/github.service';
 export class IssuesFaultyComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
   displayedColumns: string[];
+
+  readonly actionButtons = ACTION_BUTTONS;
 
   @Input() teamFilter: string;
 
