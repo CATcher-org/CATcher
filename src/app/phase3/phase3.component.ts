@@ -10,6 +10,7 @@ import { Phase } from '../core/services/phase.service';
 import { DataService } from '../core/services/data.service';
 import { LabelService } from '../core/services/label.service';
 import { GithubService } from '../core/services/github.service';
+import { ACTION_BUTTONS } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-phase3',
@@ -21,6 +22,8 @@ export class Phase3Component implements OnInit {
   issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining', 'actions'];
   public teamFilter = 'All Teams';
+
+  readonly actionButtons = ACTION_BUTTONS;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;

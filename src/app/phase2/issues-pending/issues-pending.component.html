@@ -93,3 +93,6 @@
   </mat-card>
   <mat-paginator [pageSize]="20" [pageSizeOptions]="[10, 20, 50]"></mat-paginator>
 </div>
+
+<app-issue-tables [headers]="displayedColumns" [issues]="issuesDataSource"
+                  [actions]="[actionButtons.VIEW_IN_WEB, actionButtons.RESPOND_TO_ISSUE, actionButtons.MARK_AS_RESPONDED]"></app-issue-tables>

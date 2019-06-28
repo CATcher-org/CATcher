@@ -50,4 +50,33 @@ export class IssueTablesComponent implements OnInit {
       this.errorHandlingService.handleHttpError(error);
     });
   }
+
+  isTodoListExists(issue): boolean {
+    return issue.todoList.length !== 0;
+  }
+
+  todoFinished(issue): number {
+    let count = 0;
+    if (!this.isTodoListExists(issue)) {
+      return count;
+    }
+
+    for (const todo of issue.todoList) {
+      if (todo.charAt(3) === 'x') {
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  isTodoListChecked(issue): boolean {
+    if (!this.isTodoListExists(issue)) {
+      return true;
+    }
+
+    if (this.todoFinished(issue) === issue.todoList.length) {
+      return true;
+    }
+    return false;
+  }
 }

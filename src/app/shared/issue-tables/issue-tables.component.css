@@ -1,0 +1,28 @@
+.mat-table {
+  width: 100%
+}
+
+.mat-column-id {
+  width: 5%;
+}
+
+.mat-column-title {
+  flex: 3 0 25%;
+}
+
+.mat-column-type {
+  flex: 2 0 10%;
+}
+
+.mat-column-severity {
+  flex: 2 0 10%;
+}
+
+.mat-column-Todo-Remaining {
+  flex: 3 0 30%;
+}
+
+.mat-column-actions {
+  text-align: center !important;
+  width: 13%;
+}
