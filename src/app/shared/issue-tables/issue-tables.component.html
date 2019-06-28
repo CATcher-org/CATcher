@@ -8,6 +8,7 @@
     <td mat-cell *matCellDef="let issue"> {{issue.id}} </td>
   </ng-container>
 
+  <!-- Title Column -->
   <ng-container matColumnDef="title">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
     <td mat-cell *matCellDef="let issue">
@@ -15,6 +16,12 @@
     </td>
   </ng-container>
 
+  <ng-container *ngIf="userService.currentUser.role !== 'Student'" matColumnDef="teamAssigned">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Team </th>
+    <td mat-cell *matCellDef="let issue"> {{ issue.teamAssigned && issue.teamAssigned.id || '-'}} </td>
+  </ng-container>
+
+  <!-- Type Column -->
   <ng-container matColumnDef="type">
     <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '15%' : '20%'" *matHeaderCellDef mat-sort-header> Type </th>
     <td mat-cell *matCellDef="let issue">
@@ -24,6 +31,7 @@
     </td>
   </ng-container>
 
+  <!-- Severity Column -->
   <ng-container matColumnDef="severity">
     <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '10%' : '15%'" *matHeaderCellDef mat-sort-header> Severity </th>
     <td mat-cell *matCellDef="let issue">
@@ -33,6 +41,29 @@
     </td>
   </ng-container>
 
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let issue" (click)="$event.stopPropagation()">
+      <button mat-button matTooltip="View this issue in web-browser" *ngIf="this.isActionVisible(action_buttons.VIEW_IN_WEB)"
+              (click)="this.githubService.viewIssueInBrowser(issue.id)" style="transform: scale(0.8)">
+        <mat-icon>link</mat-icon>
+      </button>
+      <button *ngIf="permissions.canCRUDTeamResponse() && !issueService.hasResponse(issue.id)
+       && this.isActionVisible(action_buttons.RESPOND_TO_ISSUE)"
+              [routerLink]="'/phase2/issues/' + issue.id" mat-button color="accent"
+              style="transform: scale(0.8)" matTooltip="Respond to this Issue">
+        <mat-icon>feedback</mat-icon>
+      </button>
+      <button *ngIf="permissions.canCRUDTeamResponse() && issueService.hasResponse(issue.id)
+      && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
+              mat-button color="primary" (click)="markAsResponded(issue)"
+              style="transform: scale(0.8)" matTooltip="Mark this Issue as Responded">
+        <mat-icon>redo</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
   <tr mat-header-row *matHeaderRowDef="this.headers"></tr>
-  <tr mat-row *matRowDef="let row; columns: this.headers;"></tr>
+  <tr mat-row *matRowDef="let issue; columns: this.headers;" [routerLink]="'issues/' + issue.id"></tr>
 </table>
