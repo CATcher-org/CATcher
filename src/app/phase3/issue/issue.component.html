@@ -5,7 +5,7 @@
 
   <div class="row">
 
-    <div class="column left">
+    <div class="column left" style="max-width: 85%; min-width: 380px;">
       <app-issue-description *ngIf="!isIssueLoading" [issue]="issue" title="Description of Issue"
                              [isEditing]="isIssueDescriptionEditing" (changeEditState)="updateDescriptionEditState($event)"
                              (issueUpdated)="updateIssue($event)"></app-issue-description>
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div class="column right">
+    <div class="column right" style="max-width: 15%; min-width:180px">
       <div *ngIf="!isIssueLoading" [style.visibility]="issue.tutorResponse ? 'visible' : 'hidden'">
         <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
         <mat-divider></mat-divider>
