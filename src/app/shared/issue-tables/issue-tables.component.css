@@ -28,6 +28,7 @@
 }
 
 .mat-column-duplicatedIssues {
+  padding-left: 5px;
 }
 
 .mat-column-assignees {

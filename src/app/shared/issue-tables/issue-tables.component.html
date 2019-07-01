@@ -22,7 +22,7 @@
 
   <!-- Type Column -->
   <ng-container matColumnDef="type">
-    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '15%' : '20%'" *matHeaderCellDef mat-sort-header> Type </th>
+    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '10%' : '15%'" *matHeaderCellDef mat-sort-header> Type </th>
     <td mat-cell *matCellDef="let issue">
           <span [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
               {{issue.type || '-'}}
@@ -32,7 +32,7 @@
 
   <!-- Severity Column -->
   <ng-container matColumnDef="severity">
-    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '10%' : '12%'" *matHeaderCellDef mat-sort-header> Severity </th>
+    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '7%' : '9%'" *matHeaderCellDef mat-sort-header> Severity </th>
     <td mat-cell *matCellDef="let issue">
         <span [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.severity))">
           {{issue.severity || '-'}}
