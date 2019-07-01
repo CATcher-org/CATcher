@@ -1,28 +1,43 @@
 .mat-table {
-  width: 100%
+  min-width: 1000px;
+}
+
+.mat-paginator {
+  min-width: 1000px;
+}
+
+.mat-column {
 }
 
 .mat-column-id {
-  width: 5%;
+  width: 6%;
 }
 
 .mat-column-title {
-  flex: 3 0 25%;
+  width: 20%;
+  padding: 0 10px 0 10px;
 }
 
 .mat-column-type {
-  flex: 2 0 10%;
+}
+
+.mat-column-responseTag {
 }
 
 .mat-column-severity {
-  flex: 2 0 10%;
+}
+
+.mat-column-duplicatedIssues {
+}
+
+.mat-column-assignees {
+  margin-left: 25px;
+  padding-left: 15px;
 }
 
 .mat-column-Todo-Remaining {
-  flex: 3 0 30%;
 }
 
 .mat-column-actions {
   text-align: center !important;
-  width: 13%;
 }

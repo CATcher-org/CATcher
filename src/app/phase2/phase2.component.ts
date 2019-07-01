@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../core/services/user.service';
-import { Issue, IssuesFilter } from '../core/models/issue.model';
+import { IssuesFilter } from '../core/models/issue.model';
 import { Phase } from '../core/services/phase.service';
 import { DataService } from '../core/services/data.service';
 import { IssueService } from '../core/services/issue.service';
-import { ACTION_BUTTONS } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-phase2',

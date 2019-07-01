@@ -1,15 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IssueService } from '../../core/services/issue.service';
-import { MatPaginator, MatSort } from '@angular/material';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssuesDataTable } from '../../shared/issue-tables/IssuesDataTable';
-import { Issue, STATUS } from '../../core/models/issue.model';
+import { Issue } from '../../core/models/issue.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
-import { LabelService } from '../../core/services/label.service';
-import { GithubService } from '../../core/services/github.service';
-import { ACTION_BUTTONS } from '../../shared/issue-tables/issue-tables.component';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-issues-pending',
@@ -18,19 +14,18 @@ import { ACTION_BUTTONS } from '../../shared/issue-tables/issue-tables.component
 })
 export class IssuesPendingComponent implements OnInit, OnChanges {
   issuesDataSource: IssuesDataTable;
-
   displayedColumns;
+  filter: (issue: Issue) => boolean;
 
-  readonly actionButtons = ACTION_BUTTONS;
+  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.RESPOND_TO_ISSUE,
+      ACTION_BUTTONS.MARK_AS_RESPONDED];
 
   @Input() teamFilter: string;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
 
-  constructor(public issueService: IssueService, private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService, public userService: UserService, private labelService: LabelService,
-              private githubService: GithubService) {
+  constructor(public issueService: IssueService,
+              public permissions: PermissionService, public userService: UserService) {
     if (userService.currentUser.role !== UserRole.Student) {
       this.displayedColumns = ['id', 'title', 'teamAssigned', 'type', 'severity', 'duplicatedIssues', 'actions'];
     } else {
@@ -40,32 +35,18 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (!changes.teamFilter.isFirstChange()) {
-      this.issuesDataSource.teamFilter = changes.teamFilter.currentValue;
+      this.table.issues.teamFilter = changes.teamFilter.currentValue;
     }
   }
 
   ngOnInit() {
-    const filter = (issue: Issue) => {
+    this.filter = (issue: Issue) => {
       return (!this.issueService.hasResponse(issue.id) || (!issue.status || issue.status === 'Incomplete')) &&
         !issue.duplicateOf;
     };
-    this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns, filter);
-    this.issuesDataSource.loadIssues();
   }
 
   applyFilter(filterValue: string) {
-    this.issuesDataSource.filter = filterValue;
-  }
-
-  markAsResponded(issue: Issue) {
-    this.issueService.updateIssue({
-      ...issue,
-      status: STATUS.Done
-    }).subscribe((updatedIssue) => {
-      this.issueService.updateLocalStore(updatedIssue);
-    }, error => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+    this.table.issues.filter = filterValue;
   }
 }

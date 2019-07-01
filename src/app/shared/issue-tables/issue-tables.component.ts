@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { LabelService } from '../../core/services/label.service';
@@ -8,6 +8,7 @@ import { IssueService } from '../../core/services/issue.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { finalize } from 'rxjs/operators';
 import { IssuesDataTable } from './IssuesDataTable';
+import { MatPaginator, MatSort } from '@angular/material';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -28,6 +29,10 @@ export class IssueTablesComponent implements OnInit {
   @Input() issues: IssuesDataTable;
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
+  @Input() filters?: any = undefined;
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   private readonly action_buttons = ACTION_BUTTONS;
 
@@ -41,6 +46,9 @@ export class IssueTablesComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
+    this.issues = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
+      this.paginator, this.headers, this.filters);
+    this.issues.loadIssues();
     this.issuesPendingDeletion = {};
   }
 

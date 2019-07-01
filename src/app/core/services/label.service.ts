@@ -204,6 +204,7 @@ export class LabelService {
     const styles = {
       'background-color' : `#${color}`,
       'border-radius' : '3px',
+      'margin' : '0 3px 0 3px',
       'padding' : '3px',
       'color' : `#${textColor}`,
       'font-weight' : '410',
