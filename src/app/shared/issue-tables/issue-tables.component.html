@@ -112,12 +112,12 @@
       && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
               mat-button color="primary" (click)="markAsResponded(issue)"
               style="transform: scale(0.8)" matTooltip="Mark this Issue as Responded">
-        <mat-icon>redo</mat-icon>
+        <mat-icon>check_circle</mat-icon>
       </button>
       <button color="primary" matTooltip="Mark this issue as Pending" mat-button (click)="markAsPending(issue)"
               style="transform: scale(0.8)" *ngIf="(userService.currentUser.role === 'Student' || userService.currentUser.role === 'Admin')
               && this.isActionVisible(action_buttons.MARK_AS_PENDING)">
-        <mat-icon>undo</mat-icon>
+        <mat-icon>cancel</mat-icon>
       </button>
       <button *ngIf="permissions.canCRUDTeamResponse() && this.isActionVisible(action_buttons.FIX_ISSUE)"
               [routerLink]="'/phase2/issues/' + issue.id" mat-button color="accent"
