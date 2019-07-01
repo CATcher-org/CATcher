@@ -4,13 +4,13 @@
   <mat-divider></mat-divider>
 
   <div class="row">
-    <div class="column left">
+    <div class="column left" style="max-width: 85%; min-width: 380px;">
       <app-issue-description [isEditing]="isEditing" (changeEditState)="updateEditState($event)" *ngIf="!isIssueLoading"
                              [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)">
       </app-issue-description>
     </div>
 
-    <div class="column right">
+    <div class="column right" style="max-width: 15%; min-width:180px">
       <app-issue-label [issue]="issue" attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
       <mat-divider></mat-divider>
       <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
