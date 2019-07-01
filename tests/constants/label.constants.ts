@@ -18,8 +18,8 @@ export const RESPONSE = 'response';
 export const STATUS = 'status';
 
 // Label color constants
-export const COLOR_DARK  = '000000';
-export const COLOR_LIGHT  = 'FFFFFF';
+export const COLOR_BLACK  = '000000';
+export const COLOR_WHITE  = 'FFFFFF';
 export const COLOR_SEVERITY_LOW = 'ffb3b3';
 export const COLOR_SEVERITY_MEDIUM = 'ff6666';
 export const COLOR_SEVERITY_HIGH = 'b30000';
@@ -34,18 +34,18 @@ export const COLOR_STATUS_INCOMPLETE = '1ac6ff';
 
 // CSS style constants
 export const DARK_BG_LIGHT_TEXT = {
-    'background-color' : `#${COLOR_DARK}`,
+    'background-color' : `#${COLOR_BLACK}`,
     'border-radius' : '3px',
     'padding' : '3px',
-    'color' : `#${COLOR_LIGHT}`,
+    'color' : `#${COLOR_WHITE}`,
     'font-weight' : '410',
 };
 
 export const LIGHT_BG_DARK_TEXT = {
-    'background-color' : `#${COLOR_LIGHT}`,
+    'background-color' : `#${COLOR_WHITE}`,
     'border-radius' : '3px',
     'padding' : '3px',
-    'color' : `#${COLOR_DARK}`,
+    'color' : `#${COLOR_BLACK}`,
     'font-weight' : '410',
 };
 
