@@ -28,11 +28,13 @@
 }
 
 .mat-column-duplicatedIssues {
-  padding-left: 5px;
+  padding-left: 25px;
 }
 
 .mat-column-assignees {
   padding-left: 25px;
+  padding-right: 20px;
+  word-wrap: normal;
 }
 
 .mat-column-Todo-Remaining {
