@@ -86,7 +86,7 @@ describe('LabelService: getColorOfLabel()', () => {
             .toEqual(LabelConstant.COLOR_SEVERITY_LOW);
     });
 
-    it('should be default color', () => {
+    it('should be white color for invalid inputs', () => {
         expect(labelService.getColorOfLabel(null))
             .toEqual(LabelConstant.COLOR_WHITE.toLowerCase());
     });
