@@ -79,7 +79,7 @@
         <button *ngIf="permissions.canCRUDTeamResponse() && issueService.hasResponse(issue.id)"
             mat-button color="primary" (click)="markAsResponded(issue)" 
             style="transform: scale(0.8)" matTooltip="Mark this Issue as Responded">
-            <mat-icon>redo</mat-icon>
+            <mat-icon>check_circle</mat-icon>
         </button>
       </td>
     </ng-container>
