@@ -17,7 +17,7 @@
     Sync
     <mat-icon>refresh</mat-icon>
   </button>
-  <div class="sync-spinner" *ngIf="this.isReloadBtnDisabled">
+  <div class="sync-spinner" *ngIf="auth.isAuthenticated() && needToShowReloadButton() && this.isReloadBtnDisabled">
     <span style="font-size: 14px; margin-right: 7px;">Sync</span>
     <mat-spinner class="white-spinner" [diameter]="20"></mat-spinner>
   </div>

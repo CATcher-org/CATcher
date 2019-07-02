@@ -72,5 +72,6 @@ table {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 17px;
+  margin-left: 16px;
+  margin-right: 16px;
 }
