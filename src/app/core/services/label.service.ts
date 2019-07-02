@@ -14,9 +14,9 @@ const COLOR_DARKNESS_THRESHOLD = 0.184;
 const COLOR_DARK_TEXT  = '000000'; // Dark color for text with light background
 const COLOR_LIGHT_TEXT  = 'FFFFFF'; // Light color for text with dark background
 
-const SEVERITY_TITLE = 'Severity';
-const TYPE_TITLE = 'Bug Type';
-const RESPONSE_TITLE = 'Response';
+const DISPLAY_NAME_SEVERITY = 'Severity';
+const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
+const DISPLAY_NAME_RESPONSE = 'Response';
 
 @Injectable({
   providedIn: 'root'
@@ -95,11 +95,11 @@ export class LabelService {
   getLabelTitle(attributeName: string): string {
     switch (attributeName) {
       case 'severity':
-        return SEVERITY_TITLE;
+        return DISPLAY_NAME_SEVERITY;
       case 'type':
-        return TYPE_TITLE;
+        return DISPLAY_NAME_BUG_TYPE;
       case 'responseTag':
-        return RESPONSE_TITLE;
+        return DISPLAY_NAME_RESPONSE;
     }
   }
 
