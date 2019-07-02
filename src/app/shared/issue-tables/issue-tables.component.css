@@ -25,6 +25,7 @@
 }
 
 .mat-column-severity {
+  padding-left: 10px;
 }
 
 .mat-column-duplicatedIssues {
@@ -41,5 +42,6 @@
 }
 
 .mat-column-actions {
+  width: 20%;
   text-align: center !important;
 }

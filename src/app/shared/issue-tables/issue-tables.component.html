@@ -3,7 +3,9 @@
   <!-- ID Column -->
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-    <td mat-cell *matCellDef="let issue"> {{issue.id}} </td>
+    <td mat-cell *matCellDef="let issue">
+      <span (click)="$event.stopPropagation()" style="cursor: default;">{{issue.id}}</span>
+    </td>
   </ng-container>
 
   <!-- Title Column -->
@@ -24,7 +26,7 @@
   <ng-container matColumnDef="type">
     <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '10%' : '15%'" *matHeaderCellDef mat-sort-header> Type </th>
     <td mat-cell *matCellDef="let issue">
-          <span [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
+          <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
               {{issue.type || '-'}}
           </span>
     </td>
@@ -32,9 +34,9 @@
 
   <!-- Severity Column -->
   <ng-container matColumnDef="severity">
-    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '7%' : '9%'" *matHeaderCellDef mat-sort-header> Severity </th>
+    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '9%' : '12%'" *matHeaderCellDef mat-sort-header> Severity </th>
     <td mat-cell *matCellDef="let issue">
-        <span [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.severity))">
+        <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.severity))">
           {{issue.severity || '-'}}
         </span>
     </td>
@@ -44,7 +46,7 @@
   <ng-container matColumnDef="responseTag">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Response </th>
     <td mat-cell *matCellDef="let issue">
-        <span *ngIf="issue.responseTag"
+        <span (click)="$event.stopPropagation()" *ngIf="issue.responseTag"
               [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.responseTag))">
           {{issue.responseTag}}
         </span>
@@ -57,7 +59,7 @@
   <ng-container matColumnDef="assignees">
     <th [style.width]="userService.currentUser.role === 'Student' ? '15%' : '10%'" mat-header-cell *matHeaderCellDef mat-sort-header> Assignees </th>
     <td mat-cell *matCellDef="let issue">
-        <span *ngIf="issue.assignees.length !== 0">
+        <span (click)="$event.stopPropagation()" style="cursor: default;" *ngIf="issue.assignees.length !== 0">
           {{issue.assignees.join(', ')}}
         </span>
       <span *ngIf="issue.assignees.length === 0" style="margin-left: 5%">
@@ -135,7 +137,7 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="this.headers"></tr>
-  <tr mat-row *matRowDef="let issue; columns: this.headers;" [routerLink]="'issues/' + issue.id"></tr>
+  <tr mat-row *matRowDef="let issue; columns: this.headers;" [routerLink]="'issues/' + issue.id" style="cursor: pointer"></tr>
 </table>
 <mat-card *ngIf="this.issues.isLoading$ | async"
           style="display: flex; justify-content: center; align-items: center">
