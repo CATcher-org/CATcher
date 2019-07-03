@@ -12,12 +12,12 @@
     View in Browser
     <mat-icon>link</mat-icon>
   </button>
-  <button *ngIf="auth.isAuthenticated() && needToShowReloadButton() && !this.isReloadBtnDisabled"
+  <button *ngIf="auth.isAuthenticated() && needToShowReloadButton() && !this.isReloadButtonDisabled"
     mat-button matTooltip="Synchronize with Github data" (click)="reload()">
     Sync
     <mat-icon>refresh</mat-icon>
   </button>
-  <div class="sync-spinner" *ngIf="auth.isAuthenticated() && needToShowReloadButton() && this.isReloadBtnDisabled">
+  <div class="sync-spinner" *ngIf="auth.isAuthenticated() && needToShowReloadButton() && this.isReloadButtonDisabled">
     <span style="font-size: 14px; margin-right: 7px;">Sync</span>
     <mat-spinner class="white-spinner" [diameter]="20"></mat-spinner>
   </div>

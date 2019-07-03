@@ -18,7 +18,7 @@ import { UserRole } from '../../core/models/user.model';
 })
 export class HeaderComponent implements OnInit {
   private prevUrl;
-  isReloadBtnDisabled = false;
+  isReloadButtonDisabled = false;
   ISSUE_FILTER = '/issues?q=is:issue+is:open'; // the filtered list must be an issue and must be open
   TUTORIAL_LABEL = '+label:tutorial.';
   TEAM_LABEL = '+label:team.';
@@ -95,7 +95,7 @@ export class HeaderComponent implements OnInit {
   }
 
   reload() {
-    this.isReloadBtnDisabled = true;
+    this.isReloadButtonDisabled = true;
 
     this.githubEventService.reloadPage().subscribe(
       (success) => success,
@@ -105,7 +105,7 @@ export class HeaderComponent implements OnInit {
 
     // Prevent user from spamming the reload button
     setTimeout(() => {
-      this.isReloadBtnDisabled = false;
+      this.isReloadButtonDisabled = false;
     },
     3000);
   }
