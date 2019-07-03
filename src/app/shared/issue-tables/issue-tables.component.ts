@@ -65,6 +65,7 @@ export class IssueTablesComponent implements OnInit {
     }, error => {
       this.errorHandlingService.handleHttpError(error);
     });
+    event.stopPropagation();
   }
 
   markAsPending(issue: Issue) {
@@ -76,6 +77,7 @@ export class IssueTablesComponent implements OnInit {
     }, error => {
       this.errorHandlingService.handleHttpError(error);
     });
+    event.stopPropagation();
   }
 
   isTodoListExists(issue): boolean {
@@ -119,5 +121,6 @@ export class IssueTablesComponent implements OnInit {
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+    event.stopPropagation();
   }
 }
