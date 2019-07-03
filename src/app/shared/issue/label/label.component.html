@@ -1,4 +1,4 @@
-<span class="mat-title"> {{attributeName.charAt(0).toUpperCase() + attributeName.substr(1)}} </span>
+<span class="mat-title"> {{this.labelService.getLabelTitle(attributeName)}} </span>
 <button *ngIf="permissions.canEditIssueLabels()" style="float: right" [matMenuTriggerFor]="labelList" mat-icon-button>
   <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
 </button>

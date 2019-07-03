@@ -63,3 +63,13 @@ table {
 .full-grid-width {
   width: 100%;
 }
+
+.column.left {
+  max-width: 85%;
+  min-width: 380px;
+}
+
+.column.right {
+  max-width: 15%;
+  min-width: 180px;
+}
