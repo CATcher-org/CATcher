@@ -27,7 +27,7 @@ export class PhaseService {
     'phase2': 'Team\'s Response Phase',
     'phase3': 'Moderation Phase',
   };
-  private sessionData: SessionData;
+  public sessionData: SessionData;
 
   private phaseRepoOwners = {
     phase1: '',
@@ -50,6 +50,14 @@ export class PhaseService {
     this.phaseRepoOwners.phase1 = user;
     this.phaseRepoOwners.phase2 = org;
     this.phaseRepoOwners.phase3 = org;
+  }
+
+  /**
+   * Returns the name of the owner of the input phase.
+   * @param phase
+   */
+  getPhaseOwner(phase: string): string {
+    return this.phaseRepoOwners[phase];
   }
 
   fetchSessionData(): Observable<SessionData> {

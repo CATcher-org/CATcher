@@ -37,6 +37,25 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {}
 
+  /**
+   * Replaces and resets the current phase data and routes the app to the
+   * newly selected phase.
+   * @param openPhase - Open Phase that is selected by the user.
+   */
+  routeToSelectedPhase(openPhase: string): void {
+    // Replace Current Phase Data.
+    this.phaseService.currentPhase = Phase[openPhase];
+    this.githubService.storePhaseDetails(this.phaseService.getPhaseOwner(this.phaseService.currentPhase),
+        this.phaseService.sessionData[openPhase]);
+
+    // Remove current phase issues and load selected phase issues.
+    this.issueService.reset();
+    this.reload();
+
+    // Route app to new phase.
+    this.router.navigateByUrl(this.phaseService.currentPhase);
+  }
+
   needToShowBackButton(): boolean {
     return `/${this.phaseService.currentPhase}` !== this.router.url && this.router.url !== '/';
   }

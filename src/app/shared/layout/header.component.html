@@ -7,6 +7,14 @@
     ({{phaseService.phaseDescription[phaseService.currentPhase]}})
   </span>
 
+  <div *ngIf="auth.isAuthenticated() && this.phaseService.sessionData.openPhases.length > 1">
+    <button mat-button [matMenuTriggerFor]="menu">Open Phases</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngFor="let openPhase of this.phaseService.sessionData.openPhases"
+       (click)="this.routeToSelectedPhase(openPhase)">{{ this.phaseService.sessionData[openPhase].toUpperCase() }}</button>
+    </mat-menu>
+  </div>
+
   <span style="flex: 1 1 auto"></span>
   <button *ngIf="auth.isAuthenticated() && needToShowOpenUrlButton()" mat-button matTooltip="View current page in web-browser" (click)="viewBrowser()">
     View in Browser
