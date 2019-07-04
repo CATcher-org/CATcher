@@ -11,6 +11,7 @@ import {NewTeamResponseComponent} from './new-team-respond/new-team-response.com
 import {IssuesPendingComponent} from './issues-pending/issues-pending.component';
 import {IssuesRespondedComponent} from './issues-responded/issues-responded.component';
 import {IssuesFaultyComponent} from './issues-faulty/issues-faulty.component';
+import { ViewIssueModule } from '../shared/view-issue/view-issue.module';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import {IssuesFaultyComponent} from './issues-faulty/issues-faulty.component';
     SharedModule,
     IssueComponentsModule,
     CommentEditorModule,
+    ViewIssueModule,
     MarkdownModule.forChild(),
   ],
   declarations: [

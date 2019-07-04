@@ -8,6 +8,7 @@ import {IssueComponent} from './issue/issue.component';
 import {CommentEditorModule} from '../shared/comment-editor/comment-editor.module';
 import {MarkdownModule} from 'ngx-markdown';
 import {IssueComponentsModule} from '../shared/issue/issue-components.module';
+import { ViewIssueModule } from '../shared/view-issue/view-issue.module';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import {IssueComponentsModule} from '../shared/issue/issue-components.module';
     SharedModule,
     IssueComponentsModule,
     CommentEditorModule,
+    ViewIssueModule,
     MarkdownModule.forChild(),
   ],
   declarations: [
