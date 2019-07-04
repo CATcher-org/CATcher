@@ -75,3 +75,13 @@ table {
   margin-left: 16px;
   margin-right: 16px;
 }
+
+.column.left {
+  max-width: 85%;
+  min-width: 380px;
+}
+
+.column.right {
+  max-width: 15%;
+  min-width: 180px;
+}
