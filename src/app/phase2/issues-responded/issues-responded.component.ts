@@ -12,7 +12,6 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
   styleUrls: ['./issues-responded.component.css'],
 })
 export class IssuesRespondedComponent implements OnInit, OnChanges {
-  issuesDataSource: IssuesDataTable;
   displayedColumns: string[];
   filter: (issue: Issue) => boolean;
 

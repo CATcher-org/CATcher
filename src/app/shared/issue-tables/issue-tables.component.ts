@@ -26,7 +26,6 @@ export enum ACTION_BUTTONS {
 })
 export class IssueTablesComponent implements OnInit {
 
-  @Input() issues: IssuesDataTable;
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
@@ -34,9 +33,9 @@ export class IssueTablesComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  private readonly action_buttons = ACTION_BUTTONS;
-
+  issues: IssuesDataTable;
   issuesPendingDeletion: {[id: number]: boolean};
+  private readonly action_buttons = ACTION_BUTTONS;
 
   constructor(private permissions: PermissionService,
               private labelService: LabelService,

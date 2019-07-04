@@ -17,8 +17,6 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/iss
   styleUrls: ['./phase3.component.css']
 })
 export class Phase3Component implements OnInit {
-  issues: BehaviorSubject<Issue[]>;
-  issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining', 'actions'];
   public teamFilter = 'All Teams';
 

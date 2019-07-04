@@ -12,8 +12,6 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/iss
   styleUrls: ['./phase1.component.css']
 })
 export class Phase1Component implements OnInit {
-  issues: BehaviorSubject<Issue[]>;
-  issuesDataSource: IssuesDataTable;
 
   readonly displayedColumns = ['id', 'title', 'type', 'severity', 'actions'];
   readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.DELETE_ISSUE];

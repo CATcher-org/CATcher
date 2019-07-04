@@ -13,7 +13,6 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
   styleUrls: ['./issues-pending.component.css']
 })
 export class IssuesPendingComponent implements OnInit, OnChanges {
-  issuesDataSource: IssuesDataTable;
   displayedColumns;
   filter: (issue: Issue) => boolean;
 
