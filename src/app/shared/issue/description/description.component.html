@@ -2,7 +2,7 @@
 <form [formGroup]="issueDescriptionForm" #myForm="ngForm" (ngSubmit)="updateDescription(myForm)">
   <div class="timeline-comment">
     <div class="timeline-header">
-      <span> <span class="bold-name"> Tester </span> posted on {{issue.created_at}}. </span>
+      <span> <strong> Tester </strong> posted on {{issue.created_at}}. </span>
       <button mat-button *ngIf="permissions.canEditIssueDescription() && !isEditing" (click)="changeToEditMode()">
         Edit
       </button>
