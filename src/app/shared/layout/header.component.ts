@@ -37,15 +37,15 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {}
 
-  needToShowBackButton(): boolean {
+  isBackButtonShown(): boolean {
     return `/${this.phaseService.currentPhase}` !== this.router.url && this.router.url !== '/';
   }
 
-  needToShowReloadButton(): boolean {
+  isReloadButtonShown(): boolean {
     return this.router.url !== '/phase1/issues/new';
   }
 
-  needToShowOpenUrlButton(): boolean {
+  isOpenUrlButtonShown(): boolean {
     return this.phaseService.currentPhase === Phase.phase1 ||
     this.userService.currentUser.role === UserRole.Student ||
     (this.issueService.getIssueTeamFilter() !== 'All Teams' || this.router.url.includes('/issues'));
