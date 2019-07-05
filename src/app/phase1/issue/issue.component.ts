@@ -16,7 +16,7 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.TYPE_LABEL
   ];
 
-  @ViewChild(ViewIssueComponent) div: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent) view_issue: ViewIssueComponent;
 
   constructor(private route: ActivatedRoute) { }
 
@@ -29,7 +29,7 @@ export class IssueComponent implements OnInit {
   }
 
   canDeactivate() {
-    return this.div.isEditing();
+    return this.view_issue.isEditing();
   }
 
 }

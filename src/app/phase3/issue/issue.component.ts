@@ -26,7 +26,7 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.TODO_LIST
   ];
 
-  @ViewChild(ViewIssueComponent) div: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent) view_issue: ViewIssueComponent;
 
   constructor(private route: ActivatedRoute,
               public userService: UserService,
@@ -42,7 +42,7 @@ export class IssueComponent implements OnInit {
   }
 
   canDeactivate() {
-    return this.div.isEditing();
+    return this.view_issue.isEditing();
   }
 
 }
