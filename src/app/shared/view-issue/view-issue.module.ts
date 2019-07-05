@@ -6,7 +6,7 @@ import { ViewIssueComponent } from './view-issue.component';
 import { CommentEditorModule } from '../comment-editor/comment-editor.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { SharedModule } from '../shared.module';
-import {IssueComponentsModule} from '../issue/issue-components.module';
+import { IssueComponentsModule } from '../issue/issue-components.module';
 
 @NgModule({
   exports: [
