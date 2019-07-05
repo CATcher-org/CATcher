@@ -36,23 +36,25 @@
         <div *ngIf="(this.isComponentVisible(issue_components_enum.NEW_TEAM_RESPONSE) && issue.teamResponse) ||
         (this.isComponentVisible(issue_components_enum.NEW_TUTOR_RESPONSE) && issue.tutorResponse) ||
         (!this.isComponentVisible(issue_components_enum.TEAM_RESPONSE) && !this.isComponentVisible(issue_components_enum.TUTOR_RESPONSE))">
+
         <!-- Severity Label -->
         <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.SEVERITY_LABEL)" [issue]="issue"
           attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
-        <mat-divider></mat-divider>
 
         <!-- Bug Type Label -->
         <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.TYPE_LABEL)" [issue]="issue"
           attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
 
-          <!-- Response Label -->
+        <!-- Response Label -->
         <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.RESPONSE_LABEL)" [issue]="issue"
           attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
+
         <mat-divider *ngIf="this.isComponentVisible(issue_components_enum.ASSIGNEE)"></mat-divider>
 
         <!-- Assignee to this Issue -->
         <app-assignee-component *ngIf="this.isComponentVisible(issue_components_enum.ASSIGNEE)" [issue]="issue"
           [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)"></app-assignee-component>
+
         <mat-divider *ngIf="this.isComponentVisible(issue_components_enum.DUPLICATE)"></mat-divider>
 
         <!-- Duplicate information -->
@@ -63,13 +65,14 @@
           (issueService.getDuplicateIssuesFor(issue) | async).length !== 0" [issue]="issue">
         </app-duplicated-issues-component>
 
-          <!-- Faulty issue warning -->  
+        <!-- Faulty issue warning -->  
         <div style="margin-top: 15px; color: red" *ngIf="this.isComponentVisible(issue_components_enum.DUPLICATE) && 
           ((issueService.getDuplicateIssuesFor(issue) | async).length !== 0) &&
           (!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
             * Need your resolution. An issue cannot have both duplicated issues and duplicated status.
         </div>
         <br>
+
         <mat-divider *ngIf="this.isComponentVisible(issue_components_enum.TODO_LIST)"></mat-divider>
 
         <!-- Issue To-Do list -->  
