@@ -9,16 +9,21 @@ import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { IssueComment, IssueComments } from '../../core/models/comment.model';
 import { UserService } from '../../core/services/user.service';
 import { Subscription } from 'rxjs';
+import { PermissionService } from '../../core/services/permission.service';
 
 export enum ISSUE_COMPONENTS {
+  TESTER_POST,
   TEAM_RESPONSE,
+  NEW_TEAM_RESPONSE,
   TUTOR_RESPONSE,
+  NEW_TUTOR_RESPONSE,
+  TESTER_RESPONSE,
   SEVERITY_LABEL,
   TYPE_LABEL,
   RESPONSE_LABEL,
   ASSIGNEE,
   DUPLICATE,
-  TODO
+  TODO_LIST
 }
 
 @Component({
@@ -48,6 +53,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
+              public permissions: PermissionService,
               public userService: UserService,
               public issueService: IssueService) { }
 
