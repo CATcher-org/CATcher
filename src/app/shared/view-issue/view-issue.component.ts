@@ -18,6 +18,7 @@ export enum ISSUE_COMPONENTS {
   TUTOR_RESPONSE,
   NEW_TUTOR_RESPONSE,
   TESTER_RESPONSE,
+  NEW_TESTER_RESPONSE,
   SEVERITY_LABEL,
   TYPE_LABEL,
   RESPONSE_LABEL,
@@ -32,7 +33,6 @@ export enum ISSUE_COMPONENTS {
   styleUrls: ['./view-issue.component.css']
 })
 export class ViewIssueComponent implements OnInit, OnDestroy {
-
   issue: Issue;
   comments: IssueComment[];
   isIssueLoading = true;
