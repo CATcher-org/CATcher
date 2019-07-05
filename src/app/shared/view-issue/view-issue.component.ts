@@ -106,7 +106,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
       .subscribe((issueComments: IssueComments) => {
         this.comments = issueComments.comments;
-        console.log('Comments: ', this.comments);
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
       });
