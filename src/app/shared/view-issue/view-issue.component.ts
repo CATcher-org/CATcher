@@ -38,10 +38,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   isIssueLoading = true;
   isCommentsLoading = true;
   isTutorResponseEditing = false;
-  isTeamResponseEditing = false;
   isIssueDescriptionEditing = false;
-  isEditing = false;
-  isResponseEditing = false;
+  isTeamResponseEditing = false;
   issueSubscription: Subscription;
 
   @Input() issueId: number;
@@ -70,9 +68,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     return this.issue_components.includes(component);
   }
 
-  canDeactivate() {
-    return !this.isEditing && !this.isTutorResponseEditing && !this.isIssueDescriptionEditing
-    && !this.isTeamResponseEditing && !this.isResponseEditing;
+  isEditing() {
+    return !this.isIssueDescriptionEditing && !this.isTutorResponseEditing && !this.isTeamResponseEditing;
   }
 
   private initializeIssue(id: number) {
@@ -93,24 +90,16 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.issueService.updateLocalStore(this.issue);
   }
 
-  updateEditState(newState: boolean) {
-    this.isEditing = newState;
-  }
-
-  updateResponseEditState(updatedState: boolean) {
-    this.isResponseEditing = updatedState;
-  }
-
-  updateTutorResponseEditState(updatedState: boolean) {
-    this.isTutorResponseEditing = updatedState;
-  }
-
   updateDescriptionEditState(updatedState: boolean) {
     this.isIssueDescriptionEditing = updatedState;
   }
 
   updateTeamResponseEditState(updatedState: boolean) {
     this.isTeamResponseEditing = updatedState;
+  }
+
+  updateTutorResponseEditState(updatedState: boolean) {
+    this.isTutorResponseEditing = updatedState;
   }
 
   private initializeComments(id: number) {

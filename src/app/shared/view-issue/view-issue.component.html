@@ -6,14 +6,14 @@
     <div class="row">
       <div class="column left">
         <!-- Tester's Post -->
-        <app-issue-description [isEditing]="isEditing" (changeEditState)="updateEditState($event)" 
+        <app-issue-description [isEditing]="isIssueDescriptionEditing" (changeEditState)="updateDescriptionEditState($event)" 
           *ngIf="!isIssueLoading && this.isComponentVisible(issue_components_enum.TESTER_POST)" 
           [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)">
         </app-issue-description>
 
         <!-- Team's Response -->
         <app-issue-response *ngIf="this.isComponentVisible(issue_components_enum.TEAM_RESPONSE) && issue.teamResponse" 
-          [issue]="issue" [isEditing]="isResponseEditing" (updateEditState)="updateResponseEditState($event)"
+          [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)"
           attributeName="teamResponse" (issueUpdated)="updateIssue($event)"></app-issue-response>
 
         <!-- New Team's Response -->
@@ -34,7 +34,8 @@
 
       <div class="column right">
         <div *ngIf="(this.isComponentVisible(issue_components_enum.NEW_TEAM_RESPONSE) && issue.teamResponse) ||
-        (this.isComponentVisible(issue_components_enum.NEW_TUTOR_RESPONSE) && issue.tutorResponse)">
+        (this.isComponentVisible(issue_components_enum.NEW_TUTOR_RESPONSE) && issue.tutorResponse) ||
+        (!this.isComponentVisible(issue_components_enum.TEAM_RESPONSE) && !this.isComponentVisible(issue_components_enum.TUTOR_RESPONSE))">
         <!-- Severity Label -->
         <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.SEVERITY_LABEL)" [issue]="issue"
           attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>

@@ -37,4 +37,8 @@ export class IssueComponent implements OnInit {
     );
   }
 
+  canDeactivate() {
+    return this.div.isEditing();
+  }
+
 }
