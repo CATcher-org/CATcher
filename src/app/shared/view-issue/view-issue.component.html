@@ -33,6 +33,8 @@
       </div>
 
       <div class="column right">
+        <div *ngIf="(this.isComponentVisible(issue_components_enum.NEW_TEAM_RESPONSE) && issue.teamResponse) ||
+        (this.isComponentVisible(issue_components_enum.NEW_TUTOR_RESPONSE) && issue.tutorResponse)">
         <!-- Severity Label -->
         <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.SEVERITY_LABEL)" [issue]="issue"
           attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
@@ -73,6 +75,7 @@
         <app-todo-list *ngIf="this.isComponentVisible(issue_components_enum.TODO_LIST)" 
           [issue]="issue" (issueUpdated)="updateIssue($event)"></app-todo-list>
       </div>
+    </div>
     </div>
 
 </div>
