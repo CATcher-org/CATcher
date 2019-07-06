@@ -98,14 +98,7 @@ export class IssueTablesComponent implements OnInit {
   }
 
   isTodoListChecked(issue): boolean {
-    if (!this.isTodoListExists(issue)) {
-      return true;
-    }
-
-    if (this.todoFinished(issue) === issue.todoList.length) {
-      return true;
-    }
-    return false;
+    return (!this.isTodoListExists(issue) || this.todoFinished(issue) === issue.todoList.length);
   }
 
   deleteIssue(id: number) {
