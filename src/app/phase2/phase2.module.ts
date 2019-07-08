@@ -11,6 +11,7 @@ import {NewTeamResponseComponent} from './new-team-respond/new-team-response.com
 import {IssuesPendingComponent} from './issues-pending/issues-pending.component';
 import {IssuesRespondedComponent} from './issues-responded/issues-responded.component';
 import {IssuesFaultyComponent} from './issues-faulty/issues-faulty.component';
+import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import {IssuesFaultyComponent} from './issues-faulty/issues-faulty.component';
     IssueComponentsModule,
     CommentEditorModule,
     MarkdownModule.forChild(),
+    IssueTablesModule,
   ],
   declarations: [
     Phase2Component,

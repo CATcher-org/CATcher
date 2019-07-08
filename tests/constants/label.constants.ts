@@ -36,6 +36,7 @@ export const COLOR_STATUS_INCOMPLETE = '1ac6ff';
 export const DARK_BG_LIGHT_TEXT = {
     'background-color' : `#${COLOR_BLACK}`,
     'border-radius' : '3px',
+    'cursor' : 'default',
     'padding' : '3px',
     'color' : `#${COLOR_WHITE}`,
     'font-weight' : '410',
@@ -44,6 +45,7 @@ export const DARK_BG_LIGHT_TEXT = {
 export const LIGHT_BG_DARK_TEXT = {
     'background-color' : `#${COLOR_WHITE}`,
     'border-radius' : '3px',
+    'cursor' : 'default',
     'padding' : '3px',
     'color' : `#${COLOR_BLACK}`,
     'font-weight' : '410',

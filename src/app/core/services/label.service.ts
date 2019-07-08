@@ -223,6 +223,7 @@ export class LabelService {
     const styles = {
       'background-color' : `#${color}`,
       'border-radius' : '3px',
+      'cursor' : 'default',
       'padding' : '3px',
       'color' : `#${textColor}`,
       'font-weight' : '410',

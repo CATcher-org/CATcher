@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Issue, IssuesFilter } from '../core/models/issue.model';
-import { IssuesDataTable } from '../shared/data-tables/IssuesDataTable';
-import { MatPaginator, MatSort } from '@angular/material';
+import { IssuesDataTable } from '../shared/issue-tables/IssuesDataTable';
 import { IssueService } from '../core/services/issue.service';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { UserService } from '../core/services/user.service';
@@ -10,6 +9,7 @@ import { Phase } from '../core/services/phase.service';
 import { DataService } from '../core/services/data.service';
 import { LabelService } from '../core/services/label.service';
 import { GithubService } from '../core/services/github.service';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-phase3',
@@ -17,13 +17,12 @@ import { GithubService } from '../core/services/github.service';
   styleUrls: ['./phase3.component.css']
 })
 export class Phase3Component implements OnInit {
-  issues: BehaviorSubject<Issue[]>;
-  issuesDataSource: IssuesDataTable;
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining', 'actions'];
   public teamFilter = 'All Teams';
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB];
+
+  @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
 
   constructor(private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
@@ -32,13 +31,10 @@ export class Phase3Component implements OnInit {
 
   ngOnInit() {
     this.issueService.setIssueTeamFilter(this.teamFilter);
-    this.issuesDataSource = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
-      this.paginator, this.displayedColumns);
-    this.issuesDataSource.loadIssues();
   }
 
   applyFilter(filterValue: string) {
-    this.issuesDataSource.filter = filterValue;
+    this.table.issues.filter = filterValue;
   }
 
   get teamList(): string[] {
@@ -55,36 +51,7 @@ export class Phase3Component implements OnInit {
 
   updateDisplayedTeam(newTeam: string) {
     this.teamFilter = newTeam;
-    this.issuesDataSource.teamFilter = this.teamFilter;
-  }
-
-  isTodoListExists(issue): boolean {
-    return issue.todoList.length !== 0;
-  }
-
-  todoFinished(issue): number {
-    let count = 0;
-    if (!this.isTodoListExists(issue)) {
-      return count;
-    }
-
-    for (const todo of issue.todoList) {
-      if (todo.charAt(3) === 'x') {
-        count += 1;
-      }
-    }
-    return count;
-  }
-
-  isTodoListChecked(issue): boolean {
-    if (!this.isTodoListExists(issue)) {
-      return true;
-    }
-
-    if (this.todoFinished(issue) === issue.todoList.length) {
-      return true;
-    }
-    return false;
+    this.table.issues.teamFilter = this.teamFilter;
   }
 
 }

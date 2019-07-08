@@ -8,6 +8,7 @@ import {IssueComponent} from './issue/issue.component';
 import {CommentEditorModule} from '../shared/comment-editor/comment-editor.module';
 import {MarkdownModule} from 'ngx-markdown';
 import {IssueComponentsModule} from '../shared/issue/issue-components.module';
+import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import {IssueComponentsModule} from '../shared/issue/issue-components.module';
     IssueComponentsModule,
     CommentEditorModule,
     MarkdownModule.forChild(),
+    IssueTablesModule,
   ],
   declarations: [
     Phase1Component,
