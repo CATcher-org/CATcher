@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "8"
+  - "10"
 sudo: required
 
 branches:
@@ -21,3 +21,7 @@ jobs:
       name: "Lint"
       script:
         - npm run lint
+    - stage: "Unit/Test"
+      name: "Jasmine"
+      script:
+        - npm run test

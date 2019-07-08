@@ -14,6 +14,6 @@
 
   <p *ngIf="issue.assignees.length === 0" style="margin-top: 5px"> - </p>
   <mat-list style="padding-top: 0" dense *ngIf="issue.assignees.length > 0">
-    <mat-list-item *ngFor="let assignee of issue.assignees">{{assignee}}</mat-list-item>
+    <mat-list-item style="font-size: 1em;" *ngFor="let assignee of issue.assignees">{{assignee}}</mat-list-item>
   </mat-list>
 </div>
