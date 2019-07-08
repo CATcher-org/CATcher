@@ -23,7 +23,7 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.DUPLICATE
   ];
 
-  @ViewChild(ViewIssueComponent) view_issue: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent) viewIssue: ViewIssueComponent;
 
   constructor(public issueService: IssueService,
               private route: ActivatedRoute,
@@ -38,7 +38,7 @@ export class IssueComponent implements OnInit {
   }
 
   canDeactivate() {
-    return this.view_issue.isEditing();
+    return this.viewIssue.isEditing();
   }
 
 }
