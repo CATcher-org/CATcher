@@ -15,10 +15,12 @@ import {Phase3Module} from './phase3/phase3.module';
 import {Phase1Module} from './phase1/phase1.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
+import { PhaseTesterResponseComponent } from './phase-tester-response/phase-tester-response.component';
+import { IssueTablesModule } from './shared/issue-tables/issue-tables.module';
 
 @NgModule({
   declarations: [
-    AppComponent, HeaderComponent, UserConfirmationComponent,
+    AppComponent, HeaderComponent, UserConfirmationComponent, PhaseTesterResponseComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,6 +46,7 @@ import { UserConfirmationComponent } from './core/guards/user-confirmation/user-
       },
     }),
     AppRoutingModule,
+    IssueTablesModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
