@@ -32,7 +32,7 @@
             {{severity.value}}
             </mat-select-trigger>
             <mat-option *ngFor="let value of severityValues" [value]="value.labelValue">
-              <mat-icon [ngStyle]="{'color': '#' + value.labelColor, 'font-size' : '1.8em'}">stop</mat-icon>
+              <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
               <span> {{value.labelValue}}</span>
             </mat-option>
           </mat-select>
@@ -49,7 +49,7 @@
             {{type.value}}
           </mat-select-trigger>
             <mat-option *ngFor="let value of issueTypeValues" [value]="value.labelValue">
-              <mat-icon [ngStyle]="{'color': '#' + value.labelColor, 'font-size' : '1.8em'}">stop</mat-icon>
+              <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
               <span> {{value.labelValue}}</span>
             </mat-option>
           </mat-select>
