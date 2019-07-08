@@ -1,9 +1,9 @@
 .mat-table {
-  min-width: 1000px;
+  min-width: 1200px;
 }
 
 .mat-paginator {
-  min-width: 1000px;
+  min-width: 1200px;
 }
 
 .mat-column {
@@ -18,10 +18,16 @@
   padding: 0 10px 0 10px;
 }
 
+.mat-column-teamAssigned {
+  width: 60px;
+}
+
 .mat-column-type {
+  width: 70px;
 }
 
 .mat-column-responseTag {
+  width: 70px;
 }
 
 .mat-column-severity {
@@ -29,12 +35,14 @@
 }
 
 .mat-column-duplicatedIssues {
-  padding-left: 25px;
+  width: 110px;
+  padding-left: 40px;
+  text-align: center !important;
 }
 
 .mat-column-assignees {
-  padding-left: 25px;
-  padding-right: 20px;
+  padding-left: 40px;
+  width: 120px;
   word-wrap: normal;
 }
 
