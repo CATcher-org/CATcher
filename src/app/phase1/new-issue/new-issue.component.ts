@@ -78,4 +78,12 @@ export class NewIssueComponent implements OnInit {
   get type() {
     return this.newIssueForm.get('type');
   }
+
+  get severityTextColor() {
+    return this.labelService.isDarkColor(this.selectedSeverityColor) ? 'white-text' : 'black-text';
+  }
+
+  get typeTextColor() {
+    return this.labelService.isDarkColor(this.selectedTypeColor) ? 'white-text' : 'black-text';
+  }
 }
