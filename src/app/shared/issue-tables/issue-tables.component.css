@@ -1,0 +1,47 @@
+.mat-table {
+  min-width: 1000px;
+}
+
+.mat-paginator {
+  min-width: 1000px;
+}
+
+.mat-column {
+}
+
+.mat-column-id {
+  width: 6%;
+}
+
+.mat-column-title {
+  width: 20%;
+  padding: 0 10px 0 10px;
+}
+
+.mat-column-type {
+}
+
+.mat-column-responseTag {
+}
+
+.mat-column-severity {
+  padding-left: 20px;
+}
+
+.mat-column-duplicatedIssues {
+  padding-left: 25px;
+}
+
+.mat-column-assignees {
+  padding-left: 25px;
+  padding-right: 20px;
+  word-wrap: normal;
+}
+
+.mat-column-Todo-Remaining {
+}
+
+.mat-column-actions {
+  width: 20%;
+  text-align: center !important;
+}

@@ -11,6 +11,7 @@ import {IssuesPendingComponent} from './issues-pending/issues-pending.component'
 import {IssuesRespondedComponent} from './issues-responded/issues-responded.component';
 import {IssuesFaultyComponent} from './issues-faulty/issues-faulty.component';
 import { ViewIssueModule } from '../shared/view-issue/view-issue.module';
+import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { ViewIssueModule } from '../shared/view-issue/view-issue.module';
     CommentEditorModule,
     ViewIssueModule,
     MarkdownModule.forChild(),
+    IssueTablesModule,
   ],
   declarations: [
     Phase2Component,

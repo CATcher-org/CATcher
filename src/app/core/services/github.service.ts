@@ -229,5 +229,6 @@ export class GithubService {
     } else {
       this.errorHandlingService.handleGeneralError('Unable to open this issue in Browser');
     }
+    event.stopPropagation();
   }
 }
