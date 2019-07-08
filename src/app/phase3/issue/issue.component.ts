@@ -13,7 +13,7 @@ import { PermissionService } from '../../core/services/permission.service';
 export class IssueComponent implements OnInit {
   issueId: number;
 
-  readonly issue_components: ISSUE_COMPONENTS[] = [
+  readonly issueComponents: ISSUE_COMPONENTS[] = [
     ISSUE_COMPONENTS.TESTER_POST,
     ISSUE_COMPONENTS.TEAM_RESPONSE,
     ISSUE_COMPONENTS.TUTOR_RESPONSE,

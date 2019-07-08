@@ -7,85 +7,85 @@
       <div class="column left">
         <!-- Tester's Post -->
         <app-issue-description [isEditing]="isIssueDescriptionEditing" (changeEditState)="updateDescriptionEditState($event)" 
-          *ngIf="!isIssueLoading && this.isComponentVisible(issue_components_enum.TESTER_POST)" 
+          *ngIf="!isIssueLoading && this.isComponentVisible(issueComponentsEnum.TESTER_POST)" 
           [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)">
         </app-issue-description>
 
         <!-- Team's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issue_components_enum.TEAM_RESPONSE) && !isCommentLoading && issue.teamResponse" 
+        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isCommentLoading && issue.teamResponse" 
           [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)"
           attributeName="teamResponse" (issueUpdated)="updateIssue($event)">
         </app-issue-response>
 
         <!-- New Team's Response -->
-        <app-new-team-response *ngIf="this.isComponentVisible(issue_components_enum.NEW_TEAM_RESPONSE) &&
+        <app-new-team-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
           permissions.canCRUDTeamResponse()  && !issue.teamResponse" [issue]="issue"
           (issueUpdated)="updateIssue($event)">
         </app-new-team-response>
 
         <!-- Tutor's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issue_components_enum.TUTOR_RESPONSE) && !isCommentLoading && issue.tutorResponse" 
+        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE) && !isCommentLoading && issue.tutorResponse" 
           [issue]="issue" [isEditing]="isTutorResponseEditing" (updateEditState)="updateTutorResponseEditState($event)"
           attributeName="tutorResponse" (issueUpdated)="updateIssue($event)">
         </app-issue-response>
 
         <!-- New Tutor's Response -->
-        <app-tutor-response *ngIf="this.isComponentVisible(issue_components_enum.NEW_TUTOR_RESPONSE)
+        <app-tutor-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TUTOR_RESPONSE)
           && permissions.canCRUDTutorResponse() && !issue.tutorResponse" [issue]="issue"
           (issueUpdated)="updateIssue($event)">
         </app-tutor-response>
       </div>
 
       <div class="column right">
-        <div *ngIf="(this.isComponentVisible(issue_components_enum.NEW_TEAM_RESPONSE) && issue.teamResponse) ||
-          (this.isComponentVisible(issue_components_enum.NEW_TUTOR_RESPONSE) && issue.tutorResponse) ||
-          (!this.isComponentVisible(issue_components_enum.TEAM_RESPONSE) && !this.isComponentVisible(issue_components_enum.TUTOR_RESPONSE))">
+        <div *ngIf="(this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) && issue.teamResponse) ||
+          (this.isComponentVisible(issueComponentsEnum.NEW_TUTOR_RESPONSE) && issue.tutorResponse) ||
+          (!this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE))">
 
         <!-- Severity Label -->
-        <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.SEVERITY_LABEL)" [issue]="issue"
+        <app-issue-label *ngIf="this.isComponentVisible(issueComponentsEnum.SEVERITY_LABEL)" [issue]="issue"
           attributeName="severity" (issueUpdated)="updateIssue($event)">
         </app-issue-label>
 
         <!-- Bug Type Label -->
-        <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.TYPE_LABEL)" [issue]="issue"
+        <app-issue-label *ngIf="this.isComponentVisible(issueComponentsEnum.TYPE_LABEL)" [issue]="issue"
           attributeName="type" (issueUpdated)="updateIssue($event)">
         </app-issue-label>
 
         <!-- Response Label -->
-        <app-issue-label *ngIf="this.isComponentVisible(issue_components_enum.RESPONSE_LABEL)" [issue]="issue"
+        <app-issue-label *ngIf="this.isComponentVisible(issueComponentsEnum.RESPONSE_LABEL)" [issue]="issue"
           attributeName="responseTag" (issueUpdated)="updateIssue($event)">
         </app-issue-label>
 
-        <mat-divider *ngIf="this.isComponentVisible(issue_components_enum.ASSIGNEE)"></mat-divider>
+        <mat-divider *ngIf="this.isComponentVisible(issueComponentsEnum.ASSIGNEE)"></mat-divider>
 
         <!-- Assignee to this Issue -->
-        <app-assignee-component *ngIf="this.isComponentVisible(issue_components_enum.ASSIGNEE)" [issue]="issue"
+        <app-assignee-component *ngIf="this.isComponentVisible(issueComponentsEnum.ASSIGNEE)" [issue]="issue"
           [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)">
         </app-assignee-component>
 
-        <mat-divider *ngIf="this.isComponentVisible(issue_components_enum.DUPLICATE)"></mat-divider>
+        <mat-divider *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE)"></mat-divider>
 
         <!-- Duplicate information -->
-        <app-duplicate-of-component *ngIf="this.isComponentVisible(issue_components_enum.DUPLICATE) &&
+        <app-duplicate-of-component *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
           (issueService.getDuplicateIssuesFor(issue) | async).length === 0" [issue]="issue"
           (issueUpdated)="updateIssue($event)">
         </app-duplicate-of-component>
-        <app-duplicated-issues-component *ngIf="this.isComponentVisible(issue_components_enum.DUPLICATE) &&
+        <app-duplicated-issues-component *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
           (issueService.getDuplicateIssuesFor(issue) | async).length !== 0" [issue]="issue">
         </app-duplicated-issues-component>
 
         <!-- Faulty issue warning -->  
-        <div style="margin-top: 15px; color: red" *ngIf="this.isComponentVisible(issue_components_enum.DUPLICATE) && 
+        <div style="margin-top: 15px; color: red" *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) && 
           ((issueService.getDuplicateIssuesFor(issue) | async).length !== 0) &&
           (!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
             * Need your resolution. An issue cannot have both duplicated issues and duplicated status.
         </div>
         <br>
 
-        <mat-divider *ngIf="this.isComponentVisible(issue_components_enum.TODO_LIST)"></mat-divider>
+        <mat-divider *ngIf="this.isComponentVisible(issueComponentsEnum.TODO_LIST)"></mat-divider>
 
         <!-- Issue To-Do list -->  
-        <app-todo-list *ngIf="this.isComponentVisible(issue_components_enum.TODO_LIST)" 
+        <app-todo-list *ngIf="this.isComponentVisible(issueComponentsEnum.TODO_LIST)" 
           [issue]="issue" (issueUpdated)="updateIssue($event)">
         </app-todo-list>
         </div>

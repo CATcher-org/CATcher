@@ -10,7 +10,7 @@ import { ViewIssueComponent, ISSUE_COMPONENTS } from '../../shared/view-issue/vi
 export class IssueComponent implements OnInit {
   issueId: number;
 
-  readonly issue_components: ISSUE_COMPONENTS[] = [
+  readonly issueComponents: ISSUE_COMPONENTS[] = [
     ISSUE_COMPONENTS.TESTER_POST,
     ISSUE_COMPONENTS.SEVERITY_LABEL,
     ISSUE_COMPONENTS.TYPE_LABEL

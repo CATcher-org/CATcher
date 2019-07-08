@@ -43,9 +43,9 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   issueSubscription: Subscription;
 
   @Input() issueId: number;
-  @Input() issue_components: ISSUE_COMPONENTS[];
+  @Input() issueComponents: ISSUE_COMPONENTS[];
 
-  private readonly issue_components_enum = ISSUE_COMPONENTS;
+  private readonly issueComponentsEnum = ISSUE_COMPONENTS;
 
   constructor(private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
@@ -65,7 +65,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   }
 
   isComponentVisible(component: ISSUE_COMPONENTS): boolean {
-    return this.issue_components.includes(component);
+    return this.issueComponents.includes(component);
   }
 
   isEditing() {
