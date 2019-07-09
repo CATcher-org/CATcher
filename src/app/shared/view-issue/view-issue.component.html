@@ -43,36 +43,38 @@
 
         <!-- Severity Label -->
         <app-issue-label *ngIf="this.isComponentVisible(issueComponentsEnum.SEVERITY_LABEL)" [issue]="issue"
-          attributeName="severity" (issueUpdated)="updateIssue($event)">
-        </app-issue-label>
+          attributeName="severity" (issueUpdated)="updateIssue($event)"></app-issue-label>
 
         <!-- Bug Type Label -->
-        <app-issue-label *ngIf="this.isComponentVisible(issueComponentsEnum.TYPE_LABEL)" [issue]="issue"
-          attributeName="type" (issueUpdated)="updateIssue($event)">
-        </app-issue-label>
+        <div *ngIf="this.isComponentVisible(issueComponentsEnum.TYPE_LABEL)">
+          <mat-divider></mat-divider>
+          <app-issue-label [issue]="issue" attributeName="type" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        </div>
 
         <!-- Response Label -->
-        <app-issue-label *ngIf="this.isComponentVisible(issueComponentsEnum.RESPONSE_LABEL)" [issue]="issue"
-          attributeName="responseTag" (issueUpdated)="updateIssue($event)">
-        </app-issue-label>
-
-        <mat-divider *ngIf="this.isComponentVisible(issueComponentsEnum.ASSIGNEE)"></mat-divider>
+        <div *ngIf="this.isComponentVisible(issueComponentsEnum.RESPONSE_LABEL)">
+          <mat-divider></mat-divider>
+          <app-issue-label [issue]="issue" attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
+        </div>
 
         <!-- Assignee to this Issue -->
-        <app-assignee-component *ngIf="this.isComponentVisible(issueComponentsEnum.ASSIGNEE)" [issue]="issue"
-          [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)">
-        </app-assignee-component>
-
-        <mat-divider *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE)"></mat-divider>
+        <div *ngIf="this.isComponentVisible(issueComponentsEnum.ASSIGNEE)">
+          <mat-divider></mat-divider>
+          <app-assignee-component  [issue]="issue" [team]="issue.teamAssigned" (issueUpdated)="updateIssue($event)"></app-assignee-component>
+        </div>
 
         <!-- Duplicate information -->
-        <app-duplicate-of-component *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
-          (issueService.getDuplicateIssuesFor(issue) | async).length === 0" [issue]="issue"
-          (issueUpdated)="updateIssue($event)">
-        </app-duplicate-of-component>
-        <app-duplicated-issues-component *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
-          (issueService.getDuplicateIssuesFor(issue) | async).length !== 0" [issue]="issue">
-        </app-duplicated-issues-component>
+        <div *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
+        (issueService.getDuplicateIssuesFor(issue) | async).length !== 0">
+          <mat-divider></mat-divider>
+          <app-duplicated-issues-component  [issue]="issue"></app-duplicated-issues-component>
+          <br>
+        </div>
+        <div *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
+        (issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
+          <mat-divider></mat-divider>
+          <app-duplicate-of-component [issue]="issue" (issueUpdated)="updateIssue($event)"></app-duplicate-of-component>
+        </div>
 
         <!-- Faulty issue warning -->  
         <div style="margin-top: 15px; color: red" *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) && 
@@ -80,14 +82,14 @@
           (!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
             * Need your resolution. An issue cannot have both duplicated issues and duplicated status.
         </div>
-        <br>
 
-        <mat-divider *ngIf="this.isComponentVisible(issueComponentsEnum.TODO_LIST)"></mat-divider>
+        <!-- Issue To-Do list -->
+        <div *ngIf="this.isComponentVisible(issueComponentsEnum.TODO_LIST)">
+          <br *ngIf="issue.duplicateOf">
+          <mat-divider></mat-divider>
+          <app-todo-list [issue]="issue" (issueUpdated)="updateIssue($event)"></app-todo-list>
+        </div>
 
-        <!-- Issue To-Do list -->  
-        <app-todo-list *ngIf="this.isComponentVisible(issueComponentsEnum.TODO_LIST)" 
-          [issue]="issue" (issueUpdated)="updateIssue($event)">
-        </app-todo-list>
         </div>
       </div>
     </div>
