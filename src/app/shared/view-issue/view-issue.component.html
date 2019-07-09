@@ -65,13 +65,13 @@
 
         <!-- Duplicate information -->
         <div *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
-        (issueService.getDuplicateIssuesFor(issue) | async).length !== 0">
+          (issueService.getDuplicateIssuesFor(issue) | async).length !== 0">
           <mat-divider></mat-divider>
           <app-duplicated-issues-component  [issue]="issue"></app-duplicated-issues-component>
           <br>
         </div>
         <div *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
-        (issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
+          (issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
           <mat-divider></mat-divider>
           <app-duplicate-of-component [issue]="issue" (issueUpdated)="updateIssue($event)"></app-duplicate-of-component>
         </div>
