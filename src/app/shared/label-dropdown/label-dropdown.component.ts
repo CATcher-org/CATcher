@@ -11,16 +11,17 @@ import { Label } from '../../core/models/label.model';
 export class LabelDropdownComponent implements OnInit {
   @Input() dropdownControl: AbstractControl;
   @Input() attributeName: string;
+  @Input() initialValue: string;
   @Input() dropdownForm: FormGroup;
 
   selectedColor: string;
-  labelValues: Label[];
+  labelList: Label[];
 
   constructor(private labelService: LabelService) { }
 
   ngOnInit() {
-    this.selectedColor = this.labelService.getColorOfLabel('');
-    this.labelValues = this.labelService.getLabelList(this.attributeName);
+    this.selectedColor = this.labelService.getColorOfLabel(this.initialValue);
+    this.labelList = this.labelService.getLabelList(this.attributeName);
   }
 
   setSelectedLabelColor(labelValue: string) {

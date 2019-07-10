@@ -5,7 +5,7 @@
       <mat-select-trigger>
         {{dropdownControl.value}}
       </mat-select-trigger>
-      <mat-option *ngFor="let value of labelValues" [value]="value.labelValue">
+      <mat-option *ngFor="let value of labelList" [value]="value.labelValue">
         <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
         <span> {{value.labelValue}}</span>
       </mat-option>
