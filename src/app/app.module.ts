@@ -17,6 +17,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
 import { PhaseTesterResponseComponent } from './phase-tester-response/phase-tester-response.component';
 import { IssueTablesModule } from './shared/issue-tables/issue-tables.module';
+import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { IssueTablesModule } from './shared/issue-tables/issue-tables.module';
     }),
     AppRoutingModule,
     IssueTablesModule,
+    PhaseTesterResponseModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

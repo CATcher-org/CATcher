@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ACTION_BUTTONS } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-phase-tester-response',
@@ -7,9 +6,6 @@ import { ACTION_BUTTONS } from '../shared/issue-tables/issue-tables.component';
   styleUrls: ['./phase-tester-response.component.css']
 })
 export class PhaseTesterResponseComponent implements OnInit {
-
-  private displayedColumns: string[] = ['id', 'title', 'type', 'severity', 'actions'];
-  private actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB];
 
   constructor() { }
 
