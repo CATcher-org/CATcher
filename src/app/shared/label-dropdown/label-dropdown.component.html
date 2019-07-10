@@ -1,18 +1,17 @@
 <form [formGroup]="dropdownForm">
-<mat-form-field>
-<mat-select [ngClass]="dropdownTextColor" formControlName="{{attributeName}}" placeholder="{{this.labelService.getLabelTitle(attributeName)}}"
-          (selectionChange)="setSelectedLabelColor($event.value)" 
-          [ngStyle]="this.labelService.setLabelStyle(this.selectedColor)">
-          <mat-select-trigger>
-            {{dropdownControl.value}}
-          </mat-select-trigger>
-            <mat-option *ngFor="let value of labelValues" [value]="value.labelValue">
-              <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
-              <span> {{value.labelValue}}</span>
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="dropdownControl.errors && dropdownControl.errors['required'] && dropdownControl.touched">
-            {{this.labelService.getLabelTitle(attributeName)}} required.
-          </mat-error>
-</mat-form-field>
+  <mat-form-field>
+    <mat-select [ngClass]="dropdownTextColor" formControlName="{{attributeName}}" placeholder="{{this.labelService.getLabelTitle(attributeName)}}"
+      (selectionChange)="setSelectedLabelColor($event.value)" [ngStyle]="this.labelService.setLabelStyle(this.selectedColor)">
+      <mat-select-trigger>
+        {{dropdownControl.value}}
+      </mat-select-trigger>
+      <mat-option *ngFor="let value of labelValues" [value]="value.labelValue">
+        <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
+        <span> {{value.labelValue}}</span>
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="dropdownControl.errors && dropdownControl.errors['required'] && dropdownControl.touched">
+      {{this.labelService.getLabelTitle(attributeName)}} required.
+    </mat-error>
+  </mat-form-field>
 </form>
