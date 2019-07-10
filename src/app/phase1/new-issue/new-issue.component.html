@@ -24,39 +24,9 @@
       </div>
 
       <div class="column right">
-        <mat-form-field class="left-half">
-          <mat-select [ngClass]="severityTextColor" formControlName="severity" placeholder="Severity"
-          (selectionChange)="setSelectedLabelColor($event.value, 'severity')" 
-          [ngStyle]="this.labelService.setLabelStyle(this.selectedSeverityColor)">
-            <mat-select-trigger>
-            {{severity.value}}
-            </mat-select-trigger>
-            <mat-option *ngFor="let value of severityValues" [value]="value.labelValue">
-              <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
-              <span> {{value.labelValue}}</span>
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="severity.errors && severity.errors['required'] && severity.touched">
-            Severity required.
-          </mat-error>
-        </mat-form-field>
+          <app-label-dropdown class="left-half"  attributeName="severity" [dropdownControl]="severity" [dropdownForm]="newIssueForm"></app-label-dropdown>
 
-        <mat-form-field class="right-half">
-          <mat-select [ngClass]="typeTextColor" formControlName="type" placeholder="Type"
-          (selectionChange)="setSelectedLabelColor($event.value, 'type')" 
-          [ngStyle]="this.labelService.setLabelStyle(this.selectedTypeColor)">
-          <mat-select-trigger>
-            {{type.value}}
-          </mat-select-trigger>
-            <mat-option *ngFor="let value of issueTypeValues" [value]="value.labelValue">
-              <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
-              <span> {{value.labelValue}}</span>
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="type.errors && type.errors['required'] && type.touched">
-            Type required.
-          </mat-error>
-        </mat-form-field>
+          <app-label-dropdown class="right-half" attributeName="type" [dropdownControl]="type" [dropdownForm]="newIssueForm"></app-label-dropdown>
       </div>
 
     </div>

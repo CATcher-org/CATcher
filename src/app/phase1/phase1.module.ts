@@ -9,6 +9,7 @@ import {CommentEditorModule} from '../shared/comment-editor/comment-editor.modul
 import {MarkdownModule} from 'ngx-markdown';
 import {IssueComponentsModule} from '../shared/issue/issue-components.module';
 import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
+import { LabelDropdownModule } from '../shared/label-dropdown/label-dropdown.module';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
     CommentEditorModule,
     MarkdownModule.forChild(),
     IssueTablesModule,
+    LabelDropdownModule
   ],
   declarations: [
     Phase1Component,

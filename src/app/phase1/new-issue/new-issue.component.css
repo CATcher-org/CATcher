@@ -23,11 +23,3 @@ mat-form-field {
 .right {
   width: 25%;
 }
-
-:host /deep/ .white-text .mat-select-value-text {
-  color: white !important;
-}
-
-:host /deep/ .black-text .mat-select-value-text {
-  color: black !important;
-}
