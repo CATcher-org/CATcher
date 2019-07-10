@@ -81,6 +81,12 @@ export const IssuesFilter = {
     Admin: 'NO_FILTER',
   },
   phase3: {
+    // TODO: Rewrite Permissions if required.
+    Student: 'NO_ACCESS',
+    Tutor: 'FILTER_BY_TEAM_ASSIGNED',
+    Admin: 'NO_FILTER',
+  },
+  phase4: {
     Student: 'NO_ACCESS',
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
     Admin: 'NO_FILTER',
@@ -89,6 +95,7 @@ export const IssuesFilter = {
 
 export enum RespondType {
   teamResponse = 'teamResponse',
+  testerResponse = 'testerResponse',
   tutorResponse = 'tutorResponse',
 }
 
@@ -97,3 +104,5 @@ export const phase2DescriptionTemplate = new RegExp('(?<header># Description|# T
 export const phase3DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
   'here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|' +
   '## State the duplicated issue here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check|$)', 'gi');
+export const phase4DescriptionTemplate = undefined;
+// TODO: Shift Phase3DescTemplate to Phase4DescTemplate and generate a new one for Phase3.
