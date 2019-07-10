@@ -78,5 +78,4 @@ export class NewIssueComponent implements OnInit {
   get type() {
     return this.newIssueForm.get('type');
   }
-
 }
