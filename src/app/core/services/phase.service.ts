@@ -53,7 +53,7 @@ export class PhaseService {
   }
 
   /**
-   * Returns the name of the owner of the input phase.
+   * Returns the name of the owner of a given phase.
    * @param phase
    */
   getPhaseOwner(phase: string): string {
