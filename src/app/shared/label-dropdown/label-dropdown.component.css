@@ -1,7 +1,7 @@
-:host /deep/ .white-text .mat-select-value-text {
+::ng-deep .white-text .mat-select-value-text {
   color: white !important;
 }
 
-:host /deep/ .black-text .mat-select-value-text {
+::ng-deep .black-text .mat-select-value-text {
   color: black !important;
 }
