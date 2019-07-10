@@ -12,7 +12,7 @@
         </app-issue-description>
 
         <!-- Team's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isCommentLoading && issue.teamResponse" 
+        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isIssueLoading && issue.teamResponse" 
           [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)"
           attributeName="teamResponse" (issueUpdated)="updateIssue($event)">
         </app-issue-response>
@@ -24,7 +24,7 @@
         </app-new-team-response>
 
         <!-- Tutor's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE) && !isCommentLoading && issue.tutorResponse" 
+        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE) && !isIssueLoading && issue.tutorResponse" 
           [issue]="issue" [isEditing]="isTutorResponseEditing" (updateEditState)="updateTutorResponseEditState($event)"
           attributeName="tutorResponse" (issueUpdated)="updateIssue($event)">
         </app-issue-response>
@@ -79,7 +79,7 @@
         <!-- Faulty issue warning -->  
         <div style="margin-top: 15px; color: red" *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) && 
           ((issueService.getDuplicateIssuesFor(issue) | async).length !== 0) &&
-          (!!issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
+          (issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
             * Need your resolution. An issue cannot have both duplicated issues and duplicated status.
         </div>
 
