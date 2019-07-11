@@ -6,8 +6,9 @@ import {IssueComponent} from './issue/issue.component';
 import {CanDeactivateIssueGuard} from '../core/guards/can-deactivate-issue-guard.service';
 
 const routes: Routes = [
-  { path: 'phaseTesterResponse', component: PhaseTesterResponseComponent, canActivate: [AuthGuard]}
-  { path: 'phase2/issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateIssueGuard] }
+  { path: 'phaseTesterResponse', component: PhaseTesterResponseComponent, canActivate: [AuthGuard]},
+  { path: 'phaseTesterResponse/issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateIssueGuard] }
 
 ];
 
