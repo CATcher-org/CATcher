@@ -10,6 +10,7 @@ import {
   labelsToAttributeMapping,
   phase2DescriptionTemplate,
   phase3DescriptionTemplate,
+  phaseTesterResponseDescriptionTemplate,
   RespondType
 } from '../models/issue.model';
 import { UserService } from './user.service';
@@ -277,7 +278,18 @@ export class IssueService {
   private parseBody(issue: {}): any {
     const body = issue['body'];
     // tslint:disable-next-line
-    const regexExp = this.phaseService.currentPhase == Phase.phase2 ? phase2DescriptionTemplate : phase3DescriptionTemplate;
+    let regexExp;
+    switch (this.phaseService.currentPhase) {
+      case Phase.phase2:
+        regexExp = phase2DescriptionTemplate;
+        break;
+      case Phase.phaseTesterResponse:
+        regexExp = phaseTesterResponseDescriptionTemplate;
+        break;
+      case Phase.phase3:
+        regexExp = phase3DescriptionTemplate;
+        break;
+    }
     const matches = body.match(regexExp);
     regexExp.lastIndex = 0;
 
