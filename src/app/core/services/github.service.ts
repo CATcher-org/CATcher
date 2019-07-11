@@ -204,7 +204,7 @@ export class GithubService {
    * @return Observable<{}> representing session information.
    */
   fetchSettingsFile(): Observable<{}> {
-    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json'}))
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'dupsettings.json'}))
         .pipe(map(rawData => JSON.parse(atob(rawData['data']['content']))));
   }
 
