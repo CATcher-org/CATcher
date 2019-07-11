@@ -69,6 +69,36 @@ const PERMISSIONS = {
     }
   },
 
+  [Phase.phaseTesterResponse]: {
+    [UserRole.Student]: {
+      'canCreateNewIssue': true,
+      'canDeleteIssue': true,
+      'canEditIssueTitle': true,
+      'canEditIssueDescription': true,
+      'canEditIssueLabels': true,
+      'canCRUDTeamResponse': false,
+      'canCRUDTutorResponse': false,
+    },
+    [UserRole.Tutor]: {
+      'canCreateNewIssue': false,
+      'canDeleteIssue': false,
+      'canEditIssueTitle': false,
+      'canEditIssueDescription': false,
+      'canEditIssueLabels': false,
+      'canCRUDTeamResponse': false,
+      'canCRUDTutorResponse': false,
+    },
+    [UserRole.Admin]: {
+      'canCreateNewIssue': true,
+      'canDeleteIssue': true,
+      'canEditIssueTitle': true,
+      'canEditIssueDescription': true,
+      'canEditIssueLabels': true,
+      'canCRUDTeamResponse': false,
+      'canCRUDTutorResponse': false,
+    }
+  },
+
   /** Phase 3 Permissions **/
   [Phase.phase3]: {
     [UserRole.Student]: {

@@ -15,13 +15,15 @@ import {Phase3Module} from './phase3/phase3.module';
 import {Phase1Module} from './phase1/phase1.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
+import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
 
 @NgModule({
   declarations: [
-    AppComponent, HeaderComponent, UserConfirmationComponent,
+    AppComponent, HeaderComponent, UserConfirmationComponent
   ],
   imports: [
     BrowserModule,
+    PhaseTesterResponseModule,
     BrowserAnimationsModule,
     AuthModule,
     Phase1Module,

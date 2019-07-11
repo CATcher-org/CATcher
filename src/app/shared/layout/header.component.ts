@@ -97,7 +97,7 @@ export class HeaderComponent implements OnInit {
 
   private getTeamFilterString() {
     // First Phase does not need team filtering
-    if (this.phaseService.currentPhase === Phase.phase1) {
+    if (this.phaseService.currentPhase === Phase.phase1 || this.phaseService.currentPhase === Phase.phaseTesterResponse) {
       return '';
     }
 

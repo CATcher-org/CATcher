@@ -80,6 +80,11 @@ export const IssuesFilter = {
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
     Admin: 'NO_FILTER',
   },
+  phaseTesterResponse: {
+    Student: 'NO_FILTER',
+    Tutor: 'NO_ACCESS',
+    Admin: 'NO_FILTER',
+  },
   phase3: {
     Student: 'NO_ACCESS',
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
