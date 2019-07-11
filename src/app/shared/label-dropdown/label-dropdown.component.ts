@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { LabelService } from '../../core/services/label.service';
-import {FormGroup, AbstractControl} from '@angular/forms';
+import { FormGroup, AbstractControl } from '@angular/forms';
 import { Label } from '../../core/models/label.model';
 
 @Component({
@@ -9,7 +9,7 @@ import { Label } from '../../core/models/label.model';
   styleUrls: ['./label-dropdown.component.css']
 })
 export class LabelDropdownComponent implements OnInit {
-  @Input() dropdownControl: AbstractControl;
+  dropdownControl: AbstractControl;
   @Input() attributeName: string;
   @Input() initialValue: string;
   @Input() dropdownForm: FormGroup;
@@ -22,6 +22,7 @@ export class LabelDropdownComponent implements OnInit {
   ngOnInit() {
     this.selectedColor = this.labelService.getColorOfLabel(this.initialValue);
     this.labelList = this.labelService.getLabelList(this.attributeName);
+    this.dropdownControl = this.dropdownForm.get(this.attributeName);
   }
 
   setSelectedLabelColor(labelValue: string) {
