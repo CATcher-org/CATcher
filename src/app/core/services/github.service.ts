@@ -11,7 +11,7 @@ const Octokit = require('@octokit/rest');
 let ORG_NAME = '';
 let MOD_ORG = '';
 let REPO = '';
-const DATA_REPO = 'public_data';
+let DATA_REPO = '';
 let octokit;
 
 @Injectable({
@@ -31,11 +31,16 @@ export class GithubService {
     });
   }
 
-  updatePhaseDetails(repoName: string, orgName: string, modOrg: string) {
-    ORG_NAME = orgName;
-    REPO = repoName;
-    MOD_ORG = modOrg;
+  storeOrganizationDetails(orgName: string, dataRepo: string) {
+    MOD_ORG = orgName;
+    DATA_REPO = dataRepo;
   }
+
+  storePhaseDetails(phaseRepoOwner: string, repoName: string) {
+    REPO = repoName;
+    ORG_NAME = phaseRepoOwner;
+  }
+
   /**
    * Will return an Observable with array of issues in JSON format.
    */
@@ -192,6 +197,15 @@ export class GithubService {
         return {data};
       })
     );
+  }
+
+  /**
+   * Fetches the data file that is regulates session information.
+   * @return Observable<{}> representing session information.
+   */
+  fetchSettingsFile(): Observable<{}> {
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json'}))
+        .pipe(map(rawData => JSON.parse(atob(rawData['data']['content']))));
   }
 
   private getNumberOfIssuePages(filter?: {}): Observable<number> {

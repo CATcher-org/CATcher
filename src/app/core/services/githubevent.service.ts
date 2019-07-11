@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
 import { Observable, of } from 'rxjs';
 import { map, flatMap } from 'rxjs/operators';
-import { User } from '../models/user.model';
 import { IssueService } from './issue.service';
 
 @Injectable({
@@ -19,12 +18,12 @@ export class GithubEventService {
    * Calls the Github service api to return the latest github event (e.g renaming an issue's title)
    * of current repository and store the timestamps of the event in this service
    */
-  setLatestChangeEvent(userResponse: User): Observable<User> {
+  setLatestChangeEvent(): Observable<any> {
       return this.githubService.fetchEventsForRepo().pipe(
         map((response) => {
           this.setLastModifiedTime(response[0]['created_at']);
           this.setLastModifiedCommentTime(response[0]['issue']['updated_at']);
-          return userResponse;
+          return response;
         })
       );
   }

@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
 import { PhaseService } from './phase.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { GithubService} from './github.service';
-import { flatMap } from 'rxjs/operators';
 import { IssueService } from './issue.service';
 import { IssueCommentService } from './issue-comment.service';
 import { DataService } from './data.service';
@@ -38,35 +37,22 @@ export class AuthService {
               private titleService: Title) {
   }
 
-  startAuthentication(username: String, password: String, encodedText: String) {
+  /**
+   * Authenticates the user to the github api and stores the necessary credentials in
+   * all remote services.
+   * @param username - User's Username
+   * @param password - User's Password
+   */
+  authenticate(username: string, password: string): Observable<any> {
+
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
-    let userLoginId;
+    this.githubService.storeCredentials(username, password);
 
-    return this.http.get('https://api.github.com/user', { headers: header }).pipe(
-      flatMap((githubResponse) => {
-        userLoginId = githubResponse['login'];
-        this.githubService.storeCredentials(username, password);
-        const array = this.phaseService.parseEncodedPhase(encodedText);
-        return (this.phaseService.checkIfReposAccessible(array));
-      }),
-      flatMap((phaseResponse) => {
-        const phase = this.phaseService.determinePhaseNumber(phaseResponse);
-        if (phase === 'not accessible') {
-          return throwError('Repo is not ready.');
-        } else {
-          return this.userService.createUserModel(userLoginId);
-        }
-      }),
-      flatMap((userResponse) => {
-        return this.labelService.synchronizeRemoteLabels(userResponse);
-      }),
-      flatMap((labelResponse) =>  {
-        // Initialise last modified time for this repo
-        return this.githubEventService.setLatestChangeEvent(labelResponse);
-      })
-    );
+    return this.http.get('https://api.github.com/user', { headers: header });
   }
+
+
 
   logOut(): void {
     this.userService.reset();

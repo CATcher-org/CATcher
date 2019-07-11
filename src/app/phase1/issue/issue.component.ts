@@ -1,67 +1,35 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Issue } from '../../core/models/issue.model';
-import { IssueService } from '../../core/services/issue.service';
-import { FormBuilder } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { IssueCommentService } from '../../core/services/issue-comment.service';
-import { Subscription } from 'rxjs';
+import { ViewIssueComponent, ISSUE_COMPONENTS } from '../../shared/view-issue/view-issue.component';
 
 @Component({
   selector: 'app-issue',
   templateUrl: './issue.component.html',
   styleUrls: ['./issue.component.css']
 })
-export class IssueComponent implements OnInit, OnDestroy {
-  issue: Issue;
-  isIssueLoading = true;
-  isEditing = false;
-  issueSubscription: Subscription;
+export class IssueComponent implements OnInit {
+  issueId: number;
 
-  constructor(private issueService: IssueService,
-              private issueCommentService: IssueCommentService,
-              private route: ActivatedRoute,
-              private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService) { }
+  readonly issueComponents: ISSUE_COMPONENTS[] = [
+    ISSUE_COMPONENTS.TESTER_POST,
+    ISSUE_COMPONENTS.SEVERITY_LABEL,
+    ISSUE_COMPONENTS.TYPE_LABEL
+  ];
+
+  @ViewChild(ViewIssueComponent) viewIssue: ViewIssueComponent;
+
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.initializeIssue();
+    this.route.params.subscribe(
+      params => {
+        this.issueId = + params['issue_id'];
+      }
+    );
   }
 
-  canDeactivate() {
-    return !this.isEditing;
-  }
-
-  updateIssue(newIssue: Issue) {
-    this.issue = newIssue;
-    this.issueService.updateLocalStore(this.issue);
-  }
-
-  updateEditState(newState: boolean) {
-    this.isEditing = newState;
-  }
-
-  /**
-   * Will obtain the issue from IssueService and then check whether the responses (aka comments) has been loaded into the application.
-   * If they are not loaded, retrieve the comments from github. Else just use the already retrieved comments.
-   */
-  private initializeIssue() {
-    const id = +this.route.snapshot.paramMap.get('issue_id');
-    this.getIssue(id);
-  }
-
-  private getIssue(id: number) {
-    this.issueSubscription = this.issueService.getAllIssues().subscribe((issues) => {
-        this.issue = issues.find(issue => issue.id === id);
-        this.isIssueLoading = false;
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue());
-    });
-  }
-
-  ngOnDestroy() {
-    this.issueSubscription.unsubscribe();
+  canDeactivate(): boolean {
+    return this.viewIssue.isEditing();
   }
 
 }
