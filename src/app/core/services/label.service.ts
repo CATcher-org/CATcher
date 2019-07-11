@@ -62,11 +62,11 @@ export class LabelService {
   /**
    * Synchronizes the labels in github with those required by the application.
    */
-  synchronizeRemoteLabels(userResponse: User): Observable<User> {
+  synchronizeRemoteLabels(): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
           this.ensureRepoHasRequiredLabels(this.parseLabelData(response), this.getRequiredLabelsAsArray());
-          return userResponse;
+          return response;
         })
       );
   }
