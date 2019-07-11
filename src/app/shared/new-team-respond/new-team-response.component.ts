@@ -14,14 +14,8 @@ import { LabelService } from '../../core/services/label.service';
 })
 export class NewTeamResponseComponent implements OnInit {
   newTeamResponseForm: FormGroup;
-  severityValues = this.labelService.getLabelList('severity');
-  issueTypeValues = this.labelService.getLabelList('type');
-  responseList = this.labelService.getLabelList('responseTag');
   teamMembers: string[];
   duplicatedIssueList: Observable<Issue[]>;
-  selectedSeverityColor: string;
-  selectedTypeColor: string;
-  selectedResponseColor: string;
 
   isFormPending = false;
   @Input() issue: Issue;
@@ -58,9 +52,6 @@ export class NewTeamResponseComponent implements OnInit {
       this.responseTag.updateValueAndValidity();
     });
 
-    this.selectedSeverityColor = this.labelService.getColorOfLabel(this.issue.severity);
-    this.selectedTypeColor = this.labelService.getColorOfLabel(this.issue.type);
-    this.selectedResponseColor = this.labelService.getColorOfLabel(this.issue.responseTag);
   }
 
   submitNewTeamResponse(form: NgForm) {
@@ -119,20 +110,6 @@ export class NewTeamResponseComponent implements OnInit {
         return this.issue.id !== issue.id;
       });
     }));
-  }
-
-  setSelectedLabelColor(labelValue: string, labelType: string) {
-    switch (labelType) {
-      case 'severity':
-        this.selectedSeverityColor = this.labelService.getColorOfLabel(labelValue);
-        break;
-      case 'type':
-        this.selectedTypeColor = this.labelService.getColorOfLabel(labelValue);
-        break;
-      case 'responseTag':
-        this.selectedResponseColor = this.labelService.getColorOfLabel(labelValue);
-        break;
-    }
   }
 
   get description() {
