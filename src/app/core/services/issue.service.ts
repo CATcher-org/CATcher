@@ -21,6 +21,7 @@ import * as moment from 'moment';
 import { Team } from '../models/team.model';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
+import { TesterResponse } from '../models/tester-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -270,6 +271,7 @@ export class IssueService {
     issue.tutorResponse = array[3];
     issue.todoList = array[4];
     issue.proposedAssignees = array[5];
+    issue.testerResponses = array[6];
   }
 
   /**
@@ -341,7 +343,7 @@ export class IssueService {
           break;
       }
     }
-    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || []);
+    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || [], testerResponses || []);
   }
 
   /**
@@ -396,6 +398,7 @@ export class IssueService {
       teamResponse: issueInJson['teamResponse'],
       tutorResponse: issueInJson['tutorResponse'],
       duplicateOf: issueInJson['duplicateOf'],
+      testerResponses: issueInJson['testerResponses'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS),
     };
   }
@@ -410,8 +413,17 @@ export class IssueService {
     }
   }
 
-  private parseTesterResponse(toParse: string): [] {
-    return [];
+  private parseTesterResponse(toParse: string): TesterResponse[] {
+    let matches;
+    const testerResponses: TesterResponse[] = [];
+    const regex = new RegExp('#* (\\d.+)[\\n\\r]*(.+)[\\n\\r]*(.+)[\\n\\r]*\\*\\*Reason for disagreement:\\*\\* ([A-z' +
+      '0-9  !@#$%^&*()_\\-=+\\\\\|\\[\\]{};\'",.<>/?\\n\\r]*)-------------------', 'gi');
+    while (matches = regex.exec(toParse)) {
+      if (matches && matches.length > 1) {
+        testerResponses.push(new TesterResponse(matches[1], matches[2], matches[3], matches[4]));
+      }
+    }
+    return testerResponses;
   }
 
 
