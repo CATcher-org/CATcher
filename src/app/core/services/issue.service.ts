@@ -297,7 +297,7 @@ export class IssueService {
       return Array('', null, null, null, null, null);
     }
 
-    let description; let teamResponse; let duplicateOf; let tutorResponse; let todoList; let assignees;
+    let description; let teamResponse; let duplicateOf; let tutorResponse; let todoList; let assignees; let testerResponses;
 
     for (const match of matches) {
       const groups = regexExp.exec(match)['groups'];
@@ -333,6 +333,9 @@ export class IssueService {
           const proposedAssignees = groups['description'].split(',').map(a => a.toLowerCase().trim()) || [];
           const teamMembers = this.getTeamAssignedToIssue(issue).teamMembers.map(m => m.loginId);
           assignees = teamMembers.filter(m => proposedAssignees.includes(m.toLowerCase()));
+          break;
+        case '# Items for the Tester to Verify':
+          testerResponses = this.parseTesterResponse(groups['description']);
           break;
         default:
           break;
@@ -405,6 +408,10 @@ export class IssueService {
     } else {
       return null;
     }
+  }
+
+  private parseTesterResponse(toParse: string): [] {
+    return [];
   }
 
 
