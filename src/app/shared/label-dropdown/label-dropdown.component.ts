@@ -29,7 +29,7 @@ export class LabelDropdownComponent implements OnInit {
     this.selectedColor = this.labelService.getColorOfLabel(labelValue);
   }
 
-  get dropdownTextColor() {
+  get dropdownTextColor(): string {
     return this.labelService.isDarkColor(this.selectedColor) ? 'white-text' : 'black-text';
   }
 
