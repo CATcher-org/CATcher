@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ACTION_BUTTONS, IssueTablesComponent} from '../../shared/issue-tables/issue-tables.component';
-import {Issue} from '../../core/models/issue.model';
+import {Issue, STATUS} from '../../core/models/issue.model';
 
 @Component({
   selector: 'app-issue-responded',
@@ -13,7 +13,7 @@ export class IssueRespondedComponent implements OnInit {
 
   readonly displayedColumns: string[] = ['id', 'title', 'type', 'severity', 'actions'];
   readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.MARK_AS_PENDING];
-  readonly filter: (issue: Issue) => boolean = (issue: Issue) => (issue.teamResponse !== undefined && issue.testerResponses !== undefined);
+  readonly filter: (issue: Issue) => boolean = (issue: Issue) => (issue.status === STATUS.Done);
 
   constructor() { }
 

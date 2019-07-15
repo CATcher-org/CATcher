@@ -14,7 +14,8 @@
 
         <h3> {{response.itemName}} </h3>
         <mat-divider></mat-divider>
-        <p> {{response.itemDescription}} </p>
+        <markdown [data]="response.itemDescription"></markdown>
+        <br>
 
         <div>
           <mat-checkbox style="display: inline-block; width: 20%" [checked]="isDisagreeChecked(response.disagreeCheckbox)"
