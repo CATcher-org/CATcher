@@ -100,6 +100,18 @@ export class IssueService {
       case Phase.phase2:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
+      case Phase.phaseTesterResponse:
+        let testerResponsesString = '';
+        for (const testerResponse of issue.testerResponses) {
+          testerResponsesString += '## ' + testerResponse.itemName + '\n\n';
+          testerResponsesString += testerResponse.itemDescription + '\n\n';
+          testerResponsesString += testerResponse.disagreeCheckbox + '\n\n';
+          testerResponsesString += '**Reason for disagreement:** ' + testerResponse.reasonForDiagreement + '\n\n';
+          testerResponsesString += '-------------------\n';
+        }
+        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
+        `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
+        `## Items for the Tester to Verify\n${testerResponsesString}`;
       case Phase.phase3:
         if (!issue.todoList) {
           issue.todoList = [];
@@ -352,7 +364,8 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phase1) {
+    if (this.phaseService.currentPhase !== Phase.phase1 &&
+        this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
       const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
     }
