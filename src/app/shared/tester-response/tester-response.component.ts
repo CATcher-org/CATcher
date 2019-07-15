@@ -5,6 +5,7 @@ import { CommentEditorComponent } from '../comment-editor/comment-editor.compone
 import { IssueService } from '../../core/services/issue.service';
 import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { PermissionService } from '../../core/services/permission.service';
 
 @Component({
   selector: 'app-tester-response',
@@ -15,6 +16,7 @@ export class TesterResponseComponent implements OnInit {
 
   testerResponseForm: FormGroup;
   isFormPending = false;
+  isEditing = false;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -22,7 +24,8 @@ export class TesterResponseComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService) { }
+              private errorHandlingService: ErrorHandlingService,
+              private permission: PermissionService) { }
 
   ngOnInit() {
     this.testerResponseForm = this.formBuilder.group({
@@ -44,6 +47,14 @@ export class TesterResponseComponent implements OnInit {
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+  }
+
+  changeToEditMode() {
+    this.isEditing = true;
+  }
+
+  cancelEditMode() {
+    this.isEditing = false;
   }
 
   handleChangeOfDisagreeCheckbox(event, disagree, index) {

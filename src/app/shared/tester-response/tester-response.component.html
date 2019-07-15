@@ -3,35 +3,40 @@
   <div class="timeline-comment">
     <div class="timeline-header">
       <span style="vertical-align: middle; margin-left: 5px"> <strong>Tester</strong> responded. </span>
+      <button mat-button style="float: right;" *ngIf="!isEditing && permission.canEditTesterResponse" (click)="changeToEditMode()">
+          Edit
+        </button>
     </div>
 
     <div>
       <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
-      
+
         <h3> {{response.itemName}} </h3>
-
         <mat-divider></mat-divider>
-
         <p> {{response.itemDescription}} </p>
-
-        <br>
 
         <div>
           <mat-checkbox style="display: inline-block; width: 20%" [checked]="isDisagreeChecked(response.disagreeCheckbox)"
-            (change)="handleChangeOfDisagreeCheckbox($event, response.disagreeCheckbox, i)">
+            (change)="handleChangeOfDisagreeCheckbox($event, response.disagreeCheckbox, i)" [disabled]="!isEditing">
             I disagree
           </mat-checkbox>
         </div>
 
       <br>
-      <div class="comment">
-      <markdown [data]="response.reasonForDiagreement"></markdown>
+      <div>
+        <p style="font-weight: 500;"> Reason for Disagreement: </p>
+      <markdown [data]="response.reasonForDiagreement" *ngIf="!isEditing"></markdown>
       </div>
+      <div *ngIf="isEditing">
       <app-comment-editor [commentField]="testerResponseForm.get('description')" [commentForm]="testerResponseForm"
       (change)="handleChangeOfText($event, response.reasonForDiagreement, i)"></app-comment-editor>
       </div>
 
-      <div style="float: right; padding:5px;">
+      <br> <mat-divider></mat-divider> 
+    </div>
+
+      <div style="float: right; padding:5px;" *ngIf="isEditing">
+          <button type="button" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
         <button type="submit" style="margin-left: 10px" [disabled]="testerResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>
       </div>
     </div>
