@@ -14,9 +14,6 @@ import {finalize, map} from 'rxjs/operators';
 export class TutorResponseComponent implements OnInit {
 
   tutorResponseForm: FormGroup;
-  severityValues = Object.keys(SEVERITY);
-  issueTypeValues = Object.keys(TYPE);
-  responseList = Object.keys(RESPONSE);
   duplicatedIssueList: Observable<Issue[]>;
   teamMembers: string[];
 

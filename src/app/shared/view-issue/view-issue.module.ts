@@ -7,6 +7,7 @@ import { CommentEditorModule } from '../comment-editor/comment-editor.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { SharedModule } from '../shared.module';
 import { IssueComponentsModule } from '../issue/issue-components.module';
+import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
 
 @NgModule({
   exports: [
@@ -22,6 +23,7 @@ import { IssueComponentsModule } from '../issue/issue-components.module';
     CommentEditorModule,
     SharedModule,
     IssueComponentsModule,
+    LabelDropdownModule,
     MarkdownModule.forChild(),
   ]
 })

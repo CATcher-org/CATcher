@@ -13,11 +13,7 @@ import { LabelService } from '../../core/services/label.service';
 })
 export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
-  severityValues = this.labelService.getLabelList('severity');
-  issueTypeValues = this.labelService.getLabelList('type');
   isFormPending = false;
-  selectedSeverityColor: string;
-  selectedTypeColor: string;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService, public labelService: LabelService,
@@ -30,8 +26,6 @@ export class NewIssueComponent implements OnInit {
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
-    this.selectedSeverityColor = this.labelService.getColorOfLabel('');
-    this.selectedTypeColor = this.labelService.getColorOfLabel('');
   }
 
   submitNewIssue(form: NgForm) {
@@ -50,17 +44,6 @@ export class NewIssueComponent implements OnInit {
           error => {
           this.errorHandlingService.handleHttpError(error);
         });
-  }
-
-  setSelectedLabelColor(labelValue: string, labelType: string) {
-    switch (labelType) {
-      case 'severity':
-        this.selectedSeverityColor = this.labelService.getColorOfLabel(labelValue);
-        break;
-      case 'type':
-        this.selectedTypeColor = this.labelService.getColorOfLabel(labelValue);
-        break;
-    }
   }
 
   get title() {
