@@ -1,3 +1,39 @@
-<p>
-  tester-response works!
-</p>
+<h3 class="mat-title">Tester's Response</h3>
+<form [formGroup]="testerResponseForm" #myForm="ngForm" (ngSubmit)="submitTesterResponseForm(myForm)">
+  <div class="timeline-comment">
+    <div class="timeline-header">
+      <span style="vertical-align: middle; margin-left: 5px"> <strong>Tester</strong> responded. </span>
+    </div>
+
+    <div>
+      <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
+      
+        <h3> {{response.itemName}} </h3>
+
+        <mat-divider></mat-divider>
+
+        <p> {{response.itemDescription}} </p>
+
+        <br>
+
+        <div>
+          <mat-checkbox style="display: inline-block; width: 20%" [checked]="isDisagreeChecked(response.disagreeCheckbox)"
+            (change)="handleChangeOfDisagreeCheckbox($event, response.disagreeCheckbox, i)">
+            I disagree
+          </mat-checkbox>
+        </div>
+
+      <br>
+      <div class="comment">
+      <markdown [data]="response.reasonForDiagreement"></markdown>
+      </div>
+      <app-comment-editor [commentField]="testerResponseForm.get('description')" [commentForm]="testerResponseForm"></app-comment-editor>
+      </div>
+
+      <div style="float: right; padding:5px;">
+        <button type="submit" style="margin-left: 10px" [disabled]="testerResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>
+      </div>
+    </div>
+
+  </div>
+</form>

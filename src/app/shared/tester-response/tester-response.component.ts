@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Issue } from '../../core/models/issue.model';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
 
 @Component({
   selector: 'app-tester-response',
@@ -7,9 +10,39 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TesterResponseComponent implements OnInit {
 
-  constructor() { }
+  testerResponseForm: FormGroup;
+
+  @Input() issue: Issue;
+  @Output() issueUpdated = new EventEmitter<Issue>();
+  @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
+
+  constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.testerResponseForm = this.formBuilder.group({
+      description: [''],
+      testerResponse: [this.issue.testerResponses]
+    });
+
+  }
+
+  handleChangeOfDisagreeCheckbox(event, disagree, index) {
+    if (event.checked) {
+      this.issue.testerResponses[index].disagreeCheckbox = '- [x]' + disagree.substring(5);
+    } else {
+      this.issue.testerResponses[index].disagreeCheckbox = '- [ ]' + disagree.substring(5);
+    }
+  }
+
+  trackDisagreeList(index: number, item: string[]): string {
+    return item[index];
+  }
+
+  isDisagreeChecked(disagree): boolean {
+    if (disagree.charAt(3) === 'x') {
+      return true;
+    }
+    return false;
   }
 
 }

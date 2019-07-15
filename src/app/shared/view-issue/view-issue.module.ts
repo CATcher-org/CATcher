@@ -8,6 +8,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { SharedModule } from '../shared.module';
 import { IssueComponentsModule } from '../issue/issue-components.module';
 import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
+import { TesterResponseComponent } from '../tester-response/tester-response.component';
 
 @NgModule({
   exports: [
@@ -16,6 +17,7 @@ import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
   declarations: [
     TutorResponseComponent,
     NewTeamResponseComponent,
+    TesterResponseComponent,
     ViewIssueComponent
   ],
   imports: [

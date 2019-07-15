@@ -23,6 +23,11 @@
           (issueUpdated)="updateIssue($event)">
         </app-new-team-response>
 
+        <!-- Tester's Response -->
+        <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TESTER_RESPONSE)" [issue]="issue"
+          (issueUpdated)="updateIssue($event)">
+        </app-tester-response>
+
         <!-- Tutor's Response -->
         <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE) && !isIssueLoading && issue.tutorResponse" 
           [issue]="issue" [isEditing]="isTutorResponseEditing" (updateEditState)="updateTutorResponseEditState($event)"
