@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { Issue } from '../../core/models/issue.model';
+import { Issue, STATUS } from '../../core/models/issue.model';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
 import { IssueService } from '../../core/services/issue.service';
 import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { PermissionService } from '../../core/services/permission.service';
 
 @Component({
   selector: 'app-tester-response',
@@ -24,14 +23,17 @@ export class TesterResponseComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService,
-              private permission: PermissionService) { }
+              private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
     this.testerResponseForm = this.formBuilder.group({
       description: [''],
       testerResponse: [this.issue.testerResponses]
     });
+
+    if (!this.issue.status) {
+      this.isEditing = true;
+    }
 
   }
 
@@ -40,8 +42,12 @@ export class TesterResponseComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    this.issueService.updateIssue(this.issue).pipe(finalize(() => {
+    this.issueService.updateIssue({
+      ...this.issue,
+      status: STATUS.Done,
+    }).pipe(finalize(() => {
       this.isFormPending = false;
+      this.isEditing = false;
     })).subscribe((updatedIssue) => {
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
