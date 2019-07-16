@@ -76,7 +76,7 @@ const PERMISSIONS = {
       'canEditIssueTitle': false,
       'canEditIssueDescription': false,
       'canEditIssueLabels': false,
-      'canCRUDTeamResponse': false,
+      'canCRUDTeamResponse': true,
       'canCRUDTutorResponse': false,
       'canEditTesterResponse': true,
     },
