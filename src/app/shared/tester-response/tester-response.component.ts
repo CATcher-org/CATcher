@@ -5,6 +5,8 @@ import { CommentEditorComponent } from '../comment-editor/comment-editor.compone
 import { IssueService } from '../../core/services/issue.service';
 import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { UserService } from '../../core/services/user.service';
+import { UserRole } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -23,6 +25,7 @@ export class TesterResponseComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
+              public userService: UserService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
@@ -31,10 +34,9 @@ export class TesterResponseComponent implements OnInit {
       group[i.toString()] = new FormControl();
     }
     group['testerResponse'] = [this.issue.testerResponses];
-    console.log(group);
     this.testerResponseForm = this.formBuilder.group(group);
 
-    if (!this.issue.status) {
+    if (this.isNewResponse()) {
       this.isEditing = true;
     }
   }
@@ -88,6 +90,10 @@ export class TesterResponseComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  isNewResponse() {
+    return (!this.issue.status && this.userService.currentUser.role === UserRole.Student);
   }
 
 }

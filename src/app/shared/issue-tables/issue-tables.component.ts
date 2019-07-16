@@ -49,7 +49,6 @@ export class IssueTablesComponent implements OnInit {
       this.paginator, this.headers, this.filters);
     this.issues.loadIssues();
     this.issuesPendingDeletion = {};
-    console.log(this.permissions.canCRUDTeamResponse());
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {

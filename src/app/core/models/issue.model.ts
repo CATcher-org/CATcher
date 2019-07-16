@@ -102,8 +102,9 @@ export enum RespondType {
 export const phase2DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
   'here, if any)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|$)', 'gi');
 export const phase3DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
-  'here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|' +
-  '## State the duplicated issue here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check|$)', 'gi');
+  'here, if any|## Proposed Assignees|# Items for the Tester to Verify|# Tutor\'s Response|## Tutor to check)\\s+' +
+  '(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|## Proposed Assignees|' +
+  '# Items for the Tester to Verify|# Tutor\'s Response|## Tutor to check|$)', 'gi');
 export const phaseTesterResponseDescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State ' +
   'the duplicated issue here, if any|# Items for the Tester to Verify)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response' +
   '|## State the duplicated issue here, if any|# Items for the Tester to Verify|$)', 'gi');
