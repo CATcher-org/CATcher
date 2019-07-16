@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { Issue } from '../../core/models/issue.model';
 import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
+import { Issue, STATUS } from '../../core/models/issue.model';
 import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
 import { IssueService } from '../../core/services/issue.service';
 import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { TesterResponse } from '../../core/models/tester-response.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -16,6 +15,7 @@ export class TesterResponseComponent implements OnInit {
 
   testerResponseForm: FormGroup;
   isFormPending = false;
+  isEditing = false;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -26,10 +26,6 @@ export class TesterResponseComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
-    // this.testerResponseForm = this.formBuilder.group({
-    //   description: [''],
-    //   testerResponse: [this.issue.testerResponses]
-    // });
     const group: any = {};
     for (let i = 0; i < this.issue.testerResponses.length; i++) {
       group[i.toString()] = new FormControl();
@@ -37,6 +33,10 @@ export class TesterResponseComponent implements OnInit {
     group['testerResponse'] = [this.issue.testerResponses];
     console.log(group);
     this.testerResponseForm = this.formBuilder.group(group);
+
+    if (!this.issue.status) {
+      this.isEditing = true;
+    }
   }
 
   submitTesterResponseForm() {
@@ -44,13 +44,25 @@ export class TesterResponseComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    this.issueService.updateIssue(this.issue).pipe(finalize(() => {
+    this.issueService.updateIssue({
+      ...this.issue,
+      status: STATUS.Done,
+    }).pipe(finalize(() => {
       this.isFormPending = false;
+      this.isEditing = false;
     })).subscribe((updatedIssue) => {
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+  }
+
+  changeToEditMode() {
+    this.isEditing = true;
+  }
+
+  cancelEditMode() {
+    this.isEditing = false;
   }
 
   handleChangeOfDisagreeCheckbox(event, disagree, index) {
