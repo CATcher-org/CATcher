@@ -76,7 +76,7 @@ const PERMISSIONS = {
       'canEditIssueTitle': false,
       'canEditIssueDescription': false,
       'canEditIssueLabels': false,
-      'canCRUDTeamResponse': true,
+      'canCRUDTeamResponse': false,
       'canCRUDTutorResponse': false,
     },
     [UserRole.Tutor]: {
@@ -89,12 +89,12 @@ const PERMISSIONS = {
       'canCRUDTutorResponse': false,
     },
     [UserRole.Admin]: {
-      'canCreateNewIssue': true,
-      'canDeleteIssue': true,
-      'canEditIssueTitle': true,
+      'canCreateNewIssue': false,
+      'canDeleteIssue': false,
+      'canEditIssueTitle': false,
       'canEditIssueDescription': true,
       'canEditIssueLabels': true,
-      'canCRUDTeamResponse': false,
+      'canCRUDTeamResponse': true,
       'canCRUDTutorResponse': false,
     }
   },
