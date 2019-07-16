@@ -24,7 +24,7 @@
         </app-new-team-response>
 
         <!-- Tester's Response -->
-        <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TESTER_RESPONSE)" [issue]="issue"
+        <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TESTER_RESPONSE) && issue.testerResponses" [issue]="issue"
           (issueUpdated)="updateIssue($event)">
         </app-tester-response>
 
