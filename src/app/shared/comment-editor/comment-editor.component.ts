@@ -28,7 +28,9 @@ export class CommentEditorComponent implements OnInit {
   uploadErrorMessage: string;
 
   ngOnInit() {
-    this.commentField.setValue(this.initialDescription !== undefined ? this.initialDescription : '');
+    if (this.initialDescription !== undefined) {
+      this.commentField.setValue(this.initialDescription);
+    }
   }
 
   onDragEnter(event) {

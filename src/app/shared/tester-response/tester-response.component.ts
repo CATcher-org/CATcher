@@ -31,7 +31,7 @@ export class TesterResponseComponent implements OnInit {
   ngOnInit() {
     const group: any = {};
     for (let i = 0; i < this.issue.testerResponses.length; i++) {
-      group[i.toString()] = new FormControl();
+      group[i.toString()] = new FormControl('', Validators.required);
     }
     group['testerResponse'] = [this.issue.testerResponses];
     this.testerResponseForm = this.formBuilder.group(group);
