@@ -101,17 +101,9 @@ export class IssueService {
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
       case Phase.phaseTesterResponse:
-        let testerResponsesString = '';
-        for (const testerResponse of issue.testerResponses) {
-          testerResponsesString += testerResponse.itemName + '\n\n';
-          testerResponsesString += testerResponse.itemDescription + '\n\n';
-          testerResponsesString += testerResponse.disagreeCheckbox + '\n\n';
-          testerResponsesString += '**Reason for disagreement:** ' + testerResponse.reasonForDiagreement + '\n\n';
-          testerResponsesString += '-------------------\n';
-        }
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
         `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
-        `## Items for the Tester to Verify\n${testerResponsesString}`;
+        `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}`;
       case Phase.phase3:
         if (!issue.todoList) {
           issue.todoList = [];
@@ -123,10 +115,23 @@ export class IssueService {
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
           `## Proposed Assignees\n${issue.assignees.length === 0 ? '--' : issue.assignees.join(', ')}\n` +
+          `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}\n` +
           `# Tutor\'s Response\n${issue.tutorResponse}\n## Tutor to check\n${todoString}`;
       default:
         return issue.description;
     }
+  }
+
+  private getTesterResponsesString(testerResponses: TesterResponse[]): string {
+    let testerResponsesString = '';
+    for (const testerResponse of testerResponses) {
+      testerResponsesString += testerResponse.itemName + '\n\n';
+      testerResponsesString += testerResponse.itemDescription + '\n\n';
+      testerResponsesString += testerResponse.disagreeCheckbox + '\n\n';
+      testerResponsesString += '**Reason for disagreement:** ' + testerResponse.reasonForDiagreement + '\n\n';
+      testerResponsesString += '-------------------\n';
+    }
+    return testerResponsesString;
   }
 
   deleteIssue(id: number): Observable<Issue> {
