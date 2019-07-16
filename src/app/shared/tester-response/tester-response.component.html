@@ -27,8 +27,9 @@
       <div class="comment">
       <markdown [data]="response.reasonForDiagreement"></markdown>
       </div>
-      <app-comment-editor [commentField]="testerResponseForm.get('description')" [commentForm]="testerResponseForm"
-      (change)="handleChangeOfText($event, response.reasonForDiagreement, i)"></app-comment-editor>
+      <app-comment-editor [commentField]="testerResponseForm.get(i.toString())" [commentForm]="testerResponseForm"
+      (change)="handleChangeOfText($event, response.reasonForDiagreement, i)" [id]="i.toString()"
+      [initialDescription]="response.reasonForDiagreement"></app-comment-editor>
       </div>
 
       <div style="float: right; padding:5px;">

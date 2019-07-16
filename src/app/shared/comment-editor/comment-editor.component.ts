@@ -18,6 +18,8 @@ export class CommentEditorComponent implements OnInit {
 
   @Input() commentField: AbstractControl;
   @Input() commentForm: FormGroup;
+  @Input() id?: string;
+  @Input() initialDescription?: string;
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
   @ViewChild('markdownArea') markdownArea;
@@ -25,7 +27,9 @@ export class CommentEditorComponent implements OnInit {
   dragActiveCounter = 0;
   uploadErrorMessage: string;
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.commentField.setValue(this.initialDescription !== undefined ? this.initialDescription : '');
+  }
 
   onDragEnter(event) {
     event.preventDefault();
