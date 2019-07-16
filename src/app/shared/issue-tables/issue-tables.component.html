@@ -104,13 +104,13 @@
               transform: scale(0.8)">
         <mat-icon>link</mat-icon>
       </button>
-      <button *ngIf="permissions.canCRUDTeamResponse() && !issueService.hasResponse(issue.id)
+      <button *ngIf="permissions.canCRUDTeamResponse() && !issue.status
        && this.isActionVisible(action_buttons.RESPOND_TO_ISSUE)"
-              [routerLink]="'/phase2/issues/' + issue.id" mat-button color="accent"
+              [routerLink]="'issues/' + issue.id" mat-button color="accent"
               style="transform: scale(0.8)" matTooltip="Respond to this Issue">
         <mat-icon>feedback</mat-icon>
       </button>
-      <button *ngIf="permissions.canCRUDTeamResponse() && issueService.hasResponse(issue.id)
+      <button *ngIf="permissions.canCRUDTeamResponse() && issue.status
       && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
               mat-button color="primary" (click)="markAsResponded(issue)"
               style="transform: scale(0.8)" matTooltip="Mark this Issue as Responded">

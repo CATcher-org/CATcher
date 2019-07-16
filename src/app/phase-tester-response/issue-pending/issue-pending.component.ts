@@ -14,7 +14,7 @@ export class IssuePendingComponent implements OnInit {
   readonly displayedColumns: string[] = ['id', 'title', 'type', 'severity', 'actions'];
   readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.RESPOND_TO_ISSUE,
     ACTION_BUTTONS.MARK_AS_RESPONDED];
-  readonly filter: (issue: Issue) => boolean = (issue: Issue) => (issue.status === STATUS.Incomplete || issue.status === undefined);
+  readonly filter: (issue: Issue) => boolean = (issue: Issue) => (!issue.status || issue.status === STATUS.Incomplete);
 
   constructor() { }
 
