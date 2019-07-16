@@ -434,8 +434,6 @@ export class IssueService {
   private parseTesterResponse(toParse: string): TesterResponse[] {
     let matches;
     const testerResponses: TesterResponse[] = [];
-    /*const regex = new RegExp('#* (\\d.+)[\\n\\r]*(.+)[\\n\\r]*(.+)[\\n\\r]*\\*\\*Reason for disagreement:\\*\\* ([A-z' +
-      '0-9  !@#$%^&*()_\\-=+\\\\\|\\[\\]{};\'",.<>/?\\n\\r]*)-------------------', 'gi'); */
     const regex = /(## \d.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > 1) {

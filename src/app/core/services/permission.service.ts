@@ -78,7 +78,6 @@ const PERMISSIONS = {
       'canEditIssueLabels': false,
       'canCRUDTeamResponse': true,
       'canCRUDTutorResponse': false,
-      'canEditTesterResponse': true,
     },
     [UserRole.Tutor]: {
       'canCreateNewIssue': false,
@@ -88,7 +87,6 @@ const PERMISSIONS = {
       'canEditIssueLabels': false,
       'canCRUDTeamResponse': false,
       'canCRUDTutorResponse': false,
-      'canEditTesterResponse': false,
     },
     [UserRole.Admin]: {
       'canCreateNewIssue': true,
@@ -98,7 +96,6 @@ const PERMISSIONS = {
       'canEditIssueLabels': true,
       'canCRUDTeamResponse': false,
       'canCRUDTutorResponse': false,
-      'canEditTesterResponse': true,
     }
   },
 
@@ -166,10 +163,6 @@ export class PermissionService {
 
   canCRUDTutorResponse(): boolean {
     return this.askForPermission(PermissionLevel.User, 'canCRUDTutorResponse');
-  }
-
-  canEditTesterResponse(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canEditTesterResponse');
   }
 
   private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {
