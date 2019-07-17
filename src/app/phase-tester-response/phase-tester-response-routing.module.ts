@@ -9,7 +9,6 @@ const routes: Routes = [
   { path: 'phaseTesterResponse', component: PhaseTesterResponseComponent, canActivate: [AuthGuard]},
   { path: 'phaseTesterResponse/issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard],
     canDeactivate: [CanDeactivateIssueGuard] }
-
 ];
 
 @NgModule({
