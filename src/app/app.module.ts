@@ -19,7 +19,9 @@ import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-
 
 @NgModule({
   declarations: [
-    AppComponent, HeaderComponent, UserConfirmationComponent
+    AppComponent,
+    HeaderComponent,
+    UserConfirmationComponent
   ],
   imports: [
     BrowserModule,

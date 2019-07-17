@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { PhaseTesterResponseRoutingModule } from './phase-tester-response-routing.module';
 import { PhaseTesterResponseComponent } from './phase-tester-response.component';
 import { IssueComponent } from './issue/issue.component';
@@ -13,7 +12,12 @@ import { IssueRespondedComponent } from './issue-responded/issue-responded.compo
 
 @NgModule({
   exports: [PhaseTesterResponseComponent],
-  declarations: [PhaseTesterResponseComponent, IssueComponent, IssuePendingComponent, IssueRespondedComponent],
+  declarations: [
+    PhaseTesterResponseComponent,
+    IssueComponent,
+    IssuePendingComponent,
+    IssueRespondedComponent
+  ],
   imports: [
     CommonModule,
     PhaseTesterResponseRoutingModule,
