@@ -125,8 +125,8 @@ export class IssueService {
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {
     let testerResponsesString = '';
     for (const testerResponse of testerResponses) {
-      testerResponsesString += testerResponse.itemName + '\n\n';
-      testerResponsesString += testerResponse.itemDescription + '\n\n';
+      testerResponsesString += testerResponse.title + '\n\n';
+      testerResponsesString += testerResponse.description + '\n\n';
       testerResponsesString += testerResponse.disagreeCheckbox + '\n\n';
       testerResponsesString += '**Reason for disagreement:** ' + testerResponse.reasonForDiagreement + '\n\n';
       testerResponsesString += '-------------------\n';

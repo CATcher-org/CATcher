@@ -12,9 +12,9 @@
     <div>
       <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
 
-        <markdown [data]="response.itemName"></markdown>
+        <markdown [data]="response.title"></markdown>
         <br>
-        <markdown [data]="response.itemDescription"></markdown>
+        <markdown [data]="response.description"></markdown>
         <br>
 
         <div>
