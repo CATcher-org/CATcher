@@ -39,7 +39,8 @@
 
       <div style="float: right; padding:5px;" *ngIf="isEditing">
         <button type="button" *ngIf="!this.isNewResponse()" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
-        <button type="submit" style="margin-left: 10px" [disabled]="testerResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>
+        <button type="submit" style="margin-left: 10px" [disabled]="testerResponseForm.invalid || isFormPending"
+          mat-stroked-button color="primary"> {{this.getSubmitButtonText()}} </button>
       </div>
 
     </div>

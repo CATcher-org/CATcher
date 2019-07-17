@@ -98,4 +98,8 @@ export class TesterResponseComponent implements OnInit {
     return (!this.issue.status && this.userService.currentUser.role === UserRole.Student);
   }
 
+  getSubmitButtonText() {
+    return this.isNewResponse() ? 'Submit' : 'Save';
+  }
+
 }
