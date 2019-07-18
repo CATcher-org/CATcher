@@ -16,9 +16,9 @@ export class CommentEditorComponent implements OnInit {
   constructor(private uploadService: UploadService,
               private errorHandlingService: ErrorHandlingService) {}
 
-  @Input() commentField: AbstractControl;
-  @Input() commentForm: FormGroup;
-  @Input() id: string;
+  @Input() commentField: AbstractControl; // Compulsory Input
+  @Input() commentForm: FormGroup; // Compulsory Input
+  @Input() id: string; // Compulsory Input
   @Input() initialDescription?: string;
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
@@ -31,8 +31,9 @@ export class CommentEditorComponent implements OnInit {
     if (this.initialDescription !== undefined) {
       this.commentField.setValue(this.initialDescription);
     }
-    if (this.id === undefined) {
-      throw new Error('Comment Editor\'s FormName ([id]) has not been specified');
+
+    if (this.commentField === undefined || this.commentForm === undefined || this.id === undefined) {
+      throw new Error('Comment Editor\'s compulsory properties are not defined.');
     }
   }
 
