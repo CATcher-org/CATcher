@@ -18,7 +18,7 @@ export class CommentEditorComponent implements OnInit {
 
   @Input() commentField: AbstractControl;
   @Input() commentForm: FormGroup;
-  @Input() id?: string;
+  @Input() id: string;
   @Input() initialDescription?: string;
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
@@ -30,6 +30,9 @@ export class CommentEditorComponent implements OnInit {
   ngOnInit() {
     if (this.initialDescription !== undefined) {
       this.commentField.setValue(this.initialDescription);
+    }
+    if (this.id === undefined) {
+      throw new Error('Comment Editor\'s FormName ([id]) has not been specified');
     }
   }
 
