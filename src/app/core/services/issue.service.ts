@@ -30,6 +30,7 @@ export class IssueService {
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
   private issueTeamFilter = 'All Teams';
+  readonly MINIMUM_MATCHES = 1;
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -419,7 +420,7 @@ export class IssueService {
   private parseDuplicateOfValue(toParse: string): number {
     const regex = /duplicate of\s*#(\d+)/i;
     const result = regex.exec(toParse);
-    if (result && result.length >= 2) {
+    if (result && result.length > this.MINIMUM_MATCHES) {
       return +regex.exec(toParse)[1];
     } else {
       return null;
@@ -431,7 +432,7 @@ export class IssueService {
     const testerResponses: TesterResponse[] = [];
     const regex = /(## \d.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
     while (matches = regex.exec(toParse)) {
-      if (matches && matches.length > 1) {
+      if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
         testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement));
       }
