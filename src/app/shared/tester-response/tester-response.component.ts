@@ -88,17 +88,14 @@ export class TesterResponseComponent implements OnInit {
   }
 
   isDisagreeChecked(disagree): boolean {
-    if (disagree.charAt(3) === 'x') {
-      return true;
-    }
-    return false;
+    return disagree.charAt(3) === 'x';
   }
 
-  isNewResponse() {
+  isNewResponse(): boolean {
     return (!this.issue.status && this.userService.currentUser.role === UserRole.Student);
   }
 
-  getSubmitButtonText() {
+  getSubmitButtonText(): string {
     return this.isNewResponse() ? 'Submit' : 'Save';
   }
 

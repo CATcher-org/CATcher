@@ -8,22 +8,18 @@
           Edit
       </button>
     </div>
-
     <div>
       <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
-
         <markdown [data]="response.title"></markdown>
         <br>
         <markdown [data]="response.description"></markdown>
         <br>
-
         <div>
           <mat-checkbox style="display: inline-block; width: 20%" [checked]="isDisagreeChecked(response.disagreeCheckbox)"
             (change)="handleChangeOfDisagreeCheckbox($event, response.disagreeCheckbox, i)" [disabled]="!isEditing">
             I disagree
           </mat-checkbox>
         </div>
-
         <div>
           <p style="font-weight: 500;"> Reason for Disagreement: </p>
           <markdown [data]="response.reasonForDiagreement" *ngIf="!isEditing"></markdown>
@@ -33,10 +29,8 @@
             (change)="handleChangeOfText($event, response.reasonForDiagreement, i)" [id]="i.toString()"
             [initialDescription]="response.reasonForDiagreement"></app-comment-editor>
         </div>
-
         <br> <markdown data="-------------------"></markdown> <br>
       </div>
-
       <mat-divider></mat-divider>
       <div style="float: right; padding: 10px;" *ngIf="isEditing">
         <button type="submit" [disabled]="testerResponseForm.invalid || isFormPending"
@@ -44,8 +38,6 @@
         <button type="button" style="margin-left: 10px;" *ngIf="!this.isNewResponse()" mat-stroked-button color="warn"
           (click)="cancelEditMode()">Cancel</button>
       </div>
-
     </div>
-
   </div>
 </form>
