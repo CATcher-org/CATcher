@@ -305,7 +305,13 @@ export class IssueService {
       return Array('', null, null, null, null, null);
     }
 
-    let description; let teamResponse; let duplicateOf; let tutorResponse; let todoList; let assignees; let testerResponses;
+    let description,
+    teamResponse,
+    duplicateOf,
+    tutorResponse,
+    todoList,
+    assignees,
+    testerResponses;
 
     for (const match of matches) {
       const groups = regexExp.exec(match)['groups'];
@@ -426,7 +432,8 @@ export class IssueService {
     const regex = /(## \d.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > 1) {
-        testerResponses.push(new TesterResponse(matches[1], matches[2], matches[3], matches[4]));
+        const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
+        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement));
       }
     }
     return testerResponses;
