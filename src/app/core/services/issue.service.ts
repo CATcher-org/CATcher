@@ -125,11 +125,7 @@ export class IssueService {
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {
     let testerResponsesString = '';
     for (const testerResponse of testerResponses) {
-      testerResponsesString += testerResponse.title + '\n\n';
-      testerResponsesString += testerResponse.description + '\n\n';
-      testerResponsesString += testerResponse.disagreeCheckbox + '\n\n';
-      testerResponsesString += '**Reason for disagreement:** ' + testerResponse.reasonForDiagreement + '\n\n';
-      testerResponsesString += '-------------------\n';
+      testerResponsesString += testerResponse.toString();
     }
     return testerResponsesString;
   }
@@ -280,15 +276,8 @@ export class IssueService {
     if (this.phaseService.currentPhase === Phase.phase1) {
       return;
     }
-
-    const array = this.parseBody(issue);
-    issue.body = array[0];
-    issue.teamResponse = array[1];
-    issue.duplicateOf = array[2];
-    issue.tutorResponse = array[3];
-    issue.todoList = array[4];
-    issue.proposedAssignees = array[5];
-    issue.testerResponses = array[6];
+    [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
+      issue.proposedAssignees, issue.testerResponses] = this.parseBody(issue);
   }
 
   /**
