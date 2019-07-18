@@ -37,10 +37,12 @@
         <br> <markdown data="-------------------"></markdown>
       </div>
 
-      <div style="float: right; padding:5px;" *ngIf="isEditing">
-        <button type="button" *ngIf="!this.isNewResponse()" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
-        <button type="submit" style="margin-left: 10px" [disabled]="testerResponseForm.invalid || isFormPending"
+      <mat-divider></mat-divider>
+      <div style="float: right; padding: 10px;" *ngIf="isEditing">
+        <button type="submit" [disabled]="testerResponseForm.invalid || isFormPending"
           mat-stroked-button color="primary"> {{this.getSubmitButtonText()}} </button>
+        <button type="button" style="margin-left: 10px;" *ngIf="!this.isNewResponse()" mat-stroked-button color="warn"
+          (click)="cancelEditMode()">Cancel</button>
       </div>
 
     </div>
