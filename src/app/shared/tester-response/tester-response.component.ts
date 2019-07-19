@@ -92,7 +92,7 @@ export class TesterResponseComponent implements OnInit {
   }
 
   isNewResponse(): boolean {
-    return (!this.issue.status && this.userService.currentUser.role === UserRole.Student);
+    return !this.issue.status && this.userService.currentUser.role === UserRole.Student;
   }
 
   getSubmitButtonText(): string {
