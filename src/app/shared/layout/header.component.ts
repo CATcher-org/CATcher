@@ -110,7 +110,7 @@ export class HeaderComponent implements OnInit {
     // The team filter string E.g "+label:tutorial.W12+label:team.3"
     const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
     // Only include duplicate Issues in last Phase
-    return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
+    return (this.phaseService.currentPhase === Phase.phaseModeration) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
   reload() {

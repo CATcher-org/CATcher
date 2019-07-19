@@ -12,11 +12,11 @@ import { GithubService } from '../core/services/github.service';
 import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
-  selector: 'app-phase3',
-  templateUrl: './phase3.component.html',
-  styleUrls: ['./phase3.component.css']
+  selector: 'app-phase-moderation',
+  templateUrl: './phase-moderation.component.html',
+  styleUrls: ['./phase-moderation.component.css']
 })
-export class Phase3Component implements OnInit {
+export class PhaseModerationComponent implements OnInit {
   displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining', 'actions'];
   public teamFilter = 'All Teams';
 
@@ -39,7 +39,7 @@ export class Phase3Component implements OnInit {
 
   get teamList(): string[] {
     const teams = this.dataService.getTeams();
-    switch (IssuesFilter[Phase.phase3][this.userService.currentUser.role]) {
+    switch (IssuesFilter[Phase.phaseModeration][this.userService.currentUser.role]) {
       case 'FILTER_BY_TEAM_ASSIGNED':
         return ['All Teams', ...this.userService.currentUser.allocatedTeams.map(team => team.id)];
       case 'NO_FILTER':

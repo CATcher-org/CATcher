@@ -9,7 +9,7 @@ import {
   LABELS,
   labelsToAttributeMapping,
   phase2DescriptionTemplate,
-  phase3DescriptionTemplate,
+  phaseModerationDescriptionTemplate,
   RespondType
 } from '../models/issue.model';
 import { UserService } from './user.service';
@@ -79,7 +79,7 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
-    const assignees = this.phaseService.currentPhase === Phase.phase3 ? [] : issue.assignees;
+    const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
       this.createLabelsForIssue(issue), assignees).pipe(
         map((response) => {
@@ -98,7 +98,7 @@ export class IssueService {
       case Phase.phase2:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
-      case Phase.phase3:
+      case Phase.phaseModeration:
         if (!issue.todoList) {
           issue.todoList = [];
         }
@@ -277,7 +277,7 @@ export class IssueService {
   private parseBody(issue: {}): any {
     const body = issue['body'];
     // tslint:disable-next-line
-    const regexExp = this.phaseService.currentPhase == Phase.phase2 ? phase2DescriptionTemplate : phase3DescriptionTemplate;
+    const regexExp = this.phaseService.currentPhase == Phase.phase2 ? phase2DescriptionTemplate : phaseModerationDescriptionTemplate;
     const matches = body.match(regexExp);
     regexExp.lastIndex = 0;
 
@@ -373,7 +373,7 @@ export class IssueService {
       id: +issueInJson['number'],
       created_at: moment(issueInJson['created_at']).format('lll'),
       title: issueInJson['title'],
-      assignees: this.phaseService.currentPhase === Phase.phase3 ? issueInJson['proposedAssignees'] :
+      assignees: this.phaseService.currentPhase === Phase.phaseModeration ? issueInJson['proposedAssignees'] :
         issueInJson['assignees'].map((assignee) => assignee['login']),
       description: issueInJson['body'],
       teamAssigned: this.getTeamAssignedToIssue(issueInJson),

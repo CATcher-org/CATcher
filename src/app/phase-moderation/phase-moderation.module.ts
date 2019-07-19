@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 
 import {SharedModule} from '../shared/shared.module';
-import {Phase3Component} from './phase3.component';
-import {Phase3RoutingModule} from './phase3-routing.module';
+import {PhaseModerationComponent} from './phase-moderation.component';
+import {PhaseModerationRoutingModule} from './phase-moderation-routing.module';
 import { IssueComponent } from './issue/issue.component';
 import {IssueComponentsModule} from '../shared/issue/issue-components.module';
 import {CommentEditorModule} from '../shared/comment-editor/comment-editor.module';
@@ -12,7 +12,7 @@ import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
 
 @NgModule({
   imports: [
-    Phase3RoutingModule,
+    PhaseModerationRoutingModule,
     SharedModule,
     IssueComponentsModule,
     CommentEditorModule,
@@ -21,8 +21,8 @@ import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
     IssueTablesModule,
   ],
   declarations: [
-    Phase3Component,
+    PhaseModerationComponent,
     IssueComponent,
   ],
 })
-export class Phase3Module {}
+export class PhaseModerationModule {}

@@ -70,7 +70,7 @@ const PERMISSIONS = {
   },
 
   /** Phase 3 Permissions **/
-  [Phase.phase3]: {
+  [Phase.phaseModeration]: {
     [UserRole.Student]: {
       'canCreateNewIssue': false,
       'canDeleteIssue': false,
