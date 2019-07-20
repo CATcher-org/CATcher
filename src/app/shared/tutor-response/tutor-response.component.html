@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <app-comment-editor [commentField]="tutorResponseForm.get('description')" [commentForm]="tutorResponseForm"></app-comment-editor>
+      <app-comment-editor [id]="'description'" [commentField]="tutorResponseForm.get('description')" [commentForm]="tutorResponseForm"></app-comment-editor>
     
       <div style="float: right; padding:5px;">
         <button type="submit" style="margin-left: 10px" [disabled]="tutorResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>

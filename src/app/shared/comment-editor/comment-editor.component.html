@@ -8,7 +8,7 @@
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
           <textarea ctrlKeys (ctrlV)="onPaste()" #commentTextArea (dragover)="disableCaretMovement($event)"
-                    id="description" formControlName="description" matInput placeholder="Description"
+                    id="{{ this.id }}" formControlName="{{ this.id }}" matInput placeholder="Description"
                     cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
                     cdkAutosizeMaxRows="20"></textarea>
           <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">

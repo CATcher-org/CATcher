@@ -10,6 +10,7 @@ import { IssueComment, IssueComments } from '../../core/models/comment.model';
 import { UserService } from '../../core/services/user.service';
 import { Subscription } from 'rxjs';
 import { PermissionService } from '../../core/services/permission.service';
+import { UserRole } from '../../core/models/user.model';
 
 export enum ISSUE_COMPONENTS {
   TESTER_POST,
@@ -18,7 +19,6 @@ export enum ISSUE_COMPONENTS {
   TUTOR_RESPONSE,
   NEW_TUTOR_RESPONSE,
   TESTER_RESPONSE,
-  NEW_TESTER_RESPONSE,
   SEVERITY_LABEL,
   TYPE_LABEL,
   RESPONSE_LABEL,
@@ -46,6 +46,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   @Input() issueComponents: ISSUE_COMPONENTS[];
 
   private readonly issueComponentsEnum = ISSUE_COMPONENTS;
+  private readonly userRole = UserRole;
 
   constructor(private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
