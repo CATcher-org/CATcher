@@ -1,4 +1,5 @@
 import {Team} from './team.model';
+import { TesterResponse } from './tester-response.model';
 
 export interface Issue {
   readonly id: number;
@@ -16,6 +17,7 @@ export interface Issue {
   todoList?: string[];
   teamResponse?: string;
   tutorResponse?: string;
+  testerResponses?: TesterResponse[];
 }
 
 export interface Issues {
@@ -80,6 +82,11 @@ export const IssuesFilter = {
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
     Admin: 'NO_FILTER',
   },
+  phaseTesterResponse: {
+    Student: 'NO_FILTER',
+    Tutor: 'NO_ACCESS',
+    Admin: 'NO_FILTER',
+  },
   phase3: {
     Student: 'NO_ACCESS',
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
@@ -95,5 +102,10 @@ export enum RespondType {
 export const phase2DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
   'here, if any)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|$)', 'gi');
 export const phase3DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
-  'here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|' +
-  '## State the duplicated issue here, if any|## Proposed Assignees|# Tutor\'s Response|## Tutor to check|$)', 'gi');
+  'here, if any|## Proposed Assignees|# Items for the Tester to Verify|# Tutor\'s Response|## Tutor to check)\\s+' +
+  '(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|## Proposed Assignees|' +
+  '# Items for the Tester to Verify|# Tutor\'s Response|## Tutor to check|$)', 'gi');
+export const phaseTesterResponseDescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State ' +
+  'the duplicated issue here, if any|# Items for the Tester to Verify)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response' +
+  '|## State the duplicated issue here, if any|# Items for the Tester to Verify|$)', 'gi');
+

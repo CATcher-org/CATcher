@@ -1,0 +1,7 @@
+::ng-deep .white-text .mat-select-value-text {
+  color: white !important;
+}
+
+::ng-deep .black-text .mat-select-value-text {
+  color: black !important;
+}

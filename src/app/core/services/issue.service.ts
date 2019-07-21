@@ -10,6 +10,7 @@ import {
   labelsToAttributeMapping,
   phase2DescriptionTemplate,
   phase3DescriptionTemplate,
+  phaseTesterResponseDescriptionTemplate,
   RespondType
 } from '../models/issue.model';
 import { UserService } from './user.service';
@@ -20,6 +21,7 @@ import * as moment from 'moment';
 import { Team } from '../models/team.model';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
+import { TesterResponse } from '../models/tester-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +30,7 @@ export class IssueService {
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
   private issueTeamFilter = 'All Teams';
+  readonly MINIMUM_MATCHES = 1;
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -98,6 +101,10 @@ export class IssueService {
       case Phase.phase2:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
+      case Phase.phaseTesterResponse:
+        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
+        `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
+        `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}`;
       case Phase.phase3:
         if (!issue.todoList) {
           issue.todoList = [];
@@ -109,10 +116,19 @@ export class IssueService {
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
           `## Proposed Assignees\n${issue.assignees.length === 0 ? '--' : issue.assignees.join(', ')}\n` +
+          `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}\n` +
           `# Tutor\'s Response\n${issue.tutorResponse}\n## Tutor to check\n${todoString}`;
       default:
         return issue.description;
     }
+  }
+
+  private getTesterResponsesString(testerResponses: TesterResponse[]): string {
+    let testerResponsesString = '';
+    for (const testerResponse of testerResponses) {
+      testerResponsesString += testerResponse.toString();
+    }
+    return testerResponsesString;
   }
 
   deleteIssue(id: number): Observable<Issue> {
@@ -261,14 +277,8 @@ export class IssueService {
     if (this.phaseService.currentPhase === Phase.phase1) {
       return;
     }
-
-    const array = this.parseBody(issue);
-    issue.body = array[0];
-    issue.teamResponse = array[1];
-    issue.duplicateOf = array[2];
-    issue.tutorResponse = array[3];
-    issue.todoList = array[4];
-    issue.proposedAssignees = array[5];
+    [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
+      issue.proposedAssignees, issue.testerResponses] = this.parseBody(issue);
   }
 
   /**
@@ -277,7 +287,18 @@ export class IssueService {
   private parseBody(issue: {}): any {
     const body = issue['body'];
     // tslint:disable-next-line
-    const regexExp = this.phaseService.currentPhase == Phase.phase2 ? phase2DescriptionTemplate : phase3DescriptionTemplate;
+    let regexExp;
+    switch (this.phaseService.currentPhase) {
+      case Phase.phase2:
+        regexExp = phase2DescriptionTemplate;
+        break;
+      case Phase.phaseTesterResponse:
+        regexExp = phaseTesterResponseDescriptionTemplate;
+        break;
+      case Phase.phase3:
+        regexExp = phase3DescriptionTemplate;
+        break;
+    }
     const matches = body.match(regexExp);
     regexExp.lastIndex = 0;
 
@@ -285,7 +306,13 @@ export class IssueService {
       return Array('', null, null, null, null, null);
     }
 
-    let description; let teamResponse; let duplicateOf; let tutorResponse; let todoList; let assignees;
+    let description,
+    teamResponse,
+    duplicateOf,
+    tutorResponse,
+    todoList,
+    assignees,
+    testerResponses;
 
     for (const match of matches) {
       const groups = regexExp.exec(match)['groups'];
@@ -322,11 +349,14 @@ export class IssueService {
           const teamMembers = this.getTeamAssignedToIssue(issue).teamMembers.map(m => m.loginId);
           assignees = teamMembers.filter(m => proposedAssignees.includes(m.toLowerCase()));
           break;
+        case '# Items for the Tester to Verify':
+          testerResponses = this.parseTesterResponse(groups['description']);
+          break;
         default:
           break;
       }
     }
-    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || []);
+    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || [], testerResponses || []);
   }
 
   /**
@@ -335,7 +365,8 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phase1) {
+    if (this.phaseService.currentPhase !== Phase.phase1 &&
+        this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
       const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
     }
@@ -381,6 +412,7 @@ export class IssueService {
       teamResponse: issueInJson['teamResponse'],
       tutorResponse: issueInJson['tutorResponse'],
       duplicateOf: issueInJson['duplicateOf'],
+      testerResponses: issueInJson['testerResponses'],
       ...this.getFormattedLabels(issueInJson['labels'], LABELS),
     };
   }
@@ -388,11 +420,24 @@ export class IssueService {
   private parseDuplicateOfValue(toParse: string): number {
     const regex = /duplicate of\s*#(\d+)/i;
     const result = regex.exec(toParse);
-    if (result && result.length >= 2) {
+    if (result && result.length > this.MINIMUM_MATCHES) {
       return +regex.exec(toParse)[1];
     } else {
       return null;
     }
+  }
+
+  private parseTesterResponse(toParse: string): TesterResponse[] {
+    let matches;
+    const testerResponses: TesterResponse[] = [];
+    const regex = /(## \d.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
+    while (matches = regex.exec(toParse)) {
+      if (matches && matches.length > this.MINIMUM_MATCHES) {
+        const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
+        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement));
+      }
+    }
+    return testerResponses;
   }
 
 

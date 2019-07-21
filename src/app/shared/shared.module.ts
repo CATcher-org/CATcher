@@ -4,8 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from './material.module';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ErrorToasterModule} from './error-toasters/error-toaster.module';
+import { ErrorToasterModule } from './error-toasters/error-toaster.module';
 
 @NgModule({
   imports: [

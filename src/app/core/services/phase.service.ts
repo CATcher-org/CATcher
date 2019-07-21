@@ -1,11 +1,19 @@
 import {Injectable} from '@angular/core';
 import { HttpClient} from '@angular/common/http';
-import {catchError, map} from 'rxjs/operators';
-import {forkJoin, Observable, of, throwError} from 'rxjs';
+import { flatMap, map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 import {GithubService} from './github.service';
-import {ErrorHandlingService} from './error-handling.service';
+import { LabelService } from './label.service';
 
-export enum Phase { phase1 = 'phase1', phase2 = 'phase2', phase3 = 'phase3' }
+export enum Phase { phase1 = 'phase1', phase2 = 'phase2', phaseTesterResponse = 'phaseTesterResponse', phase3 = 'phase3' }
+
+export interface SessionData {
+  openPhases: string[];
+  phase1: string;
+  phase2: string;
+  phaseTesterResponse: string;
+  phase3: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -18,85 +26,96 @@ export class PhaseService {
   public readonly phaseDescription = {
     'phase1': 'Bug Reporting Phase',
     'phase2': 'Team\'s Response Phase',
+    'phaseTesterResponse': 'Tester\'s Response Phase',
     'phase3': 'Moderation Phase',
   };
-  private phaseNum: string;
+  public sessionData: SessionData;
+
+  private phaseRepoOwners = {
+    phase1: '',
+    phase2: '',
+    phaseTesterResponse: '',
+    phase3: '',
+  };
 
   constructor(private http: HttpClient,
-              private github: GithubService,
-              private errorHandlingService: ErrorHandlingService) {}
+              private githubService: GithubService,
+              private labelService: LabelService) {}
 
-  parseEncodedPhase(encodedText: String): string[] {
-    const phase = encodedText.split('@', 4);
-    const moduleOrg = phase[0];
-    const phaseOneUrl = phase[1].split('=', 2)[1];
-    const phaseTwoUrl = phase[2].split('=', 2)[1];
-    const phaseThreeUrl = phase[3].split('=', 2)[1];
-
-    let separator = phaseOneUrl.lastIndexOf('/');
-    const repoName = phaseOneUrl.substring(separator + 1);
-
-    let separatorOrg = phaseOneUrl.indexOf('.com');
-    const orgName = phaseOneUrl.substring(separatorOrg + 5, separator);
-
-    separator = phaseTwoUrl.lastIndexOf('/');
-    const repoNameSecond = phaseTwoUrl.substring(separator + 1);
-    separatorOrg = phaseTwoUrl.indexOf('.com');
-    const orgNameSecond = phaseTwoUrl.substring(separatorOrg + 5, separator);
-
-    separator = phaseThreeUrl.lastIndexOf('/');
-    const repoNameThird = phaseThreeUrl.substring(separator + 1);
-    separatorOrg = phaseThreeUrl.indexOf('.com');
-    const orgNameThird = phaseThreeUrl.substring(separatorOrg + 5, separator);
-
-    return new Array(repoName, orgName, repoNameSecond, orgNameSecond, repoNameThird, orgNameThird, moduleOrg);
+  /**
+   * Stores the location of the repositories belonging to
+   * each phase of the application.
+   * @param org - name of organization.
+   * @param user - name of user.
+   */
+  setPhaseOwners(org: string, user: string): void {
+    this.orgName = org;
+    this.phaseRepoOwners.phase1 = user;
+    this.phaseRepoOwners.phase2 = org;
+    this.phaseRepoOwners.phaseTesterResponse = user;
+    this.phaseRepoOwners.phase3 = org;
   }
 
-  checkIfReposAccessible(array: any): any {
+  /**
+   * Returns the name of the owner of a given phase.
+   * @param phase
+   */
+  getPhaseOwner(phase: string): string {
+    return this.phaseRepoOwners[phase];
+  }
 
-    const value = forkJoin(
-      this.github.getRepo(array[1], array[0]).pipe(map(res => res), catchError(e => of('Oops'))),
-      this.github.getRepo(array[3], array[2]).pipe(map(res => res), catchError(e => of('Oops'))),
-      this.github.getRepo(array[5], array[4]).pipe(map(res => res), catchError(e => of('Oops'))),
-    ).pipe(
-      map(([first, second, third]) => {
-        return {first, second, third, array};
+  fetchSessionData(): Observable<SessionData> {
+    return this.githubService.fetchSettingsFile().pipe(
+      map(data => data as SessionData)
+    );
+  }
+
+  assertSessionDataIntegrity(sessionData: SessionData): void {
+    if (sessionData === undefined) {
+      throwError('Session Data Unavailable.');
+    } else if (!this.isSessionDataCorrectlyDefined(sessionData)) {
+      throwError('Session Data is Incorrectly Defined');
+    }
+  }
+
+  /**
+   * Ensures that the input session Data has been correctly defined.
+   * Returns true if satisfies these properties, false otherwise.
+   * @param sessionData
+   */
+  isSessionDataCorrectlyDefined(sessionData: SessionData): boolean {
+    for (const data of Object.values(sessionData)) {
+      if (data === undefined || data === '') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Stores session data and sets current session's phase.
+   * @throws throwError - If there are no open phases in this session.
+   * @param sessionData
+   */
+  updateSessionParameters(sessionData: SessionData) {
+    if (sessionData.openPhases.length === 0) {
+      throwError('There are no accessible phases.');
+    }
+
+    this.sessionData = sessionData;
+    this.currentPhase = Phase[sessionData.openPhases[0]];
+    this.repoName = sessionData[sessionData.openPhases[0]];
+    this.githubService.storePhaseDetails(this.phaseRepoOwners[this.currentPhase], this.repoName);
+  }
+
+  sessionSetup(): Observable<any> {
+    return this.fetchSessionData().pipe(
+      flatMap((sessionData: SessionData) => {
+        this.assertSessionDataIntegrity(sessionData);
+        this.updateSessionParameters(sessionData);
+        return this.labelService.synchronizeRemoteLabels();
       })
     );
-    return value;
-  }
-
-  determinePhaseNumber(response: any) {
-    let org = '';
-    let repo = '';
-    let copyUrl = '';
-    const moduleOrg = response['array'][6];
-
-    if (response['first']['id'] != null) {
-      this.currentPhase = Phase.phase1;
-      this.phaseNum = 'first';
-    } else if (response['second']['id'] != null) {
-      this.currentPhase = Phase.phase2;
-      this.phaseNum = 'second';
-    } else if (response['third']['id'] != null) {
-      this.currentPhase = Phase.phase3;
-      this.phaseNum = 'third';
-    }
-    if (this.currentPhase == null) {
-      return ('not accessible');
-    } else {
-      copyUrl = this.currentPhase;
-      org = response[this.phaseNum]['full_name'].split('/', 2)[0];
-      repo = response[this.phaseNum]['full_name'].split('/', 2)[1];
-      this.github.updatePhaseDetails(repo, org, moduleOrg);
-      this.setPhaseDetail(repo, org);
-      return (copyUrl);
-    }
-  }
-
-  private setPhaseDetail(repo: string, org: string) {
-    this.repoName = repo;
-    this.orgName = org;
   }
 
   public getPhaseDetail() {

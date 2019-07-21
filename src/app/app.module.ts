@@ -8,20 +8,24 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HeaderComponent } from './shared/layout';
-import {AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
-import {Phase2Module} from './phase2/phase2.module';
-import {Phase3Module} from './phase3/phase3.module';
-import {Phase1Module} from './phase1/phase1.module';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { Phase2Module } from './phase2/phase2.module';
+import { Phase3Module } from './phase3/phase3.module';
+import { Phase1Module } from './phase1/phase1.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
+import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
 
 @NgModule({
   declarations: [
-    AppComponent, HeaderComponent, UserConfirmationComponent,
+    AppComponent,
+    HeaderComponent,
+    UserConfirmationComponent
   ],
   imports: [
     BrowserModule,
+    PhaseTesterResponseModule,
     BrowserAnimationsModule,
     AuthModule,
     Phase1Module,
