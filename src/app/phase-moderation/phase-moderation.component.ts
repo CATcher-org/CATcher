@@ -9,15 +9,25 @@ import { Phase } from '../core/services/phase.service';
 import { DataService } from '../core/services/data.service';
 import { LabelService } from '../core/services/label.service';
 import { GithubService } from '../core/services/github.service';
-import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/issue-tables.component';
+import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
   selector: 'app-phase-moderation',
   templateUrl: './phase-moderation.component.html',
   styleUrls: ['./phase-moderation.component.css']
 })
+
 export class PhaseModerationComponent implements OnInit {
-  displayedColumns = ['id', 'title', 'type', 'severity', 'Todo Remaining', 'actions'];
+
+  displayedColumns = [
+    TABLE_COLUMNS.ID,
+    TABLE_COLUMNS.TITLE,
+    TABLE_COLUMNS.TYPE,
+    TABLE_COLUMNS.SEVERITY,
+    TABLE_COLUMNS.TODO,
+    TABLE_COLUMNS.ACTIONS
+  ];
+
   public teamFilter = 'All Teams';
 
   readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB];

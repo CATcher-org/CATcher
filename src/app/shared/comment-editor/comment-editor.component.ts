@@ -16,8 +16,10 @@ export class CommentEditorComponent implements OnInit {
   constructor(private uploadService: UploadService,
               private errorHandlingService: ErrorHandlingService) {}
 
-  @Input() commentField: AbstractControl;
-  @Input() commentForm: FormGroup;
+  @Input() commentField: AbstractControl; // Compulsory Input
+  @Input() commentForm: FormGroup; // Compulsory Input
+  @Input() id: string; // Compulsory Input
+  @Input() initialDescription?: string;
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
   @ViewChild('markdownArea') markdownArea;
@@ -25,7 +27,15 @@ export class CommentEditorComponent implements OnInit {
   dragActiveCounter = 0;
   uploadErrorMessage: string;
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.initialDescription !== undefined) {
+      this.commentField.setValue(this.initialDescription);
+    }
+
+    if (this.commentField === undefined || this.commentForm === undefined || this.id === undefined) {
+      throw new Error('Comment Editor\'s compulsory properties are not defined.');
+    }
+  }
 
   onDragEnter(event) {
     event.preventDefault();
