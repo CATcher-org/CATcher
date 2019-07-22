@@ -36,10 +36,10 @@
         </app-issue-response>
 
         <!-- New Tutor's Response -->
-        <app-tutor-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TUTOR_RESPONSE)
+        <app-new-tutor-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TUTOR_RESPONSE)
           && permissions.canCRUDTutorResponse() && !issue.tutorResponse" [issue]="issue"
           (issueUpdated)="updateIssue($event)">
-        </app-tutor-response>
+        </app-new-tutor-response>
       </div>
 
       <div class="column right">
