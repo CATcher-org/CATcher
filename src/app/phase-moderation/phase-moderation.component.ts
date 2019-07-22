@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Issue, IssuesFilter } from '../core/models/issue.model';
-import { IssuesDataTable } from '../shared/issue-tables/IssuesDataTable';
+import { IssuesFilter } from '../core/models/issue.model';
 import { IssueService } from '../core/services/issue.service';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { UserService } from '../core/services/user.service';

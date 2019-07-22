@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-
 import {SharedModule} from '../shared/shared.module';
 import {PhaseBugReportingRoutingModule} from './phase-bug-reporting-routing.module';
 import {PhaseBugReportingComponent} from './phase-bug-reporting.component';

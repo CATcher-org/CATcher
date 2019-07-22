@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { PhaseTeamResponseComponent } from './phase-team-response.component';
 
 describe('PhaseTeamResponseComponent', () => {

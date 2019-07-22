@@ -1,7 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IssuesDataTable } from '../shared/issue-tables/IssuesDataTable';
-import { BehaviorSubject } from 'rxjs';
-import { Issue } from '../core/models/issue.model';
 import { PermissionService } from '../core/services/permission.service';
 import { UserService } from '../core/services/user.service';
 import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../shared/issue-tables/issue-tables.component';

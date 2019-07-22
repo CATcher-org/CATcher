@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { PhaseBugReportingComponent } from './phase-bug-reporting.component';
 import { TranslateModule } from '@ngx-translate/core';
 
