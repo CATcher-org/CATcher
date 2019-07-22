@@ -8,7 +8,7 @@ const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 
 const PERMISSIONS = {
   /** Phase 1 Permissions **/
-  [Phase.phase1]: {
+  [Phase.phaseBugReporting]: {
     [UserRole.Student]: {
       'canCreateNewIssue': true,
       'canDeleteIssue': true,

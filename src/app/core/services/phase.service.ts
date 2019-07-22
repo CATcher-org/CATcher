@@ -6,7 +6,7 @@ import {GithubService} from './github.service';
 import { LabelService } from './label.service';
 
 export enum Phase {
-  phase1 = 'phase1',
+  phaseBugReporting = 'phaseBugReporting',
   phaseTeamResponse = 'phaseTeamResponse',
   phaseTesterResponse = 'phaseTesterResponse',
   phaseModeration = 'phaseModeration'
@@ -15,7 +15,7 @@ export enum Phase {
 
 export interface SessionData {
   openPhases: string[];
-  phase1: string;
+  phaseBugReporting: string;
   phaseTeamResponse: string;
   phaseTesterResponse: string;
   phaseModeration: string;
@@ -30,7 +30,7 @@ export class PhaseService {
   private repoName: string;
   private orgName: string;
   public readonly phaseDescription = {
-    'phase1': 'Bug Reporting Phase',
+    'phaseBugReporting': 'Bug Reporting Phase',
     'phaseTeamResponse': 'Team\'s Response Phase',
     'phaseTesterResponse': 'Tester\'s Response Phase',
     'phaseModeration': 'Moderation Phase'
@@ -39,7 +39,7 @@ export class PhaseService {
   public sessionData: SessionData;
 
   private phaseRepoOwners = {
-    phase1: '',
+    phaseBugReporting: '',
     phaseTeamResponse: '',
     phaseTesterResponse: '',
     phaseModeration: ''
@@ -57,7 +57,7 @@ export class PhaseService {
    */
   setPhaseOwners(org: string, user: string): void {
     this.orgName = org;
-    this.phaseRepoOwners.phase1 = user;
+    this.phaseRepoOwners.phaseBugReporting = user;
     this.phaseRepoOwners.phaseTeamResponse = org;
     this.phaseRepoOwners.phaseTesterResponse = user;
     this.phaseRepoOwners.phaseModeration = org;

@@ -11,7 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
 import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
 import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
-import { Phase1Module } from './phase1/phase1.module';
+import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporting.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
@@ -27,7 +27,7 @@ import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-
     PhaseTesterResponseModule,
     BrowserAnimationsModule,
     AuthModule,
-    Phase1Module,
+    PhaseBugReportingModule,
     PhaseTeamResponseModule,
     PhaseModerationModule,
     SharedModule,

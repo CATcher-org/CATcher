@@ -7,11 +7,11 @@ import { UserService } from '../core/services/user.service';
 import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
-  selector: 'app-phase1',
-  templateUrl: './phase1.component.html',
-  styleUrls: ['./phase1.component.css']
+  selector: 'app-phase-bug-reporting',
+  templateUrl: './phase-bug-reporting.component.html',
+  styleUrls: ['./phase-bug-reporting.component.css']
 })
-export class Phase1Component implements OnInit {
+export class PhaseBugReportingComponent implements OnInit {
 
   readonly displayedColumns = [
     TABLE_COLUMNS.ID,

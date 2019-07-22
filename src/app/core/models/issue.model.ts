@@ -72,7 +72,7 @@ export const ISSUE_LABELS = {
 };
 
 export const IssuesFilter = {
-  phase1: {
+  phaseBugReporting: {
     Student: 'FILTER_BY_CREATOR',
     Tutor: 'NO_FILTER',
     Admin: 'NO_FILTER',

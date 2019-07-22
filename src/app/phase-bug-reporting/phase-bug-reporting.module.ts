@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 
 import {SharedModule} from '../shared/shared.module';
-import {Phase1RoutingModule} from './phase1-routing.module';
-import {Phase1Component} from './phase1.component';
+import {PhaseBugReportingRoutingModule} from './phase-bug-reporting-routing.module';
+import {PhaseBugReportingComponent} from './phase-bug-reporting.component';
 import {NewIssueComponent} from './new-issue/new-issue.component';
 import {IssueComponent} from './issue/issue.component';
 import {CommentEditorModule} from '../shared/comment-editor/comment-editor.module';
@@ -14,7 +14,7 @@ import { LabelDropdownModule } from '../shared/label-dropdown/label-dropdown.mod
 
 @NgModule({
   imports: [
-    Phase1RoutingModule,
+    PhaseBugReportingRoutingModule,
     SharedModule,
     IssueComponentsModule,
     CommentEditorModule,
@@ -24,9 +24,9 @@ import { LabelDropdownModule } from '../shared/label-dropdown/label-dropdown.mod
     LabelDropdownModule
   ],
   declarations: [
-    Phase1Component,
+    PhaseBugReportingComponent,
     NewIssueComponent,
     IssueComponent,
   ],
 })
-export class Phase1Module {}
+export class PhaseBugReportingModule {}

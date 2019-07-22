@@ -184,7 +184,7 @@ export class IssueService {
    * Obtain the team that is assigned to the given issue.
    */
   getTeamAssignedToIssue(issueInJson: {}): Team {
-    if (this.phaseService.currentPhase === Phase.phase1) {
+    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return null;
     }
 
@@ -274,7 +274,7 @@ export class IssueService {
    * Will be used to parse the github representation of the issue's description
    */
   private getParsedBody(issue: any) {
-    if (this.phaseService.currentPhase === Phase.phase1) {
+    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return;
     }
     [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
@@ -366,7 +366,7 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phase1 &&
+    if (this.phaseService.currentPhase !== Phase.phaseBugReporting &&
         this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
       const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
