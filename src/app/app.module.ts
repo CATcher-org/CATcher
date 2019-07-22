@@ -9,7 +9,7 @@ import { SharedModule } from './shared/shared.module';
 import { HeaderComponent } from './shared/layout';
 import { AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
-import { Phase2Module } from './phase2/phase2.module';
+import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
 import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
 import { Phase1Module } from './phase1/phase1.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -28,7 +28,7 @@ import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-
     BrowserAnimationsModule,
     AuthModule,
     Phase1Module,
-    Phase2Module,
+    PhaseTeamResponseModule,
     PhaseModerationModule,
     SharedModule,
     HttpClientModule,

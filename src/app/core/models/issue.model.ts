@@ -77,7 +77,7 @@ export const IssuesFilter = {
     Tutor: 'NO_FILTER',
     Admin: 'NO_FILTER',
   },
-  phase2: {
+  phaseTeamResponse: {
     Student: 'FILTER_BY_TEAM',
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
     Admin: 'NO_FILTER',
@@ -99,7 +99,7 @@ export enum RespondType {
   tutorResponse = 'tutorResponse',
 }
 
-export const phase2DescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
+export const phaseTeamResponseDescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
   'here, if any)\\s+(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|$)', 'gi');
 
 export const phaseTesterResponseDescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State ' +

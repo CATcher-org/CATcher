@@ -6,11 +6,11 @@ import { DataService } from '../core/services/data.service';
 import { IssueService } from '../core/services/issue.service';
 
 @Component({
-  selector: 'app-phase2',
-  templateUrl: './phase2.component.html',
-  styleUrls: ['./phase2.component.css']
+  selector: 'app-phase-team-response',
+  templateUrl: './phase-team-response.component.html',
+  styleUrls: ['./phase-team-response.component.css']
 })
-export class Phase2Component implements OnInit {
+export class PhaseTeamResponseComponent implements OnInit {
   public teamFilter = 'All Teams';
 
   constructor(public userService: UserService, private dataService: DataService, private issueService: IssueService) {}
@@ -21,7 +21,7 @@ export class Phase2Component implements OnInit {
 
   get teamList(): string[] {
     const teams = this.dataService.getTeams();
-    switch (IssuesFilter[Phase.phase2][this.userService.currentUser.role]) {
+    switch (IssuesFilter[Phase.phaseTeamResponse][this.userService.currentUser.role]) {
       case 'FILTER_BY_TEAM_ASSIGNED':
         return ['All Teams', ...this.userService.currentUser.allocatedTeams.map(team => team.id)];
       case 'NO_FILTER':

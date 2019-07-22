@@ -39,7 +39,7 @@ const PERMISSIONS = {
   },
 
   /** Phase 2 Permissions **/
-  [Phase.phase2]: {
+  [Phase.phaseTeamResponse]: {
     [UserRole.Student]: {
       'canCreateNewIssue': false,
       'canDeleteIssue': false,

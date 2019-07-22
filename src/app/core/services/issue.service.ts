@@ -8,7 +8,7 @@ import {
   IssuesFilter,
   LABELS,
   labelsToAttributeMapping,
-  phase2DescriptionTemplate,
+  phaseTeamResponseDescriptionTemplate,
   phaseTesterResponseDescriptionTemplate,
   phaseModerationDescriptionTemplate,
   RespondType
@@ -98,7 +98,7 @@ export class IssueService {
    */
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
-      case Phase.phase2:
+      case Phase.phaseTeamResponse:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
       case Phase.phaseTesterResponse:
@@ -165,7 +165,7 @@ export class IssueService {
    * Check whether the issue has been responded in the phase 2/3.
    */
   hasResponse(issueId: number): boolean {
-    const responseType = this.phaseService.currentPhase === Phase.phase2 ? RespondType.teamResponse : RespondType.tutorResponse;
+    const responseType = this.phaseService.currentPhase === Phase.phaseTeamResponse ? RespondType.teamResponse : RespondType.tutorResponse;
     return !!this.issues[issueId][responseType];
   }
 
@@ -289,8 +289,8 @@ export class IssueService {
 
     let regexExp;
     switch (this.phaseService.currentPhase) {
-      case Phase.phase2:
-        regexExp = phase2DescriptionTemplate;
+      case Phase.phaseTeamResponse:
+        regexExp = phaseTeamResponseDescriptionTemplate;
         break;
       case Phase.phaseTesterResponse:
         regexExp = phaseTesterResponseDescriptionTemplate;

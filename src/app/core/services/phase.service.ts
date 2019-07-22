@@ -5,13 +5,18 @@ import { Observable, throwError } from 'rxjs';
 import {GithubService} from './github.service';
 import { LabelService } from './label.service';
 
-export enum Phase { phase1 = 'phase1', phase2 = 'phase2', phaseTesterResponse = 'phaseTesterResponse', phaseModeration = 'phaseModeration' }
+export enum Phase {
+  phase1 = 'phase1',
+  phaseTeamResponse = 'phaseTeamResponse',
+  phaseTesterResponse = 'phaseTesterResponse',
+  phaseModeration = 'phaseModeration'
+}
 
 
 export interface SessionData {
   openPhases: string[];
   phase1: string;
-  phase2: string;
+  phaseTeamResponse: string;
   phaseTesterResponse: string;
   phaseModeration: string;
 }
@@ -26,7 +31,7 @@ export class PhaseService {
   private orgName: string;
   public readonly phaseDescription = {
     'phase1': 'Bug Reporting Phase',
-    'phase2': 'Team\'s Response Phase',
+    'phaseTeamResponse': 'Team\'s Response Phase',
     'phaseTesterResponse': 'Tester\'s Response Phase',
     'phaseModeration': 'Moderation Phase'
   };
@@ -35,7 +40,7 @@ export class PhaseService {
 
   private phaseRepoOwners = {
     phase1: '',
-    phase2: '',
+    phaseTeamResponse: '',
     phaseTesterResponse: '',
     phaseModeration: ''
   };
@@ -53,7 +58,7 @@ export class PhaseService {
   setPhaseOwners(org: string, user: string): void {
     this.orgName = org;
     this.phaseRepoOwners.phase1 = user;
-    this.phaseRepoOwners.phase2 = org;
+    this.phaseRepoOwners.phaseTeamResponse = org;
     this.phaseRepoOwners.phaseTesterResponse = user;
     this.phaseRepoOwners.phaseModeration = org;
   }
