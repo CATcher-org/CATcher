@@ -50,9 +50,9 @@ export class IssueTablesComponent implements OnInit {
   issuesPendingDeletion: {[id: number]: boolean};
   private readonly action_buttons = ACTION_BUTTONS;
 
-  constructor(private permissions: PermissionService,
+  constructor(public userService: UserService,
+              private permissions: PermissionService,
               private labelService: LabelService,
-              private userService: UserService,
               private githubService: GithubService,
               private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService) { }

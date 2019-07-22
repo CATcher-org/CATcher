@@ -17,7 +17,7 @@ export class LabelDropdownComponent implements OnInit {
   selectedColor: string;
   labelList: Label[];
 
-  constructor(private labelService: LabelService) { }
+  constructor(public labelService: LabelService) { }
 
   ngOnInit() {
     this.selectedColor = this.labelService.getColorOfLabel(this.initialValue);
