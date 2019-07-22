@@ -45,8 +45,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   @Input() issueId: number;
   @Input() issueComponents: ISSUE_COMPONENTS[];
 
-  private readonly issueComponentsEnum = ISSUE_COMPONENTS;
-  private readonly userRole = UserRole;
+  public readonly issueComponentsEnum = ISSUE_COMPONENTS;
+  public readonly userRole = UserRole;
 
   constructor(private issueCommentService: IssueCommentService,
               private route: ActivatedRoute,
