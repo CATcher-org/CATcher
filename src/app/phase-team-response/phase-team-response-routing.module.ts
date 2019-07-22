@@ -7,7 +7,8 @@ import {CanDeactivateIssueGuard} from '../core/guards/can-deactivate-issue-guard
 
 const routes: Routes = [
   { path: 'phaseTeamResponse', component: PhaseTeamResponseComponent, canActivate: [AuthGuard] },
-  { path: 'phaseTeamResponse/issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateIssueGuard] }
+  { path: 'phaseTeamResponse/issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateIssueGuard] }
 ];
 
 @NgModule({
