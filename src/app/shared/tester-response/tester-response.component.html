@@ -9,7 +9,7 @@
       </button>
     </div>
     <div>
-      <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
+      <div class="container" *ngFor="let response of testerResponses; index as i; trackBy: trackDisagreeList">
         <markdown [data]="response.title"></markdown>
         <br>
         <markdown [data]="response.description"></markdown>

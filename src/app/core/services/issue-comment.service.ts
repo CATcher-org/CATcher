@@ -4,6 +4,7 @@ import {GithubService} from './github.service';
 import {IssueComment, IssueComments} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import * as moment from 'moment';
+import { TesterResponse } from '../models/tester-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,7 @@ import * as moment from 'moment';
 export class IssueCommentService {
   // A map from issueId to their respective issue comments.
   comments = new Map<number, IssueComments>();
+  readonly MINIMUM_MATCHES = 1;
 
   constructor(private githubService: GithubService) {
   }
@@ -59,6 +61,19 @@ export class IssueCommentService {
         return this.comments.get(issueId);
       })
     );
+  }
+
+  parseTesterResponse(toParse: string): TesterResponse[] {
+    let matches;
+    const testerResponses: TesterResponse[] = [];
+    const regex = /(## \d.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
+    while (matches = regex.exec(toParse)) {
+      if (matches && matches.length > this.MINIMUM_MATCHES) {
+        const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
+        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement));
+      }
+    }
+    return testerResponses;
   }
 
   /**

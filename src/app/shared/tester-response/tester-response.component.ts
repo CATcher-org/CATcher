@@ -7,6 +7,9 @@ import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
+import { IssueComments } from '../../core/models/comment.model';
+import { IssueCommentService } from '../../core/services/issue-comment.service';
+import { TesterResponse } from '../../core/models/tester-response.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -18,6 +21,7 @@ export class TesterResponseComponent implements OnInit {
   testerResponseForm: FormGroup;
   isFormPending = false;
   isEditing = false;
+  testerResponses: TesterResponse[];
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -26,9 +30,12 @@ export class TesterResponseComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
               public userService: UserService,
+              public issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
+    this.initializeComments(this.issue.id);
+
     const group: any = {};
     for (let i = 0; i < this.issue.testerResponses.length; i++) {
       group[i.toString()] = new FormControl(Validators.required);
@@ -98,5 +105,18 @@ export class TesterResponseComponent implements OnInit {
   getSubmitButtonText(): string {
     return this.isNewResponse() ? 'Submit' : 'Save';
   }
+
+  private initializeComments(id: number) {
+    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isFormPending = false))
+      .subscribe((issueComments: IssueComments) => {
+        const comment = issueComments.comments[0];
+        if (comment) {
+          this.testerResponses = this.issueCommentService.parseTesterResponse(comment.description);
+          console.log(issueComments.comments[0]);
+        }
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
+      });
+    }
 
 }
