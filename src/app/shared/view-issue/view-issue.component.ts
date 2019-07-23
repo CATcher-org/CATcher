@@ -53,7 +53,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,
-              public userService: UserService,
               public issueService: IssueService) { }
 
   ngOnInit() {

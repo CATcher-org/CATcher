@@ -45,7 +45,6 @@
       <div class="column right">
         <div *ngIf="(this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) && issue.teamResponse) ||
           (this.isComponentVisible(issueComponentsEnum.NEW_TUTOR_RESPONSE) && issue.tutorResponse) ||
-          (this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && this.userService.currentUser.role === userRole.Student) ||
           (!this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE))">
 
         <!-- Severity Label -->
