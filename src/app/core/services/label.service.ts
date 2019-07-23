@@ -25,23 +25,29 @@ export class LabelService {
 
   private readonly REQUIRED_LABELS = {
     severity: {
-      Low: new Label('severity', 'Low', 'ffb3b3'),
-      Medium: new Label('severity', 'Medium', 'ff6666'),
-      High: new Label('severity', 'High', 'b30000')
+      Low: new Label('severity', 'Low', 'ffcccc'),
+      Medium: new Label('severity', 'Medium', 'ff9999'),
+      High: new Label('severity', 'High', 'ff6666')
     },
     type: {
-      DocumentationBug: new Label('type', 'DocumentationBug', 'ccb3ff'),
-      FunctionalityBug: new Label('type', 'FunctionalityBug', '661aff')
+      DocTypo: new Label('type', 'DocTypo', 'f2ccff'),
+      DocumentationBug: new Label('type', 'DocumentationBug', 'd966ff'),
+      FeatureFlaw: new Label('type', 'FeatureFlaw', 'd966ff'),
+      FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc')
     },
     response: {
-      Accepted: new Label('response', 'Accepted', '80ffcc'),
-      Rejected: new Label('response', 'Rejected', 'ff80b3'),
+      Accepted: new Label('response', 'Accepted', '00802b'),
+      CannotReproduce: new Label('response', 'CannotReproduce', 'ffebcc'),
       IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80'),
-      CannotReproduce: new Label('response', 'CannotReproduce', 'bfbfbf')
+      NotInScope: new Label('response', 'NotInScope', 'ffcc80'),
+      Rejected: new Label('response', 'Rejected', 'ff9900')
     },
     status: {
-      Done: new Label('status', 'Done', 'b3ecff'),
-      Incomplete: new Label('status', 'Incomplete', '1ac6ff')
+      Done: new Label('status', 'Done', 'a6a6a6'),
+      Incomplete: new Label('status', 'Incomplete', '000000')
+    },
+    others: {
+      duplicate: new Label(undefined, 'duplicate', '0066ff')
     }
   };
 
@@ -49,11 +55,13 @@ export class LabelService {
   private typeLabels: Label[] = Object.values(this.REQUIRED_LABELS.type);
   private responseLabels: Label[] = Object.values(this.REQUIRED_LABELS.response);
   private statusLabels: Label[] = Object.values(this.REQUIRED_LABELS.status);
+  private otherLabels: Label[] = Object.values(this.REQUIRED_LABELS.others);
   private labelArrays = {
     severity: this.severityLabels,
     type: this.typeLabels,
     response: this.responseLabels,
-    status: this.statusLabels
+    status: this.statusLabels,
+    others: this.otherLabels
   };
 
   constructor(private githubService: GithubService) {
@@ -152,14 +160,20 @@ export class LabelService {
           remoteLabel.getFormattedName() === label.getFormattedName());
 
       if (nameMatchedLabels.length === 0) {
+
         // Create new Label (Could not find a label with the same name & category)
         this.githubService.createLabel(label.getFormattedName(), label.labelColor);
+
       } else if (nameMatchedLabels.length === 1) {
         if (nameMatchedLabels[0].equals(label)) {
+
           // the label exists exactly as expected -> do nothing
+
         } else {
+
           // the label exists but the color does not match
           this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
+
         }
       } else {
         throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());
@@ -174,11 +188,19 @@ export class LabelService {
    */
   parseLabelData(labels: Array<{}>): Label[] {
     const labelData: Label[] = [];
+
     for (const label of labels) {
 
-      const labelName: string[] = String(label['name']).split('.');
-      const labelCategory: string = labelName[0];
-      const labelValue: string = labelName[1];
+      let labelCategory: string;
+      let labelValue: string;
+      const containsDotRegex = /\./g;
+
+      const rawName: string = String(label['name']);
+
+      [labelCategory, labelValue] = containsDotRegex.test(rawName)
+        ? String(label['name']).split('.')
+        : [undefined, rawName];
+
       const labelColor: string = String(label['color']);
 
       labelData.push(new Label(labelCategory, labelValue, labelColor));
