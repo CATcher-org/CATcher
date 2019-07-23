@@ -1,4 +1,4 @@
-<form [formGroup]="tutorResponseForm" #myForm="ngForm" (ngSubmit)="submitNewTutorResponseForm(myForm)">
+<form [formGroup]="newTutorResponseForm" #myForm="ngForm" (ngSubmit)="submitNewTutorResponseForm(myForm)">
   <div class="timeline-comment">
     <div class="timeline-header">
       <span style="vertical-align: middle; margin-left: 5px"> Post your response here. </span>
@@ -37,11 +37,11 @@
 
       <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
         <div class="left-half">
-          <app-label-dropdown [initialValue]="this.issue.severity" attributeName="severity" [dropdownForm]="tutorResponseForm"></app-label-dropdown>
+          <app-label-dropdown [initialValue]="this.issue.severity" attributeName="severity" [dropdownForm]="newTutorResponseForm"></app-label-dropdown>
         </div>
 
         <div class="right-half">
-          <app-label-dropdown [initialValue]="this.issue.type" attributeName="type" [dropdownForm]="tutorResponseForm"></app-label-dropdown>
+          <app-label-dropdown [initialValue]="this.issue.type" attributeName="type" [dropdownForm]="newTutorResponseForm"></app-label-dropdown>
         </div>
       </div>
 
@@ -56,14 +56,14 @@
         </mat-form-field>
 
         <div class="right-half">
-          <app-label-dropdown [initialValue]="this.issue.responseTag" attributeName="responseTag" [dropdownForm]="tutorResponseForm"></app-label-dropdown>
+          <app-label-dropdown [initialValue]="this.issue.responseTag" attributeName="responseTag" [dropdownForm]="newTutorResponseForm"></app-label-dropdown>
         </div>
       </div>
 
-      <app-comment-editor [id]="'description'" [commentField]="tutorResponseForm.get('description')" [commentForm]="tutorResponseForm"></app-comment-editor>
+      <app-comment-editor [id]="'description'" [commentField]="newTutorResponseForm.get('description')" [commentForm]="newTutorResponseForm"></app-comment-editor>
     
       <div style="float: right; padding:5px;">
-        <button type="submit" style="margin-left: 10px" [disabled]="tutorResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>
+        <button type="submit" style="margin-left: 10px" [disabled]="newTutorResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>
       </div>
     </div>
 

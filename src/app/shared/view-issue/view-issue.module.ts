@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TutorResponseComponent } from '../tutor-response/tutor-response.component';
+import { NewTutorResponseComponent } from '../new-tutor-response/new-tutor-response.component';
 import { NewTeamResponseComponent } from '../new-team-respond/new-team-response.component';
 import { ViewIssueComponent } from './view-issue.component';
 import { CommentEditorModule } from '../comment-editor/comment-editor.module';
@@ -15,7 +15,7 @@ import { TesterResponseComponent } from '../tester-response/tester-response.comp
     ViewIssueComponent
   ],
   declarations: [
-    TutorResponseComponent,
+    NewTutorResponseComponent,
     NewTeamResponseComponent,
     TesterResponseComponent,
     ViewIssueComponent

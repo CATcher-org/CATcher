@@ -7,13 +7,13 @@ import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {finalize, map} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-tutor-response',
-  templateUrl: './tutor-response.component.html',
-  styleUrls: ['./tutor-response.component.css']
+  selector: 'app-new-tutor-response',
+  templateUrl: './new-tutor-response.component.html',
+  styleUrls: ['./new-tutor-response.component.css']
 })
-export class TutorResponseComponent implements OnInit {
+export class NewTutorResponseComponent implements OnInit {
 
-  tutorResponseForm: FormGroup;
+  newTutorResponseForm: FormGroup;
   duplicatedIssueList: Observable<Issue[]>;
   teamMembers: string[];
 
@@ -27,7 +27,7 @@ export class TutorResponseComponent implements OnInit {
 
   ngOnInit() {
     this.duplicatedIssueList = this.getDupIssueList();
-    this.tutorResponseForm = this.formBuilder.group({
+    this.newTutorResponseForm = this.formBuilder.group({
       description: ['', Validators.required],
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
@@ -58,7 +58,7 @@ export class TutorResponseComponent implements OnInit {
   }
 
   submitNewTutorResponseForm(form: NgForm) {
-    if (this.tutorResponseForm.invalid) {
+    if (this.newTutorResponseForm.invalid) {
       return;
     }
     this.isFormPending = true;
@@ -82,31 +82,31 @@ export class TutorResponseComponent implements OnInit {
   }
 
   get severity() {
-    return this.tutorResponseForm.get('severity');
+    return this.newTutorResponseForm.get('severity');
   }
 
   get description() {
-    return this.tutorResponseForm.get('description');
+    return this.newTutorResponseForm.get('description');
   }
 
   get type() {
-    return this.tutorResponseForm.get('type');
+    return this.newTutorResponseForm.get('type');
   }
 
   get assignees() {
-    return this.tutorResponseForm.get('assignees');
+    return this.newTutorResponseForm.get('assignees');
   }
 
   get duplicated() {
-    return this.tutorResponseForm.get('duplicated');
+    return this.newTutorResponseForm.get('duplicated');
   }
 
   get duplicateOf() {
-    return this.tutorResponseForm.get('duplicateOf');
+    return this.newTutorResponseForm.get('duplicateOf');
   }
 
   get responseTag() {
-    return this.tutorResponseForm.get('responseTag');
+    return this.newTutorResponseForm.get('responseTag');
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
