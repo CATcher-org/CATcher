@@ -10,7 +10,7 @@ const PERMISSIONS = {
   /** Phase 1 Permissions **/
   [Phase.phaseBugReporting]: {
     [UserRole.Student]: {
-      'isNewIssueCreatable': true,
+      'isIssueCreatable': true,
       'isIssueDeletable': true,
       'isIssueTitleEditable': true,
       'isIssueDescriptionEditable': true,
@@ -19,7 +19,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': false,
@@ -28,7 +28,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
-      'isNewIssueCreatable': true,
+      'isIssueCreatable': true,
       'isIssueDeletable': true,
       'isIssueTitleEditable': true,
       'isIssueDescriptionEditable': true,
@@ -41,7 +41,7 @@ const PERMISSIONS = {
   /** Phase 2 Permissions **/
   [Phase.phaseTeamResponse]: {
     [UserRole.Student]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': false,
@@ -50,7 +50,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': false,
@@ -59,7 +59,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': true,
@@ -71,7 +71,7 @@ const PERMISSIONS = {
 
   [Phase.phaseTesterResponse]: {
     [UserRole.Student]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': false,
@@ -80,7 +80,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': false,
@@ -89,7 +89,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': true,
@@ -102,7 +102,7 @@ const PERMISSIONS = {
   /** Phase 3 Permissions **/
   [Phase.phaseModeration]: {
     [UserRole.Student]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': false,
@@ -111,7 +111,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': true,
@@ -120,7 +120,7 @@ const PERMISSIONS = {
       'isTutorResponseEditable': true,
     },
     [UserRole.Admin]: {
-      'isNewIssueCreatable': false,
+      'isIssueCreatable': false,
       'isIssueDeletable': false,
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': true,
@@ -137,8 +137,8 @@ const PERMISSIONS = {
 export class PermissionService {
   constructor(private githubService: GithubService, private userService: UserService, private phaseService: PhaseService) {}
 
-  isNewIssueCreatable(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'isNewIssueCreatable');
+  isIssueCreatable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isIssueCreatable');
   }
 
   isIssueDeletable(): boolean {
