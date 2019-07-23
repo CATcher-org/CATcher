@@ -5,14 +5,20 @@ import { Observable, throwError } from 'rxjs';
 import {GithubService} from './github.service';
 import { LabelService } from './label.service';
 
-export enum Phase { phase1 = 'phase1', phase2 = 'phase2', phaseTesterResponse = 'phaseTesterResponse', phase3 = 'phase3' }
+export enum Phase {
+  phaseBugReporting = 'phaseBugReporting',
+  phaseTeamResponse = 'phaseTeamResponse',
+  phaseTesterResponse = 'phaseTesterResponse',
+  phaseModeration = 'phaseModeration'
+}
+
 
 export interface SessionData {
   openPhases: string[];
-  phase1: string;
-  phase2: string;
+  phaseBugReporting: string;
+  phaseTeamResponse: string;
   phaseTesterResponse: string;
-  phase3: string;
+  phaseModeration: string;
 }
 
 @Injectable({
@@ -24,18 +30,19 @@ export class PhaseService {
   private repoName: string;
   private orgName: string;
   public readonly phaseDescription = {
-    'phase1': 'Bug Reporting Phase',
-    'phase2': 'Team\'s Response Phase',
+    'phaseBugReporting': 'Bug Reporting Phase',
+    'phaseTeamResponse': 'Team\'s Response Phase',
     'phaseTesterResponse': 'Tester\'s Response Phase',
-    'phase3': 'Moderation Phase',
+    'phaseModeration': 'Moderation Phase'
   };
+
   public sessionData: SessionData;
 
   private phaseRepoOwners = {
-    phase1: '',
-    phase2: '',
+    phaseBugReporting: '',
+    phaseTeamResponse: '',
     phaseTesterResponse: '',
-    phase3: '',
+    phaseModeration: ''
   };
 
   constructor(private http: HttpClient,
@@ -50,10 +57,10 @@ export class PhaseService {
    */
   setPhaseOwners(org: string, user: string): void {
     this.orgName = org;
-    this.phaseRepoOwners.phase1 = user;
-    this.phaseRepoOwners.phase2 = org;
+    this.phaseRepoOwners.phaseBugReporting = user;
+    this.phaseRepoOwners.phaseTeamResponse = org;
     this.phaseRepoOwners.phaseTesterResponse = user;
-    this.phaseRepoOwners.phase3 = org;
+    this.phaseRepoOwners.phaseModeration = org;
   }
 
   /**

@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Issue, IssuesFilter } from '../core/models/issue.model';
-import { IssuesDataTable } from '../shared/issue-tables/IssuesDataTable';
+import { IssuesFilter } from '../core/models/issue.model';
 import { IssueService } from '../core/services/issue.service';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { UserService } from '../core/services/user.service';
@@ -12,11 +10,13 @@ import { GithubService } from '../core/services/github.service';
 import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../shared/issue-tables/issue-tables.component';
 
 @Component({
-  selector: 'app-phase3',
-  templateUrl: './phase3.component.html',
-  styleUrls: ['./phase3.component.css']
+  selector: 'app-phase-moderation',
+  templateUrl: './phase-moderation.component.html',
+  styleUrls: ['./phase-moderation.component.css']
 })
-export class Phase3Component implements OnInit {
+
+export class PhaseModerationComponent implements OnInit {
+
   displayedColumns = [
     TABLE_COLUMNS.ID,
     TABLE_COLUMNS.TITLE,
@@ -25,6 +25,7 @@ export class Phase3Component implements OnInit {
     TABLE_COLUMNS.TODO,
     TABLE_COLUMNS.ACTIONS
   ];
+
   public teamFilter = 'All Teams';
 
   readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB];
@@ -46,7 +47,7 @@ export class Phase3Component implements OnInit {
 
   get teamList(): string[] {
     const teams = this.dataService.getTeams();
-    switch (IssuesFilter[Phase.phase3][this.userService.currentUser.role]) {
+    switch (IssuesFilter[Phase.phaseModeration][this.userService.currentUser.role]) {
       case 'FILTER_BY_TEAM_ASSIGNED':
         return ['All Teams', ...this.userService.currentUser.allocatedTeams.map(team => team.id)];
       case 'NO_FILTER':

@@ -61,18 +61,18 @@ export class HeaderComponent implements OnInit {
   }
 
   isReloadButtonShown(): boolean {
-    return this.router.url !== '/phase1/issues/new';
+    return this.router.url !== '/phaseBugReporting/issues/new';
   }
 
   isOpenUrlButtonShown(): boolean {
-    return this.phaseService.currentPhase === Phase.phase1 ||
+    return this.phaseService.currentPhase === Phase.phaseBugReporting ||
     this.userService.currentUser.role === UserRole.Student ||
     (this.issueService.getIssueTeamFilter() !== 'All Teams' || this.router.url.includes('/issues'));
   }
 
   goBack() {
     if (this.prevUrl === `/${this.phaseService.currentPhase}/issues/new`) {
-      this.router.navigate(['/phase1']);
+      this.router.navigate(['/phaseBugReporting']);
     } else {
       this.location.back();
     }
@@ -97,7 +97,7 @@ export class HeaderComponent implements OnInit {
 
   private getTeamFilterString() {
     // First Phase does not need team filtering
-    if (this.phaseService.currentPhase === Phase.phase1 || this.phaseService.currentPhase === Phase.phaseTesterResponse) {
+    if (this.phaseService.currentPhase === Phase.phaseBugReporting || this.phaseService.currentPhase === Phase.phaseTesterResponse) {
       return '';
     }
 
@@ -110,7 +110,7 @@ export class HeaderComponent implements OnInit {
     // The team filter string E.g "+label:tutorial.W12+label:team.3"
     const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
     // Only include duplicate Issues in last Phase
-    return (this.phaseService.currentPhase === Phase.phase3) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
+    return (this.phaseService.currentPhase === Phase.phaseModeration) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
   reload() {

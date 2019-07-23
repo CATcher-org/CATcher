@@ -8,9 +8,9 @@ import {
   IssuesFilter,
   LABELS,
   labelsToAttributeMapping,
-  phase2DescriptionTemplate,
-  phase3DescriptionTemplate,
+  phaseTeamResponseDescriptionTemplate,
   phaseTesterResponseDescriptionTemplate,
+  phaseModerationDescriptionTemplate,
   RespondType
 } from '../models/issue.model';
 import { UserService } from './user.service';
@@ -82,7 +82,7 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
-    const assignees = this.phaseService.currentPhase === Phase.phase3 ? [] : issue.assignees;
+    const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
       this.createLabelsForIssue(issue), assignees).pipe(
         map((response) => {
@@ -98,14 +98,14 @@ export class IssueService {
    */
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
-      case Phase.phase2:
+      case Phase.phaseTeamResponse:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
       case Phase.phaseTesterResponse:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
-        `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
-        `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}`;
-      case Phase.phase3:
+          `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
+          `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}`;
+      case Phase.phaseModeration:
         if (!issue.todoList) {
           issue.todoList = [];
         }
@@ -165,7 +165,7 @@ export class IssueService {
    * Check whether the issue has been responded in the phase 2/3.
    */
   hasResponse(issueId: number): boolean {
-    const responseType = this.phaseService.currentPhase === Phase.phase2 ? RespondType.teamResponse : RespondType.tutorResponse;
+    const responseType = this.phaseService.currentPhase === Phase.phaseTeamResponse ? RespondType.teamResponse : RespondType.tutorResponse;
     return !!this.issues[issueId][responseType];
   }
 
@@ -184,7 +184,7 @@ export class IssueService {
    * Obtain the team that is assigned to the given issue.
    */
   getTeamAssignedToIssue(issueInJson: {}): Team {
-    if (this.phaseService.currentPhase === Phase.phase1) {
+    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return null;
     }
 
@@ -274,7 +274,7 @@ export class IssueService {
    * Will be used to parse the github representation of the issue's description
    */
   private getParsedBody(issue: any) {
-    if (this.phaseService.currentPhase === Phase.phase1) {
+    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return;
     }
     [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
@@ -286,19 +286,20 @@ export class IssueService {
    */
   private parseBody(issue: {}): any {
     const body = issue['body'];
-    // tslint:disable-next-line
+
     let regexExp;
     switch (this.phaseService.currentPhase) {
-      case Phase.phase2:
-        regexExp = phase2DescriptionTemplate;
+      case Phase.phaseTeamResponse:
+        regexExp = phaseTeamResponseDescriptionTemplate;
         break;
       case Phase.phaseTesterResponse:
         regexExp = phaseTesterResponseDescriptionTemplate;
         break;
-      case Phase.phase3:
-        regexExp = phase3DescriptionTemplate;
+      case Phase.phaseModeration:
+        regexExp = phaseModerationDescriptionTemplate;
         break;
     }
+
     const matches = body.match(regexExp);
     regexExp.lastIndex = 0;
 
@@ -365,7 +366,7 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phase1 &&
+    if (this.phaseService.currentPhase !== Phase.phaseBugReporting &&
         this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
       const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
@@ -404,7 +405,7 @@ export class IssueService {
       id: +issueInJson['number'],
       created_at: moment(issueInJson['created_at']).format('lll'),
       title: issueInJson['title'],
-      assignees: this.phaseService.currentPhase === Phase.phase3 ? issueInJson['proposedAssignees'] :
+      assignees: this.phaseService.currentPhase === Phase.phaseModeration ? issueInJson['proposedAssignees'] :
         issueInJson['assignees'].map((assignee) => assignee['login']),
       description: issueInJson['body'],
       teamAssigned: this.getTeamAssignedToIssue(issueInJson),

@@ -1,15 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { Phase1Component } from './home.component';
+import { PhaseBugReportingComponent } from './phase-bug-reporting.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 describe('HomeComponent', () => {
-  let component: Phase1Component;
-  let fixture: ComponentFixture<Phase1Component>;
+  let component: PhaseBugReportingComponent;
+  let fixture: ComponentFixture<PhaseBugReportingComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ Phase1Component ],
+      declarations: [ PhaseBugReportingComponent ],
       imports: [
         TranslateModule.forRoot()
       ]
@@ -18,7 +17,7 @@ describe('HomeComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(Phase1Component);
+    fixture = TestBed.createComponent(PhaseBugReportingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

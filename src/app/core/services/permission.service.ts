@@ -8,7 +8,7 @@ const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 
 const PERMISSIONS = {
   /** Phase 1 Permissions **/
-  [Phase.phase1]: {
+  [Phase.phaseBugReporting]: {
     [UserRole.Student]: {
       'canCreateNewIssue': true,
       'canDeleteIssue': true,
@@ -39,7 +39,7 @@ const PERMISSIONS = {
   },
 
   /** Phase 2 Permissions **/
-  [Phase.phase2]: {
+  [Phase.phaseTeamResponse]: {
     [UserRole.Student]: {
       'canCreateNewIssue': false,
       'canDeleteIssue': false,
@@ -100,7 +100,7 @@ const PERMISSIONS = {
   },
 
   /** Phase 3 Permissions **/
-  [Phase.phase3]: {
+  [Phase.phaseModeration]: {
     [UserRole.Student]: {
       'canCreateNewIssue': false,
       'canDeleteIssue': false,

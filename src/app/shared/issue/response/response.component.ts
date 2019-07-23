@@ -80,9 +80,9 @@ export class ResponseComponent implements OnInit {
 
   canEditIssue(): boolean {
     switch (this.phaseService.currentPhase) {
-      case Phase.phase2:
+      case Phase.phaseTeamResponse:
         return this.permissions.canCRUDTeamResponse();
-      case Phase.phase3:
+      case Phase.phaseModeration:
         return this.permissions.canCRUDTutorResponse();
       default:
         return false;

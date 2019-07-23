@@ -4,15 +4,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
-
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HeaderComponent } from './shared/layout';
 import { AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
-import { Phase2Module } from './phase2/phase2.module';
-import { Phase3Module } from './phase3/phase3.module';
-import { Phase1Module } from './phase1/phase1.module';
+import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
+import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
+import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporting.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
@@ -28,9 +27,9 @@ import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-
     PhaseTesterResponseModule,
     BrowserAnimationsModule,
     AuthModule,
-    Phase1Module,
-    Phase2Module,
-    Phase3Module,
+    PhaseBugReportingModule,
+    PhaseTeamResponseModule,
+    PhaseModerationModule,
     SharedModule,
     HttpClientModule,
     MarkdownModule.forRoot({
