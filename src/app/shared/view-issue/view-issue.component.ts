@@ -34,7 +34,6 @@ export enum ISSUE_COMPONENTS {
 })
 export class ViewIssueComponent implements OnInit, OnDestroy {
   issue: Issue;
-  comments: IssueComment[];
   issueComment: IssueComment;
   isIssueLoading = true;
   isCommentsLoading = true;
@@ -118,7 +117,9 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
           return;
         }
         // For Tester Response Phase, where team and tester response items are in the issue comment
-        this.setTeamAndTesterResponse();
+        if (!this.issue.teamResponse) {
+          this.setTeamAndTesterResponse();
+        }
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
       });
