@@ -120,6 +120,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
       .subscribe((issueComments: IssueComments) => {
         this.issueComments = issueComments;
         this.issueComment = issueComments.comments[0];
+        this.isCommentsLoading = false;
         // If there is no comment in the issue, don't need to continue
         if (!this.issueComment) {
           return;
