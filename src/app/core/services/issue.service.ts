@@ -351,7 +351,7 @@ export class IssueService {
           assignees = teamMembers.filter(m => proposedAssignees.includes(m.toLowerCase()));
           break;
         case '# Items for the Tester to Verify':
-          // testerResponses = this.parseTesterResponse(groups['description']);
+          testerResponses = this.parseTesterResponse(groups['description']);
           break;
         default:
           break;

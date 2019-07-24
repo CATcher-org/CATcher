@@ -104,26 +104,21 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.isTutorResponseEditing = updatedState;
   }
 
-  setTesterResponses() {
-    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issueComment.description);
-  }
-
-  setTeamResponse() {
+  setTeamAndTesterResponse() {
     this.issue.teamResponse = this.issueService.parseTeamResponse(this.issueComment.description);
+    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issueComment.description);
   }
 
   private initializeComments(id: number) {
     this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
       .subscribe((issueComments: IssueComments) => {
         this.issueComment = issueComments.comments[0];
-        // If there is no comment, don't continue
+        // If there is no comment in the issue, don't need to continue
         if (!this.issueComment) {
           return;
         }
-        if (!this.issue.teamResponse) {
-          this.setTeamResponse();
-        }
-        this.setTesterResponses();
+        // For Tester Response Phase, where team and tester response items are in the issue comment
+        this.setTeamAndTesterResponse();
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
       });
