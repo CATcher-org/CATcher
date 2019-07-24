@@ -42,7 +42,11 @@ export class CommentEditorComponent implements OnInit {
     event.stopPropagation();
 
     this.dragActiveCounter++;
-    this.dropArea.nativeElement.classList.add('highlight-drag-box');
+    if (this.commentField.disabled) {
+      this.dropArea.nativeElement.classList.add('highlight-drag-box-disabled');
+    } else {
+      this.dropArea.nativeElement.classList.add('highlight-drag-box');
+    }
   }
 
   // Prevent cursor in textarea from moving when file is dragged over it.
@@ -58,9 +62,13 @@ export class CommentEditorComponent implements OnInit {
   onDrop(event) {
     event.preventDefault();
     event.stopPropagation();
-    const files = event.dataTransfer.files;
     this.removeHighlightBorderStyle();
 
+    if (this.commentField.disabled) {
+      return;
+    }
+
+    const files = event.dataTransfer.files;
     if (files.length > 0) {
       this.readAndUploadFile(files[0]);
       this.commentTextArea.nativeElement.focus();
@@ -189,6 +197,7 @@ export class CommentEditorComponent implements OnInit {
     this.dragActiveCounter--;
     if (this.dragActiveCounter === 0) { // To make sure when dragging over a child element, drop area is still highlight.
       this.dropArea.nativeElement.classList.remove('highlight-drag-box');
+      this.dropArea.nativeElement.classList.remove('highlight-drag-box-disabled');
     }
   }
 }

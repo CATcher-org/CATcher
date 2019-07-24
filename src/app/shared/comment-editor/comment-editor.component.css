@@ -8,6 +8,12 @@
   border-width: 2px;
 }
 
+.highlight-drag-box-disabled {
+  border-style: dashed;
+  border-color: #fb2a5c;
+  border-width: 2px;
+}
+
 .drag-and-drop {
   color: #586069;
   font-size: 13px;
