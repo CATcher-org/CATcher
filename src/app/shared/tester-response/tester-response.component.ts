@@ -7,6 +7,8 @@ import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
+import { IssueCommentService } from '../../core/services/issue-comment.service';
+import { IssueComment } from '../../core/models/comment.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -20,11 +22,14 @@ export class TesterResponseComponent implements OnInit {
   isEditing = false;
 
   @Input() issue: Issue;
+  @Input() issueComment: IssueComment;
   @Output() issueUpdated = new EventEmitter<Issue>();
+  @Output() commentUpdated = new EventEmitter<IssueComment>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
+              private issueCommentService: IssueCommentService,
               public userService: UserService,
               private errorHandlingService: ErrorHandlingService) { }
 
@@ -55,10 +60,26 @@ export class TesterResponseComponent implements OnInit {
       this.isFormPending = false;
       this.isEditing = false;
     })).subscribe((updatedIssue) => {
+      updatedIssue.teamResponse = this.issue.teamResponse;
+      updatedIssue.testerResponses = this.issue.testerResponses;
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+
+    // For Tester Response phase, where the items are in the issue's comment
+    if (this.issueComment) {
+      this.issueComment.description = this.issueCommentService.
+        createGithubIssueCommentDescription(this.issue.teamResponse, this.issue.testerResponses);
+
+      this.issueCommentService.updateIssueComment(this.issueComment).subscribe(
+        (updatedComment) => {
+          this.commentUpdated.emit(updatedComment);
+        }, (error) => {
+          this.errorHandlingService.handleHttpError(error);
+      });
+    }
+
   }
 
   changeToEditMode() {

@@ -102,9 +102,7 @@ export class IssueService {
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
       case Phase.phaseTesterResponse:
-        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
-          `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
-          `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}`;
+          return `# Description\n${issue.description}`;
       case Phase.phaseModeration:
         if (!issue.todoList) {
           issue.todoList = [];

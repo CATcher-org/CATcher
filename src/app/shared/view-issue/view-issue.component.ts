@@ -35,12 +35,14 @@ export enum ISSUE_COMPONENTS {
 export class ViewIssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   issueComment: IssueComment;
+  issueComments: IssueComments;
   isIssueLoading = true;
   isCommentsLoading = true;
   isTutorResponseEditing = false;
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
   issueSubscription: Subscription;
+  issueCommentSubscription: Subscription;
 
   @Input() issueId: number;
   @Input() issueComponents: ISSUE_COMPONENTS[];
@@ -91,6 +93,11 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.issueService.updateLocalStore(this.issue);
   }
 
+  updateComment(newComment: IssueComment) {
+    this.issueComments.comments[0] = newComment;
+    this.issueCommentService.updateLocalStore(this.issueComments);
+  }
+
   updateDescriptionEditState(updatedState: boolean) {
     this.isIssueDescriptionEditing = updatedState;
   }
@@ -109,14 +116,15 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   }
 
   private initializeComments(id: number) {
-    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
+    this.issueCommentSubscription = this.issueCommentService.getIssueComments(id)
       .subscribe((issueComments: IssueComments) => {
+        this.issueComments = issueComments;
         this.issueComment = issueComments.comments[0];
         // If there is no comment in the issue, don't need to continue
         if (!this.issueComment) {
           return;
         }
-        // For Tester Response Phase, where team and tester response items are in the issue comment
+        // For Tester Response Phase, where team and tester response items are in the issue's comment
         if (!this.issue.teamResponse) {
           this.setTeamAndTesterResponse();
         }
@@ -127,6 +135,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.issueSubscription.unsubscribe();
+    this.issueCommentSubscription.unsubscribe();
   }
 
 }

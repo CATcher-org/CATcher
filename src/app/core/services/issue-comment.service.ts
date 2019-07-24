@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {Observable, of, BehaviorSubject} from 'rxjs';
 import {GithubService} from './github.service';
 import {IssueComment, IssueComments} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import * as moment from 'moment';
+import { TesterResponse } from '../models/tester-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,7 @@ import * as moment from 'moment';
 export class IssueCommentService {
   // A map from issueId to their respective issue comments.
   comments = new Map<number, IssueComments>();
+  comments$: BehaviorSubject<IssueComments>;
 
   constructor(private githubService: GithubService) {
   }
@@ -19,7 +21,7 @@ export class IssueCommentService {
     if (!this.comments.get(issueId)) {
       return this.initializeIssueComments(issueId);
     } else {
-      return of(this.comments.get(issueId));
+      return this.comments$;
     }
   }
 
@@ -34,7 +36,7 @@ export class IssueCommentService {
     );
   }
 
-  private updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
+  updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
     return this.githubService.updateIssueComment({
       ...issueComment,
       description: issueComment.description,
@@ -43,6 +45,19 @@ export class IssueCommentService {
         return this.createIssueCommentModel(response);
       })
     );
+  }
+
+  createGithubIssueCommentDescription(teamResponse: string, testerResponses: TesterResponse[]): string {
+    return `# Team\'s Response\n${teamResponse}\n ` +
+          `# Items for the Tester to Verify\n${this.getTesterResponsesString(testerResponses)}`;
+  }
+
+  private getTesterResponsesString(testerResponses: TesterResponse[]): string {
+    let testerResponsesString = '';
+    for (const testerResponse of testerResponses) {
+      testerResponsesString += testerResponse.toString();
+    }
+    return testerResponsesString;
   }
 
   private initializeIssueComments(issueId: number): Observable<IssueComments> {
@@ -56,6 +71,7 @@ export class IssueCommentService {
           issueComments.comments.push(this.createIssueCommentModel(comment));
         }
         this.comments.set(issueId, <IssueComments>{...issueComments, issueId: issueId});
+        this.comments$ = new BehaviorSubject<IssueComments>(this.comments.get(issueId));
         return this.comments.get(issueId);
       })
     );
@@ -66,10 +82,12 @@ export class IssueCommentService {
    */
   updateLocalStore(commentsToUpdate: IssueComments) {
     this.comments.set(commentsToUpdate.issueId, commentsToUpdate);
+    this.comments$.next(commentsToUpdate);
   }
 
   reset() {
     this.comments.clear();
+    this.comments$.next(null);
   }
 
   private createIssueCommentModel(issueCommentInJson: {}): IssueComment {

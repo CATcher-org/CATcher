@@ -25,8 +25,8 @@
 
         <!-- Tester's Response -->
         <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && 
-          issue.testerResponses && issue.testerResponses.length !== 0" [issue]="issue"
-          (issueUpdated)="updateIssue($event)">
+          issue.testerResponses && issue.testerResponses.length !== 0" [issue]="issue" [issueComment]="issueComment"
+          (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
         </app-tester-response>
 
         <!-- Tutor's Response -->
