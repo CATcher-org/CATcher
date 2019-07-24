@@ -12,7 +12,7 @@
 
     <mat-grid-tile>
       <div class="grid-flush-right">
-        <button *ngIf="permissions.canCreateNewIssue()" mat-stroked-button color="primary" routerLink="issues/new">
+        <button *ngIf="permissions.isIssueCreatable()" mat-stroked-button color="primary" routerLink="issues/new">
           New Issue
         </button>
       </div>
