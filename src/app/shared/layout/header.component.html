@@ -11,8 +11,12 @@
     <button mat-button [matMenuTriggerFor]="menu">Open Phases</button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item *ngFor="let openPhase of this.phaseService.sessionData.openPhases"
-        [disabled]="this.phaseService.currentPhase === openPhase"
-       (click)="this.routeToSelectedPhase(openPhase)">{{ this.phaseService.sessionData[openPhase].toUpperCase() }}</button>
+       (click)="this.routeToSelectedPhase(openPhase)">
+        <span>
+          <mat-icon style="color: green" *ngIf="this.phaseService.currentPhase === openPhase">done</mat-icon>
+          {{ openPhase }}
+        </span>
+      </button>
     </mat-menu>
   </div>
 
