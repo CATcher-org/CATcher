@@ -351,7 +351,7 @@ export class IssueService {
           assignees = teamMembers.filter(m => proposedAssignees.includes(m.toLowerCase()));
           break;
         case '# Items for the Tester to Verify':
-          testerResponses = this.parseTesterResponse(groups['description']);
+          // testerResponses = this.parseTesterResponse(groups['description']);
           break;
         default:
           break;
@@ -428,17 +428,28 @@ export class IssueService {
     }
   }
 
-  private parseTesterResponse(toParse: string): TesterResponse[] {
+  parseTesterResponse(toParse: string): TesterResponse[] {
     let matches;
     const testerResponses: TesterResponse[] = [];
     const regex = /(## \d.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
-        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement));
+        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement.trim()));
       }
     }
     return testerResponses;
+  }
+
+  parseTeamResponse(toParse: string): string {
+    let teamResponse = '';
+    const regex = /# Team\'s Response[\n\r]+([\s\S]*)# Items for the Tester to Verify/gi;
+    const matches = regex.exec(toParse);
+
+    if (matches && matches.length > this.MINIMUM_MATCHES) {
+      teamResponse = matches[1].trim();
+    }
+    return teamResponse;
   }
 
 

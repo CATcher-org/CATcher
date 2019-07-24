@@ -35,6 +35,7 @@ export enum ISSUE_COMPONENTS {
 export class ViewIssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   comments: IssueComment[];
+  issueComment: IssueComment;
   isIssueLoading = true;
   isCommentsLoading = true;
   isTutorResponseEditing = false;
@@ -103,10 +104,26 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.isTutorResponseEditing = updatedState;
   }
 
+  setTesterResponses() {
+    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issueComment.description);
+  }
+
+  setTeamResponse() {
+    this.issue.teamResponse = this.issueService.parseTeamResponse(this.issueComment.description);
+  }
+
   private initializeComments(id: number) {
     this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
       .subscribe((issueComments: IssueComments) => {
-        this.comments = issueComments.comments;
+        this.issueComment = issueComments.comments[0];
+        // If there is no comment, don't continue
+        if (!this.issueComment) {
+          return;
+        }
+        if (!this.issue.teamResponse) {
+          this.setTeamResponse();
+        }
+        this.setTesterResponses();
       }, (error) => {
         this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
       });

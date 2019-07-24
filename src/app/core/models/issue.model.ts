@@ -1,6 +1,5 @@
 import {Team} from './team.model';
 import { TesterResponse } from './tester-response.model';
-import { IssueComment } from './comment.model';
 
 export interface Issue {
   readonly id: number;
@@ -18,7 +17,6 @@ export interface Issue {
   todoList?: string[];
   teamResponse?: string;
   tutorResponse?: string;
-  issueComments?: IssueComment;
   testerResponses?: TesterResponse[];
 }
 
