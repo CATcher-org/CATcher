@@ -426,7 +426,7 @@ export class IssueService {
         tutorResponse: issueInJson['tutorResponse'],
         duplicateOf: issueInJson['duplicateOf'],
         testerResponses: issueInJson['testerResponses'],
-        issueComment: issueComments.comments[0],
+        issueComment: issueComments ? undefined : issueComments.comments[0],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
       })
     );
