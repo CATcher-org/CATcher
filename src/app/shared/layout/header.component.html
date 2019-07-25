@@ -15,7 +15,7 @@
         <span>
           <mat-icon [ngStyle]="{color: 'green',
             visibility: this.phaseService.currentPhase === openPhase ? 'visible' : 'hidden'}">done</mat-icon>
-          {{ openPhase }}
+          {{ phaseService.phaseDescription[openPhase] }}
         </span>
       </button>
     </mat-menu>
