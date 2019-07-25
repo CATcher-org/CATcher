@@ -20,17 +20,17 @@ export const STATUS = 'status';
 // Label color constants
 export const COLOR_BLACK  = '000000';
 export const COLOR_WHITE  = 'FFFFFF';
-export const COLOR_SEVERITY_LOW = 'ffb3b3';
-export const COLOR_SEVERITY_MEDIUM = 'ff6666';
-export const COLOR_SEVERITY_HIGH = 'b30000';
-export const COLOR_TYPE_DOCUMENTATION_BUG = 'ccb3ff';
-export const COLOR_TYPE_FUNCTIONALITY_BUG = '661aff';
-export const COLOR_RESPONSE_ACCEPTED = '80ffcc';
-export const COLOR_RESPONSE_REJECTED = 'ff80b3';
+export const COLOR_SEVERITY_LOW = 'ffcccc';
+export const COLOR_SEVERITY_MEDIUM = 'ff9999';
+export const COLOR_SEVERITY_HIGH = 'ff6666';
+export const COLOR_TYPE_DOCUMENTATION_BUG = 'd966ff';
+export const COLOR_TYPE_FUNCTIONALITY_BUG = '9900cc';
+export const COLOR_RESPONSE_ACCEPTED = '00802b';
+export const COLOR_RESPONSE_REJECTED = 'ff9900';
 export const COLOR_RESPONSE_ISSUE_UNCLEAR = 'ffcc80';
-export const COLOR_RESPONSE_CANNOT_REPRODUCE = 'bfbfbf';
-export const COLOR_STATUS_DONE = 'b3ecff';
-export const COLOR_STATUS_INCOMPLETE = '1ac6ff';
+export const COLOR_RESPONSE_CANNOT_REPRODUCE = 'ffebcc';
+export const COLOR_STATUS_DONE = 'a6a6a6';
+export const COLOR_STATUS_INCOMPLETE = '000000';
 
 // CSS style constants
 export const DARK_BG_LIGHT_TEXT = {

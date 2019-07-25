@@ -24,7 +24,7 @@
 
   <!-- Type Column -->
   <ng-container matColumnDef="type">
-    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '10%' : '15%'" *matHeaderCellDef mat-sort-header> Type </th>
+    <th mat-header-cell [style.width]="permissions.isTeamResponseEditable() ? '10%' : '15%'" *matHeaderCellDef mat-sort-header> Type </th>
     <td mat-cell *matCellDef="let issue">
           <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
               {{issue.type || '-'}}
@@ -34,7 +34,7 @@
 
   <!-- Severity Column -->
   <ng-container matColumnDef="severity">
-    <th mat-header-cell [style.width]="permissions.canCRUDTeamResponse() ? '9%' : '12%'" *matHeaderCellDef mat-sort-header> Severity </th>
+    <th mat-header-cell [style.width]="permissions.isTeamResponseEditable() ? '9%' : '12%'" *matHeaderCellDef mat-sort-header> Severity </th>
     <td mat-cell *matCellDef="let issue">
         <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.severity))">
           {{issue.severity || '-'}}
@@ -104,13 +104,13 @@
               transform: scale(0.8)">
         <mat-icon>link</mat-icon>
       </button>
-      <button *ngIf="permissions.canCRUDTeamResponse() && !issue.status
+      <button *ngIf="permissions.isTeamResponseEditable() && !issue.status
        && this.isActionVisible(action_buttons.RESPOND_TO_ISSUE)"
               [routerLink]="'issues/' + issue.id" mat-button color="accent"
               style="transform: scale(0.8)" matTooltip="Respond to this Issue">
         <mat-icon>feedback</mat-icon>
       </button>
-      <button *ngIf="permissions.canCRUDTeamResponse() && issue.status
+      <button *ngIf="permissions.isTeamResponseEditable() && issue.status
       && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
               mat-button color="primary" (click)="markAsResponded(issue)"
               style="transform: scale(0.8)" matTooltip="Mark this Issue as Responded">
@@ -121,12 +121,12 @@
               && this.isActionVisible(action_buttons.MARK_AS_PENDING)">
         <mat-icon>cancel</mat-icon>
       </button>
-      <button *ngIf="permissions.canCRUDTeamResponse() && this.isActionVisible(action_buttons.FIX_ISSUE)"
+      <button *ngIf="permissions.isTeamResponseEditable() && this.isActionVisible(action_buttons.FIX_ISSUE)"
               [routerLink]="'/phaseTeamResponse/issues/' + issue.id" mat-button color="accent"
               style="transform: scale(0.8)" matTooltip="Fix this Issue" >
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-button color="warn" *ngIf="permissions.canDeleteIssue() && !issuesPendingDeletion[issue.id]
+      <button mat-button color="warn" *ngIf="permissions.isIssueDeletable() && !issuesPendingDeletion[issue.id]
           && this.isActionVisible(action_buttons.DELETE_ISSUE)"
               (click)="deleteIssue(issue.id)" matTooltip="Delete this issue" style="transform: scale(0.8)">
         <mat-icon>delete_outline</mat-icon>
