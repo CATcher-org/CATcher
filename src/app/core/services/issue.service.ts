@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { map } from 'rxjs/operators';
-import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
+import { map, flatMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, merge, Observable, of, zip } from 'rxjs';
 import {
   Issue,
   Issues,
@@ -22,6 +22,7 @@ import { Team } from '../models/team.model';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { TesterResponse } from '../models/tester-response.model';
+import { IssueComments } from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -63,7 +64,7 @@ export class IssueService {
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
       return this.githubService.fetchIssue(id).pipe(
-        map((response) => {
+        flatMap((response) => {
           return this.createIssueModel(response);
         })
       );
@@ -75,7 +76,7 @@ export class IssueService {
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
     return this.githubService.createIssue(title, description, labelsArray).pipe(
-      map((response) => {
+      flatMap((response) => {
         return this.createIssueModel(response);
       })
     );
@@ -85,7 +86,7 @@ export class IssueService {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
       this.createLabelsForIssue(issue), assignees).pipe(
-        map((response) => {
+        flatMap((response) => {
           return this.createIssueModel(response);
         })
     );
@@ -131,10 +132,13 @@ export class IssueService {
 
   deleteIssue(id: number): Observable<Issue> {
     return this.githubService.closeIssue(id).pipe(
-      map((response) => {
-        const deletedIssue = this.createIssueModel(response);
-        this.deleteFromLocalStore(deletedIssue);
-        return deletedIssue;
+      flatMap((response) => {
+        return this.createIssueModel(response).pipe(
+          map(deletedIssue => {
+            this.deleteFromLocalStore(deletedIssue);
+            return deletedIssue;
+          })
+        );
       })
     );
   }
@@ -246,18 +250,22 @@ export class IssueService {
     }
 
     return forkJoin(issuesPerFilter).pipe(
-      map((issuesByFilter: [][]) => {
-        let mappedResult = {};
+      flatMap((issuesByFilter: [][]) => {
+        const mappingFunctions: Observable<Issue>[] = [];
         for (const issues of issuesByFilter) {
           for (const issue of issues) {
-            const issueModel = this.createIssueModel(issue);
-            mappedResult = {
-              ...mappedResult,
-              [issueModel.id]: issueModel,
-            };
+            mappingFunctions.push(this.createIssueModel(issue));
           }
         }
-        return mappedResult;
+        return combineLatest(mappingFunctions);
+      }),
+      map((issueArray) => {
+        let mappedResults: Issues = {};
+        issueArray.forEach(issue => mappedResults = {
+          ...mappedResults,
+          [issue.id]: issue
+        });
+        return mappedResults;
       }),
       map((issues: Issues) => {
         this.issues = { ...this.issues, ...issues };
@@ -397,23 +405,31 @@ export class IssueService {
     return `${prepend}.${value}`;
   }
 
-  private createIssueModel(issueInJson: {}): Issue {
+  private createIssueModel(issueInJson: {}): Observable<Issue> {
     this.getParsedBody(issueInJson);
-    return <Issue>{
-      id: +issueInJson['number'],
-      created_at: moment(issueInJson['created_at']).format('lll'),
-      title: issueInJson['title'],
-      assignees: this.phaseService.currentPhase === Phase.phaseModeration ? issueInJson['proposedAssignees'] :
-        issueInJson['assignees'].map((assignee) => assignee['login']),
-      description: issueInJson['body'],
-      teamAssigned: this.getTeamAssignedToIssue(issueInJson),
-      todoList: issueInJson['todoList'],
-      teamResponse: issueInJson['teamResponse'],
-      tutorResponse: issueInJson['tutorResponse'],
-      duplicateOf: issueInJson['duplicateOf'],
-      testerResponses: issueInJson['testerResponses'],
-      ...this.getFormattedLabels(issueInJson['labels'], LABELS),
-    };
+    const issueId = +issueInJson['number'];
+    return this.issueCommentService.getIssueComments(issueId).pipe(
+      map(result => {
+        return result;
+      }),
+      map((issueComments: IssueComments) =>
+        <Issue>{
+        id: issueId,
+        created_at: moment(issueInJson['created_at']).format('lll'),
+        title: issueInJson['title'],
+        assignees: this.phaseService.currentPhase === Phase.phaseModeration ? issueInJson['proposedAssignees'] :
+          issueInJson['assignees'].map((assignee) => assignee['login']),
+        description: issueInJson['body'],
+        teamAssigned: this.getTeamAssignedToIssue(issueInJson),
+        todoList: issueInJson['todoList'],
+        teamResponse: issueInJson['teamResponse'],
+        tutorResponse: issueInJson['tutorResponse'],
+        duplicateOf: issueInJson['duplicateOf'],
+        testerResponses: issueInJson['testerResponses'],
+        issueComment: issueComments ? undefined : issueComments.comments[0],
+        ...this.getFormattedLabels(issueInJson['labels'], LABELS),
+      })
+    );
   }
 
   private parseDuplicateOfValue(toParse: string): number {
