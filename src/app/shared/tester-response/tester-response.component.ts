@@ -120,4 +120,8 @@ export class TesterResponseComponent implements OnInit {
     return this.isNewResponse() ? 'Submit' : 'Save';
   }
 
+  getItemTitleText(title: string): string {
+    return '## ' + title;
+  }
+
 }

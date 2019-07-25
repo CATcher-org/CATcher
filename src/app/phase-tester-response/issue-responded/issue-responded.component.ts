@@ -27,7 +27,7 @@ export class IssueRespondedComponent implements OnInit {
 
   ngOnInit() {
     this.filter = (issue: Issue) => {
-      return (issue.status === STATUS.Done) && !!issue.teamResponse;
+      return (issue.status === STATUS.Done);
     };
   }
 

@@ -10,7 +10,11 @@
     </div>
     <div>
       <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
-        <markdown [data]="response.title"></markdown>
+        <div style="display: flex;">
+          <div style="color:red; font-size: 35px; padding-right: 10px;
+            text-shadow: -1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black;"> ? </div>
+          <markdown [data]="this.getItemTitleText(response.title)"></markdown>
+        </div>
         <br>
         <markdown [data]="response.description"></markdown>
         <br>
