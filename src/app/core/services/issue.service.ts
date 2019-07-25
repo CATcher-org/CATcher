@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
 import { map, flatMap } from 'rxjs/operators';
-import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, merge, Observable, of, zip } from 'rxjs';
 import {
   Issue,
   Issues,
@@ -250,19 +250,22 @@ export class IssueService {
     }
 
     return forkJoin(issuesPerFilter).pipe(
-      map((issuesByFilter: [][]) => {
-        let mappedResult = {};
+      flatMap((issuesByFilter: [][]) => {
+        const mappingFunctions: Observable<Issue>[] = [];
         for (const issues of issuesByFilter) {
           for (const issue of issues) {
-            this.createIssueModel(issue).subscribe(issueModel => {
-              mappedResult = {
-                ...mappedResult,
-                [issueModel.id]: issueModel,
-              };
-            });
+            mappingFunctions.push(this.createIssueModel(issue));
           }
         }
-        return mappedResult;
+        return combineLatest(mappingFunctions);
+      }),
+      map((issueArray) => {
+        let mappedResults: Issues = {};
+        issueArray.forEach(issue => mappedResults = {
+          ...mappedResults,
+          [issue.id]: issue
+        });
+        return mappedResults;
       }),
       map((issues: Issues) => {
         this.issues = { ...this.issues, ...issues };
@@ -410,7 +413,7 @@ export class IssueService {
         return result;
       }),
       map((issueComments: IssueComments) =>
-      <Issue>{
+        <Issue>{
         id: issueId,
         created_at: moment(issueInJson['created_at']).format('lll'),
         title: issueInJson['title'],
