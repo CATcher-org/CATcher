@@ -45,6 +45,10 @@ export class HeaderComponent implements OnInit {
    * @param openPhase - Open Phase that is selected by the user.
    */
   routeToSelectedPhase(openPhase: string): void {
+    // Do nothing if the selected phase is the current phase.
+    if (this.phaseService.currentPhase === Phase[openPhase]) {
+      return;
+    }
     // Replace Current Phase Data.
     this.phaseService.currentPhase = Phase[openPhase];
     this.githubService.storePhaseDetails(this.phaseService.getPhaseOwner(this.phaseService.currentPhase),
