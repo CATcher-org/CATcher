@@ -12,7 +12,6 @@ import { TesterResponse } from '../models/tester-response.model';
 export class IssueCommentService {
   // A map from issueId to their respective issue comments.
   comments = new Map<number, IssueComments>();
-  comments$: BehaviorSubject<IssueComments>;
 
   constructor(private githubService: GithubService) {
   }
@@ -21,7 +20,7 @@ export class IssueCommentService {
     if (!this.comments.get(issueId)) {
       return this.initializeIssueComments(issueId);
     } else {
-      return this.comments$;
+      return of(this.comments.get(issueId));
     }
   }
 
@@ -71,7 +70,6 @@ export class IssueCommentService {
           issueComments.comments.push(this.createIssueCommentModel(comment));
         }
         this.comments.set(issueId, <IssueComments>{...issueComments, issueId: issueId});
-        this.comments$ = new BehaviorSubject<IssueComments>(this.comments.get(issueId));
         return this.comments.get(issueId);
       })
     );
@@ -82,12 +80,10 @@ export class IssueCommentService {
    */
   updateLocalStore(commentsToUpdate: IssueComments) {
     this.comments.set(commentsToUpdate.issueId, commentsToUpdate);
-    this.comments$.next(commentsToUpdate);
   }
 
   reset() {
     this.comments.clear();
-    this.comments$.next(null);
   }
 
   private createIssueCommentModel(issueCommentInJson: {}): IssueComment {

@@ -409,11 +409,8 @@ export class IssueService {
     this.getParsedBody(issueInJson);
     const issueId = +issueInJson['number'];
     return this.issueCommentService.getIssueComments(issueId).pipe(
-      map(result => {
-        return result;
-      }),
-      map((issueComments: IssueComments) =>
-        <Issue>{
+      map((issueComments: IssueComments) => {
+        return <Issue>{
         id: issueId,
         created_at: moment(issueInJson['created_at']).format('lll'),
         title: issueInJson['title'],
@@ -426,8 +423,10 @@ export class IssueService {
         tutorResponse: issueInJson['tutorResponse'],
         duplicateOf: issueInJson['duplicateOf'],
         testerResponses: issueInJson['testerResponses'],
-        issueComment: issueComments ? undefined : issueComments.comments[0],
+        issueComments: issueComments,
+        issueComment: issueComments.comments[0],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
+        };
       })
     );
   }

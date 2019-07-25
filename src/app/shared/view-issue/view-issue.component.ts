@@ -62,7 +62,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(
       params => {
         this.initializeIssue(this.issueId);
-        this.initializeComments(this.issueId);
+        this.initializeComments();
       }
     );
   }
@@ -115,11 +115,9 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.issue.testerResponses = this.issueService.parseTesterResponse(this.issueComment.description);
   }
 
-  private initializeComments(id: number) {
-    this.issueCommentSubscription = this.issueCommentService.getIssueComments(id)
-      .subscribe((issueComments: IssueComments) => {
-        this.issueComments = issueComments;
-        this.issueComment = issueComments.comments[0];
+  private initializeComments() {
+        this.issueComments = this.issue.issueComments;
+        this.issueComment = this.issue.issueComment;
         this.isCommentsLoading = false;
         // If there is no comment in the issue, don't need to continue
         if (!this.issueComment) {
@@ -129,14 +127,10 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
         if (!this.issue.teamResponse) {
           this.setTeamAndTesterResponse();
         }
-      }, (error) => {
-        this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
-      });
   }
 
   ngOnDestroy() {
     this.issueSubscription.unsubscribe();
-    this.issueCommentSubscription.unsubscribe();
   }
 
 }
