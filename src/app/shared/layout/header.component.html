@@ -8,11 +8,16 @@
   </span>
 
   <div *ngIf="auth.isAuthenticated() && this.phaseService.sessionData.openPhases.length > 1">
-    <button mat-button [matMenuTriggerFor]="menu">Open Phases</button>
+    <button mat-button [matMenuTriggerFor]="menu"><mat-icon style="color: white;">expand_more</mat-icon></button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item *ngFor="let openPhase of this.phaseService.sessionData.openPhases"
-        [disabled]="this.phaseService.currentPhase === openPhase"
-       (click)="this.routeToSelectedPhase(openPhase)">{{ this.phaseService.sessionData[openPhase].toUpperCase() }}</button>
+       (click)="this.routeToSelectedPhase(openPhase)">
+        <span>
+          <mat-icon [ngStyle]="{color: 'green',
+            visibility: this.phaseService.currentPhase === openPhase ? 'visible' : 'hidden'}">done</mat-icon>
+          {{ phaseService.phaseDescription[openPhase] }}
+        </span>
+      </button>
     </mat-menu>
   </div>
 
