@@ -12,10 +12,13 @@ export class Label {
 
   /**
    * Returns the name of the label with the format of
-   * 'category'.'value' (e.g. severity.Low)
+   * 'category'.'value' (e.g. severity.Low) if a category exists or
+   * 'value' if the category does not exist.
    */
   public getFormattedName(): string {
-    return this.labelCategory + '.' + this.labelValue;
+    return (this.labelCategory === undefined || this.labelCategory === '')
+      ? this.labelValue
+      : (this.labelCategory.concat('.', this.labelValue));
   }
 
   public equals(label: Label) {

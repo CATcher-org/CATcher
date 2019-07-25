@@ -3,7 +3,7 @@
   <div class="timeline-comment">
     <div class="timeline-header">
       <span> <strong> Tester </strong> posted on {{issue.created_at}}. </span>
-      <button mat-button *ngIf="permissions.canEditIssueDescription() && !isEditing" (click)="changeToEditMode()">
+      <button mat-button *ngIf="permissions.isIssueDescriptionEditable() && !isEditing" (click)="changeToEditMode()">
         Edit
       </button>
     </div>

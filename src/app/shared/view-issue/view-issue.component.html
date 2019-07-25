@@ -19,7 +19,7 @@
 
         <!-- New Team's Response -->
         <app-new-team-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
-          permissions.canCRUDTeamResponse()  && !issue.teamResponse" [issue]="issue"
+          permissions.isTeamResponseEditable()  && !issue.teamResponse" [issue]="issue"
           (issueUpdated)="updateIssue($event)">
         </app-new-team-response>
 
@@ -43,7 +43,7 @@
 
         <!-- New Tutor's Response -->
         <app-new-tutor-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TUTOR_RESPONSE)
-          && permissions.canCRUDTutorResponse() && !issue.tutorResponse" [issue]="issue"
+          && permissions.isTutorResponseEditable() && !issue.tutorResponse" [issue]="issue"
           (issueUpdated)="updateIssue($event)">
         </app-new-tutor-response>
       </div>

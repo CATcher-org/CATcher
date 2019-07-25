@@ -10,123 +10,123 @@ const PERMISSIONS = {
   /** Phase 1 Permissions **/
   [Phase.phaseBugReporting]: {
     [UserRole.Student]: {
-      'canCreateNewIssue': true,
-      'canDeleteIssue': true,
-      'canEditIssueTitle': true,
-      'canEditIssueDescription': true,
-      'canEditIssueLabels': true,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': true,
+      'isIssueDeletable': true,
+      'isIssueTitleEditable': true,
+      'isIssueDescriptionEditable': true,
+      'isIssueLabelsEditable': true,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': false,
-      'canEditIssueLabels': false,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': false,
+      'isIssueLabelsEditable': false,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
-      'canCreateNewIssue': true,
-      'canDeleteIssue': true,
-      'canEditIssueTitle': true,
-      'canEditIssueDescription': true,
-      'canEditIssueLabels': true,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': true,
+      'isIssueDeletable': true,
+      'isIssueTitleEditable': true,
+      'isIssueDescriptionEditable': true,
+      'isIssueLabelsEditable': true,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': false,
     }
   },
 
   /** Phase 2 Permissions **/
   [Phase.phaseTeamResponse]: {
     [UserRole.Student]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': false,
-      'canEditIssueLabels': true,
-      'canCRUDTeamResponse': true,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': false,
+      'isIssueLabelsEditable': true,
+      'isTeamResponseEditable': true,
+      'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': false,
-      'canEditIssueLabels': false,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': false,
+      'isIssueLabelsEditable': false,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': true,
-      'canEditIssueLabels': true,
-      'canCRUDTeamResponse': true,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': true,
+      'isIssueLabelsEditable': true,
+      'isTeamResponseEditable': true,
+      'isTutorResponseEditable': false,
     }
   },
 
   [Phase.phaseTesterResponse]: {
     [UserRole.Student]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': false,
-      'canEditIssueLabels': false,
-      'canCRUDTeamResponse': true,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': false,
+      'isIssueLabelsEditable': false,
+      'isTeamResponseEditable': true,
+      'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': false,
-      'canEditIssueLabels': false,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': false,
+      'isIssueLabelsEditable': false,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': true,
-      'canEditIssueLabels': true,
-      'canCRUDTeamResponse': true,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': true,
+      'isIssueLabelsEditable': true,
+      'isTeamResponseEditable': true,
+      'isTutorResponseEditable': false,
     }
   },
 
   /** Phase 3 Permissions **/
   [Phase.phaseModeration]: {
     [UserRole.Student]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': false,
-      'canEditIssueLabels': false,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': false,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': false,
+      'isIssueLabelsEditable': false,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': true,
-      'canEditIssueLabels': true,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': true,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': true,
+      'isIssueLabelsEditable': true,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': true,
     },
     [UserRole.Admin]: {
-      'canCreateNewIssue': false,
-      'canDeleteIssue': false,
-      'canEditIssueTitle': false,
-      'canEditIssueDescription': true,
-      'canEditIssueLabels': true,
-      'canCRUDTeamResponse': false,
-      'canCRUDTutorResponse': true,
+      'isIssueCreatable': false,
+      'isIssueDeletable': false,
+      'isIssueTitleEditable': false,
+      'isIssueDescriptionEditable': true,
+      'isIssueLabelsEditable': true,
+      'isTeamResponseEditable': false,
+      'isTutorResponseEditable': true,
     }
   }
 };
@@ -137,32 +137,32 @@ const PERMISSIONS = {
 export class PermissionService {
   constructor(private githubService: GithubService, private userService: UserService, private phaseService: PhaseService) {}
 
-  canCreateNewIssue(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canCreateNewIssue');
+  isIssueCreatable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isIssueCreatable');
   }
 
-  canDeleteIssue(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canDeleteIssue');
+  isIssueDeletable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isIssueDeletable');
   }
 
-  canEditIssueTitle(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canEditIssueTitle');
+  isIssueTitleEditable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isIssueTitleEditable');
   }
 
-  canEditIssueDescription(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canEditIssueDescription');
+  isIssueDescriptionEditable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isIssueDescriptionEditable');
   }
 
-  canEditIssueLabels(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canEditIssueLabels');
+  isIssueLabelsEditable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isIssueLabelsEditable');
   }
 
-  canCRUDTeamResponse(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canCRUDTeamResponse');
+  isTeamResponseEditable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isTeamResponseEditable');
   }
 
-  canCRUDTutorResponse(): boolean {
-    return this.askForPermission(PermissionLevel.User, 'canCRUDTutorResponse');
+  isTutorResponseEditable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isTutorResponseEditable');
   }
 
   private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {

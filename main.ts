@@ -96,9 +96,8 @@ const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     role: 'help',
     submenu: [
       {
-        label: 'Learn More',
-        // TODO: Change below url to course-site / application github site.
-        click () { require('electron').shell.openExternal('https://electronjs.org'); }
+        label: 'User Guide',
+        click () { require('electron').shell.openExternal('https://catcher-org.github.io/'); }
       }
     ]
   }
