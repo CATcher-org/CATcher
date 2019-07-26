@@ -23,6 +23,7 @@ import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { TesterResponse } from '../models/tester-response.model';
 import { IssueComments } from '../models/comment.model';
+import { IssueDispute } from '../models/issue-dispute.model';
 
 @Injectable({
   providedIn: 'root',
@@ -284,7 +285,7 @@ export class IssueService {
       return;
     }
     [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
-      issue.proposedAssignees, issue.testerResponses] = this.parseBody(issue);
+      issue.proposedAssignees, issue.testerResponses, issue.issueDisputes] = this.parseBody(issue);
   }
 
   /**
@@ -319,7 +320,8 @@ export class IssueService {
     tutorResponse,
     todoList,
     assignees,
-    testerResponses;
+    testerResponses,
+    issueDisputes;
 
     for (const match of matches) {
       const groups = regexExp.exec(match)['groups'];
@@ -359,11 +361,15 @@ export class IssueService {
         case '# Items for the Tester to Verify':
           testerResponses = this.parseTesterResponse(groups['description']);
           break;
+        case '# Disputes':
+          issueDisputes = this.parseIssueDisputes(groups['description']);
+          break;
         default:
           break;
       }
     }
-    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || [], testerResponses || []);
+    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [],
+      assignees || [], testerResponses || [], issueDisputes || []);
   }
 
   /**
@@ -425,6 +431,7 @@ export class IssueService {
         testerResponses: issueInJson['testerResponses'],
         issueComments: issueComments,
         issueComment: issueComments.comments[0],
+        issueDisputes: issueInJson['issueDisputes'],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
         };
       })
@@ -465,6 +472,32 @@ export class IssueService {
     return teamResponse;
   }
 
+  parseIssueDisputes(toParse: string): IssueDispute[] {
+    let matches;
+    const issueDisputes: IssueDispute[] = [];
+    const regex = /## :question: (.*)[\r\n]*([\s\S]*?(?=-------------------))/gi;
+    while (matches = regex.exec(toParse)) {
+      if (matches && matches.length > this.MINIMUM_MATCHES) {
+        const [regexString, title, description] = matches;
+        issueDisputes.push(new IssueDispute(title, description.trim()));
+      }
+    }
+    return issueDisputes;
+  }
+
+  parseTutorResponseInComment(toParse: string, issueDispute: IssueDispute[]): IssueDispute[] {
+    let matches, i = 0;
+    const regex = /## :question: .*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-------------------))/gi;
+    while (matches = regex.exec(toParse)) {
+      if (matches && matches.length > this.MINIMUM_MATCHES) {
+        const [regexString, todo, tutorResponse] = matches;
+        issueDispute[i].todo = todo;
+        issueDispute[i].tutorResponse = tutorResponse.trim();
+        i++;
+      }
+    }
+    return issueDispute;
+  }
 
   /**
    * Based on the kind labels specified in `desiredLabels` field, this function will produce a neatly formatted JSON object.
