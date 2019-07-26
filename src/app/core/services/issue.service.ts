@@ -436,23 +436,15 @@ export class IssueService {
         const LABEL_CATEGORY = 1;
         const LABEL_VALUE = 2;
 
-        const labelTypeAndSeverityExtractionRegex = /## :question: \w* of (\w+)[\r\n]*Changed from `\w+` to `(\w+)`[\r\n]/g;
-        const labelResponseExtractionRegex = /## :question: Team's (\w+)[\n\r]*Team responded `(\w+)`[\n\r]/g;
+        const issueLabelsExtractionRegex = /## :question: Issue (\w+)[\n\r]*Team chose `(\w+)`\./g;
         let extractedLabelsAndValues: RegExpExecArray;
 
-        // Type And Severity Changes Extraction.
-        while (extractedLabelsAndValues = labelTypeAndSeverityExtractionRegex.exec(issue.issueComment.description)) {
+        while (extractedLabelsAndValues = issueLabelsExtractionRegex.exec(issue.issueComment.description)) {
           issue = {
             ...issue,
-            [extractedLabelsAndValues[LABEL_CATEGORY]]: extractedLabelsAndValues[LABEL_VALUE]
-          };
-        }
-
-        // Team Response Extraction.
-        if (extractedLabelsAndValues = labelResponseExtractionRegex.exec(issue.issueComment.description)) {
-          issue = {
-            ...issue,
-            [extractedLabelsAndValues[LABEL_CATEGORY].concat('Tag')]: extractedLabelsAndValues[LABEL_VALUE]
+            [(extractedLabelsAndValues[LABEL_CATEGORY] === 'response'
+              ? extractedLabelsAndValues[LABEL_CATEGORY].concat('Tag')
+              : extractedLabelsAndValues[LABEL_CATEGORY])]: extractedLabelsAndValues[LABEL_VALUE]
           };
         }
 
