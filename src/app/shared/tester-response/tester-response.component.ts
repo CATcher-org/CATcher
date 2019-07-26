@@ -72,7 +72,8 @@ export class TesterResponseComponent implements OnInit {
   }
 
   handleChangeOfDisagreeCheckbox(event, disagree, index) {
-    this.issue.testerResponses[index].disagreeCheckbox = '- [' + event.checked ? 'x' : '' + ']' + disagree.substring(5);
+    this.issue.testerResponses[index].disagreeCheckbox = ('- [').concat((event.checked ? 'x' : ' '), '] ', disagree.substring(6));
+    console.log(this.issue.testerResponses[index].disagreeCheckbox);
     this.toggleCommentEditor(index, event.checked);
   }
 
