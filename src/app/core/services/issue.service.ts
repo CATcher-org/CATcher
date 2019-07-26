@@ -427,6 +427,29 @@ export class IssueService {
         issueComment: issueComments.comments[0],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
         };
+      }),
+      map((issue: Issue) => {
+        if (issue.issueComment === undefined) {
+          return issue;
+        }
+
+        const LABEL_CATEGORY = 1;
+        const LABEL_VALUE = 2;
+
+        const issueLabelsExtractionRegex = /## :question: Issue (\w+)[\n\r]*Team chose `(\w+)`\./g;
+        let extractedLabelsAndValues: RegExpExecArray;
+
+        while (extractedLabelsAndValues = issueLabelsExtractionRegex.exec(issue.issueComment.description)) {
+          issue = {
+            ...issue,
+            [(extractedLabelsAndValues[LABEL_CATEGORY] === 'response'
+              ? extractedLabelsAndValues[LABEL_CATEGORY].concat('Tag')
+              : extractedLabelsAndValues[LABEL_CATEGORY])]: extractedLabelsAndValues[LABEL_VALUE]
+          };
+        }
+
+        this.updateIssue(issue);
+        return issue;
       })
     );
   }
