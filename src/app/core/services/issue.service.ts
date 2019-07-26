@@ -427,6 +427,37 @@ export class IssueService {
         issueComment: issueComments.comments[0],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
         };
+      }),
+      map((issue: Issue) => {
+        if (issue.issueComment === undefined) {
+          return issue;
+        }
+
+        const LABEL_CATEGORY = 1;
+        const LABEL_VALUE = 2;
+
+        const labelTypeAndSeverityExtractionRegex = /## :question: \w* of (\w+)[\r\n]*Changed from `\w+` to `(\w+)`[\r\n]/g;
+        const labelResponseExtractionRegex = /## :question: Team's (\w+)[\n\r]*Team responded `(\w+)`[\n\r]/g;
+        let extractedLabelsAndValues: RegExpExecArray;
+
+        // Type And Severity Changes Extraction.
+        while (extractedLabelsAndValues = labelTypeAndSeverityExtractionRegex.exec(issue.issueComment.description)) {
+          issue = {
+            ...issue,
+            [extractedLabelsAndValues[LABEL_CATEGORY]]: extractedLabelsAndValues[LABEL_VALUE]
+          };
+        }
+
+        // Team Response Extraction.
+        if (extractedLabelsAndValues = labelResponseExtractionRegex.exec(issue.issueComment.description)) {
+          issue = {
+            ...issue,
+            [extractedLabelsAndValues[LABEL_CATEGORY].concat('Tag')]: extractedLabelsAndValues[LABEL_VALUE]
+          };
+        }
+
+        this.updateIssue(issue);
+        return issue;
       })
     );
   }
