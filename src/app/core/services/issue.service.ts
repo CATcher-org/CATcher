@@ -450,7 +450,7 @@ export class IssueService {
         const LABEL_CATEGORY = 1;
         const LABEL_VALUE = 2;
 
-        const issueLabelsExtractionRegex = /## :question: Issue (\w+)[\n\r]*Team chose `(\w+)`\./g;
+        const issueLabelsExtractionRegex = /## :question: [iI]ssue (\w+)[\n\r]*[tT]eam [cC]hose `(\w+)`\.?/g;
         let extractedLabelsAndValues: RegExpExecArray;
 
         while (extractedLabelsAndValues = issueLabelsExtractionRegex.exec(issue.issueComment.description)) {
