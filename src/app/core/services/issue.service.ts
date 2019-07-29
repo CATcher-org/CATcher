@@ -495,7 +495,7 @@ export class IssueService {
 
   parseTeamResponse(toParse: string): string {
     let teamResponse = '';
-    const regex = /# Team\'s Response[\n\r]+([\s\S]*)# Items for the Tester to Verify/gi;
+    const regex = /# ?[tT]eam\'?s [rR]esponse[\n\r]+([\s\S]*)# Items for the Tester to Verify/g;
     const matches = regex.exec(toParse);
 
     if (matches && matches.length > this.MINIMUM_MATCHES) {
@@ -507,7 +507,7 @@ export class IssueService {
   parseIssueDisputes(toParse: string): IssueDispute[] {
     let matches;
     const issueDisputes: IssueDispute[] = [];
-    const regex = /## :question: (.*)[\r\n]*([\s\S]*?(?=-------------------))/gi;
+    const regex = /#{2} ?:question: ?(.*)[\r\n]*([\s\S]*?(?=-{19}))/g;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description] = matches;
@@ -519,7 +519,7 @@ export class IssueService {
 
   parseTutorResponseInComment(toParse: string, issueDispute: IssueDispute[]): IssueDispute[] {
     let matches, i = 0;
-    const regex = /## :question: .*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-------------------))/gi;
+    const regex = /#{2} ?:question: ?.*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-{19}))/gi;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, todo, tutorResponse] = matches;
