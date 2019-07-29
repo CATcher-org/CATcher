@@ -467,7 +467,9 @@ export class IssueService {
   parseTesterResponse(toParse: string): TesterResponse[] {
     let matches;
     const testerResponses: TesterResponse[] = [];
-    const regex = /## :question: (.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
+    const regex: RegExp = new RegExp('## :question: ([\\w ]+)[\\r\\n]*(Team chose .*[\\r\\n]*Originally.*|Team chose .*'
+      + '[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason for disagreement:\\*\\* (.*)[\\r\\n]*-------------------',
+      'g');
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
