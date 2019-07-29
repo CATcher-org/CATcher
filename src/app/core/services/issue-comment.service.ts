@@ -5,6 +5,7 @@ import {IssueComment, IssueComments} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import * as moment from 'moment';
 import { TesterResponse } from '../models/tester-response.model';
+import { IssueDispute } from '../models/issue-dispute.model';
 
 @Injectable({
   providedIn: 'root',
@@ -46,9 +47,17 @@ export class IssueCommentService {
     );
   }
 
-  createGithubIssueCommentDescription(teamResponse: string, testerResponses: TesterResponse[]): string {
+  createGithubTesterResponse(teamResponse: string, testerResponses: TesterResponse[]): string {
     return `# Team\'s Response\n${teamResponse}\n ` +
           `# Items for the Tester to Verify\n${this.getTesterResponsesString(testerResponses)}`;
+  }
+
+  createGithubTutorResponse(issueDisputes: IssueDispute[]): string {
+    let tutorResponseString = '# Tutor Moderation\n\n';
+    for (const issueDispute of issueDisputes) {
+      tutorResponseString += issueDispute.toTutorResponseString();
+    }
+    return tutorResponseString;
   }
 
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {

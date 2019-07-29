@@ -9,6 +9,7 @@ import { SharedModule } from '../shared.module';
 import { IssueComponentsModule } from '../issue/issue-components.module';
 import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
 import { TesterResponseComponent } from '../tester-response/tester-response.component';
+import { IssueDisputeComponent } from '../issue-dispute/issue-dispute.component';
 
 @NgModule({
   exports: [
@@ -18,6 +19,7 @@ import { TesterResponseComponent } from '../tester-response/tester-response.comp
     NewTutorResponseComponent,
     NewTeamResponseComponent,
     TesterResponseComponent,
+    IssueDisputeComponent,
     ViewIssueComponent
   ],
   imports: [

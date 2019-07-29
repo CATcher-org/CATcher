@@ -70,7 +70,7 @@ export class TesterResponseComponent implements OnInit {
     // For Tester Response phase, where the items are in the issue's comment
     if (this.issueComment) {
       this.issueComment.description = this.issueCommentService.
-        createGithubIssueCommentDescription(this.issue.teamResponse, this.issue.testerResponses);
+        createGithubTesterResponse(this.issue.teamResponse, this.issue.testerResponses);
 
       this.issueCommentService.updateIssueComment(this.issueComment).subscribe(
         (updatedComment) => {

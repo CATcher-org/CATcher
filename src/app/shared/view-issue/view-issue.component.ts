@@ -16,9 +16,10 @@ export enum ISSUE_COMPONENTS {
   TESTER_POST,
   TEAM_RESPONSE,
   NEW_TEAM_RESPONSE,
-  TUTOR_RESPONSE,
-  NEW_TUTOR_RESPONSE,
+  TUTOR_RESPONSE, // Old component, unused
+  NEW_TUTOR_RESPONSE, // Old component, unused
   TESTER_RESPONSE,
+  ISSUE_DISPUTE,
   SEVERITY_LABEL,
   TYPE_LABEL,
   RESPONSE_LABEL,
@@ -124,9 +125,18 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
           return;
         }
         // For Tester Response Phase, where team and tester response items are in the issue's comment
-        if (!this.issue.teamResponse) {
+        if (!this.issue.teamResponse && this.userService.currentUser.role === this.userRole.Student) {
           this.setTeamAndTesterResponse();
         }
+        // For Moderation Phase, where tutor responses are in the issue's comment
+        if (this.issue.issueDisputes && this.userService.currentUser.role === this.userRole.Tutor) {
+          this.setTutorResponse();
+        }
+  }
+
+  setTutorResponse() {
+    this.issue.issueDisputes =
+      this.issueService.parseTutorResponseInComment(this.issueComment.description, this.issue.issueDisputes);
   }
 
   ngOnDestroy() {
