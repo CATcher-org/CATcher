@@ -468,7 +468,7 @@ export class IssueService {
     let matches;
     const testerResponses: TesterResponse[] = [];
     const regex: RegExp = new RegExp('## :question: ([\\w ]+)[\\r\\n]*(Team chose .*[\\r\\n]*Originally.*|Team chose .*'
-      + '[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason for disagreement:\\*\\* (.*)[\\r\\n]*-------------------',
+      + '[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason for disagreement:\\*\\* ([\\s\\S]*?)-------------------',
       'g');
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
