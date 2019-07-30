@@ -482,8 +482,8 @@ export class IssueService {
   parseTesterResponse(toParse: string): TesterResponse[] {
     let matches;
     const testerResponses: TesterResponse[] = [];
-    const regex: RegExp = new RegExp('#{2} ?:question: ?([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]*Originally.*'
-      + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason for disagreement:\\*\\* ?([\\s\\S]*?)-{19}',
+    const regex: RegExp = new RegExp('#{2} *:question: *([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]* *Originally.*'
+      + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)-{19}',
       'gi');
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
@@ -497,7 +497,7 @@ export class IssueService {
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   parseTeamResponse(toParse: string): string {
     let teamResponse = '';
-    const regex = /# ?Team\'?s Response[\n\r]*([\s\S]*)# Items for the Tester to Verify/gi;
+    const regex = /# *Team\'?s Response[\n\r]*([\s\S]*)# Items for the Tester to Verify/gi;
     const matches = regex.exec(toParse);
 
     if (matches && matches.length > this.MINIMUM_MATCHES) {
@@ -510,7 +510,7 @@ export class IssueService {
   parseIssueDisputes(toParse: string): IssueDispute[] {
     let matches;
     const issueDisputes: IssueDispute[] = [];
-    const regex = /#{2} ?:question: ?(.*)[\r\n]*([\s\S]*?(?=-{19}))/gi;
+    const regex = /#{2} *:question: *(.*)[\r\n]*([\s\S]*?(?=-{19}))/gi;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description] = matches;
@@ -523,7 +523,7 @@ export class IssueService {
   // Template url: https://github.com/CATcher-org/templates#tutor-moderations
   parseTutorResponseInComment(toParse: string, issueDispute: IssueDispute[]): IssueDispute[] {
     let matches, i = 0;
-    const regex = /#{2} ?:question: ?.*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-{19}))/gi;
+    const regex = /#{2} *:question: *.*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-{19}))/gi;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, todo, tutorResponse] = matches;
