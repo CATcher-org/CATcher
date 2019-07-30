@@ -105,8 +105,6 @@ export class IssueService {
       case Phase.phaseTeamResponse:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
-      case Phase.phaseTesterResponse:
-          return `# Description\n${issue.description}`;
       case Phase.phaseModeration:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
          // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
@@ -282,7 +280,8 @@ export class IssueService {
    * Will be used to parse the github representation of the issue's description
    */
   private getParsedBody(issue: any) {
-    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
+    if (this.phaseService.currentPhase === Phase.phaseBugReporting ||
+        this.phaseService.currentPhase === Phase.phaseTesterResponse) {
       return;
     }
     [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
