@@ -1,4 +1,7 @@
 export class TesterResponse {
+    readonly TITLE_PREFIX = '## :question: ';
+    readonly DISAGREEMENT_PREFIX = '**Reason for disagreement:** ';
+    readonly LINE_BREAK = '-------------------\n';
     title: string; // e.g Change of Severity
     description: string; // e.g Changed from High to Low
     disagreeCheckbox: string; // e.g - [x] I disagree
@@ -13,11 +16,11 @@ export class TesterResponse {
 
     toString(): string {
       let toString = '';
-      toString += '## :question: ' + this.title + '\n\n';
+      toString += this.TITLE_PREFIX + this.title + '\n\n';
       toString += this.description + '\n\n';
       toString += this.disagreeCheckbox + '\n\n';
-      toString += '**Reason for disagreement:** ' + this.reasonForDiagreement + '\n\n';
-      toString += '-------------------\n';
+      toString += this.DISAGREEMENT_PREFIX + this.reasonForDiagreement + '\n\n';
+      toString += this.LINE_BREAK;
       return toString;
     }
 }

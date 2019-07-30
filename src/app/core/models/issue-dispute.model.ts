@@ -1,4 +1,8 @@
 export class IssueDispute {
+    readonly TODO_UNCHECKED = '- [ ] Done';
+    readonly INITIAL_RESPONSE = '[replace this with your explanation]';
+    readonly TITLE_PREFIX = '## :question: ';
+    readonly LINE_BREAK = '-------------------\n';
     title: string; // e.g Downgrade of severity
     description: string; // e.g Team says: xxx\n Tester says: xxx.
     tutorResponse: string; // e.g Not justified. I've changed it back.
@@ -7,8 +11,8 @@ export class IssueDispute {
     constructor(title: string, description: string) {
         this.title = title;
         this.description = description;
-        this.tutorResponse = '[replace this with your explanation]';
-        this.todo = '- [ ] Done';
+        this.tutorResponse = this.INITIAL_RESPONSE;
+        this.todo = this.TODO_UNCHECKED;
     }
 
     /*
@@ -17,18 +21,18 @@ export class IssueDispute {
     */
     toTutorResponseString(): string {
         let toString = '';
-        toString += '## :question: ' + this.title + '\n\n';
+        toString += this.TITLE_PREFIX + this.title + '\n\n';
         toString += this.todo + '\n\n';
         toString += this.tutorResponse + '\n\n';
-        toString += '-------------------\n';
+        toString += this.LINE_BREAK;
         return toString;
       }
 
     toString(): string {
         let toString = '';
-        toString += '## :question: ' +  this.title + '\n\n';
+        toString += this.TITLE_PREFIX +  this.title + '\n\n';
         toString += this.description + '\n\n';
-        toString += '-------------------\n';
+        toString += this.LINE_BREAK;
         return toString;
     }
 }

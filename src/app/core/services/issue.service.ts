@@ -478,6 +478,7 @@ export class IssueService {
     }
   }
 
+  // Template url: https://github.com/CATcher-org/templates#items-for-the-tester-to-verify
   parseTesterResponse(toParse: string): TesterResponse[] {
     let matches;
     const testerResponses: TesterResponse[] = [];
@@ -493,6 +494,7 @@ export class IssueService {
     return testerResponses;
   }
 
+  // Template url: https://github.com/CATcher-org/templates#teams-response-1
   parseTeamResponse(toParse: string): string {
     let teamResponse = '';
     const regex = /# ?[tT]eam\'?s [rR]esponse[\n\r]+([\s\S]*)# Items for the Tester to Verify/g;
@@ -504,6 +506,7 @@ export class IssueService {
     return teamResponse;
   }
 
+  // Template url: https://github.com/CATcher-org/templates#disputes
   parseIssueDisputes(toParse: string): IssueDispute[] {
     let matches;
     const issueDisputes: IssueDispute[] = [];
@@ -517,6 +520,7 @@ export class IssueService {
     return issueDisputes;
   }
 
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderations
   parseTutorResponseInComment(toParse: string, issueDispute: IssueDispute[]): IssueDispute[] {
     let matches, i = 0;
     const regex = /#{2} ?:question: ?.*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-{19}))/gi;
@@ -531,6 +535,7 @@ export class IssueService {
     return issueDispute;
   }
 
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderations
   getToDoList(issueComment: IssueComment, issueDisputes: IssueDispute[]): string[] {
     let matches;
     const toDoList: string[] = [];

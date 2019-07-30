@@ -47,23 +47,25 @@ export class IssueCommentService {
     );
   }
 
+  // Template url: https://github.com/CATcher-org/templates#teams-response-1
   createGithubTesterResponse(teamResponse: string, testerResponses: TesterResponse[]): string {
     return `# Team\'s Response\n${teamResponse}\n ` +
           `# Items for the Tester to Verify\n${this.getTesterResponsesString(testerResponses)}`;
   }
 
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(issueDisputes: IssueDispute[]): string {
-    let tutorResponseString = '# Tutor Moderation\n\n';
+    const tutorResponseString = '# Tutor Moderation\n\n';
     for (const issueDispute of issueDisputes) {
-      tutorResponseString += issueDispute.toTutorResponseString();
+      tutorResponseString.concat(issueDispute.toTutorResponseString());
     }
     return tutorResponseString;
   }
 
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {
-    let testerResponsesString = '';
+    const testerResponsesString = '';
     for (const testerResponse of testerResponses) {
-      testerResponsesString += testerResponse.toString();
+      testerResponsesString.concat(testerResponse.toString());
     }
     return testerResponsesString;
   }
