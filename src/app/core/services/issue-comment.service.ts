@@ -55,17 +55,17 @@ export class IssueCommentService {
 
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(issueDisputes: IssueDispute[]): string {
-    const tutorResponseString = '# Tutor Moderation\n\n';
+    let tutorResponseString = '# Tutor Moderation\n\n';
     for (const issueDispute of issueDisputes) {
-      tutorResponseString.concat(issueDispute.toTutorResponseString());
+      tutorResponseString += issueDispute.toTutorResponseString();
     }
     return tutorResponseString;
   }
 
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {
-    const testerResponsesString = '';
+    let testerResponsesString = '';
     for (const testerResponse of testerResponses) {
-      testerResponsesString.concat(testerResponse.toString());
+      testerResponsesString += testerResponse.toString();
     }
     return testerResponsesString;
   }
