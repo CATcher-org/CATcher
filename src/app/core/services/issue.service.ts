@@ -450,7 +450,7 @@ export class IssueService {
         const LABEL_CATEGORY = 1;
         const LABEL_VALUE = 2;
 
-        const issueLabelsExtractionRegex = /#{2} ?:question: ?[iI]ssue (\w+)[\n\r]*[tT]eam [cC]hose `?(\w+)`?\.?/g;
+        const issueLabelsExtractionRegex = /#{2} ?:question: ?Issue (\w+)[\n\r]*Team Chose `?(\w+)`?\.?/gi;
         let extractedLabelsAndValues: RegExpExecArray;
 
         while (extractedLabelsAndValues = issueLabelsExtractionRegex.exec(issue.issueComment.description)) {
@@ -482,9 +482,9 @@ export class IssueService {
   parseTesterResponse(toParse: string): TesterResponse[] {
     let matches;
     const testerResponses: TesterResponse[] = [];
-    const regex: RegExp = new RegExp('#{2} ?:question: ?([\\w ]+)[\\r\\n]*([tT]eam [cC]hose.*[\\r\\n]*[oO]riginally.*'
-      + '|[tT]eam [cC]hose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason for disagreement:\\*\\* ?([\\s\\S]*?)-{19}',
-      'g');
+    const regex: RegExp = new RegExp('#{2} ?:question: ?([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]*Originally.*'
+      + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason for disagreement:\\*\\* ?([\\s\\S]*?)-{19}',
+      'gi');
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
@@ -497,7 +497,7 @@ export class IssueService {
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   parseTeamResponse(toParse: string): string {
     let teamResponse = '';
-    const regex = /# ?[tT]eam\'?s [rR]esponse[\n\r]+([\s\S]*)# Items for the Tester to Verify/g;
+    const regex = /# ?Team\'?s Response[\n\r]*([\s\S]*)# Items for the Tester to Verify/gi;
     const matches = regex.exec(toParse);
 
     if (matches && matches.length > this.MINIMUM_MATCHES) {
@@ -510,7 +510,7 @@ export class IssueService {
   parseIssueDisputes(toParse: string): IssueDispute[] {
     let matches;
     const issueDisputes: IssueDispute[] = [];
-    const regex = /#{2} ?:question: ?(.*)[\r\n]*([\s\S]*?(?=-{19}))/g;
+    const regex = /#{2} ?:question: ?(.*)[\r\n]*([\s\S]*?(?=-{19}))/gi;
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description] = matches;
@@ -539,7 +539,7 @@ export class IssueService {
   getToDoList(issueComment: IssueComment, issueDisputes: IssueDispute[]): string[] {
     let matches;
     const toDoList: string[] = [];
-    const regex = /- .* Done/g;
+    const regex = /- .* Done/gi;
 
     if (this.userService.currentUser.role !== this.userRole.Tutor) {
       return toDoList;
