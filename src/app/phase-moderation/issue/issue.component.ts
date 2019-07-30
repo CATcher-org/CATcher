@@ -20,7 +20,8 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.SEVERITY_LABEL,
     ISSUE_COMPONENTS.TYPE_LABEL,
     ISSUE_COMPONENTS.RESPONSE_LABEL,
-    ISSUE_COMPONENTS.DUPLICATE
+    ISSUE_COMPONENTS.DUPLICATE,
+    ISSUE_COMPONENTS.UNSURE_CHECKBOX
   ];
 
   @ViewChild(ViewIssueComponent) viewIssue: ViewIssueComponent;

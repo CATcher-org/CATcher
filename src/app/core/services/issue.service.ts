@@ -411,6 +411,10 @@ export class IssueService {
       }
     }
 
+    if (issue.unsure) {
+      result.push('unsure');
+    }
+
     return result;
   }
 
@@ -587,6 +591,11 @@ export class IssueService {
         result = {
           ...result,
           duplicated: true,
+        };
+      } else if (label['name'] === 'unsure') {
+        result = {
+          ...result,
+          unsure: true,
         };
       } else if (desiredLabels.includes(labelType)) {
         result = {

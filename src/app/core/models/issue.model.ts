@@ -24,6 +24,7 @@ export interface Issue {
   issueComment?: IssueComment;
   issueDisputes?: IssueDispute[];
   pending?: string;
+  unsure?: boolean;
 }
 
 export interface Issues {
@@ -35,14 +36,15 @@ export interface Issues {
  * Where `Type` represent the type of the label. (e.g. severity, type, response)
  * And `Value` represent the value that is associated to the `Type` (e.g. for severity Type, it could be Low, Medium, High)
  */
-export const LABELS = ['severity', 'type', 'response', 'duplicate', 'status', 'pending'];
+export const LABELS = ['severity', 'type', 'response', 'duplicate', 'status', 'pending', 'unsure'];
 
 export const labelsToAttributeMapping = {
   'severity': 'severity',
   'type': 'type',
   'response': 'responseTag',
   'status': 'status',
-  'pending': 'pending'
+  'pending': 'pending',
+  'unsure': 'unsure'
 };
 
 export const SEVERITY_ORDER = { Low: 0, Medium: 1, High: 2 };
@@ -114,6 +116,6 @@ export const phaseTesterResponseDescriptionTemplate = new RegExp('(?<header># De
   '|## State the duplicated issue here, if any|# Items for the Tester to Verify|$)', 'gi');
 
 export const phaseModerationDescriptionTemplate = new RegExp('(?<header># Description|# Team\'s Response|## State the duplicated issue ' +
-  'here, if any|# Disputes|# Tutor\'s Response|## Tutor to check)\\s+' +
+  'here, if any|# Disputes)\\s+' +
   '(?<description>[\\s\\S]*?)(?=# Team\'s Response|## State the duplicated issue here, if any|' +
   '# Disputes|$)', 'gi');

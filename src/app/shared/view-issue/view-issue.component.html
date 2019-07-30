@@ -101,6 +101,12 @@
             * Need your resolution. An issue cannot have both duplicated issues and duplicated status.
         </div>
 
+        <!-- Unsure checkbox -->
+        <div *ngIf="this.isComponentVisible(issueComponentsEnum.UNSURE_CHECKBOX)">
+          <mat-divider></mat-divider>
+          <app-unsure-checkbox [issue]="issue"></app-unsure-checkbox>
+        </div>
+
         <!-- Issue To-Do list -->
         <div *ngIf="this.isComponentVisible(issueComponentsEnum.TODO_LIST)">
           <br *ngIf="issue.duplicateOf">
