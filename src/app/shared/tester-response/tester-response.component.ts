@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
 import { IssueService } from '../../core/services/issue.service';
@@ -31,7 +31,9 @@ export class TesterResponseComponent implements OnInit {
   ngOnInit() {
     const group: any = {};
     for (let i = 0; i < this.issue.testerResponses.length; i++) {
-      group[i.toString()] = new FormControl(Validators.required);
+      const disabled: boolean = !this.isDisagreeChecked(this.issue.testerResponses[i].disagreeCheckbox);
+      const value: string = this.issue.testerResponses[i].reasonForDiagreement;
+      group[i.toString()] = new FormControl({value: value, disabled: disabled}, Validators.required);
     }
     group['testerResponse'] = [this.issue.testerResponses];
     this.testerResponseForm = this.formBuilder.group(group);
@@ -70,10 +72,18 @@ export class TesterResponseComponent implements OnInit {
   }
 
   handleChangeOfDisagreeCheckbox(event, disagree, index) {
-    if (event.checked) {
-      this.issue.testerResponses[index].disagreeCheckbox = '- [x]' + disagree.substring(5);
+    this.issue.testerResponses[index].disagreeCheckbox = ('- [').concat((event.checked ? 'x' : ' '), '] ', disagree.substring(6));
+    console.log(this.issue.testerResponses[index].disagreeCheckbox);
+    this.toggleCommentEditor(index, event.checked);
+  }
+
+  toggleCommentEditor(index: number, isCommentEditorEnabled: boolean) {
+    const control: AbstractControl = this.testerResponseForm.controls[index];
+    if (isCommentEditorEnabled) {
+      control.enable({onlySelf: true});
     } else {
-      this.issue.testerResponses[index].disagreeCheckbox = '- [ ]' + disagree.substring(5);
+      control.disable({onlySelf: false});
+      this.issue.testerResponses[index].reasonForDiagreement = '';
     }
   }
 
