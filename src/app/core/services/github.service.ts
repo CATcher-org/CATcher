@@ -179,7 +179,7 @@ export class GithubService {
     );
   }
 
-  fetchEventsForRepo() {
+  fetchEventsForRepo(): Observable<any[]> {
     return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
       map(response => {
         return response['data'];

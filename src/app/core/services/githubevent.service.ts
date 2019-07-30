@@ -21,6 +21,9 @@ export class GithubEventService {
   setLatestChangeEvent(): Observable<any> {
       return this.githubService.fetchEventsForRepo().pipe(
         map((response) => {
+          if (response.length === 0) {
+            return response;
+          }
           this.setLastModifiedTime(response[0]['created_at']);
           this.setLastModifiedCommentTime(response[0]['issue']['updated_at']);
           return response;
@@ -34,7 +37,10 @@ export class GithubEventService {
    */
   reloadPage() {
     return this.githubService.fetchEventsForRepo().pipe(
-      flatMap((response) => {
+      flatMap((response: any[]) => {
+        if (response.length === 0) {
+          return of(response);
+        }
         const eventResponse = response[0];
         // Will only allow page to reload if the latest modify time is different
         // from last modified, meaning that some changes to the repo has occured.

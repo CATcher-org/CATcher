@@ -18,7 +18,8 @@
           <div class="drag-and-drop">
             <span *ngIf="!isInErrorState"> Attach files by dragging & dropping or select them by clicking here. </span>
             <span *ngIf="isInErrorState" class="error"> {{uploadErrorMessage}} </span>
-            <input #fileInput [accept]="['gif', 'jpeg', 'jpg', 'png', 'docx', 'gz', 'log', 'pdf', 'pptx', 'txt', 'xlsx', 'zip']"
+            <input #fileInput [disabled]="this.commentField.disabled"
+                   [accept]="['gif', 'jpeg', 'jpg', 'png', 'docx', 'gz', 'log', 'pdf', 'pptx', 'txt', 'xlsx', 'zip']"
                    type="file" class="file" (change)="onFileInputUpload($event, fileInput)">
           </div>
         </mat-form-field>
