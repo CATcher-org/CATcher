@@ -3,7 +3,7 @@ export class IssueDispute {
     readonly INITIAL_RESPONSE = '[replace this with your explanation]';
     readonly TITLE_PREFIX = '## :question: ';
     readonly LINE_BREAK = '-------------------\n';
-    title: string; // e.g Downgrade of severity
+    title: string; // e.g Issue severity
     description: string; // e.g Team says: xxx\n Tester says: xxx.
     tutorResponse: string; // e.g Not justified. I've changed it back.
     todo: string; // e.g  - [x] Done
