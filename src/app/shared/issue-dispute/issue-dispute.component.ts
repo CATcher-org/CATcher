@@ -21,7 +21,6 @@ export class IssueDisputeComponent implements OnInit {
   isEditing = false;
 
   @Input() issue: Issue;
-  @Input() issueComment: IssueComment;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() commentUpdated = new EventEmitter<IssueComment>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
@@ -54,15 +53,14 @@ export class IssueDisputeComponent implements OnInit {
     this.issue.todoList = this.getToDoList();
 
     // Update tutor's response in the issue comment
-    if (this.issueComment) {
-      this.issueComment.description = this.issueCommentService.
+    if (this.issue.issueComment) {
+      this.issue.issueComment.description = this.issueCommentService.
         createGithubTutorResponse(this.issue.issueDisputes);
 
-      this.issueCommentService.updateIssueComment(this.issueComment).subscribe(
+      this.issueCommentService.updateIssueComment(this.issue.issueComment).subscribe(
         (updatedComment) => {
           this.isFormPending = false;
           this.isEditing = false;
-          this.issueComment = updatedComment;
           this.commentUpdated.emit(updatedComment);
         }, (error) => {
           this.errorHandlingService.handleHttpError(error);
@@ -72,11 +70,11 @@ export class IssueDisputeComponent implements OnInit {
         .createGithubTutorResponse(this.issue.issueDisputes);
 
       this.issueCommentService.createIssueComment(this.issue.id, issueCommentDescription).subscribe(
-        (updatedComment) => {
+        (newComment) => {
           this.isFormPending = false;
           this.isEditing = false;
-          this.issueComment = updatedComment;
-          this.commentUpdated.emit(updatedComment);
+          this.issue.issueComment = newComment;
+          this.commentUpdated.emit(newComment);
         },
         (error) => {
           this.errorHandlingService.handleHttpError(error);
@@ -123,7 +121,7 @@ export class IssueDisputeComponent implements OnInit {
   }
 
   isNewResponse(): boolean {
-    return !this.issueComment;
+    return !this.issue.issueComment;
   }
 
   getSubmitButtonText(): string {
