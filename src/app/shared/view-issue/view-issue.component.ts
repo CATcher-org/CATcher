@@ -43,7 +43,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   isTeamResponseEditing = false;
   issueSubscription: Subscription;
   issueCommentSubscription: Subscription;
-  issueCommentNumber = 0;
+  issueComment: IssueComment;
+  issueComments: IssueComments;
 
   @Input() issueId: number;
   @Input() issueComponents: ISSUE_COMPONENTS[];
@@ -95,8 +96,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   }
 
   updateComment(newComment: IssueComment) {
-    this.issue.issueComments[this.issueCommentNumber] = newComment;
-    this.issueCommentService.updateLocalStore(this.issue.issueComments);
+    this.issueComments.comments[0] = newComment;
+    this.issueCommentService.updateLocalStore(this.issueComments);
   }
 
   updateDescriptionEditState(updatedState: boolean) {
@@ -111,41 +112,32 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.isTutorResponseEditing = updatedState;
   }
 
-  setTesterResponse() {
-    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issue.issueComment.description);
-  }
-
-  setTeamResponseAndComment() {
-    for (const comment of this.issue.issueComments.comments) {
-      this.issue.teamResponse = this.issueService.parseTeamResponse(comment.description);
-      if (this.issue.teamResponse !== '') {
-        this.issue.issueComment = comment;
-        break;
-      }
-      this.issueCommentNumber++;
-    }
+  setTeamAndTesterResponse() {
+    this.issue.teamResponse = this.issueService.parseTeamResponse(this.issueComment.description);
+    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issueComment.description);
   }
 
   private initializeComments() {
-        this.isCommentsLoading = false;
-        // If there is no comment in the issue, don't need to continue
-        if (!this.issue.issueComment) {
-          return;
-        }
-        this.setTeamResponseAndComment();
-        // For Tester Response Phase, where tester responses are in the issue's comment
-        if (this.issue.teamResponse && this.userService.currentUser.role === this.userRole.Student) {
-          this.setTesterResponse();
-        }
-        // For Moderation Phase, where tutor responses are in the issue's comment
-        if (this.issue.issueDisputes && this.userService.currentUser.role === this.userRole.Tutor) {
-          this.setTutorResponse();
-        }
+    this.issueComments = this.issue.issueComments;
+    this.issueComment = this.issue.issueComment;
+    this.isCommentsLoading = false;
+    // If there is no comment in the issue, don't need to continue
+    if (!this.issueComment) {
+      return;
+    }
+    // For Tester Response Phase, where team and tester response items are in the issue's comment
+    if (!this.issue.teamResponse && this.userService.currentUser.role === this.userRole.Student) {
+      this.setTeamAndTesterResponse();
+    }
+    // For Moderation Phase, where tutor responses are in the issue's comment
+    if (this.issue.issueDisputes && this.userService.currentUser.role === this.userRole.Tutor) {
+      this.setTutorResponse();
+    }
   }
 
   setTutorResponse() {
     this.issue.issueDisputes =
-      this.issueService.parseTutorResponseInComment(this.issue.issueComment.description, this.issue.issueDisputes);
+      this.issueService.parseTutorResponseInComment(this.issueComment.description, this.issue.issueDisputes);
   }
 
   ngOnDestroy() {
