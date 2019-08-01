@@ -20,7 +20,7 @@ export interface Issue {
   teamResponse?: string;
   tutorResponse?: string;
   testerResponses?: TesterResponse[];
-  issueComment?: IssueComment;
+  issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
   pending?: string;
   unsure?: boolean;
