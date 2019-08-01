@@ -80,7 +80,7 @@ export class GithubService {
       mergeMap((numOfPages) => {
         const apiCalls = [];
         for (let i = 1; i <= numOfPages; i++) {
-          apiCalls.push(from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, number: issueId, per_page: 1, page: i})));
+          apiCalls.push(from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, number: issueId, page: i})));
         }
         return forkJoin(apiCalls);
       }),
@@ -222,7 +222,7 @@ export class GithubService {
   }
 
   private getNumberOfCommentPages(issueId: number): Observable<number> {
-    return from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, number: issueId, per_page: 1, page: 1})).pipe(
+    return from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, number: issueId, page: 1})).pipe(
       map((response) => {
         if (!response['headers'].link) {
           return 1;

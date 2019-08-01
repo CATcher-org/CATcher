@@ -426,6 +426,7 @@ export class IssueService {
     const issueId = +issueInJson['number'];
     return this.issueCommentService.getIssueComments(issueId).pipe(
       map((issueComments: IssueComments) => {
+        const issueComment = this.getIssueComment(issueComments);
         return <Issue>{
         id: issueId,
         created_at: moment(issueInJson['created_at']).format('lll'),
@@ -434,13 +435,12 @@ export class IssueService {
           issueInJson['assignees'].map((assignee) => assignee['login']),
         description: issueInJson['body'],
         teamAssigned: this.getTeamAssignedToIssue(issueInJson),
-        todoList: this.getToDoList(issueComments.comments[0], issueInJson['issueDisputes']),
+        todoList: this.getToDoList(issueComment, issueInJson['issueDisputes']),
         teamResponse: issueInJson['teamResponse'],
         tutorResponse: issueInJson['tutorResponse'],
         duplicateOf: issueInJson['duplicateOf'],
         testerResponses: issueInJson['testerResponses'],
-        issueComments: issueComments,
-        issueComment: issueComments.comments[0],
+        issueComment: issueComment,
         issueDisputes: issueInJson['issueDisputes'],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
         };
@@ -469,6 +469,20 @@ export class IssueService {
         return issue;
       })
     );
+  }
+
+  getIssueComment(issueComments: IssueComments): IssueComment {
+    let regex = /# *Team\'?s Response[\n\r]*[\s\S]*# Items for the Tester to Verify/gi;
+    if (this.phaseService.currentPhase === Phase.phaseModeration) {
+      regex = /# Tutor Moderation[\n\r]*#{2} *:question: *.*[\n\r]*.*[\n\r]*[\s\S]*?(?=-{19})/gi;
+    }
+
+    for (const comment of issueComments.comments) {
+      const matched = regex.exec(comment.description);
+      if (matched) {
+        return comment;
+      }
+    }
   }
 
   private parseDuplicateOfValue(toParse: string): number {

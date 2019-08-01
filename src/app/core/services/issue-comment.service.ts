@@ -18,11 +18,7 @@ export class IssueCommentService {
   }
 
   getIssueComments(issueId: number): Observable<IssueComments> {
-    if (!this.comments.get(issueId)) {
-      return this.initializeIssueComments(issueId);
-    } else {
-      return of(this.comments.get(issueId));
-    }
+    return this.initializeIssueComments(issueId);
   }
 
   createIssueComment(issueId: number, description: string): Observable<IssueComment> {

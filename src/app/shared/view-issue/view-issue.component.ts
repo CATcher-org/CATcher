@@ -43,8 +43,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   isTeamResponseEditing = false;
   issueSubscription: Subscription;
   issueCommentSubscription: Subscription;
-  issueComment: IssueComment;
-  issueComments: IssueComments;
 
   @Input() issueId: number;
   @Input() issueComponents: ISSUE_COMPONENTS[];
@@ -96,8 +94,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   }
 
   updateComment(newComment: IssueComment) {
-    this.issueComments.comments[0] = newComment;
-    this.issueCommentService.updateLocalStore(this.issueComments);
+    this.issue.issueComment = newComment;
+    this.issueService.updateLocalStore(this.issue);
   }
 
   updateDescriptionEditState(updatedState: boolean) {
@@ -113,16 +111,14 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   }
 
   setTeamAndTesterResponse() {
-    this.issue.teamResponse = this.issueService.parseTeamResponse(this.issueComment.description);
-    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issueComment.description);
+    this.issue.teamResponse = this.issueService.parseTeamResponse(this.issue.issueComment.description);
+    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issue.issueComment.description);
   }
 
   private initializeComments() {
-    this.issueComments = this.issue.issueComments;
-    this.issueComment = this.issue.issueComment;
     this.isCommentsLoading = false;
     // If there is no comment in the issue, don't need to continue
-    if (!this.issueComment) {
+    if (!this.issue.issueComment) {
       return;
     }
     // For Tester Response Phase, where team and tester response items are in the issue's comment
@@ -137,7 +133,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
 
   setTutorResponse() {
     this.issue.issueDisputes =
-      this.issueService.parseTutorResponseInComment(this.issueComment.description, this.issue.issueDisputes);
+      this.issueService.parseTutorResponseInComment(this.issue.issueComment.description, this.issue.issueDisputes);
   }
 
   ngOnDestroy() {

@@ -31,12 +31,12 @@
 
         <!-- Tester's Response -->
         <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && 
-          issue.testerResponses && issue.testerResponses.length !== 0" [issue]="issue" [issueComment]="issueComment"
+          issue.testerResponses && issue.testerResponses.length !== 0" [issue]="issue"
           (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
         </app-tester-response>
 
         <!-- Issue Disputes -->
-        <app-issue-dispute *ngIf="this.isComponentVisible(issueComponentsEnum.ISSUE_DISPUTE)" [issue]="issue" [issueComment]="issueComment"
+        <app-issue-dispute *ngIf="this.isComponentVisible(issueComponentsEnum.ISSUE_DISPUTE)" [issue]="issue"
           (commentUpdated)="updateComment($event)">
         </app-issue-dispute>
 
@@ -104,7 +104,7 @@
         <!-- Unsure checkbox -->
         <div *ngIf="this.isComponentVisible(issueComponentsEnum.UNSURE_CHECKBOX)">
           <mat-divider></mat-divider>
-          <app-unsure-checkbox [issue]="issue"></app-unsure-checkbox>
+          <app-unsure-checkbox [issue]="issue" (issueUpdated)="updateIssue($event)"></app-unsure-checkbox>
         </div>
 
         <!-- Issue To-Do list -->

@@ -22,7 +22,6 @@ export class TesterResponseComponent implements OnInit {
   isEditing = false;
 
   @Input() issue: Issue;
-  @Input() issueComment: IssueComment;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() commentUpdated = new EventEmitter<IssueComment>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
@@ -70,11 +69,11 @@ export class TesterResponseComponent implements OnInit {
     });
 
     // For Tester Response phase, where the items are in the issue's comment
-    if (this.issueComment) {
-      this.issueComment.description = this.issueCommentService.
+    if (this.issue.issueComment) {
+      this.issue.issueComment.description = this.issueCommentService.
         createGithubTesterResponse(this.issue.teamResponse, this.issue.testerResponses);
 
-      this.issueCommentService.updateIssueComment(this.issueComment).subscribe(
+      this.issueCommentService.updateIssueComment(this.issue.issueComment).subscribe(
         (updatedComment) => {
           this.commentUpdated.emit(updatedComment);
         }, (error) => {
@@ -94,7 +93,6 @@ export class TesterResponseComponent implements OnInit {
 
   handleChangeOfDisagreeCheckbox(event, disagree, index) {
     this.issue.testerResponses[index].disagreeCheckbox = ('- [').concat((event.checked ? 'x' : ' '), '] ', disagree.substring(6));
-    console.log(this.issue.testerResponses[index].disagreeCheckbox);
     this.toggleCommentEditor(index, event.checked);
   }
 
