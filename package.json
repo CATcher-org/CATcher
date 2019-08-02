@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "1.0.0",
+  "version": "3.1.0",
   "main": "main.js",
   "scripts": {
     "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
