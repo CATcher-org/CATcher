@@ -67,6 +67,11 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     );
   }
 
+  ngOnChange() {
+    this.initializeIssue(this.issueId);
+    this.initializeComments();
+  }
+
   isComponentVisible(component: ISSUE_COMPONENTS): boolean {
     return this.issueComponents.includes(component);
   }
@@ -91,6 +96,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
     this.issueService.updateLocalStore(this.issue);
+    this.initializeIssue(this.issueId);
+    this.initializeComments();
   }
 
   updateComment(newComment: IssueComment) {
