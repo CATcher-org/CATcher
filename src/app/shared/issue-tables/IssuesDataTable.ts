@@ -56,14 +56,14 @@ export class IssuesDataTable extends DataSource<Issue> {
             if (this.defaultFilter) {
               data = data.filter(this.defaultFilter);
             }
-
             data = this.getSortedData(data);
             data = this.getFilteredTeamData(data);
             data = this.getFilteredData(data);
             data = this.getPaginatedData(data);
 
             return data;
-          }));
+          })
+        );
       })
     ).subscribe((issues) => {
       this.issuesSubject.next(issues);

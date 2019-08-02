@@ -16,15 +16,17 @@ export enum ISSUE_COMPONENTS {
   TESTER_POST,
   TEAM_RESPONSE,
   NEW_TEAM_RESPONSE,
-  TUTOR_RESPONSE,
-  NEW_TUTOR_RESPONSE,
+  TUTOR_RESPONSE, // Old component, unused
+  NEW_TUTOR_RESPONSE, // Old component, unused
   TESTER_RESPONSE,
+  ISSUE_DISPUTE,
   SEVERITY_LABEL,
   TYPE_LABEL,
   RESPONSE_LABEL,
   ASSIGNEE,
   DUPLICATE,
-  TODO_LIST
+  TODO_LIST,
+  UNSURE_CHECKBOX
 }
 
 @Component({
@@ -34,13 +36,13 @@ export enum ISSUE_COMPONENTS {
 })
 export class ViewIssueComponent implements OnInit, OnDestroy {
   issue: Issue;
-  comments: IssueComment[];
   isIssueLoading = true;
   isCommentsLoading = true;
   isTutorResponseEditing = false;
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
   issueSubscription: Subscription;
+  issueCommentSubscription: Subscription;
 
   @Input() issueId: number;
   @Input() issueComponents: ISSUE_COMPONENTS[];
@@ -60,7 +62,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(
       params => {
         this.initializeIssue(this.issueId);
-        this.initializeComments(this.issueId);
+        this.initializeComments();
       }
     );
   }
@@ -91,6 +93,11 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.issueService.updateLocalStore(this.issue);
   }
 
+  updateComment(newComment: IssueComment) {
+    this.issue.issueComment = newComment;
+    this.issueService.updateLocalStore(this.issue);
+  }
+
   updateDescriptionEditState(updatedState: boolean) {
     this.isIssueDescriptionEditing = updatedState;
   }
@@ -103,13 +110,30 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.isTutorResponseEditing = updatedState;
   }
 
-  private initializeComments(id: number) {
-    this.issueCommentService.getIssueComments(id).pipe(finalize(() => this.isCommentsLoading = false))
-      .subscribe((issueComments: IssueComments) => {
-        this.comments = issueComments.comments;
-      }, (error) => {
-        this.errorHandlingService.handleHttpError(error, () => this.initializeComments(id));
-      });
+  setTeamAndTesterResponse() {
+    this.issue.teamResponse = this.issueService.parseTeamResponse(this.issue.issueComment.description);
+    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issue.issueComment.description);
+  }
+
+  private initializeComments() {
+    this.isCommentsLoading = false;
+    // If there is no comment in the issue, don't need to continue
+    if (!this.issue.issueComment) {
+      return;
+    }
+    // For Tester Response Phase, where team and tester response items are in the issue's comment
+    if (!this.issue.teamResponse && this.userService.currentUser.role === this.userRole.Student) {
+      this.setTeamAndTesterResponse();
+    }
+    // For Moderation Phase, where tutor responses are in the issue's comment
+    if (this.issue.issueDisputes && this.userService.currentUser.role === this.userRole.Tutor) {
+      this.setTutorResponse();
+    }
+  }
+
+  setTutorResponse() {
+    this.issue.issueDisputes =
+      this.issueService.parseTutorResponseInComment(this.issue.issueComment.description, this.issue.issueDisputes);
   }
 
   ngOnDestroy() {

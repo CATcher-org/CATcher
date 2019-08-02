@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { map } from 'rxjs/operators';
-import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
+import { map, flatMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, merge, Observable, of, zip } from 'rxjs';
 import {
   Issue,
   Issues,
@@ -22,6 +22,9 @@ import { Team } from '../models/team.model';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { TesterResponse } from '../models/tester-response.model';
+import { IssueComments, IssueComment } from '../models/comment.model';
+import { IssueDispute } from '../models/issue-dispute.model';
+import { UserRole } from '../../core/models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +34,7 @@ export class IssueService {
   issues$: BehaviorSubject<Issue[]>;
   private issueTeamFilter = 'All Teams';
   readonly MINIMUM_MATCHES = 1;
+  readonly userRole = UserRole;
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -63,7 +67,7 @@ export class IssueService {
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
       return this.githubService.fetchIssue(id).pipe(
-        map((response) => {
+        flatMap((response) => {
           return this.createIssueModel(response);
         })
       );
@@ -75,7 +79,7 @@ export class IssueService {
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
     return this.githubService.createIssue(title, description, labelsArray).pipe(
-      map((response) => {
+      flatMap((response) => {
         return this.createIssueModel(response);
       })
     );
@@ -85,7 +89,7 @@ export class IssueService {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
       this.createLabelsForIssue(issue), assignees).pipe(
-        map((response) => {
+        flatMap((response) => {
           return this.createIssueModel(response);
         })
     );
@@ -101,23 +105,10 @@ export class IssueService {
       case Phase.phaseTeamResponse:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
           `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
-      case Phase.phaseTesterResponse:
-        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
-          `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
-          `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}`;
       case Phase.phaseModeration:
-        if (!issue.todoList) {
-          issue.todoList = [];
-        }
-        let todoString = '';
-        for (const todo of issue.todoList) {
-          todoString += todo + '\n';
-        }
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
-          `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
-          `## Proposed Assignees\n${issue.assignees.length === 0 ? '--' : issue.assignees.join(', ')}\n` +
-          `## Items for the Tester to Verify\n${this.getTesterResponsesString(issue.testerResponses)}\n` +
-          `# Tutor\'s Response\n${issue.tutorResponse}\n## Tutor to check\n${todoString}`;
+         // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
+          `# Disputes\n\n${this.getIssueDisputeString(issue.issueDisputes)}\n`;
       default:
         return issue.description;
     }
@@ -131,12 +122,23 @@ export class IssueService {
     return testerResponsesString;
   }
 
+  private getIssueDisputeString(issueDisputes: IssueDispute[]): string {
+    let issueDisputeString = '';
+    for (const issueDispute of issueDisputes) {
+      issueDisputeString += issueDispute.toString();
+    }
+    return issueDisputeString;
+  }
+
   deleteIssue(id: number): Observable<Issue> {
     return this.githubService.closeIssue(id).pipe(
-      map((response) => {
-        const deletedIssue = this.createIssueModel(response);
-        this.deleteFromLocalStore(deletedIssue);
-        return deletedIssue;
+      flatMap((response) => {
+        return this.createIssueModel(response).pipe(
+          map(deletedIssue => {
+            this.deleteFromLocalStore(deletedIssue);
+            return deletedIssue;
+          })
+        );
       })
     );
   }
@@ -248,18 +250,22 @@ export class IssueService {
     }
 
     return forkJoin(issuesPerFilter).pipe(
-      map((issuesByFilter: [][]) => {
-        let mappedResult = {};
+      flatMap((issuesByFilter: [][]) => {
+        const mappingFunctions: Observable<Issue>[] = [];
         for (const issues of issuesByFilter) {
           for (const issue of issues) {
-            const issueModel = this.createIssueModel(issue);
-            mappedResult = {
-              ...mappedResult,
-              [issueModel.id]: issueModel,
-            };
+            mappingFunctions.push(this.createIssueModel(issue));
           }
         }
-        return mappedResult;
+        return combineLatest(mappingFunctions);
+      }),
+      map((issueArray) => {
+        let mappedResults: Issues = {};
+        issueArray.forEach(issue => mappedResults = {
+          ...mappedResults,
+          [issue.id]: issue
+        });
+        return mappedResults;
       }),
       map((issues: Issues) => {
         this.issues = { ...this.issues, ...issues };
@@ -274,11 +280,12 @@ export class IssueService {
    * Will be used to parse the github representation of the issue's description
    */
   private getParsedBody(issue: any) {
-    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
+    if (this.phaseService.currentPhase === Phase.phaseBugReporting ||
+        this.phaseService.currentPhase === Phase.phaseTesterResponse) {
       return;
     }
     [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
-      issue.proposedAssignees, issue.testerResponses] = this.parseBody(issue);
+      issue.proposedAssignees, issue.testerResponses, issue.issueDisputes] = this.parseBody(issue);
   }
 
   /**
@@ -313,7 +320,8 @@ export class IssueService {
     tutorResponse,
     todoList,
     assignees,
-    testerResponses;
+    testerResponses,
+    issueDisputes;
 
     for (const match of matches) {
       const groups = regexExp.exec(match)['groups'];
@@ -353,11 +361,15 @@ export class IssueService {
         case '# Items for the Tester to Verify':
           testerResponses = this.parseTesterResponse(groups['description']);
           break;
+        case '# Disputes':
+          issueDisputes = this.parseIssueDisputes(groups['description']);
+          break;
         default:
           break;
       }
     }
-    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [], assignees || [], testerResponses || []);
+    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [],
+      assignees || [], testerResponses || [], issueDisputes || []);
   }
 
   /**
@@ -392,6 +404,16 @@ export class IssueService {
       result.push(this.createLabel('status', issue.status));
     }
 
+    if (issue.pending) {
+      if (+issue.pending > 0) {
+        result.push(this.createLabel('pending', issue.pending));
+      }
+    }
+
+    if (issue.unsure) {
+      result.push('unsure');
+    }
+
     return result;
   }
 
@@ -399,23 +421,68 @@ export class IssueService {
     return `${prepend}.${value}`;
   }
 
-  private createIssueModel(issueInJson: {}): Issue {
+  private createIssueModel(issueInJson: {}): Observable<Issue> {
     this.getParsedBody(issueInJson);
-    return <Issue>{
-      id: +issueInJson['number'],
-      created_at: moment(issueInJson['created_at']).format('lll'),
-      title: issueInJson['title'],
-      assignees: this.phaseService.currentPhase === Phase.phaseModeration ? issueInJson['proposedAssignees'] :
-        issueInJson['assignees'].map((assignee) => assignee['login']),
-      description: issueInJson['body'],
-      teamAssigned: this.getTeamAssignedToIssue(issueInJson),
-      todoList: issueInJson['todoList'],
-      teamResponse: issueInJson['teamResponse'],
-      tutorResponse: issueInJson['tutorResponse'],
-      duplicateOf: issueInJson['duplicateOf'],
-      testerResponses: issueInJson['testerResponses'],
-      ...this.getFormattedLabels(issueInJson['labels'], LABELS),
-    };
+    const issueId = +issueInJson['number'];
+    return this.issueCommentService.getIssueComments(issueId).pipe(
+      map((issueComments: IssueComments) => {
+        const issueComment = this.getIssueComment(issueComments);
+        return <Issue>{
+        id: issueId,
+        created_at: moment(issueInJson['created_at']).format('lll'),
+        title: issueInJson['title'],
+        assignees: this.phaseService.currentPhase === Phase.phaseModeration ? issueInJson['proposedAssignees'] :
+          issueInJson['assignees'].map((assignee) => assignee['login']),
+        description: issueInJson['body'],
+        teamAssigned: this.getTeamAssignedToIssue(issueInJson),
+        todoList: this.getToDoList(issueComment, issueInJson['issueDisputes']),
+        teamResponse: issueInJson['teamResponse'],
+        tutorResponse: issueInJson['tutorResponse'],
+        duplicateOf: issueInJson['duplicateOf'],
+        testerResponses: issueInJson['testerResponses'],
+        issueComment: issueComment,
+        issueDisputes: issueInJson['issueDisputes'],
+        ...this.getFormattedLabels(issueInJson['labels'], LABELS),
+        };
+      }),
+      map((issue: Issue) => {
+        if (issue.issueComment === undefined) {
+          return issue;
+        }
+
+        const LABEL_CATEGORY = 1;
+        const LABEL_VALUE = 2;
+
+        const issueLabelsExtractionRegex = /#{2} ?:question: ?Issue (\w+)[\n\r]*Team Chose `?(\w+)`?\.?/gi;
+        let extractedLabelsAndValues: RegExpExecArray;
+
+        while (extractedLabelsAndValues = issueLabelsExtractionRegex.exec(issue.issueComment.description)) {
+          issue = {
+            ...issue,
+            [(extractedLabelsAndValues[LABEL_CATEGORY] === 'response'
+              ? extractedLabelsAndValues[LABEL_CATEGORY].concat('Tag')
+              : extractedLabelsAndValues[LABEL_CATEGORY])]: extractedLabelsAndValues[LABEL_VALUE]
+          };
+        }
+
+        this.updateIssue(issue);
+        return issue;
+      })
+    );
+  }
+
+  getIssueComment(issueComments: IssueComments): IssueComment {
+    let regex = /# *Team\'?s Response[\n\r]*[\s\S]*# Items for the Tester to Verify/gi;
+    if (this.phaseService.currentPhase === Phase.phaseModeration) {
+      regex = /# Tutor Moderation[\n\r]*#{2} *:question: *.*[\n\r]*.*[\n\r]*[\s\S]*?(?=-{19})/gi;
+    }
+
+    for (const comment of issueComments.comments) {
+      const matched = regex.exec(comment.description);
+      if (matched) {
+        return comment;
+      }
+    }
   }
 
   private parseDuplicateOfValue(toParse: string): number {
@@ -428,19 +495,87 @@ export class IssueService {
     }
   }
 
-  private parseTesterResponse(toParse: string): TesterResponse[] {
+  // Template url: https://github.com/CATcher-org/templates#items-for-the-tester-to-verify
+  parseTesterResponse(toParse: string): TesterResponse[] {
     let matches;
     const testerResponses: TesterResponse[] = [];
-    const regex = /(## \d.*)[\r\n]*(.*)[\r\n]*(.*)[\r\n]*\*\*Reason for disagreement:\*\* ([\s\S]*?(?=-------------------))/gi;
+    const regex: RegExp = new RegExp('#{2} *:question: *([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]* *Originally.*'
+      + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)-{19}',
+      'gi');
     while (matches = regex.exec(toParse)) {
       if (matches && matches.length > this.MINIMUM_MATCHES) {
         const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
-        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement));
+        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement.trim()));
       }
     }
     return testerResponses;
   }
 
+  // Template url: https://github.com/CATcher-org/templates#teams-response-1
+  parseTeamResponse(toParse: string): string {
+    let teamResponse = '';
+    const regex = /# *Team\'?s Response[\n\r]*([\s\S]*)# Items for the Tester to Verify/gi;
+    const matches = regex.exec(toParse);
+
+    if (matches && matches.length > this.MINIMUM_MATCHES) {
+      teamResponse = matches[1].trim();
+    }
+    return teamResponse;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#disputes
+  parseIssueDisputes(toParse: string): IssueDispute[] {
+    let matches;
+    const issueDisputes: IssueDispute[] = [];
+    const regex = /#{2} *:question: *(.*)[\r\n]*([\s\S]*?(?=-{19}))/gi;
+    while (matches = regex.exec(toParse)) {
+      if (matches && matches.length > this.MINIMUM_MATCHES) {
+        const [regexString, title, description] = matches;
+        issueDisputes.push(new IssueDispute(title, description.trim()));
+      }
+    }
+    return issueDisputes;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderations
+  parseTutorResponseInComment(toParse: string, issueDispute: IssueDispute[]): IssueDispute[] {
+    let matches, i = 0;
+    const regex = /#{2} *:question: *.*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-{19}))/gi;
+    while (matches = regex.exec(toParse)) {
+      if (matches && matches.length > this.MINIMUM_MATCHES) {
+        const [regexString, todo, tutorResponse] = matches;
+        issueDispute[i].todo = todo;
+        issueDispute[i].tutorResponse = tutorResponse.trim();
+        i++;
+      }
+    }
+    return issueDispute;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderations
+  getToDoList(issueComment: IssueComment, issueDisputes: IssueDispute[]): string[] {
+    let matches;
+    const toDoList: string[] = [];
+    const regex = /- .* Done/gi;
+
+    if (this.userService.currentUser.role !== this.userRole.Tutor) {
+      return toDoList;
+    }
+
+    if (!issueComment && issueDisputes) {
+      for (const dispute of issueDisputes) {
+        toDoList.push(dispute.todo);
+      }
+      return toDoList;
+    }
+
+    while (matches = regex.exec(issueComment.description)) {
+      if (matches) {
+        toDoList.push(matches[0]);
+      }
+    }
+    return toDoList;
+  }
 
   /**
    * Based on the kind labels specified in `desiredLabels` field, this function will produce a neatly formatted JSON object.
@@ -469,6 +604,11 @@ export class IssueService {
         result = {
           ...result,
           duplicated: true,
+        };
+      } else if (label['name'] === 'unsure') {
+        result = {
+          ...result,
+          unsure: true,
         };
       } else if (desiredLabels.includes(labelType)) {
         result = {

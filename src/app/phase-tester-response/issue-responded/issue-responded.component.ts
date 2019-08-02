@@ -21,11 +21,14 @@ export class IssueRespondedComponent implements OnInit {
     ACTION_BUTTONS.VIEW_IN_WEB,
     ACTION_BUTTONS.MARK_AS_PENDING
   ];
-  readonly filter: (issue: Issue) => boolean = (issue: Issue) => (issue.status === STATUS.Done);
+  filter: (issue: Issue) => boolean;
 
   constructor() { }
 
   ngOnInit() {
+    this.filter = (issue: Issue) => {
+      return (issue.status === STATUS.Done) && !!issue.issueComment;
+    };
   }
 
   applyFilter(filterValue: string) {

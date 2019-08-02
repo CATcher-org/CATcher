@@ -11,6 +11,7 @@ import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
 import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
+import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     TodoListComponent,
+    UnsureCheckboxComponent,
   ],
   exports: [
     TitleComponent,
@@ -38,6 +40,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     TodoListComponent,
+    UnsureCheckboxComponent,
   ]
 })
 export class IssueComponentsModule { }

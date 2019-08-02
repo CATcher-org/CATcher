@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {Observable, of, BehaviorSubject} from 'rxjs';
 import {GithubService} from './github.service';
 import {IssueComment, IssueComments} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import * as moment from 'moment';
+import { TesterResponse } from '../models/tester-response.model';
+import { IssueDispute } from '../models/issue-dispute.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +18,7 @@ export class IssueCommentService {
   }
 
   getIssueComments(issueId: number): Observable<IssueComments> {
-    if (!this.comments.get(issueId)) {
-      return this.initializeIssueComments(issueId);
-    } else {
-      return of(this.comments.get(issueId));
-    }
+    return this.initializeIssueComments(issueId);
   }
 
   createIssueComment(issueId: number, description: string): Observable<IssueComment> {
@@ -34,7 +32,7 @@ export class IssueCommentService {
     );
   }
 
-  private updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
+  updateIssueComment(issueComment: IssueComment): Observable<IssueComment> {
     return this.githubService.updateIssueComment({
       ...issueComment,
       description: issueComment.description,
@@ -43,6 +41,29 @@ export class IssueCommentService {
         return this.createIssueCommentModel(response);
       })
     );
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#teams-response-1
+  createGithubTesterResponse(teamResponse: string, testerResponses: TesterResponse[]): string {
+    return `# Team\'s Response\n${teamResponse}\n ` +
+          `# Items for the Tester to Verify\n${this.getTesterResponsesString(testerResponses)}`;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderation
+  createGithubTutorResponse(issueDisputes: IssueDispute[]): string {
+    let tutorResponseString = '# Tutor Moderation\n\n';
+    for (const issueDispute of issueDisputes) {
+      tutorResponseString += issueDispute.toTutorResponseString();
+    }
+    return tutorResponseString;
+  }
+
+  private getTesterResponsesString(testerResponses: TesterResponse[]): string {
+    let testerResponsesString = '';
+    for (const testerResponse of testerResponses) {
+      testerResponsesString += testerResponse.toString();
+    }
+    return testerResponsesString;
   }
 
   private initializeIssueComments(issueId: number): Observable<IssueComments> {

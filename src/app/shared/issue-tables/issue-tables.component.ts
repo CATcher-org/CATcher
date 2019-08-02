@@ -93,7 +93,7 @@ export class IssueTablesComponent implements OnInit {
   }
 
   isTodoListExists(issue): boolean {
-    return issue.todoList.length !== 0;
+    return issue.todoList;
   }
 
   todoFinished(issue): number {

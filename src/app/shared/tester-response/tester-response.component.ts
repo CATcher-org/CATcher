@@ -7,6 +7,8 @@ import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
+import { IssueCommentService } from '../../core/services/issue-comment.service';
+import { IssueComment } from '../../core/models/comment.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -21,10 +23,12 @@ export class TesterResponseComponent implements OnInit {
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
+  @Output() commentUpdated = new EventEmitter<IssueComment>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
+              private issueCommentService: IssueCommentService,
               public userService: UserService,
               private errorHandlingService: ErrorHandlingService) { }
 
@@ -57,10 +61,26 @@ export class TesterResponseComponent implements OnInit {
       this.isFormPending = false;
       this.isEditing = false;
     })).subscribe((updatedIssue) => {
+      updatedIssue.teamResponse = this.issue.teamResponse;
+      updatedIssue.testerResponses = this.issue.testerResponses;
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
+
+    // For Tester Response phase, where the items are in the issue's comment
+    if (this.issue.issueComment) {
+      this.issue.issueComment.description = this.issueCommentService.
+        createGithubTesterResponse(this.issue.teamResponse, this.issue.testerResponses);
+
+      this.issueCommentService.updateIssueComment(this.issue.issueComment).subscribe(
+        (updatedComment) => {
+          this.commentUpdated.emit(updatedComment);
+        }, (error) => {
+          this.errorHandlingService.handleHttpError(error);
+      });
+    }
+
   }
 
   changeToEditMode() {
@@ -73,7 +93,6 @@ export class TesterResponseComponent implements OnInit {
 
   handleChangeOfDisagreeCheckbox(event, disagree, index) {
     this.issue.testerResponses[index].disagreeCheckbox = ('- [').concat((event.checked ? 'x' : ' '), '] ', disagree.substring(6));
-    console.log(this.issue.testerResponses[index].disagreeCheckbox);
     this.toggleCommentEditor(index, event.checked);
   }
 
@@ -107,6 +126,10 @@ export class TesterResponseComponent implements OnInit {
 
   getSubmitButtonText(): string {
     return this.isNewResponse() ? 'Submit' : 'Save';
+  }
+
+  getItemTitleText(title: string): string {
+    return '## ' + title;
   }
 
 }

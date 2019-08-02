@@ -23,11 +23,14 @@ export class IssuePendingComponent implements OnInit {
     ACTION_BUTTONS.RESPOND_TO_ISSUE,
     ACTION_BUTTONS.MARK_AS_RESPONDED
   ];
-  readonly filter: (issue: Issue) => boolean = (issue: Issue) => (!issue.status || issue.status === STATUS.Incomplete);
+  filter: (issue: Issue) => boolean;
 
   constructor() { }
 
   ngOnInit() {
+    this.filter = (issue: Issue) => {
+      return (!issue.status || issue.status === STATUS.Incomplete) && !!issue.issueComment;
+    };
   }
 
   applyFilter(filterValue: string) {
