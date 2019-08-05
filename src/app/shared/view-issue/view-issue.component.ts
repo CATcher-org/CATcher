@@ -37,7 +37,7 @@ export enum ISSUE_COMPONENTS {
 export class ViewIssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   isIssueLoading = true;
-  isCommentsLoading = true;
+  isCommentsLoading = false;
   isTutorResponseEditing = false;
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
@@ -62,14 +62,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(
       params => {
         this.initializeIssue(this.issueId);
-        this.initializeComments();
       }
     );
-  }
-
-  ngOnChange() {
-    this.initializeIssue(this.issueId);
-    this.initializeComments();
   }
 
   isComponentVisible(component: ISSUE_COMPONENTS): boolean {
@@ -96,8 +90,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
     this.issueService.updateLocalStore(this.issue);
-    this.initializeIssue(this.issueId);
-    this.initializeComments();
   }
 
   updateComment(newComment: IssueComment) {
@@ -115,32 +107,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
 
   updateTutorResponseEditState(updatedState: boolean) {
     this.isTutorResponseEditing = updatedState;
-  }
-
-  setTeamAndTesterResponse() {
-    this.issue.teamResponse = this.issueService.parseTeamResponse(this.issue.issueComment.description);
-    this.issue.testerResponses = this.issueService.parseTesterResponse(this.issue.issueComment.description);
-  }
-
-  private initializeComments() {
-    this.isCommentsLoading = false;
-    // If there is no comment in the issue, don't need to continue
-    if (!this.issue.issueComment) {
-      return;
-    }
-    // For Tester Response Phase, where team and tester response items are in the issue's comment
-    if (!this.issue.teamResponse && this.userService.currentUser.role === this.userRole.Student) {
-      this.setTeamAndTesterResponse();
-    }
-    // For Moderation Phase, where tutor responses are in the issue's comment
-    if (this.issue.issueDisputes && this.userService.currentUser.role === this.userRole.Tutor) {
-      this.setTutorResponse();
-    }
-  }
-
-  setTutorResponse() {
-    this.issue.issueDisputes =
-      this.issueService.parseTutorResponseInComment(this.issue.issueComment.description, this.issue.issueDisputes);
   }
 
   ngOnDestroy() {

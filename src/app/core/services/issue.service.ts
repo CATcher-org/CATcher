@@ -427,6 +427,7 @@ export class IssueService {
     return this.issueCommentService.getIssueComments(issueId).pipe(
       map((issueComments: IssueComments) => {
         const issueComment = this.getIssueComment(issueComments);
+        const incompleteIssueDisputes: IssueDispute[] = issueInJson['issueDisputes'];
         return <Issue>{
         id: issueId,
         created_at: moment(issueInJson['created_at']).format('lll'),
@@ -436,12 +437,17 @@ export class IssueService {
         description: issueInJson['body'],
         teamAssigned: this.getTeamAssignedToIssue(issueInJson),
         todoList: this.getToDoList(issueComment, issueInJson['issueDisputes']),
-        teamResponse: issueInJson['teamResponse'],
+        teamResponse: this.phaseService.currentPhase === Phase.phaseTesterResponse && !!issueComment ?
+          this.parseTeamResponse(issueComment.description) : issueInJson['teamResponse'],
         tutorResponse: issueInJson['tutorResponse'],
         duplicateOf: issueInJson['duplicateOf'],
-        testerResponses: issueInJson['testerResponses'],
+        testerResponses: this.phaseService.currentPhase === Phase.phaseTesterResponse && !!issueComment ?
+          this.parseTesterResponse(issueComment.description) : issueInJson['testerResponses'],
         issueComment: issueComment,
-        issueDisputes: issueInJson['issueDisputes'],
+        issueDisputes: this.phaseService.currentPhase === Phase.phaseModeration &&
+          incompleteIssueDisputes.length > 0 && !!issueComment ?
+          this.parseTutorResponseInComment(issueComment.description, incompleteIssueDisputes) :
+          issueInJson['issueDisputes'],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
         };
       }),
