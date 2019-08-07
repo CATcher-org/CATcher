@@ -35,6 +35,7 @@ export class IssueService {
   private issueTeamFilter = 'All Teams';
   readonly MINIMUM_MATCHES = 1;
   readonly userRole = UserRole;
+  private isModified = false;
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -61,6 +62,7 @@ export class IssueService {
   }
 
   reloadAllIssues() {
+    this.isModified = true;
     return this.initializeData();
   }
 
@@ -424,10 +426,11 @@ export class IssueService {
   private createIssueModel(issueInJson: {}): Observable<Issue> {
     this.getParsedBody(issueInJson);
     const issueId = +issueInJson['number'];
-    return this.issueCommentService.getIssueComments(issueId).pipe(
+    return this.issueCommentService.getIssueComments(issueId, this.isModified).pipe(
       map((issueComments: IssueComments) => {
         const issueComment = this.getIssueComment(issueComments);
         const incompleteIssueDisputes: IssueDispute[] = issueInJson['issueDisputes'];
+        this.isModified = false;
         return <Issue>{
         id: issueId,
         created_at: moment(issueInJson['created_at']).format('lll'),

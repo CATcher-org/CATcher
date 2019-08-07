@@ -17,8 +17,8 @@ export class IssueCommentService {
   constructor(private githubService: GithubService) {
   }
 
-  getIssueComments(issueId: number): Observable<IssueComments> {
-    if (!this.comments.get(issueId)) {
+  getIssueComments(issueId: number, isModified: boolean): Observable<IssueComments> {
+    if (!this.comments.get(issueId) || isModified) {
       return this.initializeIssueComments(issueId);
     }
     return of(this.comments.get(issueId));
