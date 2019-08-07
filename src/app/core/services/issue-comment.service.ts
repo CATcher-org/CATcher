@@ -18,7 +18,10 @@ export class IssueCommentService {
   }
 
   getIssueComments(issueId: number): Observable<IssueComments> {
-    return this.initializeIssueComments(issueId);
+    if (!this.comments.get(issueId)) {
+      return this.initializeIssueComments(issueId);
+    }
+    return of(this.comments.get(issueId));
   }
 
   createIssueComment(issueId: number, description: string): Observable<IssueComment> {
@@ -85,8 +88,13 @@ export class IssueCommentService {
   /**
    * To add/update an issue.
    */
-  updateLocalStore(commentsToUpdate: IssueComments) {
-    this.comments.set(commentsToUpdate.issueId, commentsToUpdate);
+  updateLocalStore(commentToUpdate: IssueComment, issueId: number) {
+    const issueComments = <IssueComments>{
+      issueId: issueId,
+      comments: [],
+    };
+    issueComments.comments.push(commentToUpdate);
+    this.comments.set(issueId, issueComments);
   }
 
   reset() {

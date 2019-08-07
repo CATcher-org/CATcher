@@ -95,6 +95,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   updateComment(newComment: IssueComment) {
     this.issue.issueComment = newComment;
     this.issueService.updateLocalStore(this.issue);
+    this.issueCommentService.updateLocalStore(newComment, this.issueId);
   }
 
   updateDescriptionEditState(updatedState: boolean) {
