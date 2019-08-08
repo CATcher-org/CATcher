@@ -37,7 +37,6 @@ export enum ISSUE_COMPONENTS {
 export class ViewIssueComponent implements OnInit, OnDestroy {
   issue: Issue;
   isIssueLoading = true;
-  isCommentsLoading = false;
   isTutorResponseEditing = false;
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
