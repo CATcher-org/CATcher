@@ -35,6 +35,7 @@ export class IssueService {
   private issueTeamFilter = 'All Teams';
   readonly MINIMUM_MATCHES = 1;
   readonly userRole = UserRole;
+  // This boolean is used by the "Sync" function, to be removed after polling is implemented
   private isModified = false;
 
   constructor(private githubService: GithubService,

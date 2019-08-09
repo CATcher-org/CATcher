@@ -89,11 +89,13 @@ export class IssueCommentService {
    * To add/update an issue.
    */
   updateLocalStore(commentToUpdate: IssueComment, issueId: number) {
-    const issueComments = <IssueComments>{
-      issueId: issueId,
-      comments: [],
-    };
-    issueComments.comments.push(commentToUpdate);
+    const issueComments = this.comments.get(issueId);
+    for (const i in issueComments.comments) {
+      if (issueComments.comments[i].id === commentToUpdate.id) {
+        issueComments.comments[i] = commentToUpdate;
+        break;
+      }
+    }
     this.comments.set(issueId, issueComments);
   }
 
