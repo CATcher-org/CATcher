@@ -26,12 +26,12 @@ export class BaseIssue implements Issue {
   status?: string;
   pending?: string;
   unsure?: boolean;
-
-  /** Depending on the phase, teamAssigned attribute can be derived from Github's assignee feature OR from the Github's issue description */
   teamAssigned?: Team;
 
-  /** Fields derived from parsing of Github's issue description */
+  /** Depending on the phase, assignees attribute can be derived from Github's assignee feature OR from the Github's issue description */
   assignees?: string[];
+
+  /** Fields derived from parsing of Github's issue description */
   duplicateOf?: number;
   todoList?: string[];
   teamResponse?: string;

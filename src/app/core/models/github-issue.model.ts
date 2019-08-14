@@ -37,6 +37,10 @@ export class GithubIssue {
     const label = this.labels.find(l => (l.isCategorical() === isCategorical && l.getCategory() === name));
     return label ? label.getCategoryValue() : undefined;
   }
+
+  findTeamId(): string {
+    return `${this.findLabel('team')}.${this.findLabel('tutorial')}`;
+  }
 }
 
 export class GithubLabel {
