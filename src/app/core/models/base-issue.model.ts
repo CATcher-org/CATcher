@@ -1,6 +1,6 @@
-import {Issue, labelsToAttributeMapping} from './issue.model';
+import {Issue} from './issue.model';
 import * as moment from 'moment';
-import {GithubIssue, GithubLabel} from './github-issue.model';
+import {GithubIssue} from './github-issue.model';
 import {Team} from './team.model';
 import {TesterResponse} from './tester-response.model';
 import {IssueComment} from './comment.model';
