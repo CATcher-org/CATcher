@@ -1,6 +1,6 @@
-import {Issue} from './issue.model';
+import {Issue, labelsToAttributeMapping} from './issue.model';
 import * as moment from 'moment';
-import {GithubIssue} from './github-issue.model';
+import {GithubIssue, GithubLabel} from './github-issue.model';
 import {Team} from './team.model';
 import {TesterResponse} from './tester-response.model';
 import {IssueComment} from './comment.model';
@@ -16,16 +16,18 @@ export class BaseIssue implements Issue {
   readonly id: number;
   readonly created_at: string;
   title: string;
-  type: string;
-  severity: string;
   description: string;
 
   /** Fields derived from Labels */
+  severity: string;
+  type: string;
   responseTag?: string;
   duplicated?: boolean;
   status?: string;
   pending?: string;
   unsure?: boolean;
+
+  /** Depending on the phase, teamAssigned attribute can be derived from Github's assignee feature OR from the Github's issue description */
   teamAssigned?: Team;
 
   /** Fields derived from parsing of Github's issue description */
@@ -44,9 +46,16 @@ export class BaseIssue implements Issue {
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
     this.description = githubIssue.body;
+
+    this.severity = githubIssue.findLabel('severity');
+    this.type = githubIssue.findLabel('type');
+    this.responseTag = githubIssue.findLabel('response');
+    this.duplicated = !!githubIssue.findLabel('duplicated', false);
+    this.status = githubIssue.findLabel('unsure', false);
+    this.pending = githubIssue.findLabel('pending');
   }
 
-  public static createPhaseBugReportingIsusue(githubIssue: GithubIssue): Issue {
+  public static createPhaseBugReportingIssue(githubIssue: GithubIssue): BaseIssue {
     return new BaseIssue(githubIssue);
   }
 
