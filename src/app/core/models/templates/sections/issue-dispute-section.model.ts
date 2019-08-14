@@ -20,9 +20,9 @@ export class IssueDisputeSection extends Section {
 
   toString(): string {
     let toString = '';
-    toString += this.header.toString();
+    toString += `${this.header.toString()}\n`;
     for (const dispute of this.disputes) {
-      toString += dispute.toString();
+      toString += `${dispute.toString()}\n`;
     }
     return toString;
   }

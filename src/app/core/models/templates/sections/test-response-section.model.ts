@@ -13,8 +13,8 @@ export class TesterResponseSection extends Section {
         'gi');
       while (matches = regex.exec(this.content)) {
         if (matches) {
-          const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
-          this.testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement.trim()));
+          const [regexString, title, description, disagreeCheckbox, reasonForDisagreement] = matches;
+          this.testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDisagreement.trim()));
         }
       }
     }
@@ -22,9 +22,9 @@ export class TesterResponseSection extends Section {
 
   toString(): string {
     let toString = '';
-    toString += this.header.toString();
+    toString += `${this.header.toString()}\n`;
     for (const response of this.testerResponses) {
-      toString += response.toString() + '\n';
+      toString += `${response.toString()}\n`;
     }
     return toString;
   }

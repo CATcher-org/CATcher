@@ -26,4 +26,13 @@ export class ModerationSection extends Section {
   get todoList(): string[] {
     return this.disputesToResolve.map(e => e.todo);
   }
+
+  toString(): string {
+    let toString = '';
+    toString += `${this.header.toString()}\n`;
+    for (const dispute of this.disputesToResolve) {
+      toString += `${dispute.toTutorResponseString()}\n`;
+    }
+    return toString;
+  }
 }
