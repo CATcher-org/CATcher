@@ -5,6 +5,7 @@ import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser'
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ErrorHandlingService } from './error-handling.service';
+import {GithubIssue} from '../models/github-issue.model';
 const Octokit = require('@octokit/rest');
 
 
@@ -44,7 +45,7 @@ export class GithubService {
   /**
    * Will return an Observable with array of issues in JSON format.
    */
-  fetchIssues(filter?: {}): Observable<Array<{}>> {
+  fetchIssues(filter?: {}): Observable<Array<GithubIssue>> {
     return this.getNumberOfIssuePages(filter).pipe(
       mergeMap((numOfPages) => {
         const apiCalls = [];
@@ -67,7 +68,7 @@ export class GithubService {
     );
   }
 
-  fetchIssue(id: number): Observable<{}> {
+  fetchIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, number: id})).pipe(
       map((response) => {
         return response['data'];
