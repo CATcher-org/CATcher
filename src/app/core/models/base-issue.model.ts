@@ -46,7 +46,7 @@ export class BaseIssue implements Issue {
     this.description = githubIssue.body;
   }
 
-  public static createPhaseBugReportingIsusue(githubIssue: GithubIssue): BaseIssue {
+  public static createPhaseBugReportingIsusue(githubIssue: GithubIssue): Issue {
     return new BaseIssue(githubIssue);
   }
 
@@ -67,7 +67,7 @@ export class BaseIssue implements Issue {
     return issue;
   }
 
-  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[]) {
+  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
     const issue = new BaseIssue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
     const todoTemplate = new TutorModerationTodoTemplate(githubComments);
@@ -76,5 +76,6 @@ export class BaseIssue implements Issue {
     issue.teamResponse = issueTemplate.teamResponse.content;
     issue.issueDisputes = issueTemplate.dispute.disputes;
     issue.todoList = todoTemplate.moderation.todoList;
+    return issue;
   }
 }
