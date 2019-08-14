@@ -17,8 +17,11 @@ export class IssueCommentService {
   constructor(private githubService: GithubService) {
   }
 
-  getIssueComments(issueId: number): Observable<IssueComments> {
-    return this.initializeIssueComments(issueId);
+  getIssueComments(issueId: number, isIssueReloaded: boolean): Observable<IssueComments> {
+    if (!this.comments.get(issueId) || isIssueReloaded) {
+      return this.initializeIssueComments(issueId);
+    }
+    return of(this.comments.get(issueId));
   }
 
   createIssueComment(issueId: number, description: string): Observable<IssueComment> {
@@ -85,8 +88,15 @@ export class IssueCommentService {
   /**
    * To add/update an issue.
    */
-  updateLocalStore(commentsToUpdate: IssueComments) {
-    this.comments.set(commentsToUpdate.issueId, commentsToUpdate);
+  updateLocalStore(commentToUpdate: IssueComment, issueId: number) {
+    const issueComments = this.comments.get(issueId);
+    for (const i in issueComments.comments) {
+      if (issueComments.comments[i].id === commentToUpdate.id) {
+        issueComments.comments[i] = commentToUpdate;
+        break;
+      }
+    }
+    this.comments.set(issueId, issueComments);
   }
 
   reset() {
