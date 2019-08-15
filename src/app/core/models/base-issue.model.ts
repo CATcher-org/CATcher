@@ -1,15 +1,15 @@
-import {Issue} from './issue.model';
+import { TeamResponseTemplate } from './templates/team-response-template.model';
+import { Issue } from './issue.model';
+import { IssueDispute } from './issue-dispute.model';
+import { IssueComment } from './comment.model';
+import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
+import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
+import { Team } from './team.model';
+import { TesterResponse } from './tester-response.model';
+import { TesterResponseTemplate } from './templates/tester-response-template.model';
+import { GithubIssue } from './github-issue.model';
 import * as moment from 'moment';
-import {GithubIssue} from './github-issue.model';
-import {Team} from './team.model';
-import {TesterResponse} from './tester-response.model';
-import {IssueComment} from './comment.model';
-import {IssueDispute} from './issue-dispute.model';
-import {TeamResponseTemplate} from './templates/team-response-template.model';
-import {GithubComment} from './github-comment.model';
-import {TesterResponseTemplate} from './templates/tester-response-template.model';
-import {TutorModerationIssueTemplate} from './templates/tutor-moderation-issue-template.model';
-import {TutorModerationTodoTemplate} from './templates/tutor-moderation-todo-template.model';
+import { GithubComment } from './github-comment.model';
 
 export class BaseIssue implements Issue {
   /** Basic Fields */
@@ -42,11 +42,13 @@ export class BaseIssue implements Issue {
 
 
   protected constructor(githubIssue: GithubIssue) {
+    /** Basic Fields */
     this.id = +githubIssue.number;
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
     this.description = githubIssue.body;
 
+    /** Fields derived from Labels */
     this.severity = githubIssue.findLabel('severity');
     this.type = githubIssue.findLabel('type');
     this.responseTag = githubIssue.findLabel('response');

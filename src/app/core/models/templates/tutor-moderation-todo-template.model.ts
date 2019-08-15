@@ -1,6 +1,7 @@
-import {Header, Template} from './template.model';
-import {GithubComment} from '../github-comment.model';
-import {ModerationSection} from './sections/moderation-section.model';
+import { Header, Template } from './template.model';
+import { ModerationSection } from './sections/moderation-section.model';
+import { GithubComment } from '../github-comment.model';
+
 
 const tutorModerationTodoHeaders = {
   todo: new Header('Tutor Moderation', 1),

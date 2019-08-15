@@ -1,4 +1,4 @@
-import {Section, SectionalDependency} from './section.model';
+import { Section, SectionalDependency } from './section.model';
 
 export class DuplicateOfSection extends Section {
   private readonly duplicateOfRegex = /duplicate of\s*#(\d+)/i;

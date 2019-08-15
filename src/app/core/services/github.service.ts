@@ -5,7 +5,7 @@ import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser'
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ErrorHandlingService } from './error-handling.service';
-import {GithubIssue} from '../models/github-issue.model';
+import { GithubIssue } from '../models/github-issue.model';
 const Octokit = require('@octokit/rest');
 
 

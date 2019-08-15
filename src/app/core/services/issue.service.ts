@@ -25,8 +25,8 @@ import { TesterResponse } from '../models/tester-response.model';
 import { IssueComments, IssueComment } from '../models/comment.model';
 import { IssueDispute } from '../models/issue-dispute.model';
 import { UserRole } from '../../core/models/user.model';
-import {BaseIssue} from '../models/base-issue.model';
-import {GithubIssue} from '../models/github-issue.model';
+import { BaseIssue } from '../models/base-issue.model';
+import { GithubIssue } from '../models/github-issue.model';
 
 @Injectable({
   providedIn: 'root',

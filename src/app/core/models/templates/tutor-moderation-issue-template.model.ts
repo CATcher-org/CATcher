@@ -1,7 +1,8 @@
-import {Header, Template} from './template.model';
-import {Section} from './sections/section.model';
-import {GithubIssue} from '../github-issue.model';
-import {IssueDisputeSection} from './sections/issue-dispute-section.model';
+import { Header, Template } from './template.model';
+import { IssueDisputeSection } from './sections/issue-dispute-section.model';
+import { Section } from './sections/section.model';
+import { GithubIssue } from '../github-issue.model';
+
 
 const tutorModerationIssueDescriptionHeaders = {
   description: new Header('Description', 1),

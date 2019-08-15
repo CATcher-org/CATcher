@@ -1,7 +1,7 @@
-import {GithubIssue} from '../github-issue.model';
-import {Header, Template} from './template.model';
-import {Section} from './sections/section.model';
-import {DuplicateOfSection} from './sections/duplicate-of-section.model';
+import { DuplicateOfSection } from './sections/duplicate-of-section.model';
+import { Header, Template } from './template.model';
+import { Section } from './sections/section.model';
+import { GithubIssue } from '../github-issue.model';
 
 const teamResponseHeaders = {
   description: new Header('Description', 1),
