@@ -33,9 +33,30 @@ export class GithubIssue {
    * @param name Depending on the isCategorical flag, this name either refers to the category name of label or the exact name of label.
    * @param isCategorical Whether the label is categorical.
    */
-  findLabel(name: string, isCategorical: boolean = true) {
-    const label = this.labels.find(l => (l.isCategorical() === isCategorical && l.getCategory() === name));
-    return label ? label.getCategoryValue() : undefined;
+  findLabel(name: string, isCategorical: boolean = true): string {
+    if (!isCategorical) {
+      const label = this.labels.find(l => (!l.isCategorical() && l.name === name));
+      return label ? label.getCategoryValue() : undefined;
+    }
+
+    // Find labels with the same category name as what is specified in the parameter.
+    const labels = this.labels.filter(l => (l.isCategorical() && l.getCategory() === name));
+    if (labels.length === 0) {
+      return undefined;
+    } else if (labels.length === 1) {
+      return labels[0].getCategoryValue();
+    } else {
+      // If Label order is not specified, return the first label value else
+      // If Label order is specified, return the highest ranking label value
+      if (!GithubLabel.LABEL_ORDER[name]) {
+        return labels[0].getCategoryValue();
+      } else {
+        const order = GithubLabel.LABEL_ORDER[name];
+        return labels.reduce((result, currLabel) => {
+          return order[currLabel.getCategoryValue()] > order[result.getCategoryValue()] ? currLabel : result;
+        }).getCategoryValue();
+      }
+    }
   }
 
   findTeamId(): string {
@@ -44,6 +65,19 @@ export class GithubIssue {
 }
 
 export class GithubLabel {
+  static readonly LABEL_ORDER = {
+    severity: { Low: 0, Medium: 1, High: 2 },
+    type: { DocumentationBug: 0, FunctionalityBug: 1 },
+  };
+  static readonly LABELS = {
+    severity: 'severity',
+    type: 'type',
+    response: 'response',
+    duplicated: 'duplicated',
+    unsure: 'unsure',
+    pending: 'pending'
+  };
+
   color: string;
   id: number;
   name: string;
@@ -57,7 +91,7 @@ export class GithubLabel {
     if (this.isCategorical()) {
       return this.name.split('.')[0];
     } else {
-      return '';
+      return this.name;
     }
   }
 

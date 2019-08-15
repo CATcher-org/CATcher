@@ -7,7 +7,7 @@ import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-t
 import { Team } from './team.model';
 import { TesterResponse } from './tester-response.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
-import { GithubIssue } from './github-issue.model';
+import { GithubIssue, GithubLabel } from './github-issue.model';
 import * as moment from 'moment';
 import { GithubComment } from './github-comment.model';
 
@@ -49,12 +49,12 @@ export class BaseIssue implements Issue {
     this.description = githubIssue.body;
 
     /** Fields derived from Labels */
-    this.severity = githubIssue.findLabel('severity');
-    this.type = githubIssue.findLabel('type');
-    this.responseTag = githubIssue.findLabel('response');
-    this.duplicated = !!githubIssue.findLabel('duplicated', false);
-    this.status = githubIssue.findLabel('unsure', false);
-    this.pending = githubIssue.findLabel('pending');
+    this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity);
+    this.type = githubIssue.findLabel(GithubLabel.LABELS.type);
+    this.responseTag = githubIssue.findLabel(GithubLabel.LABELS.response);
+    this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
+    this.status = githubIssue.findLabel(GithubLabel.LABELS.unsure, false);
+    this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
   public static createPhaseBugReportingIssue(githubIssue: GithubIssue): BaseIssue {
