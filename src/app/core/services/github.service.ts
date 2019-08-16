@@ -5,7 +5,7 @@ import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser'
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ErrorHandlingService } from './error-handling.service';
-import {GithubIssue} from '../models/github-issue.model';
+import { GithubIssue } from '../models/github-issue.model';
 const Octokit = require('@octokit/rest');
 
 
@@ -56,12 +56,11 @@ export class GithubService {
         return forkJoin(apiCalls);
       }),
       map((resultArray) => {
-        let collatedData = [];
+        const collatedData = [];
         for (const response of resultArray) {
-          collatedData = [
-            ...collatedData,
-            ...response['data'],
-          ];
+          for (const issue of response['data']) {
+            collatedData.push(new GithubIssue(issue));
+          }
         }
         return collatedData;
       })
@@ -71,7 +70,7 @@ export class GithubService {
   fetchIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, number: id})).pipe(
       map((response) => {
-        return response['data'];
+        return new GithubIssue(response['data']);
       })
     );
   }
@@ -124,18 +123,18 @@ export class GithubService {
     octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, current_name: labelName, color: labelColor});
   }
 
-  closeIssue(id: number): Observable<{}> {
+  closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, state: 'closed'})).pipe(
       map(response => {
-        return response['data'];
+        return new GithubIssue(response['data']);
       })
     );
   }
 
-  createIssue(title: string, description: string, labels: string[]): Observable<{}> {
+  createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels})).pipe(
       map(response => {
-        return response['data'];
+        return new GithubIssue(response['data']);
       })
     );
   }
@@ -149,11 +148,11 @@ export class GithubService {
     );
   }
 
-  updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<{}> {
+  updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
       map(response => {
-        return response['data'];
+        return new GithubIssue(response['data']);
       })
     );
   }

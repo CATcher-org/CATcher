@@ -1,5 +1,5 @@
-import {Section, SectionalDependency} from './section.model';
-import {TesterResponse} from '../../tester-response.model';
+import { TesterResponse } from '../../tester-response.model';
+import { Section, SectionalDependency } from './section.model';
 
 export class TesterResponseSection extends Section {
   testerResponses: TesterResponse[] = [];

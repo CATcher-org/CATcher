@@ -1,4 +1,4 @@
-import {SectionalDependency} from './sections/section.model';
+import { SectionalDependency } from './sections/section.model';
 
 export abstract class Template {
   headers: Header[];

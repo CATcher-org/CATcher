@@ -1,5 +1,5 @@
-import {Section, SectionalDependency} from './section.model';
-import {IssueDispute} from '../../issue-dispute.model';
+import { IssueDispute } from '../../issue-dispute.model';
+import { Section, SectionalDependency } from './section.model';
 
 export class ModerationSection extends Section {
   disputesToResolve: IssueDispute[];

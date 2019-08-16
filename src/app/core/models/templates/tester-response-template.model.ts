@@ -1,7 +1,8 @@
-import {Header, Template} from './template.model';
-import {Section} from './sections/section.model';
-import {GithubComment} from '../github-comment.model';
-import {TesterResponseSection} from './sections/test-response-section.model';
+import { Header, Template } from './template.model';
+import { TesterResponseSection } from './sections/test-response-section.model';
+import { Section } from './sections/section.model';
+import { GithubComment } from '../github-comment.model';
+
 
 const testerResponseHeaders = {
   teamResponse: new Header('Team\'s Response', 1),

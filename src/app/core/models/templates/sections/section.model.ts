@@ -5,7 +5,7 @@
  * Reason for the dependencies on other headers: We need them to create a regex expression that is capable of parsing the current
  *                                               section out of the string.
  */
-import {Header} from '../template.model';
+import { Header } from '../template.model';
 
 export interface SectionalDependency {
   sectionHeader: Header;
