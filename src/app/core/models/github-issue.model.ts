@@ -36,7 +36,7 @@ export class GithubIssue {
   findLabel(name: string, isCategorical: boolean = true): string {
     if (!isCategorical) {
       const label = this.labels.find(l => (!l.isCategorical() && l.name === name));
-      return label ? label.getCategoryValue() : undefined;
+      return label ? label.getValue() : undefined;
     }
 
     // Find labels with the same category name as what is specified in the parameter.
@@ -44,17 +44,17 @@ export class GithubIssue {
     if (labels.length === 0) {
       return undefined;
     } else if (labels.length === 1) {
-      return labels[0].getCategoryValue();
+      return labels[0].getValue();
     } else {
       // If Label order is not specified, return the first label value else
       // If Label order is specified, return the highest ranking label value
       if (!GithubLabel.LABEL_ORDER[name]) {
-        return labels[0].getCategoryValue();
+        return labels[0].getValue();
       } else {
         const order = GithubLabel.LABEL_ORDER[name];
         return labels.reduce((result, currLabel) => {
-          return order[currLabel.getCategoryValue()] > order[result.getCategoryValue()] ? currLabel : result;
-        }).getCategoryValue();
+          return order[currLabel.getValue()] > order[result.getValue()] ? currLabel : result;
+        }).getValue();
       }
     }
   }
@@ -95,7 +95,7 @@ export class GithubLabel {
     }
   }
 
-  getCategoryValue(): string {
+  getValue(): string {
     if (this.isCategorical()) {
       return this.name.split('.')[1];
     } else {
