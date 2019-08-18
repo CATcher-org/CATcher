@@ -15,6 +15,7 @@ Currently runs with:
 This application will support the following order of workflow:
 1. **Bug Reporting**: Testers will be informed of the teams they will be testing. Following which, they will be able to start creating new bug reports during this phase.
 2. **Team's Response**: Teams will be able to respond to the bugs that are reported during the bug _reporting phase_.
+3. **Tester's Response**: Testers will be able to respond to the team's acknowledgement / rejection of the bugs submitted.
 3. **Evaluation**: Tutors and Admins will be able to view the bug reports and their respective teams' response. They can evaluate the responses, change the severity and status of the bug reports if needed.
 
 # 2. Getting Started
@@ -31,17 +32,27 @@ A Github organization must be created first. The organization must have the foll
 
 
 ## 2.2. Set up Github Repositories
-This application assumes 4 repositories will be created under the above organization.
+This application 4 separate repositories, one for each phase in the bug reporting process.
 
 For each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue description and comments in a form of a link. As for images, the actual image will be displayed.
 
-### 2.2.1. `public_data` Repository
-The name of this repository must be **exactly** `public_data`. This repository must contain 1 file called `data.csv`. This `.csv` file, will contain the following information:
+**NOTE**: The repositories used in the *Bug Reporting Phase* and *Tester's Response Phase* are to be located in the individual User's Repository.
+
+### 2.2.1. Settings Repository
+The name of this repository must be stated in the application during login. This repository must contain a `data.csv` and a `settings.json` file. 
+
+The `data.csv` file, must contain the following information:
 1. Roles of users. (Student, Tutor, Admin)
 2. Student's team allocation. For each student, the `.csv` file must specify which team the student is in.
 3. Tutor's team allocation. For each tutor, the `.csv` must specify which teams the tutor is assigned to.
 
 An example of `data.csv`: https://github.com/CATcher-org/public_data/blob/master/data.csv
+
+The `settings.json` file must contain the following information:
+1. The list of open phases represented by `"openPhases": []`.
+2. The name of the repository that each phase is to utilize.
+
+An example of `settings.json`: https://github.com/CATcher-org/public_data/blob/master/settings.json
 
 ### 2.2.2. Bug Reporting Repository
 All the bug reports that are created from the application will be posted into this repository.
@@ -66,7 +77,19 @@ This repository must include the following issue tags:
 
 **Team** and **Tutorial** tags are compulsory tags for each issue.
 
-### 2.2.4. Evaluation Repository
+### 2.2.4 Tester's Response Repository
+After the teams have responded to the bugs reported by their testers, the issues posted during that phase will be transferred over to this repository, with the identity of the poster anonymized.
+
+This repository will then be used by the application for individual tester to respond to the team's assessment of the bug they had reported initially.
+
+This repository must include the following issue tags:
+1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
+2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
+3. **Response**: `response.Accepted`, `response.CannotReproduce`, `response.IssueUnclear`, `response.Rejected`
+4. **Status**: `status.Done`, `status.Incomplete`
+8. **Duplicate**: `duplicate`
+
+### 2.2.5. Evaluation Repository
 After the teams have responded to the bugs reported by their testers. The issues and their respective responses from `pe-results` will be transferred over to this repository. 
 
 The application will then use this repository to post tutor's or admin's evaluation of each team's response and their respective bug report.
@@ -78,6 +101,7 @@ This repository must include the following issue tags:
 4. **Team**: `team.*`,  with the star representing the team number.
 5. **Tutorial**: `tutorial.*`, with the star representing tutorial name.
 6. **Duplicate**: `duplicate`
+7. **Pending**: `pending.1`, `pending.2`, `pending.3`.
 
 **Team** and **Tutorial** tags are compulsory for each issue.
 
@@ -104,11 +128,11 @@ You can download the latest release from https://github.com/CATcher-org/CATcher/
 Start the application by clicking on the executable file, no installation is required.
 
 The login page will be displayed.
-![login](https://i.imgur.com/zb1tN2k.png)
+![login](https://i.imgur.com/6APFI3J.png)
 
 Use your Github credentials for username and password.
 
-**Encoded Text** will contain the urls of the 3 different repositories that are created in Section 2.2.2, 2.2.3 and 2.2.4.
+**Settings Location** refers to the name of the Organization and Repositoriy that contains the `settings.json` mentioned in *2.2.1*.
 
 # 3. Development
 1. Clone this repository locally.
@@ -117,10 +141,9 @@ Use your Github credentials for username and password.
 
 3. Compile and start the application: `npm start`
 
-After compilation, an application window will start up which runs on localhost:4200. You can disable "Developer Tools" by commenting `win.webContents.openDevTools();` in `main.ts`.
+After compilation, an application window will start up which runs on localhost:4200. You can disable "Developer Tools" by un-commenting `enableProdMode();` in `main.ts`.
 
 # 4. Commands
-
 |Command|Description|
 |--|--|
 |`npm run build`| Build the app. Your built files are in the /dist folder. |
@@ -138,9 +161,4 @@ Currently, the application only support 1 response for each phase. So a commenti
 
 ## 5.2. Poll for updates
 The state of the application is based on the initial log-in in which the data will be pulled from Github. However, this state is not updated as the user uses the application. This might lead to problems where the user is shown an outdated version of an issue.
-
-## 5.3. Add Tester's response phase (Right after the Team's Response)
-The rational for this phase is to ease the workload of tutors and admins during the evaluation phase. In this phase, testers who reported the bug will be able to look at the team's response to their bug report. If they think that the response is unjust, they can object it.
-
-During the evaluation phase, the tutors and admins just need focus on those bug reports with objections. Those without objections will not be moderated.
 
