@@ -61,53 +61,20 @@ An example of `settings.json`: https://github.com/CATcher-org/public_data/blob/m
 ### 2.2.2. Bug Reporting Repository
 All the bug reports that are created from the application will be posted into this repository.
 
-This repository must include the following issue tags:
-1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
-2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
-
 ### 2.2.3. Team's Response Repository
 After the bug reporting phase, the issues posted during that phase will be transferred over to this repository, with the identity of the poster anonymized.
 
 This repository will then be used by the application for individual teams to respond to the bugs that are discovered by the testers testing their application.
-
-This repository must include the following issue tags:
-1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
-2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
-3. **Response**: `response.Accepted`, `response.CannotReproduce`, `response.IssueUnclear`, `response.Rejected`
-4. **Status**: `status.Done`, `status.Incomplete`
-5. **Team**: `team.*`, with the star representing the team number.
-7. **Tutorial**: `tutorial.*`, with the star representing tutorial name.
-8. **Duplicate**: `duplicate`
-
-**Team** and **Tutorial** tags are compulsory tags for each issue.
 
 ### 2.2.4 Tester's Response Repository
 After the teams have responded to the bugs reported by their testers, the issues posted during that phase will be transferred over to this repository, with the identity of the poster anonymized.
 
 This repository will then be used by the application for individual tester to respond to the team's assessment of the bug they had reported initially.
 
-This repository must include the following issue tags:
-1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
-2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
-3. **Response**: `response.Accepted`, `response.CannotReproduce`, `response.IssueUnclear`, `response.Rejected`
-4. **Status**: `status.Done`, `status.Incomplete`
-8. **Duplicate**: `duplicate`
-
 ### 2.2.5. Evaluation Repository
-After the teams have responded to the bugs reported by their testers. The issues and their respective responses from `pe-results` will be transferred over to this repository. 
+After the testers have responded to the bug report responses. The issues and their respective information from the Tester's Response Phase will be transferred over to this repository. 
 
 The application will then use this repository to post tutor's or admin's evaluation of each team's response and their respective bug report.
-
-This repository must include the following issue tags:
-1. **Severity**: `severity.High`, `severity.Medium`, `severity.Low`
-2. **Type**: `type.DocumentationBug`, `type.FunctionalityBug`
-3. **Response**: `response.Accepted`, `response.CannotReproduce`, `response.IssueUnclear`, `response.Rejected`
-4. **Team**: `team.*`,  with the star representing the team number.
-5. **Tutorial**: `tutorial.*`, with the star representing tutorial name.
-6. **Duplicate**: `duplicate`
-7. **Pending**: `pending.1`, `pending.2`, `pending.3`.
-
-**Team** and **Tutorial** tags are compulsory for each issue.
 
 ## 2.3. Set up access rights
 For each of the teams, follow the steps below to assign the right access level to the repositories. 
