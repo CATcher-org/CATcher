@@ -32,14 +32,18 @@ A Github organization must be created first. The organization must have the foll
 
 
 ## 2.2. Set up Github Repositories
-This application 4 separate repositories, one for each phase in the bug reporting process.
+This application requires 4 separate repositories.
+1. Settings Repository
+2. Bug Testing Phase / Tester's Response Phase Repository (**Both** phases utilize the same repository)
+3. Team's Response Phase Repository
+4. Moderation Phase Repository
 
 For each phase, users with write access will be able to upload files (e.g. screenshots, .txt files, etc...) onto the repository's `/file` folder. These files are used in conjuction with issue description and comments in a form of a link. As for images, the actual image will be displayed.
 
 **NOTE**: The repositories used in the *Bug Reporting Phase* and *Tester's Response Phase* are to be located in the individual User's Repository.
 
 ### 2.2.1. Settings Repository
-The name of this repository must be stated in the application during login. This repository must contain a `data.csv` and a `settings.json` file. 
+The name of this repository must be stated in the application during login. This repository must contain a **`data.csv`** and a **`settings.json`** file. 
 
 The `data.csv` file, must contain the following information:
 1. Roles of users. (Student, Tutor, Admin)
@@ -132,7 +136,7 @@ The login page will be displayed.
 
 Use your Github credentials for username and password.
 
-**Settings Location** refers to the name of the Organization and Repositoriy that contains the `settings.json` mentioned in *2.2.1*.
+**Settings Location** refers to the name of the Organization and Repository that contains the `settings.json` mentioned in *2.2.1*.
 
 # 3. Development
 1. Clone this repository locally.
