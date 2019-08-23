@@ -432,7 +432,7 @@ export class IssueService {
     }
 
     // A temp fix due to the refactoring process. After refactoring is complete, we can remove this whole chunk of code below.
-    let issueInJson = { ...githubIssue };
+    const issueInJson = { ...githubIssue };
     this.getParsedBody(issueInJson);
     const issueId = +issueInJson['number'];
     return this.issueCommentService.getIssueComments(issueId, this.isIssueReloaded).pipe(
