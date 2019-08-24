@@ -4,8 +4,10 @@ import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Issue, SEVERITY_ORDER, STATUS } from '../../core/models/issue.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { finalize, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import {Observable, of} from 'rxjs';
 import { LabelService } from '../../core/services/label.service';
+import {IssueCommentService} from '../../core/services/issue-comment.service';
+import {IssueComment} from '../../core/models/comment.model';
 
 @Component({
   selector: 'app-new-team-response',
@@ -20,9 +22,11 @@ export class NewTeamResponseComponent implements OnInit {
   isFormPending = false;
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
+  @Output() commentUpdated = new EventEmitter<IssueComment>();
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
+              private issueCommentService: IssueCommentService,
               public labelService: LabelService,
               private errorHandlingService: ErrorHandlingService) { }
 
@@ -59,7 +63,39 @@ export class NewTeamResponseComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    this.issueService.updateIssue({
+    const latestIssue = this.getUpdatedIssue();
+    const cmtEmitter = this.commentUpdated;
+    this.issueService.updateIssue(latestIssue)
+      .subscribe(() => {
+        this.issueUpdated.emit(latestIssue);
+
+        // New Team Response has no pre-existing comments hence new comment will be added.
+        const newCommentDescription = this.issueCommentService.
+        createGithubTeamResponse(this.description.value, this.duplicateOf.value);
+
+        this.issueCommentService.createIssueComment(this.issue.id, newCommentDescription)
+          .pipe(
+            map((updatedComment) => {
+              // tests
+              console.log('here');
+              cmtEmitter.emit(updatedComment);
+              console.log('emitted?');
+            }),
+            map(() => console.log(this.issue))
+          ).subscribe(
+          () => {
+            form.resetForm();
+            this.isFormPending = false;
+          }, (error) => {
+            this.errorHandlingService.handleHttpError(error);
+          });
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error);
+      });
+  }
+
+  getUpdatedIssue() {
+    return <Issue>{
       ...this.issue,
       severity: this.severity.value,
       type: this.type.value,
@@ -68,13 +104,8 @@ export class NewTeamResponseComponent implements OnInit {
       duplicated: this.duplicated.value,
       status: STATUS.Done,
       teamResponse: this.description.value,
-      duplicateOf: this.duplicateOf.value,
-    }).pipe(finalize(() => this.isFormPending = false)).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(updatedIssue);
-      form.resetForm();
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+      duplicateOf: this.duplicateOf.value
+    };
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {

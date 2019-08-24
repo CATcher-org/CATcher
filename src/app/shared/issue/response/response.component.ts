@@ -6,6 +6,8 @@ import {finalize} from 'rxjs/operators';
 import {PermissionService} from '../../../core/services/permission.service';
 import {Phase, PhaseService} from '../../../core/services/phase.service';
 import {Issue} from '../../../core/models/issue.model';
+import {IssueCommentService} from '../../../core/services/issue-comment.service';
+import {IssueComment} from '../../../core/models/comment.model';
 
 @Component({
   selector: 'app-issue-response',
@@ -36,9 +38,11 @@ export class ResponseComponent implements OnInit {
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
+  @Output() commentUpdated = new EventEmitter<IssueComment>();
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
+              private issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService,
               private permissions: PermissionService,
               private phaseService: PhaseService) {
@@ -66,13 +70,27 @@ export class ResponseComponent implements OnInit {
       return;
     }
 
+    const latestIssue = this.getUpdatedIssue();
+
     this.isSavePending = true;
-    this.issueService.updateIssue(this.getUpdatedIssue()).pipe(finalize(() => {
-      this.updateEditState.emit(false);
-      this.isSavePending = false;
-    })).subscribe((updatedIssue: Issue) => {
+    this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
       this.issueUpdated.emit(updatedIssue);
       form.resetForm();
+
+      if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
+        // For Team Response phase, where the items are in the issue's comment
+        latestIssue.issueComment.description = this.issueCommentService.
+        createGithubTeamResponse(latestIssue.teamResponse, latestIssue.duplicateOf);
+
+        this.issueCommentService.updateIssueComment(latestIssue.issueComment).subscribe(
+          (updatedComment) => {
+            this.commentUpdated.emit(updatedComment);
+            this.updateEditState.emit(false);
+            this.isSavePending = false;
+          }, (error) => {
+            this.errorHandlingService.handleHttpError(error);
+          });
+      }
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });

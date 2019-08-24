@@ -14,13 +14,13 @@
         <!-- Team's Response -->
         <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isIssueLoading && issue.teamResponse" 
           [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)"
-          attributeName="teamResponse" (issueUpdated)="updateIssue($event)">
+          attributeName="teamResponse" (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
         </app-issue-response>
 
         <!-- New Team's Response -->
         <app-new-team-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
           permissions.isTeamResponseEditable()  && !issue.teamResponse" [issue]="issue"
-          (issueUpdated)="updateIssue($event)">
+          (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
         </app-new-team-response>
 
         <!-- Tester's Response -->
