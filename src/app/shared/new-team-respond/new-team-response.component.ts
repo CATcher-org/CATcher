@@ -3,11 +3,11 @@ import { IssueService } from '../../core/services/issue.service';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Issue, SEVERITY_ORDER, STATUS } from '../../core/models/issue.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { finalize, map } from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { LabelService } from '../../core/services/label.service';
-import {IssueCommentService} from '../../core/services/issue-comment.service';
-import {IssueComment} from '../../core/models/comment.model';
+import { IssueCommentService } from '../../core/services/issue-comment.service';
+import { IssueComment } from '../../core/models/comment.model';
 
 @Component({
   selector: 'app-new-team-response',
@@ -22,7 +22,6 @@ export class NewTeamResponseComponent implements OnInit {
   isFormPending = false;
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
-  @Output() commentUpdated = new EventEmitter<IssueComment>();
   @Output() updatedCommentEmitter = new EventEmitter<IssueComment>();
 
   constructor(private issueService: IssueService,
