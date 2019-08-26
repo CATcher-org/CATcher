@@ -69,13 +69,10 @@ export class ResponseComponent implements OnInit {
     if (this.responseForm.invalid) {
       return;
     }
-
     const latestIssue = this.getUpdatedIssue();
 
     this.isSavePending = true;
     this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(updatedIssue);
-      form.resetForm();
 
       if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
         // For Team Response phase, where the items are in the issue's comment
@@ -87,9 +84,16 @@ export class ResponseComponent implements OnInit {
             this.commentUpdated.emit(updatedComment);
             this.updateEditState.emit(false);
             this.isSavePending = false;
+            updatedIssue.issueComment = updatedComment;
+            updatedIssue.teamResponse = this.issueService.parseTeamResponseForTeamResponsePhase(updatedComment.description);
+            this.issueUpdated.emit(updatedIssue);
+            form.resetForm();
           }, (error) => {
             this.errorHandlingService.handleHttpError(error);
           });
+      } else {
+        this.issueUpdated.emit(updatedIssue);
+        form.resetForm();
       }
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);

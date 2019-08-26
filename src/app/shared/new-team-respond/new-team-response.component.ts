@@ -23,6 +23,7 @@ export class NewTeamResponseComponent implements OnInit {
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() commentUpdated = new EventEmitter<IssueComment>();
+  @Output() updatedCommentEmitter = new EventEmitter<IssueComment>();
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
@@ -55,7 +56,6 @@ export class NewTeamResponseComponent implements OnInit {
       this.duplicateOf.updateValueAndValidity();
       this.responseTag.updateValueAndValidity();
     });
-
   }
 
   submitNewTeamResponse(form: NgForm) {
@@ -64,30 +64,18 @@ export class NewTeamResponseComponent implements OnInit {
     }
     this.isFormPending = true;
     const latestIssue = this.getUpdatedIssue();
-    const cmtEmitter = this.commentUpdated;
+
     this.issueService.updateIssue(latestIssue)
       .subscribe(() => {
-        this.issueUpdated.emit(latestIssue);
 
         // New Team Response has no pre-existing comments hence new comment will be added.
-        const newCommentDescription = this.issueCommentService.
-        createGithubTeamResponse(this.description.value, this.duplicateOf.value);
-
+        const newCommentDescription = this.issueCommentService.createGithubTeamResponse(this.description.value, this.duplicateOf.value);
         this.issueCommentService.createIssueComment(this.issue.id, newCommentDescription)
-          .pipe(
-            map((updatedComment) => {
-              // tests
-              console.log('here');
-              cmtEmitter.emit(updatedComment);
-              console.log('emitted?');
-            }),
-            map(() => console.log(this.issue))
-          ).subscribe(
-          () => {
+          .subscribe((newComment: IssueComment) => {
+            this.updatedCommentEmitter.emit(newComment);
+            latestIssue.issueComment = newComment;
+            this.issueUpdated.emit(latestIssue);
             form.resetForm();
-            this.isFormPending = false;
-          }, (error) => {
-            this.errorHandlingService.handleHttpError(error);
           });
       }, (error) => {
         this.errorHandlingService.handleHttpError(error);

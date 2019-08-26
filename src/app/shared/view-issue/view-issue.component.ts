@@ -92,11 +92,9 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
   }
 
   updateComment(newComment: IssueComment) {
-    console.log('here too');
     this.issue.issueComment = newComment;
-    console.log(this.issue);
-    this.issueService.updateLocalStore(this.issue);
     this.issueCommentService.updateLocalStore(newComment, this.issueId);
+    this.issueService.updateLocalStore(this.issue);
   }
 
   updateDescriptionEditState(updatedState: boolean) {
