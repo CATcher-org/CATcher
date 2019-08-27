@@ -429,17 +429,11 @@ export class IssueService {
     return this.issueCommentService.getIssueComments(issueId, this.isIssueReloaded).pipe(
       map((issueComments: IssueComments) => {
         const issueComment = this.getIssueComment(issueComments);
-        let teamResponse;
-        if (!!issueComment) {
-          if (this.phaseService.currentPhase === Phase.phaseTesterResponse) {
-            teamResponse = this.parseTeamResponseForTesterResponsePhase(issueComment.description);
-          } else if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
-            teamResponse = this.parseTeamResponseForTeamResponsePhase(issueComment.description);
-          } else {
-            teamResponse = issueInJson['teamResponse'];
-          }
-        } else {
-          teamResponse = issueInJson['teamResponse'];
+        let teamResponse = issueInJson['teamResponse'];
+        if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTesterResponse) {
+          teamResponse = this.parseTeamResponseForTesterResponsePhase(issueComment.description);
+        } else if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTeamResponse) {
+          teamResponse = this.parseTeamResponseForTeamResponsePhase(issueComment.description);
         }
         const incompleteIssueDisputes: IssueDispute[] = issueInJson['issueDisputes'];
         this.isIssueReloaded = false;
