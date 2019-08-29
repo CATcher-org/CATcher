@@ -85,7 +85,7 @@
         <div *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
           (issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
           <mat-divider></mat-divider>
-          <app-duplicate-of-component [issue]="issue" (issueUpdated)="updateIssue($event)"></app-duplicate-of-component>
+          <app-duplicate-of-component [issue]="issue" (commentUpdated)="updateComment($event)" (issueUpdated)="updateIssue($event)"></app-duplicate-of-component>
         </div>
 
         <!-- Faulty issue warning -->  

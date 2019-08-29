@@ -485,6 +485,10 @@ export class IssueService {
     );
   }
 
+  /**
+   * Searches for a comment in the issue that matches the required template.
+   * @return IssueComment - Latest Comment that matches the required template.
+   */
   getIssueComment(issueComments: IssueComments): IssueComment {
     let regex = /# *Team\'?s Response[\n\r]*[\s\S]*# Items for the Tester to Verify/gi;
     if (this.phaseService.currentPhase === Phase.phaseModeration) {
@@ -493,7 +497,9 @@ export class IssueService {
       regex = /# Team's Response[\r\n]*[\S\s]*?[\r\n]*## Duplicate status \(if any\):[\r\n]*[\S\s]*/gi;
     }
 
-    for (const comment of issueComments.comments) {
+    // Re-Order the comments (Most Recent First)
+    const comments = issueComments.comments.reverse();
+    for (const comment of comments) {
       const matched = regex.exec(comment.description);
       if (matched) {
         return comment;

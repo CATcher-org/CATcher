@@ -16,6 +16,8 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MatCheckbox, MatSelect } from '@angular/material';
 import { PermissionService } from '../../../core/services/permission.service';
+import { IssueCommentService } from '../../../core/services/issue-comment.service';
+import { IssueComment } from '../../../core/models/comment.model';
 
 @Component({
   selector: 'app-duplicate-of-component',
@@ -30,6 +32,7 @@ export class DuplicateOfComponent implements OnInit {
   @Input() issue: Issue;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
+  @Output() commentUpdated = new EventEmitter<IssueComment>();
 
   @ViewChild(MatSelect) duplicateOfSelection: MatSelect;
   @ViewChild(MatCheckbox) duplicatedCheckbox: MatCheckbox;
@@ -40,6 +43,7 @@ export class DuplicateOfComponent implements OnInit {
   readonly MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE = 37;
 
   constructor(public issueService: IssueService,
+              public issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService) {
   }
@@ -66,12 +70,22 @@ export class DuplicateOfComponent implements OnInit {
   }
 
   updateDuplicateStatus(event) {
-    this.issueService.updateIssue({
+    const latestIssue = {
       ...this.issue,
       duplicated: !!event,
       duplicateOf: event ? event.value : null,
-    }).subscribe((updatedIssue) => {
-      this.issueUpdated.emit(updatedIssue);
+    };
+
+    latestIssue.issueComment.description = this.issueCommentService.
+    createGithubTeamResponse(latestIssue.teamResponse, latestIssue.duplicateOf);
+
+    this.issueService.updateIssue(latestIssue).subscribe((updatedIssue) => {
+      this.issueCommentService.updateIssueComment(latestIssue.issueComment).subscribe((updatedComment) => {
+        updatedIssue.duplicateOf = latestIssue.duplicateOf;
+        updatedIssue.issueComment = updatedComment;
+        this.commentUpdated.emit(updatedComment);
+        this.issueUpdated.emit(updatedIssue);
+      });
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
     });
