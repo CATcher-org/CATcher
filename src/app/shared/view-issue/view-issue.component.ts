@@ -88,13 +88,13 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
 
   updateIssue(newIssue: Issue) {
     this.issue = newIssue;
-    this.issueService.updateLocalStore(this.issue);
+    this.issueService.updateLocalStore(newIssue);
   }
 
   updateComment(newComment: IssueComment) {
     this.issue.issueComment = newComment;
-    this.issueService.updateLocalStore(this.issue);
     this.issueCommentService.updateLocalStore(newComment, this.issueId);
+    this.issueService.updateLocalStore(this.issue);
   }
 
   updateDescriptionEditState(updatedState: boolean) {
