@@ -430,10 +430,12 @@ export class IssueService {
       map((issueComments: IssueComments) => {
         const issueComment = this.getIssueComment(issueComments);
         let teamResponse = issueInJson['teamResponse'];
+        let duplicateOf = issueInJson['duplicateOf'];
         if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTesterResponse) {
           teamResponse = this.parseTeamResponseForTesterResponsePhase(issueComment.description);
         } else if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTeamResponse) {
           teamResponse = this.parseTeamResponseForTeamResponsePhase(issueComment.description);
+          duplicateOf = this.parseDuplicateOfForTeamResponsePhase(issueComment.description);
         }
         const incompleteIssueDisputes: IssueDispute[] = issueInJson['issueDisputes'];
         this.isIssueReloaded = false;
@@ -448,7 +450,7 @@ export class IssueService {
         todoList: this.getToDoList(issueComment, issueInJson['issueDisputes']),
         teamResponse: teamResponse,
         tutorResponse: issueInJson['tutorResponse'],
-        duplicateOf: issueInJson['duplicateOf'],
+        duplicateOf: +duplicateOf,
         testerResponses: this.phaseService.currentPhase === Phase.phaseTesterResponse && !!issueComment ?
           this.parseTesterResponse(issueComment.description) : issueInJson['testerResponses'],
         issueComment: issueComment,
@@ -554,6 +556,17 @@ export class IssueService {
       teamResponse = matches[1].trim();
     }
     return teamResponse;
+  }
+
+  parseDuplicateOfForTeamResponsePhase(toParse: string): string {
+    let duplicateOf = '';
+    const regex = /## Duplicate status \(if any\):[\r\n]*Duplicate of #(.*)/gi;
+    const matches = regex.exec(toParse);
+
+    if (matches && matches.length > this.MINIMUM_MATCHES) {
+      duplicateOf = matches[1].trim();
+    }
+    return duplicateOf;
   }
 
   // Template url: https://github.com/CATcher-org/templates#disputes

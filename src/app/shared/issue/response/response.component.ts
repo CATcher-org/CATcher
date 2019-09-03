@@ -70,7 +70,6 @@ export class ResponseComponent implements OnInit {
       return;
     }
     const latestIssue = this.getUpdatedIssue();
-
     this.isSavePending = true;
     this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
 
@@ -86,6 +85,7 @@ export class ResponseComponent implements OnInit {
             this.isSavePending = false;
             updatedIssue.issueComment = updatedComment;
             updatedIssue.teamResponse = this.issueService.parseTeamResponseForTeamResponsePhase(updatedComment.description);
+            updatedIssue.duplicateOf = +this.issueService.parseDuplicateOfForTeamResponsePhase(updatedComment.description);
             this.issueUpdated.emit(updatedIssue);
             form.resetForm();
           }, (error) => {
