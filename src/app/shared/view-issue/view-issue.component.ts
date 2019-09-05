@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, Input, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
@@ -34,7 +34,7 @@ export enum ISSUE_COMPONENTS {
   templateUrl: './view-issue.component.html',
   styleUrls: ['./view-issue.component.css']
 })
-export class ViewIssueComponent implements OnInit, OnDestroy {
+export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   issue: Issue;
   isIssueLoading = true;
   isTutorResponseEditing = false;
@@ -58,11 +58,13 @@ export class ViewIssueComponent implements OnInit, OnDestroy {
               public issueService: IssueService) { }
 
   ngOnInit() {
-    this.route.params.subscribe(
-      params => {
-        this.initializeIssue(this.issueId);
-      }
-    );
+    this.initializeIssue(this.issueId);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.issueId.firstChange) {
+      this.initializeIssue(changes.issueId.currentValue);
+    }
   }
 
   isComponentVisible(component: ISSUE_COMPONENTS): boolean {
