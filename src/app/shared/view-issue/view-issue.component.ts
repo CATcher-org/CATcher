@@ -63,7 +63,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, onChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (!changes.issueId.firstChange) {
-      this.initializeIssue(changes.issueId.currentValue)
+      this.initializeIssue(changes.issueId.currentValue);
     }
   }
 
