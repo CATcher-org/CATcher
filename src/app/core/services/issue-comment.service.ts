@@ -52,6 +52,12 @@ export class IssueCommentService {
           `# Items for the Tester to Verify\n${this.getTesterResponsesString(testerResponses)}`;
   }
 
+  // Template url: https://github.com/CATcher-org/templates#dev-response-phase
+  createGithubTeamResponse(teamResponse: string, duplicateOf: number): string {
+      return `# Team\'s Response\n${teamResponse}\n ` +
+        `## Duplicate status (if any):\n${duplicateOf ? `Duplicate of #${duplicateOf}` : `--`}`;
+  }
+
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(issueDisputes: IssueDispute[]): string {
     let tutorResponseString = '# Tutor Moderation\n\n';
