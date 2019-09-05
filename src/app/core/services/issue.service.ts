@@ -27,6 +27,7 @@ import { IssueDispute } from '../models/issue-dispute.model';
 import { UserRole } from '../../core/models/user.model';
 import { BaseIssue } from '../models/base-issue.model';
 import { GithubIssue } from '../models/github-issue.model';
+import { GithubComment } from '../models/github-comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -428,6 +429,10 @@ export class IssueService {
   private createIssueModel(githubIssue: GithubIssue): Observable<Issue> {
     if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
+    } if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
+      this.issueCommentService.getGithubComments(githubIssue.id, this.isIssueReloaded).pipe(
+        map((githubComments: GithubComment[]) => of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments)))
+      );
     }
 
     // A temp fix due to the refactoring process. After refactoring is complete, we can remove this whole chunk of code below.

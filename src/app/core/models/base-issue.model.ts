@@ -61,10 +61,9 @@ export class BaseIssue implements Issue {
     return new BaseIssue(githubIssue);
   }
 
-  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue): Issue {
+  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
     const issue = new BaseIssue(githubIssue);
-    const template = new TeamResponseTemplate(githubIssue);
-    issue.description = template.description.content;
+    const template = new TeamResponseTemplate(githubComments);
     issue.teamResponse = template.teamResponse.content;
     issue.duplicateOf = template.duplicateOf.issueNumber;
     return issue;
