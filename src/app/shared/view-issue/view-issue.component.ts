@@ -34,7 +34,7 @@ export enum ISSUE_COMPONENTS {
   templateUrl: './view-issue.component.html',
   styleUrls: ['./view-issue.component.css']
 })
-export class ViewIssueComponent implements OnInit, OnDestroy, onChanges {
+export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   issue: Issue;
   isIssueLoading = true;
   isTutorResponseEditing = false;
