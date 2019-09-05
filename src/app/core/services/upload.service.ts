@@ -19,7 +19,7 @@ export class UploadService {
     } else {
       base64String = base64File;
     }
-    const fileType = userFilename.split('.')[1];
+    const fileType = userFilename.split('.').pop();
 
     if (SUPPORTED_FILE_TYPES.includes(fileType)) {
       base64String = base64String.split(',')[1];
