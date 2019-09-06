@@ -7,6 +7,8 @@ import { LabelService } from './label.service';
 import { UserService } from './user.service';
 import { UserRole } from '../models/user.model';
 import { ErrorHandlingService } from './error-handling.service';
+import { MatDialog } from '@angular/material';
+import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 
 export enum Phase {
   phaseBugReporting = 'phaseBugReporting',
@@ -52,7 +54,7 @@ export class PhaseService {
               private githubService: GithubService,
               private labelService: LabelService,
               private userService: UserService,
-              private errorHandlingService: ErrorHandlingService) {}
+              public phaseFixConfirmationDialog: MatDialog) {}
 
   /**
    * Stores the location of the repositories belonging to
@@ -149,6 +151,19 @@ export class PhaseService {
   }
 
   /**
+   * Launches the SessionFixConfirmation Dialog.
+   * @return Observable<boolean> - Representing user's permission grant.
+   */
+  openSessionFixConfirmation(): Observable<boolean> {
+    const dialogRef = this.phaseFixConfirmationDialog.open(SessionFixConfirmationComponent, {
+      data: {user: this.userService.currentUser.loginId, repoName: this.sessionData[this.currentPhase]}
+    });
+
+    return dialogRef.afterClosed();
+  }
+
+
+  /**
    * Ensures that the necessary data for the current session is available
    * and synchronized with the remote server.
    */
@@ -161,17 +176,28 @@ export class PhaseService {
       }),
       flatMap((isSessionAvailable: boolean) => {
         if (!isSessionAvailable) {
-          return this.attemptSessionAvailabilityFix(this.sessionData);
+          return this.openSessionFixConfirmation();
         } else {
-          return of(false);
+          return of(null);
         }
       }),
-      flatMap((isFixAttempted: boolean) => {
-        // Verify that Repository has been created if a fix attempt has occured
-        if (isFixAttempted) {
-          return this.verifySessionAvailability(this.sessionData);
+      flatMap((sessionFixPermission: boolean | null) => {
+        if (sessionFixPermission === null) {
+          // No Session Fix Necessary
+          return of(null);
+        } if (sessionFixPermission === true) {
+          return this.attemptSessionAvailabilityFix(this.sessionData);
         } else {
+          throw new Error('You cannot proceed without the required repository.');
+        }
+      }),
+      flatMap((isFixAttempted: boolean | null) => {
+        if (isFixAttempted === null) {
+          // If no fix has been attempted, there is no need to verify fix outcome.
           return of(true);
+        } else if (isFixAttempted === true) {
+          // Verify that Repository has been created if a fix attempt has occurred.
+          return this.verifySessionAvailability(this.sessionData);
         }
       }),
       flatMap((isSessionCreated: boolean) => {
