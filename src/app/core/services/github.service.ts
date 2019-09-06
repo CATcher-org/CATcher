@@ -89,7 +89,7 @@ export class GithubService {
    * @return Observable<boolean> - That returns true if the repository has been successfully
    *                                created.
    */
-  createRepository(name: string): void{
+  createRepository(name: string): void {
     octokit.repos.createForAuthenticatedUser({name: name});
   }
 
