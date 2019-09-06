@@ -1,9 +1,12 @@
-import {Injectable} from '@angular/core';
-import { HttpClient} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { flatMap, map } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
-import {GithubService} from './github.service';
+import { Observable, throwError } from 'rxjs';
+import { GithubService } from './github.service';
 import { LabelService } from './label.service';
+import { UserService } from './user.service';
+import { UserRole } from '../models/user.model';
+import { ErrorHandlingService } from './error-handling.service';
 
 export enum Phase {
   phaseBugReporting = 'phaseBugReporting',
@@ -47,7 +50,9 @@ export class PhaseService {
 
   constructor(private http: HttpClient,
               private githubService: GithubService,
-              private labelService: LabelService) {}
+              private labelService: LabelService,
+              private userService: UserService,
+              private errorHandlingService: ErrorHandlingService) {}
 
   /**
    * Stores the location of the repositories belonging to
@@ -93,9 +98,16 @@ export class PhaseService {
     return this.githubService.isRepositoryPresent(this.phaseRepoOwners[this.currentPhase], sessionData[this.currentPhase]);
   }
 
+  /**
+   * If a Session is unavailable (because the repository is missing) attempt to create IF it is
+   * the BugReporting Phase
+   * @param sessionData - SessionData containing repository information.
+   */
   attemptSessionAvailabilityFix(sessionData: SessionData) {
     if (this.currentPhase !== Phase.phaseBugReporting) {
-      throwError('Unable to Fix Session Unavailability: Required Phase Repository is Unavailable.');
+      throw new Error('Current Phase\'s Repository has not been opened.');
+    } else if (this.currentPhase === Phase.phaseBugReporting && this.userService.currentUser.role !== UserRole.Student) {
+      throw new Error('Bug-Reporting Phase\'s repository initialisation is only available to Students.');
     }
     this.githubService.createRepository(sessionData[this.currentPhase]);
   }
@@ -148,7 +160,7 @@ export class PhaseService {
       }),
       flatMap((isSessionCreated: boolean) => {
         if (!isSessionCreated) {
-          throwError('Session Availability Fix failed.');
+          throw new Error('Session Availability Fix failed.');
         }
         return this.labelService.synchronizeRemoteLabels();
       })
