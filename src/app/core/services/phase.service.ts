@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { flatMap, map } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
@@ -102,14 +102,20 @@ export class PhaseService {
    * If a Session is unavailable (because the repository is missing) attempt to create IF it is
    * the BugReporting Phase
    * @param sessionData - SessionData containing repository information.
+   * @return - Dummy Observable to give the API sometime to propagate the creation of the new repository since
+   *           the API Call used here does not return any response.
    */
-  attemptSessionAvailabilityFix(sessionData: SessionData) {
+  attemptSessionAvailabilityFix(sessionData: SessionData): Observable<any> {
     if (this.currentPhase !== Phase.phaseBugReporting) {
       throw new Error('Current Phase\'s Repository has not been opened.');
     } else if (this.currentPhase === Phase.phaseBugReporting && this.userService.currentUser.role !== UserRole.Student) {
       throw new Error('Bug-Reporting Phase\'s repository initialisation is only available to Students.');
     }
     this.githubService.createRepository(sessionData[this.currentPhase]);
+
+    return new Observable(subscriber => {
+      setTimeout(() => subscriber.next(true), 1000);
+    });
   }
 
   /**
@@ -142,6 +148,10 @@ export class PhaseService {
     this.githubService.storePhaseDetails(this.phaseRepoOwners[this.currentPhase], this.repoName);
   }
 
+  /**
+   * Ensures that the necessary data for the current session is available
+   * and synchronized with the remote server.
+   */
   sessionSetup(): Observable<any> {
     return this.fetchSessionData().pipe(
       flatMap((sessionData: SessionData) => {
@@ -149,14 +159,20 @@ export class PhaseService {
         this.updateSessionParameters(sessionData);
         return this.verifySessionAvailability(sessionData);
       }),
-      map((isSessionAvailable: boolean) => {
+      flatMap((isSessionAvailable: boolean) => {
         if (!isSessionAvailable) {
-          this.attemptSessionAvailabilityFix(this.sessionData);
+          return this.attemptSessionAvailabilityFix(this.sessionData);
+        } else {
+          return of(false);
         }
       }),
-      flatMap(() => {
-        // Verify that Repository has been created
-        return this.verifySessionAvailability(this.sessionData);
+      flatMap((isFixAttempted: boolean) => {
+        // Verify that Repository has been created if a fix attempt has occured
+        if (isFixAttempted) {
+          return this.verifySessionAvailability(this.sessionData);
+        } else {
+          return of(true);
+        }
       }),
       flatMap((isSessionCreated: boolean) => {
         if (!isSessionCreated) {
