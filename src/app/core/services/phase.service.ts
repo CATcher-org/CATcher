@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import { HttpClient} from '@angular/common/http';
 import { flatMap, map } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import {GithubService} from './github.service';
 import { LabelService } from './label.service';
 
@@ -86,6 +86,21 @@ export class PhaseService {
   }
 
   /**
+   * Checks if the necessary repository is available and creates it if the permissions are available.
+   * @param sessionData
+   */
+  verifySessionAvailability(sessionData: SessionData): Observable<boolean> {
+    return this.githubService.isRepositoryPresent(this.phaseRepoOwners[this.currentPhase], sessionData[this.currentPhase]);
+  }
+
+  attemptSessionAvailabilityFix(sessionData: SessionData) {
+    if (this.currentPhase !== Phase.phaseBugReporting) {
+      throwError('Unable to Fix Session Unavailability: Required Phase Repository is Unavailable.');
+    }
+    this.githubService.createRepository(sessionData[this.currentPhase]);
+  }
+
+  /**
    * Ensures that the input session Data has been correctly defined.
    * Returns true if satisfies these properties, false otherwise.
    * @param sessionData
@@ -120,6 +135,21 @@ export class PhaseService {
       flatMap((sessionData: SessionData) => {
         this.assertSessionDataIntegrity(sessionData);
         this.updateSessionParameters(sessionData);
+        return this.verifySessionAvailability(sessionData);
+      }),
+      map((isSessionAvailable: boolean) => {
+        if (!isSessionAvailable) {
+          this.attemptSessionAvailabilityFix(this.sessionData);
+        }
+      }),
+      flatMap(() => {
+        // Verify that Repository has been created
+        return this.verifySessionAvailability(this.sessionData);
+      }),
+      flatMap((isSessionCreated: boolean) => {
+        if (!isSessionCreated) {
+          throwError('Session Availability Fix failed.');
+        }
         return this.labelService.synchronizeRemoteLabels();
       })
     );

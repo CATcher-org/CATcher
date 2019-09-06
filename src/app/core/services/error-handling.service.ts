@@ -4,6 +4,8 @@ import {NoInternetConnectionComponent} from '../../shared/error-toasters/no-inte
 import {GeneralMessageErrorComponent} from '../../shared/error-toasters/general-message-error/general-message-error.component';
 import {FormErrorComponent} from '../../shared/error-toasters/form-error/form-error.component';
 
+export const ERROR_CODE_NOT_FOUND = 404;
+
 @Injectable({
   providedIn: 'root',
 })
