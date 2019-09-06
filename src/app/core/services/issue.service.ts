@@ -262,7 +262,7 @@ export class IssueService {
             mappingFunctions.push(this.createIssueModel(issue));
           }
         }
-        return combineLatest(mappingFunctions);
+        return mappingFunctions.length === 0 ? of([]) : combineLatest(mappingFunctions);
       }),
       map((issueArray) => {
         let mappedResults: Issues = {};
