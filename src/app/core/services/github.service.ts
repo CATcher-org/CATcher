@@ -4,7 +4,7 @@ import { forkJoin, from, Observable, of } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
-import { ERROR_CODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
+import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 const Octokit = require('@octokit/rest');
 
 
@@ -75,7 +75,7 @@ export class GithubService {
   isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
     return from(octokit.repos.get({owner: owner, repo: repo})).pipe(
       map((rawData: {status: number}) => {
-        return rawData.status !== 404;
+        return rawData.status !== ERRORCODE_NOT_FOUND;
       }),
       catchError(err => {
         return of(false);
