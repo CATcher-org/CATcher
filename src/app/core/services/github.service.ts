@@ -146,7 +146,7 @@ export class GithubService {
    * @param labelColor - new color to be assigned to existing label.
    */
   updateLabel(labelName: string, labelColor: string): void {
-    octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, current_name: labelName, color: labelColor});
+    octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor});
   }
 
   closeIssue(id: number): Observable<{}> {

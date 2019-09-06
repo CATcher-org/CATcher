@@ -6,13 +6,13 @@
     <div class="row">
       <div class="column left">
         <!-- Tester's Post -->
-        <app-issue-description [isEditing]="isIssueDescriptionEditing" (changeEditState)="updateDescriptionEditState($event)" 
-          *ngIf="!isIssueLoading && this.isComponentVisible(issueComponentsEnum.TESTER_POST)" 
+        <app-issue-description [isEditing]="isIssueDescriptionEditing" (changeEditState)="updateDescriptionEditState($event)"
+          *ngIf="!isIssueLoading && this.isComponentVisible(issueComponentsEnum.TESTER_POST)"
           [issue]="issue" title="Description of Issue" (issueUpdated)="updateIssue($event)">
         </app-issue-description>
 
         <!-- Team's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isIssueLoading && issue.teamResponse" 
+        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isIssueLoading && issue.teamResponse"
           [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)" attributeName="teamResponse"
           (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
         </app-issue-response>
@@ -24,7 +24,7 @@
         </app-new-team-response>
 
         <!-- Tester's Response -->
-        <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && 
+        <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) &&
           issue.testerResponses && issue.testerResponses.length !== 0" [issue]="issue"
           (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
         </app-tester-response>
@@ -35,7 +35,7 @@
         </app-issue-dispute>
 
         <!-- Tutor's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE) && !isIssueLoading && issue.tutorResponse" 
+        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE) && !isIssueLoading && issue.tutorResponse"
           [issue]="issue" [isEditing]="isTutorResponseEditing" (updateEditState)="updateTutorResponseEditState($event)"
           attributeName="tutorResponse" (issueUpdated)="updateIssue($event)">
         </app-issue-response>
@@ -88,8 +88,8 @@
           <app-duplicate-of-component [issue]="issue" (commentUpdated)="updateComment($event)" (issueUpdated)="updateIssue($event)"></app-duplicate-of-component>
         </div>
 
-        <!-- Faulty issue warning -->  
-        <div style="margin-top: 15px; color: red" *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) && 
+        <!-- Faulty issue warning -->
+        <div style="margin-top: 15px; color: red" *ngIf="this.isComponentVisible(issueComponentsEnum.DUPLICATE) &&
           ((issueService.getDuplicateIssuesFor(issue) | async).length !== 0) &&
           (issue.duplicateOf || (issueService.getDuplicateIssuesFor(issue) | async).length === 0)">
             * Need your resolution. An issue cannot have both duplicated issues and duplicated status.
