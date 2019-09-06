@@ -108,8 +108,7 @@ export class IssueService {
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseTeamResponse:
-        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
-          `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}`;
+        return `# Description\n${issue.description}\n`;
       case Phase.phaseModeration:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
          // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
@@ -262,7 +261,7 @@ export class IssueService {
             mappingFunctions.push(this.createIssueModel(issue));
           }
         }
-        return combineLatest(mappingFunctions);
+        return mappingFunctions.length === 0 ? of([]) : combineLatest(mappingFunctions);
       }),
       map((issueArray) => {
         let mappedResults: Issues = {};
@@ -438,6 +437,14 @@ export class IssueService {
     return this.issueCommentService.getIssueComments(issueId, this.isIssueReloaded).pipe(
       map((issueComments: IssueComments) => {
         const issueComment = this.getIssueComment(issueComments);
+        let teamResponse = issueInJson['teamResponse'];
+        let duplicateOf = issueInJson['duplicateOf'];
+        if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTesterResponse) {
+          teamResponse = this.parseTeamResponseForTesterResponsePhase(issueComment.description);
+        } else if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTeamResponse) {
+          teamResponse = this.parseTeamResponseForTeamResponsePhase(issueComment.description);
+          duplicateOf = this.parseDuplicateOfForTeamResponsePhase(issueComment.description);
+        }
         const incompleteIssueDisputes: IssueDispute[] = issueInJson['issueDisputes'];
         this.isIssueReloaded = false;
         return <Issue>{
@@ -449,10 +456,9 @@ export class IssueService {
         description: issueInJson['body'],
         teamAssigned: this.getTeamAssignedToIssue(issueInJson),
         todoList: this.getToDoList(issueComment, issueInJson['issueDisputes']),
-        teamResponse: this.phaseService.currentPhase === Phase.phaseTesterResponse && !!issueComment ?
-          this.parseTeamResponse(issueComment.description) : issueInJson['teamResponse'],
+        teamResponse: teamResponse,
         tutorResponse: issueInJson['tutorResponse'],
-        duplicateOf: issueInJson['duplicateOf'],
+        duplicateOf: +duplicateOf,
         testerResponses: this.phaseService.currentPhase === Phase.phaseTesterResponse && !!issueComment ?
           this.parseTesterResponse(issueComment.description) : issueInJson['testerResponses'],
         issueComment: issueComment,
@@ -489,13 +495,21 @@ export class IssueService {
     );
   }
 
+  /**
+   * Searches for a comment in the issue that matches the required template.
+   * @return IssueComment - Latest Comment that matches the required template.
+   */
   getIssueComment(issueComments: IssueComments): IssueComment {
     let regex = /# *Team\'?s Response[\n\r]*[\s\S]*# Items for the Tester to Verify/gi;
     if (this.phaseService.currentPhase === Phase.phaseModeration) {
       regex = /# Tutor Moderation[\n\r]*#{2} *:question: *.*[\n\r]*.*[\n\r]*[\s\S]*?(?=-{19})/gi;
+    } else if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
+      regex = /# Team's Response[\r\n]*[\S\s]*?[\r\n]*## Duplicate status \(if any\):[\r\n]*[\S\s]*/gi;
     }
 
-    for (const comment of issueComments.comments) {
+    // Re-Order the comments (Most Recent First)
+    const comments = issueComments.comments.reverse();
+    for (const comment of comments) {
       const matched = regex.exec(comment.description);
       if (matched) {
         return comment;
@@ -530,7 +544,7 @@ export class IssueService {
   }
 
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
-  parseTeamResponse(toParse: string): string {
+  parseTeamResponseForTesterResponsePhase(toParse: string): string {
     let teamResponse = '';
     const regex = /# *Team\'?s Response[\n\r]*([\s\S]*)# Items for the Tester to Verify/gi;
     const matches = regex.exec(toParse);
@@ -539,6 +553,28 @@ export class IssueService {
       teamResponse = matches[1].trim();
     }
     return teamResponse;
+  }
+
+  parseTeamResponseForTeamResponsePhase(toParse: string): string {
+    let teamResponse = '';
+    const regex = /# Team's Response[\r\n]*([\S\s]*?)[\r\n]*## Duplicate status \(if any\):/gi;
+    const matches = regex.exec(toParse);
+
+    if (matches && matches.length > this.MINIMUM_MATCHES) {
+      teamResponse = matches[1].trim();
+    }
+    return teamResponse;
+  }
+
+  parseDuplicateOfForTeamResponsePhase(toParse: string): string {
+    let duplicateOf = '';
+    const regex = /## Duplicate status \(if any\):[\r\n]*Duplicate of #(.*)/gi;
+    const matches = regex.exec(toParse);
+
+    if (matches && matches.length > this.MINIMUM_MATCHES) {
+      duplicateOf = matches[1].trim();
+    }
+    return duplicateOf;
   }
 
   // Template url: https://github.com/CATcher-org/templates#disputes

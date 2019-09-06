@@ -80,7 +80,7 @@ export class GithubService {
       mergeMap((numOfPages) => {
         const apiCalls = [];
         for (let i = 1; i <= numOfPages; i++) {
-          apiCalls.push(from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, number: issueId, page: i})));
+          apiCalls.push(from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: i})));
         }
         return forkJoin(apiCalls);
       }),
@@ -120,11 +120,11 @@ export class GithubService {
    * @param labelColor - new color to be assigned to existing label.
    */
   updateLabel(labelName: string, labelColor: string): void {
-    octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, current_name: labelName, color: labelColor});
+    octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor});
   }
 
   closeIssue(id: number): Observable<GithubIssue> {
-    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, state: 'closed'})).pipe(
+    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed'})).pipe(
       map(response => {
         return new GithubIssue(response['data']);
       })
@@ -149,7 +149,7 @@ export class GithubService {
   }
 
   updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
-    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, number: id, title: title, body: description, labels: labels,
+    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
       map(response => {
         return new GithubIssue(response['data']);
@@ -222,7 +222,7 @@ export class GithubService {
   }
 
   private getNumberOfCommentPages(issueId: number): Observable<number> {
-    return from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, number: issueId, page: 1})).pipe(
+    return from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: 1})).pipe(
       map((response) => {
         if (!response['headers'].link) {
           return 1;
