@@ -123,7 +123,7 @@ export class GithubService {
     octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor});
   }
 
-  closeIssue(id: number): Observable<{}> {
+  closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed'})).pipe(
       map(response => {
         return new GithubIssue(response['data']);
@@ -148,7 +148,7 @@ export class GithubService {
     );
   }
 
-  updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<{}> {
+  updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
       map(response => {
