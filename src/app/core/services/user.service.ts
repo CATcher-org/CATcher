@@ -37,7 +37,6 @@ export class UserService {
 
   private createUser(data: {}, userLoginId: string): User {
     const userRole = this.parseUserRole(data, userLoginId);
-    console.log(data);
     switch (userRole) {
       case UserRole.Student:
         const teamId = data['students-allocation'][userLoginId]['teamId'];
