@@ -18,7 +18,7 @@ export class UserService {
   createUserModel(userLoginId: string): Observable<User> {
     return this.dataService.getDataFile().pipe(
       map((jsonData: {}) => {
-        this.currentUser = this.createUser(jsonData, userLoginId);
+        this.currentUser = this.createUser(jsonData, userLoginId.toLowerCase());
         return this.currentUser;
       }),
       flatMap((user) => {
@@ -38,7 +38,6 @@ export class UserService {
   private createUser(data: {}, userLoginId: string): User {
     const userRole = this.parseUserRole(data, userLoginId);
     switch (userRole) {
-
       case UserRole.Student:
         const teamId = data['students-allocation'][userLoginId]['teamId'];
         const studentTeam = this.createTeamModel(data['team-structure'], teamId);
