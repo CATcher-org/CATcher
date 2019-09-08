@@ -68,7 +68,7 @@ export class GithubService {
   }
 
   /**
-   * Check if the specified repository exists.
+   * Checks if the specified repository exists.
    * @param owner - Owner of Specified Repository.
    * @param repo - Name of Repository.
    */
