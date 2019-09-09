@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { map, mergeMap } from 'rxjs/operators';
-import { forkJoin, from, Observable } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
-import { ErrorHandlingService } from './error-handling.service';
+import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 const Octokit = require('@octokit/rest');
 
 
@@ -65,6 +65,32 @@ export class GithubService {
         return collatedData;
       })
     );
+  }
+
+  /**
+   * Checks if the specified repository exists.
+   * @param owner - Owner of Specified Repository.
+   * @param repo - Name of Repository.
+   */
+  isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
+    return from(octokit.repos.get({owner: owner, repo: repo})).pipe(
+      map((rawData: {status: number}) => {
+        return rawData.status !== ERRORCODE_NOT_FOUND;
+      }),
+      catchError(err => {
+        return of(false);
+      })
+    );
+  }
+
+  /**
+   * Creates a repository in for the authenticated user location.
+   * @param name - Name of Repo to create.
+   * @return Observable<boolean> - That returns true if the repository has been successfully
+   *                                created.
+   */
+  createRepository(name: string): void {
+    octokit.repos.createForAuthenticatedUser({name: name});
   }
 
   fetchIssue(id: number): Observable<{}> {
