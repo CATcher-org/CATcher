@@ -1,6 +1,6 @@
-import {Team} from './team.model';
+import { Team } from './team.model';
 import { TesterResponse } from './tester-response.model';
-import { IssueComment, IssueComments } from './comment.model';
+import { IssueComment } from './comment.model';
 import { IssueDispute } from './issue-dispute.model';
 
 export interface Issue {
