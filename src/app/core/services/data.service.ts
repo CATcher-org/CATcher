@@ -5,7 +5,8 @@ import { DataFile } from '../models/data-file.model';
 import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
 import { Observable } from 'rxjs';
-const parse = require('csv-parse/lib/sync');
+import * as parse from 'csv-parse/lib/sync';
+// const parse = require('csv-parse/lib/sync');
 
 @Injectable({
   providedIn: 'root',

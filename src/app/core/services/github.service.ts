@@ -5,7 +5,8 @@ import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser'
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
-const Octokit = require('@octokit/rest');
+import * as Octokit from '@octokit/rest';
+// const Octokit = require('@octokit/rest');
 
 
 let ORG_NAME = '';
@@ -22,12 +23,14 @@ export class GithubService {
   constructor(private errorHandlingService: ErrorHandlingService) {
   }
 
-  storeCredentials(user: String, passw: String) {
+  storeCredentials(user: string, passw: string) {
+    const authenticationInformation: {username: string, password: string, on2fa: () => Promise<string>} = {
+      username: user,
+      password: passw,
+      on2fa: null
+    };
     octokit = new Octokit({
-      auth: {
-        username: user,
-        password: passw,
-      },
+      auth: authenticationInformation
     });
   }
 

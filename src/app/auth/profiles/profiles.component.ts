@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
-const { ipcRenderer } = require('electron');
+// import * as fs from 'fs';
+import { ipcRenderer } from 'electron';
 import {
   trigger,
   state,
@@ -47,8 +48,6 @@ export class ProfilesComponent implements OnInit {
   profiles: Profile[] = undefined; // List of profiles taken from profiles.json
   blankProfile: Profile = {profileName: '', password: '', username: '', encodedText: ''}; // A blank profile to reset values
   animationActivated = false;
-
-  private readonly fs = require('fs');
 
   private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar).*/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
@@ -101,29 +100,29 @@ export class ProfilesComponent implements OnInit {
    * Processes the selected profiles JSON file.
    */
   readProfiles(): void {
-    const isFileExists: boolean = this.userProfileFileExists(this.filePath);
-    // Informing Parent Component (Auth) of file selection
-    this.profilesData.fileName = this.PROFILES_FILE_NAME;
-    this.profilesData.fileDirectory = this.filePath.split(this.PROFILES_FILE_NAME)[0];
-    this.profilesData.isDirectoryMessageVisible = !isFileExists;
-    this.profileDataEmitter.emit(this.profilesData);
-
-    if (isFileExists) {
-      try {
-        this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
-        this.assertProfilesValidity(this.profiles);
-      } catch (e) {
-        console.log(e);
-        setTimeout(() => {
-          this.profiles = undefined;
-          this.openErrorDialog();
-        });
-      }
-    }
-
-    // Set default profile if exists.
-    this.selectedProfile = this.profiles === undefined ? this.blankProfile : this.profiles[0];
-    this.selectProfile(this.selectedProfile);
+    // const isFileExists: boolean = this.userProfileFileExists(this.filePath);
+    // // Informing Parent Component (Auth) of file selection
+    // this.profilesData.fileName = this.PROFILES_FILE_NAME;
+    // this.profilesData.fileDirectory = this.filePath.split(this.PROFILES_FILE_NAME)[0];
+    // this.profilesData.isDirectoryMessageVisible = !isFileExists;
+    // this.profileDataEmitter.emit(this.profilesData);
+    //
+    // if (isFileExists) {
+    //   try {
+    //     this.profiles = JSON.parse(fs.readFileSync(this.filePath))['profiles'];
+    //     this.assertProfilesValidity(this.profiles);
+    //   } catch (e) {
+    //     console.log(e);
+    //     setTimeout(() => {
+    //       this.profiles = undefined;
+    //       this.openErrorDialog();
+    //     });
+    //   }
+    // }
+    //
+    // // Set default profile if exists.
+    // this.selectedProfile = this.profiles === undefined ? this.blankProfile : this.profiles[0];
+    // this.selectProfile(this.selectedProfile);
   }
 
   /**
@@ -149,7 +148,8 @@ export class ProfilesComponent implements OnInit {
    * @param filePath - Path of file to check.
    */
   userProfileFileExists(filePath: string): boolean {
-    return this.fs.existsSync(filePath);
+    // return this.fs.existsSync(filePath);
+    return false;
   }
 
   /**
