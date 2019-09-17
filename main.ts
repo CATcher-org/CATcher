@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
 import { enableProdMode, isDevMode } from '@angular/core';
-const { ipcMain } = require('electron');
+import { ipcMain } from 'electron';
 
 let win, serve;
 const args = process.argv.slice(1);

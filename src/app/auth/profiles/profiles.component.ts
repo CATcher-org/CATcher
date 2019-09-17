@@ -66,11 +66,11 @@ export class ProfilesComponent implements OnInit {
   constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
-    const path = require('path');
+    // const path = require('path');
     const temp = ipcRenderer.sendSync('synchronous-message', 'getDirectory');
-    this.filePath = path.join(
-        temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
-        this.PROFILES_FILE_NAME);
+    // this.filePath = path.join(
+    //     temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
+    //     this.PROFILES_FILE_NAME);
     this.readProfiles();
   }
 
