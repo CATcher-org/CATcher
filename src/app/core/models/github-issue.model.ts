@@ -75,7 +75,9 @@ export class GithubLabel {
     response: 'response',
     duplicated: 'duplicated',
     unsure: 'unsure',
-    pending: 'pending'
+    pending: 'pending',
+    team: 'team',
+    tutorial: 'tutorial'
   };
 
   color: string;

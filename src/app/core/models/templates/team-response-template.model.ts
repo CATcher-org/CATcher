@@ -16,7 +16,12 @@ export class TeamResponseTemplate extends Template {
   constructor(githubComments: GithubComment[]) {
     super(Object.values(teamResponseHeaders));
 
-    const commentsContent = githubComments.find((githubComment: GithubComment) => this.test(githubComment.body)).body;
+    const comment = githubComments.find(
+      (githubComment: GithubComment) => this.test(githubComment.body));
+    if (comment === undefined) {
+      return;
+    }
+    const commentsContent: string = comment.body;
     this.teamResponse = this.parseTeamResponse(commentsContent);
     this.duplicateOf = this.parseDuplicateOf(commentsContent);
   }

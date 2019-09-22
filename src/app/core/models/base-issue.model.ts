@@ -10,8 +10,10 @@ import { TesterResponseTemplate } from './templates/tester-response-template.mod
 import { GithubIssue, GithubLabel } from './github-issue.model';
 import * as moment from 'moment';
 import { GithubComment } from './github-comment.model';
+import { DataService } from '../services/data.service';
 
 export class BaseIssue implements Issue {
+
   /** Basic Fields */
   readonly id: number;
   readonly created_at: string;
@@ -40,7 +42,6 @@ export class BaseIssue implements Issue {
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
 
-
   protected constructor(githubIssue: GithubIssue) {
     /** Basic Fields */
     this.id = +githubIssue.number;
@@ -57,15 +58,23 @@ export class BaseIssue implements Issue {
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
+  private static constructTeamData(githubIssue: GithubIssue, dataService: DataService): Team {
+    const teamId = githubIssue.findLabel(GithubLabel.LABELS.tutorial).concat('-').concat(githubIssue.findLabel(GithubLabel.LABELS.team));
+    return dataService.getTeam(teamId);
+  }
+
   public static createPhaseBugReportingIssue(githubIssue: GithubIssue): BaseIssue {
     return new BaseIssue(githubIssue);
   }
 
-  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
+  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]
+                                             , dataService: DataService): Issue {
     const issue = new BaseIssue(githubIssue);
     const template = new TeamResponseTemplate(githubComments);
-    issue.teamResponse = template.teamResponse.content;
-    issue.duplicateOf = template.duplicateOf.issueNumber;
+
+    issue.teamAssigned = this.constructTeamData(githubIssue, dataService);
+    issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
+    issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;
     return issue;
   }
 

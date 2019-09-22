@@ -430,8 +430,10 @@ export class IssueService {
     if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
     } if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
-      this.issueCommentService.getGithubComments(githubIssue.id, this.isIssueReloaded).pipe(
-        map((githubComments: GithubComment[]) => of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments)))
+      return this.issueCommentService.getGithubComments(githubIssue.number, this.isIssueReloaded).pipe(
+        flatMap((githubComments: GithubComment[]) => {
+          return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments, this.dataService));
+        })
       );
     }
 
