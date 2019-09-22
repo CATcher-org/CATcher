@@ -54,7 +54,7 @@ export class BaseIssue implements Issue {
     this.type = githubIssue.findLabel(GithubLabel.LABELS.type);
     this.responseTag = githubIssue.findLabel(GithubLabel.LABELS.response);
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
-    this.status = githubIssue.findLabel(GithubLabel.LABELS.unsure, false);
+    this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
@@ -73,8 +73,10 @@ export class BaseIssue implements Issue {
     const template = new TeamResponseTemplate(githubComments);
 
     issue.teamAssigned = this.constructTeamData(githubIssue, dataService);
+    issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
     issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;
+    issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
     return issue;
   }
 

@@ -74,6 +74,7 @@ export class GithubLabel {
     type: 'type',
     response: 'response',
     duplicated: 'duplicated',
+    status: 'status',
     unsure: 'unsure',
     pending: 'pending',
     team: 'team',

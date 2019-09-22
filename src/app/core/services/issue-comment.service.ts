@@ -26,6 +26,7 @@ export class IssueCommentService {
   }
 
   getGithubComments(issueId: number, isIssueReloaded: boolean): Observable<GithubComment[]> {
+    this.initializeIssueComments(issueId);
     return this.githubService.fetchIssueComments(issueId).pipe(
       map(rawJsonDataArray => rawJsonDataArray.map(rawJsonData => <GithubComment> {
         ...rawJsonData
