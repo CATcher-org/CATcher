@@ -68,11 +68,11 @@ export class BaseIssue implements Issue {
   }
 
   public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]
-                                             , dataService: DataService): Issue {
+                                             , teamData: Team): Issue {
     const issue = new BaseIssue(githubIssue);
     const template = new TeamResponseTemplate(githubComments);
 
-    issue.teamAssigned = this.constructTeamData(githubIssue, dataService);
+    issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
     issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;

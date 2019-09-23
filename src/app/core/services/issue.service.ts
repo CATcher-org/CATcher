@@ -26,7 +26,7 @@ import { IssueComments, IssueComment } from '../models/comment.model';
 import { IssueDispute } from '../models/issue-dispute.model';
 import { UserRole } from '../../core/models/user.model';
 import { BaseIssue } from '../models/base-issue.model';
-import { GithubIssue } from '../models/github-issue.model';
+import { GithubIssue, GithubLabel } from '../models/github-issue.model';
 import { GithubComment } from '../models/github-comment.model';
 
 @Injectable({
@@ -424,13 +424,18 @@ export class IssueService {
     return `${prepend}.${value}`;
   }
 
+  private extractTeamIdFromGithubIssue(githubIssue: GithubIssue): string {
+    return githubIssue.findLabel(GithubLabel.LABELS.tutorial).concat('-').concat(githubIssue.findLabel(GithubLabel.LABELS.team));
+  }
+
   private createIssueModel(githubIssue: GithubIssue): Observable<Issue> {
     if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
     } if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
       return this.issueCommentService.getGithubComments(githubIssue.number, this.isIssueReloaded).pipe(
         flatMap((githubComments: GithubComment[]) => {
-          return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments, this.dataService));
+          return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments,
+            this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
         })
       );
     }
