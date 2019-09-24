@@ -81,10 +81,9 @@ export class DuplicateOfComponent implements OnInit {
 
     this.issueService.updateIssue(latestIssue).subscribe((updatedIssue) => {
       this.issueCommentService.updateIssueComment(latestIssue.issueComment).subscribe((updatedComment) => {
-        updatedIssue.duplicateOf = latestIssue.duplicateOf;
-        updatedIssue.issueComment = updatedComment;
+        latestIssue.issueComment = updatedComment;
         this.commentUpdated.emit(updatedComment);
-        this.issueUpdated.emit(updatedIssue);
+        this.issueUpdated.emit(latestIssue);
       });
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);

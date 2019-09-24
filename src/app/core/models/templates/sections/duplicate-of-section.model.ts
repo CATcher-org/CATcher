@@ -1,7 +1,7 @@
 import { Section, SectionalDependency } from './section.model';
 
 export class DuplicateOfSection extends Section {
-  private readonly duplicateOfRegex = /duplicate of\s*#(\d+)/i;
+  private readonly duplicateOfRegex = /Duplicate of\s*#(\d+)/i;
   issueNumber: number;
 
   constructor(sectionalDependency: SectionalDependency, unprocessedContent: string) {

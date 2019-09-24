@@ -2,29 +2,36 @@ import { DuplicateOfSection } from './sections/duplicate-of-section.model';
 import { Header, Template } from './template.model';
 import { Section } from './sections/section.model';
 import { GithubIssue } from '../github-issue.model';
+import { GithubComment } from '../github-comment.model';
+import { IssueComment } from '../comment.model';
 
 const teamResponseHeaders = {
-  description: new Header('Description', 1),
   teamResponse: new Header('Team\'s Response', 1),
-  duplicateOf: new Header('State the duplicated issue here, if any', 2),
+  duplicateOf: new Header('Duplicate status \\(if any\\):', 2),
 };
 
 export class TeamResponseTemplate extends Template {
-  description: Section;
   teamResponse: Section;
   duplicateOf: DuplicateOfSection;
+  comment: IssueComment;
 
-  constructor(githubIssue: GithubIssue) {
+  constructor(githubComments: GithubComment[]) {
     super(Object.values(teamResponseHeaders));
 
-    const issueContent = githubIssue.body;
-    this.description = this.parseDescription(issueContent);
-    this.teamResponse = this.parseTeamResponse(issueContent);
-    this.duplicateOf = this.parseDuplicateOf(issueContent);
-  }
-
-  parseDescription(toParse: string): Section {
-    return new Section(this.getSectionalDependency(teamResponseHeaders.description), toParse);
+    const comment = githubComments.find(
+      (githubComment: GithubComment) => this.test(githubComment.body));
+    if (comment === undefined) {
+      return;
+    }
+    this.comment = <IssueComment>{
+      ...comment,
+      description: comment.body,
+      createdAt: comment.created_at,
+      updatedAt: comment.updated_at
+    };
+    const commentsContent: string = comment.body;
+    this.teamResponse = this.parseTeamResponse(commentsContent);
+    this.duplicateOf = this.parseDuplicateOf(commentsContent);
   }
 
   parseTeamResponse(toParse: string): Section {

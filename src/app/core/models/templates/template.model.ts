@@ -34,12 +34,12 @@ export class Header {
 
   constructor(name, headerSize, prefix: string = '') {
     this.name = name;
-    this.headerHash = '#'.repeat(headerSize);
+    this.headerHash = '\#'.repeat(headerSize);
     this.prefix = prefix;
   }
 
   toString(): string {
-    return `${this.headerHash} ${this.prefix} ${this.name}`;
+    return this.headerHash.concat(this.prefix === '' ? ' ' : (' ' + this.prefix + ' ')).concat(this.name);
   }
 
   equals(section: Header): boolean {

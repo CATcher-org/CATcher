@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Hi {{ data.user }}</h1>
+<div mat-dialog-content>
+  <p>Do you want CATcher to create a repository named "{{ data.repoName }}"</p>
+  <p>in your Github Account?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false" (click)="onNoClick()">No Thanks</button>
+  <button mat-button mat-raised-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</div>

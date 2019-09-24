@@ -15,12 +15,14 @@ import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporti
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
+import { SessionFixConfirmationComponent } from './core/services/session-fix-confirmation/session-fix-confirmation.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    UserConfirmationComponent
+    UserConfirmationComponent,
+    SessionFixConfirmationComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,8 @@ import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-
   providers: [],
   bootstrap: [AppComponent],
   entryComponents: [
-    UserConfirmationComponent
+    UserConfirmationComponent,
+    SessionFixConfirmationComponent
   ]
 })
 export class AppModule { }

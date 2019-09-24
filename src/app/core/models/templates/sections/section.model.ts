@@ -26,7 +26,6 @@ export class Section {
   constructor(sectionalDependency: SectionalDependency, unprocessedContent: string) {
     this.header = sectionalDependency.sectionHeader;
     this.sectionRegex = new RegExp(`(${this.header})\\s+([\\s\\S]*?)(?=${sectionalDependency.remainingTemplateHeaders.join('|')}|$)`, 'i');
-
     const matches = this.sectionRegex.exec(unprocessedContent);
     if (matches) {
       const [originalString, header, description] = matches;

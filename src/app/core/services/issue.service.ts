@@ -26,7 +26,8 @@ import { IssueComments, IssueComment } from '../models/comment.model';
 import { IssueDispute } from '../models/issue-dispute.model';
 import { UserRole } from '../../core/models/user.model';
 import { BaseIssue } from '../models/base-issue.model';
-import { GithubIssue } from '../models/github-issue.model';
+import { GithubIssue, GithubLabel } from '../models/github-issue.model';
+import { GithubComment } from '../models/github-comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -107,8 +108,6 @@ export class IssueService {
    */
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
-      case Phase.phaseTeamResponse:
-        return `# Description\n${issue.description}\n`;
       case Phase.phaseModeration:
         return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
          // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
@@ -425,13 +424,24 @@ export class IssueService {
     return `${prepend}.${value}`;
   }
 
+  private extractTeamIdFromGithubIssue(githubIssue: GithubIssue): string {
+    return githubIssue.findLabel(GithubLabel.LABELS.tutorial).concat('-').concat(githubIssue.findLabel(GithubLabel.LABELS.team));
+  }
+
   private createIssueModel(githubIssue: GithubIssue): Observable<Issue> {
     if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
+    } if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
+      return this.issueCommentService.getGithubComments(githubIssue.number, this.isIssueReloaded).pipe(
+        flatMap((githubComments: GithubComment[]) => {
+          return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments,
+            this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
+        })
+      );
     }
 
     // A temp fix due to the refactoring process. After refactoring is complete, we can remove this whole chunk of code below.
-    let issueInJson = { ...githubIssue };
+    const issueInJson = { ...githubIssue };
     this.getParsedBody(issueInJson);
     const issueId = +issueInJson['number'];
     return this.issueCommentService.getIssueComments(issueId, this.isIssueReloaded).pipe(

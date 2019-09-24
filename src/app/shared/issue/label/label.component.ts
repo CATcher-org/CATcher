@@ -6,6 +6,7 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
 import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
 import { LabelService } from '../../../core/services/label.service';
+import { BaseIssue } from '../../../core/models/base-issue.model';
 
 @Component({
   selector: 'app-issue-label',
@@ -39,11 +40,12 @@ export class LabelComponent implements OnInit, OnChanges {
   }
 
   updateLabel(value: string) {
-    this.issueService.updateIssue({
-      ...this.issue,
-      [this.attributeName]: value,
-    }).subscribe((editedIssue: Issue) => {
-      this.issueUpdated.emit(editedIssue);
+    const latestIssue = <BaseIssue>{
+    ...this.issue,
+      [this.attributeName]: value
+    };
+    this.issueService.updateIssue(latestIssue).subscribe((editedIssue: Issue) => {
+      this.issueUpdated.emit(latestIssue);
       this.labelColor = this.labelService.getColorOfLabel(editedIssue[this.attributeName]);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
