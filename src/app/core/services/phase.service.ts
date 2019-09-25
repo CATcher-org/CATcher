@@ -175,7 +175,7 @@ export class PhaseService {
         return this.verifySessionAvailability(sessionData);
       }),
       flatMap((isSessionAvailable: boolean) => {
-        if (!isSessionAvailable) {
+        if (!isSessionAvailable && this.currentPhase === Phase.phaseBugReporting) {
           return this.openSessionFixConfirmation();
         } else {
           return of(null);
