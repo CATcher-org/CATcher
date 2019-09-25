@@ -71,9 +71,11 @@ export class NewTeamResponseComponent implements OnInit {
         const newCommentDescription = this.issueCommentService.createGithubTeamResponse(this.description.value, this.duplicateOf.value);
         this.issueCommentService.createIssueComment(this.issue.id, newCommentDescription)
           .subscribe((newComment: IssueComment) => {
-            this.updatedCommentEmitter.emit(newComment);
+            latestIssue.teamResponse = this.description.value;
+            latestIssue.duplicateOf = this.duplicateOf.value === '' ? undefined : this.duplicateOf.value;
             latestIssue.issueComment = newComment;
             this.issueUpdated.emit(latestIssue);
+            this.updatedCommentEmitter.emit(newComment);
             form.resetForm();
           });
       }, (error) => {

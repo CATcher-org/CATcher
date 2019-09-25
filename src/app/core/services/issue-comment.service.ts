@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, BehaviorSubject} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {GithubService} from './github.service';
 import {IssueComment, IssueComments} from '../models/comment.model';
 import {map} from 'rxjs/operators';
 import * as moment from 'moment';
 import { TesterResponse } from '../models/tester-response.model';
 import { IssueDispute } from '../models/issue-dispute.model';
+import { GithubComment } from '../models/github-comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,15 @@ export class IssueCommentService {
       return this.initializeIssueComments(issueId);
     }
     return of(this.comments.get(issueId));
+  }
+
+  getGithubComments(issueId: number, isIssueReloaded: boolean): Observable<GithubComment[]> {
+    this.initializeIssueComments(issueId).subscribe();
+    return this.githubService.fetchIssueComments(issueId).pipe(
+      map(rawJsonDataArray => rawJsonDataArray.map(rawJsonData => <GithubComment> {
+        ...rawJsonData
+      }))
+    );
   }
 
   createIssueComment(issueId: number, description: string): Observable<IssueComment> {

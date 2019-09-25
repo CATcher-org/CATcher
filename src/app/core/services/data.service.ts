@@ -22,7 +22,8 @@ export class DataService {
       }),
       map((jsonData: {}) => {
         this.dataFile = <DataFile>{
-          teamStructure: this.extractTeamStructure(jsonData)};
+          teamStructure: this.extractTeamStructure(jsonData)
+        };
         return jsonData;
       })
     );
