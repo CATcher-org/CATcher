@@ -100,13 +100,14 @@ export class AuthComponent implements OnInit, OnDestroy {
           return this.githubEventService.setLatestChangeEvent();
         })
       ).subscribe(
-          () => {
-            this.authService.changeAuthState(AuthState.Authenticated);
-            form.resetForm();
-            this.titleService.setTitle('CATcher '.concat(this.phaseService.getPhaseDetail()));
-            this.router.navigateByUrl(this.phaseService.currentPhase);
-          },
-          (error) => {
+        () => {
+          this.authService.changeAuthState(AuthState.Authenticated);
+          form.resetForm();
+          this.titleService.setTitle('CATcher '.concat(this.phaseService.getPhaseDetail()));
+          this.router.navigateByUrl(this.phaseService.currentPhase);
+        },
+        (error) => {
+          this.auth.changeAuthState(AuthState.NotAuthenticated);
           if (error instanceof HttpErrorResponse) {
             this.errorHandlingService.handleHttpError(error.error);
           } else {
