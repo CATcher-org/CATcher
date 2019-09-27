@@ -8,7 +8,7 @@
       <div class="container">
         <div>
           <mat-checkbox style="display: inline-block; width: 20%" formControlName="duplicated" (change)="handleChangeOfDuplicateCheckbox($event)">
-            Duplicated Issue
+            A Duplicate Of:
           </mat-checkbox>
 
           <mat-form-field [style.visibility]="!duplicated.value ? 'hidden' : 'visible'" style="display: inline-block; width: 50%">
