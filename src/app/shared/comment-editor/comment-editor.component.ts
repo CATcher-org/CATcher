@@ -149,7 +149,7 @@ export class CommentEditorComponent implements OnInit {
   private insertUploadingText(filename: string): string {
     const originalDescription = this.commentField.value;
 
-    const fileType = filename.split('.')[1];
+    const fileType = filename.split('.').pop();
     let toInsert: string;
     if (DISPLAYABLE_CONTENT.includes(fileType)) {
       toInsert = `![Uploading ${filename}...]()\n`;

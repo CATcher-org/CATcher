@@ -4,7 +4,7 @@
   </mat-card-header>
   <app-profiles (selectedProfileEmitter)="onProfileSelect($event)" (profileDataEmitter)="onProfilesMissing($event)"></app-profiles>
   <mat-card-content>
-    <form [formGroup]="loginForm" #myForm="ngForm" (ngSubmit)="login(myForm)">
+    <form [formGroup]="loginForm" #myForm="ngForm" (keyup.enter)="login(myForm)" (ngSubmit)="login(myForm)">
       <table class="table-form" cellspacing="0">
         <tr>
           <td>
@@ -29,7 +29,12 @@
         </tr>
       </table>
       <mat-card-actions>
-        <button type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">Sign In</button>
+        <button type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">
+          <div>
+            <span *ngIf="this.isUserNotAuthenticated()">Sign In</span>
+            <mat-spinner [diameter]="30" *ngIf="this.authState.toString() !== '0'"></mat-spinner>
+          </div>
+        </button>
       </mat-card-actions>
     </form>
   </mat-card-content>

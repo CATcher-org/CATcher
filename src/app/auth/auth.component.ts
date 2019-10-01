@@ -11,7 +11,6 @@ import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
 import { flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
-import { User } from '../core/models/user.model';
 import { GithubEventService } from '../core/services/githubevent.service';
 
 
@@ -100,24 +99,33 @@ export class AuthComponent implements OnInit, OnDestroy {
           return this.githubEventService.setLatestChangeEvent();
         })
       ).subscribe(
-          () => {
-            this.authService.changeAuthState(AuthState.Authenticated);
-            form.resetForm();
-            this.titleService.setTitle(require('../../../package.json').name
-              .concat(' ')
-              .concat(require('../../../package.json').version)
-              .concat(' - ')
-              .concat(this.phaseService.getPhaseDetail()));
-            this.router.navigateByUrl(this.phaseService.currentPhase);
-          },
-          (error) => {
+        () => {
+          this.authService.changeAuthState(AuthState.Authenticated);
+          form.resetForm();
+          this.titleService.setTitle(require('../../../package.json').name
+            .concat(' ')
+            .concat(require('../../../package.json').version)
+            .concat(' - ')
+            .concat(this.phaseService.getPhaseDetail()));
+          this.router.navigateByUrl(this.phaseService.currentPhase);
+        },
+        (error) => {
+          this.auth.changeAuthState(AuthState.NotAuthenticated);
           if (error instanceof HttpErrorResponse) {
             this.errorHandlingService.handleHttpError(error.error);
           } else {
             this.errorHandlingService.handleGeneralError(error);
           }
-      });
+        }
+      );
     }
+  }
+
+  /**
+   * @return boolean - true if authenticated, false if not.
+   */
+  private isUserNotAuthenticated() {
+    return this.authState === AuthState.NotAuthenticated;
   }
 
   /**
