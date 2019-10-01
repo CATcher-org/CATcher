@@ -31,7 +31,7 @@
       <mat-card-actions>
         <button type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">
           <div>
-            <span *ngIf="this.authState.toString() === '0'">Sign In</span>
+            <span *ngIf="this.isUserNotAuthenticated()">Sign In</span>
             <mat-spinner [diameter]="30" *ngIf="this.authState.toString() !== '0'"></mat-spinner>
           </div>
         </button>
