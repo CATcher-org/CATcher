@@ -114,6 +114,14 @@ export class CommentEditorComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  /**
+   * Formats the text to create space at the end of the user input to prevent any issues with
+   * the markdown interpretation.
+   */
+  formatText() {
+    this.commentField.setValue(this.commentTextArea.nativeElement.value + '\n\r');
+  }
+
   onPaste() {
     this.uploadErrorMessage = null;
 

@@ -10,7 +10,7 @@
           <textarea ctrlKeys (ctrlV)="onPaste()" #commentTextArea (dragover)="disableCaretMovement($event)"
                     id="{{ this.id }}" formControlName="{{ this.id }}" matInput placeholder="Description"
                     cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
-                    cdkAutosizeMaxRows="20"></textarea>
+                    cdkAutosizeMaxRows="20" (change)="formatText()"></textarea>
           <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">
             Description required.
           </mat-error>
