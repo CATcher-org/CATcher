@@ -61,7 +61,11 @@ export class AuthService {
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
-    this.titleService.setTitle('CATcher');
+    this.titleService.setTitle(
+      require('../../../../package.json').name
+      .concat(' ')
+      .concat(require('../../../../package.json').version)
+    );
     this.issueService.setIssueTeamFilter('All Teams');
 
     this.changeAuthState(AuthState.NotAuthenticated);
