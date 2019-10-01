@@ -106,7 +106,7 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.titleService.setTitle(require('../../../package.json').name
               .concat(' ')
               .concat(require('../../../package.json').version)
-              .concat(' || ')
+              .concat(' - ')
               .concat(this.phaseService.getPhaseDetail()));
             this.router.navigateByUrl(this.phaseService.currentPhase);
           },
