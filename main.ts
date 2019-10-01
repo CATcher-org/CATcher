@@ -32,7 +32,7 @@ function createWindow() {
     width: size.width,
     height: size.height
   });
-
+  win.setTitle(require('./package.json').name + ' ' + require('./package.json').version);
   if (serve) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
