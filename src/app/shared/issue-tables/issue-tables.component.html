@@ -63,7 +63,8 @@
           {{issue.assignees.join(', ')}}
         </span>
       <span *ngIf="issue.assignees.length === 0" style="margin-left: 5%">
-          <mat-icon matTooltip="Should not be empty" matTooltipPosition="above" color="warn">warning</mat-icon>
+          <mat-icon matTooltip="We strongly recommend assigning all issues to someone"
+                    matTooltipPosition="above" style="color: #FFAB40;">warning</mat-icon>
         </span>
   </ng-container>
 
