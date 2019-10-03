@@ -52,10 +52,7 @@ export class TesterResponseComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-
-    if (this.isNewResponse()) {
-      this.issue.status = STATUS.Done;
-    }
+    this.issue.status = STATUS.Done;
 
     this.issueService.updateIssue(this.issue).pipe(finalize(() => {
       this.isFormPending = false;
