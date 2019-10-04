@@ -46,7 +46,35 @@ export class ProfilesComponent implements OnInit {
 
   profiles: Profile[] = undefined; // List of profiles taken from profiles.json
   blankProfile: Profile = {profileName: '', password: '', username: '', encodedText: ''}; // A blank profile to reset values
-  animationActivated = false;
+  animationActivated = false; // Assists color change animations.
+
+  // To be set to undefined array if not used.
+  readonly defaultProfiles: Profile[] = [
+    <Profile>{
+      profileName: 'CS2103/T Alpha Test',
+      encodedText: 'nus-cs2103-AY1920S1/alpha'
+    },
+    <Profile>{
+      profileName: 'CS2103/T PE Dry run',
+      encodedText: 'nus-cs2103-AY1920S1/PED'
+    },
+    <Profile>{
+      profileName: 'CS2103/T PE',
+      encodedText: 'nus-cs2103-AY1920S1/PE'
+    },
+    <Profile>{
+      profileName: 'CS2113/T Alpha Test',
+      encodedText: 'nusCs2113-AY1920S1/alpha'
+    },
+    <Profile>{
+      profileName: 'CS2113/T PE Dry run',
+      encodedText: 'nusCs2113-AY1920S1/PED'
+    },
+    <Profile>{
+      profileName: 'CS2113/T PE',
+      encodedText: 'nusCs2113-AY1920S1/PE'
+    }
+  ];
 
   private readonly fs = require('fs');
 
@@ -98,7 +126,7 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Processes the selected profiles JSON file.
+   * Processes all available Profiles information.
    */
   readProfiles(): void {
     const isFileExists: boolean = this.userProfileFileExists(this.filePath);
@@ -111,15 +139,28 @@ export class ProfilesComponent implements OnInit {
     if (isFileExists) {
       try {
         this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
-        this.assertProfilesValidity(this.profiles);
       } catch (e) {
-        console.log(e);
-        setTimeout(() => {
-          this.profiles = undefined;
-          this.openErrorDialog();
-        });
+        // Do nothing if there is a parsing error because this.profiles will be set to undefined on error.
+      }
+
+      // Validity Check if custom profile.json file has values in it.
+      if (this.profiles !== undefined) {
+        try {
+          this.assertProfilesValidity(this.profiles);
+        } catch (e) {
+          console.log(e);
+          setTimeout(() => {
+            this.profiles = undefined;
+            this.openErrorDialog();
+          });
+        }
       }
     }
+
+    // Several Layers of True False Statements to decide which values to assign to this.profiles.
+    this.profiles = this.profiles === undefined
+      ? this.defaultProfiles === undefined ? undefined : this.defaultProfiles
+      : this.defaultProfiles === undefined ? this.profiles : this.profiles.concat(this.defaultProfiles);
 
     // Set default profile if exists.
     this.selectedProfile = this.profiles === undefined ? this.blankProfile : this.profiles[0];
@@ -138,8 +179,7 @@ export class ProfilesComponent implements OnInit {
    * @param profiles - Array of profiles sourced from profiles.json
    */
   assertProfilesValidity(profiles: Profile[]): void {
-    if (profiles === undefined
-        || profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined)).length !== 0) {
+    if (profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined)).length !== 0) {
       throw new Error();
     }
   }
