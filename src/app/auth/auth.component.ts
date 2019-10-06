@@ -124,7 +124,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   /**
    * @return boolean - true if authenticated, false if not.
    */
-  private isUserNotAuthenticated() {
+  isUserNotAuthenticated() {
     return this.authState === AuthState.NotAuthenticated;
   }
 
