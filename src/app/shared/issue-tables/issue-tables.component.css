@@ -14,15 +14,8 @@
 }
 
 .mat-column-title {
-  width: 30%;
+  width: 20%;
   padding: 0 10px 0 10px;
-}
-
-td {
-  overflow: hidden;
-  width:auto;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .mat-column-type {
