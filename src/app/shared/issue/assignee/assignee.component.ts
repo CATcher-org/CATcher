@@ -43,10 +43,9 @@ export class AssigneeComponent implements OnInit {
     }
   }
 
-  updateAssignee(event): void {
+  updateAssignee(): void {
     const latestIssue = <BaseIssue>{
-      ...this.issue,
-      assignees: event.value
+      ...this.issue
     };
     this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
       this.issueUpdated.emit(latestIssue);
