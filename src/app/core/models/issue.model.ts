@@ -48,7 +48,7 @@ export const labelsToAttributeMapping = {
 
 export const SEVERITY_ORDER = { Low: 0, Medium: 1, High: 2 };
 
-export const ISSUE_TYPE_ORDER = { DocumentationBug: 0, FunctionalityBug: 1 };
+export const ISSUE_TYPE_ORDER = { DocTypo: 0, DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3  };
 
 export enum STATUS {
   Incomplete = 'Incomplete',
@@ -62,7 +62,9 @@ export enum SEVERITY {
 }
 
 export enum TYPE {
+  DocTypo = 'DocTypo',
   DocumentationBug = 'DocumentationBug',
+  FeatureFlaw = 'FeatureFlaw',
   FunctionalityBug = 'FunctionalityBug',
 }
 
