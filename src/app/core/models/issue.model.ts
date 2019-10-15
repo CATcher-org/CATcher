@@ -46,9 +46,9 @@ export const labelsToAttributeMapping = {
   'unsure': 'unsure'
 };
 
-export const SEVERITY_ORDER = { Low: 0, Medium: 1, High: 2 };
+export const SEVERITY_ORDER = { '-': 0 , Low: 1, Medium: 2, High: 3 };
 
-export const ISSUE_TYPE_ORDER = { DocTypo: 0, DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3  };
+export const ISSUE_TYPE_ORDER = { '-': 0 , DocTypo: 1, DocumentationBug: 2, FeatureFlaw: 3, FunctionalityBug: 4  };
 
 export enum STATUS {
   Incomplete = 'Incomplete',
