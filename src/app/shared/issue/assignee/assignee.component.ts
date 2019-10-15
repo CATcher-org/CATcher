@@ -16,6 +16,7 @@ import { BaseIssue } from '../../../core/models/base-issue.model';
 export class AssigneeComponent implements OnInit {
   teamMembers: string[];
   isInEditMode = false;
+  assignees: string[];
 
   @Input() issue: Issue;
   @Input() team: Team;
@@ -30,6 +31,7 @@ export class AssigneeComponent implements OnInit {
 
   ngOnInit(): void {
     this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
+    this.assignees = this.issue.assignees;
   }
 
   openSelector() {
@@ -43,10 +45,10 @@ export class AssigneeComponent implements OnInit {
     }
   }
 
-  updateAssignee(event): void {
+  updateAssignee(): void {
     const latestIssue = <BaseIssue>{
       ...this.issue,
-      assignees: event.value
+      assignees: this.assignees
     };
     this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
       this.issueUpdated.emit(latestIssue);
