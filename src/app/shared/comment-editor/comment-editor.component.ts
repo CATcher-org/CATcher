@@ -119,7 +119,9 @@ export class CommentEditorComponent implements OnInit {
    * the markdown interpretation.
    */
   formatText() {
-    this.commentField.setValue(this.commentTextArea.nativeElement.value + '\n\r');
+    if (this.commentTextArea.nativeElement.value !== '') {
+      this.commentField.setValue(this.commentTextArea.nativeElement.value + '\n\r');
+    }
   }
 
   onPaste() {
