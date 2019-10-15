@@ -6,7 +6,8 @@
 
   <mat-select class="no-arrow" [style.display]="isInEditMode ? 'block' : 'none'" placeholder="-" multiple
               (openedChange)="handleEditMode($event)"
-              [value]="issue.assignees" (selectionChange)="updateAssignee($event)">
+              (closed)="updateAssignee()"
+              [(ngModel)]="this.assignees">
     <mat-select-trigger>
     </mat-select-trigger>
     <mat-option *ngFor="let assignee of teamMembers" [value]="assignee">{{assignee}}</mat-option>
