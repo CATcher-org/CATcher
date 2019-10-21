@@ -104,7 +104,7 @@ export class TesterResponseComponent implements OnInit {
   }
 
   handleChangeOfText(event, disagree, index) {
-    if (event.target.value !== disagree) {
+    if (event.target.value !== disagree && event.target.value !== undefined) {
       this.issue.testerResponses[index].reasonForDiagreement = event.target.value;
     }
   }
