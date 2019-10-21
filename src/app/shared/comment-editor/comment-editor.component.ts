@@ -1,8 +1,8 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormGroup} from '@angular/forms';
-import {UploadService} from '../../core/services/upload.service';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {clipboard} from 'electron';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
+import { UploadService } from '../../core/services/upload.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { clipboard } from 'electron';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
@@ -20,6 +20,8 @@ export class CommentEditorComponent implements OnInit {
   @Input() commentForm: FormGroup; // Compulsory Input
   @Input() id: string; // Compulsory Input
   @Input() initialDescription?: string;
+  @Input() isFormPending?: boolean;
+  @Output() isFormPendingChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
   @ViewChild('markdownArea') markdownArea;
@@ -104,11 +106,14 @@ export class CommentEditorComponent implements OnInit {
       return;
     }
 
+    this.isFormPendingChange.emit(true); // Prevents Form Submission during Upload
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);
+      }, () => {
+        this.isFormPendingChange.emit(false); // Allow Form Submission after upload.
       });
     };
     reader.readAsDataURL(file);

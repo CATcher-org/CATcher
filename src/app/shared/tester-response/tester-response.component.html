@@ -30,7 +30,11 @@
         </div>
         <div *ngIf="isEditing">
           <app-comment-editor [commentField]="testerResponseForm.get(i.toString())" [commentForm]="testerResponseForm"
-            (change)="handleChangeOfText($event, response.reasonForDiagreement, i)" [id]="i.toString()" (focusout)="handleChangeOfText($event, response.reasonForDiagreement, i)"></app-comment-editor>
+                              (change)="handleChangeOfText($event, response.reasonForDiagreement, i)"
+                              [id]="i.toString()"
+                              (focusout)="handleChangeOfText($event, response.reasonForDiagreement, i)"
+                              [(isFormPending)]="isFormPending">
+          </app-comment-editor>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>
       </div>
