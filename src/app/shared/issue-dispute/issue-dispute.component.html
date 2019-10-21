@@ -29,9 +29,14 @@
           <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing"></markdown>
         </div>
         <div *ngIf="isEditing">
-          <app-comment-editor [commentField]="tutorResponseForm.get(i.toString())" [commentForm]="tutorResponseForm"
-            (change)="handleChangeOfText($event, dispute.tutorResponse, i)" [id]="i.toString()"
-            [initialDescription]="dispute.tutorResponse"></app-comment-editor>
+          <app-comment-editor
+            [commentField]="tutorResponseForm.get(i.toString())"
+            [commentForm]="tutorResponseForm"
+            (change)="handleChangeOfText($event, dispute.tutorResponse, i)"
+            [id]="i.toString()"
+            [initialDescription]="dispute.tutorResponse"
+            [(isFormPending)]="isFormPending">
+          </app-comment-editor>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>
       </div>
