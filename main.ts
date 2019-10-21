@@ -91,16 +91,17 @@ const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
-  },
-  {
-    role: 'help',
-    submenu: [
-      {
-        label: 'User Guide',
-        click () { require('electron').shell.openExternal('https://catcher-org.github.io/'); }
-      }
-    ]
   }
+  // ,
+  // {
+  //   role: 'help',
+  //   submenu: [
+  //     {
+  //       label: 'User Guide',
+  //       click () { require('electron').shell.openExternal('https://catcher-org.github.io/'); }
+  //     }
+  //   ]
+  // }
 ];
 
 if (isDevMode()) {
