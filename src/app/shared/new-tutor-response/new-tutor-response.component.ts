@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {IssueService} from '../../core/services/issue.service';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
 import {finalize, map} from 'rxjs/operators';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
 
 @Component({
   selector: 'app-new-tutor-response',
@@ -16,6 +17,8 @@ export class NewTutorResponseComponent implements OnInit {
   newTutorResponseForm: FormGroup;
   duplicatedIssueList: Observable<Issue[]>;
   teamMembers: string[];
+
+  submitButtonText: string;
 
   isFormPending = false;
   @Input() issue: Issue;
@@ -47,6 +50,7 @@ export class NewTutorResponseComponent implements OnInit {
       this.duplicateOf.updateValueAndValidity();
       this.responseTag.updateValueAndValidity();
     });
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SUBMIT;
   }
 
   private getDupIssueList(): Observable<Issue[]> {

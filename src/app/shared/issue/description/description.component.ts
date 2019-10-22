@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {Issue} from '../../../core/models/issue.model';
-import {IssueService} from '../../../core/services/issue.service';
-import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {finalize} from 'rxjs/operators';
-import {PermissionService} from '../../../core/services/permission.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Issue } from '../../../core/models/issue.model';
+import { IssueService } from '../../../core/services/issue.service';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { finalize } from 'rxjs/operators';
+import { PermissionService } from '../../../core/services/permission.service';
+import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 
 @Component({
   selector: 'app-issue-description',
@@ -14,6 +15,8 @@ import {PermissionService} from '../../../core/services/permission.service';
 export class DescriptionComponent implements OnInit {
   isSavePending = false;
   issueDescriptionForm: FormGroup;
+
+  submitButtonText: string;
 
   @Input() issue: Issue;
   @Input() title: string;
@@ -31,6 +34,7 @@ export class DescriptionComponent implements OnInit {
     this.issueDescriptionForm = this.formBuilder.group({
       description: ['', Validators.required],
     });
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
 
   changeToEditMode() {

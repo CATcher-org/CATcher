@@ -1,8 +1,8 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormGroup} from '@angular/forms';
-import {UploadService} from '../../core/services/upload.service';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import {clipboard} from 'electron';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
+import { UploadService } from '../../core/services/upload.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { clipboard } from 'electron';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
@@ -19,7 +19,17 @@ export class CommentEditorComponent implements OnInit {
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
   @Input() id: string; // Compulsory Input
+
   @Input() initialDescription?: string;
+
+  // Allows the comment editor to control the overall form's completeness.
+  @Input() isFormPending?: boolean;
+  @Output() isFormPendingChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  // Allow the comment editor to control the text of the submit button to prompt the user.
+  @Input() submitButtonText?: string;
+  @Output() submitButtonTextChange: EventEmitter<string> = new EventEmitter<string>();
+
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
   @ViewChild('markdownArea') markdownArea;
@@ -93,6 +103,11 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
+  updateParentFormsSubmittability(isFormPending: boolean, submitButtonText: string) {
+    this.isFormPendingChange.emit(isFormPending);
+    this.submitButtonTextChange.emit(submitButtonText);
+  }
+
   readAndUploadFile(file: File): void {
     this.uploadErrorMessage = null;
     const reader = new FileReader();
@@ -104,11 +119,19 @@ export class CommentEditorComponent implements OnInit {
       return;
     }
 
+    const initialButtonText = this.submitButtonText;
+
+    // Prevents Form Submission during Upload
+    this.updateParentFormsSubmittability(true, initialButtonText + ' (Waiting for File Upload to finish...)');
+
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);
+      }, () => {
+        // Allow Form Submission after upload.
+        this.updateParentFormsSubmittability(false, initialButtonText);
       });
     };
     reader.readAsDataURL(file);
@@ -165,9 +188,9 @@ export class CommentEditorComponent implements OnInit {
     const fileType = filename.split('.').pop();
     let toInsert: string;
     if (DISPLAYABLE_CONTENT.includes(fileType)) {
-      toInsert = `![Uploading ${filename}...]()\n`;
+      toInsert = `![Uploading ${filename}...]\n`;
     } else {
-      toInsert = `[Uploading ${filename}...]()\n`;
+      toInsert = `[Uploading ${filename}...]\n`;
     }
 
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
@@ -192,12 +215,12 @@ export class CommentEditorComponent implements OnInit {
 
   private insertUploadUrl(filename: string, uploadUrl: string) {
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]()`);
-    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]()`.length;
+    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
+    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
     const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
 
     this.commentField.setValue(
-      this.commentField.value.replace(`[Uploading ${filename}...]()`, `[${filename}](${uploadUrl})`));
+      this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
 
     if (cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString) { // within the range of uploading text
       this.commentTextArea.nativeElement.setSelectionRange(endOfInsertedString, endOfInsertedString);

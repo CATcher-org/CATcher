@@ -113,9 +113,9 @@ export class HeaderComponent implements OnInit {
       this.issueService.setIssueTeamFilter(this.userService.currentUser.team.id); // e.g W12-3
     }
 
-    const teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g W12-3 -> W12 and 3
+    const teamFilter = this.issueService.getIssueTeamFilter().split('-'); // e.g CS2103T-W12-3 -> CS2103T, W12 and 3
     // The team filter string E.g "+label:tutorial.W12+label:team.3"
-    const teamFilterString = this.TUTORIAL_LABEL.concat(teamFilter[0]).concat(this.TEAM_LABEL).concat(teamFilter[1]);
+    const teamFilterString = this.TUTORIAL_LABEL.concat(`${teamFilter[0]}-${teamFilter[1]}`).concat(this.TEAM_LABEL).concat(teamFilter[2]);
     // Only include duplicate Issues in last Phase
     return (this.phaseService.currentPhase === Phase.phaseModeration) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }

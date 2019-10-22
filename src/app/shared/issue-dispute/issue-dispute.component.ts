@@ -9,6 +9,7 @@ import { UserService } from '../../core/services/user.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { finalize } from 'rxjs/operators';
 import { UserRole } from '../../core/models/user.model';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
 
 @Component({
   selector: 'app-issue-dispute',
@@ -19,6 +20,8 @@ export class IssueDisputeComponent implements OnInit {
   tutorResponseForm: FormGroup;
   isFormPending = false;
   isEditing = false;
+
+  submitButtonText: string;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -38,9 +41,8 @@ export class IssueDisputeComponent implements OnInit {
     }
     this.tutorResponseForm = this.formBuilder.group(group);
 
-    if (this.isNewResponse()) {
-      this.isEditing = true;
-    }
+    this.isEditing = this.isNewResponse();
+    this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
   }
 
   submitTutorResponseForm() {
@@ -122,10 +124,6 @@ export class IssueDisputeComponent implements OnInit {
 
   isNewResponse(): boolean {
     return !this.issue.issueComment;
-  }
-
-  getSubmitButtonText(): string {
-    return this.isNewResponse() ? 'Submit' : 'Save';
   }
 
   getItemTitleText(title: string): string {
