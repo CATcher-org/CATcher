@@ -224,7 +224,7 @@ export class IssueService {
       case 'FILTER_BY_TEAM': // Only student has this filter
         const studentTeam = this.userService.currentUser.team.id.split('-');
         filters.push({
-          labels: [this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1])]
+          labels: [this.createLabel('tutorial', `${studentTeam[0]}-${studentTeam[1]}`), this.createLabel('team', studentTeam[2])]
         });
         break;
       case 'FILTER_BY_TEAM_ASSIGNED': // Only for Tutors and Admins
@@ -232,8 +232,8 @@ export class IssueService {
         for (let i = 0; i < allocatedTeams.length; i++) {
           const labels = [];
           const team = allocatedTeams[i].id.split('-');
-          labels.push(this.createLabel('tutorial', team[0]));
-          labels.push(this.createLabel('team', team[1]));
+          labels.push(this.createLabel('tutorial', `${team[0]}-${team[1]}`));
+          labels.push(this.createLabel('team', team[2]));
           filters.push({ labels: labels });
         }
         break;
