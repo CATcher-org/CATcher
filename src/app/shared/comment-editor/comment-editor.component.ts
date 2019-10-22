@@ -188,9 +188,9 @@ export class CommentEditorComponent implements OnInit {
     const fileType = filename.split('.').pop();
     let toInsert: string;
     if (DISPLAYABLE_CONTENT.includes(fileType)) {
-      toInsert = `![Uploading ${filename}...]()\n`;
+      toInsert = `![Uploading ${filename}...]\n`;
     } else {
-      toInsert = `[Uploading ${filename}...]()\n`;
+      toInsert = `[Uploading ${filename}...]\n`;
     }
 
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
@@ -215,12 +215,12 @@ export class CommentEditorComponent implements OnInit {
 
   private insertUploadUrl(filename: string, uploadUrl: string) {
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]()`);
-    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]()`.length;
+    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
+    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
     const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
 
     this.commentField.setValue(
-      this.commentField.value.replace(`[Uploading ${filename}...]()`, `[${filename}](${uploadUrl})`));
+      this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
 
     if (cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString) { // within the range of uploading text
       this.commentTextArea.nativeElement.setSelectionRange(endOfInsertedString, endOfInsertedString);
