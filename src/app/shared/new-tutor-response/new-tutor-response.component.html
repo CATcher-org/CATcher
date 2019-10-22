@@ -60,10 +60,16 @@
         </div>
       </div>
 
-      <app-comment-editor [id]="'description'" [commentField]="newTutorResponseForm.get('description')" [commentForm]="newTutorResponseForm"></app-comment-editor>
+      <app-comment-editor
+        [id]="'description'"
+        [commentField]="this.newTutorResponseForm.get('description')"
+        [commentForm]="this.newTutorResponseForm"
+        [(isFormPending)]="this.isFormPending"
+        [(submitButtonText)]="this.submitButtonText">
+      </app-comment-editor>
     
       <div style="float: right; padding:5px;">
-        <button type="submit" style="margin-left: 10px" [disabled]="newTutorResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>
+        <button type="submit" style="margin-left: 10px" [disabled]="newTutorResponseForm.invalid || isFormPending" mat-stroked-button color="primary">{{ this.submitButtonText }}</button>
       </div>
     </div>
 

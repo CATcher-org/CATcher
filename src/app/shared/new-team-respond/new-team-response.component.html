@@ -50,10 +50,16 @@
         </div>
       </div>
 
-      <app-comment-editor [id]="'description'" [commentField]="newTeamResponseForm.get('description')" [commentForm]="newTeamResponseForm"></app-comment-editor>
+      <app-comment-editor
+        [id]="'description'"
+        [commentField]="this.newTeamResponseForm.get('description')"
+        [commentForm]="this.newTeamResponseForm"
+        [(isFormPending)]="this.isFormPending"
+        [(submitButtonText)]="this.submitButtonText">
+      </app-comment-editor>
     
       <div style="float: right; padding: 5px;">
-        <button type="submit" style="margin-left: 10px" [disabled]="newTeamResponseForm.invalid || isFormPending" mat-stroked-button color="primary">Submit</button>
+        <button type="submit" style="margin-left: 10px" [disabled]="newTeamResponseForm.invalid || isFormPending" mat-stroked-button color="primary">{{ this.submitButtonText }}</button>
       </div>
     </div>
 

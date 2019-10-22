@@ -5,6 +5,7 @@ import { ErrorHandlingService } from '../../core/services/error-handling.service
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { LabelService } from '../../core/services/label.service';
+import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component';
 
 @Component({
   selector: 'app-new-issue',
@@ -14,6 +15,8 @@ import { LabelService } from '../../core/services/label.service';
 export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
   isFormPending = false;
+
+  submitButtonText: string;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService, public labelService: LabelService,
@@ -26,6 +29,8 @@ export class NewIssueComponent implements OnInit {
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
+
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SUBMIT;
   }
 
   submitNewIssue(form: NgForm) {
