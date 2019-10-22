@@ -33,7 +33,8 @@
                               (change)="handleChangeOfText($event, response.reasonForDiagreement, i)"
                               [id]="i.toString()"
                               (focusout)="handleChangeOfText($event, response.reasonForDiagreement, i)"
-                              [(isFormPending)]="isFormPending">
+                              [(isFormPending)]="isFormPending"
+                              [(submitButtonText)]="submitButtonText">
           </app-comment-editor>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>
@@ -41,7 +42,7 @@
       <mat-divider></mat-divider>
       <div style="float: right; padding: 10px;" *ngIf="isEditing">
         <button type="submit" [disabled]="testerResponseForm.invalid || isFormPending"
-          mat-stroked-button color="primary"> {{this.getSubmitButtonText()}} </button>
+          mat-stroked-button color="primary"> {{ this.submitButtonText }} </button>
         <button type="button" [disabled]="isFormPending" style="margin-left: 10px;" *ngIf="!this.isNewResponse()" mat-stroked-button color="warn"
           (click)="cancelEditMode()">Cancel</button>
       </div>

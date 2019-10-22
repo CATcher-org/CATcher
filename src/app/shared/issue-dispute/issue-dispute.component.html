@@ -30,12 +30,13 @@
         </div>
         <div *ngIf="isEditing">
           <app-comment-editor
-            [commentField]="tutorResponseForm.get(i.toString())"
-            [commentForm]="tutorResponseForm"
+            [commentField]="this.tutorResponseForm.get(i.toString())"
+            [commentForm]="this.tutorResponseForm"
             (change)="handleChangeOfText($event, dispute.tutorResponse, i)"
             [id]="i.toString()"
             [initialDescription]="dispute.tutorResponse"
-            [(isFormPending)]="isFormPending">
+            [(isFormPending)]="this.isFormPending"
+            [(submitButtonText)]="this.submitButtonText">
           </app-comment-editor>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>
@@ -43,7 +44,7 @@
       <mat-divider></mat-divider>
       <div style="float: right; padding: 10px;" *ngIf="isEditing">
         <button type="submit" [disabled]="tutorResponseForm.invalid || isFormPending"
-          mat-stroked-button color="primary"> {{this.getSubmitButtonText()}} </button>
+          mat-stroked-button color="primary"> {{ this.submitButtonText }} </button>
         <button type="button" [disabled]="isFormPending" style="margin-left: 10px;" *ngIf="!this.isNewResponse()"
           mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
       </div>

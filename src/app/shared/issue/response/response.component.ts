@@ -8,6 +8,7 @@ import {Phase, PhaseService} from '../../../core/services/phase.service';
 import {Issue} from '../../../core/models/issue.model';
 import {IssueCommentService} from '../../../core/services/issue-comment.service';
 import {IssueComment} from '../../../core/models/comment.model';
+import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 
 @Component({
   selector: 'app-issue-response',
@@ -17,6 +18,8 @@ import {IssueComment} from '../../../core/models/comment.model';
 export class ResponseComponent implements OnInit {
   isSavePending = false;
   responseForm: FormGroup;
+
+  submitButtonText: string;
 
   readonly TITLE = {
     'teamResponse': 'Team\'s Response',
@@ -52,6 +55,7 @@ export class ResponseComponent implements OnInit {
     this.responseForm = this.formBuilder.group({
       description: ['', Validators.required],
     });
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
 
   changeToEditMode() {

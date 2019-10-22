@@ -13,12 +13,13 @@
     <div *ngIf="isEditing">
       <app-comment-editor
         [id]="'description'"
-        [commentField]="issueDescriptionForm.get('description')"
-        [commentForm]="issueDescriptionForm"
-        [(isFormPending)]="isSavePending">
+        [commentField]="this.issueDescriptionForm.get('description')"
+        [commentForm]="this.issueDescriptionForm"
+        [(isFormPending)]="this.isSavePending"
+        [(submitButtonText)]="this.submitButtonText">
       </app-comment-editor>
       <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
-      <button type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending" mat-stroked-button color="primary">Save</button>
+      <button type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending" mat-stroked-button color="primary">{{ this.submitButtonText }}</button>
     </div>
   </div>
 </form>

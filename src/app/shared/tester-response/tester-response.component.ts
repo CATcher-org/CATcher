@@ -9,6 +9,7 @@ import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
 import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { IssueComment } from '../../core/models/comment.model';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
 
 @Component({
   selector: 'app-tester-response',
@@ -20,6 +21,8 @@ export class TesterResponseComponent implements OnInit {
   testerResponseForm: FormGroup;
   isFormPending = false;
   isEditing = false;
+
+  submitButtonText: string;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -42,9 +45,8 @@ export class TesterResponseComponent implements OnInit {
     group['testerResponse'] = [this.issue.testerResponses];
     this.testerResponseForm = this.formBuilder.group(group);
 
-    if (this.isNewResponse()) {
-      this.isEditing = true;
-    }
+    this.isEditing = this.isNewResponse();
+    this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
   }
 
   submitTesterResponseForm() {
@@ -119,10 +121,6 @@ export class TesterResponseComponent implements OnInit {
 
   isNewResponse(): boolean {
     return !this.issue.status && this.userService.currentUser.role === UserRole.Student;
-  }
-
-  getSubmitButtonText(): string {
-    return this.isNewResponse() ? 'Submit' : 'Save';
   }
 
   getItemTitleText(title: string): string {

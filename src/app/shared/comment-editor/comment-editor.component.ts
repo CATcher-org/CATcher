@@ -19,9 +19,17 @@ export class CommentEditorComponent implements OnInit {
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
   @Input() id: string; // Compulsory Input
+
   @Input() initialDescription?: string;
+
+  // Allows the comment editor to control the overall form's completeness.
   @Input() isFormPending?: boolean;
   @Output() isFormPendingChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  // Allow the comment editor to control the text of the submit button to prompt the user.
+  @Input() submitButtonText?: string;
+  @Output() submitButtonTextChange: EventEmitter<string> = new EventEmitter<string>();
+
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
   @ViewChild('markdownArea') markdownArea;
@@ -95,6 +103,11 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
+  updateParentFormsSubmittability(isFormPending: boolean, submitButtonText: string) {
+    this.isFormPendingChange.emit(isFormPending);
+    this.submitButtonTextChange.emit(submitButtonText);
+  }
+
   readAndUploadFile(file: File): void {
     this.uploadErrorMessage = null;
     const reader = new FileReader();
@@ -106,14 +119,19 @@ export class CommentEditorComponent implements OnInit {
       return;
     }
 
-    this.isFormPendingChange.emit(true); // Prevents Form Submission during Upload
+    const initialButtonText = this.submitButtonText;
+
+    // Prevents Form Submission during Upload
+    this.updateParentFormsSubmittability(true, 'File Upload in Progress..');
+
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);
       }, () => {
-        this.isFormPendingChange.emit(false); // Allow Form Submission after upload.
+        // Allow Form Submission after upload.
+        this.updateParentFormsSubmittability(false, initialButtonText);
       });
     };
     reader.readAsDataURL(file);
