@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { LabelService } from '../../core/services/label.service';
 import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { IssueComment } from '../../core/models/comment.model';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
 
 @Component({
   selector: 'app-new-team-response',
@@ -20,6 +21,9 @@ export class NewTeamResponseComponent implements OnInit {
   duplicatedIssueList: Observable<Issue[]>;
 
   isFormPending = false;
+
+  submitButtonText: string;
+
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updatedCommentEmitter = new EventEmitter<IssueComment>();
@@ -55,6 +59,7 @@ export class NewTeamResponseComponent implements OnInit {
       this.duplicateOf.updateValueAndValidity();
       this.responseTag.updateValueAndValidity();
     });
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SUBMIT;
   }
 
   submitNewTeamResponse(form: NgForm) {

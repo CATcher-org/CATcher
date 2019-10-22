@@ -14,12 +14,18 @@
         </mat-form-field>
 
         <div style="margin: 10px 0 10px 0;">
-          <app-comment-editor [id]="'description'" [commentField]="description" [commentForm]="newIssueForm"></app-comment-editor>
+          <app-comment-editor
+            [id]="'description'"
+            [commentField]="description"
+            [commentForm]="this.newIssueForm"
+            [(isFormPending)]="this.isFormPending"
+            [(submitButtonText)]="this.submitButtonText">
+          </app-comment-editor>
         </div>
 
         <button style="float: right" type="submit" mat-stroked-button color="primary"
           [disabled]="!newIssueForm.valid || isFormPending">
-          Submit new issue
+          {{ this.submitButtonText }}
         </button>
       </div>
 

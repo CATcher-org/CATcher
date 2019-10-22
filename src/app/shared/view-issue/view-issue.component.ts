@@ -29,6 +29,11 @@ export enum ISSUE_COMPONENTS {
   UNSURE_CHECKBOX
 }
 
+export const SUBMIT_BUTTON_TEXT = {
+  SUBMIT: 'Submit',
+  SAVE: 'Save'
+};
+
 @Component({
   selector: 'app-view-issue',
   templateUrl: './view-issue.component.html',
