@@ -122,7 +122,7 @@ export class CommentEditorComponent implements OnInit {
     const initialButtonText = this.submitButtonText;
 
     // Prevents Form Submission during Upload
-    this.updateParentFormsSubmittability(true, 'File Upload in Progress..');
+    this.updateParentFormsSubmittability(true, initialButtonText + ' (Waiting for File Upload to finish...)');
 
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
