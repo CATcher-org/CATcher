@@ -4,7 +4,7 @@
   </mat-card-header>
   <app-profiles (selectedProfileEmitter)="onProfileSelect($event)" (profileDataEmitter)="onProfilesMissing($event)"></app-profiles>
   <mat-card-content>
-    <form [formGroup]="loginForm" #myForm="ngForm" (keyup.enter)="login(myForm)" (ngSubmit)="login(myForm)">
+    <form [formGroup]="loginForm" #myForm="ngForm" (ngSubmit)="login(myForm)">
       <table class="table-form" cellspacing="0">
         <tr>
           <td>

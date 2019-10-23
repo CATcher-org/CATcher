@@ -384,7 +384,8 @@ export class IssueService {
     if (this.phaseService.currentPhase !== Phase.phaseBugReporting &&
         this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
       const studentTeam = issue.teamAssigned.id.split('-');
-      result.push(this.createLabel('tutorial', studentTeam[0]), this.createLabel('team', studentTeam[1]));
+      result.push(this.createLabel('tutorial', `${studentTeam[0]}-${studentTeam[1]}`),
+        this.createLabel('team', studentTeam[2]));
     }
 
     if (issue.severity) {
