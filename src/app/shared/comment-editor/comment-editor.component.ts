@@ -29,6 +29,9 @@ export class CommentEditorComponent implements OnInit {
   // Allow the comment editor to control the text of the submit button to prompt the user.
   @Input() submitButtonText?: string;
   @Output() submitButtonTextChange: EventEmitter<string> = new EventEmitter<string>();
+  formatFileUploadingButtonText: (string) => string = ((currentButtonText: string) => {
+    return currentButtonText + ' (Waiting for File Upload to finish...)';
+  });
 
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
@@ -122,7 +125,7 @@ export class CommentEditorComponent implements OnInit {
     const initialButtonText = this.submitButtonText;
 
     // Prevents Form Submission during Upload
-    this.updateParentFormsSubmittability(true, initialButtonText + ' (Waiting for File Upload to finish...)');
+    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(initialButtonText));
 
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
@@ -161,10 +164,18 @@ export class CommentEditorComponent implements OnInit {
     const filename = `image.${imageFileType[0].split('/')[1]}`;
     const insertedText = this.insertUploadingText(filename);
 
+    const initialButtonText = this.submitButtonText;
+
+    // Prevents Form Submission during Upload
+    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(initialButtonText));
+
     this.uploadService.uploadFile(clipboard.readImage().toDataURL(), filename).subscribe((response) => {
       this.insertUploadUrl(filename, response.data.content.download_url);
     }, (error) => {
       this.handleUploadError(error, insertedText);
+    }, () => {
+      // Allow Form Submission after upload.
+      this.updateParentFormsSubmittability(false, initialButtonText);
     });
   }
 
