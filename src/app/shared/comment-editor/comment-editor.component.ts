@@ -32,6 +32,7 @@ export class CommentEditorComponent implements OnInit {
   formatFileUploadingButtonText: (string) => string = ((currentButtonText: string) => {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
   });
+  initialSubmitButtonText: string;
 
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
@@ -48,6 +49,8 @@ export class CommentEditorComponent implements OnInit {
     if (this.commentField === undefined || this.commentForm === undefined || this.id === undefined) {
       throw new Error('Comment Editor\'s compulsory properties are not defined.');
     }
+
+    this.initialSubmitButtonText = this.submitButtonText;
   }
 
   onDragEnter(event) {
@@ -107,8 +110,8 @@ export class CommentEditorComponent implements OnInit {
   }
 
   updateParentFormsSubmittability(isFormPending: boolean, submitButtonText: string) {
-    this.isFormPendingChange.emit(isFormPending);
-    this.submitButtonTextChange.emit(submitButtonText);
+      this.isFormPendingChange.emit(isFormPending);
+      this.submitButtonTextChange.emit(submitButtonText);
   }
 
   readAndUploadFile(file: File): void {
@@ -122,19 +125,18 @@ export class CommentEditorComponent implements OnInit {
       return;
     }
 
-    const initialButtonText = this.submitButtonText;
-
     // Prevents Form Submission during Upload
-    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(initialButtonText));
+    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(this.initialSubmitButtonText));
 
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);
+        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
       }, () => {
         // Allow Form Submission after upload.
-        this.updateParentFormsSubmittability(false, initialButtonText);
+        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
       });
     };
     reader.readAsDataURL(file);
@@ -167,15 +169,16 @@ export class CommentEditorComponent implements OnInit {
     const initialButtonText = this.submitButtonText;
 
     // Prevents Form Submission during Upload
-    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(initialButtonText));
+    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(this.initialSubmitButtonText));
 
     this.uploadService.uploadFile(clipboard.readImage().toDataURL(), filename).subscribe((response) => {
       this.insertUploadUrl(filename, response.data.content.download_url);
     }, (error) => {
       this.handleUploadError(error, insertedText);
+      this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
     }, () => {
       // Allow Form Submission after upload.
-      this.updateParentFormsSubmittability(false, initialButtonText);
+      this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
     });
   }
 
