@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { UploadService } from '../../core/services/upload.service';
+import {FILE_TYPE_SUPPORT_ERROR, UploadService} from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { clipboard } from 'electron';
 
@@ -33,6 +33,7 @@ export class CommentEditorComponent implements OnInit {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
   });
   initialSubmitButtonText: string;
+  lastUploadingTime: string;
 
   @ViewChild('dropArea') dropArea;
   @ViewChild('commentTextArea') commentTextArea;
@@ -125,6 +126,15 @@ export class CommentEditorComponent implements OnInit {
       return;
     }
 
+    if (!this.uploadService.isSupportedFileType(filename)) {
+      this.handleUploadError(FILE_TYPE_SUPPORT_ERROR, insertedText);
+      return;
+    }
+
+    // Log the most recent upload.
+    this.lastUploadingTime = new Date().getTime().toString();
+    const currentFileUploadTime = this.lastUploadingTime;
+
     // Prevents Form Submission during Upload
     this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(this.initialSubmitButtonText));
 
@@ -133,10 +143,15 @@ export class CommentEditorComponent implements OnInit {
         this.insertUploadUrl(filename, response.data.content.download_url);
       }, (error) => {
         this.handleUploadError(error, insertedText);
-        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+        // Allow button enabling if this is the last file that was uploaded.
+        if (currentFileUploadTime === this.lastUploadingTime) {
+          this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+        }
       }, () => {
-        // Allow Form Submission after upload.
-        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+        // Allow button enabling if this is the last file that was uploaded.
+        if (currentFileUploadTime === this.lastUploadingTime) {
+          this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+        }
       });
     };
     reader.readAsDataURL(file);
@@ -166,7 +181,15 @@ export class CommentEditorComponent implements OnInit {
     const filename = `image.${imageFileType[0].split('/')[1]}`;
     const insertedText = this.insertUploadingText(filename);
 
-    const initialButtonText = this.submitButtonText;
+    if (!this.uploadService.isSupportedFileType(filename)) {
+      this.handleUploadError('We dont support that file type. Try again with GIF, JPEG, JPG, PNG, DOCX, GZ, LOG, PDF,' +
+        ' PPTX, TXT, XLSX, ZIP.', insertedText);
+      return;
+    }
+
+    // Log the most recent upload.
+    this.lastUploadingTime = new Date().getTime().toString();
+    const currentFileUploadTime = this.lastUploadingTime;
 
     // Prevents Form Submission during Upload
     this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(this.initialSubmitButtonText));
@@ -175,10 +198,15 @@ export class CommentEditorComponent implements OnInit {
       this.insertUploadUrl(filename, response.data.content.download_url);
     }, (error) => {
       this.handleUploadError(error, insertedText);
-      this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+      // Allow button enabling if this is the last file that was uploaded.
+      if (currentFileUploadTime === this.lastUploadingTime) {
+        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+      }
     }, () => {
-      // Allow Form Submission after upload.
-      this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+      // Allow button enabling if this is the last file that was uploaded.
+      if (currentFileUploadTime === this.lastUploadingTime) {
+        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+      }
     });
   }
 

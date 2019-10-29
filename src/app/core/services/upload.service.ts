@@ -3,6 +3,8 @@ import {GithubService} from './github.service';
 import {uuid} from '../../shared/lib/uuid';
 import {throwError} from 'rxjs';
 
+export const FILE_TYPE_SUPPORT_ERROR = 'We dont support that file type.' +
+  ' Try again with GIF, JPEG, JPG, PNG, DOCX, GZ, LOG, PDF, PPTX, TXT, XLSX, ZIP.';
 const SUPPORTED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png', 'docx', 'gz', 'log', 'pdf', 'pptx', 'txt', 'xlsx', 'zip'];
 
 @Injectable({
@@ -28,5 +30,10 @@ export class UploadService {
     } else {
       return throwError('We dont support that file type. Try again with GIF, JPEG, JPG, PNG, DOCX, GZ, LOG, PDF, PPTX, TXT, XLSX, ZIP.');
     }
+  }
+
+  isSupportedFileType(fileName): boolean {
+    const fileType = fileName.split('.').pop();
+    return SUPPORTED_FILE_TYPES.includes(fileType);
   }
 }
