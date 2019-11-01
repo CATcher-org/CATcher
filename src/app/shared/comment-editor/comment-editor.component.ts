@@ -229,7 +229,7 @@ export class CommentEditorComponent implements OnInit {
 
     const fileType = filename.split('.').pop();
     let toInsert: string;
-    if (DISPLAYABLE_CONTENT.includes(fileType)) {
+    if (DISPLAYABLE_CONTENT.includes(fileType.toLowerCase())) {
       toInsert = `![Uploading ${filename}...]\n`;
     } else {
       toInsert = `[Uploading ${filename}...]\n`;
