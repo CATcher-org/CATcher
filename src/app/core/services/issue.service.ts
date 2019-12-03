@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { map, flatMap } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, forkJoin, merge, Observable, of, zip } from 'rxjs';
+import { flatMap, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
 import {
   Issue,
   Issues,
   IssuesFilter,
   LABELS,
   labelsToAttributeMapping,
+  phaseModerationDescriptionTemplate,
   phaseTeamResponseDescriptionTemplate,
   phaseTesterResponseDescriptionTemplate,
-  phaseModerationDescriptionTemplate,
   RespondType
 } from '../models/issue.model';
 import { UserService } from './user.service';
@@ -22,7 +22,7 @@ import { Team } from '../models/team.model';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { TesterResponse } from '../models/tester-response.model';
-import { IssueComments, IssueComment } from '../models/comment.model';
+import { IssueComment, IssueComments } from '../models/comment.model';
 import { IssueDispute } from '../models/issue-dispute.model';
 import { UserRole } from '../../core/models/user.model';
 import { BaseIssue } from '../models/base-issue.model';
@@ -271,7 +271,6 @@ export class IssueService {
         return mappedResults;
       }),
       map((issues: Issues) => {
-        this.issues = { ...this.issues, ...issues };
         this.issues = issues;
         this.issues$.next(Object.values(this.issues));
         return Object.values(this.issues);
@@ -432,11 +431,17 @@ export class IssueService {
   private createIssueModel(githubIssue: GithubIssue): Observable<Issue> {
     if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
       return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
-    } if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
+    } else if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
       return this.issueCommentService.getGithubComments(githubIssue.number, this.isIssueReloaded).pipe(
         flatMap((githubComments: GithubComment[]) => {
           return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments,
             this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
+        })
+      );
+    } else if (this.phaseService.currentPhase === Phase.phaseTesterResponse) {
+      return this.issueCommentService.getGithubComments(githubIssue.number, this.isIssueReloaded).pipe(
+        flatMap((githubComments: GithubComment[]) => {
+          return of(BaseIssue.createPhaseTesterResponseIssue(githubIssue, githubComments));
         })
       );
     }
@@ -479,29 +484,6 @@ export class IssueService {
           issueInJson['issueDisputes'],
         ...this.getFormattedLabels(issueInJson['labels'], LABELS),
         };
-      }),
-      map((issue: Issue) => {
-        if (issue.issueComment === undefined) {
-          return issue;
-        }
-
-        const LABEL_CATEGORY = 1;
-        const LABEL_VALUE = 2;
-
-        const issueLabelsExtractionRegex = /#{2} ?:question: ?Issue (\w+)[\n\r]*Team Chose `?(\w+)`?\.?/gi;
-        let extractedLabelsAndValues: RegExpExecArray;
-
-        while (extractedLabelsAndValues = issueLabelsExtractionRegex.exec(issue.issueComment.description)) {
-          issue = {
-            ...issue,
-            [(extractedLabelsAndValues[LABEL_CATEGORY] === 'response'
-              ? extractedLabelsAndValues[LABEL_CATEGORY].concat('Tag')
-              : extractedLabelsAndValues[LABEL_CATEGORY])]: extractedLabelsAndValues[LABEL_VALUE]
-          };
-        }
-
-        this.updateIssue(issue);
-        return issue;
       })
     );
   }

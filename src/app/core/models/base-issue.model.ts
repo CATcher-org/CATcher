@@ -10,7 +10,6 @@ import { TesterResponseTemplate } from './templates/tester-response-template.mod
 import { GithubIssue, GithubLabel } from './github-issue.model';
 import * as moment from 'moment';
 import { GithubComment } from './github-comment.model';
-import { DataService } from '../services/data.service';
 
 export class BaseIssue implements Issue {
 
@@ -58,17 +57,12 @@ export class BaseIssue implements Issue {
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
-  private static constructTeamData(githubIssue: GithubIssue, dataService: DataService): Team {
-    const teamId = githubIssue.findLabel(GithubLabel.LABELS.tutorial).concat('-').concat(githubIssue.findLabel(GithubLabel.LABELS.team));
-    return dataService.getTeam(teamId);
-  }
-
   public static createPhaseBugReportingIssue(githubIssue: GithubIssue): BaseIssue {
     return new BaseIssue(githubIssue);
   }
 
-  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]
-                                             , teamData: Team): Issue {
+  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
+                                             teamData: Team): Issue {
     const issue = new BaseIssue(githubIssue);
     const template = new TeamResponseTemplate(githubComments);
 
@@ -85,7 +79,8 @@ export class BaseIssue implements Issue {
   public static createPhaseTesterResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
     const issue = new BaseIssue(githubIssue);
     const template = new TesterResponseTemplate(githubComments);
-    issue.teamResponse = template.teamResponse.content;
+    issue.issueComment = template.comment;
+    issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
     issue.testerResponses = template.testerResponse.testerResponses;
     return issue;
   }

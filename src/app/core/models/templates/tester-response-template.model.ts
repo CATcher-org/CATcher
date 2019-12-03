@@ -2,6 +2,7 @@ import { Header, Template } from './template.model';
 import { TesterResponseSection } from './sections/test-response-section.model';
 import { Section } from './sections/section.model';
 import { GithubComment } from '../github-comment.model';
+import { IssueComment } from '../comment.model';
 
 
 const testerResponseHeaders = {
@@ -12,13 +13,20 @@ const testerResponseHeaders = {
 export class TesterResponseTemplate extends Template {
   teamResponse: Section;
   testerResponse: TesterResponseSection;
+  comment: IssueComment;
 
   constructor(githubIssueComments: GithubComment[]) {
     super(Object.values(testerResponseHeaders));
 
-    const templateConformingComment = githubIssueComments.find(comment => this.test(comment.body)).body;
-    this.teamResponse = this.parseTeamResponse(templateConformingComment);
-    this.testerResponse = this.parseTesterResponse(templateConformingComment);
+    const templateConformingComment = githubIssueComments.find(comment => this.test(comment.body));
+    if (templateConformingComment) {
+      this.comment = <IssueComment>{
+        ...templateConformingComment,
+        description: templateConformingComment.body
+      };
+      this.teamResponse = this.parseTeamResponse(this.comment.description);
+      this.testerResponse = this.parseTesterResponse(this.comment.description);
+    }
   }
 
   parseTeamResponse(toParse: string): Section {
