@@ -6,25 +6,15 @@ import {
   Issue,
   Issues,
   IssuesFilter,
-  LABELS,
-  labelsToAttributeMapping,
-  phaseModerationDescriptionTemplate,
-  phaseTeamResponseDescriptionTemplate,
-  phaseTesterResponseDescriptionTemplate,
   RespondType
 } from '../models/issue.model';
 import { UserService } from './user.service';
 import { Phase, PhaseService } from './phase.service';
 import { IssueCommentService } from './issue-comment.service';
 import { PermissionService } from './permission.service';
-import * as moment from 'moment';
-import { Team } from '../models/team.model';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
-import { TesterResponse } from '../models/tester-response.model';
-import { IssueComment, IssueComments } from '../models/comment.model';
 import { IssueDispute } from '../models/issue-dispute.model';
-import { UserRole } from '../../core/models/user.model';
 import { BaseIssue } from '../models/base-issue.model';
 import { GithubIssue, GithubLabel } from '../models/github-issue.model';
 import { GithubComment } from '../models/github-comment.model';
@@ -37,9 +27,6 @@ export class IssueService {
   issues$: BehaviorSubject<Issue[]>;
   private issueTeamFilter = 'All Teams';
   readonly MINIMUM_MATCHES = 1;
-  readonly userRole = UserRole;
-  // This boolean is used by the "Sync" function, to be removed after polling is implemented
-  private isIssueReloaded = false;
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -66,7 +53,6 @@ export class IssueService {
   }
 
   reloadAllIssues() {
-    this.isIssueReloaded = true;
     return this.initializeData();
   }
 
@@ -115,14 +101,6 @@ export class IssueService {
       default:
         return issue.description;
     }
-  }
-
-  private getTesterResponsesString(testerResponses: TesterResponse[]): string {
-    let testerResponsesString = '';
-    for (const testerResponse of testerResponses) {
-      testerResponsesString += testerResponse.toString();
-    }
-    return testerResponsesString;
   }
 
   private getIssueDisputeString(issueDisputes: IssueDispute[]): string {
@@ -183,30 +161,6 @@ export class IssueService {
         return issue.duplicateOf === parentIssue.id;
       });
     }));
-  }
-
-  /**
-   * Obtain the team that is assigned to the given issue.
-   */
-  getTeamAssignedToIssue(issueInJson: {}): Team {
-    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
-      return null;
-    }
-
-    let tutorial = '';
-    let team = '';
-    issueInJson['labels'].map((label) => {
-      const labelName = String(label['name']).split('.');
-      const labelType = labelName[0];
-      const labelValue = labelName[1];
-      if (labelType === 'team') {
-        team = labelValue;
-      } else if (labelType === 'tutorial') {
-        tutorial = labelValue;
-      }
-    });
-    const teamId = `${tutorial}-${team}`;
-    return this.dataService.getTeam(teamId);
   }
 
   reset() {
@@ -279,102 +233,6 @@ export class IssueService {
   }
 
   /**
-   * Will be used to parse the github representation of the issue's description
-   */
-  private getParsedBody(issue: any) {
-    if (this.phaseService.currentPhase === Phase.phaseBugReporting ||
-        this.phaseService.currentPhase === Phase.phaseTesterResponse) {
-      return;
-    }
-    [issue.body, issue.teamResponse, issue.duplicateOf, issue.tutorResponse, issue.todoList,
-      issue.proposedAssignees, issue.testerResponses, issue.issueDisputes] = this.parseBody(issue);
-  }
-
-  /**
-   * Actual implementation of using regex to extract out the data from github's representation of the issue's description.
-   */
-  private parseBody(issue: {}): any {
-    const body = issue['body'];
-
-    let regexExp;
-    switch (this.phaseService.currentPhase) {
-      case Phase.phaseTeamResponse:
-        regexExp = phaseTeamResponseDescriptionTemplate;
-        break;
-      case Phase.phaseTesterResponse:
-        regexExp = phaseTesterResponseDescriptionTemplate;
-        break;
-      case Phase.phaseModeration:
-        regexExp = phaseModerationDescriptionTemplate;
-        break;
-    }
-
-    const matches = body.match(regexExp);
-    regexExp.lastIndex = 0;
-
-    if (matches == null) {
-      return Array('', null, null, null, null, null);
-    }
-
-    let description,
-    teamResponse,
-    duplicateOf,
-    tutorResponse,
-    todoList,
-    assignees,
-    testerResponses,
-    issueDisputes;
-
-    for (const match of matches) {
-      const groups = regexExp.exec(match)['groups'];
-      regexExp.lastIndex = 0;
-      switch (groups['header']) {
-        case '# Description':
-          description = groups['description'].trim();
-          break;
-        case '# Team\'s Response':
-          if (groups['description'].trim() === 'Write your response here.') {
-            teamResponse = null;
-          } else {
-            teamResponse = groups['description'].trim();
-          }
-          break;
-        case '## State the duplicated issue here, if any':
-          duplicateOf = this.parseDuplicateOfValue(groups['description']);
-          break;
-        case '# Tutor\'s Response':
-          if (groups['description'].trim() === 'Write your response here.') {
-            tutorResponse = null;
-          } else {
-            tutorResponse = groups['description'].trim();
-          }
-          break;
-        case '## Tutor to check':
-          todoList = groups['description'].split(/\r?\n/);
-          todoList = todoList.filter(function (todo) {
-            return todo.trim() !== '';
-          });
-          break;
-        case '## Proposed Assignees':
-          const proposedAssignees = groups['description'].split(',').map(a => a.toLowerCase().trim()) || [];
-          const teamMembers = this.getTeamAssignedToIssue(issue).teamMembers.map(m => m.loginId);
-          assignees = teamMembers.filter(m => proposedAssignees.includes(m.toLowerCase()));
-          break;
-        case '# Items for the Tester to Verify':
-          testerResponses = this.parseTesterResponse(groups['description']);
-          break;
-        case '# Disputes':
-          issueDisputes = this.parseIssueDisputes(groups['description']);
-          break;
-        default:
-          break;
-      }
-    }
-    return Array(description || '', teamResponse, duplicateOf, tutorResponse, todoList || [],
-      assignees || [], testerResponses || [], issueDisputes || []);
-  }
-
-  /**
    * Given an issue model, create the necessary labels for github.
    */
   private createLabelsForIssue(issue: Issue): string[] {
@@ -429,124 +287,32 @@ export class IssueService {
   }
 
   private createIssueModel(githubIssue: GithubIssue): Observable<Issue> {
-    if (this.phaseService.currentPhase === Phase.phaseBugReporting) {
-      return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
-    } else if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
-      return this.issueCommentService.getGithubComments(githubIssue.number, this.isIssueReloaded).pipe(
-        flatMap((githubComments: GithubComment[]) => {
-          return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments,
-            this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
-        })
-      );
-    } else if (this.phaseService.currentPhase === Phase.phaseTesterResponse) {
-      return this.issueCommentService.getGithubComments(githubIssue.number, this.isIssueReloaded).pipe(
-        flatMap((githubComments: GithubComment[]) => {
-          return of(BaseIssue.createPhaseTesterResponseIssue(githubIssue, githubComments));
-        })
-      );
+    switch (this.phaseService.currentPhase) {
+      case Phase.phaseBugReporting:
+        return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
+      case Phase.phaseTeamResponse:
+        return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
+          flatMap((githubComments: GithubComment[]) => {
+            return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments,
+              this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
+          })
+        );
+      case Phase.phaseTesterResponse:
+        return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
+          flatMap((githubComments: GithubComment[]) => {
+            return of(BaseIssue.createPhaseTesterResponseIssue(githubIssue, githubComments));
+          })
+        );
+      case Phase.phaseModeration:
+        return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
+          flatMap((githubComments: GithubComment[]) => {
+            return of(BaseIssue.createPhaseModerationIssue(githubIssue, githubComments,
+              this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
+          })
+        );
+      default:
+        return;
     }
-
-    // A temp fix due to the refactoring process. After refactoring is complete, we can remove this whole chunk of code below.
-    const issueInJson = { ...githubIssue };
-    this.getParsedBody(issueInJson);
-    const issueId = +issueInJson['number'];
-    return this.issueCommentService.getIssueComments(issueId, this.isIssueReloaded).pipe(
-      map((issueComments: IssueComments) => {
-        const issueComment = this.getIssueComment(issueComments);
-        let teamResponse = issueInJson['teamResponse'];
-        let duplicateOf = issueInJson['duplicateOf'];
-        if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTesterResponse) {
-          teamResponse = this.parseTeamResponseForTesterResponsePhase(issueComment.description);
-        } else if ( !!issueComment && this.phaseService.currentPhase === Phase.phaseTeamResponse) {
-          teamResponse = this.parseTeamResponseForTeamResponsePhase(issueComment.description);
-          duplicateOf = this.parseDuplicateOfForTeamResponsePhase(issueComment.description);
-        }
-        const incompleteIssueDisputes: IssueDispute[] = issueInJson['issueDisputes'];
-        this.isIssueReloaded = false;
-        return <Issue>{
-        id: issueId,
-        created_at: moment(issueInJson['created_at']).format('lll'),
-        title: issueInJson['title'],
-        assignees: this.phaseService.currentPhase === Phase.phaseModeration ? issueInJson['proposedAssignees'] :
-          issueInJson['assignees'].map((assignee) => assignee['login']),
-        description: issueInJson['body'],
-        teamAssigned: this.getTeamAssignedToIssue(issueInJson),
-        todoList: this.getToDoList(issueComment, issueInJson['issueDisputes']),
-        teamResponse: teamResponse,
-        tutorResponse: issueInJson['tutorResponse'],
-        duplicateOf: +duplicateOf,
-        testerResponses: this.phaseService.currentPhase === Phase.phaseTesterResponse && !!issueComment ?
-          this.parseTesterResponse(issueComment.description) : issueInJson['testerResponses'],
-        issueComment: issueComment,
-        issueDisputes: this.phaseService.currentPhase === Phase.phaseModeration &&
-          incompleteIssueDisputes.length > 0 && !!issueComment ?
-          this.parseTutorResponseInComment(issueComment.description, incompleteIssueDisputes) :
-          issueInJson['issueDisputes'],
-        ...this.getFormattedLabels(issueInJson['labels'], LABELS),
-        };
-      })
-    );
-  }
-
-  /**
-   * Searches for a comment in the issue that matches the required template.
-   * @return IssueComment - Latest Comment that matches the required template.
-   */
-  getIssueComment(issueComments: IssueComments): IssueComment {
-    let regex = /# *Team\'?s Response[\n\r]*[\s\S]*# Items for the Tester to Verify/gi;
-    if (this.phaseService.currentPhase === Phase.phaseModeration) {
-      regex = /# Tutor Moderation[\n\r]*#{2} *:question: *.*[\n\r]*.*[\n\r]*[\s\S]*?(?=-{19})/gi;
-    } else if (this.phaseService.currentPhase === Phase.phaseTeamResponse) {
-      regex = /# Team's Response[\r\n]*[\S\s]*?[\r\n]*## Duplicate status \(if any\):[\r\n]*[\S\s]*/gi;
-    }
-
-    // Re-Order the comments (Most Recent First)
-    const comments = issueComments.comments.reverse();
-    for (const comment of comments) {
-      const matched = regex.exec(comment.description);
-      if (matched) {
-        return comment;
-      }
-    }
-  }
-
-  private parseDuplicateOfValue(toParse: string): number {
-    const regex = /duplicate of\s*#(\d+)/i;
-    const result = regex.exec(toParse);
-    if (result && result.length > this.MINIMUM_MATCHES) {
-      return +regex.exec(toParse)[1];
-    } else {
-      return null;
-    }
-  }
-
-  // Template url: https://github.com/CATcher-org/templates#items-for-the-tester-to-verify
-  parseTesterResponse(toParse: string): TesterResponse[] {
-    let matches;
-    const testerResponses: TesterResponse[] = [];
-    const regex: RegExp = new RegExp('#{2} *:question: *([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]* *Originally.*'
-      + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)'
-      + '[\\n\\r]-{19}[\\n\\r]{1}',
-      'gi');
-    while (matches = regex.exec(toParse)) {
-      if (matches && matches.length > this.MINIMUM_MATCHES) {
-        const [regexString, title, description, disagreeCheckbox, reasonForDiagreement] = matches;
-        testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDiagreement.trim()));
-      }
-    }
-    return testerResponses;
-  }
-
-  // Template url: https://github.com/CATcher-org/templates#teams-response-1
-  parseTeamResponseForTesterResponsePhase(toParse: string): string {
-    let teamResponse = '';
-    const regex = /# *Team\'?s Response[\n\r]*([\s\S]*)# Items for the Tester to Verify/gi;
-    const matches = regex.exec(toParse);
-
-    if (matches && matches.length > this.MINIMUM_MATCHES) {
-      teamResponse = matches[1].trim();
-    }
-    return teamResponse;
   }
 
   parseTeamResponseForTeamResponsePhase(toParse: string): string {
@@ -569,103 +335,6 @@ export class IssueService {
       duplicateOf = matches[1].trim();
     }
     return duplicateOf;
-  }
-
-  // Template url: https://github.com/CATcher-org/templates#disputes
-  parseIssueDisputes(toParse: string): IssueDispute[] {
-    let matches;
-    const issueDisputes: IssueDispute[] = [];
-    const regex = /#{2} *:question: *(.*)[\r\n]*([\s\S]*?(?=-{19}))/gi;
-    while (matches = regex.exec(toParse)) {
-      if (matches && matches.length > this.MINIMUM_MATCHES) {
-        const [regexString, title, description] = matches;
-        issueDisputes.push(new IssueDispute(title, description.trim()));
-      }
-    }
-    return issueDisputes;
-  }
-
-  // Template url: https://github.com/CATcher-org/templates#tutor-moderations
-  parseTutorResponseInComment(toParse: string, issueDispute: IssueDispute[]): IssueDispute[] {
-    let matches, i = 0;
-    const regex = /#{2} *:question: *.*[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-{19}))/gi;
-    while (matches = regex.exec(toParse)) {
-      if (matches && matches.length > this.MINIMUM_MATCHES) {
-        const [regexString, todo, tutorResponse] = matches;
-        issueDispute[i].todo = todo;
-        issueDispute[i].tutorResponse = tutorResponse.trim();
-        i++;
-      }
-    }
-    return issueDispute;
-  }
-
-  // Template url: https://github.com/CATcher-org/templates#tutor-moderations
-  getToDoList(issueComment: IssueComment, issueDisputes: IssueDispute[]): string[] {
-    let matches;
-    const toDoList: string[] = [];
-    const regex = /- .* Done/gi;
-
-    if (this.userService.currentUser.role !== this.userRole.Tutor) {
-      return toDoList;
-    }
-
-    if (!issueComment && issueDisputes) {
-      for (const dispute of issueDisputes) {
-        toDoList.push(dispute.todo);
-      }
-      return toDoList;
-    }
-
-    while (matches = regex.exec(issueComment.description)) {
-      if (matches) {
-        toDoList.push(matches[0]);
-      }
-    }
-    return toDoList;
-  }
-
-  /**
-   * Based on the kind labels specified in `desiredLabels` field, this function will produce a neatly formatted JSON object.
-   *
-   * For example:
-   * desiredLabels = ['severity', 'type']
-   * Output = {severity: High, type: FunctionalityBug}
-   *
-   * TODO: Add error handling for these assumptions.
-   * Assumptions:
-   * 1) The `labels` which were received from github has all the `desiredLabels` type we want.
-   * 2) There are no duplicates for example labels will not contain `severity.High` and `severity.Low` at the same time.
-   *
-   * @param labels defines the raw label array from which is obtained from github.
-   * @param desiredLabels defines the type of labels you want to be parsed out.
-   */
-
-  private getFormattedLabels(labels: Array<{}>, desiredLabels: Array<string>): {} {
-    let result = {};
-    for (const label of labels) {
-      const labelName = String(label['name']).split('.');
-      const labelType = labelName[0];
-      const labelValue = labelName[1];
-
-      if (label['name'] === 'duplicate') {
-        result = {
-          ...result,
-          duplicated: true,
-        };
-      } else if (label['name'] === 'unsure') {
-        result = {
-          ...result,
-          unsure: true,
-        };
-      } else if (desiredLabels.includes(labelType)) {
-        result = {
-          ...result,
-          [labelsToAttributeMapping[labelType]]: labelValue,
-        };
-      }
-    }
-    return result;
   }
 
   setIssueTeamFilter(filterValue: string) {

@@ -85,14 +85,21 @@ export class BaseIssue implements Issue {
     return issue;
   }
 
-  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
+  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
+                                           teamData: Team): Issue {
     const issue = new BaseIssue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
     const todoTemplate = new TutorModerationTodoTemplate(githubComments);
+    const disputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+      dispute.description = issueTemplate.dispute.disputes[i].description;
+      return dispute;
+    });
 
+    issue.teamAssigned = teamData;
+    issue.issueComment = todoTemplate.comment;
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse.content;
-    issue.issueDisputes = issueTemplate.dispute.disputes;
+    issue.issueDisputes = disputes;
     issue.todoList = todoTemplate.moderation.todoList;
     return issue;
   }

@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {finalize} from 'rxjs/operators';
 import {PermissionService} from '../../../core/services/permission.service';
 import {Phase, PhaseService} from '../../../core/services/phase.service';
 import {Issue} from '../../../core/models/issue.model';
