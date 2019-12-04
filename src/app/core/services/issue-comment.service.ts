@@ -18,6 +18,13 @@ export class IssueCommentService {
   constructor(private githubService: GithubService) {
   }
 
+  getIssueComments(issueId: number, isIssueReloaded: boolean): Observable<IssueComments> {
+    if (!this.comments.get(issueId) || isIssueReloaded) {
+      return this.initializeIssueComments(issueId);
+    }
+    return of(this.comments.get(issueId));
+  }
+
   getGithubComments(issueId: number): Observable<GithubComment[]> {
     this.initializeIssueComments(issueId).subscribe();
     return this.githubService.fetchIssueComments(issueId).pipe(

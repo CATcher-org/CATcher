@@ -6,7 +6,6 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
 import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
 import { LabelService } from '../../../core/services/label.service';
-import { BaseIssue } from '../../../core/models/base-issue.model';
 
 @Component({
   selector: 'app-issue-label',
@@ -40,7 +39,7 @@ export class LabelComponent implements OnInit, OnChanges {
   }
 
   updateLabel(value: string) {
-    const latestIssue = <BaseIssue>{
+    const latestIssue = <Issue>{
     ...this.issue,
       [this.attributeName]: value
     };

@@ -15,7 +15,6 @@ import { PermissionService } from './permission.service';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { IssueDispute } from '../models/issue-dispute.model';
-import { BaseIssue } from '../models/base-issue.model';
 import { GithubIssue, GithubLabel } from '../models/github-issue.model';
 import { GithubComment } from '../models/github-comment.model';
 
@@ -289,24 +288,24 @@ export class IssueService {
   private createIssueModel(githubIssue: GithubIssue): Observable<Issue> {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseBugReporting:
-        return of(BaseIssue.createPhaseBugReportingIssue(githubIssue));
+        return of(Issue.createPhaseBugReportingIssue(githubIssue));
       case Phase.phaseTeamResponse:
         return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
           flatMap((githubComments: GithubComment[]) => {
-            return of(BaseIssue.createPhaseTeamResponseIssue(githubIssue, githubComments,
+            return of(Issue.createPhaseTeamResponseIssue(githubIssue, githubComments,
               this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
           })
         );
       case Phase.phaseTesterResponse:
         return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
           flatMap((githubComments: GithubComment[]) => {
-            return of(BaseIssue.createPhaseTesterResponseIssue(githubIssue, githubComments));
+            return of(Issue.createPhaseTesterResponseIssue(githubIssue, githubComments));
           })
         );
       case Phase.phaseModeration:
         return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
           flatMap((githubComments: GithubComment[]) => {
-            return of(BaseIssue.createPhaseModerationIssue(githubIssue, githubComments,
+            return of(Issue.createPhaseModerationIssue(githubIssue, githubComments,
               this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
           })
         );
