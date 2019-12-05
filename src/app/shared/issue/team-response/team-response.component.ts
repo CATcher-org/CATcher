@@ -10,30 +10,15 @@ import {IssueComment} from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 
 @Component({
-  selector: 'app-issue-response',
-  templateUrl: './response.component.html',
-  styleUrls: ['./response.component.css'],
+  selector: 'app-team-response',
+  templateUrl: './team-response.component.html',
+  styleUrls: ['./team-response.component.css'],
 })
-export class ResponseComponent implements OnInit {
+export class TeamResponseComponent implements OnInit {
   isSavePending = false;
   responseForm: FormGroup;
 
   submitButtonText: string;
-
-  readonly TITLE = {
-    'teamResponse': 'Team\'s Response',
-    'tutorResponse': 'Tutor\'s Response'
-  };
-
-  readonly POSTER = {
-    'teamResponse': 'Team',
-    'tutorResponse': 'Tutor'
-  };
-
-  readonly ACTION = {
-    'teamResponse': 'responded',
-    'tutorResponse': 'responded'
-  };
 
   @Input() issue: Issue;
   @Input() attributeName: string;

@@ -12,10 +12,10 @@
         </app-issue-description>
 
         <!-- Team's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isIssueLoading && issue.teamResponse"
-          [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)" attributeName="teamResponse"
-          (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
-        </app-issue-response>
+        <app-team-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !isIssueLoading && issue.teamResponse"
+                           [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)" attributeName="teamResponse"
+                           (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
+        </app-team-response>
 
         <!-- New Team's Response -->
         <app-new-team-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
@@ -33,25 +33,13 @@
         <app-issue-dispute *ngIf="this.isComponentVisible(issueComponentsEnum.ISSUE_DISPUTE)" [issue]="issue"
           (commentUpdated)="updateComment($event)">
         </app-issue-dispute>
-
-        <!-- Tutor's Response -->
-        <app-issue-response *ngIf="this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE) && !isIssueLoading && issue.tutorResponse"
-          [issue]="issue" [isEditing]="isTutorResponseEditing" (updateEditState)="updateTutorResponseEditState($event)"
-          attributeName="tutorResponse" (issueUpdated)="updateIssue($event)">
-        </app-issue-response>
-
-        <!-- New Tutor's Response -->
-        <app-new-tutor-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TUTOR_RESPONSE)
-          && permissions.isTutorResponseEditable() && !issue.tutorResponse" [issue]="issue"
-          (issueUpdated)="updateIssue($event)">
-        </app-new-tutor-response>
       </div>
 
       <div class="column right">
         <div *ngIf="(this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) && issue.teamResponse) ||
           (this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && this.userService.currentUser.role === userRole.Student) ||
           this.isComponentVisible(issueComponentsEnum.ISSUE_DISPUTE) ||
-          (!this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && !this.isComponentVisible(issueComponentsEnum.TUTOR_RESPONSE))">
+          (!this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE))">
 
         <!-- Severity Label -->
         <app-issue-label *ngIf="this.isComponentVisible(issueComponentsEnum.SEVERITY_LABEL)" [issue]="issue"
@@ -99,13 +87,6 @@
         <div *ngIf="this.isComponentVisible(issueComponentsEnum.UNSURE_CHECKBOX)">
           <mat-divider></mat-divider>
           <app-unsure-checkbox [issue]="issue" (issueUpdated)="updateIssue($event)"></app-unsure-checkbox>
-        </div>
-
-        <!-- Issue To-Do list -->
-        <div *ngIf="this.isComponentVisible(issueComponentsEnum.TODO_LIST)">
-          <br *ngIf="issue.duplicateOf">
-          <mat-divider></mat-divider>
-          <app-todo-list [issue]="issue" (issueUpdated)="updateIssue($event)"></app-todo-list>
         </div>
 
         </div>

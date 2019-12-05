@@ -6,6 +6,7 @@ import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { GithubIssue } from '../models/github-issue.model';
+import { GithubComment } from '../models/github-comment.model';
 
 const Octokit = require('@octokit/rest');
 
@@ -184,7 +185,7 @@ export class GithubService {
     );
   }
 
-  updateIssueComment(issueComment: IssueComment): Observable<{}> {
+  updateIssueComment(issueComment: IssueComment): Observable<GithubComment> {
     return from(octokit.issues.updateComment({owner: ORG_NAME, repo: REPO, comment_id: issueComment.id,
       body: issueComment.description})).pipe(
       map(response => {

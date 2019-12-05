@@ -50,7 +50,7 @@ export class IssueCommentService {
       ...issueComment,
       description: issueComment.description,
     }).pipe(
-      map((response) => {
+      map((response: GithubComment) => {
         return this.createIssueCommentModel(response);
       })
     );

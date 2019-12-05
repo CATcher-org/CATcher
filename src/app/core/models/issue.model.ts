@@ -9,6 +9,7 @@ import { TesterResponseTemplate } from './templates/tester-response-template.mod
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import * as moment from 'moment';
+import { FormGroup } from '@angular/forms';
 
 export class Issue {
 
@@ -33,7 +34,6 @@ export class Issue {
 
   /** Fields derived from parsing of Github's issue description */
   duplicateOf?: number;
-  todoList?: string[];
   teamResponse?: string;
   tutorResponse?: string;
   testerResponses?: TesterResponse[];
@@ -71,7 +71,6 @@ export class Issue {
     issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
-
     return issue;
   }
 
@@ -89,6 +88,7 @@ export class Issue {
     const issue = new Issue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
     const todoTemplate = new TutorModerationTodoTemplate(githubComments);
+
     const disputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
       dispute.description = issueTemplate.dispute.disputes[i].description;
       return dispute;
@@ -99,8 +99,44 @@ export class Issue {
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse.content;
     issue.issueDisputes = disputes;
-    issue.todoList = todoTemplate.moderation.todoList;
     return issue;
+  }
+
+  updateDispute(githubComment: GithubComment): void {
+    const todoTemplate = new TutorModerationTodoTemplate([githubComment]);
+    this.issueComment = todoTemplate.comment;
+    this.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+      dispute.description = this.issueDisputes[i].description;
+      return dispute;
+    });
+  }
+
+  getTutorResponseFromForm(form: FormGroup): string {
+    if (!this.issueDisputes) {
+      return '';
+    }
+
+    let result = '# Tutor Moderation\n';
+    const values = form.getRawValue();
+    const todos = [];
+    const responses = [];
+
+    let index = 0;
+    for (const [key, value] of Object.entries(values)) {
+      if (key.startsWith('todo')) {
+        todos.push(value);
+      } else if (key.startsWith('tutor-response')) {
+        responses.push(value);
+      }
+      index++;
+    }
+
+    index = 0;
+    for (const dispute of this.issueDisputes) {
+      result += dispute.getResponseFromValue(todos[index] || dispute.isDone(), responses[index] || dispute.tutorResponse);
+      index++;
+    }
+    return result;
   }
 }
 
@@ -115,26 +151,6 @@ export const ISSUE_TYPE_ORDER = { '-': 0 , DocTypo: 1, DocumentationBug: 2, Feat
 export enum STATUS {
   Incomplete = 'Incomplete',
   Done = 'Done',
-}
-
-export enum SEVERITY {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-}
-
-export enum TYPE {
-  DocTypo = 'DocTypo',
-  DocumentationBug = 'DocumentationBug',
-  FeatureFlaw = 'FeatureFlaw',
-  FunctionalityBug = 'FunctionalityBug',
-}
-
-export enum RESPONSE {
-  Accepted = 'Accepted',
-  Rejected = 'Rejected',
-  IssueUnclear = 'IssueUnclear',
-  CannotReproduce = 'CannotReproduce',
 }
 
 export const IssuesFilter = {
@@ -159,8 +175,3 @@ export const IssuesFilter = {
     Admin: 'NO_FILTER',
   }
 };
-
-export enum RespondType {
-  teamResponse = 'teamResponse',
-  tutorResponse = 'tutorResponse',
-}

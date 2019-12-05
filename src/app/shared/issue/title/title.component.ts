@@ -50,7 +50,7 @@ export class TitleComponent implements OnInit {
     }
 
     this.isSavePending = true;
-    this.issueService.updateIssue({
+    this.issueService.updateIssue(<Issue>{
       ...this.issue,
       title: this.issueTitleForm.get('title').value,
     }).pipe(finalize(() => {

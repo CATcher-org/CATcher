@@ -70,7 +70,7 @@ export class DuplicateOfComponent implements OnInit {
   }
 
   updateDuplicateStatus(event) {
-    const latestIssue = {
+    const latestIssue = <Issue>{
       ...this.issue,
       duplicated: !!event,
       duplicateOf: event ? event.value : null,

@@ -27,7 +27,7 @@ export class UnsureCheckboxComponent implements OnInit {
       UNSURE = true;
     }
 
-    this.issueService.updateIssue({
+    this.issueService.updateIssue(<Issue>{
       ...this.issue,
       unsure: UNSURE,
     }).subscribe((updatedIssue: Issue) => {

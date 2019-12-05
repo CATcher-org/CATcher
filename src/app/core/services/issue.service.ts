@@ -6,7 +6,6 @@ import {
   Issue,
   Issues,
   IssuesFilter,
-  RespondType
 } from '../models/issue.model';
 import { UserService } from './user.service';
 import { Phase, PhaseService } from './phase.service';
@@ -17,6 +16,7 @@ import { ErrorHandlingService } from './error-handling.service';
 import { IssueDispute } from '../models/issue-dispute.model';
 import { GithubIssue, GithubLabel } from '../models/github-issue.model';
 import { GithubComment } from '../models/github-comment.model';
+import { IssueComment } from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -86,6 +86,18 @@ export class IssueService {
     );
   }
 
+  updateTutorResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
+    return this.githubService.updateIssueComment({
+      ...issueComment,
+      description: issueComment.description,
+    }).pipe(
+      map((response: GithubComment) => {
+        issue.updateDispute(response);
+        return issue;
+      })
+    );
+  }
+
   /**
    * This function will create a github representation of issue's description. Given the issue model, it will piece together the different
    * attributes to create the github's description.
@@ -146,9 +158,8 @@ export class IssueService {
   /**
    * Check whether the issue has been responded in the phase 2/3.
    */
-  hasResponse(issueId: number): boolean {
-    const responseType = this.phaseService.currentPhase === Phase.phaseTeamResponse ? RespondType.teamResponse : RespondType.tutorResponse;
-    return !!this.issues[issueId][responseType];
+  hasTeamResponse(issueId: number): boolean {
+    return !!this.issues[issueId].teamResponse;
   }
 
   /**

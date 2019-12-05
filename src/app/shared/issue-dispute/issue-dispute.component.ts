@@ -1,14 +1,12 @@
 import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Issue, STATUS } from '../../core/models/issue.model';
+import { FormGroup, FormBuilder, FormControl, Validators, NgForm } from '@angular/forms';
+import { Issue } from '../../core/models/issue.model';
 import { IssueComment } from '../../core/models/comment.model';
 import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
 import { IssueService } from '../../core/services/issue.service';
 import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { UserService } from '../../core/services/user.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { finalize } from 'rxjs/operators';
-import { UserRole } from '../../core/models/user.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
 
 @Component({
@@ -35,37 +33,31 @@ export class IssueDisputeComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
-    const group: any = {};
-    for (let i = 0; i < this.issue.issueDisputes.length; i++) {
-      group[i.toString()] = new FormControl(Validators.required);
-    }
-    this.tutorResponseForm = this.formBuilder.group(group);
-
+    this.tutorResponseForm = this.formBuilder.group(this.createFormGroup());
     this.isEditing = this.isNewResponse();
     this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
   }
 
-  submitTutorResponseForm() {
+  submitTutorResponseForm(form: NgForm) {
     if (this.tutorResponseForm.invalid) {
       return;
     }
     this.isFormPending = true;
 
     this.issue.pending = '' + this.getNumOfPending();
-    this.issue.todoList = this.getToDoList();
 
     // Update tutor's response in the issue comment
     if (this.issue.issueComment) {
-      this.issue.issueComment.description = this.issueCommentService.
-        createGithubTutorResponse(this.issue.issueDisputes);
-
-        this.issueCommentService.updateIssueComment(this.issue.issueComment).subscribe(
-          (updatedComment) => {
-          this.isFormPending = false;
-          this.isEditing = false;
-          this.commentUpdated.emit(updatedComment);
-        }, (error) => {
-          this.errorHandlingService.handleHttpError(error);
+      this.issueService.updateTutorResponse(this.issue, <IssueComment>{
+        ...this.issue.issueComment,
+        description: this.issue.getTutorResponseFromForm(this.tutorResponseForm)
+      }).subscribe((issue: Issue) => {
+        this.isFormPending = false;
+        this.isEditing = false;
+        this.commentUpdated.emit(issue.issueComment);
+        this.issueUpdated.emit(issue);
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error);
       });
     } else {
       const issueCommentDescription = this.issueCommentService
@@ -98,12 +90,7 @@ export class IssueDisputeComponent implements OnInit {
 
   cancelEditMode() {
     this.isEditing = false;
-  }
-
-  handleChangeOfText(event, disagree, index) {
-    if (event.target.value !== disagree) {
-      this.issue.issueDisputes[index].tutorResponse = event.target.value;
-    }
+    this.tutorResponseForm = this.formBuilder.group(this.createFormGroup());
   }
 
   handleChangeOfTodoCheckbox(event, todo, index) {
@@ -112,10 +99,6 @@ export class IssueDisputeComponent implements OnInit {
     } else {
       this.issue.issueDisputes[index].todo = '- [ ]' + todo.substring(5);
     }
-  }
-
-  isTodoChecked(todo): boolean {
-    return todo.charAt(3) === 'x';
   }
 
   trackDisputeList(index: number, item: string[]): string {
@@ -130,22 +113,39 @@ export class IssueDisputeComponent implements OnInit {
     return '## ' + title;
   }
 
-  getToDoList(): string[] {
-    const toDoList: string[] = [];
-    for (const issueDispute of this.issue.issueDisputes) {
-      toDoList.push(issueDispute.todo);
-    }
-    return toDoList;
-  }
-
   getNumOfPending(): number {
     let pending = this.issue.issueDisputes.length; // Initial pending is number of disputes
     for (const issueDispute of this.issue.issueDisputes) {
       // For each number of Done that is checked, reduce pending by one
-      if (this.isTodoChecked(issueDispute.todo)) {
+      if (issueDispute.isDone()) {
         pending--;
       }
     }
     return pending;
+  }
+
+  createFormGroup() {
+    const group: any = {};
+    // initialize fields for tutor response and the checkboxes for tutor to mark "Done"
+    for (let i = 0; i < this.issue.issueDisputes.length; i++) {
+      const dispute = this.issue.issueDisputes[i];
+      group[this.getTutorResponseFormId(i)] = new FormControl(dispute.tutorResponse, Validators.required);
+      group[this.getTodoFormId(i)] = new FormControl({value: dispute.isDone(), disabled: !this.isEditing}, Validators.required);
+    }
+    return group;
+  }
+
+  /**
+   * @param index - index of dispute which the tutor resolve.
+   */
+  getTutorResponseFormId(index: number): string {
+    return `tutor-response-${index}`;
+  }
+
+  /**
+   * @param index - index of dispute which the tutor resolve.
+   */
+  getTodoFormId(index: number): string {
+    return `todo-${index}`;
   }
 }

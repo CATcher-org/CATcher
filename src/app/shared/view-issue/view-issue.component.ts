@@ -3,10 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
 import { FormBuilder } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssueCommentService } from '../../core/services/issue-comment.service';
-import { IssueComment, IssueComments } from '../../core/models/comment.model';
+import { IssueComment } from '../../core/models/comment.model';
 import { UserService } from '../../core/services/user.service';
 import { Subscription } from 'rxjs';
 import { PermissionService } from '../../core/services/permission.service';
@@ -16,8 +15,6 @@ export enum ISSUE_COMPONENTS {
   TESTER_POST,
   TEAM_RESPONSE,
   NEW_TEAM_RESPONSE,
-  TUTOR_RESPONSE, // Old component, unused
-  NEW_TUTOR_RESPONSE, // Old component, unused
   TESTER_RESPONSE,
   ISSUE_DISPUTE,
   SEVERITY_LABEL,
@@ -25,7 +22,6 @@ export enum ISSUE_COMPONENTS {
   RESPONSE_LABEL,
   ASSIGNEE,
   DUPLICATE,
-  TODO_LIST,
   UNSURE_CHECKBOX
 }
 

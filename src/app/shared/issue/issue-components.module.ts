@@ -6,11 +6,10 @@ import {DescriptionComponent} from './description/description.component';
 import {MarkdownModule} from 'ngx-markdown';
 import {CommentEditorModule} from '../comment-editor/comment-editor.module';
 import {LabelComponent} from './label/label.component';
-import {ResponseComponent} from './response/response.component';
+import {TeamResponseComponent} from './team-response/team-response.component';
 import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
 import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
-import { TodoListComponent } from './todo-list/todo-list.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
 
 @NgModule({
@@ -24,22 +23,20 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     TitleComponent,
     DescriptionComponent,
     LabelComponent,
-    ResponseComponent,
+    TeamResponseComponent,
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
-    TodoListComponent,
     UnsureCheckboxComponent,
   ],
   exports: [
     TitleComponent,
     DescriptionComponent,
     LabelComponent,
-    ResponseComponent,
+    TeamResponseComponent,
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
-    TodoListComponent,
     UnsureCheckboxComponent,
   ]
 })
