@@ -33,7 +33,7 @@ export class IssueDisputeComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
-    this.tutorResponseForm = this.formBuilder.group(this.createFormGroup());
+    this.resetForm();
     this.isEditing = this.isNewResponse();
     this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
   }
@@ -50,22 +50,24 @@ export class IssueDisputeComponent implements OnInit {
     if (this.issue.issueComment) {
       this.issueService.updateTutorResponse(this.issue, <IssueComment>{
         ...this.issue.issueComment,
-        description: this.issue.getTutorResponseFromForm(this.tutorResponseForm)
+        description: this.getTutorResponseFromForm()
       }).subscribe((issue: Issue) => {
         this.isFormPending = false;
         this.isEditing = false;
         this.commentUpdated.emit(issue.issueComment);
         this.issueUpdated.emit(issue);
+        this.resetForm();
       }, (error) => {
         this.errorHandlingService.handleHttpError(error);
       });
     } else {
-      const tutorResponse = this.issue.getTutorResponseFromForm(this.tutorResponseForm);
+      const tutorResponse = this.getTutorResponseFromForm();
       this.issueService.createTutorResponse(this.issue, tutorResponse).subscribe((issue: Issue) => {
         this.isFormPending = false;
         this.isEditing = false;
         this.commentUpdated.emit(issue.issueComment);
         this.issueUpdated.emit(issue);
+        this.resetForm();
       },
         (error) => {
         this.errorHandlingService.handleHttpError(error);
@@ -87,15 +89,7 @@ export class IssueDisputeComponent implements OnInit {
 
   cancelEditMode() {
     this.isEditing = false;
-    this.tutorResponseForm = this.formBuilder.group(this.createFormGroup());
-  }
-
-  handleChangeOfTodoCheckbox(event, todo, index) {
-    if (event.checked) {
-      this.issue.issueDisputes[index].todo = '- [x]' + todo.substring(5);
-    } else {
-      this.issue.issueDisputes[index].todo = '- [ ]' + todo.substring(5);
-    }
+    this.resetForm();
   }
 
   trackDisputeList(index: number, item: string[]): string {
@@ -104,6 +98,10 @@ export class IssueDisputeComponent implements OnInit {
 
   isNewResponse(): boolean {
     return !this.issue.issueComment;
+  }
+
+  resetForm(): void {
+    this.tutorResponseForm = this.formBuilder.group(this.createFormGroup());
   }
 
   getItemTitleText(title: string): string {
@@ -130,6 +128,34 @@ export class IssueDisputeComponent implements OnInit {
       group[this.getTodoFormId(i)] = new FormControl({value: dispute.isDone(), disabled: !this.isEditing}, Validators.required);
     }
     return group;
+  }
+
+  getTutorResponseFromForm(): string {
+    if (!this.issue.issueDisputes) {
+      return '';
+    }
+
+    let result = '# Tutor Moderation\n';
+    const values = this.tutorResponseForm.getRawValue();
+    const todos = [];
+    const responses = [];
+
+    let index = 0;
+    for (const [key, value] of Object.entries(values)) {
+      if (key.startsWith('todo')) {
+        todos.push(value);
+      } else if (key.startsWith('tutor-response')) {
+        responses.push(value);
+      }
+      index++;
+    }
+
+    index = 0;
+    for (const dispute of this.issue.issueDisputes) {
+      result += dispute.getResponseFromValue(todos[index], responses[index] || dispute.tutorResponse);
+      index++;
+    }
+    return result;
   }
 
   /**

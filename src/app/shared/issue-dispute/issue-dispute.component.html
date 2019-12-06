@@ -19,7 +19,7 @@
         <br>
         <div>
           <mat-checkbox style="display: inline-block; width: 20%" [id]="getTodoFormId(i)" [formControlName]="getTodoFormId(i)"
-          [disableControl]="!isEditing" (change)="handleChangeOfTodoCheckbox($event, dispute.todo, i)">
+          [disableControl]="!isEditing">
             Done
           </mat-checkbox>
         </div>

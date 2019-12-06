@@ -112,34 +112,6 @@ export class Issue {
       return dispute;
     });
   }
-
-  getTutorResponseFromForm(form: FormGroup): string {
-    if (!this.issueDisputes) {
-      return '';
-    }
-
-    let result = '# Tutor Moderation\n';
-    const values = form.getRawValue();
-    const todos = [];
-    const responses = [];
-
-    let index = 0;
-    for (const [key, value] of Object.entries(values)) {
-      if (key.startsWith('todo')) {
-        todos.push(value);
-      } else if (key.startsWith('tutor-response')) {
-        responses.push(value);
-      }
-      index++;
-    }
-
-    index = 0;
-    for (const dispute of this.issueDisputes) {
-      result += dispute.getResponseFromValue(todos[index] || dispute.isDone(), responses[index] || dispute.tutorResponse);
-      index++;
-    }
-    return result;
-  }
 }
 
 export interface Issues {
