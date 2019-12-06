@@ -152,7 +152,8 @@ export class IssueDisputeComponent implements OnInit {
 
     index = 0;
     for (const dispute of this.issue.issueDisputes) {
-      result += dispute.getResponseFromValue(todos[index], responses[index] || dispute.tutorResponse);
+      result += dispute.getResponseFromValue(todos[index] === undefined ? dispute.isDone() : todos[index],
+        responses[index] || dispute.tutorResponse);
       index++;
     }
     return result;
