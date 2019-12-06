@@ -30,11 +30,11 @@
         </div>
         <div *ngIf="isEditing">
           <app-comment-editor
-            [commentField]="this.tutorResponseForm.get(getTutorResponseFormId(i))"
-            [commentForm]="this.tutorResponseForm"
+            [commentField]="tutorResponseForm.get(getTutorResponseFormId(i))"
+            [commentForm]="tutorResponseForm"
             [id]="getTutorResponseFormId(i)"
-            [(isFormPending)]="this.isFormPending"
-            [(submitButtonText)]="this.submitButtonText">
+            [(isFormPending)]="isFormPending"
+            [(submitButtonText)]="submitButtonText">
           </app-comment-editor>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>

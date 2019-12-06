@@ -86,11 +86,17 @@ export class IssueService {
     );
   }
 
+  updateTesterResponse(issue: Issue, issueComment: IssueComment) {
+    return this.githubService.updateIssueComment(issueComment).pipe(
+      map((response: GithubComment) => {
+        issue.updateTesterResponse(response);
+        return issue;
+      })
+    );
+  }
+
   updateTutorResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
-    return this.githubService.updateIssueComment({
-      ...issueComment,
-      description: issueComment.description,
-    }).pipe(
+    return this.githubService.updateIssueComment(issueComment).pipe(
       map((response: GithubComment) => {
         issue.updateDispute(response);
         return issue;

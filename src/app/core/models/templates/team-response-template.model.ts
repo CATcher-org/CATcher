@@ -1,11 +1,10 @@
 import { DuplicateOfSection } from './sections/duplicate-of-section.model';
 import { Header, Template } from './template.model';
 import { Section } from './sections/section.model';
-import { GithubIssue } from '../github-issue.model';
 import { GithubComment } from '../github-comment.model';
 import { IssueComment } from '../comment.model';
 
-const teamResponseHeaders = {
+export const TeamResponseHeaders = {
   teamResponse: new Header('Team\'s Response', 1),
   duplicateOf: new Header('Duplicate status \\(if any\\):', 2),
 };
@@ -16,7 +15,7 @@ export class TeamResponseTemplate extends Template {
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
-    super(Object.values(teamResponseHeaders));
+    super(Object.values(TeamResponseHeaders));
 
     const comment = githubComments.find(
       (githubComment: GithubComment) => this.test(githubComment.body));
@@ -35,10 +34,10 @@ export class TeamResponseTemplate extends Template {
   }
 
   parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(teamResponseHeaders.teamResponse), toParse);
+    return new Section(this.getSectionalDependency(TeamResponseHeaders.teamResponse), toParse);
   }
 
   parseDuplicateOf(toParse: string): DuplicateOfSection {
-    return new DuplicateOfSection(this.getSectionalDependency(teamResponseHeaders.duplicateOf), toParse);
+    return new DuplicateOfSection(this.getSectionalDependency(TeamResponseHeaders.duplicateOf), toParse);
   }
 }

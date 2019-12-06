@@ -5,7 +5,7 @@ import { GithubComment } from '../github-comment.model';
 import { IssueComment } from '../comment.model';
 
 
-const testerResponseHeaders = {
+export const TesterResponseHeaders = {
   teamResponse: new Header('Team\'s Response', 1),
   testerResponses: new Header('Items for the Tester to Verify', 1),
 };
@@ -16,7 +16,7 @@ export class TesterResponseTemplate extends Template {
   comment: IssueComment;
 
   constructor(githubIssueComments: GithubComment[]) {
-    super(Object.values(testerResponseHeaders));
+    super(Object.values(TesterResponseHeaders));
 
     const templateConformingComment = githubIssueComments.find(comment => this.test(comment.body));
     if (templateConformingComment) {
@@ -30,10 +30,10 @@ export class TesterResponseTemplate extends Template {
   }
 
   parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(testerResponseHeaders.teamResponse), toParse);
+    return new Section(this.getSectionalDependency(TesterResponseHeaders.teamResponse), toParse);
   }
 
   parseTesterResponse(toParse: string): TesterResponseSection {
-    return new TesterResponseSection(this.getSectionalDependency(testerResponseHeaders.testerResponses), toParse);
+    return new TesterResponseSection(this.getSectionalDependency(TesterResponseHeaders.testerResponses), toParse);
   }
 }

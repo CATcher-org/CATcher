@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
 import { IssueService } from '../../core/services/issue.service';
@@ -10,6 +10,8 @@ import { UserRole } from '../../core/models/user.model';
 import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { IssueComment } from '../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
+import { TesterResponseHeaders } from '../../core/models/templates/tester-response-template.model';
+import { TeamResponseHeaders } from '../../core/models/templates/team-response-template.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -36,15 +38,7 @@ export class TesterResponseComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
-    const group: any = {};
-    for (let i = 0; i < this.issue.testerResponses.length; i++) {
-      const disabled: boolean = !this.isDisagreeChecked(this.issue.testerResponses[i].disagreeCheckbox);
-      const value: string = this.issue.testerResponses[i].reasonForDiagreement;
-      group[i.toString()] = new FormControl({value: value, disabled: disabled}, Validators.required);
-    }
-    group['testerResponse'] = [this.issue.testerResponses];
-    this.testerResponseForm = this.formBuilder.group(group);
-
+    this.resetForm(this.issue);
     this.isEditing = this.isNewResponse();
     this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
   }
@@ -54,27 +48,30 @@ export class TesterResponseComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    this.issue.status = STATUS.Done;
 
+    this.issue.status = STATUS.Done;
     this.issueService.updateIssue(this.issue).pipe(finalize(() => {
       this.isFormPending = false;
       this.isEditing = false;
-    })).subscribe((updatedIssue) => {
+    })).subscribe((updatedIssue: Issue) => {
       updatedIssue.teamResponse = this.issue.teamResponse;
       updatedIssue.testerResponses = this.issue.testerResponses;
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleHttpError(error);
+      this.issue.status = STATUS.Incomplete;
     });
 
     // For Tester Response phase, where the items are in the issue's comment
     if (this.issue.issueComment) {
-      this.issue.issueComment.description = this.issueCommentService.
-        createGithubTesterResponse(this.issue.teamResponse, this.issue.testerResponses);
-
-      this.issueCommentService.updateIssueComment(this.issue.issueComment).subscribe(
-        (updatedComment) => {
-          this.commentUpdated.emit(updatedComment);
+      this.issueService.updateTesterResponse(this.issue, <IssueComment>{
+        ...this.issue.issueComment,
+        description: this.getTesterResponseFromForm()
+      }).subscribe(
+        (updatedIssue: Issue) => {
+          this.commentUpdated.emit(updatedIssue.issueComment);
+          this.issueUpdated.emit(updatedIssue);
+          this.resetForm(updatedIssue);
         }, (error) => {
           this.errorHandlingService.handleHttpError(error);
       });
@@ -88,35 +85,22 @@ export class TesterResponseComponent implements OnInit {
 
   cancelEditMode() {
     this.isEditing = false;
+    this.resetForm(this.issue);
   }
 
-  handleChangeOfDisagreeCheckbox(event, disagree, index) {
-    this.issue.testerResponses[index].disagreeCheckbox = ('- [').concat((event.checked ? 'x' : ' '), '] ', disagree.substring(6));
-    this.toggleCommentEditor(index, event.checked);
-  }
-
-  toggleCommentEditor(index: number, isCommentEditorEnabled: boolean) {
-    const control: AbstractControl = this.testerResponseForm.controls[index];
-    if (isCommentEditorEnabled) {
-      control.enable({onlySelf: true});
+  handleChangeOfDisagreeCheckbox(event, index: number) {
+    const checkboxFormControl = this.testerResponseForm.get(this.getDisagreeBoxFormId(index));
+    const responseFormControl = this.testerResponseForm.get(this.getTesterResponseFormId(index));
+    const isDisagreeChecked = checkboxFormControl.value;
+    if (isDisagreeChecked) {
+      responseFormControl.enable();
     } else {
-      control.disable({onlySelf: false});
-      this.issue.testerResponses[index].reasonForDiagreement = '';
-    }
-  }
-
-  handleChangeOfText(event, disagree, index) {
-    if (event.target.value !== disagree && event.target.value !== undefined) {
-      this.issue.testerResponses[index].reasonForDiagreement = event.target.value;
+      responseFormControl.disable();
     }
   }
 
   trackDisagreeList(index: number, item: string[]): string {
     return item[index];
-  }
-
-  isDisagreeChecked(disagree): boolean {
-    return disagree.charAt(3) === 'x';
   }
 
   isNewResponse(): boolean {
@@ -127,4 +111,71 @@ export class TesterResponseComponent implements OnInit {
     return '## ' + title;
   }
 
+  createFormGroup(issue: Issue) {
+    const group: any = {};
+    // initialize fields for tutor response and the checkboxes for tutor to mark "Done"
+    for (let i = 0; i < issue.testerResponses.length; i++) {
+      const response = issue.testerResponses[i];
+      group[this.getTesterResponseFormId(i)] = new FormControl({
+        value: response.reasonForDisagreement,
+        disabled: !response.isDisagree()
+      }, Validators.required);
+      group[this.getDisagreeBoxFormId(i)] = new FormControl({
+        value: response.isDisagree(),
+        disabled: !this.isEditing
+      }, Validators.required);
+    }
+    return group;
+  }
+
+  resetForm(issue: Issue): void {
+    this.testerResponseForm = this.formBuilder.group(this.createFormGroup(issue));
+  }
+
+  getTesterResponseFromForm(): string {
+    if (!this.issue.testerResponses) {
+      return '';
+    }
+
+    let result = `${TeamResponseHeaders.teamResponse.toString()}\n` +
+      `${this.issue.teamResponse}\n` +
+      `${TesterResponseHeaders.testerResponses.toString()}\n`;
+
+    const values = this.testerResponseForm.getRawValue();
+    const disagrees = [];
+    const reasons = [];
+
+    let index = 0;
+    for (const [key, value] of Object.entries(values)) {
+      if (key.startsWith('disagree-box')) {
+        disagrees.push(value);
+      } else if (key.startsWith('tester-response')) {
+        reasons.push(value);
+      }
+      index++;
+    }
+
+    index = 0;
+    for (const response of this.issue.testerResponses) {
+      const isDisagree = disagrees[index] === undefined ? response.isDisagree() : disagrees[index];
+      const reason = isDisagree ? reasons[index] || response.reasonForDisagreement : response.INITIAL_RESPONSE;
+      result += response.getResponseFromValue(isDisagree, reason);
+      index++;
+    }
+    return result;
+  }
+
+  /**
+   * @param index - index of action which the tester disagree.
+   */
+  getTesterResponseFormId(index: number): string {
+    return `tester-response-${index}`;
+  }
+
+  /**
+   * @param index - index of action which the tester disagree.
+   */
+  getDisagreeBoxFormId(index: number): string {
+    return `disagree-box-${index}`;
+  }
 }

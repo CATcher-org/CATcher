@@ -19,23 +19,28 @@
         <markdown [data]="response.description"></markdown>
         <br>
         <div>
-          <mat-checkbox style="display: inline-block; width: 20%" [checked]="isDisagreeChecked(response.disagreeCheckbox)"
-            (change)="handleChangeOfDisagreeCheckbox($event, response.disagreeCheckbox, i)" [disabled]="!isEditing">
+          <mat-checkbox style="display: inline-block; width: 20%" [id]="getDisagreeBoxFormId(i)"
+                        [formControlName]="getDisagreeBoxFormId(i)"
+                        [disableControl]="!isEditing"
+                        (change)="handleChangeOfDisagreeCheckbox($event, i)"
+          >
             I disagree
           </mat-checkbox>
         </div>
-        <div>
-          <p style="font-weight: 500;"> Reason for Disagreement: </p>
-          <markdown [data]="response.reasonForDiagreement" *ngIf="!isEditing"></markdown>
-        </div>
-        <div *ngIf="isEditing">
-          <app-comment-editor [commentField]="testerResponseForm.get(i.toString())" [commentForm]="testerResponseForm"
-                              (change)="handleChangeOfText($event, response.reasonForDiagreement, i)"
-                              [id]="i.toString()"
-                              (focusout)="handleChangeOfText($event, response.reasonForDiagreement, i)"
-                              [(isFormPending)]="isFormPending"
-                              [(submitButtonText)]="submitButtonText">
-          </app-comment-editor>
+        <div *ngIf="testerResponseForm.get(getDisagreeBoxFormId(i)).value">
+          <div>
+            <p style="font-weight: 500;"> Reason for Disagreement: </p>
+            <markdown [data]="response.reasonForDisagreement" *ngIf="!isEditing"></markdown>
+          </div>
+          <div *ngIf="isEditing">
+            <app-comment-editor [commentField]="testerResponseForm.get(getTesterResponseFormId(i))"
+                                [id]="getTesterResponseFormId(i)"
+                                [commentForm]="testerResponseForm"
+                                [(isFormPending)]="isFormPending"
+                                [(submitButtonText)]="submitButtonText"
+            >
+            </app-comment-editor>
+          </div>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>
       </div>

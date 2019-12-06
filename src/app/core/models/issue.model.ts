@@ -9,7 +9,6 @@ import { TesterResponseTemplate } from './templates/tester-response-template.mod
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import * as moment from 'moment';
-import { FormGroup } from '@angular/forms';
 
 export class Issue {
 
@@ -102,6 +101,13 @@ export class Issue {
       issue.issueComment = todoTemplate.comment;
     }
     return issue;
+  }
+
+  updateTesterResponse(githubComment: GithubComment): void {
+    const template = new TesterResponseTemplate([githubComment]);
+    this.issueComment = template.comment;
+    this.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
+    this.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
   }
 
   updateDispute(githubComment: GithubComment): void {
