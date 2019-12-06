@@ -60,18 +60,15 @@ export class IssueDisputeComponent implements OnInit {
         this.errorHandlingService.handleHttpError(error);
       });
     } else {
-      const issueCommentDescription = this.issueCommentService
-        .createGithubTutorResponse(this.issue.issueDisputes);
-
-      this.issueCommentService.createIssueComment(this.issue.id, issueCommentDescription).subscribe(
-        (newComment) => {
-          this.isFormPending = false;
-          this.isEditing = false;
-          this.issue.issueComment = newComment;
-          this.commentUpdated.emit(newComment);
-        },
+      const tutorResponse = this.issue.getTutorResponseFromForm(this.tutorResponseForm);
+      this.issueService.createTutorResponse(this.issue, tutorResponse).subscribe((issue: Issue) => {
+        this.isFormPending = false;
+        this.isEditing = false;
+        this.commentUpdated.emit(issue.issueComment);
+        this.issueUpdated.emit(issue);
+      },
         (error) => {
-          this.errorHandlingService.handleHttpError(error);
+        this.errorHandlingService.handleHttpError(error);
       });
     }
 

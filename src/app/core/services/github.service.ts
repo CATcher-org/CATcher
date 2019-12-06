@@ -167,9 +167,9 @@ export class GithubService {
     );
   }
 
-  createIssueComment(comment: IssueComment): Observable<{}> {
-    return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, number: comment.id,
-      body: comment.description})).pipe(
+  createIssueComment(issueId: number, description: string): Observable<{}> {
+    return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, issue_number: issueId,
+      body: description})).pipe(
       map(response => {
         return response['data'];
       })

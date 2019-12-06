@@ -79,7 +79,7 @@ export class Issue {
     const template = new TesterResponseTemplate(githubComments);
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
-    issue.testerResponses = template.testerResponse.testerResponses;
+    issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
     return issue;
   }
 
@@ -89,16 +89,18 @@ export class Issue {
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
     const todoTemplate = new TutorModerationTodoTemplate(githubComments);
 
-    const disputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
-      dispute.description = issueTemplate.dispute.disputes[i].description;
-      return dispute;
-    });
-
     issue.teamAssigned = teamData;
-    issue.issueComment = todoTemplate.comment;
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse.content;
-    issue.issueDisputes = disputes;
+    issue.issueDisputes = issueTemplate.dispute.disputes;
+
+    if (todoTemplate.moderation && todoTemplate.comment) {
+      issue.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+        dispute.description = issueTemplate.dispute.disputes[i].description;
+        return dispute;
+      });
+      issue.issueComment = todoTemplate.comment;
+    }
     return issue;
   }
 

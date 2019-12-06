@@ -35,10 +35,7 @@ export class IssueCommentService {
   }
 
   createIssueComment(issueId: number, description: string): Observable<IssueComment> {
-    return this.githubService.createIssueComment(<IssueComment>{
-      id: issueId,
-      description: description,
-    }).pipe(
+    return this.githubService.createIssueComment(issueId, description).pipe(
       map((response) => {
         return this.createIssueCommentModel(response);
       })

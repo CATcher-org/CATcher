@@ -98,6 +98,15 @@ export class IssueService {
     );
   }
 
+  createTutorResponse(issue: Issue, response: string): Observable<Issue> {
+    return this.githubService.createIssueComment(issue.id, response).pipe(
+      map((githubComment: GithubComment) => {
+        issue.updateDispute(githubComment);
+        return issue;
+      })
+    );
+  }
+
   /**
    * This function will create a github representation of issue's description. Given the issue model, it will piece together the different
    * attributes to create the github's description.
