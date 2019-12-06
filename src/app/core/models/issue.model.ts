@@ -89,17 +89,21 @@ export class Issue {
     const issue = new Issue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
     const todoTemplate = new TutorModerationTodoTemplate(githubComments);
-    const disputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
-      dispute.description = issueTemplate.dispute.disputes[i].description;
-      return dispute;
-    });
 
     issue.teamAssigned = teamData;
-    issue.issueComment = todoTemplate.comment;
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse.content;
-    issue.issueDisputes = disputes;
-    issue.todoList = todoTemplate.moderation.todoList;
+    issue.issueDisputes = issueTemplate.dispute.disputes;
+    issue.todoList = issueTemplate.dispute.disputes.map(d => d.todo);
+
+    if (todoTemplate.moderation && todoTemplate.comment) {
+      issue.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+        dispute.description = issueTemplate.dispute.disputes[i].description;
+        return dispute;
+      });
+      issue.issueComment = todoTemplate.comment;
+      issue.todoList = todoTemplate.moderation.todoList;
+    }
     return issue;
   }
 }
