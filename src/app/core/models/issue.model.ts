@@ -80,7 +80,7 @@ export class Issue {
     const template = new TesterResponseTemplate(githubComments);
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
-    issue.testerResponses = template.testerResponse.testerResponses;
+    issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
     return issue;
   }
 
