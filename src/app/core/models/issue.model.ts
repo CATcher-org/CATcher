@@ -104,6 +104,10 @@ export class Issue {
     return issue;
   }
 
+  /**
+   * Updates the tutor's resolution of the disputes with a new version of githubComment.
+   * @param githubComment - A version of githubComment to update the dispute with.
+   */
   updateDispute(githubComment: GithubComment): void {
     const todoTemplate = new TutorModerationTodoTemplate([githubComment]);
     this.issueComment = todoTemplate.comment;
