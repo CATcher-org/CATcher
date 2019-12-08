@@ -23,7 +23,7 @@ export class UploadService {
     }
     const fileType = userFilename.split('.').pop();
 
-    if (SUPPORTED_FILE_TYPES.includes(fileType)) {
+    if (SUPPORTED_FILE_TYPES.includes(fileType.toLowerCase())) {
       base64String = base64String.split(',')[1];
       const onlineFilename = uuid();
       return this.githubService.uploadFile(`${onlineFilename}.${fileType}`, base64String);
@@ -34,6 +34,6 @@ export class UploadService {
 
   isSupportedFileType(fileName): boolean {
     const fileType = fileName.split('.').pop();
-    return SUPPORTED_FILE_TYPES.includes(fileType);
+    return SUPPORTED_FILE_TYPES.includes(fileType.toLowerCase());
   }
 }
