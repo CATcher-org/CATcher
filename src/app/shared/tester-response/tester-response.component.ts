@@ -128,10 +128,17 @@ export class TesterResponseComponent implements OnInit {
     return group;
   }
 
+  /**
+   * Reset the form based on the initial values of the given issue.
+   * @param issue - The issue to reset the form to.
+   */
   resetForm(issue: Issue): void {
     this.testerResponseForm = this.formBuilder.group(this.createFormGroup(issue));
   }
 
+  /**
+   * Based on the updated form and `this.issue` we obtain the updated tester response in Github format.
+   */
   getTesterResponseFromForm(): string {
     if (!this.issue.testerResponses) {
       return '';

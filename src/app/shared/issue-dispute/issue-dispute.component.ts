@@ -100,6 +100,9 @@ export class IssueDisputeComponent implements OnInit {
     return !this.issue.issueComment;
   }
 
+  /**
+   * Will reset the form to the initial values of `this.issue`.
+   */
   resetForm(): void {
     this.tutorResponseForm = this.formBuilder.group(this.createFormGroup());
   }
@@ -119,6 +122,9 @@ export class IssueDisputeComponent implements OnInit {
     return pending;
   }
 
+  /**
+   * Will create a form group with initial values in `this.issue`.
+   */
   createFormGroup() {
     const group: any = {};
     // initialize fields for tutor response and the checkboxes for tutor to mark "Done"
@@ -130,6 +136,9 @@ export class IssueDisputeComponent implements OnInit {
     return group;
   }
 
+  /**
+   * Obtain the updated Github comment format for the tutor response.
+   */
   getTutorResponseFromForm(): string {
     if (!this.issue.issueDisputes) {
       return '';
