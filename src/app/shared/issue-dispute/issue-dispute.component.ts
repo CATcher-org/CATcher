@@ -137,7 +137,7 @@ export class IssueDisputeComponent implements OnInit {
   }
 
   /**
-   * Obtain the updated Github comment format for the tutor response.
+   * Obtain the updated Github comment format for the tutor response based on the values in the form and `this.issue`.
    */
   getTutorResponseFromForm(): string {
     if (!this.issue.issueDisputes) {
