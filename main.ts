@@ -169,7 +169,7 @@ try {
 
 const CLIENT_ID = '6750652c0c9001314434';
 const BASE_URL = 'https://github.com';
-const ACCESS_TOKEN_URL = 'http://localhost:9999/authenticate';
+const ACCESS_TOKEN_URL = 'https://catcher-proxy.herokuapp.com/authenticate';
 const CALLBACK_URL = 'http://localhost:4200';
 
 let authWindow;
