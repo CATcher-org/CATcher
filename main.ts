@@ -169,7 +169,7 @@ try {
 
 const CLIENT_ID = '6750652c0c9001314434';
 const BASE_URL = 'https://github.com';
-const ACCESS_TOKEN_URL = 'https://catcher-proxy.herokuapp.com/authenticate';
+const ACCESS_TOKEN_URL = 'http://localhost:9999/authenticate';
 const CALLBACK_URL = 'http://localhost:4200';
 
 let authWindow;
@@ -182,7 +182,12 @@ let authWindow;
 function getAccessToken(window: BrowserWindow, toClearAuthState: boolean): Promise<any> {
   return getAuthorizationCode(window, toClearAuthState).then((code) => {
     const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
-    return fetch(accessTokenUrl).then(res => res.json());
+    return fetch(accessTokenUrl).then(res => res.json()).then(data => {
+      if (data.error) {
+        throw(new Error(data.error));
+      }
+      return data;
+    });
   }).catch(error => {
     throw(error);
   });
