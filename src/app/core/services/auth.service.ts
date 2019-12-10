@@ -15,7 +15,7 @@ import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
 
-export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated' }
+export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated', 'PartialOAuthenticated', 'SettingUpOAuthUser' }
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +34,7 @@ export class AuthService {
               private labelService: LabelService,
               private dataService: DataService,
               private githubEventService: GithubEventService,
-              private titleService: Title) {
-  }
+              private titleService: Title) {}
 
   /**
    * Authenticates the user to the github api and stores the necessary credentials in
@@ -44,15 +43,10 @@ export class AuthService {
    * @param password - User's Password
    */
   authenticate(username: string, password: string): Observable<any> {
-
-    this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
     this.githubService.storeCredentials(username, password);
-
     return this.http.get('https://api.github.com/user', { headers: header });
   }
-
-
 
   logOut(): void {
     this.userService.reset();
@@ -80,4 +74,16 @@ export class AuthService {
     this.authStateSource.next(newAuthState);
   }
 
+  /**
+   * Will start the Github OAuth web flow process.
+   * @param clearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
+   */
+  startOAuthProcess(clearAuthState: boolean = false) {
+    if (clearAuthState) {
+      this.changeAuthState(AuthState.SettingUpOAuthUser);
+    } else {
+      this.changeAuthState(AuthState.AwaitingAuthentication);
+    }
+    this.electronService.ipcRenderer.send('github-oauth', clearAuthState);
+  }
 }

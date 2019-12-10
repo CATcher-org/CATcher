@@ -1,4 +1,4 @@
-<mat-form-field>
+<mat-form-field class="profile-field">
   <mat-label>Select Profile</mat-label>
   <mat-select [value]="this.selectedProfile.profileName">
     <mat-option (click)="selectProfile(this.blankProfile)">None</mat-option>
@@ -7,7 +7,7 @@
   </mat-select>
 </mat-form-field>
 <input #fileInput type="file" style="display: none;" accept=".json" (change)="this.fileSelected(fileInput)"/>
-<button mat-icon-button (click)="this.fileSelectorInitiation(fileInput)" disableRipple="true" (mousedown)="this.animationActivated = true"
+<button class="profile-input" type="button" mat-icon-button (click)="this.fileSelectorInitiation(fileInput)" disableRipple="true" (mousedown)="this.animationActivated = true"
         (mouseleave)="this.animationActivated = false">
   <mat-icon [@triggerFileInput]="this.animationActivated ? 'pressed' : 'normal'">folder_open</mat-icon>
 </button>

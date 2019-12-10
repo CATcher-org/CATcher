@@ -6,6 +6,7 @@ import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { GithubIssue } from '../models/github-issue.model';
+import { GithubUser } from '../models/github-user.model';
 
 const Octokit = require('@octokit/rest');
 
@@ -30,6 +31,14 @@ export class GithubService {
         username: user,
         password: passw,
       },
+    });
+  }
+
+  storeOAuthAccessToken(accessToken: string) {
+    octokit = new Octokit({
+      auth() {
+        return `token ${accessToken}`;
+      }
     });
   }
 
@@ -233,6 +242,13 @@ export class GithubService {
   fetchSettingsFile(): Observable<{}> {
     return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json'}))
         .pipe(map(rawData => JSON.parse(atob(rawData['data']['content']))));
+  }
+
+  fetchAuthenticatedUser(): Observable<GithubUser> {
+    return from(octokit.users.getAuthenticated())
+      .pipe(map(response => {
+        return response['data'];
+      }));
   }
 
   private getNumberOfIssuePages(filter?: {}): Observable<number> {

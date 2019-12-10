@@ -4,6 +4,8 @@ import * as url from 'url';
 import MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
 import { enableProdMode, isDevMode } from '@angular/core';
 const { ipcMain } = require('electron');
+const nodeUrl = require('url');
+const fetch = require('node-fetch');
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -20,6 +22,21 @@ ipcMain.on('synchronous-message', (event, arg) => {
     : app.getAppPath();
 });
 
+/**
+ * Will start the OAuth Web Flow and obtain the access token from Github.
+ */
+ipcMain.on('github-oauth', (event, clearAuthState) => {
+  getAccessToken(win, clearAuthState).then((data) => {
+    event.sender.send('github-oauth-reply', {token: data.token, isChangingAccount: clearAuthState});
+  }).catch(error => {
+    event.sender.send('github-oauth-reply', {
+      error: error.message,
+      isChangingAccount: clearAuthState,
+      isWindowClosed: error.message === 'WINDOW_CLOSED'});
+  });
+});
+
+
 function createWindow() {
 
   const electronScreen = screen;
@@ -30,7 +47,8 @@ function createWindow() {
     x: 0,
     y: 0,
     width: size.width,
-    height: size.height
+    height: size.height,
+    webPreferences: { webSecurity: false }
   });
   win.setTitle(require('./package.json').name + ' ' + require('./package.json').version);
   if (serve) {
@@ -147,4 +165,87 @@ try {
 } catch (e) {
   // Catch Error
   // throw e;
+}
+
+const CLIENT_ID = '6750652c0c9001314434';
+const BASE_URL = 'https://github.com';
+const ACCESS_TOKEN_URL = 'https://catcher-proxy.herokuapp.com/authenticate';
+const CALLBACK_URL = 'http://localhost:4200';
+
+let authWindow;
+
+/**
+ * Will retrieve the access token from a proxy server which acts as a intermediary to retrieve the tokens from Github.
+ * @param window - The main window of CATcher.
+ * @param toClearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
+ */
+function getAccessToken(window: BrowserWindow, toClearAuthState: boolean): Promise<any> {
+  return getAuthorizationCode(window, toClearAuthState).then((code) => {
+    const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
+    return fetch(accessTokenUrl).then(res => res.json());
+  }).catch(error => {
+    throw(error);
+  });
+}
+
+/**
+ * Get the authorization code from Github after success login.
+ * @param parentWindow - The main window of CATcher
+ * @param toClearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
+ */
+function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boolean) {
+  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=public_repo,read:user`);
+
+  return new Promise(function (resolve, reject) {
+    const windowParams = {
+      autoHideMenuBar: true,
+      parent: parentWindow,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    };
+    authWindow = new BrowserWindow(windowParams);
+
+    if (toClearAuthState) {
+      authWindow.webContents.session.clearStorageData();
+    }
+    authWindow.loadURL(oauthUrl);
+    authWindow.show();
+
+    authWindow.on('closed', (event) => {
+      reject(new Error('WINDOW_CLOSED'));
+    });
+
+    authWindow.webContents.on('will-navigate', (event, newUrl) => {
+      if (newUrl.startsWith(CALLBACK_URL)) {
+        onCallback(newUrl);
+      }
+    });
+
+    authWindow.webContents.on('will-redirect', (event, newUrl) => {
+      if (newUrl.startsWith(CALLBACK_URL)) {
+        onCallback(newUrl);
+      }
+    });
+
+    function onCallback(callbackUrl: string) {
+      const url_parts = nodeUrl.parse(callbackUrl, true);
+      const query = url_parts.query;
+      const code = query.code;
+      const error = query.error;
+      const state = query.state;
+
+      if (error !== undefined && state !== undefined) {
+        reject(error);
+      } else if (code) {
+        resolve(code);
+      }
+      setImmediate(function () {
+        authWindow.close();
+        authWindow.on('closed', () => {
+          authWindow = null;
+        });
+      });
+    }
+  });
 }
