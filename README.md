@@ -29,6 +29,9 @@ A Github organization must be created first. The organization must have the foll
 3. Create `students` team.
 4. Create `tutors` team.
 5. Invite github users into their respective teams.
+6. Start CATcher app and log in by clicking on the OAuth button. Authorize OAuth app access to your account.
+7. **Request access** to your organization as shown in this [tutorial](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/requesting-organization-approval-for-oauth-apps).
+8. **Grant** CATcher OAuth App access into the organization as shown in this [tutorial](https://help.github.com/en/github/setting-up-and-managing-organizations-and-teams/approving-oauth-apps-for-your-organization).
 
 
 ## 2.2. Set up Github Repositories
