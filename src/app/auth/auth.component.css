@@ -3,3 +3,10 @@
   height: 100%;
   transform: translate(50%, 50%);
 }
+
+
+.centralize {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

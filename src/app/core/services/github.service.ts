@@ -6,15 +6,17 @@ import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { GithubIssue } from '../models/github-issue.model';
+import { GithubRelease } from '../models/github.release';
 
 const Octokit = require('@octokit/rest');
-
+const CATCHER_ORG = 'CATcher-org';
+const CATCHER_REPO = 'CATcher';
 
 let ORG_NAME = '';
 let MOD_ORG = '';
 let REPO = '';
 let DATA_REPO = '';
-let octokit;
+let octokit = new Octokit();
 
 @Injectable({
   providedIn: 'root',
@@ -224,6 +226,10 @@ export class GithubService {
         return {data};
       })
     );
+  }
+
+  fetchLatestRelease(): Observable<GithubRelease> {
+    return from(octokit.repos.getLatestRelease({owner: CATCHER_ORG, repo: CATCHER_REPO})).pipe(map(res => res['data']));
   }
 
   /**
