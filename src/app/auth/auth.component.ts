@@ -25,6 +25,7 @@ const appSetting = require('../../../package.json');
 export class AuthComponent implements OnInit, OnDestroy {
   isReady: boolean;
   isAppOutdated: boolean;
+  versionCheckingError: boolean;
   authState: AuthState;
   authStateSubscription: Subscription;
   loginForm: FormGroup;
@@ -43,12 +44,7 @@ export class AuthComponent implements OnInit, OnDestroy {
               private appService: ApplicationService) { }
 
   ngOnInit() {
-    this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
-      this.isAppOutdated = isOutdated;
-      this.isReady = true;
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
+    this.checkAppIsOutdated();
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
       this.authState = state;
     });
@@ -61,6 +57,22 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.authStateSubscription.unsubscribe();
+  }
+
+  /**
+   * Checks whether the current version of CATcher is outdated.
+   */
+  checkAppIsOutdated(): void {
+    this.isReady = false;
+    this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
+      this.isAppOutdated = isOutdated;
+      this.isReady = true;
+      this.versionCheckingError = false;
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
+      this.isReady = true;
+      this.versionCheckingError = true;
+    });
   }
 
   /**
