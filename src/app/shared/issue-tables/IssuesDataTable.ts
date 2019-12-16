@@ -44,8 +44,7 @@ export class IssuesDataTable extends DataSource<Issue> {
 
     this.loadingSubject.next(true);
 
-    this.issueSubscription = this.issueService.getAllIssues().pipe(
-      delay(0),
+    this.issueSubscription = this.issueService.pollIssues().pipe(
       tap(() => {
         this.loadingSubject.next(false);
       }),
@@ -67,8 +66,7 @@ export class IssuesDataTable extends DataSource<Issue> {
       })
     ).subscribe((issues) => {
       this.issuesSubject.next(issues);
-    },
-      (error) => this.errorHandlingService.handleHttpError(error, () => this.issueService.getAllIssues())
+    }
     );
   }
 

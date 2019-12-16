@@ -32,6 +32,12 @@ table {
   table-layout: fixed;
 }
 
+.centralize {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Timeline comment style */
 .timeline-header {
   background-color: #f1f8ff;

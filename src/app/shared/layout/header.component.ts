@@ -55,6 +55,7 @@ export class HeaderComponent implements OnInit {
         this.phaseService.sessionData[openPhase]);
 
     // Remove current phase issues and load selected phase issues.
+    this.githubService.reset();
     this.issueService.reset();
     this.issueCommentService.reset();
     this.reload();

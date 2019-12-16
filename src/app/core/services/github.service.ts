@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, flatMap, map } from 'rxjs/operators';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
@@ -9,7 +9,6 @@ import { GithubIssue } from '../models/github-issue.model';
 import { GithubComment } from '../models/github-comment.model';
 
 const Octokit = require('@octokit/rest');
-
 
 let ORG_NAME = '';
 let MOD_ORG = '';
@@ -21,9 +20,11 @@ let octokit;
   providedIn: 'root',
 })
 export class GithubService {
+  private issuesEtags = [];
+  private issueEtags = {};
+  private commentsEtags = {};
 
-  constructor(private errorHandlingService: ErrorHandlingService) {
-  }
+  constructor(private errorHandlingService: ErrorHandlingService) {}
 
   storeCredentials(user: String, passw: String) {
     octokit = new Octokit({
@@ -45,21 +46,29 @@ export class GithubService {
   }
 
   /**
-   * Will return an Observable with array of issues in JSON format.
+   * Will return an Observable with array of all of the issues in Github including the paginated issues.
    */
   fetchIssues(filter?: {}): Observable<Array<GithubIssue>> {
-    return this.getNumberOfIssuePages(filter).pipe(
-      mergeMap((numOfPages) => {
+    const responseInFirstPage = [];
+    return from(this.getIssueAPICall(filter, 1)).pipe(
+      map((response) => {
+        responseInFirstPage.push(response);
+        return this.getNumberOfPages(response);
+      }),
+      flatMap((numOfPages: number) => {
         const apiCalls = [];
-        for (let i = 1; i <= numOfPages; i++) {
-          apiCalls.push(from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO,
-            sort: 'created', direction: 'desc', per_page: 100, page: i})));
+        for (let i = 2; i <= numOfPages; i++) {
+          apiCalls.push(from(this.getIssueAPICall(filter, i)));
         }
-        return forkJoin(apiCalls);
+        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
       map((resultArray) => {
+        const responses = [...responseInFirstPage, ...resultArray];
         const collatedData = [];
-        for (const response of resultArray) {
+        let index = 0;
+        for (const response of responses) {
+          this.issuesEtags[index] = response['headers']['etag'];
+          index++;
           for (const issue of response['data']) {
             collatedData.push(new GithubIssue(issue));
           }
@@ -96,29 +105,44 @@ export class GithubService {
   }
 
   fetchIssue(id: number): Observable<GithubIssue> {
-    return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, number: id})).pipe(
-      map((response) => {
-        return new GithubIssue(response['data']);
-      })
+    return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, issue_number: id,
+      headers: { 'If-None-Match': this.issueEtags[id] || '' }})).pipe(
+        map((response) => {
+          this.issueEtags[id] = [response['headers']['etag']];
+          return new GithubIssue(response['data']);
+        })
     );
   }
 
-  fetchIssueComments(issueId: number): Observable<Array<{}>> {
-    return this.getNumberOfCommentPages(issueId).pipe(
-      mergeMap((numOfPages) => {
+  fetchIssueComments(issueId: number): Observable<Array<GithubComment>> {
+    const responseInFirstPage = [];
+    return from(this.getCommentsAPICall(issueId, 1)).pipe(
+      map((response) => {
+        responseInFirstPage.push(response);
+        return this.getNumberOfPages(response);
+      }),
+      flatMap((numOfPages: number) => {
         const apiCalls = [];
-        for (let i = 1; i <= numOfPages; i++) {
-          apiCalls.push(from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: i})));
+        for (let i = 2; i <= numOfPages; i++) {
+          apiCalls.push(from(this.getCommentsAPICall(issueId, i)));
         }
-        return forkJoin(apiCalls);
+        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
       map((resultArray) => {
-        let collatedData = [];
-        for (const response of resultArray) {
-          collatedData = [
-            ...collatedData,
-            ...response['data'],
-          ];
+        const responses = [...responseInFirstPage, ...resultArray];
+        const collatedData = [];
+        let index = 0;
+        for (const response of responses) {
+          if (this.commentsEtags[issueId]) {
+            this.commentsEtags[issueId].push(response['headers']['etag']);
+          } else {
+            this.commentsEtags[issueId] = [response['headers']['etag']];
+          }
+          index++;
+
+          for (const comment of response['data']) {
+            collatedData.push(<GithubComment>comment);
+          }
         }
         return collatedData;
       })
@@ -180,6 +204,7 @@ export class GithubService {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
       map(response => {
+        this.issueEtags[id] = response['headers']['etag'];
         return new GithubIssue(response['data']);
       })
     );
@@ -199,16 +224,8 @@ export class GithubService {
       message: 'upload file', content: base64String}));
   }
 
-  getRepo(orgName: string, repoName: string) {
-    return from(octokit.repos.get({owner: orgName, repo: repoName})).pipe(
-      map(response => {
-        return response['data'];
-      })
-    );
-  }
-
   fetchEventsForRepo(): Observable<any[]> {
-    return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
+    return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO })).pipe(
       map(response => {
         return response['data'];
       })
@@ -236,31 +253,6 @@ export class GithubService {
         .pipe(map(rawData => JSON.parse(atob(rawData['data']['content']))));
   }
 
-  private getNumberOfIssuePages(filter?: {}): Observable<number> {
-    return from(octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
-      direction: 'desc', per_page: 100, page: 1})).pipe(
-      map((response) => {
-        if (!response['headers'].link) {
-          return 1;
-        }
-        const paginatedData = githubPaginatorParser(response['headers'].link);
-        return +paginatedData['last'] || 1;
-      })
-    );
-  }
-
-  private getNumberOfCommentPages(issueId: number): Observable<number> {
-    return from(octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: 1})).pipe(
-      map((response) => {
-        if (!response['headers'].link) {
-          return 1;
-        }
-        const paginatedData = githubPaginatorParser(response['headers'].link);
-        return +paginatedData['last'] || 1;
-      })
-    );
-  }
-
   getRepoURL(): string {
     return ORG_NAME.concat('/').concat(REPO);
   }
@@ -272,5 +264,34 @@ export class GithubService {
       this.errorHandlingService.handleGeneralError('Unable to open this issue in Browser');
     }
     event.stopPropagation();
+  }
+
+  reset(): void {
+    this.commentsEtags = {};
+    this.issueEtags = {};
+    this.issuesEtags = [];
+  }
+
+  /**
+   * Get the number of paginated pages of issues in Github.
+   * @param response
+   */
+  private getNumberOfPages(response: {}): number {
+    let numberOfPages = 1;
+    if (response['headers'].link) {
+      const paginatedData = githubPaginatorParser(response['headers'].link);
+      numberOfPages = +paginatedData['last'] || 1;
+    }
+    return numberOfPages;
+  }
+
+  private getIssueAPICall(filter: {}, pageNumber: number): Promise<{}> {
+    return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
+      direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtags[pageNumber - 1] || '' }});
+  }
+
+  private getCommentsAPICall(issueId: number, pageNumber: number): Promise<{}> {
+    return octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: pageNumber,
+      headers: { 'If-None-Match': this.commentsEtags[issueId] ? this.commentsEtags[issueId][pageNumber - 1] || '' : ''}});
   }
 }

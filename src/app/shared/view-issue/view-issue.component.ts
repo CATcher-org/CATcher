@@ -76,13 +76,9 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private initializeIssue(id: number) {
-    this.getIssue(id);
-  }
-
-  private getIssue(id: number) {
-    this.issueSubscription = this.issueService.getAllIssues().subscribe((issues) => {
-        this.issue = issues.find(issue => issue.id === id);
-        this.isIssueLoading = false;
+    this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue) => {
+      this.issue = issue;
+      this.isIssueLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
     });

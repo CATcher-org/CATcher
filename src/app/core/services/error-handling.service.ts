@@ -15,7 +15,11 @@ export class ErrorHandlingService {
 
   // Ref: https://developer.github.com/v3/#client-errors
   handleHttpError(error, actionCallback?: () => void) {
-    console.log(error);
+    // Angular treats 304 Not Modified as an error, we will ignore it.
+    if (error.status === 304) {
+      return;
+    }
+
     switch (error.status) {
       case 500: // Internal Server Error. Could also be due to user not having internet connection.
         if (navigator.onLine) {
