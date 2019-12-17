@@ -1,6 +1,7 @@
 import { Header, Template } from './template.model';
 import { ModerationSection } from './sections/moderation-section.model';
 import { GithubComment } from '../github-comment.model';
+import { IssueComment } from '../comment.model';
 
 
 const tutorModerationTodoHeaders = {
@@ -9,12 +10,19 @@ const tutorModerationTodoHeaders = {
 
 export class TutorModerationTodoTemplate extends Template {
   moderation: ModerationSection;
+  comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
     super(Object.values(tutorModerationTodoHeaders));
 
-    const templateConformingComment = githubComments.find(comment => this.test(comment.body)).body;
-    this.moderation = this.parseModeration(templateConformingComment);
+    const templateConformingComment = githubComments.find(comment => this.test(comment.body));
+    if (templateConformingComment) {
+      this.comment = <IssueComment>{
+        ...templateConformingComment,
+        description: templateConformingComment.body
+      };
+      this.moderation = this.parseModeration(this.comment.description);
+    }
   }
 
   parseModeration(toParse: string): ModerationSection {

@@ -2,7 +2,7 @@ import { IssueDispute } from '../../issue-dispute.model';
 import { Section, SectionalDependency } from './section.model';
 
 export class IssueDisputeSection extends Section {
-  disputes: IssueDispute[];
+  disputes: IssueDispute[] = [];
 
   constructor(sectionalDependency: SectionalDependency, unprocessedContent: string) {
     super(sectionalDependency, unprocessedContent);

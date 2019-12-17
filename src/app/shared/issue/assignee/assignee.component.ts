@@ -5,7 +5,6 @@ import {Team} from '../../../core/models/team.model';
 import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {PermissionService} from '../../../core/services/permission.service';
-import { BaseIssue } from '../../../core/models/base-issue.model';
 
 @Component({
   selector: 'app-assignee-component',
@@ -46,7 +45,7 @@ export class AssigneeComponent implements OnInit {
   }
 
   updateAssignee(): void {
-    const latestIssue = <BaseIssue>{
+    const latestIssue = <Issue>{
       ...this.issue,
       assignees: this.assignees
     };

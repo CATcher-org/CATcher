@@ -2,7 +2,7 @@ import { IssueDispute } from '../../issue-dispute.model';
 import { Section, SectionalDependency } from './section.model';
 
 export class ModerationSection extends Section {
-  disputesToResolve: IssueDispute[];
+  disputesToResolve: IssueDispute[] = [];
 
   constructor(sectionalDependency: SectionalDependency, unprocessedContent: string) {
     super(sectionalDependency, unprocessedContent);
@@ -13,8 +13,8 @@ export class ModerationSection extends Section {
         if (matches) {
           const [regexString, title, todo, tutorResponse] = matches;
           const description = `${todo}\n${tutorResponse}`;
-
           const newDispute = new IssueDispute(title, description);
+
           newDispute.todo = todo;
           newDispute.tutorResponse = tutorResponse.trim();
           this.disputesToResolve.push(newDispute);
