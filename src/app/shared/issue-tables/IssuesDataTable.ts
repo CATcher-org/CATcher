@@ -162,8 +162,18 @@ export class IssuesDataTable extends DataSource<Issue> {
   }
 
   private compareValue(valueA, valueB): number {
-    const a = valueA || '';
-    const b = valueB || '';
+    var a: string | number;
+    var b: string | number;
+    if (typeof valueA === 'string') {
+      a = valueA.toUpperCase();
+    } else {
+      a = valueA || '';
+    }
+    if (typeof valueB === 'string') {
+      b = valueB.toUpperCase();
+    } else {
+      b = valueB || '';
+    }
     return (a < b ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
   }
 }
