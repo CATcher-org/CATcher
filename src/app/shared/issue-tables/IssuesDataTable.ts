@@ -162,8 +162,8 @@ export class IssuesDataTable extends DataSource<Issue> {
   }
 
   private compareValue(valueA, valueB): number {
-    var a: string | number;
-    var b: string | number;
+    let a: string | number;
+    let b: string | number;
     if (typeof valueA === 'string') {
       a = valueA.toUpperCase();
     } else {
