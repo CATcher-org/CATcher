@@ -9,7 +9,6 @@ import { TesterResponseTemplate } from './templates/tester-response-template.mod
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import * as moment from 'moment';
-import { FormGroup } from '@angular/forms';
 
 export class Issue {
 
