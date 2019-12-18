@@ -12,7 +12,10 @@ import { Profile } from './profiles/profiles.component';
 import { flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
+import { ApplicationService } from '../core/services/application.service';
 
+
+const appSetting = require('../../../package.json');
 
 @Component({
   selector: 'app-auth',
@@ -20,6 +23,9 @@ import { GithubEventService } from '../core/services/githubevent.service';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit, OnDestroy {
+  isReady: boolean;
+  isAppOutdated: boolean;
+  versionCheckingError: boolean;
   authState: AuthState;
   authStateSubscription: Subscription;
   loginForm: FormGroup;
@@ -34,9 +40,11 @@ export class AuthComponent implements OnInit, OnDestroy {
               private router: Router,
               private phaseService: PhaseService,
               private authService: AuthService,
-              private titleService: Title) { }
+              private titleService: Title,
+              private appService: ApplicationService) { }
 
   ngOnInit() {
+    this.checkAppIsOutdated();
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
       this.authState = state;
     });
@@ -49,6 +57,22 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.authStateSubscription.unsubscribe();
+  }
+
+  /**
+   * Checks whether the current version of CATcher is outdated.
+   */
+  checkAppIsOutdated(): void {
+    this.isReady = false;
+    this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
+      this.isAppOutdated = isOutdated;
+      this.isReady = true;
+      this.versionCheckingError = false;
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
+      this.isReady = true;
+      this.versionCheckingError = true;
+    });
   }
 
   /**
@@ -102,9 +126,9 @@ export class AuthComponent implements OnInit, OnDestroy {
         () => {
           this.authService.changeAuthState(AuthState.Authenticated);
           form.resetForm();
-          this.titleService.setTitle(require('../../../package.json').name
+          this.titleService.setTitle(appSetting.name
             .concat(' ')
-            .concat(require('../../../package.json').version)
+            .concat(appSetting.version)
             .concat(' - ')
             .concat(this.phaseService.getPhaseDetail()));
           this.router.navigateByUrl(this.phaseService.currentPhase);
