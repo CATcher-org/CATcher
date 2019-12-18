@@ -27,7 +27,8 @@ export enum ISSUE_COMPONENTS {
 
 export const SUBMIT_BUTTON_TEXT = {
   SUBMIT: 'Submit',
-  SAVE: 'Save'
+  SAVE: 'Save',
+  OVERWRITE: 'Overwrite',
 };
 
 @Component({
@@ -58,13 +59,23 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
               public issueService: IssueService) { }
 
   ngOnInit() {
-    this.initializeIssue(this.issueId);
+    this.pollIssue(this.issueId);
   }
 
+  /**
+   * Will be triggered when there is a change in issueId (e.g. there is a navigation from 1 issue page to another issue page)
+   * @param changes - The changes being applied to @Input.
+   */
   ngOnChanges(changes: SimpleChanges) {
     if (!changes.issueId.firstChange) {
-      this.initializeIssue(changes.issueId.currentValue);
+      this.stopPolling();
+      this.isIssueLoading = true;
+      this.pollIssue(changes.issueId.currentValue);
     }
+  }
+
+  ngOnDestroy() {
+    this.stopPolling();
   }
 
   isComponentVisible(component: ISSUE_COMPONENTS): boolean {
@@ -72,16 +83,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   isEditing(): boolean {
-    return !this.isIssueDescriptionEditing && !this.isTutorResponseEditing && !this.isTeamResponseEditing;
-  }
-
-  private initializeIssue(id: number) {
-    this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue) => {
-      this.issue = issue;
-      this.isIssueLoading = false;
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.initializeIssue(id));
-    });
+    return this.isIssueDescriptionEditing || this.isTutorResponseEditing || this.isTeamResponseEditing;
   }
 
   updateIssue(newIssue: Issue) {
@@ -96,19 +98,32 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateDescriptionEditState(updatedState: boolean) {
+    updatedState ? this.stopPolling() : this.pollIssue(this.issueId);
     this.isIssueDescriptionEditing = updatedState;
   }
 
   updateTeamResponseEditState(updatedState: boolean) {
+    updatedState ? this.stopPolling() : this.pollIssue(this.issueId);
     this.isTeamResponseEditing = updatedState;
   }
 
   updateTutorResponseEditState(updatedState: boolean) {
+    updatedState ? this.stopPolling() : this.pollIssue(this.issueId);
     this.isTutorResponseEditing = updatedState;
   }
 
-  ngOnDestroy() {
-    this.issueSubscription.unsubscribe();
+  private pollIssue(id: number): void {
+    this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue) => {
+      this.issue = issue;
+      this.isIssueLoading = false;
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error, () => this.pollIssue(id));
+    });
   }
 
+  private stopPolling(): void {
+    if (this.issueSubscription) {
+      this.issueSubscription.unsubscribe();
+    }
+  }
 }

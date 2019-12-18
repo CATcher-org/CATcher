@@ -3,9 +3,15 @@ import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
 import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { PermissionService } from '../../../core/services/permission.service';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
+import { flatMap } from 'rxjs/internal/operators';
+import { throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Conflict } from '../../../core/models/conflict.model';
+import { MatDialog } from '@angular/material';
+import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
 
 @Component({
   selector: 'app-issue-description',
@@ -15,7 +21,7 @@ import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 export class DescriptionComponent implements OnInit {
   isSavePending = false;
   issueDescriptionForm: FormGroup;
-
+  conflict: Conflict;
   submitButtonText: string;
 
   @Input() issue: Issue;
@@ -27,6 +33,7 @@ export class DescriptionComponent implements OnInit {
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
+              private dialog: MatDialog,
               public permissions: PermissionService) {
   }
 
@@ -44,25 +51,50 @@ export class DescriptionComponent implements OnInit {
     });
   }
 
-  cancelEditMode() {
-    this.changeEditState.emit(false);
-  }
-
   updateDescription(form: NgForm) {
     if (this.issueDescriptionForm.invalid) {
       return;
     }
 
     this.isSavePending = true;
-    this.issueService.updateIssue(this.getUpdatedIssue()).pipe(finalize(() => {
-      this.changeEditState.emit(false);
-      this.isSavePending = false;
-    })).subscribe((editedIssue: Issue) => {
+    this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        return issue.description === this.issue.description;
+      }),
+      flatMap((isSaveToUpdate: boolean) => {
+        if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+          return this.issueService.updateIssue(this.getUpdatedIssue());
+        } else {
+          this.conflict = new Conflict(this.issue.description, this.issueService.issues[this.issue.id].description);
+          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+        }
+      }),
+      finalize(() => this.isSavePending = false)
+    ).subscribe((editedIssue: Issue) => {
       this.issueUpdated.emit(editedIssue);
+      this.resetToDefault();
       form.resetForm();
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      if (error instanceof HttpErrorResponse) {
+        this.errorHandlingService.handleHttpError(error);
+      } else {
+        this.errorHandlingService.handleGeneralError(error);
+      }
     });
+  }
+
+  viewChanges(): void {
+    this.dialog.open(ConflictDialogComponent, {
+      data: this.conflict,
+      autoFocus: false
+    });
+  }
+
+  resetToDefault(): void {
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
+    this.conflict = undefined;
+    this.changeEditState.emit(false);
   }
 
   private getUpdatedIssue(): Issue {

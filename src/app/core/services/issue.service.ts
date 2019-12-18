@@ -88,14 +88,24 @@ export class IssueService {
 
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
-      return this.githubService.fetchIssue(id).pipe(
-        flatMap((response) => {
-          return this.createIssueModel(response);
-        })
-      );
+      return this.getLatestIssue(id);
     } else {
       return of(this.issues[id]);
     }
+  }
+
+  getLatestIssue(id: number): Observable<Issue> {
+    return this.githubService.fetchIssue(id).pipe(
+      flatMap((response: GithubIssue) => {
+        return this.createAndSaveIssueModel(response);
+      }),
+      map((isSaveSuccess: boolean) => {
+        return this.issues[id];
+      }),
+      catchError((err) => {
+        return of(this.issues[id]);
+      })
+    );
   }
 
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {

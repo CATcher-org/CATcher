@@ -1,0 +1,25 @@
+<div style="position: relative">
+  <h1 style="display: inline-block" mat-dialog-title>The content you are updating has changed</h1>
+  <mat-slide-toggle *ngIf="!isOnPreview" style="display: inline-block; margin-left: 50px" color="primary" [checked]="showDiff" (change)="handleChangeShowDiff()">
+    Show Difference
+  </mat-slide-toggle>
+  <button mat-icon-button color="default" style="position: absolute; right: 5px; top: 0" (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div mat-dialog-content>
+  <mat-tab-group class="mat-elevation-z1" animationDuration="0ms" (selectedTabChange)="handleTabChange($event)">
+    <mat-tab label="Raw Text">
+      <div class="tab-content" *ngIf="isReady">
+        <div *ngIf="showDiff" [innerHTML]="diffHtml"></div>
+        <div *ngIf="!showDiff" [innerHTML]="updatedHtml"></div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Preview Updated Content">
+      <div class="tab-content">
+        <markdown>{{data.updatedContent}}</markdown>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

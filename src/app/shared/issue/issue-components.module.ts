@@ -11,6 +11,7 @@ import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
 import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
+import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 
 @NgModule({
   imports: [
@@ -28,6 +29,7 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
+    ConflictDialogComponent,
   ],
   exports: [
     TitleComponent,
@@ -38,6 +40,10 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
+    ConflictDialogComponent,
+  ],
+  entryComponents: [
+    ConflictDialogComponent,
   ]
 })
 export class IssueComponentsModule { }

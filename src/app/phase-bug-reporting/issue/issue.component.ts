@@ -29,7 +29,7 @@ export class IssueComponent implements OnInit {
   }
 
   canDeactivate(): boolean {
-    return this.viewIssue.isEditing();
+    return !this.viewIssue.isEditing();
   }
 
 }

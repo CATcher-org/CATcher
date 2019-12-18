@@ -18,8 +18,19 @@
         [(isFormPending)]="this.isSavePending"
         [(submitButtonText)]="this.submitButtonText">
       </app-comment-editor>
-      <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
-      <button type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending" mat-stroked-button color="primary">{{ this.submitButtonText }}</button>
+      <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="resetToDefault()">Cancel</button>
+      <button class="editor-action" *ngIf="!conflict" type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending"
+              mat-stroked-button color="primary">
+        {{ submitButtonText }}
+      </button>
+      <button class="editor-action" *ngIf="conflict" type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending"
+              mat-raised-button color="warn">
+        {{ submitButtonText }}
+      </button>
+      <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isSavePending"
+              mat-raised-button color="primary" (click)="viewChanges()">
+        View Changes
+      </button>
     </div>
   </div>
 </form>
