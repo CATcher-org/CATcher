@@ -15,6 +15,7 @@ export class Issue {
   /** Basic Fields */
   readonly id: number;
   readonly created_at: string;
+  readonly githubIssue: GithubIssue;
   title: string;
   description: string;
 
@@ -45,6 +46,7 @@ export class Issue {
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
     this.description = githubIssue.body;
+    this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
     this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity);
@@ -125,6 +127,13 @@ export class Issue {
       dispute.description = this.issueDisputes[i].description;
       return dispute;
     });
+  }
+
+  /**
+   * Clones new instance of Issue immutability.
+   */
+  clone(): Issue {
+    return new Issue(this.githubIssue);
   }
 }
 

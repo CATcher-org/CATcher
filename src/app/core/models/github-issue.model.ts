@@ -22,6 +22,7 @@ export class GithubLabel {
 
   constructor(githubLabels: {}) {
     Object.assign(this, githubLabels);
+    Object.freeze(this);
   }
 
   getCategory(): string {
@@ -74,6 +75,8 @@ export class GithubIssue {
     for (const label of githubIssue['labels']) {
       this.labels.push(new GithubLabel(label));
     }
+    Object.freeze(this);
+    Object.freeze(this.labels);
   }
 
   /**

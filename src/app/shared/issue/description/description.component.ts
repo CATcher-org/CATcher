@@ -67,6 +67,7 @@ export class DescriptionComponent implements OnInit {
         } else {
           this.conflict = new Conflict(this.issue.description, this.issueService.issues[this.issue.id].description);
           this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+          this.viewChanges();
           return throwError('The content you are editing has changed. Please verify the changes and try again.');
         }
       }),

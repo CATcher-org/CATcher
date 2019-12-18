@@ -98,23 +98,26 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateDescriptionEditState(updatedState: boolean) {
-    updatedState ? this.stopPolling() : this.pollIssue(this.issueId);
     this.isIssueDescriptionEditing = updatedState;
   }
 
   updateTeamResponseEditState(updatedState: boolean) {
-    updatedState ? this.stopPolling() : this.pollIssue(this.issueId);
     this.isTeamResponseEditing = updatedState;
   }
 
   updateTutorResponseEditState(updatedState: boolean) {
-    updatedState ? this.stopPolling() : this.pollIssue(this.issueId);
     this.isTutorResponseEditing = updatedState;
   }
 
   private pollIssue(id: number): void {
-    this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue) => {
-      this.issue = issue;
+    this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue: Issue) => {
+      if (this.isIssueDescriptionEditing) {
+        const issueClone = issue.clone();
+        issueClone.description = this.issue.description;
+        this.issue = issueClone;
+      } else {
+        this.issue = issue;
+      }
       this.isIssueLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.pollIssue(id));
