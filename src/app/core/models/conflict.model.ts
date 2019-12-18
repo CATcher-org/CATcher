@@ -1,46 +1,6 @@
 import DiffMatchPatch from 'diff-match-patch';
 import { escapeHTML, replaceNewlinesWithBreakLines } from '../../shared/lib/html';
 
-/**
- * A model to represent the difference/conflict between two text.
- */
-export class Conflict {
-  outdatedContent: string;
-  updatedContent: string;
-  changes: Changes[] = [];
-
-  constructor(outdatedContent: string, updatedContent: string) {
-    this.outdatedContent = outdatedContent;
-    this.updatedContent = updatedContent;
-
-    const matcher = new DiffMatchPatch();
-    const diffs = matcher.diff_main(outdatedContent, updatedContent);
-    matcher.diff_cleanupSemantic(diffs);
-    for (const diff of diffs) {
-      if (diff[0] === -1) {
-        this.changes.push(new Removal(diff[1]));
-      } else if (diff[0] === 1) {
-        this.changes.push(new Addition(diff[1]));
-      } else {
-        this.changes.push(new NoChange(diff[1]));
-      }
-    }
-  }
-
-  getHtmlDiffString(): string {
-    let result = '';
-    for (const change of this.changes) {
-      result += change.getHtmlString();
-    }
-    return replaceNewlinesWithBreakLines(result);
-  }
-
-  getHtmlUpdatedString(): string {
-    return replaceNewlinesWithBreakLines(escapeHTML(this.updatedContent));
-  }
-}
-
-
 abstract class Changes {
   abstract readonly TYPE: string;
   abstract readonly TAG: string;
@@ -85,5 +45,44 @@ class NoChange extends Changes {
   constructor(content: string) {
     super();
     this.content = content;
+  }
+}
+
+/**
+ * A model to represent the difference/conflict between two text.
+ */
+export class Conflict {
+  outdatedContent: string;
+  updatedContent: string;
+  changes: Changes[] = [];
+
+  constructor(outdatedContent: string, updatedContent: string) {
+    this.outdatedContent = outdatedContent;
+    this.updatedContent = updatedContent;
+
+    const matcher = new DiffMatchPatch();
+    const diffs = matcher.diff_main(outdatedContent, updatedContent);
+    matcher.diff_cleanupSemantic(diffs);
+    for (const diff of diffs) {
+      if (diff[0] === -1) {
+        this.changes.push(new Removal(diff[1]));
+      } else if (diff[0] === 1) {
+        this.changes.push(new Addition(diff[1]));
+      } else {
+        this.changes.push(new NoChange(diff[1]));
+      }
+    }
+  }
+
+  getHtmlDiffString(): string {
+    let result = '';
+    for (const change of this.changes) {
+      result += change.getHtmlString();
+    }
+    return replaceNewlinesWithBreakLines(result);
+  }
+
+  getHtmlUpdatedString(): string {
+    return replaceNewlinesWithBreakLines(escapeHTML(this.updatedContent));
   }
 }
