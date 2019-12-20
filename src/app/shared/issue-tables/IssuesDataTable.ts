@@ -161,19 +161,9 @@ export class IssuesDataTable extends DataSource<Issue> {
     return result;
   }
 
-  private compareValue(valueA, valueB): number {
-    let a: string | number;
-    let b: string | number;
-    if (typeof valueA === 'string') {
-      a = valueA.toUpperCase();
-    } else {
-      a = valueA || '';
-    }
-    if (typeof valueB === 'string') {
-      b = valueB.toUpperCase();
-    } else {
-      b = valueB || '';
-    }
+  private compareValue(valueA: string | number, valueB: string | number): number {
+    const a = String(valueA || '').toUpperCase();
+    const b = String(valueB || '').toUpperCase();
     return (a < b ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
   }
 }
