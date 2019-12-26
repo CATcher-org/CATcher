@@ -60,9 +60,10 @@ export class IssueService {
           }),
           map((issue: Issue) => {
             this.updateLocalStore(issue);
+            this.issueCommentService.updateIssueComment(issue.issueComment);
             return issue;
           }),
-          catchError(() => of(this.issues[issueId]))
+          catchError(() => of(this.issues[issueId].clone(this.phaseService.currentPhase)))
         );
       })
     );

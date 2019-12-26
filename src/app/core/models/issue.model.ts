@@ -8,6 +8,7 @@ import { TeamResponseTemplate } from './templates/team-response-template.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
+import { Phase } from '../services/phase.service';
 import * as moment from 'moment';
 
 export class Issue {
@@ -16,6 +17,7 @@ export class Issue {
   readonly id: number;
   readonly created_at: string;
   readonly githubIssue: GithubIssue;
+  githubComments: GithubComment[];
   title: string;
   description: string;
 
@@ -66,6 +68,7 @@ export class Issue {
     const issue = new Issue(githubIssue);
     const template = new TeamResponseTemplate(githubComments);
 
+    issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
@@ -78,6 +81,8 @@ export class Issue {
   public static createPhaseTesterResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
     const issue = new Issue(githubIssue);
     const template = new TesterResponseTemplate(githubComments);
+
+    issue.githubComments = githubComments;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
     issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
@@ -90,6 +95,7 @@ export class Issue {
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
     const todoTemplate = new TutorModerationTodoTemplate(githubComments);
 
+    issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse.content;
@@ -103,6 +109,24 @@ export class Issue {
       issue.issueComment = todoTemplate.comment;
     }
     return issue;
+  }
+
+  /**
+   * Clones new instance of issue immutability.
+   */
+  clone(phase: Phase): Issue {
+    switch (phase) {
+      case Phase.phaseBugReporting:
+        return Issue.createPhaseBugReportingIssue(this.githubIssue);
+      case Phase.phaseTeamResponse:
+        return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+      case Phase.phaseTesterResponse:
+        return Issue.createPhaseTesterResponseIssue(this.githubIssue, this.githubComments);
+      case Phase.phaseModeration:
+        return Issue.createPhaseModerationIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+      default:
+        return Issue.createPhaseBugReportingIssue(this.githubIssue);
+    }
   }
 
   /**
@@ -127,13 +151,6 @@ export class Issue {
       dispute.description = this.issueDisputes[i].description;
       return dispute;
     });
-  }
-
-  /**
-   * Clones new instance of Issue immutability.
-   */
-  clone(): Issue {
-    return new Issue(this.githubIssue);
   }
 }
 

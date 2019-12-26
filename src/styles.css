@@ -38,6 +38,13 @@ table {
   align-items: center;
 }
 
+.editor-action {
+  float: right;
+  margin-right: 10px !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
 /* Timeline comment style */
 .timeline-header {
   background-color: #f1f8ff;

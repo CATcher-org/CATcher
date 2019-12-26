@@ -93,7 +93,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
 
   updateComment(newComment: IssueComment) {
     this.issue.issueComment = newComment;
-    this.issueCommentService.updateLocalStore(newComment, this.issueId);
     this.issueService.updateLocalStore(this.issue);
   }
 
@@ -112,12 +111,11 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   private pollIssue(id: number): void {
     this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue: Issue) => {
       if (this.isIssueDescriptionEditing) {
-        const issueClone = issue.clone();
-        issueClone.description = this.issue.description;
-        this.issue = issueClone;
-      } else {
-        this.issue = issue;
+        issue.description = this.issue.description;
+      } else if (this.isTeamResponseEditing) {
+        issue.teamResponse = this.issue.teamResponse;
       }
+      this.issue = issue;
       this.isIssueLoading = false;
     }, (error) => {
       this.errorHandlingService.handleHttpError(error, () => this.pollIssue(id));

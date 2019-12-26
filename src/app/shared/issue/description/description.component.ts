@@ -98,6 +98,16 @@ export class DescriptionComponent implements OnInit {
     this.changeEditState.emit(false);
   }
 
+  /**
+   * When user exits exit mode, we will need to sync the issue in IssueService with this component.
+   */
+  cancelEditMode(): void {
+    this.issueService.getIssue(this.issue.id).subscribe((issue: Issue) => {
+      this.issueUpdated.emit(issue);
+      this.resetToDefault();
+    });
+  }
+
   private getUpdatedIssue(): Issue {
     return <Issue> {
       ...this.issue,

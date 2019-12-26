@@ -17,7 +17,7 @@
 
       <!-- Team's Response -->
       <app-team-response *ngIf="this.isComponentVisible(issueComponentsEnum.TEAM_RESPONSE) && issue.teamResponse"
-                         [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)" attributeName="teamResponse"
+                         [issue]="issue" [isEditing]="isTeamResponseEditing" (updateEditState)="updateTeamResponseEditState($event)"
                          (issueUpdated)="updateIssue($event)" (commentUpdated)="updateComment($event)">
       </app-team-response>
 
