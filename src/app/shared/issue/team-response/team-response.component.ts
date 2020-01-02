@@ -11,7 +11,7 @@ import { forkJoin, throwError } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { flatMap } from 'rxjs/internal/operators';
 import { Conflict } from '../../../core/models/conflict.model';
-import { ConflictDialogComponent, ConflictDialogData } from '../conflict-dialog/conflict-dialog.component';
+import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -113,9 +113,7 @@ export class TeamResponseComponent implements OnInit {
 
   viewChanges(): void {
     this.dialog.open(ConflictDialogComponent, {
-      data: <ConflictDialogData>{
-        conflict: this.conflict
-      },
+      data: this.conflict,
       autoFocus: false
     });
   }

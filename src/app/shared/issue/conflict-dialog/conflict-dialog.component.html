@@ -1,6 +1,6 @@
 <div style="display: flex; margin-bottom: 20px; align-items: center">
-  <h1 mat-dialog-title style="margin: 0">{{ data.title || 'The content you are editing has changed'}}</h1>
-  <mat-slide-toggle *ngIf="!isOnPreview && !toShowUpdatedIssue()" style="display: inline-block; margin-left: 50px"
+  <h1 mat-dialog-title style="margin: 0">{{ 'The content you are editing has changed'}}</h1>
+  <mat-slide-toggle *ngIf="!isOnPreview" style="display: inline-block; margin-left: 50px"
                     color="primary" [checked]="showDiff" (change)="handleChangeShowDiff()">
     Show Difference
   </mat-slide-toggle>
@@ -10,64 +10,19 @@
 </div>
 
 <div mat-dialog-content style="display: flex;">
-  <div [ngClass]="toShowUpdatedIssue() ? 'column left' : 'full-width'">
+  <div class="full-width">
     <mat-tab-group class="mat-elevation-z1" animationDuration="0ms" (selectedTabChange)="handleTabChange($event)">
-      <mat-tab label="Raw Text">
+      <mat-tab label="Markdown Text">
         <div class="tab-content" *ngIf="isReady">
-          <div *ngIf="showDiff && !toShowUpdatedIssue()" [innerHTML]="diffHtml"></div>
-          <div *ngIf="!showDiff || toShowUpdatedIssue()" [innerHTML]="updatedHtml"></div>
+          <div *ngIf="showDiff" [innerHTML]="diffHtml"></div>
+          <div *ngIf="!showDiff" [innerHTML]="updatedHtml"></div>
         </div>
       </mat-tab>
       <mat-tab label="Preview Updated Content">
         <div class="tab-content">
-          <markdown>{{data.conflict.updatedContent}}</markdown>
+          <markdown>{{data.updatedContent}}</markdown>
         </div>
       </mat-tab>
     </mat-tab-group>
-  </div>
-
-  <div *ngIf="toShowUpdatedIssue()" class="column right">
-
-    <div *ngIf="data.updatedIssue.type">
-      <mat-divider></mat-divider>
-      <span class="mat-title"> Type </span>
-      <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.updatedIssue.type))">
-        {{data.updatedIssue.type || '-'}}
-      </p>
-    </div>
-
-    <div *ngIf="data.updatedIssue.severity">
-      <mat-divider></mat-divider>
-      <span class="mat-title"> Severity </span>
-      <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.updatedIssue.severity))">
-        {{data.updatedIssue.severity || '-'}}
-      </p>
-    </div>
-
-    <div *ngIf="data.updatedIssue.responseTag">
-      <mat-divider></mat-divider>
-      <span class="mat-title"> Response </span>
-      <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.updatedIssue.responseTag))">
-        {{data.updatedIssue.responseTag || '-'}}
-      </p>
-    </div>
-
-    <div *ngIf="data.updatedIssue.assignees">
-      <mat-divider></mat-divider>
-      <app-assignee-component  [issue]="data.updatedIssue" [team]="data.updatedIssue.teamAssigned"
-                               [isEditable]="false">
-      </app-assignee-component>
-    </div>
-
-    <div *ngIf="data.updatedIssue.duplicateOf">
-      <mat-divider></mat-divider>
-      <div>
-        <span class="mat-title">A Duplicate Of:</span>
-        <p style="margin-top: 5px">
-          {{ ('#' + data.updatedIssue.duplicateOf + ': ' + (issueService.getIssue(data.updatedIssue.duplicateOf) | async).title) }}
-        </p>
-      </div>
-    </div>
-
   </div>
 </div>

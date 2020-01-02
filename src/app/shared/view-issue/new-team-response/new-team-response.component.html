@@ -57,7 +57,11 @@
         [(isFormPending)]="this.isFormPending"
         [(submitButtonText)]="this.submitButtonText">
       </app-comment-editor>
-    
+
+      <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending" mat-stroked-button
+              color="warn" (click)="refresh()" matTooltip="Updated response will overwrite your changes">
+        Cancel
+      </button>
       <button type="submit" class="editor-action" *ngIf="!conflict"
               [disabled]="newTeamResponseForm.invalid || isFormPending" mat-stroked-button color="primary">
         {{ submitButtonText }}
@@ -69,10 +73,6 @@
       <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
               mat-raised-button color="primary" (click)="viewChanges()">
         View Updated Response
-      </button>
-      <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending" mat-raised-button
-              color="default" (click)="refresh()" matTooltip="Updated response will overwrite your changes">
-        Cancel
       </button>
     </div>
 

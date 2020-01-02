@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NewTeamResponseComponent } from './new-team-respond/new-team-response.component';
 import { ViewIssueComponent } from './view-issue.component';
 import { CommentEditorModule } from '../comment-editor/comment-editor.module';
 import { MarkdownModule } from 'ngx-markdown';
@@ -10,6 +9,7 @@ import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
 import { TesterResponseComponent } from './tester-response/tester-response.component';
 import { IssueDisputeComponent } from './issue-dispute/issue-dispute.component';
 import { FormDisableControlDirective } from '../../core/directives/form-disable-control.directive';
+import { NewTeamResponseModule } from './new-team-response/new-team-response.module';
 
 @NgModule({
   exports: [
@@ -17,7 +17,6 @@ import { FormDisableControlDirective } from '../../core/directives/form-disable-
   ],
   declarations: [
     FormDisableControlDirective,
-    NewTeamResponseComponent,
     TesterResponseComponent,
     IssueDisputeComponent,
     ViewIssueComponent
@@ -25,6 +24,7 @@ import { FormDisableControlDirective } from '../../core/directives/form-disable-
   imports: [
     CommonModule,
     CommentEditorModule,
+    NewTeamResponseModule,
     SharedModule,
     IssueComponentsModule,
     LabelDropdownModule,

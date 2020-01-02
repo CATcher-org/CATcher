@@ -11,8 +11,8 @@ import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { Conflict } from '../../../core/models/conflict.model';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ConflictDialogComponent, ConflictDialogData } from '../../issue/conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
+import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 
 @Component({
   selector: 'app-new-team-response',
@@ -160,11 +160,7 @@ export class NewTeamResponseComponent implements OnInit {
 
   viewChanges(): void {
     this.dialog.open(ConflictDialogComponent, {
-      data: <ConflictDialogData>{
-        conflict: this.conflict,
-        updatedIssue: this.issueService.issues[this.issue.id],
-        title: 'A new response was submitted by another user'
-      },
+      data: this.issueService.issues[this.issue.id],
       autoFocus: false
     });
   }

@@ -11,7 +11,7 @@ import { throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Conflict } from '../../../core/models/conflict.model';
 import { MatDialog } from '@angular/material';
-import { ConflictDialogComponent, ConflictDialogData } from '../conflict-dialog/conflict-dialog.component';
+import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
 
 @Component({
   selector: 'app-issue-description',
@@ -87,9 +87,7 @@ export class DescriptionComponent implements OnInit {
 
   viewChanges(): void {
     this.dialog.open(ConflictDialogComponent, {
-      data: <ConflictDialogData>{
-        conflict: this.conflict
-      },
+      data: this.conflict,
       autoFocus: false
     });
   }

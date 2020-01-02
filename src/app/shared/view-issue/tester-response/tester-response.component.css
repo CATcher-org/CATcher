@@ -2,3 +2,10 @@
     padding: 10px 20px 0 20px;
     display: grid;
 }
+
+.question-mark {
+  color: red;
+  font-size: 35px;
+  margin: 0 10px 15px 0;
+  text-shadow: -1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black;
+}

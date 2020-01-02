@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatTabChangeEvent } from '@angular/material';
-import { Conflict } from '../../../core/models/conflict.model';
+import { Issue } from '../../../../core/models/issue.model';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { LabelService } from '../../../core/services/label.service';
-import { IssueService } from '../../../core/services/issue.service';
-
+import { LabelService } from '../../../../core/services/label.service';
+import { IssueService } from '../../../../core/services/issue.service';
+import { escapeHTML, replaceNewlinesWithBreakLines } from '../../../lib/html';
 
 @Component({
   selector: 'app-conflict-dialog',
@@ -16,27 +16,21 @@ export class ConflictDialogComponent {
   isReady = false;
   showDiff = true;
 
-  diffHtml: SafeHtml;
   updatedHtml: SafeHtml;
 
   constructor(
     public dialogRef: MatDialogRef<ConflictDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Conflict,
+    @Inject(MAT_DIALOG_DATA) public data: Issue,
     private sanitizer: DomSanitizer,
     public labelService: LabelService,
     public issueService: IssueService) {
 
-    this.diffHtml = sanitizer.bypassSecurityTrustHtml(data.getHtmlDiffString());
-    this.updatedHtml = sanitizer.bypassSecurityTrustHtml(data.getHtmlUpdatedString());
+    this.updatedHtml = sanitizer.bypassSecurityTrustHtml(replaceNewlinesWithBreakLines(escapeHTML(data.teamResponse)));
     this.isReady = true;
   }
 
   close(): void {
     this.dialogRef.close();
-  }
-
-  handleChangeShowDiff() {
-    this.showDiff = !this.showDiff;
   }
 
   handleTabChange(event: MatTabChangeEvent): void {
