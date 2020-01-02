@@ -24,7 +24,7 @@ let octokit = new Octokit();
 })
 export class GithubService {
   private issuesEtags = [];
-  private issueEtags = {};
+  private issueLastModified = {};
   private commentsEtags = {};
 
   constructor(private errorHandlingService: ErrorHandlingService) {}
@@ -109,9 +109,9 @@ export class GithubService {
 
   fetchIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, issue_number: id,
-      headers: { 'If-None-Match': this.issueEtags[id] || '' }})).pipe(
+      headers: { 'If-Modified-Since': this.issueLastModified[id] || '' }})).pipe(
         map((response) => {
-          this.issueEtags[id] = [response['headers']['etag']];
+          this.issueLastModified[id] = response['headers']['last-modified'];
           return new GithubIssue(response['data']);
         })
     );
@@ -137,7 +137,7 @@ export class GithubService {
         let index = 0;
         for (const response of responses) {
           if (this.commentsEtags[issueId]) {
-            this.commentsEtags[issueId].push(response['headers']['etag']);
+            this.commentsEtags[issueId][index] = response['headers']['etag'];
           } else {
             this.commentsEtags[issueId] = [response['headers']['etag']];
           }
@@ -207,7 +207,7 @@ export class GithubService {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
       map(response => {
-        this.issueEtags[id] = response['headers']['etag'];
+        this.issueLastModified[id] = response['headers']['last-modified'];
         return new GithubIssue(response['data']);
       })
     );
@@ -275,7 +275,7 @@ export class GithubService {
 
   reset(): void {
     this.commentsEtags = {};
-    this.issueEtags = {};
+    this.issueLastModified = {};
     this.issuesEtags = [];
   }
 

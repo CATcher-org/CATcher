@@ -1,14 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IssueService } from '../../core/services/issue.service';
+import { IssueService } from '../../../core/services/issue.service';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { Issue, SEVERITY_ORDER, STATUS } from '../../core/models/issue.model';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { LabelService } from '../../core/services/label.service';
-import { IssueCommentService } from '../../core/services/issue-comment.service';
-import { IssueComment } from '../../core/models/comment.model';
-import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
+import { Issue, SEVERITY_ORDER, STATUS } from '../../../core/models/issue.model';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { finalize, flatMap, map } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { LabelService } from '../../../core/services/label.service';
+import { IssueCommentService } from '../../../core/services/issue-comment.service';
+import { IssueComment } from '../../../core/models/comment.model';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
+import { Conflict } from '../../../core/models/conflict.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ConflictDialogComponent, ConflictDialogData } from '../../issue/conflict-dialog/conflict-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-new-team-response',
@@ -19,6 +23,7 @@ export class NewTeamResponseComponent implements OnInit {
   newTeamResponseForm: FormGroup;
   teamMembers: string[];
   duplicatedIssueList: Observable<Issue[]>;
+  conflict: Conflict;
 
   isFormPending = false;
 
@@ -32,7 +37,8 @@ export class NewTeamResponseComponent implements OnInit {
               private formBuilder: FormBuilder,
               private issueCommentService: IssueCommentService,
               public labelService: LabelService,
-              private errorHandlingService: ErrorHandlingService) { }
+              private errorHandlingService: ErrorHandlingService,
+              private dialog: MatDialog) { }
 
   ngOnInit() {
     this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
@@ -44,7 +50,7 @@ export class NewTeamResponseComponent implements OnInit {
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
       responseTag: [this.issue.responseTag, Validators.required],
-      assignees: [this.issue.assignees],
+      assignees: [this.issue.assignees.map(a => a.toLowerCase())],
       duplicated: [false],
       duplicateOf: ['']
     });
@@ -69,23 +75,46 @@ export class NewTeamResponseComponent implements OnInit {
     this.isFormPending = true;
     const latestIssue = this.getUpdatedIssue();
 
-    this.issueService.updateIssue(latestIssue)
-      .subscribe(() => {
-
-        // New Team Response has no pre-existing comments hence new comment will be added.
+    this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        return !issue.teamResponse;
+      }),
+      flatMap((isSaveToSubmit: boolean) => {
         const newCommentDescription = this.issueCommentService.createGithubTeamResponse(this.description.value, this.duplicateOf.value);
-        this.issueCommentService.createIssueComment(this.issue.id, newCommentDescription)
-          .subscribe((newComment: IssueComment) => {
-            latestIssue.teamResponse = this.description.value;
-            latestIssue.duplicateOf = this.duplicateOf.value === '' ? undefined : this.duplicateOf.value;
-            latestIssue.issueComment = newComment;
-            this.issueUpdated.emit(latestIssue);
-            this.updatedCommentEmitter.emit(newComment);
-            form.resetForm();
-          });
-      }, (error) => {
+        if (isSaveToSubmit) {
+          return forkJoin([this.issueService.updateIssue(latestIssue),
+            this.issueCommentService.createIssueComment(this.issue.id, newCommentDescription)]);
+        } else if (this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+          const issueCommentId = this.issueService.issues[this.issue.id].issueComment.id;
+          return forkJoin([this.issueService.updateIssue(latestIssue),
+            this.issueCommentService.updateIssueComment(<IssueComment>{
+              id: issueCommentId,
+              description: newCommentDescription,
+            })
+          ]);
+        } else {
+          this.conflict = new Conflict(' ', this.issueService.issues[this.issue.id].teamResponse);
+          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+          this.viewChanges();
+          return throwError('A response has been submitted. Please verify the changes and try again.');
+        }
+      }),
+      finalize(() => this.isFormPending = false)
+    ).subscribe((resultArr: [Issue, IssueComment]) => {
+        const [updatedIssue, updatedComment] = resultArr;
+      updatedIssue.teamResponse = this.description.value;
+      updatedIssue.duplicateOf = this.duplicateOf.value === '' ? undefined : this.duplicateOf.value;
+      updatedIssue.issueComment = updatedComment;
+      this.issueUpdated.emit(updatedIssue);
+      this.updatedCommentEmitter.emit(updatedComment);
+      form.resetForm();
+    }, (error) => {
+      if (error instanceof HttpErrorResponse) {
         this.errorHandlingService.handleHttpError(error);
-      });
+      } else {
+        this.errorHandlingService.handleGeneralError(error);
+      }
+    });
   }
 
   getUpdatedIssue() {
@@ -127,6 +156,23 @@ export class NewTeamResponseComponent implements OnInit {
       this.duplicateOf.setValue('');
       this.duplicateOf.markAsUntouched();
     }
+  }
+
+  viewChanges(): void {
+    this.dialog.open(ConflictDialogComponent, {
+      data: <ConflictDialogData>{
+        conflict: this.conflict,
+        updatedIssue: this.issueService.issues[this.issue.id],
+        title: 'A new response was submitted by another user'
+      },
+      autoFocus: false
+    });
+  }
+
+  refresh(): void {
+    const updatedIssue = this.issueService.issues[this.issue.id];
+    this.issueUpdated.emit(updatedIssue);
+    this.updatedCommentEmitter.emit(updatedIssue.issueComment);
   }
 
   private getDupIssueList(): Observable<Issue[]> {

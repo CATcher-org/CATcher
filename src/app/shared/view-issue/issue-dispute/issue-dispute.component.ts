@@ -1,13 +1,13 @@
 import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, NgForm } from '@angular/forms';
-import { Issue } from '../../core/models/issue.model';
-import { IssueComment } from '../../core/models/comment.model';
-import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
-import { IssueService } from '../../core/services/issue.service';
-import { IssueCommentService } from '../../core/services/issue-comment.service';
-import { UserService } from '../../core/services/user.service';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
+import { Issue } from '../../../core/models/issue.model';
+import { IssueComment } from '../../../core/models/comment.model';
+import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
+import { IssueService } from '../../../core/services/issue.service';
+import { IssueCommentService } from '../../../core/services/issue-comment.service';
+import { UserService } from '../../../core/services/user.service';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 
 @Component({
   selector: 'app-issue-dispute',

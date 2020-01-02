@@ -110,10 +110,12 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
 
   private pollIssue(id: number): void {
     this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue: Issue) => {
-      if (this.isIssueDescriptionEditing) {
-        issue.description = this.issue.description;
-      } else if (this.isTeamResponseEditing) {
-        issue.teamResponse = this.issue.teamResponse;
+      if (!this.isIssueLoading) {
+        if (this.isIssueDescriptionEditing) {
+          issue.description = this.issue.description; // prevent updating of description in this component
+        } else if (this.isTeamResponseEditing || (!this.issue.teamResponse && issue.teamResponse)) {
+          issue.teamResponse = this.issue.teamResponse; // prevent updating of team response in this component
+        }
       }
       this.issue = issue;
       this.isIssueLoading = false;

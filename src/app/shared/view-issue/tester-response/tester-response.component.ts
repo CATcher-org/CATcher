@@ -1,17 +1,17 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Issue, STATUS } from '../../core/models/issue.model';
-import { CommentEditorComponent } from '../comment-editor/comment-editor.component';
-import { IssueService } from '../../core/services/issue.service';
+import { Issue, STATUS } from '../../../core/models/issue.model';
+import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
+import { IssueService } from '../../../core/services/issue.service';
 import { finalize } from 'rxjs/operators';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { UserService } from '../../core/services/user.service';
-import { UserRole } from '../../core/models/user.model';
-import { IssueCommentService } from '../../core/services/issue-comment.service';
-import { IssueComment } from '../../core/models/comment.model';
-import { SUBMIT_BUTTON_TEXT } from '../view-issue/view-issue.component';
-import { TesterResponseHeaders } from '../../core/models/templates/tester-response-template.model';
-import { TeamResponseHeaders } from '../../core/models/templates/team-response-template.model';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { UserService } from '../../../core/services/user.service';
+import { UserRole } from '../../../core/models/user.model';
+import { IssueCommentService } from '../../../core/services/issue-comment.service';
+import { IssueComment } from '../../../core/models/comment.model';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
+import { TesterResponseHeaders } from '../../../core/models/templates/tester-response-template.model';
+import { TeamResponseHeaders } from '../../../core/models/templates/team-response-template.model';
 
 @Component({
   selector: 'app-tester-response',
