@@ -42,6 +42,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   isTutorResponseEditing = false;
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
+  isTesterResponseEditing = false;
   issueSubscription: Subscription;
 
   @Input() issueId: number;
@@ -104,6 +105,10 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
     this.isTeamResponseEditing = updatedState;
   }
 
+  updateTesterResponseEditState(updatedState: boolean) {
+    this.isTesterResponseEditing = updatedState;
+  }
+
   updateTutorResponseEditState(updatedState: boolean) {
     this.isTutorResponseEditing = updatedState;
   }
@@ -111,10 +116,13 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   private pollIssue(id: number): void {
     this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue: Issue) => {
       if (!this.isIssueLoading) {
+        // prevent updating of respective attributes while editing
         if (this.isIssueDescriptionEditing) {
-          issue.description = this.issue.description; // prevent updating of description in this component
+          issue.description = this.issue.description;
         } else if (this.isTeamResponseEditing || (!this.issue.teamResponse && issue.teamResponse)) {
-          issue.teamResponse = this.issue.teamResponse; // prevent updating of team response in this component
+          issue.teamResponse = this.issue.teamResponse;
+        } else if (this.isTesterResponseEditing) {
+          issue.testerResponses = this.issue.testerResponses;
         }
       }
       this.issue = issue;

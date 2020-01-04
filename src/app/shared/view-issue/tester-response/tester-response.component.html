@@ -12,7 +12,7 @@
       <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
         <div style="display: flex; align-items: center">
           <div class="question-mark"> ? </div>
-          <markdown [data]="this.getItemTitleText(response.title)"></markdown>
+          <markdown [data]="response.getTitleInMarkDown()"></markdown>
         </div>
         <br>
         <markdown [data]="response.description"></markdown>
@@ -44,11 +44,23 @@
         <br> <markdown data="-------------------"></markdown> <br>
       </div>
       <mat-divider></mat-divider>
-      <div style="float: right; padding: 10px;" *ngIf="isEditing">
-        <button type="submit" [disabled]="testerResponseForm.invalid || isFormPending"
-          mat-stroked-button color="primary"> {{ this.submitButtonText }} </button>
-        <button type="button" [disabled]="isFormPending" style="margin-left: 10px;" *ngIf="!this.isNewResponse()" mat-stroked-button color="warn"
-          (click)="cancelEditMode()">Cancel</button>
+      <div class="editor-actions" *ngIf="isEditing">
+        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
+                mat-raised-button color="primary" (click)="viewChanges()">
+          View Updated Response
+        </button>
+        <button type="submit" [disabled]="testerResponseForm.invalid || isFormPending" mat-stroked-button
+                color="primary" *ngIf="!conflict">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" type="submit" [disabled]="testerResponseForm.invalid || isFormPending"
+                mat-raised-button color="warn" *ngIf="conflict">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" type="button" [disabled]="isFormPending" *ngIf="!this.isNewResponse()"
+                mat-stroked-button color="warn" (click)="cancelEditMode()">
+          Cancel
+        </button>
       </div>
     </div>
   </div>

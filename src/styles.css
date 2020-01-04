@@ -9,6 +9,81 @@ html, body {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* Timeline comment style */
+.timeline-header {
+  background-color: #f1f8ff;
+  border-bottom: 1px solid #c0d3eb;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  color: #586069;
+  height: 35px;
+  padding: 5px;
+}
+
+.timeline-comment {
+  overflow: auto;
+  border: 1px solid #c0d3eb;
+  background-color: #fff;
+  border-radius: 3px;
+  margin-bottom: 30px;
+}
+
+.comment {
+  padding: 15px;
+}
+
+.question-mark {
+  color: red;
+  font-size: 35px;
+  margin: 0 10px 15px 0;
+  text-shadow: -1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black;
+}
+/* Timeline comment style */
+
+/* MaterialUI icon styles */
+.material-icons-outlined,
+.material-icons.material-icons--outlined,
+.material-icons-two-tone,
+.material-icons.material-icons--two-tone,
+.material-icons-round,
+.material-icons.material-icons--round,
+.material-icons-sharp,
+.material-icons.material-icons--sharp {
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-icons-outlined,
+.material-icons.material-icons--outlined {
+  font-family: 'Material Icons Outlined';
+}
+
+.material-icons-two-tone,
+.material-icons.material-icons--two-tone {
+  font-family: 'Material Icons Two Tone';
+}
+
+.material-icons-round,
+.material-icons.material-icons--round {
+  font-family: 'Material Icons Round';
+}
+
+.material-icons-sharp,
+.material-icons.material-icons--sharp {
+  font-family: 'Material Icons Sharp';
+}
+/* MaterialUI icon styles */
+
 .link-grey-dark {
   color: #24292e;
   font-weight: 500;
@@ -38,35 +113,15 @@ table {
   align-items: center;
 }
 
-.editor-action {
+.editor-actions {
   float: right;
-  margin-right: 10px !important;
-  margin-top: 10px !important;
-  margin-bottom: 10px !important;
+  padding: 10px;
 }
 
-/* Timeline comment style */
-.timeline-header {
-  background-color: #f1f8ff;
-  border-bottom: 1px solid #c0d3eb;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  color: #586069;
-  height: 35px;
-  padding: 5px;
+.editor-action {
+  margin-left: 10px !important;
 }
 
-.timeline-comment {
-  overflow: auto;
-  border: 1px solid #c0d3eb;
-  background-color: #fff;
-  border-radius: 3px;
-  margin-bottom: 30px;
-}
-
-.comment {
-  padding: 15px;
-}
 
 .bold-name {
   font-weight: 500;

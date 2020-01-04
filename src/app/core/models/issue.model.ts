@@ -152,6 +152,35 @@ export class Issue {
       return dispute;
     });
   }
+
+  // Template url: https://github.com/CATcher-org/templates#dev-response-phase
+  createGithubTeamResponse(): string {
+    return `# Team\'s Response\n${this.teamResponse}\n ` +
+      `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#teams-response-1
+  createGithubTesterResponse(): string {
+    return `# Team\'s Response\n${this.teamResponse}\n ` +
+      `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderation
+  createGithubTutorResponse(): string {
+    let tutorResponseString = '# Tutor Moderation\n\n';
+    for (const issueDispute of this.issueDisputes) {
+      tutorResponseString += issueDispute.toTutorResponseString();
+    }
+    return tutorResponseString;
+  }
+
+  private getTesterResponsesString(testerResponses: TesterResponse[]): string {
+    let testerResponsesString = '';
+    for (const testerResponse of testerResponses) {
+      testerResponsesString += testerResponse.toString();
+    }
+    return testerResponsesString;
+  }
 }
 
 export interface Issues {

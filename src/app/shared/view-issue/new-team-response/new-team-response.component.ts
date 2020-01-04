@@ -13,6 +13,7 @@ import { Conflict } from '../../../core/models/conflict.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-new-team-response',
@@ -38,7 +39,8 @@ export class NewTeamResponseComponent implements OnInit {
               private issueCommentService: IssueCommentService,
               public labelService: LabelService,
               private errorHandlingService: ErrorHandlingService,
-              private dialog: MatDialog) { }
+              private dialog: MatDialog,
+              private phaseService: PhaseService) { }
 
   ngOnInit() {
     this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
@@ -80,14 +82,14 @@ export class NewTeamResponseComponent implements OnInit {
         return !issue.teamResponse;
       }),
       flatMap((isSaveToSubmit: boolean) => {
-        const newCommentDescription = this.issueCommentService.createGithubTeamResponse(this.description.value, this.duplicateOf.value);
+        const newCommentDescription = latestIssue.createGithubTeamResponse();
         if (isSaveToSubmit) {
           return forkJoin([this.issueService.updateIssue(latestIssue),
             this.issueCommentService.createIssueComment(this.issue.id, newCommentDescription)]);
         } else if (this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
           const issueCommentId = this.issueService.issues[this.issue.id].issueComment.id;
           return forkJoin([this.issueService.updateIssue(latestIssue),
-            this.issueCommentService.updateIssueComment(<IssueComment>{
+            this.issueCommentService.updateIssueComment(latestIssue.id, <IssueComment>{
               id: issueCommentId,
               description: newCommentDescription,
             })
@@ -118,17 +120,16 @@ export class NewTeamResponseComponent implements OnInit {
   }
 
   getUpdatedIssue() {
-    return <Issue>{
-      ...this.issue,
-      severity: this.severity.value,
-      type: this.type.value,
-      assignees: this.assignees.value,
-      responseTag: this.responseTag.value,
-      duplicated: this.duplicated.value,
-      status: STATUS.Done,
-      teamResponse: this.description.value,
-      duplicateOf: this.duplicateOf.value
-    };
+    const clone = this.issue.clone(this.phaseService.currentPhase);
+    clone.severity = this.severity.value;
+    clone.type = this.type.value;
+    clone.assignees = this.assignees.value;
+    clone.responseTag = this.responseTag.value;
+    clone.duplicated = this.duplicated.value;
+    clone.duplicateOf = this.duplicateOf.value;
+    clone.status = STATUS.Done;
+    clone.teamResponse = this.description.value;
+    return clone;
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {

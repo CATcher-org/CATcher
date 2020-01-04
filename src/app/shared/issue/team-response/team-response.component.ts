@@ -14,6 +14,7 @@ import { Conflict } from '../../../core/models/conflict.model';
 import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-team-response',
@@ -38,7 +39,8 @@ export class TeamResponseComponent implements OnInit {
               private issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService,
               private permissions: PermissionService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private phaseService: PhaseService) {
   }
 
   ngOnInit() {
@@ -64,7 +66,7 @@ export class TeamResponseComponent implements OnInit {
     const updatedIssue = this.getUpdatedIssue();
     const updatedIssueComment = <IssueComment>{
       ...updatedIssue.issueComment,
-      description: this.issueCommentService.createGithubTeamResponse(updatedIssue.teamResponse, updatedIssue.duplicateOf)
+      description: updatedIssue.createGithubTeamResponse(),
     };
 
     this.issueService.getLatestIssue(this.issue.id).pipe(
@@ -74,7 +76,7 @@ export class TeamResponseComponent implements OnInit {
       flatMap((isSaveToUpdate: boolean) => {
         if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
           return forkJoin([this.issueService.updateIssue(updatedIssue),
-            this.issueCommentService.updateIssueComment(updatedIssueComment)]);
+            this.issueCommentService.updateIssueComment(updatedIssue.id, updatedIssueComment)]);
         } else {
           this.conflict = new Conflict(this.issue.teamResponse, this.issueService.issues[this.issue.id].teamResponse);
           this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
@@ -129,9 +131,8 @@ export class TeamResponseComponent implements OnInit {
   }
 
   private getUpdatedIssue(): Issue {
-    return <Issue> {
-      ...this.issue,
-      teamResponse: this.responseForm.get('description').value
-    };
+    const clone = this.issue.clone(this.phaseService.currentPhase);
+    clone.teamResponse = this.responseForm.get('description').value;
+    return clone;
   }
 }

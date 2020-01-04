@@ -5,7 +5,7 @@ import { BehaviorSubject, forkJoin, Observable, of, timer } from 'rxjs';
 import {
   Issue,
   Issues,
-  IssuesFilter,
+  IssuesFilter, STATUS,
 } from '../models/issue.model';
 import { UserService } from './user.service';
 import { Phase, PhaseService } from './phase.service';
@@ -60,11 +60,10 @@ export class IssueService {
           }),
           map((issue: Issue) => {
             this.updateLocalStore(issue);
-            this.issueCommentService.updateLocalStore(issue.issueComment, issue.id);
-            return issue;
+            return issue.clone(this.phaseService.currentPhase);
           }),
-          catchError(() => {
-            return of(this.issues[issueId].clone(this.phaseService.currentPhase))
+          catchError((err) => {
+            return of(this.issues[issueId].clone(this.phaseService.currentPhase));
           })
         );
       })
@@ -130,11 +129,13 @@ export class IssueService {
     );
   }
 
-  updateTesterResponse(issue: Issue, issueComment: IssueComment) {
+  updateTesterResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
-      map((response: GithubComment) => {
-        issue.updateTesterResponse(response);
-        return issue;
+      flatMap((response: GithubComment) => {
+        const issueClone = issue.clone(this.phaseService.currentPhase);
+        issueClone.updateTesterResponse(response);
+        issueClone.status = STATUS.Done;
+        return this.updateIssue(issueClone);
       })
     );
   }
@@ -297,7 +298,9 @@ export class IssueService {
         this.updateLocalStore(issue);
         return true;
       }),
-      catchError(err => of(false))
+      catchError(err => {
+        return of(false);
+      })
     );
   }
 

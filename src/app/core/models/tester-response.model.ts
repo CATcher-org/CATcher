@@ -39,4 +39,19 @@ export class TesterResponse {
   isDisagree(): boolean {
     return this.disagreeCheckbox.charAt(3) === 'x';
   }
+
+  compareTo(anotherResponse: TesterResponse): number {
+    if (this.isDisagree() === anotherResponse.isDisagree()) {
+      return this.reasonForDisagreement.localeCompare(anotherResponse.reasonForDisagreement);
+    }
+    return this.isDisagree() ? 1 : -1;
+  }
+
+  getTitleInMarkDown(): string {
+    return `## ${this.title}`;
+  }
+
+  getDisagreementWithoutDefaultResponse(): string {
+    return this.reasonForDisagreement.replace(this.INITIAL_RESPONSE, ' ');
+  }
 }

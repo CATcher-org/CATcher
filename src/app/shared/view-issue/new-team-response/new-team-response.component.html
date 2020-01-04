@@ -58,22 +58,24 @@
         [(submitButtonText)]="this.submitButtonText">
       </app-comment-editor>
 
-      <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending" mat-stroked-button
-              color="warn" (click)="refresh()" matTooltip="Updated response will overwrite your changes">
-        Cancel
-      </button>
-      <button type="submit" class="editor-action" *ngIf="!conflict"
-              [disabled]="newTeamResponseForm.invalid || isFormPending" mat-stroked-button color="primary">
-        {{ submitButtonText }}
-      </button>
-      <button class="editor-action" *ngIf="conflict" type="submit"
-              [disabled]="newTeamResponseForm.invalid || isFormPending" mat-raised-button color="warn">
-        {{ submitButtonText }}
-      </button>
-      <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
-              mat-raised-button color="primary" (click)="viewChanges()">
-        View Updated Response
-      </button>
+      <div class="editor-actions">
+        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
+                mat-raised-button color="primary" (click)="viewChanges()">
+          View Updated Response
+        </button>
+        <button class="editor-action" *ngIf="conflict" type="submit"
+                [disabled]="newTeamResponseForm.invalid || isFormPending" mat-raised-button color="warn">
+          {{ submitButtonText }}
+        </button>
+        <button type="submit" class="editor-action" *ngIf="!conflict"
+                [disabled]="newTeamResponseForm.invalid || isFormPending" mat-stroked-button color="primary">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending" mat-stroked-button
+                color="warn" (click)="refresh()" matTooltip="Updated response will overwrite your changes">
+          Cancel
+        </button>
+      </div>
     </div>
 
   </div>

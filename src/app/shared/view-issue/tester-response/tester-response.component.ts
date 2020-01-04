@@ -1,9 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Issue, STATUS } from '../../../core/models/issue.model';
+import { Issue } from '../../../core/models/issue.model';
 import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
 import { IssueService } from '../../../core/services/issue.service';
-import { finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { UserService } from '../../../core/services/user.service';
 import { UserRole } from '../../../core/models/user.model';
@@ -12,6 +11,13 @@ import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { TesterResponseHeaders } from '../../../core/models/templates/tester-response-template.model';
 import { TeamResponseHeaders } from '../../../core/models/templates/team-response-template.model';
+import { finalize, map } from 'rxjs/operators';
+import { flatMap } from 'rxjs/internal/operators';
+import { throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
+import { MatDialog } from '@angular/material';
+import { TesterResponseConflictData } from './conflict-dialog/conflict-dialog.component';
 
 @Component({
   selector: 'app-tester-response',
@@ -22,24 +28,26 @@ export class TesterResponseComponent implements OnInit {
 
   testerResponseForm: FormGroup;
   isFormPending = false;
-  isEditing = false;
 
   submitButtonText: string;
 
   @Input() issue: Issue;
+  @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() commentUpdated = new EventEmitter<IssueComment>();
+  @Output() updateEditState = new EventEmitter<boolean>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
               private issueCommentService: IssueCommentService,
               public userService: UserService,
-              private errorHandlingService: ErrorHandlingService) { }
+              private errorHandlingService: ErrorHandlingService,
+              private dialog: MatDialog) { }
 
   ngOnInit() {
     this.resetForm(this.issue);
-    this.isEditing = this.isNewResponse();
+    this.updateEditState.emit(this.isNewResponse());
     this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
   }
 
@@ -49,42 +57,65 @@ export class TesterResponseComponent implements OnInit {
     }
     this.isFormPending = true;
 
-    this.issue.status = STATUS.Done;
-    this.issueService.updateIssue(this.issue).pipe(finalize(() => {
-      this.isFormPending = false;
-      this.isEditing = false;
-    })).subscribe((updatedIssue: Issue) => {
-      updatedIssue.teamResponse = this.issue.teamResponse;
-      updatedIssue.testerResponses = this.issue.testerResponses;
+    this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        for (let i = 0; i < issue.testerResponses.length; i++) {
+          if (issue.testerResponses[i].compareTo(this.issue.testerResponses[i]) !== 0) {
+            return false;
+          }
+        }
+        return true;
+      }),
+      flatMap((isSaveToSubmit: boolean) => {
+        if (isSaveToSubmit || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+          return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
+            ...this.issue.issueComment,
+            description: this.getTesterResponseFromForm(),
+          });
+        } else {
+          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+          this.viewChanges();
+          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+        }
+      }),
+      finalize(() => this.isFormPending = false)
+    ).subscribe((updatedIssue: Issue) => {
+      this.commentUpdated.emit(updatedIssue.issueComment);
       this.issueUpdated.emit(updatedIssue);
+      this.resetToDefault();
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-      this.issue.status = STATUS.Incomplete;
+      if (error instanceof HttpErrorResponse) {
+        this.errorHandlingService.handleHttpError(error);
+      } else {
+        this.errorHandlingService.handleGeneralError(error);
+      }
     });
+  }
 
-    // For Tester Response phase, where the items are in the issue's comment
-    if (this.issue.issueComment) {
-      this.issueService.updateTesterResponse(this.issue, <IssueComment>{
-        ...this.issue.issueComment,
-        description: this.getTesterResponseFromForm()
-      }).subscribe(
-        (updatedIssue: Issue) => {
-          this.commentUpdated.emit(updatedIssue.issueComment);
-          this.issueUpdated.emit(updatedIssue);
-          this.resetForm(updatedIssue);
-        }, (error) => {
-          this.errorHandlingService.handleHttpError(error);
-      });
-    }
-
+  viewChanges(): void {
+    this.dialog.open(ConflictDialogComponent, {
+      data: <TesterResponseConflictData>{
+        outdatedResponses: this.issue.testerResponses,
+        updatedResponses: this.issueService.issues[this.issue.id].testerResponses,
+      },
+      autoFocus: false
+    });
   }
 
   changeToEditMode() {
-    this.isEditing = true;
+    this.updateEditState.emit(true);
   }
 
   cancelEditMode() {
-    this.isEditing = false;
+    this.issueService.getIssue(this.issue.id).subscribe((issue: Issue) => {
+      this.issueUpdated.emit(issue);
+      this.resetToDefault();
+    });
+  }
+
+  resetToDefault(): void {
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
+    this.updateEditState.emit(false);
     this.resetForm(this.issue);
   }
 
@@ -105,10 +136,6 @@ export class TesterResponseComponent implements OnInit {
 
   isNewResponse(): boolean {
     return !this.issue.status && this.userService.currentUser.role === UserRole.Student;
-  }
-
-  getItemTitleText(title: string): string {
-    return '## ' + title;
   }
 
   createFormGroup(issue: Issue) {
@@ -184,5 +211,9 @@ export class TesterResponseComponent implements OnInit {
    */
   getDisagreeBoxFormId(index: number): string {
     return `disagree-box-${index}`;
+  }
+
+  get conflict(): boolean {
+    return this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE;
   }
 }

@@ -13,11 +13,12 @@ import {
 import { Issue, SEVERITY_ORDER } from '../../../core/models/issue.model';
 import { IssueService } from '../../../core/services/issue.service';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { MatCheckbox, MatSelect } from '@angular/material';
+import { forkJoin, Observable } from 'rxjs';
+import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
 import { PermissionService } from '../../../core/services/permission.service';
 import { IssueCommentService } from '../../../core/services/issue-comment.service';
 import { IssueComment } from '../../../core/models/comment.model';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-duplicate-of-component',
@@ -44,8 +45,9 @@ export class DuplicateOfComponent implements OnInit {
 
   constructor(public issueService: IssueService,
               public issueCommentService: IssueCommentService,
+              public permissions: PermissionService,
               private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService) {
+              private phaseService: PhaseService) {
   }
 
   /**
@@ -69,25 +71,18 @@ export class DuplicateOfComponent implements OnInit {
     this.duplicatedIssueList = this.getDupIssueList();
   }
 
-  updateDuplicateStatus(event) {
-    const latestIssue = <Issue>{
-      ...this.issue,
-      duplicated: !!event,
-      duplicateOf: event ? event.value : null,
-    };
-
-    latestIssue.issueComment.description = this.issueCommentService.
-    createGithubTeamResponse(latestIssue.teamResponse, latestIssue.duplicateOf);
-
-    this.issueService.updateIssue(latestIssue).subscribe((updatedIssue) => {
-      this.issueCommentService.updateIssueComment(latestIssue.issueComment).subscribe((updatedComment) => {
-        latestIssue.issueComment = updatedComment;
-        this.commentUpdated.emit(updatedComment);
-        this.issueUpdated.emit(latestIssue);
+  updateDuplicateStatus(event: MatSelectChange) {
+    const latestIssue = this.getUpdatedIssue(event);
+    forkJoin([this.issueService.updateIssue(latestIssue),
+      this.issueCommentService.updateIssueComment(latestIssue.id, latestIssue.issueComment)])
+      .subscribe((resultArr: [Issue, IssueComment]) => {
+        const [updatedIssue, updatedIssueComment] = resultArr;
+        updatedIssue.issueComment = updatedIssueComment;
+        this.issueUpdated.emit(updatedIssue);
+        this.commentUpdated.emit(updatedIssueComment);
+      }, (error) => {
+        this.errorHandlingService.handleHttpError(error);
       });
-    }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
-    });
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
@@ -133,6 +128,14 @@ export class DuplicateOfComponent implements OnInit {
       this.isEditing = false;
       this.duplicatedCheckbox.checked = this.duplicateOfSelection.value;
     }
+  }
+
+  getUpdatedIssue(duplicateCheckboxEvent: MatSelectChange): Issue {
+    const clone = this.issue.clone(this.phaseService.currentPhase);
+    clone.duplicated = !!duplicateCheckboxEvent;
+    clone.duplicateOf = duplicateCheckboxEvent ? duplicateCheckboxEvent.value : null;
+    clone.issueComment.description = clone.createGithubTeamResponse();
+    return clone;
   }
 
   private getDupIssueList(): Observable<Issue[]> {
