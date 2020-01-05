@@ -301,7 +301,6 @@ export class IssueService {
         return true;
       }),
       catchError(err => {
-        console.log('fail to save issue model');
         return of(false);
       })
     );

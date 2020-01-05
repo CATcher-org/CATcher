@@ -48,6 +48,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // Whenever there is a change in value of issue, we reset the form so to render the most up to date form.
     if (!this.isEditing && changes.issue && changes.issue.previousValue !== changes.issue.currentValue) {
       this.resetForm();
     }

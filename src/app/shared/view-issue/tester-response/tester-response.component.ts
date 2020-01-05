@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, SimpleChanges, OnChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
 import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
@@ -24,8 +24,7 @@ import { TesterResponseConflictData } from './conflict-dialog/conflict-dialog.co
   templateUrl: './tester-response.component.html',
   styleUrls: ['./tester-response.component.css']
 })
-export class TesterResponseComponent implements OnInit, AfterViewInit {
-
+export class TesterResponseComponent implements OnInit, OnChanges {
   testerResponseForm: FormGroup;
   isFormPending = false;
 
@@ -45,15 +44,18 @@ export class TesterResponseComponent implements OnInit, AfterViewInit {
               private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.resetForm(this.issue);
+    this.resetForm();
     this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
     setTimeout(() => {
       this.updateEditState.emit(this.isNewResponse());
     });
   }
 
-  ngAfterViewInit(): void {
-    this.updateEditState.emit(this.isNewResponse());
+  ngOnChanges(changes: SimpleChanges) {
+    // Whenever there is a change in value of issue, we reset the form so to render the most up to date form.
+    if (!this.isEditing && changes.issue && changes.issue.previousValue !== changes.issue.currentValue) {
+      this.resetForm();
+    }
   }
 
   submitTesterResponseForm() {
@@ -120,7 +122,7 @@ export class TesterResponseComponent implements OnInit, AfterViewInit {
   resetToDefault(): void {
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
     this.updateEditState.emit(false);
-    this.resetForm(this.issue);
+    this.resetForm();
   }
 
   handleChangeOfDisagreeCheckbox(event, index: number) {
@@ -142,11 +144,14 @@ export class TesterResponseComponent implements OnInit, AfterViewInit {
     return !this.issue.status && this.userService.currentUser.role === UserRole.Student;
   }
 
-  createFormGroup(issue: Issue) {
+  /**
+   * Will create a form group with initial values in `this.issue`.
+   */
+  createFormGroup() {
     const group: any = {};
-    // initialize fields for tutor response and the checkboxes for tutor to mark "Done"
-    for (let i = 0; i < issue.testerResponses.length; i++) {
-      const response = issue.testerResponses[i];
+    // initialize fields for tester response and the checkboxes for tester to mark "Disagree"
+    for (let i = 0; i < this.issue.testerResponses.length; i++) {
+      const response = this.issue.testerResponses[i];
       group[this.getTesterResponseFormId(i)] = new FormControl({
         value: response.reasonForDisagreement,
         disabled: !response.isDisagree()
@@ -159,12 +164,8 @@ export class TesterResponseComponent implements OnInit, AfterViewInit {
     return group;
   }
 
-  /**
-   * Reset the form based on the initial values of the given issue.
-   * @param issue - The issue to reset the form to.
-   */
-  resetForm(issue: Issue): void {
-    this.testerResponseForm = this.formBuilder.group(this.createFormGroup(issue));
+  resetForm(): void {
+    this.testerResponseForm = this.formBuilder.group(this.createFormGroup());
   }
 
   /**
