@@ -98,6 +98,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   text-decoration: none!important;
 }
 
+.grid-flush-left {
+  position: absolute;
+  left: 5px;
+}
+
+.grid-flush-right {
+  position: absolute;
+  right: 5px;
+}
+
 .mat-table tbody tr:hover td {
   background-color: #E8E8EE;
 }
