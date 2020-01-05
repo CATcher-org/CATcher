@@ -1,7 +1,7 @@
 import { DuplicateOfSection } from './sections/duplicate-of-section.model';
 import { Header, Template } from './template.model';
 import { Section } from './sections/section.model';
-import { GithubComment } from '../github-comment.model';
+import { GithubComment } from '../github/github-comment.model';
 import { IssueComment } from '../comment.model';
 
 export const TeamResponseHeaders = {

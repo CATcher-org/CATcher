@@ -42,6 +42,13 @@ export class IssueDispute {
     return toString;
   }
 
+  compareTo(anotherResponse: IssueDispute): number {
+    if (this.isDone() === anotherResponse.isDone()) {
+      return this.tutorResponse.localeCompare(anotherResponse.tutorResponse);
+    }
+    return this.isDone() ? 1 : -1;
+  }
+
   toString(): string {
     let toString = '';
     toString += this.TITLE_PREFIX +  this.title + '\n\n';

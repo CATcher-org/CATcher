@@ -15,6 +15,7 @@ export class ErrorHandlingService {
 
   // Ref: https://developer.github.com/v3/#client-errors
   handleHttpError(error, actionCallback?: () => void) {
+    console.error(error);
     // Angular treats 304 Not Modified as an error, we will ignore it.
     if (error.status === 304) {
       return;
@@ -44,7 +45,7 @@ export class ErrorHandlingService {
   }
 
   handleGeneralError(error: string) {
-    console.log(error);
+    console.error(error);
     this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: {message: error}});
   }
 }

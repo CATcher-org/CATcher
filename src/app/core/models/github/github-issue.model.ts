@@ -69,7 +69,7 @@ export class GithubIssue {
     url: string,
   };
 
-  constructor(githubIssue: {}) {
+  constructor(githubIssue: GithubIssue) {
     Object.assign(this, githubIssue);
     this.labels = [];
     for (const label of githubIssue['labels']) {

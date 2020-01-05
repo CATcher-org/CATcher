@@ -32,7 +32,6 @@ export class TeamResponseComponent implements OnInit {
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
-  @Output() commentUpdated = new EventEmitter<IssueComment>();
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
@@ -87,7 +86,6 @@ export class TeamResponseComponent implements OnInit {
       finalize(() => this.isSavePending = false)
     ).subscribe((resultArr: [Issue, IssueComment]) => {
       const [issue, comment] = resultArr;
-      this.commentUpdated.emit(comment);
       issue.issueComment = comment;
       issue.teamResponse = this.issueService.parseTeamResponseForTeamResponsePhase(comment.description);
       issue.duplicateOf = +this.issueService.parseDuplicateOfForTeamResponsePhase(comment.description);

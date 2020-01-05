@@ -9,9 +9,8 @@
     </div>
     <div>
       <div class="container" *ngFor="let dispute of issue.issueDisputes; index as i; trackBy: trackDisputeList">
-        <div style="display: flex;">
-          <div style="color:red; font-size: 35px; padding-right: 10px;
-            text-shadow: -1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black;"> ? </div>
+        <div style="display: flex; align-items: center">
+          <div class="question-mark"> ? </div>
           <markdown [data]="this.getItemTitleText(dispute.title)"></markdown>
         </div>
         <br>
@@ -24,27 +23,41 @@
           </mat-checkbox>
         </div>
         <br>
-        <div>
-          <markdown data="### Tutor's Response: "></markdown>
-          <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing"></markdown>
-        </div>
-        <div *ngIf="isEditing">
-          <app-comment-editor
-            [commentField]="tutorResponseForm.get(getTutorResponseFormId(i))"
-            [commentForm]="tutorResponseForm"
-            [id]="getTutorResponseFormId(i)"
-            [(isFormPending)]="isFormPending"
-            [(submitButtonText)]="submitButtonText">
-          </app-comment-editor>
+        <div *ngIf="tutorResponseForm.get(getTodoFormId(i)).value">
+          <div>
+            <markdown data="### Tutor's Response: "></markdown>
+            <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing"></markdown>
+          </div>
+          <div *ngIf="isEditing">
+            <app-comment-editor
+              [commentField]="tutorResponseForm.get(getTutorResponseFormId(i))"
+              [commentForm]="tutorResponseForm"
+              [id]="getTutorResponseFormId(i)"
+              [(isFormPending)]="isFormPending"
+              [(submitButtonText)]="submitButtonText">
+            </app-comment-editor>
+          </div>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>
       </div>
       <mat-divider></mat-divider>
-      <div style="float: right; padding: 10px;" *ngIf="isEditing">
-        <button type="submit" [disabled]="tutorResponseForm.invalid || isFormPending"
-          mat-stroked-button color="primary"> {{ this.submitButtonText }} </button>
-        <button type="button" [disabled]="isFormPending" style="margin-left: 10px;" *ngIf="!this.isNewResponse()"
-          mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
+      <div class="editor-actions" *ngIf="isEditing">
+        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
+                mat-raised-button color="primary" (click)="viewInGithub()">
+          View Updated Response On Github
+        </button>
+        <button class="editor-action" type="submit" *ngIf="!conflict" [disabled]="tutorResponseForm.invalid || isFormPending"
+          mat-stroked-button color="primary">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" type="submit" [disabled]="tutorResponseForm.invalid || isFormPending"
+                mat-raised-button color="warn" *ngIf="conflict">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" type="button" [disabled]="isFormPending" style="margin-left: 10px;" *ngIf="!this.isNewResponse()"
+          mat-stroked-button color="warn" (click)="cancelEditMode()">
+          Cancel
+        </button>
       </div>
     </div>
   </div>

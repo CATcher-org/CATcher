@@ -33,7 +33,6 @@ export class DuplicateOfComponent implements OnInit {
   @Input() issue: Issue;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
-  @Output() commentUpdated = new EventEmitter<IssueComment>();
 
   @ViewChild(MatSelect) duplicateOfSelection: MatSelect;
   @ViewChild(MatCheckbox) duplicatedCheckbox: MatCheckbox;
@@ -79,7 +78,6 @@ export class DuplicateOfComponent implements OnInit {
         const [updatedIssue, updatedIssueComment] = resultArr;
         updatedIssue.issueComment = updatedIssueComment;
         this.issueUpdated.emit(updatedIssue);
-        this.commentUpdated.emit(updatedIssueComment);
       }, (error) => {
         this.errorHandlingService.handleHttpError(error);
       });

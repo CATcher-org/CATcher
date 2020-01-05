@@ -4,7 +4,7 @@ import {GithubService} from './github.service';
 import {IssueComment} from '../models/comment.model';
 import { catchError, map } from 'rxjs/operators';
 import * as moment from 'moment';
-import { GithubComment } from '../models/github-comment.model';
+import { GithubComment } from '../models/github/github-comment.model';
 
 @Injectable({
   providedIn: 'root',

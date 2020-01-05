@@ -14,8 +14,8 @@ import { PermissionService } from './permission.service';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { IssueDispute } from '../models/issue-dispute.model';
-import { GithubIssue, GithubLabel } from '../models/github-issue.model';
-import { GithubComment } from '../models/github-comment.model';
+import { GithubIssue, GithubLabel } from '../models/github/github-issue.model';
+import { GithubComment } from '../models/github/github-comment.model';
 import { IssueComment } from '../models/comment.model';
 
 @Injectable({
@@ -145,7 +145,8 @@ export class IssueService {
       map((response: GithubComment) => {
         issue.updateDispute(response);
         return issue;
-      })
+      }),
+      flatMap(() => this.updateIssue(issue))
     );
   }
 
@@ -154,7 +155,8 @@ export class IssueService {
       map((githubComment: GithubComment) => {
         issue.updateDispute(githubComment);
         return issue;
-      })
+      }),
+      flatMap(() => this.updateIssue(issue))
     );
   }
 
@@ -299,6 +301,7 @@ export class IssueService {
         return true;
       }),
       catchError(err => {
+        console.log('fail to save issue model');
         return of(false);
       })
     );

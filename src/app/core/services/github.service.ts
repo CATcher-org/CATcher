@@ -5,9 +5,13 @@ import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser'
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
-import { GithubIssue } from '../models/github-issue.model';
-import { GithubComment } from '../models/github-comment.model';
-import { GithubRelease } from '../models/github.release';
+import { GithubIssue } from '../models/github/github-issue.model';
+import { GithubComment } from '../models/github/github-comment.model';
+import { GithubRelease } from '../models/github/github.release';
+import { GithubResponse } from '../models/github/github-response.model';
+import { IssuesEtagManager } from '../models/github/cache-manager/issues-etag-manager.model';
+import { IssueLastModifiedManagerModel } from '../models/github/cache-manager/issue-last-modified-manager.model';
+import { CommentsEtagManager } from '../models/github/cache-manager/comments-etag-manager.model';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -23,9 +27,9 @@ let octokit = new Octokit();
   providedIn: 'root',
 })
 export class GithubService {
-  private issuesEtags = [];
-  private issueLastModified = {};
-  private commentsEtags = {};
+  private issuesEtagManager = new IssuesEtagManager();
+  private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
+  private commentsEtagManager = new CommentsEtagManager();
 
   constructor(private errorHandlingService: ErrorHandlingService) {}
 
@@ -52,28 +56,58 @@ export class GithubService {
    * Will return an Observable with array of all of the issues in Github including the paginated issues.
    */
   fetchIssues(filter?: {}): Observable<Array<GithubIssue>> {
-    const responseInFirstPage = [];
+    let responseInFirstPage: GithubResponse<GithubIssue[]>;
     return from(this.getIssueAPICall(filter, 1)).pipe(
-      map((response) => {
-        responseInFirstPage.push(response);
+      map((response: GithubResponse<GithubIssue[]>) => {
+        responseInFirstPage = response;
         return this.getNumberOfPages(response);
       }),
       flatMap((numOfPages: number) => {
-        const apiCalls = [];
+        const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
           apiCalls.push(from(this.getIssueAPICall(filter, i)));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
-      map((resultArray) => {
-        const responses = [...responseInFirstPage, ...resultArray];
-        const collatedData = [];
-        let index = 0;
+      map((resultArray: GithubResponse<GithubIssue[]>[]) => {
+        const responses = [responseInFirstPage, ...resultArray];
+        const collatedData: GithubIssue[] = [];
+        let pageNum = 1;
         for (const response of responses) {
-          this.issuesEtags[index] = response['headers']['etag'];
-          index++;
-          for (const issue of response['data']) {
+          this.issuesEtagManager.set(pageNum, response.headers.etag);
+          pageNum++;
+          for (const issue of response.data) {
             collatedData.push(new GithubIssue(issue));
+          }
+        }
+        return collatedData;
+      })
+    );
+  }
+
+  fetchIssueComments(issueId: number): Observable<Array<GithubComment>> {
+    let responseInFirstPage: GithubResponse<GithubComment[]>;
+    return from(this.getCommentsAPICall(issueId, 1)).pipe(
+      map((response: GithubResponse<GithubComment[]>) => {
+        responseInFirstPage = response;
+        return this.getNumberOfPages(response);
+      }),
+      flatMap((numOfPages: number) => {
+        const apiCalls: Observable<GithubResponse<GithubComment[]>>[] = [];
+        for (let i = 2; i <= numOfPages; i++) {
+          apiCalls.push(from(this.getCommentsAPICall(issueId, i)));
+        }
+        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
+      }),
+      map((resultArray: GithubResponse<GithubComment[]>[]) => {
+        const responses = [responseInFirstPage, ...resultArray];
+        const collatedData: GithubComment[] = [];
+        let pageNum = 1;
+        for (const response of responses) {
+          this.commentsEtagManager.set(issueId, pageNum, response.headers.etag);
+          pageNum++;
+          for (const comment of response.data) {
+            collatedData.push(comment);
           }
         }
         return collatedData;
@@ -109,46 +143,11 @@ export class GithubService {
 
   fetchIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, issue_number: id,
-      headers: { 'If-Modified-Since': this.issueLastModified[id] || '' }})).pipe(
-        map((response) => {
-          this.issueLastModified[id] = response['headers']['last-modified'];
-          return new GithubIssue(response['data']);
+      headers: { 'If-Modified-Since': this.issuesLastModifiedManager.get(id) }})).pipe(
+        map((response: GithubResponse<GithubIssue>) => {
+          this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
+          return new GithubIssue(response.data);
         })
-    );
-  }
-
-  fetchIssueComments(issueId: number): Observable<Array<GithubComment>> {
-    const responseInFirstPage = [];
-    return from(this.getCommentsAPICall(issueId, 1)).pipe(
-      map((response) => {
-        responseInFirstPage.push(response);
-        return this.getNumberOfPages(response);
-      }),
-      flatMap((numOfPages: number) => {
-        const apiCalls = [];
-        for (let i = 2; i <= numOfPages; i++) {
-          apiCalls.push(from(this.getCommentsAPICall(issueId, i)));
-        }
-        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
-      }),
-      map((resultArray) => {
-        const responses = [...responseInFirstPage, ...resultArray];
-        const collatedData = [];
-        let index = 0;
-        for (const response of responses) {
-          if (this.commentsEtags[issueId]) {
-            this.commentsEtags[issueId][index] = response['headers']['etag'];
-          } else {
-            this.commentsEtags[issueId] = [response['headers']['etag']];
-          }
-          index++;
-
-          for (const comment of response['data']) {
-            collatedData.push(<GithubComment>comment);
-          }
-        }
-        return collatedData;
-      })
     );
   }
 
@@ -180,16 +179,17 @@ export class GithubService {
 
   closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed'})).pipe(
-      map(response => {
-        return new GithubIssue(response['data']);
+      map((response: GithubResponse<GithubIssue>) => {
+        this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
+        return new GithubIssue(response.data);
       })
     );
   }
 
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels})).pipe(
-      map(response => {
-        return new GithubIssue(response['data']);
+      map((response: GithubResponse<GithubIssue>) => {
+        return new GithubIssue(response.data);
       })
     );
   }
@@ -197,7 +197,7 @@ export class GithubService {
   createIssueComment(issueId: number, description: string): Observable<{}> {
     return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, issue_number: issueId,
       body: description})).pipe(
-      map(response => {
+      map((response: GithubResponse<GithubComment>) => {
         return response['data'];
       })
     );
@@ -206,9 +206,9 @@ export class GithubService {
   updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
-      map(response => {
-        this.issueLastModified[id] = response['headers']['last-modified'];
-        return new GithubIssue(response['data']);
+      map((response: GithubResponse<GithubIssue>) => {
+        this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
+        return new GithubIssue(response.data);
       })
     );
   }
@@ -216,7 +216,7 @@ export class GithubService {
   updateIssueComment(issueComment: IssueComment): Observable<GithubComment> {
     return from(octokit.issues.updateComment({owner: ORG_NAME, repo: REPO, comment_id: issueComment.id,
       body: issueComment.description})).pipe(
-      map(response => {
+      map((response: GithubResponse<GithubComment>) => {
         return response['data'];
       })
     );
@@ -274,31 +274,31 @@ export class GithubService {
   }
 
   reset(): void {
-    this.commentsEtags = {};
-    this.issueLastModified = {};
-    this.issuesEtags = [];
+    this.issuesEtagManager.clear();
+    this.issuesLastModifiedManager.clear();
+    this.commentsEtagManager.clear();
   }
 
   /**
    * Get the number of paginated pages of issues in Github.
    * @param response
    */
-  private getNumberOfPages(response: {}): number {
+  private getNumberOfPages<T>(response: GithubResponse<T>): number {
     let numberOfPages = 1;
-    if (response['headers'].link) {
-      const paginatedData = githubPaginatorParser(response['headers'].link);
+    if (response.headers.link) {
+      const paginatedData = githubPaginatorParser(response.headers.link);
       numberOfPages = +paginatedData['last'] || 1;
     }
     return numberOfPages;
   }
 
-  private getIssueAPICall(filter: {}, pageNumber: number): Promise<{}> {
+  private getIssueAPICall(filter: {}, pageNumber: number): Promise<GithubResponse<GithubIssue[]>> {
     return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
-      direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtags[pageNumber - 1] || '' }});
+      direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtagManager.get(pageNumber) }});
   }
 
-  private getCommentsAPICall(issueId: number, pageNumber: number): Promise<{}> {
-    return octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: pageNumber,
-      headers: { 'If-None-Match': this.commentsEtags[issueId] ? this.commentsEtags[issueId][pageNumber - 1] || '' : ''}});
+  private getCommentsAPICall(issueId: number, pageNumber: number): Promise<GithubResponse<GithubComment[]>> {
+    return octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: pageNumber, per_page: 100,
+      headers: { 'If-None-Match': this.commentsEtagManager.get(issueId, pageNumber)}});
   }
 }

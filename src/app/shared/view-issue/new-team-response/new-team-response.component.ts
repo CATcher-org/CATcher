@@ -32,7 +32,6 @@ export class NewTeamResponseComponent implements OnInit {
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
-  @Output() updatedCommentEmitter = new EventEmitter<IssueComment>();
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
@@ -108,7 +107,6 @@ export class NewTeamResponseComponent implements OnInit {
       updatedIssue.duplicateOf = this.duplicateOf.value === '' ? undefined : this.duplicateOf.value;
       updatedIssue.issueComment = updatedComment;
       this.issueUpdated.emit(updatedIssue);
-      this.updatedCommentEmitter.emit(updatedComment);
       form.resetForm();
     }, (error) => {
       if (error instanceof HttpErrorResponse) {
@@ -169,7 +167,6 @@ export class NewTeamResponseComponent implements OnInit {
   refresh(): void {
     const updatedIssue = this.issueService.issues[this.issue.id];
     this.issueUpdated.emit(updatedIssue);
-    this.updatedCommentEmitter.emit(updatedIssue.issueComment);
   }
 
   private getDupIssueList(): Observable<Issue[]> {

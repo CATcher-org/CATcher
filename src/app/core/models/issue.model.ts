@@ -2,8 +2,8 @@ import { Team } from './team.model';
 import { TesterResponse } from './tester-response.model';
 import { IssueComment } from './comment.model';
 import { IssueDispute } from './issue-dispute.model';
-import { GithubIssue, GithubLabel } from './github-issue.model';
-import { GithubComment } from './github-comment.model';
+import { GithubIssue, GithubLabel } from './github/github-issue.model';
+import { GithubComment } from './github/github-comment.model';
 import { TeamResponseTemplate } from './templates/team-response-template.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
@@ -37,7 +37,6 @@ export class Issue {
   /** Fields derived from parsing of Github's issue description */
   duplicateOf?: number;
   teamResponse?: string;
-  tutorResponse?: string;
   testerResponses?: TesterResponse[];
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];

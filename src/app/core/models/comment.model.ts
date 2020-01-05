@@ -4,8 +4,3 @@ export interface IssueComment {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export interface IssueComments {
-  issueId: number;
-  comments?: IssueComment[];
-}

@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, ViewChild, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, NgForm } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
 import { IssueComment } from '../../../core/models/comment.model';
@@ -8,35 +8,51 @@ import { IssueCommentService } from '../../../core/services/issue-comment.servic
 import { UserService } from '../../../core/services/user.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
+import { finalize, map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { flatMap } from 'rxjs/internal/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { shell } from 'electron';
+import { GithubService } from '../../../core/services/github.service';
 
 @Component({
   selector: 'app-issue-dispute',
   templateUrl: './issue-dispute.component.html',
   styleUrls: ['./issue-dispute.component.css']
 })
-export class IssueDisputeComponent implements OnInit {
+export class IssueDisputeComponent implements OnInit, OnChanges {
   tutorResponseForm: FormGroup;
   isFormPending = false;
-  isEditing = false;
 
   submitButtonText: string;
 
   @Input() issue: Issue;
+  @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
-  @Output() commentUpdated = new EventEmitter<IssueComment>();
+  @Output() updateEditState = new EventEmitter<boolean>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
               private issueCommentService: IssueCommentService,
               public userService: UserService,
-              private errorHandlingService: ErrorHandlingService) { }
+              private errorHandlingService: ErrorHandlingService,
+              private githubService: GithubService) { }
 
   ngOnInit() {
     this.resetForm();
-    this.isEditing = this.isNewResponse();
     this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
+    setTimeout(() => {
+      this.updateEditState.emit(this.isNewResponse());
+    });
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!this.isEditing && changes.issue && changes.issue.previousValue !== changes.issue.currentValue) {
+      this.resetForm();
+    }
+  }
+
 
   submitTutorResponseForm(form: NgForm) {
     if (this.tutorResponseForm.invalid) {
@@ -46,50 +62,98 @@ export class IssueDisputeComponent implements OnInit {
 
     this.issue.pending = '' + this.getNumOfPending();
 
-    // Update tutor's response in the issue comment
     if (this.issue.issueComment) {
-      this.issueService.updateTutorResponse(this.issue, <IssueComment>{
-        ...this.issue.issueComment,
-        description: this.getTutorResponseFromForm()
-      }).subscribe((issue: Issue) => {
-        this.isFormPending = false;
-        this.isEditing = false;
-        this.commentUpdated.emit(issue.issueComment);
-        this.issueUpdated.emit(issue);
-        this.resetForm();
-      }, (error) => {
-        this.errorHandlingService.handleHttpError(error);
-      });
+      this.updateTutorResponse();
     } else {
-      const tutorResponse = this.getTutorResponseFromForm();
-      this.issueService.createTutorResponse(this.issue, tutorResponse).subscribe((issue: Issue) => {
-        this.isFormPending = false;
-        this.isEditing = false;
-        this.commentUpdated.emit(issue.issueComment);
-        this.issueUpdated.emit(issue);
-        this.resetForm();
-      },
-        (error) => {
-        this.errorHandlingService.handleHttpError(error);
-      });
+      this.createTutorResponse();
     }
+  }
 
-    this.issueService.updateIssue(this.issue).subscribe(
-      (updatedIssue) => {
-        this.issueUpdated.emit(updatedIssue);
-      },
-      (error) => {
+  updateTutorResponse(): void {
+    this.isSafeToSubmitTutorResponse().pipe(
+      flatMap((isSaveToUpdate: boolean) => {
+        if (!isSaveToUpdate && this.submitButtonText !== SUBMIT_BUTTON_TEXT.OVERWRITE) {
+          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+        }
+        return this.issueService.updateTutorResponse(this.issue, <IssueComment>{
+          ...this.issue.issueComment,
+          description: this.getTutorResponseFromForm()
+        });
+      }),
+      finalize(() => this.isFormPending = false)
+    ).subscribe((issue: Issue) => {
+      this.issueUpdated.emit(issue);
+      this.resetToDefault();
+    }, (error) => {
+      if (error instanceof HttpErrorResponse) {
         this.errorHandlingService.handleHttpError(error);
-      });
+      } else {
+        this.errorHandlingService.handleGeneralError(error);
+      }
+    });
+  }
+
+  createTutorResponse(): void {
+    const tutorResponse = this.getTutorResponseFromForm();
+    this.isSafeToSubmitTutorResponse().pipe(
+      flatMap((isSafeToSubmit: boolean) => {
+        if (!isSafeToSubmit && this.submitButtonText !== SUBMIT_BUTTON_TEXT.OVERWRITE) {
+          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+        }
+        return this.issueService.createTutorResponse(this.issue, tutorResponse);
+      }),
+      finalize(() => this.isFormPending = false)
+    ).subscribe((issue: Issue) => {
+      this.issueUpdated.emit(issue);
+      this.resetToDefault();
+    }, (error) => {
+      if (error instanceof HttpErrorResponse) {
+        this.errorHandlingService.handleHttpError(error);
+      } else {
+        this.errorHandlingService.handleGeneralError(error);
+      }
+    });
+  }
+
+  isSafeToSubmitTutorResponse(): Observable<boolean> {
+    return this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        if (issue.issueComment && !!issue.issueComment === !!this.issue.issueComment) {
+          for (let i = 0; i < issue.issueDisputes.length; i++) {
+            if (issue.issueDisputes[i].compareTo(this.issue.issueDisputes[i]) !== 0) {
+              return false;
+            }
+          }
+          return true;
+        } else {
+          return !!issue.issueComment === !!this.issue.issueComment;
+        }
+      })
+    );
+  }
+
+  resetToDefault(): void {
+    this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
+    this.updateEditState.emit(false);
+    this.resetForm();
+  }
+
+  viewInGithub(): void {
+    shell.openExternal(`https://github.com/${this.githubService.getRepoURL()}/issues/` +
+      `${this.issue.id}#issuecomment-${this.issue.issueComment.id}`);
   }
 
   changeToEditMode() {
-    this.isEditing = true;
+    this.updateEditState.emit(true);
   }
 
   cancelEditMode() {
-    this.isEditing = false;
-    this.resetForm();
+    this.issueService.getIssue(this.issue.id).subscribe((issue: Issue) => {
+      this.issueUpdated.emit(issue);
+      this.resetToDefault();
+    });
   }
 
   trackDisputeList(index: number, item: string[]): string {
@@ -180,5 +244,9 @@ export class IssueDisputeComponent implements OnInit {
    */
   getTodoFormId(index: number): string {
     return `todo-${index}`;
+  }
+
+  get conflict(): boolean {
+    return this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE;
   }
 }

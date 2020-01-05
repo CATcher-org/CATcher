@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
 import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
@@ -24,7 +24,7 @@ import { TesterResponseConflictData } from './conflict-dialog/conflict-dialog.co
   templateUrl: './tester-response.component.html',
   styleUrls: ['./tester-response.component.css']
 })
-export class TesterResponseComponent implements OnInit {
+export class TesterResponseComponent implements OnInit, AfterViewInit {
 
   testerResponseForm: FormGroup;
   isFormPending = false;
@@ -34,7 +34,6 @@ export class TesterResponseComponent implements OnInit {
   @Input() issue: Issue;
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
-  @Output() commentUpdated = new EventEmitter<IssueComment>();
   @Output() updateEditState = new EventEmitter<boolean>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
@@ -47,8 +46,14 @@ export class TesterResponseComponent implements OnInit {
 
   ngOnInit() {
     this.resetForm(this.issue);
-    this.updateEditState.emit(this.isNewResponse());
     this.submitButtonText = this.isNewResponse() ? SUBMIT_BUTTON_TEXT.SUBMIT : SUBMIT_BUTTON_TEXT.SAVE;
+    setTimeout(() => {
+      this.updateEditState.emit(this.isNewResponse());
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.updateEditState.emit(this.isNewResponse());
   }
 
   submitTesterResponseForm() {
@@ -80,7 +85,6 @@ export class TesterResponseComponent implements OnInit {
       }),
       finalize(() => this.isFormPending = false)
     ).subscribe((updatedIssue: Issue) => {
-      this.commentUpdated.emit(updatedIssue.issueComment);
       this.issueUpdated.emit(updatedIssue);
       this.resetToDefault();
     }, (error) => {

@@ -5,7 +5,6 @@ import { IssueService } from '../../core/services/issue.service';
 import { FormBuilder } from '@angular/forms';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssueCommentService } from '../../core/services/issue-comment.service';
-import { IssueComment } from '../../core/models/comment.model';
 import { UserService } from '../../core/services/user.service';
 import { Subscription } from 'rxjs';
 import { PermissionService } from '../../core/services/permission.service';
@@ -92,11 +91,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
     this.issueService.updateLocalStore(newIssue);
   }
 
-  updateComment(newComment: IssueComment) {
-    this.issue.issueComment = newComment;
-    this.issueService.updateLocalStore(this.issue);
-  }
-
   updateDescriptionEditState(updatedState: boolean) {
     this.isIssueDescriptionEditing = updatedState;
   }
@@ -123,6 +117,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
           issue.teamResponse = this.issue.teamResponse;
         } else if (this.isTesterResponseEditing) {
           issue.testerResponses = this.issue.testerResponses;
+        } else if (this.isTutorResponseEditing) {
+          issue.issueDisputes = this.issue.issueDisputes;
         }
       }
       this.issue = issue;
