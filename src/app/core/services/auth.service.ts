@@ -67,7 +67,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!(this.authStateSource.getValue() === AuthState.Authenticated);
+    return this.authStateSource.getValue() === AuthState.Authenticated;
   }
 
   changeAuthState(newAuthState: AuthState) {
