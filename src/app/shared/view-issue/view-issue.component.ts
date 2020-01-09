@@ -46,7 +46,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
   issueSubscription: Subscription;
-  issueCommentSubscription: Subscription;
 
   @Input() issueId: number;
   @Input() issueComponents: ISSUE_COMPONENTS[];

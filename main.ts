@@ -47,8 +47,7 @@ function createWindow() {
     x: 0,
     y: 0,
     width: size.width,
-    height: size.height,
-    webPreferences: { webSecurity: false }
+    height: size.height
   });
   win.setTitle(require('./package.json').name + ' ' + require('./package.json').version);
   if (serve) {
@@ -199,7 +198,7 @@ function getAccessToken(window: BrowserWindow, toClearAuthState: boolean): Promi
  * @param toClearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
  */
 function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boolean) {
-  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=public_repo,read:user`);
+  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=repo,read:user`);
 
   return new Promise(function (resolve, reject) {
     const windowParams = {

@@ -13,7 +13,9 @@ import { flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { ElectronService } from '../core/services/electron.service';
+import { ApplicationService } from '../core/services/application.service';
 
+const appSetting = require('../../../package.json');
 
 @Component({
   selector: 'app-auth',
@@ -21,6 +23,9 @@ import { ElectronService } from '../core/services/electron.service';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit, OnDestroy {
+  isReady: boolean;
+  isAppOutdated: boolean;
+  versionCheckingError: boolean;
   authState: AuthState;
   authStateSubscription: Subscription;
   loginForm: FormGroup;
@@ -39,7 +44,8 @@ export class AuthComponent implements OnInit, OnDestroy {
               private electronService: ElectronService,
               private authService: AuthService,
               private titleService: Title,
-              private ngZone: NgZone) {
+              private ngZone: NgZone,
+              private appService: ApplicationService) {
     this.electronService.ipcRenderer.on('github-oauth-reply',
       (event, {token, isChangingAccount, error, isWindowClosed}) => {
       this.ngZone.run(() => {
@@ -64,8 +70,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.checkAppIsOutdated();
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
-      this.authState = state;
+      this.authState = state
     });
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
@@ -79,6 +86,22 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.authStateSubscription.unsubscribe();
+  }
+
+  /**
+   * Checks whether the current version of CATcher is outdated.
+   */
+  checkAppIsOutdated(): void {
+    this.isReady = false;
+    this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
+      this.isAppOutdated = isOutdated;
+      this.isReady = true;
+      this.versionCheckingError = false;
+    }, (error) => {
+      this.errorHandlingService.handleHttpError(error);
+      this.isReady = true;
+      this.versionCheckingError = true;
+    });
   }
 
   /**
@@ -188,9 +211,9 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   handleAuthSuccess(form: NgForm) {
     form.resetForm();
-    this.titleService.setTitle(require('../../../package.json').name
+    this.titleService.setTitle(appSetting.name
       .concat(' ')
-      .concat(require('../../../package.json').version)
+      .concat(appSetting.version)
       .concat(' - ')
       .concat(this.phaseService.getPhaseDetail()));
     this.router.navigateByUrl(this.phaseService.currentPhase);
