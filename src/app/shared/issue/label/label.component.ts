@@ -47,7 +47,7 @@ export class LabelComponent implements OnInit, OnChanges {
       this.issueUpdated.emit(latestIssue);
       this.labelColor = this.labelService.getColorOfLabel(editedIssue[this.attributeName]);
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
   }
 }

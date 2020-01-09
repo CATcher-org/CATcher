@@ -90,11 +90,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
       this.issueUpdated.emit(updatedIssue);
       this.resetToDefault();
     }, (error) => {
-      if (error instanceof HttpErrorResponse) {
-        this.errorHandlingService.handleHttpError(error);
-      } else {
-        this.errorHandlingService.handleGeneralError(error);
-      }
+      this.errorHandlingService.handleError(error);
     });
   }
 

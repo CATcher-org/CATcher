@@ -109,11 +109,7 @@ export class NewTeamResponseComponent implements OnInit {
       this.issueUpdated.emit(updatedIssue);
       form.resetForm();
     }, (error) => {
-      if (error instanceof HttpErrorResponse) {
-        this.errorHandlingService.handleHttpError(error);
-      } else {
-        this.errorHandlingService.handleGeneralError(error);
-      }
+      this.errorHandlingService.handleError(error);
     });
   }
 

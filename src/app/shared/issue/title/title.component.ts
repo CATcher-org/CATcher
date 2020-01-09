@@ -60,7 +60,7 @@ export class TitleComponent implements OnInit {
       this.issueUpdated.emit(editedIssue);
       form.resetForm();
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
   }
 }

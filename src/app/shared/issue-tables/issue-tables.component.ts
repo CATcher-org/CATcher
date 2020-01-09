@@ -94,7 +94,7 @@ export class IssueTablesComponent implements OnInit {
     }).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
   }
@@ -106,7 +106,7 @@ export class IssueTablesComponent implements OnInit {
     }).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
   }
@@ -136,7 +136,7 @@ export class IssueTablesComponent implements OnInit {
       this.issuesPendingDeletion = theRest;
     })).subscribe((removedIssue) => {
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
   }

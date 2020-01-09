@@ -69,7 +69,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.isReady = true;
       this.versionCheckingError = false;
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
       this.isReady = true;
       this.versionCheckingError = true;
     });
@@ -135,11 +135,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         },
         (error) => {
           this.auth.changeAuthState(AuthState.NotAuthenticated);
-          if (error instanceof HttpErrorResponse) {
-            this.errorHandlingService.handleHttpError(error.error);
-          } else {
-            this.errorHandlingService.handleGeneralError(error);
-          }
+          this.errorHandlingService.handleError(error);
         }
       );
     }

@@ -127,7 +127,7 @@ export class HeaderComponent implements OnInit {
     this.githubEventService.reloadPage().subscribe(
       (success) => success,
       (error) => {
-        this.errorHandlingService.handleHttpError(error, () => this.githubEventService.reloadPage());
+        this.errorHandlingService.handleError(error, () => this.githubEventService.reloadPage());
       });
 
     // Prevent user from spamming the reload button

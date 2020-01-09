@@ -268,7 +268,7 @@ export class GithubService {
     if (id) {
       shell.openExternal('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
     } else {
-      this.errorHandlingService.handleGeneralError('Unable to open this issue in Browser');
+      this.errorHandlingService.handleError('Unable to open this issue in Browser');
     }
     event.stopPropagation();
   }

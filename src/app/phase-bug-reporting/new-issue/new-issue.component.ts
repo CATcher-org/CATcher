@@ -47,7 +47,7 @@ export class NewIssueComponent implements OnInit {
           form.resetForm();
           },
           error => {
-          this.errorHandlingService.handleHttpError(error);
+          this.errorHandlingService.handleError(error);
         });
   }
 

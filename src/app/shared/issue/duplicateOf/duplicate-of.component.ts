@@ -79,7 +79,7 @@ export class DuplicateOfComponent implements OnInit {
         updatedIssue.issueComment = updatedIssueComment;
         this.issueUpdated.emit(updatedIssue);
       }, (error) => {
-        this.errorHandlingService.handleHttpError(error);
+        this.errorHandlingService.handleError(error);
       });
   }
 

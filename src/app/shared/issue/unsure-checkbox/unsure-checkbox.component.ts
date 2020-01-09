@@ -33,7 +33,7 @@ export class UnsureCheckboxComponent implements OnInit {
     }).subscribe((updatedIssue: Issue) => {
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
   }
 

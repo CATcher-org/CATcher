@@ -124,7 +124,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
       this.issue = issue;
       this.isIssueLoading = false;
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error, () => this.pollIssue(id));
+      this.errorHandlingService.handleError(error, () => this.pollIssue(id));
     });
   }
 

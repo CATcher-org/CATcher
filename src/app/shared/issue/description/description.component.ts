@@ -77,11 +77,7 @@ export class DescriptionComponent implements OnInit {
       this.resetToDefault();
       form.resetForm();
     }, (error) => {
-      if (error instanceof HttpErrorResponse) {
-        this.errorHandlingService.handleHttpError(error);
-      } else {
-        this.errorHandlingService.handleGeneralError(error);
-      }
+      this.errorHandlingService.handleError(error);
     });
   }
 

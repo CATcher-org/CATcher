@@ -87,11 +87,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
       this.issueUpdated.emit(issue);
       this.resetToDefault();
     }, (error) => {
-      if (error instanceof HttpErrorResponse) {
-        this.errorHandlingService.handleHttpError(error);
-      } else {
-        this.errorHandlingService.handleGeneralError(error);
-      }
+      this.errorHandlingService.handleError(error);
     });
   }
 
@@ -110,11 +106,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
       this.issueUpdated.emit(issue);
       this.resetToDefault();
     }, (error) => {
-      if (error instanceof HttpErrorResponse) {
-        this.errorHandlingService.handleHttpError(error);
-      } else {
-        this.errorHandlingService.handleGeneralError(error);
-      }
+      this.errorHandlingService.handleError(error);
     });
   }
 

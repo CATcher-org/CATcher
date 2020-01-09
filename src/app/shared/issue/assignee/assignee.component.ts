@@ -53,7 +53,7 @@ export class AssigneeComponent implements OnInit {
     this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
       this.issueUpdated.emit(latestIssue);
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
   }
 }
