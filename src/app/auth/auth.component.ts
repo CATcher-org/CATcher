@@ -72,7 +72,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.checkAppIsOutdated();
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
-      this.authState = state
+      this.authState = state;
     });
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
