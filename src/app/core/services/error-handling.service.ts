@@ -3,7 +3,7 @@ import {MatSnackBar} from '@angular/material';
 import {NoInternetConnectionComponent} from '../../shared/error-toasters/no-internet-connection/no-internet-connection.component';
 import {GeneralMessageErrorComponent} from '../../shared/error-toasters/general-message-error/general-message-error.component';
 import {FormErrorComponent} from '../../shared/error-toasters/form-error/form-error.component';
-import {HttpErrorResponse} from "@angular/common/http";
+import {HttpErrorResponse} from '@angular/common/http';
 
 export const ERRORCODE_NOT_FOUND = 404;
 
@@ -14,7 +14,7 @@ export class ErrorHandlingService {
 
   constructor(private snackBar: MatSnackBar) {}
 
-  handleError(error : HttpErrorResponse | string, actionCallback?: () => void) {
+  handleError(error: HttpErrorResponse | string, actionCallback?: () => void) {
     console.error(error);
     if (error instanceof HttpErrorResponse) {
       this.handleHttpError(error.error, actionCallback);
@@ -24,7 +24,7 @@ export class ErrorHandlingService {
   }
 
   // Ref: https://developer.github.com/v3/#client-errors
-  private handleHttpError({error} : HttpErrorResponse, actionCallback?: () => void): void {
+  private handleHttpError({error}: HttpErrorResponse, actionCallback?: () => void): void {
     // Angular treats 304 Not Modified as an error, we will ignore it.
     if (error.status === 304) {
       return;
