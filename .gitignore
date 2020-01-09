@@ -21,6 +21,7 @@ src/**/*.js
 *.launch
 .settings/
 *.sublime-workspace
+CATcher.iml
 
 # IDE - VSCode
 .vscode/*
