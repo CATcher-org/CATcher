@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Conflict } from '../../../../core/models/conflict.model';
+import { Conflict } from '../../../../core/models/conflict/conflict.model';
 import { LabelService } from '../../../../core/services/label.service';
 import { IssueService } from '../../../../core/services/issue.service';
 import { TesterResponse } from '../../../../core/models/tester-response.model';

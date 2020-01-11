@@ -1,52 +1,9 @@
 import DiffMatchPatch from 'diff-match-patch';
-import { escapeHTML, replaceNewlinesWithBreakLines } from '../../shared/lib/html';
-
-abstract class Changes {
-  abstract readonly TYPE: string;
-  abstract readonly TAG: string;
-  abstract readonly STYLES: string[];
-  abstract readonly content: string;
-
-  getHtmlString(): string {
-    return `<${this.TAG} style="${this.STYLES.join(';')}">${escapeHTML(this.content)}</${this.TAG}>`;
-  }
-}
-
-class Addition extends Changes {
-  readonly TYPE = 'ADDITION';
-  readonly TAG = 'ins';
-  readonly STYLES = ['background: #d4fcbc', 'text-decoration: none'];
-  readonly content: string;
-
-  constructor(content: string) {
-    super();
-    this.content = content;
-  }
-}
-
-class Removal extends Changes {
-  readonly TYPE = 'REMOVAL';
-  readonly TAG = 'del';
-  readonly STYLES = ['background: #fbb'];
-  readonly content: string;
-
-  constructor(content: string) {
-    super();
-    this.content = content;
-  }
-}
-
-class NoChange extends Changes {
-  readonly TYPE = 'NO_CHANGE';
-  readonly TAG = 'span';
-  readonly STYLES = [];
-  readonly content: string;
-
-  constructor(content: string) {
-    super();
-    this.content = content;
-  }
-}
+import { escapeHTML, replaceNewlinesWithBreakLines } from '../../../shared/lib/html';
+import { Changes } from './changes.model';
+import { Removal } from './removal.model';
+import { Addition } from './addition.model';
+import { NoChange } from './no-change.model';
 
 /**
  * A model to represent the difference/conflict between two text.

@@ -9,11 +9,12 @@ import { LabelService } from '../../../core/services/label.service';
 import { IssueCommentService } from '../../../core/services/issue-comment.service';
 import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
-import { Conflict } from '../../../core/models/conflict.model';
+import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 import { PhaseService } from '../../../core/services/phase.service';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-new-team-response',
@@ -76,10 +77,7 @@ export class NewTeamResponseComponent implements OnInit {
     this.isFormPending = true;
     const latestIssue = this.getUpdatedIssue();
 
-    this.issueService.getLatestIssue(this.issue.id).pipe(
-      map((issue: Issue) => {
-        return !issue.teamResponse;
-      }),
+    this.isSafeToSubmit().pipe(
       flatMap((isSaveToSubmit: boolean) => {
         const newCommentDescription = latestIssue.createGithubTeamResponse();
         if (isSaveToSubmit) {
@@ -96,7 +94,7 @@ export class NewTeamResponseComponent implements OnInit {
         } else {
           this.conflict = new Conflict(' ', this.issueService.issues[this.issue.id].teamResponse);
           this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
-          this.viewChanges();
+          this.viewUpdatedResponse();
           return throwError('A response has been submitted. Please verify the changes and try again.');
         }
       }),
@@ -113,7 +111,21 @@ export class NewTeamResponseComponent implements OnInit {
     });
   }
 
-  getUpdatedIssue() {
+  /**
+   * @return - Determines whether it is safe to submit a tester response.
+   */
+  isSafeToSubmit(): Observable<boolean> {
+    return this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        return !issue.teamResponse;
+      })
+    );
+  }
+
+  /**
+   * @return - an updated copy of issue with its updated value from the form.
+   */
+  getUpdatedIssue(): Issue {
     const clone = this.issue.clone(this.phaseService.currentPhase);
     clone.severity = this.severity.value;
     clone.type = this.type.value;
@@ -142,7 +154,7 @@ export class NewTeamResponseComponent implements OnInit {
     return reason.join(', ');
   }
 
-  handleChangeOfDuplicateCheckbox(event) {
+  handleChangeOfDuplicateCheckbox(event: MatCheckboxChange) {
     if (event.checked) {
       this.responseTag.setValue('');
       this.assignees.setValue([]);
@@ -153,7 +165,10 @@ export class NewTeamResponseComponent implements OnInit {
     }
   }
 
-  viewChanges(): void {
+  /**
+   * Pops up a dialog that shows the updated team response that was submitted.
+   */
+  viewUpdatedResponse(): void {
     this.dialog.open(ConflictDialogComponent, {
       data: this.issueService.issues[this.issue.id],
       autoFocus: false

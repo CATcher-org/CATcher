@@ -32,16 +32,6 @@ export class IssueDispute {
     return toString;
   }
 
-  getResponseFromValue(isDone: boolean, tutorResponse: string): string {
-    const todo = `- [${isDone ? 'x' : ' '}] Done`;
-    let toString = '';
-    toString += this.TITLE_PREFIX + this.title + '\n\n';
-    toString += todo + '\n\n';
-    toString += tutorResponse + '\n\n';
-    toString += this.LINE_BREAK;
-    return toString;
-  }
-
   compareTo(anotherResponse: IssueDispute): number {
     if (this.isDone() === anotherResponse.isDone()) {
       return this.tutorResponse.localeCompare(anotherResponse.tutorResponse);
@@ -55,5 +45,17 @@ export class IssueDispute {
     toString += this.description + '\n\n';
     toString += this.LINE_BREAK;
     return toString;
+  }
+
+  setTutorResponse(response: string) {
+    this.tutorResponse = response;
+  }
+
+  setIsDone(isDone: boolean) {
+    if (isDone) {
+      this.todo = this.todo.replace('[ ]', '[x]');
+    } else {
+      this.todo = this.todo.replace('[x]', '[ ]');
+    }
   }
 }

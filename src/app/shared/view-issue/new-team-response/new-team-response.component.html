@@ -60,7 +60,7 @@
 
       <div class="editor-actions">
         <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
-                mat-raised-button color="primary" (click)="viewChanges()">
+                mat-raised-button color="primary" (click)="viewUpdatedResponse()">
           View Updated Response
         </button>
         <button class="editor-action" *ngIf="conflict" type="submit"

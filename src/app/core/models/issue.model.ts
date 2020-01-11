@@ -111,7 +111,9 @@ export class Issue {
   }
 
   /**
-   * Clones new instance of issue immutability.
+   * Creates a new copy of an exact same issue.
+   * This would come useful in the event when you want to update the issue but not the actual
+   * state of the application.
    */
   clone(phase: Phase): Issue {
     switch (phase) {
@@ -158,12 +160,6 @@ export class Issue {
       `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
   }
 
-  // Template url: https://github.com/CATcher-org/templates#teams-response-1
-  createGithubTesterResponse(): string {
-    return `# Team\'s Response\n${this.teamResponse}\n ` +
-      `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
-  }
-
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(): string {
     let tutorResponseString = '# Tutor Moderation\n\n';
@@ -171,6 +167,12 @@ export class Issue {
       tutorResponseString += issueDispute.toTutorResponseString();
     }
     return tutorResponseString;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#teams-response-1
+  createGithubTesterResponse(): string {
+    return `# Team\'s Response\n${this.teamResponse}\n ` +
+      `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
   }
 
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {

@@ -40,7 +40,7 @@ export class IssueService {
   }
 
   /**
-   * Poll for updated issues.
+   * Will constantly poll and update the application's state with the updated issues.
    */
   pollIssues(): Observable<Issue[]> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
@@ -51,6 +51,12 @@ export class IssueService {
     );
   }
 
+  /**
+   * Will constantly poll and update the application's state's with the updated issue.
+   *
+   * @param issueId - The issue's id to poll for.
+   * @return - Will return a new copy of updated issue in each poll interval.
+   */
   pollIssue(issueId: number): Observable<Issue> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
       switchMap(() => {
@@ -68,20 +74,6 @@ export class IssueService {
         );
       })
     );
-  }
-
-  /**
-   * Fetch all the necessary issues. If the issues have been fetched before, the function will return the existing issues instead
-   * of calling from Github API.
-   *
-   * @return An Observable containing an array of Issues.
-   *
-   */
-  getAllIssues(): Observable<Issue[]> {
-    if (this.issues === undefined) {
-      return this.initializeData();
-    }
-    return this.issues$;
   }
 
   reloadAllIssues() {

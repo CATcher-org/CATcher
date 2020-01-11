@@ -1,11 +1,14 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatTabChangeEvent } from '@angular/material';
-import { Conflict } from '../../../core/models/conflict.model';
+import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { LabelService } from '../../../core/services/label.service';
 import { IssueService } from '../../../core/services/issue.service';
 
-
+/**
+ * A Component that is in a form of a dialog modal and its purpose is to
+ * display the difference between 2 pieces of text.
+ */
 @Component({
   selector: 'app-conflict-dialog',
   templateUrl: 'conflict-dialog.component.html',

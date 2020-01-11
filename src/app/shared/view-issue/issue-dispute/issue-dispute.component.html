@@ -23,20 +23,18 @@
           </mat-checkbox>
         </div>
         <br>
-        <div *ngIf="tutorResponseForm.get(getTodoFormId(i)).value">
-          <div>
-            <markdown data="### Tutor's Response: "></markdown>
-            <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing"></markdown>
-          </div>
-          <div *ngIf="isEditing">
-            <app-comment-editor
-              [commentField]="tutorResponseForm.get(getTutorResponseFormId(i))"
-              [commentForm]="tutorResponseForm"
-              [id]="getTutorResponseFormId(i)"
-              [(isFormPending)]="isFormPending"
-              [(submitButtonText)]="submitButtonText">
-            </app-comment-editor>
-          </div>
+        <div>
+          <markdown data="### Tutor's Response: "></markdown>
+          <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing"></markdown>
+        </div>
+        <div *ngIf="isEditing">
+          <app-comment-editor
+            [commentField]="tutorResponseForm.get(getTutorResponseFormId(i))"
+            [commentForm]="tutorResponseForm"
+            [id]="getTutorResponseFormId(i)"
+            [(isFormPending)]="isFormPending"
+            [(submitButtonText)]="submitButtonText">
+          </app-comment-editor>
         </div>
         <br> <markdown data="-------------------"></markdown> <br>
       </div>

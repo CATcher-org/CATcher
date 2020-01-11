@@ -14,6 +14,7 @@ import { flatMap } from 'rxjs/internal/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { shell } from 'electron';
 import { GithubService } from '../../../core/services/github.service';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue-dispute',
@@ -37,7 +38,8 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
               private issueCommentService: IssueCommentService,
               public userService: UserService,
               private errorHandlingService: ErrorHandlingService,
-              private githubService: GithubService) { }
+              private githubService: GithubService,
+              private phaseService: PhaseService) { }
 
   ngOnInit() {
     this.resetForm();
@@ -110,6 +112,9 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
     });
   }
 
+  /**
+   * @return - Determines whether it is safe to submit an issue dispute's resolution.
+   */
   isSafeToSubmitTutorResponse(): Observable<boolean> {
     return this.issueService.getLatestIssue(this.issue.id).pipe(
       map((issue: Issue) => {
@@ -201,10 +206,10 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
       return '';
     }
 
-    let result = '# Tutor Moderation\n';
     const values = this.tutorResponseForm.getRawValue();
     const todos = [];
     const responses = [];
+    const updatedIssue = this.issue.clone(this.phaseService.currentPhase);
 
     let index = 0;
     for (const [key, value] of Object.entries(values)) {
@@ -217,12 +222,14 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
     }
 
     index = 0;
-    for (const dispute of this.issue.issueDisputes) {
-      result += dispute.getResponseFromValue(todos[index] === undefined ? dispute.isDone() : todos[index],
-        responses[index] || dispute.tutorResponse);
-      index++;
+    for (const dispute of updatedIssue.issueDisputes) {
+      const isDone = todos[index] === undefined ? dispute.isDone() : todos[index];
+      const tutorResponse = responses[index] || dispute.tutorResponse;
+      updatedIssue.issueDisputes[index].setTutorResponse(tutorResponse);
+      updatedIssue.issueDisputes[index].setIsDone(isDone);
+      index++
     }
-    return result;
+    return updatedIssue.createGithubTutorResponse();
   }
 
   /**

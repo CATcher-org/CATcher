@@ -9,7 +9,7 @@ import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 import { flatMap } from 'rxjs/internal/operators';
 import { throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Conflict } from '../../../core/models/conflict.model';
+import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
 

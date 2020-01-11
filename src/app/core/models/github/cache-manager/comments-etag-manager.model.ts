@@ -3,7 +3,7 @@
  * Example of a single list of comments: https://developer.github.com/v3/issues/comments/#list-comments-in-a-repository
  */
 export class CommentsEtagManager {
-  // A mapping from issue ID to their respective array of etags of the comments in each page. The index this array
+  // A mapping from issue ID to their respective array of etags of the comments in each page. The index in this array
   // represents (page number - 1)
   private commentsEtags: Map<number, string[]>;
 

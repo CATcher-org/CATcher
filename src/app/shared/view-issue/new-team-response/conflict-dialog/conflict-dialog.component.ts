@@ -14,8 +14,6 @@ import { escapeHTML, replaceNewlinesWithBreakLines } from '../../../lib/html';
 export class ConflictDialogComponent {
   isOnPreview = false;
   isReady = false;
-  showDiff = true;
-
   updatedHtml: SafeHtml;
 
   constructor(

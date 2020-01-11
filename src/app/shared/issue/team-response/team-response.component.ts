@@ -10,7 +10,7 @@ import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 import { forkJoin, throwError } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { flatMap } from 'rxjs/internal/operators';
-import { Conflict } from '../../../core/models/conflict.model';
+import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
 import { HttpErrorResponse } from '@angular/common/http';

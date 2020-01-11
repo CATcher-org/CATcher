@@ -13,11 +13,12 @@ import { TesterResponseHeaders } from '../../../core/models/templates/tester-res
 import { TeamResponseHeaders } from '../../../core/models/templates/team-response-template.model';
 import { finalize, map } from 'rxjs/operators';
 import { flatMap } from 'rxjs/internal/operators';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
 import { TesterResponseConflictData } from './conflict-dialog/conflict-dialog.component';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-tester-response',
@@ -41,7 +42,8 @@ export class TesterResponseComponent implements OnInit, OnChanges {
               private issueCommentService: IssueCommentService,
               public userService: UserService,
               private errorHandlingService: ErrorHandlingService,
-              private dialog: MatDialog) { }
+              private dialog: MatDialog,
+              private phaseService: PhaseService) { }
 
   ngOnInit() {
     this.resetForm();
@@ -64,15 +66,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     }
     this.isFormPending = true;
 
-    this.issueService.getLatestIssue(this.issue.id).pipe(
-      map((issue: Issue) => {
-        for (let i = 0; i < issue.testerResponses.length; i++) {
-          if (issue.testerResponses[i].compareTo(this.issue.testerResponses[i]) !== 0) {
-            return false;
-          }
-        }
-        return true;
-      }),
+    this.isSafeToSubmit().pipe(
       flatMap((isSaveToSubmit: boolean) => {
         if (isSaveToSubmit || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
           return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
@@ -94,6 +88,25 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     });
   }
 
+  /**
+   * @return - Determines whether it is safe to submit a tester response.
+   */
+  isSafeToSubmit(): Observable<boolean> {
+    return this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        for (let i = 0; i < issue.testerResponses.length; i++) {
+          if (issue.testerResponses[i].compareTo(this.issue.testerResponses[i]) !== 0) {
+            return false;
+          }
+        }
+        return true;
+      })
+    )
+  }
+
+  /**
+   * Pops up a dialog that shows the difference between the outdated tester's response and the updated one.
+   */
   viewChanges(): void {
     this.dialog.open(ConflictDialogComponent, {
       data: <TesterResponseConflictData>{
@@ -172,10 +185,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
       return '';
     }
 
-    let result = `${TeamResponseHeaders.teamResponse.toString()}\n` +
-      `${this.issue.teamResponse}\n` +
-      `${TesterResponseHeaders.testerResponses.toString()}\n`;
-
+    const updatedIssue = this.issue.clone(this.phaseService.currentPhase);
     const values = this.testerResponseForm.getRawValue();
     const disagrees = [];
     const reasons = [];
@@ -191,13 +201,15 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     }
 
     index = 0;
-    for (const response of this.issue.testerResponses) {
+    for (const response of updatedIssue.testerResponses) {
       const isDisagree = disagrees[index] === undefined ? response.isDisagree() : disagrees[index];
       const reason = isDisagree ? reasons[index] || response.reasonForDisagreement : response.INITIAL_RESPONSE;
-      result += response.getResponseFromValue(isDisagree, reason);
+      response.setDisagree(isDisagree);
+      response.setReasonForDisagreement(reason);
       index++;
     }
-    return result;
+
+    return updatedIssue.createGithubTesterResponse();
   }
 
   /**

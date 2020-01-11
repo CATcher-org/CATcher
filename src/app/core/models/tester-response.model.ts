@@ -25,17 +25,6 @@ export class TesterResponse {
     return toString;
   }
 
-  getResponseFromValue(isDisagree: boolean, reason: string): string {
-    const todo = `- [${isDisagree ? 'x' : ' '}] I disagree`;
-    let toString = '';
-    toString += this.TITLE_PREFIX + this.title + '\n\n';
-    toString += this.description + '\n\n';
-    toString += todo + '\n\n';
-    toString += this.DISAGREEMENT_PREFIX + reason + '\n\n';
-    toString += this.LINE_BREAK;
-    return toString;
-  }
-
   isDisagree(): boolean {
     return this.disagreeCheckbox.charAt(3) === 'x';
   }
@@ -53,5 +42,17 @@ export class TesterResponse {
 
   getDisagreementWithoutDefaultResponse(): string {
     return this.reasonForDisagreement.replace(this.INITIAL_RESPONSE, ' ');
+  }
+
+  setDisagree(isDisagree: boolean) {
+    if (isDisagree) {
+      this.disagreeCheckbox = this.disagreeCheckbox.replace('[ ]', '[x]');
+    } else {
+      this.disagreeCheckbox = this.disagreeCheckbox.replace('[x]', '[ ]');
+    }
+  }
+
+  setReasonForDisagreement(reason: string) {
+    this.reasonForDisagreement = reason;
   }
 }
