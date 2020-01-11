@@ -227,7 +227,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
       const tutorResponse = responses[index] || dispute.tutorResponse;
       updatedIssue.issueDisputes[index].setTutorResponse(tutorResponse);
       updatedIssue.issueDisputes[index].setIsDone(isDone);
-      index++
+      index++;
     }
     return updatedIssue.createGithubTutorResponse();
   }

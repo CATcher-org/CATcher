@@ -101,7 +101,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
         }
         return true;
       })
-    )
+    );
   }
 
   /**
