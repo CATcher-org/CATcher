@@ -10,7 +10,6 @@ import { IssueCommentService } from '../../../core/services/issue-comment.servic
 import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 import { PhaseService } from '../../../core/services/phase.service';

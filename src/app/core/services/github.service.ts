@@ -194,11 +194,11 @@ export class GithubService {
     );
   }
 
-  createIssueComment(issueId: number, description: string): Observable<{}> {
+  createIssueComment(issueId: number, description: string): Observable<GithubComment> {
     return from(octokit.issues.createComment({owner: ORG_NAME, repo: REPO, issue_number: issueId,
       body: description})).pipe(
       map((response: GithubResponse<GithubComment>) => {
-        return response['data'];
+        return response.data;
       })
     );
   }
@@ -217,7 +217,7 @@ export class GithubService {
     return from(octokit.issues.updateComment({owner: ORG_NAME, repo: REPO, comment_id: issueComment.id,
       body: issueComment.description})).pipe(
       map((response: GithubResponse<GithubComment>) => {
-        return response['data'];
+        return response.data;
       })
     );
   }

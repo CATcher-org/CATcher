@@ -11,7 +11,6 @@ import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { finalize, map } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { flatMap } from 'rxjs/internal/operators';
-import { HttpErrorResponse } from '@angular/common/http';
 import { shell } from 'electron';
 import { GithubService } from '../../../core/services/github.service';
 import { PhaseService } from '../../../core/services/phase.service';
@@ -65,24 +64,18 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
 
     this.issue.pending = '' + this.getNumOfPending();
 
-    if (this.issue.issueComment) {
-      this.updateTutorResponse();
-    } else {
-      this.createTutorResponse();
-    }
-  }
-
-  updateTutorResponse(): void {
     this.isSafeToSubmitTutorResponse().pipe(
-      flatMap((isSaveToUpdate: boolean) => {
-        if (!isSaveToUpdate && this.submitButtonText !== SUBMIT_BUTTON_TEXT.OVERWRITE) {
+      flatMap((isSave: boolean) => {
+        if (isSave || this.isUpdatingDeletedResponse()) {
+          if (this.issue.issueComment && !this.isUpdatingDeletedResponse()) {
+            return this.updateTutorResponse();
+          } else {
+            return this.createTutorResponse();
+          }
+        } else {
           this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
           return throwError('The content you are editing has changed. Please verify the changes and try again.');
         }
-        return this.issueService.updateTutorResponse(this.issue, <IssueComment>{
-          ...this.issue.issueComment,
-          description: this.getTutorResponseFromForm()
-        });
       }),
       finalize(() => this.isFormPending = false)
     ).subscribe((issue: Issue) => {
@@ -93,23 +86,16 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
     });
   }
 
-  createTutorResponse(): void {
+  updateTutorResponse(): Observable<Issue> {
+    return this.issueService.updateTutorResponse(this.issue, <IssueComment>{
+      ...this.issue.issueComment,
+      description: this.getTutorResponseFromForm()
+    });
+  }
+
+  createTutorResponse(): Observable<Issue> {
     const tutorResponse = this.getTutorResponseFromForm();
-    this.isSafeToSubmitTutorResponse().pipe(
-      flatMap((isSafeToSubmit: boolean) => {
-        if (!isSafeToSubmit && this.submitButtonText !== SUBMIT_BUTTON_TEXT.OVERWRITE) {
-          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
-          return throwError('The content you are editing has changed. Please verify the changes and try again.');
-        }
-        return this.issueService.createTutorResponse(this.issue, tutorResponse);
-      }),
-      finalize(() => this.isFormPending = false)
-    ).subscribe((issue: Issue) => {
-      this.issueUpdated.emit(issue);
-      this.resetToDefault();
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+    return this.issueService.createTutorResponse(this.issue, tutorResponse);
   }
 
   /**
@@ -132,6 +118,16 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
     );
   }
 
+  /**
+   * Determines whether the user is updating a response that has already been deleted on Github.
+   */
+  isUpdatingDeletedResponse(): boolean {
+    return this.issue.issueComment && !this.issueService.issues[this.issue.id].issueComment;
+  }
+
+  /**
+   * Resets to default form state.
+   */
   resetToDefault(): void {
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
     this.updateEditState.emit(false);

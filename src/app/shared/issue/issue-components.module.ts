@@ -6,7 +6,6 @@ import {DescriptionComponent} from './description/description.component';
 import {MarkdownModule} from 'ngx-markdown';
 import {CommentEditorModule} from '../comment-editor/comment-editor.module';
 import {LabelComponent} from './label/label.component';
-import {TeamResponseComponent} from './team-response/team-response.component';
 import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
 import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
@@ -24,7 +23,6 @@ import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.compo
     TitleComponent,
     DescriptionComponent,
     LabelComponent,
-    TeamResponseComponent,
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
@@ -35,7 +33,6 @@ import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.compo
     TitleComponent,
     DescriptionComponent,
     LabelComponent,
-    TeamResponseComponent,
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,

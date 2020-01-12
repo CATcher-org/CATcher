@@ -55,7 +55,6 @@ export class IssueService {
    * Will constantly poll and update the application's state's with the updated issue.
    *
    * @param issueId - The issue's id to poll for.
-   * @return - Will return a new copy of updated issue in each poll interval.
    */
   pollIssue(issueId: number): Observable<Issue> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
@@ -66,10 +65,10 @@ export class IssueService {
           }),
           map((issue: Issue) => {
             this.updateLocalStore(issue);
-            return issue.clone(this.phaseService.currentPhase);
+            return issue;
           }),
           catchError((err) => {
-            return of(this.issues[issueId].clone(this.phaseService.currentPhase));
+            return of(this.issues[issueId]);
           })
         );
       })
@@ -122,7 +121,10 @@ export class IssueService {
   }
 
   updateTesterResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
-    return this.githubService.updateIssueComment(issueComment).pipe(
+    const isTesterResponseExist = this.issues[issue.id].testerResponses;
+    const commentApiToCall = isTesterResponseExist ? this.githubService.updateIssueComment(issueComment)
+      : this.githubService.createIssueComment(issue.id, issueComment.description);
+    return commentApiToCall.pipe(
       flatMap((response: GithubComment) => {
         const issueClone = issue.clone(this.phaseService.currentPhase);
         issueClone.updateTesterResponse(response);

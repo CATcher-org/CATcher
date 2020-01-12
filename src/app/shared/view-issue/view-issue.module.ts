@@ -9,6 +9,7 @@ import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
 import { NewTeamResponseModule } from './new-team-response/new-team-response.module';
 import { IssueDisputeModule } from './issue-dispute/issue-dispute.module';
 import { TesterResponseModule } from './tester-response/tester-response.module';
+import { TeamResponseModule } from './team-response/team-response.module';
 
 @NgModule({
   exports: [
@@ -21,6 +22,7 @@ import { TesterResponseModule } from './tester-response/tester-response.module';
     CommonModule,
     CommentEditorModule,
     NewTeamResponseModule,
+    TeamResponseModule,
     IssueDisputeModule,
     TesterResponseModule,
     SharedModule,

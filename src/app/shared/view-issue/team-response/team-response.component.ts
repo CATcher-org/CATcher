@@ -6,14 +6,13 @@ import {PermissionService} from '../../../core/services/permission.service';
 import {Issue} from '../../../core/models/issue.model';
 import {IssueCommentService} from '../../../core/services/issue-comment.service';
 import {IssueComment} from '../../../core/models/comment.model';
-import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
-import { forkJoin, throwError } from 'rxjs';
+import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { flatMap } from 'rxjs/internal/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
-import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
+import { ConflictDialogComponent } from '../../issue/conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
-import { HttpErrorResponse } from '@angular/common/http';
 import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
@@ -52,7 +51,7 @@ export class TeamResponseComponent implements OnInit {
   changeToEditMode() {
     this.updateEditState.emit(true);
     this.responseForm.setValue({
-      description: this.issue.teamResponse || ''
+      description: this.issue.teamResponse || '',
     });
   }
 
@@ -68,14 +67,14 @@ export class TeamResponseComponent implements OnInit {
       description: updatedIssue.createGithubTeamResponse(),
     };
 
-    this.issueService.getLatestIssue(this.issue.id).pipe(
-      map((issue: Issue) => {
-        return issue.teamResponse === this.issue.teamResponse;
-      }),
+    this.isSafeToUpdate().pipe(
       flatMap((isSaveToUpdate: boolean) => {
         if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
           return forkJoin([this.issueService.updateIssue(updatedIssue),
             this.issueCommentService.updateIssueComment(updatedIssue.id, updatedIssueComment)]);
+        } else if (this.isUpdatingDeletedResponse()) {
+          return forkJoin([this.issueService.updateIssue(updatedIssue),
+            this.issueCommentService.createIssueComment(this.issue.id, updatedIssueComment.description)]);
         } else {
           this.conflict = new Conflict(this.issue.teamResponse, this.issueService.issues[this.issue.id].teamResponse);
           this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
@@ -97,10 +96,31 @@ export class TeamResponseComponent implements OnInit {
     });
   }
 
+  /**
+   * @return - Determines whether it is safe to updated an existing team response.
+   */
+  isSafeToUpdate(): Observable<boolean> {
+    return this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        return issue.teamResponse === this.issue.teamResponse;
+      })
+    );
+  }
+
+  /**
+   * Determines whether the user is updating a response that has already been deleted on Github.
+   */
+  isUpdatingDeletedResponse(): boolean {
+    return this.issue.teamResponse && !this.issueService.issues[this.issue.id].teamResponse;
+  }
+
   canEditIssue(): boolean {
     return this.permissions.isTeamResponseEditable();
   }
 
+  /**
+   * Resets to default form state.
+   */
   resetToDefault(): void {
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
     this.conflict = undefined;

@@ -131,6 +131,35 @@ export class Issue {
   }
 
   /**
+   * Depending on the phase of the peer testing, each phase will have a response associated to them.
+   * This function will allow the current instance of issue to retain the state of response of the given `issue`.
+   *
+   * @param phase - The phase in which you want to retain your responses.
+   * @param issue - The issue which you want your current instance to retain from.
+   */
+  retainResponses(phase: Phase, issue: Issue) {
+    this.issueComment = issue.issueComment;
+    this.githubComments = issue.githubComments;
+    switch (phase) {
+      case Phase.phaseBugReporting:
+        this.description = issue.description;
+        break;
+      case Phase.phaseTeamResponse:
+        this.teamResponse = issue.teamResponse;
+        break;
+      case Phase.phaseTesterResponse:
+        this.testerResponses = issue.testerResponses;
+        this.teamResponse = issue.teamResponse;
+        break;
+      case Phase.phaseModeration:
+        this.issueDisputes = issue.issueDisputes;
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
    * Updates the tester's responses and team response based on the given githubComment.
    * @param githubComment - A version of githubComment to update the issue with.
    */

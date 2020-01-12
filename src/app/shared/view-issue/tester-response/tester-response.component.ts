@@ -9,15 +9,11 @@ import { UserRole } from '../../../core/models/user.model';
 import { IssueCommentService } from '../../../core/services/issue-comment.service';
 import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
-import { TesterResponseHeaders } from '../../../core/models/templates/tester-response-template.model';
-import { TeamResponseHeaders } from '../../../core/models/templates/team-response-template.model';
 import { finalize, map } from 'rxjs/operators';
 import { flatMap } from 'rxjs/internal/operators';
 import { Observable, throwError } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
-import { TesterResponseConflictData } from './conflict-dialog/conflict-dialog.component';
+import { ConflictDialogComponent, TesterResponseConflictData } from './conflict-dialog/conflict-dialog.component';
 import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
@@ -68,7 +64,8 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
     this.isSafeToSubmit().pipe(
       flatMap((isSaveToSubmit: boolean) => {
-        if (isSaveToSubmit || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+        if (isSaveToSubmit || this.isUpdatingDeletedResponse() ||
+            this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
           return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
             ...this.issue.issueComment,
             description: this.getTesterResponseFromForm(),
@@ -94,14 +91,21 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   isSafeToSubmit(): Observable<boolean> {
     return this.issueService.getLatestIssue(this.issue.id).pipe(
       map((issue: Issue) => {
-        for (let i = 0; i < issue.testerResponses.length; i++) {
-          if (issue.testerResponses[i].compareTo(this.issue.testerResponses[i]) !== 0) {
-            return false;
-          }
+        if (!issue.testerResponses) {
+          return false;
         }
-        return true;
+        return issue.testerResponses.reduce((result, response, index) => {
+          return result && response.compareTo(this.issue.testerResponses[index]) === 0;
+        }, true);
       })
     );
+  }
+
+  /**
+   * Determines whether the user is updating a response that has already been deleted on Github.
+   */
+  isUpdatingDeletedResponse(): boolean {
+    return this.issue.testerResponses && !this.issueService.issues[this.issue.id].testerResponses;
   }
 
   /**
@@ -128,6 +132,9 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     });
   }
 
+  /**
+   * Resets to default form state.
+   */
   resetToDefault(): void {
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
     this.updateEditState.emit(false);
