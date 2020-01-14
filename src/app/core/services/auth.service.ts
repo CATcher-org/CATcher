@@ -44,7 +44,6 @@ export class AuthService {
    * @param password - User's Password
    */
   authenticate(username: string, password: string): Observable<any> {
-
     this.changeAuthState(AuthState.AwaitingAuthentication);
     const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
     this.githubService.storeCredentials(username, password);
@@ -52,9 +51,8 @@ export class AuthService {
     return this.http.get('https://api.github.com/user', { headers: header });
   }
 
-
-
   logOut(): void {
+    this.githubService.reset();
     this.userService.reset();
     this.issueService.reset();
     this.issueCommentService.reset();

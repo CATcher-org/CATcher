@@ -36,6 +36,7 @@
     "@octokit/rest": "^16.27.0",
     "core-js": "2.6.1",
     "csv-parse": "^4.4.3",
+    "diff-match-patch": "^1.0.4",
     "moment": "^2.24.0",
     "ngx-markdown": "^8.1.1",
     "node-fetch": "^2.6.0",

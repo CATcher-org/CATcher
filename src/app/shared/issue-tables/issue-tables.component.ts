@@ -88,49 +88,42 @@ export class IssueTablesComponent implements OnInit {
   }
 
   markAsResponded(issue: Issue) {
-    this.issueService.updateIssue({
+    this.issueService.updateIssue(<Issue>{
       ...issue,
       status: STATUS.Done
     }).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
   }
 
   markAsPending(issue: Issue) {
-    this.issueService.updateIssue({
+    this.issueService.updateIssue(<Issue>{
       ...issue,
       status: STATUS.Incomplete
     }).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
   }
 
-  isTodoListExists(issue): boolean {
-    return issue.todoList;
-  }
-
-  todoFinished(issue): number {
+  todoFinished(issue: Issue): number {
     let count = 0;
-    if (!this.isTodoListExists(issue)) {
-      return count;
-    }
-
-    for (const todo of issue.todoList) {
-      if (todo.charAt(3) === 'x') {
+    for (const dispute of issue.issueDisputes) {
+      if (dispute.isDone()) {
         count += 1;
       }
     }
+
     return count;
   }
 
-  isTodoListChecked(issue): boolean {
-    return (!this.isTodoListExists(issue) || this.todoFinished(issue) === issue.todoList.length);
+  isTodoListChecked(issue: Issue): boolean {
+    return this.todoFinished(issue) === issue.issueDisputes.length;
   }
 
   deleteIssue(id: number) {
@@ -143,7 +136,7 @@ export class IssueTablesComponent implements OnInit {
       this.issuesPendingDeletion = theRest;
     })).subscribe((removedIssue) => {
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
   }

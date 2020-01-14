@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { flatMap, map } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
+import { catchError, flatMap, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, Observable, of, timer } from 'rxjs';
 import {
   Issue,
   Issues,
-  IssuesFilter,
-  RespondType
+  IssuesFilter, STATUS,
 } from '../models/issue.model';
 import { UserService } from './user.service';
 import { Phase, PhaseService } from './phase.service';
@@ -15,13 +14,16 @@ import { PermissionService } from './permission.service';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { IssueDispute } from '../models/issue-dispute.model';
-import { GithubIssue, GithubLabel } from '../models/github-issue.model';
-import { GithubComment } from '../models/github-comment.model';
+import { GithubIssue, GithubLabel } from '../models/github/github-issue.model';
+import { GithubComment } from '../models/github/github-comment.model';
+import { IssueComment } from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IssueService {
+  static readonly POLL_INTERVAL = 5000; // 5 seconds
+
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
   private issueTeamFilter = 'All Teams';
@@ -38,17 +40,39 @@ export class IssueService {
   }
 
   /**
-   * Fetch all the necessary issues. If the issues have been fetched before, the function will return the existing issues instead
-   * of calling from Github API.
-   *
-   * @return An Observable containing an array of Issues.
-   *
+   * Will constantly poll and update the application's state with the updated issues.
    */
-  getAllIssues(): Observable<Issue[]> {
-    if (this.issues === undefined) {
-      return this.initializeData();
-    }
-    return this.issues$;
+  pollIssues(): Observable<Issue[]> {
+    return timer(0, IssueService.POLL_INTERVAL).pipe(
+      switchMap(() => {
+        return this.reloadAllIssues()
+          .pipe(catchError(() => this.issues$));
+      })
+    );
+  }
+
+  /**
+   * Will constantly poll and update the application's state's with the updated issue.
+   *
+   * @param issueId - The issue's id to poll for.
+   */
+  pollIssue(issueId: number): Observable<Issue> {
+    return timer(0, IssueService.POLL_INTERVAL).pipe(
+      switchMap(() => {
+        return this.githubService.fetchIssue(issueId).pipe(
+          flatMap((response) => {
+            return this.createIssueModel(response);
+          }),
+          map((issue: Issue) => {
+            this.updateLocalStore(issue);
+            return issue;
+          }),
+          catchError((err) => {
+            return of(this.issues[issueId]);
+          })
+        );
+      })
+    );
   }
 
   reloadAllIssues() {
@@ -57,14 +81,24 @@ export class IssueService {
 
   getIssue(id: number): Observable<Issue> {
     if (this.issues === undefined) {
-      return this.githubService.fetchIssue(id).pipe(
-        flatMap((response) => {
-          return this.createIssueModel(response);
-        })
-      );
+      return this.getLatestIssue(id);
     } else {
       return of(this.issues[id]);
     }
+  }
+
+  getLatestIssue(id: number): Observable<Issue> {
+    return this.githubService.fetchIssue(id).pipe(
+      flatMap((response: GithubIssue) => {
+        return this.createAndSaveIssueModel(response);
+      }),
+      map((isSaveSuccess: boolean) => {
+        return this.issues[id];
+      }),
+      catchError((err) => {
+        return of(this.issues[id]);
+      })
+    );
   }
 
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
@@ -83,6 +117,40 @@ export class IssueService {
         flatMap((response: GithubIssue) => {
           return this.createIssueModel(response);
         })
+    );
+  }
+
+  updateTesterResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
+    const isTesterResponseExist = this.issues[issue.id].testerResponses;
+    const commentApiToCall = isTesterResponseExist ? this.githubService.updateIssueComment(issueComment)
+      : this.githubService.createIssueComment(issue.id, issueComment.description);
+    return commentApiToCall.pipe(
+      flatMap((response: GithubComment) => {
+        const issueClone = issue.clone(this.phaseService.currentPhase);
+        issueClone.updateTesterResponse(response);
+        issueClone.status = STATUS.Done;
+        return this.updateIssue(issueClone);
+      })
+    );
+  }
+
+  updateTutorResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
+    return this.githubService.updateIssueComment(issueComment).pipe(
+      map((response: GithubComment) => {
+        issue.updateDispute(response);
+        return issue;
+      }),
+      flatMap(() => this.updateIssue(issue))
+    );
+  }
+
+  createTutorResponse(issue: Issue, response: string): Observable<Issue> {
+    return this.githubService.createIssueComment(issue.id, response).pipe(
+      map((githubComment: GithubComment) => {
+        issue.updateDispute(githubComment);
+        return issue;
+      }),
+      flatMap(() => this.updateIssue(issue))
     );
   }
 
@@ -146,9 +214,8 @@ export class IssueService {
   /**
    * Check whether the issue has been responded in the phase 2/3.
    */
-  hasResponse(issueId: number): boolean {
-    const responseType = this.phaseService.currentPhase === Phase.phaseTeamResponse ? RespondType.teamResponse : RespondType.tutorResponse;
-    return !!this.issues[issueId][responseType];
+  hasTeamResponse(issueId: number): boolean {
+    return !!this.issues[issueId].teamResponse;
   }
 
   /**
@@ -207,26 +274,28 @@ export class IssueService {
 
     return forkJoin(issuesPerFilter).pipe(
       flatMap((issuesByFilter: [][]) => {
-        const mappingFunctions: Observable<Issue>[] = [];
+        const mappingFunctions: Observable<boolean>[] = [];
         for (const issues of issuesByFilter) {
           for (const issue of issues) {
-            mappingFunctions.push(this.createIssueModel(issue));
+            mappingFunctions.push(this.createAndSaveIssueModel(issue));
           }
         }
-        return mappingFunctions.length === 0 ? of([]) : combineLatest(mappingFunctions);
+        return mappingFunctions.length === 0 ? of([]) : forkJoin(mappingFunctions);
       }),
-      map((issueArray) => {
-        let mappedResults: Issues = {};
-        issueArray.forEach(issue => mappedResults = {
-          ...mappedResults,
-          [issue.id]: issue
-        });
-        return mappedResults;
-      }),
-      map((issues: Issues) => {
-        this.issues = issues;
-        this.issues$.next(Object.values(this.issues));
+      map(() => {
         return Object.values(this.issues);
+      })
+    );
+  }
+
+  private createAndSaveIssueModel(githubIssue: GithubIssue): Observable<boolean> {
+    return this.createIssueModel(githubIssue).pipe(
+      map((issue: Issue) => {
+        this.updateLocalStore(issue);
+        return true;
+      }),
+      catchError(err => {
+        return of(false);
       })
     );
   }
@@ -291,22 +360,22 @@ export class IssueService {
         return of(Issue.createPhaseBugReportingIssue(githubIssue));
       case Phase.phaseTeamResponse:
         return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
-          flatMap((githubComments: GithubComment[]) => {
-            return of(Issue.createPhaseTeamResponseIssue(githubIssue, githubComments,
-              this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
+          map((githubComments: GithubComment[]) => {
+            return Issue.createPhaseTeamResponseIssue(githubIssue, githubComments,
+              this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
           })
         );
       case Phase.phaseTesterResponse:
         return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
-          flatMap((githubComments: GithubComment[]) => {
-            return of(Issue.createPhaseTesterResponseIssue(githubIssue, githubComments));
+          map((githubComments: GithubComment[]) => {
+            return Issue.createPhaseTesterResponseIssue(githubIssue, githubComments);
           })
         );
       case Phase.phaseModeration:
         return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
-          flatMap((githubComments: GithubComment[]) => {
-            return of(Issue.createPhaseModerationIssue(githubIssue, githubComments,
-              this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue))));
+          map((githubComments: GithubComment[]) => {
+            return Issue.createPhaseModerationIssue(githubIssue, githubComments,
+              this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
           })
         );
       default:

@@ -1,0 +1,20 @@
+.tab-content {
+  padding: 10px;
+  min-height: 300px;
+  max-height: 55vh;
+}
+
+.column.left {
+  min-width: 60vh;
+  width: 100%;
+}
+
+.column.right {
+  max-width: 15%;
+  min-width: 20vh;
+  width: 100%;
+}
+
+.column {
+  padding: 10px;
+}

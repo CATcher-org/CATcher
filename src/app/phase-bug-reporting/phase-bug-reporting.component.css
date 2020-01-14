@@ -31,12 +31,3 @@
 .mat-column-severity {
   width: 23%;
 }
-.grid-flush-left {
-  position: absolute;
-  left: 5px;
-}
-
-.grid-flush-right {
-  position: absolute;
-  right: 5px;
-}

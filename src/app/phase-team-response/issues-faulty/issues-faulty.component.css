@@ -42,13 +42,3 @@
   width: 15%;
   text-align: center;
 }
-
-.grid-flush-left {
-  position: absolute;
-  left: 5px;
-}
-
-.grid-flush-right {
-  position: absolute;
-  right: 5px;
-}

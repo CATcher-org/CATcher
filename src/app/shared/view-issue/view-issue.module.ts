@@ -1,30 +1,30 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NewTutorResponseComponent } from '../new-tutor-response/new-tutor-response.component';
-import { NewTeamResponseComponent } from '../new-team-respond/new-team-response.component';
 import { ViewIssueComponent } from './view-issue.component';
 import { CommentEditorModule } from '../comment-editor/comment-editor.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { SharedModule } from '../shared.module';
 import { IssueComponentsModule } from '../issue/issue-components.module';
 import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
-import { TesterResponseComponent } from '../tester-response/tester-response.component';
-import { IssueDisputeComponent } from '../issue-dispute/issue-dispute.component';
+import { NewTeamResponseModule } from './new-team-response/new-team-response.module';
+import { IssueDisputeModule } from './issue-dispute/issue-dispute.module';
+import { TesterResponseModule } from './tester-response/tester-response.module';
+import { TeamResponseModule } from './team-response/team-response.module';
 
 @NgModule({
   exports: [
     ViewIssueComponent
   ],
   declarations: [
-    NewTutorResponseComponent,
-    NewTeamResponseComponent,
-    TesterResponseComponent,
-    IssueDisputeComponent,
     ViewIssueComponent
   ],
   imports: [
     CommonModule,
     CommentEditorModule,
+    NewTeamResponseModule,
+    TeamResponseModule,
+    IssueDisputeModule,
+    TesterResponseModule,
     SharedModule,
     IssueComponentsModule,
     LabelDropdownModule,

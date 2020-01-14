@@ -19,6 +19,7 @@ export class AssigneeComponent implements OnInit {
 
   @Input() issue: Issue;
   @Input() team: Team;
+  @Input() isEditable = true;
 
   @ViewChild(MatSelect) assigneeSelection: MatSelect;
 
@@ -30,7 +31,7 @@ export class AssigneeComponent implements OnInit {
 
   ngOnInit(): void {
     this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
-    this.assignees = this.issue.assignees;
+    this.assignees = this.issue.assignees.map(a => a.toLowerCase());
   }
 
   openSelector() {
@@ -52,7 +53,7 @@ export class AssigneeComponent implements OnInit {
     this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
       this.issueUpdated.emit(latestIssue);
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
     });
   }
 }
