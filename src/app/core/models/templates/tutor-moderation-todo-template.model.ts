@@ -1,6 +1,6 @@
 import { Header, Template } from './template.model';
 import { ModerationSection } from './sections/moderation-section.model';
-import { GithubComment } from '../github-comment.model';
+import { GithubComment } from '../github/github-comment.model';
 import { IssueComment } from '../comment.model';
 
 

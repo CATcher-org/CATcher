@@ -58,7 +58,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.filter = (issue: Issue) => {
-      return (!this.issueService.hasResponse(issue.id) || (!issue.status || issue.status === 'Incomplete')) &&
+      return (!this.issueService.hasTeamResponse(issue.id) || (!issue.status || issue.status === 'Incomplete')) &&
         !issue.duplicateOf;
     };
   }

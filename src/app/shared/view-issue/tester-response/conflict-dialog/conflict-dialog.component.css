@@ -1,0 +1,23 @@
+.tab-content {
+  padding: 10px;
+  min-height: 300px;
+  max-height: 55vh;
+}
+
+.full-width {
+  min-width: 80vh;
+  width: 100%;
+}
+
+.response-title {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  margin-top: 10px;
+}
+
+.checkbox-changes {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}

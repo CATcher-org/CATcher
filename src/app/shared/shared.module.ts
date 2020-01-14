@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from './material.module';
 import { ErrorToasterModule } from './error-toasters/error-toaster.module';
+import { FormDisableControlDirective } from '../core/directives/form-disable-control.directive';
 
 @NgModule({
   imports: [
@@ -16,8 +17,9 @@ import { ErrorToasterModule } from './error-toasters/error-toaster.module';
     MaterialModule,
     ErrorToasterModule,
   ],
-  declarations: [],
+  declarations: [FormDisableControlDirective],
   exports: [
+    FormDisableControlDirective,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

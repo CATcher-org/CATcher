@@ -6,12 +6,11 @@ import {DescriptionComponent} from './description/description.component';
 import {MarkdownModule} from 'ngx-markdown';
 import {CommentEditorModule} from '../comment-editor/comment-editor.module';
 import {LabelComponent} from './label/label.component';
-import {ResponseComponent} from './response/response.component';
 import {AssigneeComponent} from './assignee/assignee.component';
 import {DuplicateOfComponent} from './duplicateOf/duplicate-of.component';
 import {DuplicatedIssuesComponent} from './duplicatedIssues/duplicated-issues.component';
-import { TodoListComponent } from './todo-list/todo-list.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
+import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 
 @NgModule({
   imports: [
@@ -24,23 +23,24 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     TitleComponent,
     DescriptionComponent,
     LabelComponent,
-    ResponseComponent,
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
-    TodoListComponent,
     UnsureCheckboxComponent,
+    ConflictDialogComponent,
   ],
   exports: [
     TitleComponent,
     DescriptionComponent,
     LabelComponent,
-    ResponseComponent,
     AssigneeComponent,
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
-    TodoListComponent,
     UnsureCheckboxComponent,
+    ConflictDialogComponent,
+  ],
+  entryComponents: [
+    ConflictDialogComponent,
   ]
 })
 export class IssueComponentsModule { }

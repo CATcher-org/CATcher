@@ -38,12 +38,3 @@
 .mat-column-duplicateOf {
   width: 12%;
 }
-.grid-flush-left {
-  position: absolute;
-  left: 5px;
-}
-
-.grid-flush-right {
-  position: absolute;
-  right: 5px;
-}

@@ -24,7 +24,7 @@ export class DuplicatedIssuesComponent implements OnInit {
   }
 
   removeDuplicateStatus(duplicatedIssue: Issue) {
-    this.issueService.updateIssue({
+    this.issueService.updateIssue(<Issue>{
       ...duplicatedIssue,
       duplicated: false,
       duplicateOf: null,

@@ -1,0 +1,67 @@
+<h3 class="mat-title">Tester's Response</h3>
+<form [formGroup]="testerResponseForm" (ngSubmit)="submitTesterResponseForm()">
+  <div class="timeline-comment">
+    <div class="timeline-header">
+      <span style="vertical-align: middle; margin-left: 5px" *ngIf="this.isNewResponse()"> Please verify the following item(s). </span>
+      <span style="vertical-align: middle; margin-left: 5px" *ngIf="!this.isNewResponse()"> <strong>Tester</strong> responded. </span>
+      <button mat-button style="float: right;" *ngIf="!isEditing" (click)="changeToEditMode()">
+          Edit
+      </button>
+    </div>
+    <div>
+      <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
+        <div style="display: flex; align-items: center">
+          <div class="question-mark"> ? </div>
+          <markdown [data]="response.getTitleInMarkDown()"></markdown>
+        </div>
+        <br>
+        <markdown [data]="response.description"></markdown>
+        <br>
+        <div>
+          <mat-checkbox style="display: inline-block; width: 20%" [id]="getDisagreeBoxFormId(i)"
+                        [formControlName]="getDisagreeBoxFormId(i)"
+                        [disableControl]="!isEditing"
+                        (change)="handleChangeOfDisagreeCheckbox($event, i)"
+          >
+            I disagree
+          </mat-checkbox>
+        </div>
+        <div *ngIf="testerResponseForm.get(getDisagreeBoxFormId(i)).value">
+          <div>
+            <p style="font-weight: 500;"> Reason for Disagreement: </p>
+            <markdown [data]="response.reasonForDisagreement" *ngIf="!isEditing"></markdown>
+          </div>
+          <div *ngIf="isEditing">
+            <app-comment-editor [commentField]="testerResponseForm.get(getTesterResponseFormId(i))"
+                                [id]="getTesterResponseFormId(i)"
+                                [commentForm]="testerResponseForm"
+                                [(isFormPending)]="isFormPending"
+                                [(submitButtonText)]="submitButtonText"
+            >
+            </app-comment-editor>
+          </div>
+        </div>
+        <br> <markdown data="-------------------"></markdown> <br>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="editor-actions" *ngIf="isEditing">
+        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
+                mat-raised-button color="primary" (click)="viewChanges()">
+          View Updated Response
+        </button>
+        <button type="submit" [disabled]="testerResponseForm.invalid || isFormPending" mat-stroked-button
+                color="primary" *ngIf="!conflict">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" type="submit" [disabled]="testerResponseForm.invalid || isFormPending"
+                mat-raised-button color="warn" *ngIf="conflict">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" type="button" [disabled]="isFormPending" *ngIf="!this.isNewResponse()"
+                mat-stroked-button color="warn" (click)="cancelEditMode()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

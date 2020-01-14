@@ -10,29 +10,6 @@ html, body {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.link-grey-dark {
-  color: #24292e;
-  font-weight: 500;
-  font-size: 16px;
-}
-
-.link-grey-dark:hover {
-  color: #0366d6;
-}
-
-.no-underline {
-  text-decoration: none!important;
-}
-
-.mat-table tbody tr:hover td {
-  background-color: #E8E8EE;
-}
-
-table {
-  width: 100%;
-  table-layout: fixed;
-}
-
 /* Timeline comment style */
 .timeline-header {
   background-color: #f1f8ff;
@@ -55,6 +32,107 @@ table {
 .comment {
   padding: 15px;
 }
+
+.question-mark {
+  color: red;
+  font-size: 35px;
+  margin: 0 10px 15px 0;
+  text-shadow: -1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black;
+}
+/* Timeline comment style */
+
+/* MaterialUI icon styles */
+.material-icons-outlined,
+.material-icons.material-icons--outlined,
+.material-icons-two-tone,
+.material-icons.material-icons--two-tone,
+.material-icons-round,
+.material-icons.material-icons--round,
+.material-icons-sharp,
+.material-icons.material-icons--sharp {
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-icons-outlined,
+.material-icons.material-icons--outlined {
+  font-family: 'Material Icons Outlined';
+}
+
+.material-icons-two-tone,
+.material-icons.material-icons--two-tone {
+  font-family: 'Material Icons Two Tone';
+}
+
+.material-icons-round,
+.material-icons.material-icons--round {
+  font-family: 'Material Icons Round';
+}
+
+.material-icons-sharp,
+.material-icons.material-icons--sharp {
+  font-family: 'Material Icons Sharp';
+}
+/* MaterialUI icon styles */
+
+.link-grey-dark {
+  color: #24292e;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.link-grey-dark:hover {
+  color: #0366d6;
+}
+
+.no-underline {
+  text-decoration: none!important;
+}
+
+.grid-flush-left {
+  position: absolute;
+  left: 5px;
+}
+
+.grid-flush-right {
+  position: absolute;
+  right: 5px;
+}
+
+.mat-table tbody tr:hover td {
+  background-color: #E8E8EE;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.centralize {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editor-actions {
+  float: right;
+  padding: 10px;
+}
+
+.editor-action {
+  margin-left: 10px !important;
+}
+
 
 .bold-name {
   font-weight: 500;

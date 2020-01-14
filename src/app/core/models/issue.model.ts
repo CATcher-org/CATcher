@@ -2,12 +2,13 @@ import { Team } from './team.model';
 import { TesterResponse } from './tester-response.model';
 import { IssueComment } from './comment.model';
 import { IssueDispute } from './issue-dispute.model';
-import { GithubIssue, GithubLabel } from './github-issue.model';
-import { GithubComment } from './github-comment.model';
+import { GithubIssue, GithubLabel } from './github/github-issue.model';
+import { GithubComment } from './github/github-comment.model';
 import { TeamResponseTemplate } from './templates/team-response-template.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
+import { Phase } from '../services/phase.service';
 import * as moment from 'moment';
 
 export class Issue {
@@ -15,6 +16,8 @@ export class Issue {
   /** Basic Fields */
   readonly id: number;
   readonly created_at: string;
+  readonly githubIssue: GithubIssue;
+  githubComments: GithubComment[];
   title: string;
   description: string;
 
@@ -33,9 +36,7 @@ export class Issue {
 
   /** Fields derived from parsing of Github's issue description */
   duplicateOf?: number;
-  todoList?: string[];
   teamResponse?: string;
-  tutorResponse?: string;
   testerResponses?: TesterResponse[];
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
@@ -46,6 +47,7 @@ export class Issue {
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
     this.description = githubIssue.body;
+    this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
     this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity);
@@ -65,19 +67,21 @@ export class Issue {
     const issue = new Issue(githubIssue);
     const template = new TeamResponseTemplate(githubComments);
 
+    issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
     issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
-
     return issue;
   }
 
   public static createPhaseTesterResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
     const issue = new Issue(githubIssue);
     const template = new TesterResponseTemplate(githubComments);
+
+    issue.githubComments = githubComments;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
     issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
@@ -90,11 +94,11 @@ export class Issue {
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
     const todoTemplate = new TutorModerationTodoTemplate(githubComments);
 
+    issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse.content;
     issue.issueDisputes = issueTemplate.dispute.disputes;
-    issue.todoList = issueTemplate.dispute.disputes.map(d => d.todo);
 
     if (todoTemplate.moderation && todoTemplate.comment) {
       issue.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
@@ -102,9 +106,110 @@ export class Issue {
         return dispute;
       });
       issue.issueComment = todoTemplate.comment;
-      issue.todoList = todoTemplate.moderation.todoList;
     }
     return issue;
+  }
+
+  /**
+   * Creates a new copy of an exact same issue.
+   * This would come useful in the event when you want to update the issue but not the actual
+   * state of the application.
+   */
+  clone(phase: Phase): Issue {
+    switch (phase) {
+      case Phase.phaseBugReporting:
+        return Issue.createPhaseBugReportingIssue(this.githubIssue);
+      case Phase.phaseTeamResponse:
+        return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+      case Phase.phaseTesterResponse:
+        return Issue.createPhaseTesterResponseIssue(this.githubIssue, this.githubComments);
+      case Phase.phaseModeration:
+        return Issue.createPhaseModerationIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+      default:
+        return Issue.createPhaseBugReportingIssue(this.githubIssue);
+    }
+  }
+
+  /**
+   * Depending on the phase of the peer testing, each phase will have a response associated to them.
+   * This function will allow the current instance of issue to retain the state of response of the given `issue`.
+   *
+   * @param phase - The phase in which you want to retain your responses.
+   * @param issue - The issue which you want your current instance to retain from.
+   */
+  retainResponses(phase: Phase, issue: Issue) {
+    this.issueComment = issue.issueComment;
+    this.githubComments = issue.githubComments;
+    switch (phase) {
+      case Phase.phaseBugReporting:
+        this.description = issue.description;
+        break;
+      case Phase.phaseTeamResponse:
+        this.teamResponse = issue.teamResponse;
+        break;
+      case Phase.phaseTesterResponse:
+        this.testerResponses = issue.testerResponses;
+        this.teamResponse = issue.teamResponse;
+        break;
+      case Phase.phaseModeration:
+        this.issueDisputes = issue.issueDisputes;
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
+   * Updates the tester's responses and team response based on the given githubComment.
+   * @param githubComment - A version of githubComment to update the issue with.
+   */
+  updateTesterResponse(githubComment: GithubComment): void {
+    const template = new TesterResponseTemplate([githubComment]);
+    this.issueComment = template.comment;
+    this.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
+    this.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
+  }
+
+  /**
+   * Updates the tutor's resolution of the disputes with a new version of githubComment.
+   * @param githubComment - A version of githubComment to update the dispute with.
+   */
+  updateDispute(githubComment: GithubComment): void {
+    const todoTemplate = new TutorModerationTodoTemplate([githubComment]);
+    this.issueComment = todoTemplate.comment;
+    this.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+      dispute.description = this.issueDisputes[i].description;
+      return dispute;
+    });
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#dev-response-phase
+  createGithubTeamResponse(): string {
+    return `# Team\'s Response\n${this.teamResponse}\n ` +
+      `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#tutor-moderation
+  createGithubTutorResponse(): string {
+    let tutorResponseString = '# Tutor Moderation\n\n';
+    for (const issueDispute of this.issueDisputes) {
+      tutorResponseString += issueDispute.toTutorResponseString();
+    }
+    return tutorResponseString;
+  }
+
+  // Template url: https://github.com/CATcher-org/templates#teams-response-1
+  createGithubTesterResponse(): string {
+    return `# Team\'s Response\n${this.teamResponse}\n ` +
+      `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
+  }
+
+  private getTesterResponsesString(testerResponses: TesterResponse[]): string {
+    let testerResponsesString = '';
+    for (const testerResponse of testerResponses) {
+      testerResponsesString += testerResponse.toString();
+    }
+    return testerResponsesString;
   }
 }
 
@@ -119,26 +224,6 @@ export const ISSUE_TYPE_ORDER = { '-': 0 , DocTypo: 1, DocumentationBug: 2, Feat
 export enum STATUS {
   Incomplete = 'Incomplete',
   Done = 'Done',
-}
-
-export enum SEVERITY {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-}
-
-export enum TYPE {
-  DocTypo = 'DocTypo',
-  DocumentationBug = 'DocumentationBug',
-  FeatureFlaw = 'FeatureFlaw',
-  FunctionalityBug = 'FunctionalityBug',
-}
-
-export enum RESPONSE {
-  Accepted = 'Accepted',
-  Rejected = 'Rejected',
-  IssueUnclear = 'IssueUnclear',
-  CannotReproduce = 'CannotReproduce',
 }
 
 export const IssuesFilter = {
@@ -163,8 +248,3 @@ export const IssuesFilter = {
     Admin: 'NO_FILTER',
   }
 };
-
-export enum RespondType {
-  teamResponse = 'teamResponse',
-  tutorResponse = 'tutorResponse',
-}

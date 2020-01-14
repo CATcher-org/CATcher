@@ -2,7 +2,6 @@ import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { Router } from '@angular/router';
 import { GithubService } from '../core/services/github.service';
@@ -50,7 +49,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       (event, {token, isChangingAccount, error, isWindowClosed}) => {
       this.ngZone.run(() => {
         if (error && !isWindowClosed) {
-          this.errorHandlingService.handleGeneralError(error);
+          this.errorHandlingService.handleError(error);
         }
         if (error && isChangingAccount) {
           this.authService.changeAuthState(AuthState.PartialOAuthenticated);
@@ -98,7 +97,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.isReady = true;
       this.versionCheckingError = false;
     }, (error) => {
-      this.errorHandlingService.handleHttpError(error);
+      this.errorHandlingService.handleError(error);
       this.isReady = true;
       this.versionCheckingError = true;
     });
@@ -168,7 +167,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.auth.changeAuthState(AuthState.NotAuthenticated);
-        this.onAuthFailure(form, error);
+        this.errorHandlingService.handleError(error);
       }
     );
   }
@@ -201,7 +200,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.handleAuthSuccess(form);
     }, (error) => {
       this.auth.changeAuthState(AuthState.PartialOAuthenticated);
-      this.onAuthFailure(form, error);
+      this.errorHandlingService.handleError(error);
     });
   }
 
@@ -218,19 +217,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       .concat(this.phaseService.getPhaseDetail()));
     this.router.navigateByUrl(this.phaseService.currentPhase);
     this.authService.changeAuthState(AuthState.Authenticated);
-  }
-
-  /**
-   * Handles the clean up required after the user encounter a failure in authentication.
-   * @param form - the form using in the authentication process.
-   * @param error - the error object that is being raised.
-   */
-  onAuthFailure(form: NgForm, error: any) {
-    if (error instanceof HttpErrorResponse) {
-      this.errorHandlingService.handleHttpError(error.error);
-    } else {
-      this.errorHandlingService.handleGeneralError(error);
-    }
   }
 
   /**

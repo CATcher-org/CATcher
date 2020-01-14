@@ -1,7 +1,7 @@
 import { Header, Template } from './template.model';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
-import { GithubIssue } from '../github-issue.model';
+import { GithubIssue } from '../github/github-issue.model';
 
 
 const tutorModerationIssueDescriptionHeaders = {

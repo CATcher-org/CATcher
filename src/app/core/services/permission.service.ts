@@ -7,7 +7,6 @@ import {UserRole} from '../models/user.model';
 const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 
 const PERMISSIONS = {
-  /** Phase 1 Permissions **/
   [Phase.phaseBugReporting]: {
     [UserRole.Student]: {
       'isIssueCreatable': true,
@@ -38,7 +37,6 @@ const PERMISSIONS = {
     }
   },
 
-  /** Phase 2 Permissions **/
   [Phase.phaseTeamResponse]: {
     [UserRole.Student]: {
       'isIssueCreatable': false,
@@ -76,7 +74,7 @@ const PERMISSIONS = {
       'isIssueTitleEditable': false,
       'isIssueDescriptionEditable': false,
       'isIssueLabelsEditable': false,
-      'isTeamResponseEditable': true,
+      'isTeamResponseEditable': false,
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {

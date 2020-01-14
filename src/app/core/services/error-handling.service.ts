@@ -1,8 +1,9 @@
-import {Injectable} from '@angular/core';
-import {MatSnackBar} from '@angular/material';
-import {NoInternetConnectionComponent} from '../../shared/error-toasters/no-internet-connection/no-internet-connection.component';
-import {GeneralMessageErrorComponent} from '../../shared/error-toasters/general-message-error/general-message-error.component';
-import {FormErrorComponent} from '../../shared/error-toasters/form-error/form-error.component';
+import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
+import { GeneralMessageErrorComponent } from '../../shared/error-toasters/general-message-error/general-message-error.component';
+import { FormErrorComponent } from '../../shared/error-toasters/form-error/form-error.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { RequestError } from '@octokit/request-error';
 
 export const ERRORCODE_NOT_FOUND = 404;
 
@@ -13,17 +14,30 @@ export class ErrorHandlingService {
 
   constructor(private snackBar: MatSnackBar) {}
 
+  handleError(error: HttpErrorResponse | string | RequestError, actionCallback?: () => void) {
+    console.error(error);
+    if (error instanceof HttpErrorResponse || error instanceof RequestError) {
+      this.handleHttpError(error, actionCallback);
+    } else {
+      this.handleGeneralError(error);
+    }
+  }
+
   // Ref: https://developer.github.com/v3/#client-errors
-  handleHttpError(error, actionCallback?: () => void) {
-    console.log(error);
+  private handleHttpError(error: HttpErrorResponse | RequestError, actionCallback?: () => void): void {
+    // Angular treats 304 Not Modified as an error, we will ignore it.
+    if (error.status === 304) {
+      return;
+    }
+
+    if (!navigator.onLine) {
+      this.handleGeneralError('No Internet Connection');
+      return;
+    }
+
     switch (error.status) {
-      case 500: // Internal Server Error. Could also be due to user not having internet connection.
-        if (navigator.onLine) {
-          this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
-        } else {
-          const snackbarRef = this.snackBar.openFromComponent(NoInternetConnectionComponent, {data: error.request.method});
-          snackbarRef.onAction().subscribe(actionCallback);
-        }
+      case 500: // Internal Server Error.
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
         break;
       case 422: // Form errors
         this.snackBar.openFromComponent(FormErrorComponent, {data: error});
@@ -39,8 +53,7 @@ export class ErrorHandlingService {
     }
   }
 
-  handleGeneralError(error: string) {
-    console.log(error);
+  private handleGeneralError(error: string): void {
     this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: {message: error}});
   }
 }

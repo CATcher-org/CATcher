@@ -3,7 +3,7 @@
   <div class="timeline-comment">
     <div class="timeline-header">
       <span> <strong> Tester </strong> posted on {{issue.created_at}}. </span>
-      <button mat-button *ngIf="permissions.isIssueDescriptionEditable() && !isEditing" (click)="changeToEditMode()">
+      <button style="float: right;" mat-button *ngIf="permissions.isIssueDescriptionEditable() && !isEditing" (click)="changeToEditMode()">
         Edit
       </button>
     </div>
@@ -18,8 +18,21 @@
         [(isFormPending)]="this.isSavePending"
         [(submitButtonText)]="this.submitButtonText">
       </app-comment-editor>
-      <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
-      <button type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending" mat-stroked-button color="primary">{{ this.submitButtonText }}</button>
+      <div class="editor-actions">
+        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isSavePending"
+                mat-raised-button color="primary" (click)="viewChanges()">
+          View Updated Description
+        </button>
+        <button class="editor-action" *ngIf="conflict" type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending"
+                mat-raised-button color="warn">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" *ngIf="!conflict" type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending"
+                mat-stroked-button color="primary">
+          {{ submitButtonText }}
+        </button>
+        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
+      </div>
     </div>
   </div>
 </form>

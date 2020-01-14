@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import {FILE_TYPE_SUPPORT_ERROR, UploadService} from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { clipboard } from 'electron';
+import { HttpErrorResponse } from '@angular/common/http';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
@@ -215,8 +216,8 @@ export class CommentEditorComponent implements OnInit {
   }
 
   private handleUploadError(error, insertedText: string) {
-    if (error.constructor.name === 'HttpError') {
-      this.errorHandlingService.handleHttpError(error);
+    if (error instanceof HttpErrorResponse) {
+      this.errorHandlingService.handleError(error);
       this.uploadErrorMessage = 'Something went wrong while uploading your file. Please try again.';
     } else {
       this.uploadErrorMessage = error;

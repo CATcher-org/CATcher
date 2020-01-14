@@ -1,9 +1,0 @@
-<p style="display: inline-block;"> No internet connection. </p>
-
-<button style="float: right; margin-top: 8px;" mat-button
-        color="accent" *ngIf="data !== 'GET'"
-        (click)="snackBarRef.dismiss()"> Close </button>
-
-<button style="float: right; margin-top: 8px;" mat-button
-        color="accent" *ngIf="data === 'GET'"
-        (click)="snackBarRef.dismissWithAction()"> Retry </button>
