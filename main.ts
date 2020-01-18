@@ -208,6 +208,9 @@ function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boo
   return new Promise(function (resolve, reject) {
     const windowParams = {
       autoHideMenuBar: true,
+      alwaysOnTop: true,
+      movable: false,
+      fullscreenable: false,
       parent: parentWindow,
       webPreferences: {
         nodeIntegration: true
