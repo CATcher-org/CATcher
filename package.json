@@ -33,14 +33,14 @@
     "@angular/platform-browser": "^7.2.16",
     "@angular/platform-browser-dynamic": "^7.2.16",
     "@angular/router": "^7.2.16",
-    "@octokit/rest": "^16.27.0",
-    "core-js": "^2.6.5",
+    "@octokit/rest": "^16.37.0",
+    "core-js": "^3.6.4",
     "csv-parse": "^4.4.3",
     "diff-match-patch": "^1.0.4",
     "moment": "^2.24.0",
-    "ngx-markdown": "^8.1.1",
+    "ngx-markdown": "^8.2.1",
     "node-fetch": "^2.6.0",
-    "rxjs": "6.4.0",
+    "rxjs": "6.5.3",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
   },
@@ -67,12 +67,11 @@
     "karma-jasmine": "2.0.1",
     "karma-jasmine-html-reporter": "1.4.0",
     "npm-run-all": "4.1.5",
-    "nyc": "^14.1.1",
     "protractor": "5.4.1",
     "ts-node": "^7.0.1",
     "tslint": "5.11.0",
     "typescript": "3.2.4",
-    "wait-on": "3.2.0",
+    "wait-on": "3.3.0",
     "webdriver-manager": "12.1.0"
   }
 }
