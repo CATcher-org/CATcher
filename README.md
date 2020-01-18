@@ -4,14 +4,6 @@
 
 **CAT**cher is a desktop application for **C**rowed-sourced **A**nonymous **T**esting software. It uses GitHub as the backend for hosting bug reports.
 
-Project structure is adapted from, https://angular.io/guide/styleguide#overall-structural-guidelines and https://github.com/maximegris/angular-electron.
-
-Currently runs with:
-
-- Angular v7.2.10
-- Electron v4.0.0
-- Electron Builder v20.28.1
-
 This application will support the following order of workflow:
 1. **Bug Reporting**: Testers will be informed of the teams they will be testing. Following which, they will be able to start creating new bug reports during this phase.
 2. **Team's Response**: Teams will be able to respond to the bugs that are reported during the bug _reporting phase_.
@@ -131,7 +123,4 @@ Here are a few suggestions that future developers can work on to improve this ap
 
 ## 5.1. Support Commenting
 Currently, the application only support 1 response for each phase. So a commenting section would be good to allow discussions between team members as well as between tutors and admins. 
-
-## 5.2. Poll for updates
-The state of the application is based on the initial log-in in which the data will be pulled from Github. However, this state is not updated as the user uses the application. This might lead to problems where the user is shown an outdated version of an issue.
 
