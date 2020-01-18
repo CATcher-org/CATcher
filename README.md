@@ -106,13 +106,15 @@ Use your Github credentials for username and password.
 **Settings Location** refers to the name of the Organization and Repository that contains the `settings.json` mentioned in *2.2.1*.
 
 # 3. Development
-1. Clone this repository locally.
+1. Fork this repository into your Github account.
 
-2. Install dependencies with npm: `npm install` 
+2. Clone the forked repository into your computer.
 
-3. Compile and start the application: `npm start`
+3. Make sure you are using Node 12 for this project.
 
-After compilation, an application window will start up which runs on localhost:4200. You can disable "Developer Tools" by un-commenting `enableProdMode();` in `main.ts`.
+4. Install dependencies with npm: `npm install` 
+
+5. Compile and start the application: `npm start`
 
 # 4. Commands
 |Command|Description|
