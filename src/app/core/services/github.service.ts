@@ -232,7 +232,7 @@ export class GithubService {
   }
 
   uploadFile(filename: string, base64String: string): Observable<any> {
-    return from(octokit.repos.createFile({owner: ORG_NAME, repo: REPO, path: `files/${filename}`,
+    return from(octokit.repos.createOrUpdateFile({owner: ORG_NAME, repo: REPO, path: `files/${filename}`,
       message: 'upload file', content: base64String}));
   }
 
@@ -245,14 +245,10 @@ export class GithubService {
   }
 
   fetchDataFile(): Observable<{}> {
-    // roles information
-    return forkJoin(
-      from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv'}))
-        .pipe(map(rawData => atob(rawData['data']['content'])))
-    ).pipe(
-      map(([data]) => {
-        return {data};
-      })
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv'})).pipe(
+      map(rawData => {
+          return {data: atob(rawData['data']['content'])};
+        })
     );
   }
 

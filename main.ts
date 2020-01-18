@@ -1,22 +1,18 @@
-import { app, BrowserWindow, screen, Menu } from 'electron';
+import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
-import { enableProdMode, isDevMode } from '@angular/core';
-const { ipcMain } = require('electron');
 const nodeUrl = require('url');
 const fetch = require('node-fetch');
 
-let win, serve;
-const args = process.argv.slice(1);
-serve = args.some(val => val === '--serve');
+let win: BrowserWindow = null;
+const args = process.argv.slice(1),
+  serve = args.some(val => val === '--serve');
 
-// TODO: enableProdMode() prior to release.
-// enableProdMode();
+const isDevMode = !!serve;
 
 ipcMain.on('synchronous-message', (event, arg) => {
   event.returnValue = process.platform === 'win32'
-    ? isDevMode()
+    ? isDevMode
         ? app.getAppPath()
         : process.env.PORTABLE_EXECUTABLE_FILE
     : app.getAppPath();
@@ -40,15 +36,22 @@ ipcMain.on('github-oauth', (event, clearAuthState) => {
 function createWindow() {
 
   const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  const size = screen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
   win = new BrowserWindow({
     x: 0,
     y: 0,
     width: size.width,
-    height: size.height
+    height: size.height,
+    webPreferences: {
+      nodeIntegration: true,
+      allowRunningInsecureContent: !isDevMode,
+    },
   });
+
+  nativeTheme.themeSource = 'light';
+
   win.setTitle(require('./package.json').name + ' ' + require('./package.json').version);
   if (serve) {
     require('electron-reload')(__dirname, {
@@ -63,7 +66,9 @@ function createWindow() {
     }));
   }
 
-  // win.webContents.openDevTools();
+  if (isDevMode) {
+    win.webContents.openDevTools();
+  }
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -102,13 +107,13 @@ const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
     label: 'View',
     submenu: [
-      { role: 'resetzoom' },
-      { role: 'zoomin' },
-      { role: 'zoomout' },
+      { role: 'resetZoom' },
+      { role: 'zoomIn' },
+      { role: 'zoomOut' },
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
-  }
+  },
   // ,
   // {
   //   role: 'help',
@@ -121,12 +126,12 @@ const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   // }
 ];
 
-if (isDevMode()) {
+if (isDevMode) {
   let viewSubMenu: MenuItemConstructorOptions[];
   viewSubMenu = mainMenuTemplate[2].submenu as MenuItemConstructorOptions[];
   viewSubMenu.push(
     { type: 'separator' },
-    { role: 'toggledevtools'}
+    { role: 'toggleDevTools'}
   );
 }
 
