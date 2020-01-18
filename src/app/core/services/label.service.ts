@@ -30,7 +30,6 @@ export class LabelService {
       High: new Label('severity', 'High', 'ff6666')
     },
     type: {
-      DocTypo: new Label('type', 'DocTypo', 'f2ccff'),
       DocumentationBug: new Label('type', 'DocumentationBug', 'd966ff'),
       FeatureFlaw: new Label('type', 'FeatureFlaw', 'd966ff'),
       FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc')
