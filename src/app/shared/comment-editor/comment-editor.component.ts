@@ -183,8 +183,7 @@ export class CommentEditorComponent implements OnInit {
     const insertedText = this.insertUploadingText(filename);
 
     if (!this.uploadService.isSupportedFileType(filename)) {
-      this.handleUploadError('We dont support that file type. Try again with GIF, JPEG, JPG, PNG, DOCX, GZ, LOG, PDF,' +
-        ' PPTX, TXT, XLSX, ZIP.', insertedText);
+      this.handleUploadError(FILE_TYPE_SUPPORT_ERROR, insertedText);
       return;
     }
 

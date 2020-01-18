@@ -28,7 +28,7 @@ export class UploadService {
       const onlineFilename = uuid();
       return this.githubService.uploadFile(`${onlineFilename}.${fileType}`, base64String);
     } else {
-      return throwError('We dont support that file type. Try again with GIF, JPEG, JPG, PNG, DOCX, GZ, LOG, PDF, PPTX, TXT, XLSX, ZIP.');
+      return throwError(FILE_TYPE_SUPPORT_ERROR);
     }
   }
 
