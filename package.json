@@ -34,6 +34,7 @@
     "@angular/platform-browser-dynamic": "^7.2.16",
     "@angular/router": "^7.2.16",
     "@octokit/rest": "^16.37.0",
+    "ajv": "^6.11.0",
     "core-js": "^3.6.4",
     "csv-parse": "^4.4.3",
     "diff-match-patch": "^1.0.4",
