@@ -219,7 +219,7 @@ export interface Issues {
 
 export const SEVERITY_ORDER = { '-': 0 , Low: 1, Medium: 2, High: 3 };
 
-export const ISSUE_TYPE_ORDER = { '-': 0 , DocTypo: 1, DocumentationBug: 2, FeatureFlaw: 3, FunctionalityBug: 4  };
+export const ISSUE_TYPE_ORDER = { '-': 0 , DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3  };
 
 export enum STATUS {
   Incomplete = 'Incomplete',
