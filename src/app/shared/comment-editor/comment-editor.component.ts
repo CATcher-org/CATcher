@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import {FILE_TYPE_SUPPORT_ERROR, UploadService} from '../../core/services/upload.service';
+import {FILE_TYPE_SUPPORT_ERROR, SUPPORTED_FILE_TYPES, UploadService} from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { clipboard } from 'electron';
 import { HttpErrorResponse } from '@angular/common/http';
