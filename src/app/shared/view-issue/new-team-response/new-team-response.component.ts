@@ -47,7 +47,7 @@ export class NewTeamResponseComponent implements OnInit {
     });
     this.duplicatedIssueList = this.getDupIssueList();
     this.newTeamResponseForm = this.formBuilder.group({
-      description: ['', Validators.required],
+      description: ['No response provided.'],
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
       responseTag: [this.issue.responseTag, Validators.required],
