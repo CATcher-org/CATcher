@@ -43,7 +43,7 @@ export class TeamResponseComponent implements OnInit {
 
   ngOnInit() {
     this.responseForm = this.formBuilder.group({
-      description: ['', Validators.required],
+      description: [''],
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
