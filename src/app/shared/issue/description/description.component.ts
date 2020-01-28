@@ -38,7 +38,7 @@ export class DescriptionComponent implements OnInit {
 
   ngOnInit() {
     this.issueDescriptionForm = this.formBuilder.group({
-      description: ['', Validators.required],
+      description: [''],
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
