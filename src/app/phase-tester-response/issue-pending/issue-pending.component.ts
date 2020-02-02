@@ -16,6 +16,7 @@ export class IssuePendingComponent implements OnInit {
     TABLE_COLUMNS.TITLE,
     TABLE_COLUMNS.TYPE,
     TABLE_COLUMNS.SEVERITY,
+    TABLE_COLUMNS.RESPONSE,
     TABLE_COLUMNS.ACTIONS
   ];
   readonly actionButtons: ACTION_BUTTONS[] = [
