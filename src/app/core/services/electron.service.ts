@@ -55,5 +55,4 @@ export class ElectronService {
       this.rightClickMenu.popup({window: remote.getCurrentWindow()});
     }, false);
   }
-
 }

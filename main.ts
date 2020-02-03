@@ -1,6 +1,7 @@
 import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { getAccessToken } from './oauth';
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
@@ -15,6 +16,21 @@ ipcMain.on('synchronous-message', (event, arg) => {
         : process.env.PORTABLE_EXECUTABLE_FILE
     : app.getAppPath();
 });
+
+/**
+ * Will start the OAuth Web Flow and obtain the access token from Github.
+ */
+ipcMain.on('github-oauth', (event, clearAuthState) => {
+  getAccessToken(win, clearAuthState).then((data) => {
+    event.sender.send('github-oauth-reply', {token: data.token, isChangingAccount: clearAuthState});
+  }).catch(error => {
+    event.sender.send('github-oauth-reply', {
+      error: error.message,
+      isChangingAccount: clearAuthState,
+      isWindowClosed: error.message === 'WINDOW_CLOSED'});
+  });
+});
+
 
 function createWindow() {
 

@@ -6,6 +6,7 @@ import {Team} from '../models/team.model';
 import {Observable, of, throwError} from 'rxjs';
 import {DataService} from './data.service';
 import {flatMap} from 'rxjs/internal/operators';
+import { GithubUser } from '../models/github-user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,17 @@ export class UserService {
   public currentUser: User;
 
   constructor(private githubService: GithubService, private dataService: DataService) {}
+
+  /**
+   * Get the authenticated user if it exist.
+   */
+  getAuthenticatedUser(): Observable<GithubUser> {
+    return this.githubService.fetchAuthenticatedUser().pipe(
+      map((data: GithubUser) => {
+        return data;
+      })
+    );
+  }
 
   createUserModel(userLoginId: string): Observable<User> {
     return this.dataService.getDataFile().pipe(

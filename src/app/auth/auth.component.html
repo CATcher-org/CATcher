@@ -10,49 +10,77 @@
 
 <div *ngIf="isReady && versionCheckingError" class="centralize">
   <span class="error-text"> Unable to verify CATcher's version. <br/>
-    Please click <a href="#" (click)="checkAppIsOutdated()">here</a> to try again.
+    Please click <a href="#" (click)="checkAppIsOutdated()">here</a> to try again
   </span>
 </div>
 
-<mat-card *ngIf="isReady && !isAppOutdated && !versionCheckingError" class="login-card">
-  <mat-card-header>
-    <mat-card-title>Login</mat-card-title>
-  </mat-card-header>
-  <app-profiles (selectedProfileEmitter)="onProfileSelect($event)" (profileDataEmitter)="onProfilesMissing($event)"></app-profiles>
-  <mat-card-content>
-    <form [formGroup]="loginForm" #myForm="ngForm" (ngSubmit)="login(myForm)">
-      <table class="table-form" cellspacing="0">
-        <tr>
-          <td>
-            <mat-form-field class="login-field">
-              <input matInput placeholder="Username" formControlName="username" required>
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-form-field class="login-field">
-              <input matInput placeholder="Password" formControlName="password" type="password" required>
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-form-field class="login-field">
-              <input matInput placeholder="Settings Location (Org/Repo)" formControlName="session" required>
-            </mat-form-field>
-          </td>
-        </tr>
-      </table>
-      <mat-card-actions>
-        <button type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">
-          <div>
-            <span *ngIf="this.isUserNotAuthenticated()">Sign In</span>
-            <mat-spinner [diameter]="30" *ngIf="this.authState.toString() !== '0'"></mat-spinner>
-          </div>
+<div *ngIf="isReady && !isAppOutdated && !versionCheckingError" class="login-page">
+  <mat-card class="login-card">
+    <mat-card-header style="margin-bottom: 20px;">
+      <mat-card-title *ngIf="isUserNotAuthenticated() || isUserAuthenticating()" class="login-title">Github Login</mat-card-title>
+      <mat-card-title *ngIf="isUserPartiallyAuthenticated() || isSettingUpOAuthUser()" class="login-title">Welcome {{currentUserName}}</mat-card-title>
+    </mat-card-header>
+
+    <div *ngIf="isUserNotAuthenticated() || isUserAuthenticating()">
+      <button mat-raised-button class="login-with-oauth-btn" [class.hover-blue]="isUserNotAuthenticated()" (click)="auth.startOAuthProcess()" [disabled]="isUserAuthenticating()">
+        <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo"> </span>
+        <span> Use Github Login Interface </span>
+      </button>
+      <h6 class="or-text">OR</h6>
+
+      <app-profiles class="login-field" (selectedProfileEmitter)="onProfileSelect($event)" (profileDataEmitter)="onProfilesMissing($event)"></app-profiles>
+      <mat-card-content>
+        <form [formGroup]="loginForm" #myForm="ngForm" (ngSubmit)="login(myForm)">
+          <mat-form-field class="login-field">
+            <input matInput placeholder="Github Username" formControlName="username" required>
+          </mat-form-field>
+          <mat-form-field class="login-field">
+            <input matInput placeholder="Github Password" formControlName="password" type="password" required>
+          </mat-form-field>
+          <mat-form-field class="login-field">
+            <input matInput placeholder="Settings Location (Org/Repo)" formControlName="session" required>
+          </mat-form-field>
+
+          <mat-card-actions>
+            <button *ngIf="isUserNotAuthenticated()" class="sign-in-button" type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">
+              <div>Sign In</div>
+            </button>
+            <div *ngIf="isUserAuthenticating()" class="spinner-centralize">
+              <mat-spinner [diameter]="47"></mat-spinner>
+            </div>
+          </mat-card-actions>
+        </form>
+      </mat-card-content>
+      <div style="color: #6a737d; font-size: 10px;">{{ profileLocationPrompt }}</div>
+    </div>
+
+    <div *ngIf="isUserPartiallyAuthenticated() || isSettingUpOAuthUser()">
+      <div style="position: absolute; top: 15px; left: 15px">
+        <button mat-icon-button (click)="goBackToLoginPage()" [disabled]="isSettingUpOAuthUser()" class="mat-primary">
+          <mat-icon>arrow_back_ios</mat-icon>
         </button>
-      </mat-card-actions>
-    </form>
-  </mat-card-content>
-  <div style="color: #6a737d; font-size: 10px;">{{ this.profileLocationPrompt }}</div>
-</mat-card>
+      </div>
+      <span class="secondary-header-title"> Please select your profile,</span>
+      <form [formGroup]="profileForm" #myForm="ngForm" (ngSubmit)="finishSettingUpOAuthUser(myForm)">
+        <app-profiles class="login-field" (selectedProfileEmitter)="onProfileSelect($event)" (profileDataEmitter)="onProfilesMissing($event)"></app-profiles>
+        <mat-card-content>
+          <mat-form-field class="login-field">
+            <input matInput placeholder="Settings Location (Org/Repo)" formControlName="session" required>
+          </mat-form-field>
+
+          <mat-card-actions>
+            <button *ngIf="isUserPartiallyAuthenticated()" class="sign-in-button" type="submit" [disabled]="profileForm.invalid" mat-stroked-button color="primary">
+              <div>Submit</div>
+            </button>
+            <button mat-button [class.link]="!isSettingUpOAuthUser()" style="margin-top: 10px; margin-bottom: 10px;"
+               (click)="auth.startOAuthProcess(true)" [disabled]="isSettingUpOAuthUser()"> Log in to another account </button>
+            <div *ngIf="isSettingUpOAuthUser()" class="spinner-centralize">
+              <mat-spinner [diameter]="47"></mat-spinner>
+            </div>
+          </mat-card-actions>
+        </mat-card-content>
+        <div style="color: #6a737d; font-size: 10px;">{{ profileLocationPrompt }}</div>
+      </form>
+    </div>
+  </mat-card>
+</div>

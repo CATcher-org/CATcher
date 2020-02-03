@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
@@ -11,8 +11,8 @@ import { Profile } from './profiles/profiles.component';
 import { flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
+import { ElectronService } from '../core/services/electron.service';
 import { ApplicationService } from '../core/services/application.service';
-
 
 const appSetting = require('../../../package.json');
 
@@ -28,7 +28,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   authState: AuthState;
   authStateSubscription: Subscription;
   loginForm: FormGroup;
+  profileForm: FormGroup;
   profileLocationPrompt: string;
+  currentUserName: string;
 
   constructor(private auth: AuthService,
               private githubService: GithubService,
@@ -38,9 +40,33 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
+              private electronService: ElectronService,
               private authService: AuthService,
               private titleService: Title,
-              private appService: ApplicationService) { }
+              private ngZone: NgZone,
+              private appService: ApplicationService) {
+    this.electronService.ipcRenderer.on('github-oauth-reply',
+      (event, {token, isChangingAccount, error, isWindowClosed}) => {
+      this.ngZone.run(() => {
+        if (error && !isWindowClosed) {
+          this.errorHandlingService.handleError(error);
+        }
+        if (error && isChangingAccount) {
+          this.authService.changeAuthState(AuthState.PartialOAuthenticated);
+          return;
+        }
+        if (error && !isChangingAccount) {
+          this.authService.changeAuthState(AuthState.NotAuthenticated);
+          return;
+        }
+        this.githubService.storeOAuthAccessToken(token);
+        this.userService.getAuthenticatedUser().subscribe((user) => {
+          this.currentUserName = user.login;
+          this.authService.changeAuthState(AuthState.PartialOAuthenticated);
+        });
+      });
+    });
+  }
 
   ngOnInit() {
     this.checkAppIsOutdated();
@@ -50,6 +76,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
+      session: ['', Validators.required],
+    });
+    this.profileForm = this.formBuilder.group({
       session: ['', Validators.required],
     });
   }
@@ -93,58 +122,125 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param profile - Profile selected by the user.
    */
   onProfileSelect(profile: Profile): void {
-    this.loginForm.get('username').setValue(profile.username);
-    this.loginForm.get('password').setValue(profile.password);
-    this.loginForm.get('session').setValue(profile.encodedText);
-  }
-
-  login(form: NgForm) {
-    if (this.loginForm.invalid) {
-      return;
-    } else {
-      const username: string = this.loginForm.get('username').value;
-      const password: string = this.loginForm.get('password').value;
-      const sessionInformation: string = this.loginForm.get('session').value;
-      const org: string = this.getOrgDetails(sessionInformation);
-      const dataRepo: string = this.getDataRepoDetails(sessionInformation);
-
-      this.githubService.storeOrganizationDetails(org, dataRepo);
-      this.phaseService.setPhaseOwners(org, username);
-
-      this.auth.authenticate(username, password).pipe(
-        flatMap((loginConfirmation: {login: string}) => {
-          return this.userService.createUserModel(loginConfirmation.login);
-        }),
-        flatMap(() => {
-          return this.phaseService.sessionSetup();
-        }),
-        flatMap(() => {
-          return this.githubEventService.setLatestChangeEvent();
-        })
-      ).subscribe(
-        () => {
-          this.authService.changeAuthState(AuthState.Authenticated);
-          form.resetForm();
-          this.titleService.setTitle(appSetting.name
-            .concat(' ')
-            .concat(appSetting.version)
-            .concat(' - ')
-            .concat(this.phaseService.getPhaseDetail()));
-          this.router.navigateByUrl(this.phaseService.currentPhase);
-        },
-        (error) => {
-          this.auth.changeAuthState(AuthState.NotAuthenticated);
-          this.errorHandlingService.handleError(error);
-        }
-      );
+    if (this.isUserNotAuthenticated()) {
+      this.loginForm.get('username').setValue(this.loginForm.get('username').value || profile.username);
+      this.loginForm.get('password').setValue(this.loginForm.get('password').value || profile.password);
+      this.loginForm.get('session').setValue(profile.encodedText);
+    } else if (this.isUserPartiallyAuthenticated()) {
+      this.profileForm.get('session').setValue(profile.encodedText);
     }
   }
 
   /**
-   * @return boolean - true if authenticated, false if not.
+   * Logs in the user using basic authentication (username and password).
+   * DEPRECIATION WARNING: https://developer.github.com/changes/2019-11-05-deprecated-passwords-and-authorizations-api/
+   * @param form - The login form to complete the login process.
    */
-  isUserNotAuthenticated() {
+  login(form: NgForm) {
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
+    const username: string = this.loginForm.get('username').value;
+    const password: string = this.loginForm.get('password').value;
+    const sessionInformation: string = this.loginForm.get('session').value;
+    const org: string = this.getOrgDetails(sessionInformation);
+    const dataRepo: string = this.getDataRepoDetails(sessionInformation);
+
+    this.githubService.storeOrganizationDetails(org, dataRepo);
+    this.phaseService.setPhaseOwners(org, username);
+
+    this.auth.authenticate(username, password).pipe(
+      flatMap((loginConfirmation: {login: string}) => {
+        return this.userService.createUserModel(loginConfirmation.login);
+      }),
+      flatMap(() => {
+        return this.phaseService.sessionSetup();
+      }),
+      flatMap(() => {
+        return this.githubEventService.setLatestChangeEvent();
+      })
+    ).subscribe(
+      () => {
+        this.handleAuthSuccess(form);
+      },
+      (error) => {
+        this.auth.changeAuthState(AuthState.NotAuthenticated);
+        this.errorHandlingService.handleError(error);
+      }
+    );
+  }
+
+  /**
+   * Complete the initialization process of an already authenticated user through Github's OAuth Web Flow process.
+   * @param form - The profile form to complete the setting up process.
+   */
+  finishSettingUpOAuthUser(form: NgForm) {
+    if (this.profileForm.invalid) {
+      return;
+    }
+
+    this.authService.changeAuthState(AuthState.SettingUpOAuthUser);
+    const sessionInformation: string = this.profileForm.get('session').value;
+    const org: string = this.getOrgDetails(sessionInformation);
+    const dataRepo: string = this.getDataRepoDetails(sessionInformation);
+
+    this.githubService.storeOrganizationDetails(org, dataRepo);
+    this.phaseService.setPhaseOwners(org, this.currentUserName);
+
+    this.userService.createUserModel(this.currentUserName).pipe(
+      flatMap(() => {
+        return this.phaseService.sessionSetup();
+      }),
+      flatMap(() => {
+        return this.githubEventService.setLatestChangeEvent();
+      })
+    ).subscribe(() => {
+      this.handleAuthSuccess(form);
+    }, (error) => {
+      this.auth.changeAuthState(AuthState.PartialOAuthenticated);
+      this.errorHandlingService.handleError(error);
+    });
+  }
+
+  /**
+   * Handles the clean up required after authentication and setting up of user data is completed.
+   * @param form - The form used in this authentication process.
+   */
+  handleAuthSuccess(form: NgForm) {
+    form.resetForm();
+    this.titleService.setTitle(appSetting.name
+      .concat(' ')
+      .concat(appSetting.version)
+      .concat(' - ')
+      .concat(this.phaseService.getPhaseDetail()));
+    this.router.navigateByUrl(this.phaseService.currentPhase);
+    this.authService.changeAuthState(AuthState.Authenticated);
+  }
+
+  /**
+   * Redirects the user from OAuth's set up page to Login page.
+   */
+  goBackToLoginPage(): void {
+    this.userService.reset();
+    this.authService.changeAuthState(AuthState.NotAuthenticated);
+  }
+
+  isUserNotAuthenticated(): boolean {
     return this.authState === AuthState.NotAuthenticated;
+  }
+
+  isUserAuthenticating(): boolean {
+    return this.authState === AuthState.AwaitingAuthentication;
+  }
+
+  isUserPartiallyAuthenticated(): boolean {
+    return this.authState === AuthState.PartialOAuthenticated;
+  }
+
+  isSettingUpOAuthUser(): boolean {
+    return this.authState === AuthState.SettingUpOAuthUser;
   }
 
   /**
