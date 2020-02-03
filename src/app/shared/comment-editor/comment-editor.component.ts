@@ -14,6 +14,8 @@ const MAX_UPLOAD_SIZE = 10000000; // 10MB
   styleUrls: ['./comment-editor.component.css'],
 })
 export class CommentEditorComponent implements OnInit {
+  readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
+
   constructor(private uploadService: UploadService,
               private errorHandlingService: ErrorHandlingService) {}
 
