@@ -60,6 +60,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boo
     });
 
     authWindow.webContents.on('will-navigate', (event, newUrl) => {
+      event.preventDefault();
       if (newUrl.startsWith(CALLBACK_URL)) {
         onCallback(newUrl);
       }
