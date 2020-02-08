@@ -1,4 +1,5 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, shell } from 'electron';
+
 const nodeUrl = require('url');
 const fetch = require('node-fetch');
 
@@ -62,7 +63,15 @@ function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boo
     authWindow.webContents.on('will-navigate', (event, newUrl) => {
       if (newUrl.startsWith(CALLBACK_URL)) {
         onCallback(newUrl);
+      } else {
+        event.preventDefault();
+        shell.openExternal(newUrl).then(() => console.log('External link is clicked on auth window, opening system browser...'));
       }
+    });
+
+    authWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+      event.preventDefault();
+      shell.openExternal(url).then(() => console.log('External link is clicked on auth window, opening system browser...'));
     });
 
     authWindow.webContents.on('will-redirect', (event, newUrl) => {
