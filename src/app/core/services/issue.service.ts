@@ -18,6 +18,8 @@ import { GithubIssue, GithubLabel } from '../models/github/github-issue.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import { IssueComment } from '../models/comment.model';
 
+export const DEFAULT_BUG_REPORTER_DESCRIPTION = "No details provided by bug reporter."
+
 @Injectable({
   providedIn: 'root',
 })
@@ -413,5 +415,9 @@ export class IssueService {
 
   getIssueTeamFilter(): string {
     return this.issueTeamFilter;
+  }
+
+  static getOrDefaultDescription(description: string, def: string) {
+    return description.length !== 0 ? description : def;
   }
 }
