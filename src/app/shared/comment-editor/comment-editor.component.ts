@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import {FILE_TYPE_SUPPORT_ERROR, UploadService} from '../../core/services/upload.service';
+import {FILE_TYPE_SUPPORT_ERROR, SUPPORTED_FILE_TYPES, UploadService} from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { clipboard } from 'electron';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -14,6 +14,8 @@ const MAX_UPLOAD_SIZE = 10000000; // 10MB
   styleUrls: ['./comment-editor.component.css'],
 })
 export class CommentEditorComponent implements OnInit {
+  readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
+
   constructor(private uploadService: UploadService,
               private errorHandlingService: ErrorHandlingService) {}
 
