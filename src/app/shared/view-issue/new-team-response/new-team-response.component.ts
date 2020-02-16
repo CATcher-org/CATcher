@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IssueService } from '../../../core/services/issue.service';
+import { DEFAULT_TEAM_RESPONSE_DESCRIPTION, IssueService } from '../../../core/services/issue.service';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Issue, SEVERITY_ORDER, STATUS } from '../../../core/models/issue.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
@@ -133,7 +133,9 @@ export class NewTeamResponseComponent implements OnInit {
     clone.duplicated = this.duplicated.value;
     clone.duplicateOf = this.duplicateOf.value;
     clone.status = STATUS.Done;
-    clone.teamResponse = this.description.value;
+    clone.teamResponse = IssueService.getOrDefaultDescription(
+                                        this.description.value,
+                                        DEFAULT_TEAM_RESPONSE_DESCRIPTION);
     return clone;
   }
 
