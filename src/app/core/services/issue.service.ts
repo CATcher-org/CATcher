@@ -19,6 +19,7 @@ import { GithubComment } from '../models/github/github-comment.model';
 import { IssueComment } from '../models/comment.model';
 
 export const DEFAULT_BUG_REPORTER_DESCRIPTION = 'No details provided by bug reporter.';
+export const DEFAULT_TEAM_RESPONSE_DESCRIPTION = 'No details provided by team.';
 
 @Injectable({
   providedIn: 'root',
