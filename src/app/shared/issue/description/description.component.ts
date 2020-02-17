@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
-import { DEFAULT_BUG_REPORTER_DESCRIPTION, IssueService } from '../../../core/services/issue.service';
+import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { finalize, map } from 'rxjs/operators';
 import { PermissionService } from '../../../core/services/permission.service';
@@ -106,9 +106,7 @@ export class DescriptionComponent implements OnInit {
   private getUpdatedIssue(): Issue {
     return <Issue> {
       ...this.issue,
-      ['description']: IssueService.getOrDefaultDescription(
-                                      this.issueDescriptionForm.get('description').value,
-                                      DEFAULT_BUG_REPORTER_DESCRIPTION)
+      ['description']: Issue.updateDescription(this.issueDescriptionForm.get('description').value)
     };
   }
 }
