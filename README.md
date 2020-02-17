@@ -120,6 +120,7 @@ Use your Github credentials for username and password.
 |`npm run electron:linux`| Builds your application and creates an app consumable on linux system |
 |`npm run electron:windows`| On a Windows OS, builds your application and creates an app consumable in windows 32/64 bit systems |
 |`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
+| `npm run lint` | Runs the linter (TSLint) |
 
 # 5. Future Developments
 Here are a few suggestions that future developers can work on to improve this application!
