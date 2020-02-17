@@ -110,6 +110,8 @@ export class IssuesDataTable extends DataSource<Issue> {
           return this.compareValue(a.assignees.join(', '), b.assignees.join(', '));
         case 'teamAssigned':
           return this.compareValue(a.teamAssigned.id, b.teamAssigned.id);
+        case 'Todo Remaining':
+          return this.compareValue(this.todoFinished(a) - a.issueDisputes.length, this.todoFinished(b) - b.issueDisputes.length);
         default: // id, title, responseTag
           return this.compareValue(a[this.sort.active], b[this.sort.active]);
       }
@@ -157,6 +159,17 @@ export class IssuesDataTable extends DataSource<Issue> {
     });
     this.paginator.length = result.length;
     return result;
+  }
+
+  private todoFinished(issue: Issue): number {
+    let count = 0;
+    for (const dispute of issue.issueDisputes) {
+      if (dispute.isDone()) {
+        count += 1;
+      }
+    }
+
+    return count;
   }
 
   private compareValue(valueA: string | number, valueB: string | number): number {
