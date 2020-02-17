@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {DEFAULT_TEAM_RESPONSE_DESCRIPTION, IssueService} from '../../../core/services/issue.service';
+import {IssueService} from '../../../core/services/issue.service';
 import {ErrorHandlingService} from '../../../core/services/error-handling.service';
 import {PermissionService} from '../../../core/services/permission.service';
 import {Issue} from '../../../core/models/issue.model';
@@ -146,9 +146,7 @@ export class TeamResponseComponent implements OnInit {
 
   private getUpdatedIssue(): Issue {
     const clone = this.issue.clone(this.phaseService.currentPhase);
-    clone.teamResponse = IssueService.getOrDefaultDescription(
-                                        this.responseForm.get('description').value,
-                                        DEFAULT_TEAM_RESPONSE_DESCRIPTION);
+    clone.teamResponse = Issue.updateTeamResponse(this.responseForm.get('description').value);
     return clone;
   }
 }
