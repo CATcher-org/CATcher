@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { DEFAULT_BUG_REPORTER_DESCRIPTION, IssueService } from '../../core/services/issue.service';
+import { IssueService } from '../../core/services/issue.service';
+import { Issue } from '../../core/models/issue.model';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { Router } from '@angular/router';
@@ -39,7 +40,7 @@ export class NewIssueComponent implements OnInit {
     }
     this.isFormPending = true;
     this.issueService.createIssue(this.title.value,
-      IssueService.getOrDefaultDescription(this.description.value, DEFAULT_BUG_REPORTER_DESCRIPTION),
+      Issue.updateDescription(this.description.value),
       this.severity.value, this.type.value).pipe(finalize(() => this.isFormPending = false))
       .subscribe(
         newIssue => {
