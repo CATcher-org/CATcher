@@ -112,7 +112,7 @@ export class IssuesDataTable extends DataSource<Issue> {
         case 'teamAssigned':
           return this.compareValue(a.teamAssigned.id, b.teamAssigned.id);
         case 'Todo Remaining':
-          return this.compareValue(this.getUnfinishedDisputes(a), this.getUnfinishedDisputes(b));
+          return this.compareValue(a.getUnresolvedDisputes(), b.getUnresolvedDisputes());
         default: // id, title, responseTag
           return this.compareValue(a[this.sort.active], b[this.sort.active]);
       }
@@ -160,18 +160,6 @@ export class IssuesDataTable extends DataSource<Issue> {
     });
     this.paginator.length = result.length;
     return result;
-  }
-
-  /**
-   * Gets the number of unresolved disputes in an Issue.
-   * @param issue
-   */
-  private getUnfinishedDisputes(issue: Issue): number {
-    if (!issue.issueDisputes) {
-      return 0;
-    }
-
-    return issue.issueDisputes.reduce((prev, current) => prev + Number(current.isDone()), 0);
   }
 
   private compareValue(valueA: string | number, valueB: string | number): number {
