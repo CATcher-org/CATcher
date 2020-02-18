@@ -18,7 +18,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   readonly actionButtons: ACTION_BUTTONS[] = [
     ACTION_BUTTONS.VIEW_IN_WEB,
-    ACTION_BUTTONS.FIX_ISSUE
+    ACTION_BUTTONS.FIX_ISSUE,
   ];
 
   @Input() teamFilter: string;

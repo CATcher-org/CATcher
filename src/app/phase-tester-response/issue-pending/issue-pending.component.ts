@@ -21,7 +21,8 @@ export class IssuePendingComponent implements OnInit {
   readonly actionButtons: ACTION_BUTTONS[] = [
     ACTION_BUTTONS.VIEW_IN_WEB,
     ACTION_BUTTONS.RESPOND_TO_ISSUE,
-    ACTION_BUTTONS.MARK_AS_RESPONDED
+    ACTION_BUTTONS.MARK_AS_RESPONDED,
+    ACTION_BUTTONS.FIX_ISSUE
   ];
   filter: (issue: Issue) => boolean;
 
