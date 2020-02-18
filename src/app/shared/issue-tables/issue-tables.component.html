@@ -113,7 +113,7 @@
       </button>
       <ng-template #tryFixIssue>
         <button *ngIf="this.isActionVisible(action_buttons.FIX_ISSUE)"
-                [routerLink]="'/phaseTeamResponse/issues/' + issue.id" mat-button color="accent"
+                mat-button color="accent"
                 style="transform: scale(0.8)" matTooltip="Fix this Issue" >
           <mat-icon>edit</mat-icon>
         </button>
