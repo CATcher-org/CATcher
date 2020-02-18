@@ -5,7 +5,6 @@ import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.m
 import {MatPaginator, MatSort} from '@angular/material';
 import {delay, flatMap, map, tap} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
-import { IssueDispute } from '../../core/models/issue-dispute.model';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
