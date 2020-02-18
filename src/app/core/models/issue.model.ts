@@ -206,7 +206,6 @@ export class Issue {
 
   /**
    * Gets the number of unresolved disputes in an Issue.
-   * @param issue
    */
   getUnresolvedDisputes(): number {
     if (!this.issueDisputes) {
