@@ -100,8 +100,6 @@ export class NewTeamResponseComponent implements OnInit {
       finalize(() => this.isFormPending = false)
     ).subscribe((resultArr: [Issue, IssueComment]) => {
         const [updatedIssue, updatedComment] = resultArr;
-      updatedIssue.teamResponse = Issue.updateDescription(this.description.value);
-      updatedIssue.duplicateOf = this.duplicateOf.value === '' ? undefined : this.duplicateOf.value;
       updatedIssue.issueComment = updatedComment;
       this.issueUpdated.emit(updatedIssue);
       form.resetForm();
