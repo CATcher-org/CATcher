@@ -5,6 +5,7 @@ import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.m
 import {MatPaginator, MatSort} from '@angular/material';
 import {delay, flatMap, map, tap} from 'rxjs/operators';
 import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import { IssueDispute } from '../../core/models/issue-dispute.model';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
@@ -111,7 +112,7 @@ export class IssuesDataTable extends DataSource<Issue> {
         case 'teamAssigned':
           return this.compareValue(a.teamAssigned.id, b.teamAssigned.id);
         case 'Todo Remaining':
-          return this.compareValue(this.todoFinished(a) - a.issueDisputes.length, this.todoFinished(b) - b.issueDisputes.length);
+          return this.compareValue(this.getUnfinishedDisputes(a), this.getUnfinishedDisputes(b));
         default: // id, title, responseTag
           return this.compareValue(a[this.sort.active], b[this.sort.active]);
       }
@@ -161,15 +162,16 @@ export class IssuesDataTable extends DataSource<Issue> {
     return result;
   }
 
-  private todoFinished(issue: Issue): number {
-    let count = 0;
-    for (const dispute of issue.issueDisputes) {
-      if (dispute.isDone()) {
-        count += 1;
-      }
+  /**
+   * Gets the number of unresolved disputes in an Issue.
+   * @param issue
+   */
+  private getUnfinishedDisputes(issue: Issue): number {
+    if (!issue.issueDisputes) {
+      return 0;
     }
 
-    return count;
+    return issue.issueDisputes.reduce((prev, current) => prev + Number(current.isDone()), 0);
   }
 
   private compareValue(valueA: string | number, valueB: string | number): number {
