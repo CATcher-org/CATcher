@@ -204,6 +204,17 @@ export class Issue {
       `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
   }
 
+  /**
+   * Gets the number of unresolved disputes in an Issue.
+   */
+  numOfUnresolvedDisputes(): number {
+    if (!this.issueDisputes) {
+      return 0;
+    }
+
+    return this.issueDisputes.reduce((prev, current) => prev + Number(current.isDone()), 0);
+  }
+
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {
     let testerResponsesString = '';
     for (const testerResponse of testerResponses) {
