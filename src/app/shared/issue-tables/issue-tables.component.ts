@@ -111,19 +111,18 @@ export class IssueTablesComponent implements OnInit {
     event.stopPropagation();
   }
 
+  /**
+   * Gets the number of resolved disputes.
+   */
   todoFinished(issue: Issue): number {
-    let count = 0;
-    for (const dispute of issue.issueDisputes) {
-      if (dispute.isDone()) {
-        count += 1;
-      }
-    }
-
-    return count;
+    return issue.issueDisputes.length - issue.numOfUnresolvedDisputes();
   }
 
+  /**
+   * Checks if all the disputes are resolved.
+   */
   isTodoListChecked(issue: Issue): boolean {
-    return this.todoFinished(issue) === issue.issueDisputes.length;
+    return issue.issueDisputes && issue.numOfUnresolvedDisputes() === 0;
   }
 
   deleteIssue(id: number) {
