@@ -207,7 +207,7 @@ export class Issue {
   /**
    * Gets the number of unresolved disputes in an Issue.
    */
-  getUnresolvedDisputes(): number {
+  numOfUnresolvedDisputes(): number {
     if (!this.issueDisputes) {
       return 0;
     }

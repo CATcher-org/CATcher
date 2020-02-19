@@ -115,14 +115,14 @@ export class IssueTablesComponent implements OnInit {
    * Gets the number of resolved disputes.
    */
   todoFinished(issue: Issue): number {
-    return issue.issueDisputes.length - issue.getUnresolvedDisputes();
+    return issue.issueDisputes.length - issue.numOfUnresolvedDisputes();
   }
 
   /**
    * Checks if all the disputes are resolved.
    */
   isTodoListChecked(issue: Issue): boolean {
-    return issue.issueDisputes && issue.getUnresolvedDisputes() === 0;
+    return issue.issueDisputes && issue.numOfUnresolvedDisputes() === 0;
   }
 
   deleteIssue(id: number) {
