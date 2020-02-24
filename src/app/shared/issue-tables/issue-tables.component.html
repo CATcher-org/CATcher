@@ -112,7 +112,7 @@
         <mat-icon>feedback</mat-icon>
       </button>
       <ng-template #tryFixIssue>
-        <button *ngIf="this.isActionVisible(action_buttons.FIX_ISSUE)"
+        <button *ngIf="permissions.isIssueEditable() && this.isActionVisible(action_buttons.FIX_ISSUE)"
                 mat-button color="accent"
                 style="transform: scale(0.8)" matTooltip="Fix this Issue" >
           <mat-icon>edit</mat-icon>

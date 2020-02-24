@@ -163,6 +163,12 @@ export class PermissionService {
     return this.askForPermission(PermissionLevel.User, 'isTutorResponseEditable');
   }
 
+  isIssueEditable(): boolean {
+    return this.isIssueTitleEditable() || this.isIssueDescriptionEditable()
+           || this.isIssueLabelsEditable() || this.isTeamResponseEditable()
+           || this.isTutorResponseEditable();
+  }
+
   private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {
     switch (permissionLevel) {
       case PermissionLevel.Phase:
