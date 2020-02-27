@@ -47,7 +47,7 @@ export class NewTeamResponseComponent implements OnInit {
     });
     this.duplicatedIssueList = this.getDupIssueList();
     this.newTeamResponseForm = this.formBuilder.group({
-      description: ['', Validators.required],
+      description: ['No response provided.'],
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
       responseTag: [this.issue.responseTag, Validators.required],
@@ -100,11 +100,9 @@ export class NewTeamResponseComponent implements OnInit {
       finalize(() => this.isFormPending = false)
     ).subscribe((resultArr: [Issue, IssueComment]) => {
         const [updatedIssue, updatedComment] = resultArr;
-      updatedIssue.teamResponse = this.description.value;
-      updatedIssue.duplicateOf = this.duplicateOf.value === '' ? undefined : this.duplicateOf.value;
       updatedIssue.issueComment = updatedComment;
       this.issueUpdated.emit(updatedIssue);
-      form.resetForm();
+      form.resetForm(this.newTeamResponseForm.value);
     }, (error) => {
       this.errorHandlingService.handleError(error);
     });
@@ -133,7 +131,7 @@ export class NewTeamResponseComponent implements OnInit {
     clone.duplicated = this.duplicated.value;
     clone.duplicateOf = this.duplicateOf.value;
     clone.status = STATUS.Done;
-    clone.teamResponse = this.description.value;
+    clone.teamResponse = Issue.updateTeamResponse(this.description.value);
     return clone;
   }
 

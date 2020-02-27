@@ -17,7 +17,8 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
 
   readonly actionButtons: ACTION_BUTTONS[] = [
     ACTION_BUTTONS.VIEW_IN_WEB,
-    ACTION_BUTTONS.MARK_AS_PENDING
+    ACTION_BUTTONS.MARK_AS_PENDING,
+    ACTION_BUTTONS.FIX_ISSUE
   ];
 
   @Input() teamFilter: string;

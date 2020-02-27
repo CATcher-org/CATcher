@@ -41,6 +41,28 @@ export class Issue {
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
 
+    /**
+   * Processes and cleans a raw issue description obtained from user input.
+   */
+  static updateDescription(description: string): string {
+    return Issue.orDefaultString(description, 'No details provided by bug reporter.');
+  }
+
+  /**
+   * Processes and cleans a raw team response obtained from user input.
+   */
+  static updateTeamResponse(teamResponse: string): string {
+    return Issue.orDefaultString(teamResponse, 'No details provided by team.');
+  }
+
+  /**
+   * Given two strings, returns the first if it is not an empty string.
+   * Returns the second string if the first is an empty string.
+   */
+  private static orDefaultString(stringA: string, def: string): string {
+    return stringA.length !== 0 ? stringA : def;
+  }
+
   protected constructor(githubIssue: GithubIssue) {
     /** Basic Fields */
     this.id = +githubIssue.number;
@@ -228,7 +250,7 @@ export interface Issues {
   [id: number]: Issue;
 }
 
-export const SEVERITY_ORDER = { '-': 0 , Low: 1, Medium: 2, High: 3 };
+export const SEVERITY_ORDER = { '-': 0 , VeryLow: 1, Low: 2, Medium: 3, High: 4 };
 
 export const ISSUE_TYPE_ORDER = { '-': 0 , DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3  };
 
