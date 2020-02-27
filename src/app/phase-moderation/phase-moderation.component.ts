@@ -28,7 +28,7 @@ export class PhaseModerationComponent implements OnInit {
 
   public teamFilter = 'All Teams';
 
-  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB];
+  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.FIX_ISSUE];
 
   @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
 

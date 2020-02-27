@@ -94,7 +94,7 @@ export class DataService {
       if (!(entry[ROLE] === UserRole.Tutor.toLowerCase())) {
         return;
       }
-      const tutor = entry[NAME] in tutors ? tutors[entry[NAME]] : {};
+      const tutor = entry[NAME].toLowerCase() in tutors ? tutors[entry[NAME].toLowerCase()] : {};
       tutor[entry[TEAM]] = 'true';
       tutors[entry[NAME].toLowerCase()] = tutor;
     });

@@ -19,7 +19,8 @@ export class PhaseBugReportingComponent implements OnInit {
   ];
   readonly actionButtons: ACTION_BUTTONS[] = [
     ACTION_BUTTONS.VIEW_IN_WEB,
-    ACTION_BUTTONS.DELETE_ISSUE
+    ACTION_BUTTONS.DELETE_ISSUE,
+    ACTION_BUTTONS.FIX_ISSUE
   ];
 
   @ViewChild(IssueTablesComponent) table: IssueTablesComponent;

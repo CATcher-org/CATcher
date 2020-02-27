@@ -25,6 +25,7 @@ export class LabelService {
 
   private readonly REQUIRED_LABELS = {
     severity: {
+      VeryLow: new Label('severity', 'VeryLow', 'ffe0e0'),
       Low: new Label('severity', 'Low', 'ffcccc'),
       Medium: new Label('severity', 'Medium', 'ff9999'),
       High: new Label('severity', 'High', 'ff6666')

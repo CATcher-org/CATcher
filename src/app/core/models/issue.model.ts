@@ -226,6 +226,17 @@ export class Issue {
       `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
   }
 
+  /**
+   * Gets the number of unresolved disputes in an Issue.
+   */
+  numOfUnresolvedDisputes(): number {
+    if (!this.issueDisputes) {
+      return 0;
+    }
+
+    return this.issueDisputes.reduce((prev, current) => prev + Number(current.isDone()), 0);
+  }
+
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {
     let testerResponsesString = '';
     for (const testerResponse of testerResponses) {
@@ -239,7 +250,7 @@ export interface Issues {
   [id: number]: Issue;
 }
 
-export const SEVERITY_ORDER = { '-': 0 , Low: 1, Medium: 2, High: 3 };
+export const SEVERITY_ORDER = { '-': 0 , VeryLow: 1, Low: 2, Medium: 3, High: 4 };
 
 export const ISSUE_TYPE_ORDER = { '-': 0 , DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3  };
 
