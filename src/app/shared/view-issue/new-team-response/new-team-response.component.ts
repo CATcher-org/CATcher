@@ -102,7 +102,7 @@ export class NewTeamResponseComponent implements OnInit {
         const [updatedIssue, updatedComment] = resultArr;
       updatedIssue.issueComment = updatedComment;
       this.issueUpdated.emit(updatedIssue);
-      form.resetForm();
+      form.resetForm(this.newTeamResponseForm.value);
     }, (error) => {
       this.errorHandlingService.handleError(error);
     });
