@@ -43,7 +43,7 @@ export class TeamResponseComponent implements OnInit {
 
   ngOnInit() {
     this.responseForm = this.formBuilder.group({
-      description: ['', Validators.required],
+      description: [''],
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
@@ -146,7 +146,7 @@ export class TeamResponseComponent implements OnInit {
 
   private getUpdatedIssue(): Issue {
     const clone = this.issue.clone(this.phaseService.currentPhase);
-    clone.teamResponse = this.responseForm.get('description').value;
+    clone.teamResponse = Issue.updateTeamResponse(this.responseForm.get('description').value);
     return clone;
   }
 }

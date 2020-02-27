@@ -38,7 +38,7 @@ export class DescriptionComponent implements OnInit {
 
   ngOnInit() {
     this.issueDescriptionForm = this.formBuilder.group({
-      description: ['', Validators.required],
+      description: [''],
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
@@ -106,7 +106,7 @@ export class DescriptionComponent implements OnInit {
   private getUpdatedIssue(): Issue {
     return <Issue> {
       ...this.issue,
-      ['description']: this.issueDescriptionForm.get('description').value
+      ['description']: Issue.updateDescription(this.issueDescriptionForm.get('description').value)
     };
   }
 }

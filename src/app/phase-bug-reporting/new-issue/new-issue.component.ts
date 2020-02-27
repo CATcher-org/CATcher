@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IssueService } from '../../core/services/issue.service';
+import { Issue } from '../../core/models/issue.model';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { Router } from '@angular/router';
@@ -25,7 +26,7 @@ export class NewIssueComponent implements OnInit {
   ngOnInit() {
     this.newIssueForm = this.formBuilder.group({
       title: ['', Validators.required],
-      description: ['', Validators.required],
+      description: ['No details provided.'],
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
@@ -38,7 +39,8 @@ export class NewIssueComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    this.issueService.createIssue(this.title.value, this.description.value,
+    this.issueService.createIssue(this.title.value,
+      Issue.updateDescription(this.description.value),
       this.severity.value, this.type.value).pipe(finalize(() => this.isFormPending = false))
       .subscribe(
         newIssue => {
