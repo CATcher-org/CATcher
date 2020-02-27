@@ -23,7 +23,12 @@ export abstract class Template {
    * Check whether the given string conforms to the template.
    */
   test(toTest: string): boolean {
-    return this.regex.test(toTest);
+    let numOfMatch = 0;
+    while (this.regex.exec(toTest) != null) {
+      numOfMatch += 1;
+    }
+    this.regex.lastIndex = 0;
+    return numOfMatch === this.headers.length;
   }
 }
 
