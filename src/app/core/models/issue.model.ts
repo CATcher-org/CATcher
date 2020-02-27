@@ -45,21 +45,26 @@ export class Issue {
    * Processes and cleans a raw issue description obtained from user input.
    */
   static updateDescription(description: string): string {
-    return Issue.orDefaultString(description, 'No details provided by bug reporter.');
+    const defaultString = 'No details provided by bug reporter.';
+    return Issue.orDefaultString(description, defaultString);
   }
 
   /**
    * Processes and cleans a raw team response obtained from user input.
    */
   static updateTeamResponse(teamResponse: string): string {
-    return Issue.orDefaultString(teamResponse, 'No details provided by team.');
+    const defaultString = 'No details provided by team.';
+    return Issue.orDefaultString(teamResponse, defaultString);
   }
 
   /**
-   * Given two strings, returns the first if it is not an empty string.
+   * Given two strings, returns the first if it is not an empty string or a false value such as null/undefined.
    * Returns the second string if the first is an empty string.
    */
   private static orDefaultString(stringA: string, def: string): string {
+    if (!stringA) {
+      return def;
+    }
     return stringA.length !== 0 ? stringA : def;
   }
 
@@ -68,7 +73,7 @@ export class Issue {
     this.id = +githubIssue.number;
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
-    this.description = githubIssue.body;
+    this.description = Issue.updateDescription(githubIssue.body);
     this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
@@ -92,7 +97,7 @@ export class Issue {
     issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
-    issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
+    issue.teamResponse = Issue.updateTeamResponse(template.teamResponse.content);
     issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
@@ -105,7 +110,7 @@ export class Issue {
 
     issue.githubComments = githubComments;
     issue.issueComment = template.comment;
-    issue.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
+    issue.teamResponse = Issue.updateTeamResponse(template.teamResponse.content);
     issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
     return issue;
   }
@@ -119,7 +124,7 @@ export class Issue {
     issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.description = issueTemplate.description.content;
-    issue.teamResponse = issueTemplate.teamResponse.content;
+    issue.teamResponse = Issue.updateTeamResponse(issueTemplate.teamResponse.content);
     issue.issueDisputes = issueTemplate.dispute.disputes;
 
     if (todoTemplate.moderation && todoTemplate.comment) {
