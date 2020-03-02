@@ -108,20 +108,20 @@
       <button *ngIf="permissions.isTeamResponseEditable() && !issue.status
        && this.isActionVisible(action_buttons.RESPOND_TO_ISSUE); else tryEditIssue"
               [routerLink]="'issues/' + issue.id" mat-button color="accent"
-              style="transform: scale(0.8)" matTooltip="Respond to this Issue">
+              style="transform: scale(0.8)" matTooltip="Respond to this issue">
         <mat-icon>feedback</mat-icon>
       </button>
       <ng-template #tryEditIssue>
         <button *ngIf="permissions.isIssueEditable() && this.isActionVisible(action_buttons.FIX_ISSUE)"
                 mat-button color="accent"
-                style="transform: scale(0.8)" matTooltip="Edit this Issue" >
+                style="transform: scale(0.8)" matTooltip="Edit this issue" >
           <mat-icon>edit</mat-icon>
         </button>
       </ng-template>
       <button *ngIf="permissions.isTeamResponseEditable() && issue.status
       && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
               mat-button color="primary" (click)="markAsResponded(issue)"
-              style="transform: scale(0.8)" matTooltip="Mark this Issue as Responded">
+              style="transform: scale(0.8)" matTooltip="Mark this issue as Responded">
         <mat-icon>check_circle</mat-icon>
       </button>
       <button color="primary" matTooltip="Mark this issue as Pending" mat-button (click)="markAsPending(issue)"
