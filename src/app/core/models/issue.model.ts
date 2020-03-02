@@ -97,7 +97,7 @@ export class Issue {
     issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
-    issue.teamResponse = Issue.updateTeamResponse(template.teamResponse.content);
+    issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
     issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
@@ -110,7 +110,7 @@ export class Issue {
 
     issue.githubComments = githubComments;
     issue.issueComment = template.comment;
-    issue.teamResponse = Issue.updateTeamResponse(template.teamResponse.content);
+    issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
     issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
     return issue;
   }
@@ -124,7 +124,9 @@ export class Issue {
     issue.githubComments = githubComments;
     issue.teamAssigned = teamData;
     issue.description = issueTemplate.description.content;
-    issue.teamResponse = Issue.updateTeamResponse(issueTemplate.teamResponse.content);
+    issue.teamResponse = issueTemplate.teamResponse !== undefined
+      ? Issue.updateTeamResponse(issueTemplate.teamResponse.content)
+      : undefined;
     issue.issueDisputes = issueTemplate.dispute.disputes;
 
     if (todoTemplate.moderation && todoTemplate.comment) {
