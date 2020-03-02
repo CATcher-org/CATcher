@@ -4,12 +4,12 @@ import { UserService } from '../../src/app/core/services/user.service';
 import { UserRole } from '../../src/app/core/models/user.model';
 
 const testStudent = {
-    loginId: 'TestStudent',
+    loginId: 'testStudent',
     role: UserRole.Student
 };
 
 const testTutor = {
-    loginId: 'TestTutor',
+    loginId: 'testTutor',
     role: UserRole.Tutor
 }
 
@@ -18,45 +18,56 @@ const testAdmin = {
     role: UserRole.Admin
 }
 
-let permissionService: PermissionService;
 let mockUserService = new UserService(null, null);
 let mockPhaseService = new PhaseService(null, null, null, null, null);
+let permissionService = new PermissionService(null, mockUserService, mockPhaseService);
 
-describe('test bug reporting phase permissions', () => {
-    beforeAll(() => {
+describe('Test a few permissions for each role in each phase', () => {
+    it('Test a few permissions for UserRole.Student', () => {
         mockPhaseService.currentPhase = Phase.phaseBugReporting;
+        mockUserService.currentUser = testStudent;
+        expect(permissionService.isIssueCreatable()).toBe(true);
+        expect(permissionService.isTutorResponseEditable()).toBe(false);
+        mockPhaseService.currentPhase = Phase.phaseTeamResponse;
+        expect(permissionService.isIssueLabelsEditable()).toBe(true);
+        expect(permissionService.isTeamResponseEditable()).toBe(true);
+        mockPhaseService.currentPhase = Phase.phaseTesterResponse;
+        expect(permissionService.isIssueEditable()).toBe(false);
+        expect(permissionService.isIssueDescriptionEditable()).toBe(false);
+        mockPhaseService.currentPhase = Phase.phaseModeration;
+        expect(permissionService.isIssueDeletable()).toBe(false);
+        expect(permissionService.isIssueTitleEditable()).toBe(false);
     });
 
-    describe('test student permissions', () => {
-        beforeAll(() => {
-            mockUserService.currentUser = testStudent;
-            permissionService = new PermissionService(null, mockUserService, mockPhaseService);
-        });
-
-        it('Student should be only able to edit bug reports', () => {
-            expect(permissionService.isIssueCreatable()).toBe(true);
-            expect(permissionService.isIssueDeletable()).toBe(true);
-            expect(permissionService.isIssueDescriptionEditable()).toBe(true);
-            expect(permissionService.isIssueEditable()).toBe(true);
-            expect(permissionService.isIssueLabelsEditable()).toBe(true);
-            expect(permissionService.isIssueTitleEditable()).toBe(true);
-            expect(permissionService.isTeamResponseEditable()).toBe(false);
-            expect(permissionService.isTutorResponseEditable()).toBe(false);
-        });
+    it('Test a few permissions for UserRole.Tutor', () => {
+        mockPhaseService.currentPhase = Phase.phaseBugReporting;
+        mockUserService.currentUser = testTutor;
+        expect(permissionService.isIssueCreatable()).toBe(false);
+        expect(permissionService.isIssueTitleEditable()).toBe(false);
+        mockPhaseService.currentPhase = Phase.phaseTeamResponse;
+        expect(permissionService.isIssueLabelsEditable()).toBe(false);
+        expect(permissionService.isTeamResponseEditable()).toBe(false);
+        mockPhaseService.currentPhase = Phase.phaseTesterResponse;
+        expect(permissionService.isIssueEditable()).toBe(false);
+        expect(permissionService.isIssueDescriptionEditable()).toBe(false);
+        mockPhaseService.currentPhase = Phase.phaseModeration;
+        expect(permissionService.isTutorResponseEditable()).toBe(true);
+        expect(permissionService.isIssueDeletable()).toBe(false);
     });
 
-    describe('test tutor permissions', () => {
-        beforeAll(() => {
-            mockUserService.currentUser = testTutor;
-            permissionService = new PermissionService(null, mockUserService, mockPhaseService);
-        });
-        it('Tutor should not be able to take any action', () => {
-            expect(permissionService.isIssueCreatable()).toBe(false);
-            // ... to add on after review
-        });
+    it('Test a few permissions for UserRole.Admin', () => {
+        mockPhaseService.currentPhase = Phase.phaseBugReporting;
+        mockUserService.currentUser = testAdmin;
+        expect(permissionService.isIssueCreatable()).toBe(true);
+        expect(permissionService.isTutorResponseEditable()).toBe(false);
+        mockPhaseService.currentPhase = Phase.phaseTeamResponse;
+        expect(permissionService.isIssueLabelsEditable()).toBe(true);
+        expect(permissionService.isTeamResponseEditable()).toBe(true);
+        mockPhaseService.currentPhase = Phase.phaseTesterResponse;
+        expect(permissionService.isIssueEditable()).toBe(true);
+        expect(permissionService.isIssueDescriptionEditable()).toBe(true);
+        mockPhaseService.currentPhase = Phase.phaseModeration;
+        expect(permissionService.isIssueDeletable()).toBe(false);
+        expect(permissionService.isIssueTitleEditable()).toBe(false);
     });
-
-    // .... to add on tests for admin
 });
-
-// ... to add on tests for other phases
