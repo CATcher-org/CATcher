@@ -241,7 +241,7 @@ export class Issue {
       return 0;
     }
 
-    return this.issueDisputes.reduce((prev, current) => prev + Number(current.isDone()), 0);
+    return this.issueDisputes.reduce((prev, current) => prev + Number(!current.isDone()), 0);
   }
 
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {
