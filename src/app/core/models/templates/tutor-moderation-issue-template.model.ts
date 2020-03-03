@@ -5,7 +5,7 @@ import { GithubIssue } from '../github/github-issue.model';
 
 
 const tutorModerationIssueDescriptionHeaders = {
-  description: new Header('Description', 1),
+  description: new Header('Issue Description', 1),
   teamResponse: new Header('Team\'s Response', 1),
   disputes: new Header('Disputes', 1)
 };
