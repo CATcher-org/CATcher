@@ -162,7 +162,7 @@ export class IssueService {
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseModeration:
-        return `# Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
+        return `# Issue Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
          // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
           `# Disputes\n\n${this.getIssueDisputeString(issue.issueDisputes)}\n`;
       default:
