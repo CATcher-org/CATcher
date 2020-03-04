@@ -6,7 +6,6 @@ import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
 import { UserRole } from '../models/user.model';
-import { ErrorHandlingService } from './error-handling.service';
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 
@@ -82,6 +81,32 @@ export class PhaseService {
     return this.githubService.fetchSettingsFile().pipe(
       map(data => data as SessionData)
     );
+  }
+
+  /**
+   * Will fetch session data and update phase service with it.
+   * @returns - If the session is valid return true, else false
+   */
+  storeSessionData(): Observable<boolean> {
+    return this.fetchSessionData().pipe(
+      map((sessionData: SessionData) => {
+        this.assertSessionDataIntegrity(sessionData);
+        this.updateSessionParameters(sessionData);
+        return this.currentPhase !== undefined;
+      })
+    );
+  }
+
+  /**
+   * Determines the github's level of repo permission required for the phase.
+   * Ref: https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/#available-scopes
+   */
+  githubRepoPermissionLevel(): string {
+    if (this.sessionData.openPhases.includes(Phase.phaseModeration)) {
+      return 'repo';
+    } else {
+      return 'public_repo';
+    }
   }
 
   assertSessionDataIntegrity(sessionData: SessionData): void {
