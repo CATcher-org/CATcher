@@ -58,7 +58,6 @@ export class AuthComponent implements OnInit, OnDestroy {
               private authService: AuthService,
               private titleService: Title,
               private ngZone: NgZone,
-              private dataService: DataService,
               private appService: ApplicationService) {
     this.electronService.ipcRenderer.on('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
