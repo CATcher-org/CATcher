@@ -190,7 +190,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     const dataRepo: string = this.getDataRepoDetails(sessionInformation);
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
-    this.phaseService.hasValidSession().pipe(
+    this.phaseService.storeSessionData().pipe(
       flatMap((isValidSession: boolean) => {
         if (!isValidSession) {
           throwError('Invalid Session');
