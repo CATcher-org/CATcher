@@ -14,13 +14,18 @@ import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
+import { map } from 'rxjs/operators';
 
-export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated', 'PartialOAuthenticated', 'SettingUpOAuthUser' }
+export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated', 'ConfirmOAuthUser' }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  readonly githubUrl = 'http://www.github.com';
+  readonly githubDomain = 'github.com';
+  readonly githubLoginCacheName = 'is_logged_in';
+
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
 
@@ -72,6 +77,22 @@ export class AuthService {
     return this.authStateSource.getValue() === AuthState.Authenticated;
   }
 
+  hasExistingAuthWithGithub(): Observable<boolean> {
+    return this.electronService.cookieFor(this.githubUrl, this.githubLoginCacheName).pipe(
+      map((value) => {
+        return value === 'yes';
+      })
+    );
+  }
+
+  setLoginStatusWithGithub(isLoggedIn: boolean) {
+    if (!isLoggedIn) {
+      this.electronService.clearCookies();
+    } else {
+      this.electronService.setCookie(this.githubUrl, this.githubDomain, this.githubLoginCacheName, 'yes');
+    }
+  }
+
   changeAuthState(newAuthState: AuthState) {
     this.authStateSource.next(newAuthState);
   }
@@ -81,11 +102,8 @@ export class AuthService {
    * @param clearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
    */
   startOAuthProcess(clearAuthState: boolean = false) {
-    if (clearAuthState) {
-      this.changeAuthState(AuthState.SettingUpOAuthUser);
-    } else {
-      this.changeAuthState(AuthState.AwaitingAuthentication);
-    }
-    this.electronService.ipcRenderer.send('github-oauth', clearAuthState);
+    const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
+    this.changeAuthState(AuthState.AwaitingAuthentication);
+    this.electronService.ipcRenderer.send('github-oauth', clearAuthState, githubRepoPermission);
   }
 }

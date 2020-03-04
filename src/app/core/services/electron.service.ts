@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-
-// If you import a module but never use any of the imported values other than as TypeScript types,
-// the resulting javascript file will look as if you never imported the module at all.
 import { ipcRenderer, webFrame, remote } from 'electron';
 const { Menu, MenuItem } = remote;
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import { AppConfig } from '../../../environments/environment';
+import { from, Observable } from 'rxjs';
+import Cookie = Electron.Cookie;
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -54,5 +54,31 @@ export class ElectronService {
       this.rightClickPosition = {x: e.x, y: e.y};
       this.rightClickMenu.popup({window: remote.getCurrentWindow()});
     }, false);
+  }
+
+  cookieFor(url: string, name: string): Observable<string> {
+    return from(remote.getCurrentWebContents().session.cookies.get({url: url, name: name})
+      .then((cookies: Cookie[]) => {
+        if (cookies.length < 1) {
+          return '';
+        } else {
+          return cookies[0].value;
+        }
+      })
+    );
+  }
+
+  setCookie(url: string, domain: string, key: string, value: string) {
+    remote.getCurrentWebContents().session.cookies.set({
+      url: url,
+      name: key,
+      value: value,
+      domain: domain,
+      expirationDate: moment().add(7, 'days').unix()
+    });
+  }
+
+  clearCookies() {
+    remote.getCurrentWebContents().session.clearStorageData();
   }
 }
