@@ -16,7 +16,7 @@ import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
 import { map } from 'rxjs/operators';
 
-export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated', 'ConfirmOAuthUser' }
+export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated', 'ConfirmOAuthUser'}
 
 @Injectable({
   providedIn: 'root'

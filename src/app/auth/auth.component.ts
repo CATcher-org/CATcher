@@ -68,8 +68,7 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.errorHandlingService.handleError(error);
           }
           this.authService.changeAuthState(AuthState.NotAuthenticated);
-          this.isAtGithubAccountConfirmation = false;
-          this.isAtNewGithubLogin = true;
+          this.goToNewGithubLogin();
           return;
         }
         this.githubService.storeOAuthAccessToken(token);
@@ -201,12 +200,11 @@ export class AuthComponent implements OnInit, OnDestroy {
       }),
     ).subscribe((hasExistingSession: boolean) => {
       if (hasExistingSession) {
-        this.isAtGithubAccountConfirmation = true;
+        this.goToGithubAccountConfirmation();
         this.auth.startOAuthProcess();
       } else {
-        this.isAtNewGithubLogin = true;
+        this.goToNewGithubLogin();
       }
-      this.isAtSessionSelection = false;
     }, (error) => {
       this.errorHandlingService.handleError(error);
     }, () => {
@@ -234,8 +232,22 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.authService.changeAuthState(AuthState.Authenticated);
   }
 
-  goBackToSessionSelect(): void {
+  goToSessionSelect() {
     this.isAtSessionSelection = true;
+    this.isAtNewGithubLogin = false;
+    this.isAtGithubAccountConfirmation = false;
+  }
+
+  goToGithubAccountConfirmation() {
+    this.isAtSessionSelection = false;
+    this.isAtNewGithubLogin = false;
+    this.isAtGithubAccountConfirmation = true;
+  }
+
+  goToNewGithubLogin() {
+    this.isAtSessionSelection = false;
+    this.isAtNewGithubLogin = true;
+    this.isAtGithubAccountConfirmation = false;
   }
 
   isUserNotAuthenticated(): boolean {
