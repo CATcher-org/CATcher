@@ -211,6 +211,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       }
     }, (error) => {
       this.errorHandlingService.handleError(error);
+      this.isSettingUpSession = false;
     }, () => {
       this.isSettingUpSession = false;
     });
