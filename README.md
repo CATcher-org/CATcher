@@ -112,6 +112,7 @@ Use your Github credentials for username and password.
 5. Compile and start the application: `npm start`
 
 # 4. Commands
+Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file. 
 |Command|Description|
 |--|--|
 |`npm run build`| Build the app. Your built files are in the /dist folder. |
