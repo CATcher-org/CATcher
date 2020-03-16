@@ -1,6 +1,7 @@
 import { GithubService } from '../../src/app/core/services/github.service';
 import { DataService } from '../../src/app/core/services/data.service';
 import { autoSpy } from '../auto-spy';
+import { of } from 'rxjs';
 
 const csvString = `
 role,name,team
@@ -18,12 +19,15 @@ student,student4,CS2103T-W1-2
 describe('DataService', () => {
   it('when getDataFile is called it should', () => {
     // arrange
-    const { build } = setup().default();
+    const { build, githubService } = setup().default();
     const c = build();
+    githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
     // act
-    // c.getDataFile();
+    const dataFile = c.getDataFile();
     // assert
-    // expect(c).toEqual
+    dataFile.subscribe(data => {
+      expect(data).toBeTruthy();
+    });
   });
 
   it('when constructData is called it should', () => {
