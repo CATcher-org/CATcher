@@ -94,17 +94,17 @@ You can download the latest release from https://github.com/CATcher-org/CATcher/
 
 Start the application by clicking on the executable file, no installation is required.
 
-The login page will be displayed.
-![login](https://i.imgur.com/6APFI3J.png)
-
-Use your Github credentials for username and password.
-
-**Settings Location** refers to the name of the Organization and Repository that contains the `settings.json` mentioned in *2.2.1*.
+A page prompting you to enter the session you are participating in using the dropdown.
+![session_select](https://imgur.com/nBOy7zH.png)
 
 ### 2.4.1. For Mac Users
 To run CATcher on MacOS, go to "Security & Privacy" and select "Open Anyway" for CATcher.
 
 <img width="1208" alt="Screenshot 2020-01-19 at 11 05 57 AM" src="https://user-images.githubusercontent.com/22557857/72704060-90461f00-3b92-11ea-97ad-5d8fbbbd5bf0.png">
+
+### 2.4.2. Troubleshooting
+1. Copy and pasting images into the text editor for Mac Users
+You may find you are not able to copy (Cmd+c) and paste (Cmd+v) an image from the "Preview" application. As a workaround, there are other ways to paste stuff into the text editor such as dragging and drop a screenshot image or a file.
 
 # 3. Development
 1. Fork this repository into your Github account.
