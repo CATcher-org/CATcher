@@ -89,6 +89,7 @@ For each of the teams, follow the steps below to assign the right access level t
         3. pe-evaluation: `Write`
 
 ## 2.4. The Application
+
 You can download the latest release from https://github.com/CATcher-org/CATcher/releases
 
 Start the application by clicking on the executable file, no installation is required.
@@ -99,6 +100,11 @@ The login page will be displayed.
 Use your Github credentials for username and password.
 
 **Settings Location** refers to the name of the Organization and Repository that contains the `settings.json` mentioned in *2.2.1*.
+
+### 2.4.1. For Mac Users
+To run CATcher on MacOS, go to "Security & Privacy" and select "Open Anyway" for CATcher.
+
+<img width="1208" alt="Screenshot 2020-01-19 at 11 05 57 AM" src="https://user-images.githubusercontent.com/22557857/72704060-90461f00-3b92-11ea-97ad-5d8fbbbd5bf0.png">
 
 # 3. Development
 1. Fork this repository into your Github account.
