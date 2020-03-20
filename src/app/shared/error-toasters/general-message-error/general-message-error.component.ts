@@ -11,6 +11,5 @@ export class GeneralMessageErrorComponent implements OnInit {
     @Inject(MAT_SNACK_BAR_DATA) public data: any) {}
 
   ngOnInit() {
-    this.snackBarRef.containerInstance.snackBarConfig.duration = 5000;
   }
 }
