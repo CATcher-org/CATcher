@@ -7,6 +7,12 @@ Start the application by clicking on the executable file, no installation is req
 The app will prompt you to enter the session you are participating in, using a dropdown.
 ![session_select](https://imgur.com/nBOy7zH.png)
 
+## For Windows Users
+For normal usage, you can run the `CATcher.exe` and the following dialog would appear. Simply click on the "More Info" button and then click the "Run Anyway" button which would have appeared on the bottom right corner of the dialog. 
+![windows_warning](https://imgur.com/v17UEow.png)
+In some cases, the "Run Anyway" button would not appear. To troubleshoot this, you can open up "Windows Security" and under "App & browser control", make sure your setting conforms to the following.
+![app_control](https://imgur.com/lFgVPSd.png=50x)
+
 ## For Mac Users
 To run CATcher on MacOS, go to "Security & Privacy" and select "Open Anyway" for CATcher.
 
@@ -15,7 +21,7 @@ To run CATcher on MacOS, go to "Security & Privacy" and select "Open Anyway" for
 ### Troubleshooting
 1. Copy and pasting images into the text editor for Mac Users
 
-    You may find you are not able to copy (Cmd+c) and paste (Cmd+v) an image from the "Preview" application. As a workaround,     there are other ways to paste stuff into the text editor such as dragging and dropping a screenshot image or a file.
+    You may find you are not able to copy (Cmd+c) and paste (Cmd+v) an image from the "Preview" application. As a workaround, there are other ways to paste stuff into the text editor such as dragging and dropping a screenshot image or a file.
 
 ## For Linux Users
 After downloading the AppImage file, you should be able to run CATcher by clicking on the
