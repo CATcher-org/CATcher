@@ -108,7 +108,8 @@ AppImage file.
 If this does not work, you may need to allow the file to be executed.
 There are 2 methods to achieve this:
 - From the GUI: Right click on the file icon, select `Properties`, select `Permissions`
-  and enable the `Allow executing file as program` option.
+  and enable the `Allow executing file as program` option. The exact steps may vary based
+  on the Linux distribution.
 - From the command line: Use `chmod +x CATcher-x.y.z.AppImage`
 
 ### 2.4.2. Troubleshooting
