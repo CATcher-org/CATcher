@@ -1,4 +1,4 @@
-# 1. Getting started
+# Getting started
 1. Fork this repository into your Github account.
 
 2. Clone the forked repository into your computer.
@@ -9,7 +9,7 @@
 
 5. Compile and start the application: `npm start`
 
-# 2. Commands
+# Commands
 Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file. 
 |Command|Description|
 |--|--|
@@ -21,8 +21,8 @@ Before building the application using the build commands below, go to `index.htm
 |`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
 | `npm run lint` | Runs the linter (TSLint) |
 
-# 3. Future Developments
+# Future Developments
 Here are a few suggestions that future developers can work on to improve this application!
 
-## 3.1. Support Commenting
+## Support Commenting
 Currently, the application only support 1 response for each phase. So a commenting section would be good to allow discussions between team members as well as between tutors and admins. 
