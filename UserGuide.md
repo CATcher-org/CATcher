@@ -1,4 +1,4 @@
-## CATcher - User Guide
+# CATcher - User Guide
 
 * [Running CATcher on your computer](#running-catcher-on-your-computer)
 
