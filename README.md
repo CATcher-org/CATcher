@@ -1,4 +1,4 @@
-# 1. Introduction
+# Introduction
 
 [![Build Status](https://travis-ci.org/CATcher-org/CATcher.svg?branch=master)](https://travis-ci.org/CATcher-org/CATcher)
 
@@ -10,10 +10,10 @@ This application will support the following order of workflow:
 3. **Tester's Response**: Testers will be able to respond to the team's acknowledgement / rejection of the bugs submitted.
 3. **Evaluation**: Tutors and Admins will be able to view the bug reports and their respective teams' response. They can evaluate the responses, change the severity and status of the bug reports if needed.
 
-# 2. Getting Started
+# Getting Started
 
-* [Running CATcher on your computer](./UserGuide.md#running-catcher-on-your-computer)
+* [Running CATcher on your computer](./usage-notes.md)
 
-* [Setting up the required GitHub organisation and repositories](./UserGuide.md#setting-up-the-required-github-organisation-and-repositories) (for **admin users** only)
+* [Setting up the required GitHub organisation and repositories](./setup-notes.md) (for **admin users** only)
 
 * [Developer Guide](./DeveloperGuide.md)
