@@ -16,9 +16,9 @@ In some cases, the "Run Anyway" button would not appear. To troubleshoot this, y
 ![app_control](https://imgur.com/lFgVPSd.png=50x)
 
 ## For Mac Users
-To run CATcher on MacOS, go to "Security & Privacy" and select "Open Anyway" for CATcher.
+To run CATcher on MacOS, you would need to go to "System Preferences" and in "Security & Privacy", select "Open Anyway" for CATcher as shown below.
 
-<img width="1208" alt="Screenshot 2020-01-19 at 11 05 57 AM" src="https://user-images.githubusercontent.com/22557857/72704060-90461f00-3b92-11ea-97ad-5d8fbbbd5bf0.png">
+![mac_security](https://imgur.com/INX9Juq.png)
 
 ### Troubleshooting
 1. Copy and pasting images into the text editor for Mac Users
