@@ -9,7 +9,9 @@ The app will prompt you to enter the session you are participating in, using a d
 
 ## For Windows Users
 For normal usage, you can run the `CATcher.exe` and the following dialog would appear. Simply click on the "More Info" button and then click the "Run Anyway" button which would have appeared on the bottom right corner of the dialog. 
-![windows_warning](https://imgur.com/v17UEow.png)
+
+![windows_warning](https://imgur.com/4p0Yn7s.png)
+
 In some cases, the "Run Anyway" button would not appear. To troubleshoot this, you can open up "Windows Security" and under "App & browser control", make sure your setting conforms to the following.
 ![app_control](https://imgur.com/lFgVPSd.png=50x)
 
