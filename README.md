@@ -12,7 +12,7 @@ This application will support the following order of workflow:
 
 # 2. Getting Started
 
-Instructions for running CATcher on your computer are available in the [User Guide](./UserGuide.md)
+Instructions for running CATcher on your compute are available in the [User Guide](./UserGuide.md#running-catcher-on-your-computer)
 
 ## 2.1. Set up Organization
 A Github organization must be created first. The organization must have the following settings:
