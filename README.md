@@ -112,7 +112,7 @@ There are 2 methods to achieve this:
   on the Linux distribution.
 - From the command line: Use `chmod +x CATcher-x.y.z.AppImage`
 
-### 2.4.2. Troubleshooting
+### 2.4.3. Troubleshooting
 1. Copy and pasting images into the text editor for Mac Users
 
     You may find you are not able to copy (Cmd+c) and paste (Cmd+v) an image from the "Preview" application. As a workaround,     there are other ways to paste stuff into the text editor such as dragging and dropping a screenshot image or a file.
