@@ -2,6 +2,8 @@
 
 * [Running CATcher on your computer](#running-catcher-on-your-computer)
 
+* [Setting up the required GitHub organisation and repositories](./UserGuide.md#setting-up-the-required-github-organisation-and-repositories) (for **admin** users)
+
 ## Running CATcher on your computer
 You can download the latest release from https://github.com/CATcher-org/CATcher/releases
 
