@@ -16,4 +16,4 @@ This application will support the following order of workflow:
 
 * [Setting up the required GitHub organisation and repositories](./setup-notes.md) (for **admin users** only)
 
-* [Developer Guide](./DeveloperGuide.md)
+* [Developing CATcher](./developer-notes.md)
