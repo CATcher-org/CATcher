@@ -5,11 +5,8 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material';
   selector: 'app-form-error',
   templateUrl: './form-error.component.html',
 })
-export class FormErrorComponent implements OnInit {
+export class FormErrorComponent {
   constructor(
     public snackBarRef: MatSnackBarRef<FormErrorComponent>,
     @Inject(MAT_SNACK_BAR_DATA) public data: any) {}
-
-  ngOnInit() {
-  }
 }
