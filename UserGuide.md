@@ -1,5 +1,6 @@
 ## CATcher - User Guide
 
+* [Running CATcher on your computer](#running-catcher-on-your-computer)
 
 ## Running CATcher on your computer
 You can download the latest release from https://github.com/CATcher-org/CATcher/releases
