@@ -70,3 +70,9 @@ export const USER_JUNWEI = {
     role: UserRole.Student,
     team: TEAM_3
 }
+
+export const USER_ANUBHAV = {
+    loginId: 'anubh-v',
+    role: UserRole.Tutor,
+    allocatedTeams: [TEAM_3]
+}
