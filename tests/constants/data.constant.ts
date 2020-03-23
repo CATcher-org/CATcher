@@ -76,3 +76,9 @@ export const USER_ANUBHAV = {
     role: UserRole.Tutor,
     allocatedTeams: [TEAM_3]
 }
+
+export const USER_SHUMING = {
+    loginId: 'geshuming',
+    role: UserRole.Admin,
+    allocatedTeams: []
+}
