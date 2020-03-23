@@ -1,4 +1,4 @@
-import { DataService } from "../../src/app/core/services/data.service"
+import { UserRole } from "../../src/app/core/models/user.model"
 
 export const csvString = `
 role,name,team
@@ -17,11 +17,56 @@ student,RonakLakhotia,CS2103T-W12-4
 student,ptvrajsk,CS2103T-W12-3
 `
 
-const dataService = new DataService(null);
-export const jsonData = dataService.constructData({data: csvString});
+// jsonData is a json representation of csvString
+export const jsonData = {
+    roles: {
+      students: {
+        junwei96: 'true',
+        testathorstudent: 'true',
+        damithc: 'true',
+        somestudent: 'true',
+        ronaklakhotia: 'true',
+        ptvrajsk: 'true'
+      },
+      tutors: { 'anubh-v': 'true', testathortutor: 'true', anothertutor: 'true' },
+      admins: { damithc: 'true', geshuming: 'true' }
+    },
+    'team-structure': {
+      'CS2103T-W12-3': {
+        junwei96: 'true',
+        testathorstudent: 'true',
+        damithc: 'true',
+        ptvrajsk: 'true'
+      },
+      'CS2103T-W12-4': { somestudent: 'true', ronaklakhotia: 'true' }
+    },
+    'students-allocation': {
+      junwei96: { teamId: 'CS2103T-W12-3' },
+      testathorstudent: { teamId: 'CS2103T-W12-3' },
+      damithc: { teamId: 'CS2103T-W12-3' },
+      somestudent: { teamId: 'CS2103T-W12-4' },
+      ronaklakhotia: { teamId: 'CS2103T-W12-4' },
+      ptvrajsk: { teamId: 'CS2103T-W12-3' }
+    },
+    'tutors-allocation': {
+      'anubh-v': { 'CS2103T-W12-3': 'true' },
+      testathortutor: { 'CS2103T-W12-3': 'true', 'CS2103T-W12-4': 'true' },
+      anothertutor: { 'CS2103T-W12-4': 'true' }
+    },
+    'admins-allocation': { damithc: {}, geshuming: {} }
+  };
 
-export const USER_ANUBHAV = {
-    loginId: 'anubh-v',
-    role: 'tutor',
-    team: 'CS2103-W12-3'
+// These are objects representing some users and teams in jsonData
+const TEAM_3 = {
+    id: 'CS2103T-W12-3',
+    teamMembers: [{loginId: 'junwei96', role: UserRole.Student},
+                  {loginId: 'testathorstudent', role: UserRole.Student}  ,
+                  {loginId: 'damithc',  role: UserRole.Student},
+                  {loginId: 'ptvrajsk', role: UserRole.Student}]
+}
+
+export const USER_JUNWEI = {
+    loginId: 'junwei96',
+    role: UserRole.Student,
+    team: TEAM_3
 }
