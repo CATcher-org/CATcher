@@ -1,0 +1,10 @@
+role,name,team
+admin,admin,
+tutor,tutor1,CS2103T-W1-1
+tutor,tutor1,CS2103T-W1-2
+tutor,tutor2,CS2103T-W1-3
+tutor,tutor2,CS2103T-W1-4
+student,student1,CS2103T-W1-1
+student,student2,CS2103T-W1-1
+student,student3,CS2103T-W1-2
+student,student4,CS2103T-W1-2
