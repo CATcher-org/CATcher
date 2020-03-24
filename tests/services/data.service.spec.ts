@@ -1,136 +1,150 @@
-import { GithubService } from '../../src/app/core/services/github.service';
-import { DataService } from '../../src/app/core/services/data.service';
-import { autoSpy } from '../auto-spy';
 import { of } from 'rxjs';
-
-const csvString = `
-role,name,team
-admin,admin,
-tutor,tutor1,CS2103T-W1-1
-tutor,tutor1,CS2103T-W1-2
-tutor,tutor2,CS2103T-W1-3
-tutor,tutor2,CS2103T-W1-4
-student,student1,CS2103T-W1-1
-student,student2,CS2103T-W1-1
-student,student3,CS2103T-W1-2
-student,student4,CS2103T-W1-2
-`;
+import { DataService } from '../../src/app/core/services/data.service';
+import { GithubService } from '../../src/app/core/services/github.service';
+import { autoSpy } from '../auto-spy';
+import { csvString, dataFile, dataFileTeamStructure } from '../constants/data.constants';
 
 describe('DataService', () => {
-  it('when getDataFile is called it should', () => {
+  it('when getDataFile is called it should return the correct data', () => {
     // arrange
     const { build, githubService } = setup().default();
     const c = build();
     githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
     // act
-    const dataFile = c.getDataFile();
+    const d = c.getDataFile();
     // assert
-    dataFile.subscribe(data => {
-      expect(data).toBeTruthy();
+    d.subscribe(data => {
+      expect(data).toEqual(dataFile);
     });
   });
 
-  it('when constructData is called it should', () => {
+  it('when getDataFile is called it should set dataFile with correct data', () => {
+    // arrange
+    const { build, githubService } = setup().default();
+    const c = build();
+    githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
+    // act
+    const d = c.getDataFile();
+    // assert
+    d.subscribe(data => undefined);
+    expect(c.dataFile).toEqual(dataFileTeamStructure);
+  });
+
+  it('when constructData is called it should return the correct data', () => {
+    // arrange
+    const { build, githubService } = setup().default();
+    const c = build();
+    githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
+    // act
+    let d: {};
+    githubService.fetchDataFile().subscribe(data => {
+      d = c.constructData(data);
+    });
+    // assert
+    expect(d).toEqual(dataFile);
+  });
+
+  it('when parseAdminAllocation is called it should return the correct data', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
     // act
-    // c.constructData();
+    const d = c.parseAdminAllocation(csvString);
     // assert
-    // expect(c).toEqual
+    expect(d).toEqual(dataFile['admins-allocation']);
   });
 
-  it('when parseAdminAllocation is called it should', () => {
+  it('when parseTutorAllocation is called it should return the correct data', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
     // act
-    const admins = c.parseAdminAllocation(csvString);
+    const d = c.parseTutorAllocation(csvString);
     // assert
-    expect(admins['admin']).toBeTruthy();
+    expect(d).toEqual(dataFile['tutors-allocation']);
   });
 
-  it('when parseTutorAllocation is called it should', () => {
+  it('when parseStudentAllocation is called it should return the correct data', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
     // act
-    // c.parseTutorAllocation();
+    const d = c.parseStudentAllocation(csvString);
     // assert
-    // expect(c).toEqual
+    expect(d).toEqual(dataFile['students-allocation']);
   });
 
-  it('when parseStudentAllocation is called it should', () => {
+  it('when parseTeamStructureData is called it should return the correct data', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
     // act
-    // c.parseStudentAllocation();
+    const d = c.parseTeamStructureData(csvString);
     // assert
-    // expect(c).toEqual
+    expect(d).toEqual(dataFile['team-structure']);
   });
 
-  it('when parseTeamStructureData is called it should', () => {
+  it('when parseRolesData is called it should return the correct data', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
     // act
-    // c.parseTeamStructureData();
+    const d = c.parseRolesData(csvString);
     // assert
-    // expect(c).toEqual
+    expect(d).toEqual(dataFile['roles']);
   });
 
-  it('when parseRolesData is called it should', () => {
+  it('when getTeam is called it should return the correct data', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
+    spyOn(c, 'getDataFile').and.callFake(() => {
+      c.dataFile = dataFileTeamStructure;
+      return of({});
+    });
     // act
-    // c.parseRolesData();
+    c.getDataFile();
     // assert
-    // expect(c).toEqual
+    expect(c.getTeam('CS2103T-W1-1')).toEqual(dataFileTeamStructure.teamStructure.get('CS2103T-W1-1'));
+    expect(c.getTeam('CS2103T-W1-2')).toEqual(dataFileTeamStructure.teamStructure.get('CS2103T-W1-2'));
+    expect(c.getTeam('CS2103T-W1-3')).toBeUndefined();
+    expect(c.getTeam('CS2103T-W1-4')).toBeUndefined();
+    expect(c.getTeam('CS2103T-W2-1')).toBeUndefined();
   });
 
-  it('when csvParser is called it should', () => {
+  it('when getTeams is called it should return the correct data', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
+    spyOn(c, 'getDataFile').and.callFake(() => {
+      c.dataFile = dataFileTeamStructure;
+      return of({});
+    });
+    const teams = [
+      'CS2103T-W1-1',
+      'CS2103T-W1-2'
+    ];
     // act
-    // c.csvParser();
+    c.getDataFile();
+    const d = c.getTeams();
     // assert
-    // expect(c).toEqual
+    expect(d).toEqual(teams);
   });
 
-  it('when getTeam is called it should', () => {
+  it('when reset is called it should set dataFile to undefined', () => {
     // arrange
     const { build } = setup().default();
     const c = build();
-    // act
-    // c.getTeam();
+    spyOn(c, 'getDataFile').and.callFake(() => {
+      c.dataFile = dataFileTeamStructure;
+      return of({});
+    });
     // assert
-    // expect(c).toEqual
+    c.getDataFile();
+    expect(c.dataFile).toBeDefined();
+    c.reset();
+    expect(c.dataFile).toBeUndefined();
   });
-
-  it('when getTeams is called it should', () => {
-    // arrange
-    const { build } = setup().default();
-    const c = build();
-    // act
-    // c.getTeams();
-    // assert
-    // expect(c).toEqual
-  });
-
-  it('when reset is called it should', () => {
-    // arrange
-    const { build } = setup().default();
-    const c = build();
-    // act
-    // c.reset();
-    // assert
-    // expect(c).toEqual
-  });
-
-
 });
 
 function setup() {

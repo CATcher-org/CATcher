@@ -50,8 +50,6 @@ const team1: User[] = [{loginId: 'student1', role: UserRole.Student}, {loginId: 
 const team2: User[] = [{loginId: 'student3', role: UserRole.Student}, {loginId: 'student4', role: UserRole.Student}];
 teamStructure.set('CS2103T-W1-1', {id: 'CS2103T-W1-1', teamMembers: team1});
 teamStructure.set('CS2103T-W1-2', {id: 'CS2103T-W1-2', teamMembers: team2});
-teamStructure.set('CS2103T-W1-3', {id: 'CS2103T-W1-3', teamMembers: []});
-teamStructure.set('CS2103T-W1-4', {id: 'CS2103T-W1-4', teamMembers: []});
 
 export const dataFileTeamStructure: DataFile = {
   teamStructure: teamStructure
