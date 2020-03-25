@@ -5,7 +5,7 @@ import { autoSpy } from '../auto-spy';
 import { csvString, dataFile, dataFileTeamStructure } from '../constants/data.constants';
 
 describe('DataService', () => {
-  it('when getDataFile is called it should return the correct data', () => {
+  it('when getDataFile is called it should return the correct data', done => {
     // arrange
     const { build, githubService } = setup().default();
     const c = build();
@@ -15,10 +15,11 @@ describe('DataService', () => {
     // assert
     d.subscribe(data => {
       expect(data).toEqual(dataFile);
+      done();
     });
   });
 
-  it('when getDataFile is called it should set dataFile with correct data', () => {
+  it('when getDataFile is called it should set dataFile with correct data', done => {
     // arrange
     const { build, githubService } = setup().default();
     const c = build();
@@ -26,8 +27,10 @@ describe('DataService', () => {
     // act
     const d = c.getDataFile();
     // assert
-    d.subscribe(data => undefined);
-    expect(c.dataFile).toEqual(dataFileTeamStructure);
+    d.subscribe(data => {
+      expect(c.dataFile).toEqual(dataFileTeamStructure);
+      done();
+    });
   });
 
   it('when constructData is called it should return the correct data', () => {
