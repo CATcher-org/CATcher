@@ -3,11 +3,11 @@ import {UploadService, SUPPORTED_FILE_TYPES, FILE_TYPE_SUPPORT_ERROR} from '../.
 describe('Test the UploadService', () => {
     it('Test whether the UploadService can detect valid / invalid filetypes', () => {
         const uploadService = new UploadService(null);
-        const numOfAcceptedFileTypes = SUPPORTED_FILE_TYPES.length;
-        const randomValidFileType = SUPPORTED_FILE_TYPES[randomIntBetween(0, numOfAcceptedFileTypes)];
-        const validFileName = "testFile." + randomValidFileType;
+        for (const validFileType of SUPPORTED_FILE_TYPES) {
+            const validFileName = "testFile." + validFileType;
+            expect(uploadService.isSupportedFileType(validFileName)).toBe(true);
+        }
         const invalidFileName = "testFile." + 'java';
-        expect(uploadService.isSupportedFileType(validFileName)).toBe(true);
         expect(uploadService.isSupportedFileType(invalidFileName)).toBe(false);
     });
 
@@ -25,7 +25,3 @@ describe('Test the UploadService', () => {
       );
     });
 });
-
-function randomIntBetween(smallerInt : number, largerInt : number) {
-  return Math.floor(Math.random() * (largerInt - smallerInt)) + smallerInt;
-}
