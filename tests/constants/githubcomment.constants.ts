@@ -1,6 +1,6 @@
 import { GithubComment } from "../../src/app/core/models/github/github-comment.model";
 
-export const TEAM_RESPONSE : GithubComment = {
+export const EMPTY_TEAM_RESPONSE : GithubComment = {
     author_association: 'CONTRIBUTOR',
     body: "# Team's Response\n" +
     '\n' +
