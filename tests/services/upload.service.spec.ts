@@ -1,14 +1,30 @@
 import {UploadService, SUPPORTED_FILE_TYPES, FILE_TYPE_SUPPORT_ERROR} from '../../src/app/core/services/upload.service';
 
+const PERIOD = "."
+
 describe('UploadService', () => {
-    it('can detect valid / invalid filetypes', () => {
+    it('can distinguish valid / invalid filetypes', () => {
         const uploadService = new UploadService(null);
         for (const validFileType of SUPPORTED_FILE_TYPES) {
-            const validFileName = "testFile." + validFileType;
+            const validFileName = "testFile" + PERIOD + validFileType;
             expect(uploadService.isSupportedFileType(validFileName)).toBe(true);
         }
-        const invalidFileName = "testFile." + 'java';
+        const invalidFileName = "testFile" + PERIOD + 'java';
         expect(uploadService.isSupportedFileType(invalidFileName)).toBe(false);
+    });
+
+    it('is case insensitive', () => {
+      const uploadService = new UploadService(null);
+      const invalidFileName = "TESTfile" + PERIOD + "JS";
+      expect(uploadService.isSupportedFileType(invalidFileName)).toBe(false);
+    });
+
+    it('rejects filenames that do not have a file extension', () => {
+      const uploadService = new UploadService(null);
+      for (const validFileType of SUPPORTED_FILE_TYPES) {
+        const fileNameWithoutFileExtension = "testFile" + validFileType;
+        expect(uploadService.isSupportedFileType(fileNameWithoutFileExtension)).toBe(false);
+      }
     });
 
     it('throws an error if an invalid filetype is uploaded', done => {
