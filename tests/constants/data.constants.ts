@@ -1,4 +1,3 @@
-import { UserRole } from "../../src/app/core/models/user.model"
 
 export const csvString = `
 role,name,team
