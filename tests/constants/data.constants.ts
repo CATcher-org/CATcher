@@ -6,9 +6,9 @@ admin,damithc,
 tutor,anubh-v,CS2103T-W12-3
 admin,geshuming,
 tutor,jj-lim,CS2103T-W12-3
+tutor,jj-lim,CS2103T-W12-3
 tutor,jj-lim,CS2103T-W12-4
 tutor,q,CS2103T-W12-4
-tutor,jj-lim,CS2103T-W12-3
 student,003-samuel,CS2103T-W12-3
 student,damithc,CS2103T-W12-3
 student,RonakLakhotia,CS2103T-W12-4
