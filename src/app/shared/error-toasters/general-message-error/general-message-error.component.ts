@@ -5,12 +5,8 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material';
   selector: 'app-general-message-error',
   templateUrl: './general-message-error.component.html',
 })
-export class GeneralMessageErrorComponent implements OnInit {
+export class GeneralMessageErrorComponent {
   constructor(
     public snackBarRef: MatSnackBarRef<GeneralMessageErrorComponent>,
     @Inject(MAT_SNACK_BAR_DATA) public data: any) {}
-
-  ngOnInit() {
-    this.snackBarRef.containerInstance.snackBarConfig.duration = 5000;
-  }
 }
