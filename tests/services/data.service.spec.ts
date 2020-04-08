@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { DataService } from '../../src/app/core/services/data.service';
 import { GithubService } from '../../src/app/core/services/github.service';
 import { autoSpy } from '../auto-spy';
-import { csvString, dataFile, dataFileTeamStructure } from '../constants/data.constants';
+import { csvString, jsonData, dataFileTeamStructure } from '../constants/data.constants';
 
 describe('DataService', () => {
   it('when getDataFile is called it should return the correct data', done => {
@@ -14,7 +14,7 @@ describe('DataService', () => {
     const d = c.getDataFile();
     // assert
     d.subscribe(data => {
-      expect(data).toEqual(dataFile);
+      expect(data).toEqual(jsonData);
       done();
     });
   });
@@ -44,7 +44,7 @@ describe('DataService', () => {
       d = c.constructData(data);
     });
     // assert
-    expect(d).toEqual(dataFile);
+    expect(d).toEqual(jsonData);
   });
 
   it('when parseAdminAllocation is called it should return the correct data', () => {
@@ -54,7 +54,7 @@ describe('DataService', () => {
     // act
     const d = c.parseAdminAllocation(csvString);
     // assert
-    expect(d).toEqual(dataFile['admins-allocation']);
+    expect(d).toEqual(jsonData['admins-allocation']);
   });
 
   it('when parseTutorAllocation is called it should return the correct data', () => {
@@ -64,7 +64,7 @@ describe('DataService', () => {
     // act
     const d = c.parseTutorAllocation(csvString);
     // assert
-    expect(d).toEqual(dataFile['tutors-allocation']);
+    expect(d).toEqual(jsonData['tutors-allocation']);
   });
 
   it('when parseStudentAllocation is called it should return the correct data', () => {
@@ -74,7 +74,7 @@ describe('DataService', () => {
     // act
     const d = c.parseStudentAllocation(csvString);
     // assert
-    expect(d).toEqual(dataFile['students-allocation']);
+    expect(d).toEqual(jsonData['students-allocation']);
   });
 
   it('when parseTeamStructureData is called it should return the correct data', () => {
@@ -84,7 +84,7 @@ describe('DataService', () => {
     // act
     const d = c.parseTeamStructureData(csvString);
     // assert
-    expect(d).toEqual(dataFile['team-structure']);
+    expect(d).toEqual(jsonData['team-structure']);
   });
 
   it('when parseRolesData is called it should return the correct data', () => {
@@ -94,7 +94,7 @@ describe('DataService', () => {
     // act
     const d = c.parseRolesData(csvString);
     // assert
-    expect(d).toEqual(dataFile['roles']);
+    expect(d).toEqual(jsonData['roles']);
   });
 
   it('when getTeam is called it should return the correct data', () => {
@@ -108,11 +108,10 @@ describe('DataService', () => {
     // act
     c.getDataFile();
     // assert
-    expect(c.getTeam('CS2103T-W1-1')).toEqual(dataFileTeamStructure.teamStructure.get('CS2103T-W1-1'));
-    expect(c.getTeam('CS2103T-W1-2')).toEqual(dataFileTeamStructure.teamStructure.get('CS2103T-W1-2'));
-    expect(c.getTeam('CS2103T-W1-3')).toBeUndefined();
-    expect(c.getTeam('CS2103T-W1-4')).toBeUndefined();
-    expect(c.getTeam('CS2103T-W2-1')).toBeUndefined();
+    expect(c.getTeam('CS2103T-W12-3')).toEqual(dataFileTeamStructure.teamStructure.get('CS2103T-W12-3'));
+    expect(c.getTeam('CS2103T-W12-4')).toEqual(dataFileTeamStructure.teamStructure.get('CS2103T-W12-4'));
+    expect(c.getTeam('CS2103T-W12-1')).toBeUndefined();
+    expect(c.getTeam('CS2103T-W12-2')).toBeUndefined();
   });
 
   it('when getTeams is called it should return the correct data', () => {
@@ -124,8 +123,8 @@ describe('DataService', () => {
       return of({});
     });
     const teams = [
-      'CS2103T-W1-1',
-      'CS2103T-W1-2'
+      'CS2103T-W12-3',
+      'CS2103T-W12-4'
     ];
     // act
     c.getDataFile();
