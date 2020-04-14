@@ -1,4 +1,14 @@
 {
     "spec_dir": "tests",
-    "spec_files": ["**/**/*.spec.ts"]
+    "spec_files": ["**/**/*.spec.ts"],
+    "reporters": [
+      {
+        "name": "jasmine-spec-reporter#SpecReporter",
+        "options": {
+          "spec": {
+            "displayDuration": true
+          }
+        }
+      }
+    ]
  }
