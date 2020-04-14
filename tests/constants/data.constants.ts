@@ -1,3 +1,4 @@
+import { UserRole } from "../../src/app/core/models/user.model"
 
 export const csvString = `
 role,name,team
@@ -51,3 +52,35 @@ export const jsonData = {
     },
     'admins-allocation': { damithc: {}, geshuming: {} }
   }
+
+  // These are objects representing some users and teams in jsonData
+const TEAM_3 = {
+  id: 'CS2103T-W12-3',
+  teamMembers: [{loginId: 'junwei96', role: UserRole.Student},
+                {loginId: '003-samuel', role: UserRole.Student}  ,
+                {loginId: 'damithc',  role: UserRole.Student},
+                {loginId: 'ptvrajsk', role: UserRole.Student}]
+}
+
+const TEAM_4 = {
+  id: 'CS2103T-W12-4',
+  teamMembers: [{loginId: 'ronaklakhotia', role: UserRole.Student}]
+}
+
+export const USER_JUNWEI = {
+  loginId: 'junwei96',
+  role: UserRole.Student,
+  team: TEAM_3
+}
+
+export const USER_Q = {
+  loginId: 'q',
+  role: UserRole.Tutor,
+  allocatedTeams: [TEAM_4]
+}
+
+export const USER_SHUMING = {
+  loginId: 'geshuming',
+  role: UserRole.Admin,
+  allocatedTeams: []
+}
