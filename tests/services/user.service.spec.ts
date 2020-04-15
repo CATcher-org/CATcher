@@ -28,7 +28,7 @@ describe('UserService', () => {
       await createAndVerifyUser('JUNWEi96', USER_JUNWEI);
     });
 
-    it('assigns highest possible role to a user, based on all roles of that user in data.csv', async () => {
+    it('assigns highest possible role to a user who has multiple roles in data.csv', async () => {
       await createAndVerifyUser(USER_WITH_TWO_ROLES.loginId, USER_WITH_TWO_ROLES);
     });
 
