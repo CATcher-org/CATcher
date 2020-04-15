@@ -15,6 +15,10 @@ export class DataService {
 
   constructor(private githubService: GithubService) {}
 
+  /**
+   * Retrieves the csv file from the settings repo and constructs
+   * the required data file for the app.
+   */
   getDataFile(): Observable<{}> {
     return this.githubService.fetchDataFile().pipe(
       map((allCsvDataWrapper: {}) => {
@@ -35,7 +39,7 @@ export class DataService {
    * @param allCsvDataWrapper - Object containing strings of csv data.
    * @return jsonData - Object representing merged data file.
    */
-  constructData(allCsvDataWrapper: {}): {} {
+  private constructData(allCsvDataWrapper: {}): {} {
     const jsonData: {} = {};
     const allCsvData: string = allCsvDataWrapper['data'];
 
@@ -54,7 +58,7 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  parseAdminAllocation(csvInput: string): {} {
+  private parseAdminAllocation(csvInput: string): {} {
     // CSV Headers
     const NAME = 'name';
     const ROLE = 'role';
@@ -79,7 +83,7 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  parseTutorAllocation(csvInput: string): {} {
+  private parseTutorAllocation(csvInput: string): {} {
     // CSV Headers
     const NAME = 'name';
     const TEAM = 'team';
@@ -108,7 +112,7 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  parseStudentAllocation(csvInput: string): {} {
+  private parseStudentAllocation(csvInput: string): {} {
     // CSV Headers
     const TEAM = 'team';
     const NAME = 'name';
@@ -139,7 +143,7 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  parseTeamStructureData(csvInput: string): {} {
+  private parseTeamStructureData(csvInput: string): {} {
     // CSV Headers
     const TEAM = 'team';
     const NAME = 'name';
@@ -168,7 +172,7 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  parseRolesData(csvInput: string): {} {
+  private parseRolesData(csvInput: string): {} {
     // CSV Headers
     const ROLE = 'role';
     const NAME = 'name';
@@ -205,7 +209,7 @@ export class DataService {
    * @param csvText - csv information.
    * @return - Subjects that tracks the parsed data.
    */
-  csvParser(csvText: string): [{}] {
+  private csvParser(csvText: string): [{}] {
     return parse(csvText, {
       columns: true
     });
