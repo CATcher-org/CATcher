@@ -84,3 +84,9 @@ export const USER_SHUMING = {
   role: UserRole.Admin,
   allocatedTeams: []
 }
+
+export const USER_WITH_TWO_ROLES = {
+  loginId: 'damithc',
+  role: UserRole.Admin,
+  allocatedTeams: []
+}

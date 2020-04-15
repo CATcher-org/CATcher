@@ -1,4 +1,4 @@
-import { jsonData, USER_JUNWEI, USER_Q, USER_SHUMING } from '../constants/data.constants'
+import { jsonData, USER_JUNWEI, USER_Q, USER_SHUMING, USER_WITH_TWO_ROLES } from '../constants/data.constants'
 import { UserService } from '../../src/app/core/services/user.service'
 import { User, UserRole } from '../../src/app/core/models/user.model';
 import { of } from 'rxjs';
@@ -26,6 +26,10 @@ describe('UserService', () => {
 
     it('treats the loginId in a case insensitive manner', async () => {
       await createAndVerifyUser('JUNWEi96', USER_JUNWEI);
+    });
+
+    it('assigns highest possible role to a user, based on all roles of that user in data.csv', async () => {
+      await createAndVerifyUser(USER_WITH_TWO_ROLES.loginId, USER_WITH_TWO_ROLES);
     });
 
     it('throws an error if the user is unauthorized', (done) => {
