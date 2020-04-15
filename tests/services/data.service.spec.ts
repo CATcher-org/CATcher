@@ -6,7 +6,7 @@ import { csvString, jsonData, dataFileTeamStructure } from '../constants/data.co
 
 describe('DataService', () => {
   it('when getDataFile is called it should return the correct data', done => {
-    const { build, githubService } = setup().default();
+    const { build, githubService } = setup();
     const dataService = build();
     githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
 
@@ -17,7 +17,7 @@ describe('DataService', () => {
   });
 
   it('when getDataFile is called it should set dataFile with correct data', done => {
-    const { build, githubService } = setup().default();
+    const { build, githubService } = setup();
     const dataService = build();
     githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
 
@@ -29,7 +29,7 @@ describe('DataService', () => {
 
   it('when constructData is called it should return the correct data', () => {
     // arrange
-    const { build, githubService } = setup().default();
+    const { build, githubService } = setup();
     const dataService = build();
     githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
     // act
@@ -43,7 +43,7 @@ describe('DataService', () => {
 
   it('when parseAdminAllocation is called it should return the correct data', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     // act
     const actual = dataService.parseAdminAllocation(csvString);
@@ -53,7 +53,7 @@ describe('DataService', () => {
 
   it('when parseTutorAllocation is called it should return the correct data', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     // act
     const actual = dataService.parseTutorAllocation(csvString);
@@ -63,7 +63,7 @@ describe('DataService', () => {
 
   it('when parseStudentAllocation is called it should return the correct data', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     // act
     const actual = dataService.parseStudentAllocation(csvString);
@@ -73,7 +73,7 @@ describe('DataService', () => {
 
   it('when parseTeamStructureData is called it should return the correct data', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     // act
     const actual = dataService.parseTeamStructureData(csvString);
@@ -83,7 +83,7 @@ describe('DataService', () => {
 
   it('when parseRolesData is called it should return the correct data', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     // act
     const actual = dataService.parseRolesData(csvString);
@@ -93,7 +93,7 @@ describe('DataService', () => {
 
   it('when getTeam is called it should return the correct data', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     spyOn(dataService, 'getDataFile').and.callFake(() => {
       dataService.dataFile = dataFileTeamStructure;
@@ -110,7 +110,7 @@ describe('DataService', () => {
 
   it('when getTeams is called it should return the correct data', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     spyOn(dataService, 'getDataFile').and.callFake(() => {
       dataService.dataFile = dataFileTeamStructure;
@@ -129,7 +129,7 @@ describe('DataService', () => {
 
   it('when reset is called it should set dataFile to undefined', () => {
     // arrange
-    const { build } = setup().default();
+    const { build } = setup();
     const dataService = build();
     spyOn(dataService, 'getDataFile').and.callFake(() => {
       dataService.dataFile = dataFileTeamStructure;
@@ -147,9 +147,6 @@ function setup() {
   const githubService = autoSpy(GithubService);
   const builder = {
     githubService,
-    default() {
-      return builder;
-    },
     build() {
       return new DataService(githubService);
     }
