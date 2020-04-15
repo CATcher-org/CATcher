@@ -45,7 +45,7 @@ describe('UserService', () => {
         }
       );
     });
-});
+  });
 });
 
 async function createAndVerifyUser(loginId: string, expectedUser: User) {
