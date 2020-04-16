@@ -1,4 +1,6 @@
-import { UserRole } from "../../src/app/core/models/user.model"
+import { DataFile } from '../../src/app/core/models/data-file.model';
+import { Team } from '../../src/app/core/models/team.model';
+import { UserRole } from '../../src/app/core/models/user.model';
 
 export const csvString = `
 role,name,team
@@ -14,7 +16,7 @@ student,003-samuel,CS2103T-W12-3
 student,damithc,CS2103T-W12-3
 student,RonakLakhotia,CS2103T-W12-4
 student,ptvrajsk,CS2103T-W12-3
-`
+`;
 
 // jsonData is a json representation of csvString
 export const jsonData = {
@@ -90,3 +92,17 @@ export const USER_WITH_TWO_ROLES = {
   role: UserRole.Admin,
   allocatedTeams: []
 }
+
+export const dataFileTeamStructure: DataFile = {
+  teamStructure: new Map<string, Team>([
+    ['CS2103T-W12-3', {id: 'CS2103T-W12-3', teamMembers: [
+      {loginId: 'junwei96', role: UserRole.Student},
+      {loginId: '003-samuel', role: UserRole.Student},
+      {loginId: 'damithc', role: UserRole.Student},
+      {loginId: 'ptvrajsk', role: UserRole.Student}
+    ]}],
+    ['CS2103T-W12-4', {id: 'CS2103T-W12-4', teamMembers: [
+      {loginId: 'ronaklakhotia', role: UserRole.Student}
+    ]}]
+  ])
+};
