@@ -1,6 +1,6 @@
 import { DataFile } from '../../src/app/core/models/data-file.model';
 import { Team } from '../../src/app/core/models/team.model';
-import { User, UserRole } from '../../src/app/core/models/user.model';
+import { UserRole } from '../../src/app/core/models/user.model';
 
 export const csvString = `
 role,name,team
@@ -53,7 +53,45 @@ export const jsonData = {
       q: { 'CS2103T-W12-4': 'true' }
     },
     'admins-allocation': { damithc: {}, geshuming: {} }
-  };
+  }
+
+  // These are objects representing some users and teams in jsonData
+const TEAM_3 = {
+  id: 'CS2103T-W12-3',
+  teamMembers: [{loginId: 'junwei96', role: UserRole.Student},
+                {loginId: '003-samuel', role: UserRole.Student}  ,
+                {loginId: 'damithc',  role: UserRole.Student},
+                {loginId: 'ptvrajsk', role: UserRole.Student}]
+}
+
+const TEAM_4 = {
+  id: 'CS2103T-W12-4',
+  teamMembers: [{loginId: 'ronaklakhotia', role: UserRole.Student}]
+}
+
+export const USER_JUNWEI = {
+  loginId: 'junwei96',
+  role: UserRole.Student,
+  team: TEAM_3
+}
+
+export const USER_Q = {
+  loginId: 'q',
+  role: UserRole.Tutor,
+  allocatedTeams: [TEAM_4]
+}
+
+export const USER_SHUMING = {
+  loginId: 'geshuming',
+  role: UserRole.Admin,
+  allocatedTeams: []
+}
+
+export const USER_WITH_TWO_ROLES = {
+  loginId: 'damithc',
+  role: UserRole.Admin,
+  allocatedTeams: []
+}
 
 export const dataFileTeamStructure: DataFile = {
   teamStructure: new Map<string, Team>([
