@@ -211,7 +211,8 @@ export class DataService {
    */
   private csvParser(csvText: string): [{}] {
     return parse(csvText, {
-      columns: true
+      columns: true,
+      skip_empty_lines: true
     });
   }
 
