@@ -1,4 +1,4 @@
-import { ISSUE_WITH_ASSIGNEES, ISSUE_WITH_EMPTY_DESCRIPTION } from "./githubissue.constants";
+import { ISSUE_WITH_ASSIGNEES, ISSUE_WITH_EMPTY_DESCRIPTION } from './githubissue.constants';
 
 /* Contains a simplified version of the data obtained when we query
    for the latest events on a repository using the Octokit API.
@@ -20,7 +20,7 @@ export const ADD_LABEL_EVENT = {
     created_at: '2020-03-02T16:34:03Z',
     label: { name: 'severity.VeryLow', color: 'ffe0e0' },
     issue: ISSUE_WITH_ASSIGNEES
-}
+};
 
 /* In the list of events returned by Octokit API,
    the events are ordered by time of creation,

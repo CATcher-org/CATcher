@@ -36,7 +36,7 @@ describe('GithubEventService', () => {
       const SECOND_EVENT = [CHANGE_TITLE_EVENT];
       githubService.fetchEventsForRepo.and.returnValue(of(FIRST_EVENT));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
-      
+
       githubEventService.reloadPage().subscribe(_ => {
         expect(issueService.reloadAllIssues.calls.count()).toBe(1);
         assertLastModified(githubEventService, FIRST_EVENT);
@@ -46,7 +46,7 @@ describe('GithubEventService', () => {
           expect(issueService.reloadAllIssues.calls.count()).toBe(2);
           assertLastModified(githubEventService, SECOND_EVENT);
           done();
-        })
+        });
       });
     });
 
