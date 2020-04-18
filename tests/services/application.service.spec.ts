@@ -1,6 +1,6 @@
 import {ApplicationService} from '../../src/app/core/services/application.service';
 
-let applicationService = new ApplicationService(null);
+const applicationService = new ApplicationService(null);
 const currentVersion = '3.2.5';
 
 describe('Test the ApplicationService', () => {

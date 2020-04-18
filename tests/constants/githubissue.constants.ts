@@ -1,5 +1,5 @@
 import { GithubIssue } from '../../src/app/core/models/github/github-issue.model';
-import { GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL, 
+import { GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
          GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY } from '../constants/githublabel.constants';
 
 export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubIssue({
@@ -8,7 +8,7 @@ export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubIssue({
     assignees: [],
     body: '',
     created_at: '2020-03-02T16:19:02Z',
-    labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL, 
+    labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
              GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY
             ],
     state: 'open',
@@ -35,7 +35,7 @@ export const ISSUE_WITH_ASSIGNEES = new GithubIssue({
       ],
     body: 'Screen freezes every few minutes',
     created_at: '2020-01-18T07:01:45Z',
-    labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL, 
+    labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
         GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY
        ],
     state: 'open',
