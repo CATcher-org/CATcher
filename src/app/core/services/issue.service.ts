@@ -29,6 +29,8 @@ export class IssueService {
   private issueTeamFilter = 'All Teams';
   readonly MINIMUM_MATCHES = 1;
 
+  private toForceFetch = true;
+
   constructor(private githubService: GithubService,
               private userService: UserService,
               private phaseService: PhaseService,
@@ -266,10 +268,10 @@ export class IssueService {
 
     const issuesPerFilter = [];
     if (filters.length === 0) {
-      issuesPerFilter.push(this.githubService.fetchIssues({}));
+      issuesPerFilter.push(this.githubService.fetchIssues({}, this.toForceFetch));
     }
     for (const filter of filters) {
-      issuesPerFilter.push(this.githubService.fetchIssues(filter));
+      issuesPerFilter.push(this.githubService.fetchIssues(filter, this.toForceFetch));
     }
 
     return forkJoin(issuesPerFilter).pipe(
@@ -283,6 +285,9 @@ export class IssueService {
         return mappingFunctions.length === 0 ? of([]) : forkJoin(mappingFunctions);
       }),
       map(() => {
+        if (this.toForceFetch) {
+          this.toForceFetch = false;
+        }
         return Object.values(this.issues);
       })
     );
@@ -359,20 +364,20 @@ export class IssueService {
       case Phase.phaseBugReporting:
         return of(Issue.createPhaseBugReportingIssue(githubIssue));
       case Phase.phaseTeamResponse:
-        return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
+        return this.issueCommentService.getGithubComments(githubIssue.number, this.toForceFetch).pipe(
           map((githubComments: GithubComment[]) => {
             return Issue.createPhaseTeamResponseIssue(githubIssue, githubComments,
               this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
           })
         );
       case Phase.phaseTesterResponse:
-        return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
+        return this.issueCommentService.getGithubComments(githubIssue.number, this.toForceFetch).pipe(
           map((githubComments: GithubComment[]) => {
             return Issue.createPhaseTesterResponseIssue(githubIssue, githubComments);
           })
         );
       case Phase.phaseModeration:
-        return this.issueCommentService.getGithubComments(githubIssue.number).pipe(
+        return this.issueCommentService.getGithubComments(githubIssue.number, this.toForceFetch).pipe(
           map((githubComments: GithubComment[]) => {
             return Issue.createPhaseModerationIssue(githubIssue, githubComments,
               this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));

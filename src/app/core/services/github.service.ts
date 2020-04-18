@@ -64,9 +64,9 @@ export class GithubService {
   /**
    * Will return an Observable with array of all of the issues in Github including the paginated issues.
    */
-  fetchIssues(filter?: {}): Observable<Array<GithubIssue>> {
+  fetchIssues(filter?: {}, forceFetch: boolean = false): Observable<Array<GithubIssue>> {
     let responseInFirstPage: GithubResponse<GithubIssue[]>;
-    return from(this.getIssueAPICall(filter, 1)).pipe(
+    return from(this.getIssueAPICall(filter, 1, forceFetch)).pipe(
       map((response: GithubResponse<GithubIssue[]>) => {
         responseInFirstPage = response;
         return this.getNumberOfPages(response);
@@ -74,7 +74,7 @@ export class GithubService {
       flatMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
-          apiCalls.push(from(this.getIssueAPICall(filter, i)));
+          apiCalls.push(from(this.getIssueAPICall(filter, i, forceFetch)));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
@@ -94,17 +94,18 @@ export class GithubService {
     );
   }
 
-  fetchIssueComments(issueId: number): Observable<Array<GithubComment>> {
+  fetchIssueComments(issueId: number, forceFetch: boolean = false): Observable<Array<GithubComment>> {
     let responseInFirstPage: GithubResponse<GithubComment[]>;
-    return from(this.getCommentsAPICall(issueId, 1)).pipe(
+    return from(this.getCommentsAPICall(issueId, 1, forceFetch)).pipe(
       map((response: GithubResponse<GithubComment[]>) => {
         responseInFirstPage = response;
+        console.log('got number of pages in ', issueId);
         return this.getNumberOfPages(response);
       }),
       flatMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubComment[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
-          apiCalls.push(from(this.getCommentsAPICall(issueId, i)));
+          apiCalls.push(from(this.getCommentsAPICall(issueId, i, forceFetch)));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
@@ -119,6 +120,7 @@ export class GithubService {
             collatedData.push(comment);
           }
         }
+        console.log('collated comments for issueId', issueId, ' ', collatedData);
         return collatedData;
       })
     );
@@ -304,13 +306,22 @@ export class GithubService {
     return numberOfPages;
   }
 
-  private getIssueAPICall(filter: {}, pageNumber: number): Promise<GithubResponse<GithubIssue[]>> {
-    return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
-      direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtagManager.get(pageNumber) }});
+  private getIssueAPICall(filter: {}, pageNumber: number, force: boolean = false): Promise<GithubResponse<GithubIssue[]>> {
+    if (force) {
+      return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
+        direction: 'desc', per_page: 100, page: pageNumber});
+    } else {
+      return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
+        direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtagManager.get(pageNumber) }});
+    }
   }
 
-  private getCommentsAPICall(issueId: number, pageNumber: number): Promise<GithubResponse<GithubComment[]>> {
-    return octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: pageNumber, per_page: 100,
-      headers: { 'If-None-Match': this.commentsEtagManager.get(issueId, pageNumber)}});
+  private getCommentsAPICall(issueId: number, pageNumber: number, force: boolean = false): Promise<GithubResponse<GithubComment[]>> {
+    if (force) {
+      return octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: pageNumber, per_page: 100});
+    } else {
+      return octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: pageNumber, per_page: 100,
+        headers: { 'If-None-Match': this.commentsEtagManager.get(issueId, pageNumber)}});
+    }
   }
 }

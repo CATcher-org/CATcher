@@ -15,8 +15,8 @@ export class IssueCommentService {
 
   constructor(private githubService: GithubService) {}
 
-  getGithubComments(issueId: number): Observable<GithubComment[]> {
-    return this.githubService.fetchIssueComments(issueId).pipe(
+  getGithubComments(issueId: number, forceFetch: boolean = false): Observable<GithubComment[]> {
+    return this.githubService.fetchIssueComments(issueId, forceFetch).pipe(
       map((githubComments: Array<GithubComment>) => {
         this.updateLocalIssueComments(issueId, githubComments);
         return githubComments.map(rawJsonData => <GithubComment>{...rawJsonData});
