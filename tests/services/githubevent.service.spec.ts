@@ -42,7 +42,7 @@ describe('GithubEventService', () => {
         assertLastModified(githubEventService, FIRST_EVENT);
 
         githubService.fetchEventsForRepo.and.returnValue(of(SECOND_EVENT));
-        githubEventService.reloadPage().subscribe(_ => {
+        githubEventService.reloadPage().subscribe(__ => {
           expect(issueService.reloadAllIssues.calls.count()).toBe(2);
           assertLastModified(githubEventService, SECOND_EVENT);
           done();
@@ -59,7 +59,7 @@ describe('GithubEventService', () => {
       githubEventService.reloadPage().subscribe(_ => {
         expect(issueService.reloadAllIssues.calls.count()).toBe(1);
         assertLastModified(githubEventService, EVENTS);
-        githubEventService.reloadPage().subscribe(_ => {
+        githubEventService.reloadPage().subscribe(__ => {
           // issueService.reloadAllIssues must not have been called again
           expect(issueService.reloadAllIssues.calls.count()).toBe(1);
           assertLastModified(githubEventService, EVENTS);
