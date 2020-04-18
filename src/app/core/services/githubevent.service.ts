@@ -63,11 +63,11 @@ export class GithubEventService {
     this.lastModifiedComment = lastModified;
   }
 
-  private getLastModifiedTime(): string {
+  getLastModifiedTime(): string {
     return this.lastModified;
   }
 
-  private getLastModifiedCommentTime(): string {
+  getLastModifiedCommentTime(): string {
     return this.lastModifiedComment;
   }
 
