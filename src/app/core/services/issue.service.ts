@@ -234,6 +234,7 @@ export class IssueService {
   reset() {
     this.issues = undefined;
     this.issues$.next(new Array<Issue>());
+    this.toForceFetch = true;
   }
 
   private initializeData(): Observable<Issue[]> {
