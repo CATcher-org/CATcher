@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, flatMap, map, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, flatMap, map, switchMap } from 'rxjs/operators';
 import { BehaviorSubject, forkJoin, Observable, of, timer } from 'rxjs';
 import {
   Issue,
@@ -44,7 +44,7 @@ export class IssueService {
    */
   pollIssues(): Observable<Issue[]> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
-      switchMap(() => {
+      concatMap(() => {
         return this.reloadAllIssues()
           .pipe(catchError(() => this.issues$));
       })
