@@ -1,6 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PhaseBugReportingComponent } from './phase-bug-reporting.component';
-import { TranslateModule } from '@ngx-translate/core';
 
 describe('HomeComponent', () => {
   let component: PhaseBugReportingComponent;
@@ -9,11 +8,8 @@ describe('HomeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PhaseBugReportingComponent ],
-      imports: [
-        TranslateModule.forRoot()
-      ]
-    })
-    .compileComponents();
+      imports: []
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -22,6 +22,10 @@ jobs:
       script:
         - npm run lint
     - stage: "Unit/Test"
-      name: "Jasmine"
+      name: "Unit Test"
       script:
         - npm run test
+    - stage: "E2E/Test"
+      name: "E2E"
+      script:
+        - npm run e2e

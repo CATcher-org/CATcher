@@ -2,16 +2,12 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/e2e",
-    "module": "commonjs",
-    "target": "es5",
-    "types":[
-      "jasmine",
-      "node"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "core-js/es7/reflect": ["../node_modules/core-js/proposals/reflect-metadata"],
-      "core-js/es6/": ["../node_modules/core-js/es/"]
-    }
-  }
+    "module": "es2015",
+    "types": [
+      "jasmine"
+    ]
+  },
+  "include": [
+    "**/*.ts"
+  ]
 }
