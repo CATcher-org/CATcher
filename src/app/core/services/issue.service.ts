@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, concatMap, flatMap, map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, forkJoin, Observable, of, timer } from 'rxjs';
+import { catchError, exhaustMap, flatMap, map } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, forkJoin, interval, Observable, of } from 'rxjs';
 import {
   Issue,
   Issues,
@@ -43,10 +43,11 @@ export class IssueService {
    * Will constantly poll and update the application's state with the updated issues.
    */
   pollIssues(): Observable<Issue[]> {
-    return timer(0, IssueService.POLL_INTERVAL).pipe(
-      concatMap(() => {
-        return this.reloadAllIssues()
-          .pipe(catchError(() => this.issues$));
+    return interval(IssueService.POLL_INTERVAL).pipe(
+      exhaustMap(() => {
+        return this.reloadAllIssues().pipe(
+          catchError(() => EMPTY)
+        );
       })
     );
   }
@@ -57,8 +58,8 @@ export class IssueService {
    * @param issueId - The issue's id to poll for.
    */
   pollIssue(issueId: number): Observable<Issue> {
-    return timer(0, IssueService.POLL_INTERVAL).pipe(
-      switchMap(() => {
+    return interval(IssueService.POLL_INTERVAL).pipe(
+      exhaustMap(() => {
         return this.githubService.fetchIssue(issueId).pipe(
           flatMap((response) => {
             return this.createIssueModel(response);
@@ -68,7 +69,7 @@ export class IssueService {
             return issue;
           }),
           catchError((err) => {
-            return of(this.issues[issueId]);
+            return EMPTY;
           })
         );
       })
