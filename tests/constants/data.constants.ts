@@ -16,9 +16,8 @@ tutor,q     ,CS2103T-W12-4
 student,003-samuel,CS2103T-W12-3
 student,damithc,CS2103T-W12-3
 student,RonakLakhotia,CS2103T-W12-4
-student,ptvrajsk,CS2103T-W12-3
-               
-`;
+student,ptvrajsk,CS2103T-W12-3` +
+`                       `;
 
 // jsonData is a json representation of csvString
 export const jsonData = {
