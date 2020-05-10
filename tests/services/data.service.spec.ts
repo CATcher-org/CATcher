@@ -5,8 +5,8 @@ import { autoSpy } from '../auto-spy';
 import { csvString, jsonData, dataFileTeamStructure } from '../constants/data.constants';
 
 describe('DataService', () => {
-  describe('getDataFile', () => {
-    it('should return the correct data', done => {
+  describe('.getDataFile()', () => {
+    it('returns a json representation of the repo\'s data csv', done => {
       const { build, githubService } = setup();
       const dataService = build();
       githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
@@ -17,7 +17,7 @@ describe('DataService', () => {
       });
     });
 
-    it('should set dataFile with correct data', done => {
+    it('initializes an internal data structure that maps teamIds to Team objects', done => {
       const { build, githubService } = setup();
       const dataService = build();
       githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
@@ -29,8 +29,8 @@ describe('DataService', () => {
     });
   });
 
-  describe('getTeam', () => {
-    it('should return the correct data', () => {
+  describe('.getTeam(teamId)', () => {
+    it('returns the Team object corresponding to the given teamId', () => {
       // arrange
       const { build } = setup();
       const dataService = build();
@@ -48,8 +48,8 @@ describe('DataService', () => {
     });
   });
 
-  describe('getTeams', () => {
-    it('should return the correct data', () => {
+  describe('.getTeams()', () => {
+    it('returns an array containing ids of the teams in the repo\'s data csv', () => {
       // arrange
       const { build } = setup();
       const dataService = build();
@@ -69,8 +69,8 @@ describe('DataService', () => {
     });
   });
 
-  describe('reset', () => {
-      it('should set dataFile to undefined', () => {
+  describe('.reset()', () => {
+      it('clears the internal state of the DataService', () => {
       // arrange
       const { build } = setup();
       const dataService = build();
