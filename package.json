@@ -70,7 +70,7 @@
     "karma-jasmine-html-reporter": "1.5.1",
     "npm-run-all": "4.1.5",
     "scuri": "^0.9.4",
-    "spectron": "5.0.0",
+    "spectron": "9.0.0",
     "ts-node": "^7.0.1",
     "tslint": "5.20.1",
     "typescript": "3.2.4",
