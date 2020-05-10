@@ -9,7 +9,7 @@ export default function setup() {
   beforeEach(async function () {
     this.app = new Application({
       path: electronPath,
-      args: [path.join(__dirname, '..')],
+      args: ['.'],
       webdriverOptions: {}
     });
 
