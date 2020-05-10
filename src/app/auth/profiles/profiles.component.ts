@@ -82,7 +82,7 @@ export class ProfilesComponent implements OnInit {
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
 
-  selectedProfile: Profile = undefined;
+  selectedProfile: Profile = this.blankProfile;
   @Output() selectedProfileEmitter: EventEmitter<Profile> = new EventEmitter<Profile>();
   @Output() profileDataEmitter: EventEmitter<{}> = new EventEmitter<{}>();
 
@@ -161,10 +161,6 @@ export class ProfilesComponent implements OnInit {
     this.profiles = this.profiles === undefined
       ? this.defaultProfiles === undefined ? undefined : this.defaultProfiles
       : this.defaultProfiles === undefined ? this.profiles : this.profiles.concat(this.defaultProfiles);
-
-    // Set default profile if exists.
-    this.selectedProfile = this.profiles === undefined ? this.blankProfile : this.profiles[0];
-    this.selectProfile(this.selectedProfile);
   }
 
   /**

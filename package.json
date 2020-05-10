@@ -20,7 +20,8 @@
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "test": "jasmine-ts --config=unit-test.json",
     "e2e": "npm run build:prod && jasmine-ts --config=e2e.json",
-    "lint": "ng lint --tslint-config"
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix"
   },
   "dependencies": {
     "@angular/animations": "^7.2.16",

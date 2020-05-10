@@ -2,20 +2,23 @@ import { DataFile } from '../../src/app/core/models/data-file.model';
 import { Team } from '../../src/app/core/models/team.model';
 import { UserRole } from '../../src/app/core/models/user.model';
 
-export const csvString = `role,name,team
+export const csvString = `
+role,name,team
 student,JunWei96,CS2103T-W12-3
 admin,damithc,
 tutor,anubh-v,CS2103T-W12-3
 admin,geshuming,
+
+
 tutor,jj-lim,CS2103T-W12-3
 tutor,jj-lim,CS2103T-W12-3
 tutor,jj-lim,CS2103T-W12-4
-tutor,q,CS2103T-W12-4
+tutor,q     ,CS2103T-W12-4
 student,003-samuel,CS2103T-W12-3
 student,damithc,CS2103T-W12-3
 student,RonakLakhotia,CS2103T-W12-4
-student,ptvrajsk,CS2103T-W12-3
-`;
+student,ptvrajsk,CS2103T-W12-3` +
+`                       `;
 
 // jsonData is a json representation of csvString
 export const jsonData = {
