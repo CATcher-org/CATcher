@@ -16,7 +16,6 @@ jobs:
       name: "Prepare Dependencies"
       script:
         - npm install
-        - npm update
     - stage: "Lint/Test"
       name: "Lint"
       script:
