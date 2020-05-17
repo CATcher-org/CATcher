@@ -7,6 +7,9 @@ branches:
   only:
     - master
 install: true
+cache:
+  directories:
+    - node_modules
 jobs:
   include:
     - stage: "Prepare Dependencies"
@@ -24,4 +27,5 @@ jobs:
     - stage: "E2E/Test"
       name: "E2E"
       script:
+        - npm list
         - npm run e2e
