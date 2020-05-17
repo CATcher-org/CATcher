@@ -7,9 +7,6 @@ branches:
   only:
     - master
 install: true
-cache:
-  directories:
-    - node_modules
 jobs:
   include:
     - stage: "Prepare Dependencies"
