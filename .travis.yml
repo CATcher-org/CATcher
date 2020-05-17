@@ -31,5 +31,4 @@ jobs:
     - stage: "E2E/Test"
       name: "E2E"
       script:
-        - npm list
         - npm run e2e
