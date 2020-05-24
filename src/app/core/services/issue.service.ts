@@ -70,19 +70,6 @@ export class IssueService {
   }
 
   /**
-   * Will constantly poll and update the application's state with the updated issues.
-   */
-  pollIssues(): Observable<Issue[]> {
-    return timer(0, IssueService.POLL_INTERVAL).pipe(
-      exhaustMap(() => {
-        return this.reloadAllIssues().pipe(
-          catchError(() => EMPTY)
-        );
-      })
-    );
-  }
-
-  /**
    * Will constantly poll and update the application's state's with the updated issue.
    *
    * @param issueId - The issue's id to poll for.
