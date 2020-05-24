@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { LabelService } from '../../core/services/label.service';
@@ -37,7 +37,7 @@ export enum TABLE_COLUMNS {
   templateUrl: './issue-tables.component.html',
   styleUrls: ['./issue-tables.component.css']
 })
-export class IssueTablesComponent implements OnInit {
+export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
@@ -60,8 +60,13 @@ export class IssueTablesComponent implements OnInit {
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.headers, this.filters);
-    this.issues.loadIssues();
     this.issuesPendingDeletion = {};
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.issues.loadIssues();
+    });
   }
 
   /**

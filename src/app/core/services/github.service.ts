@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { catchError, flatMap, map } from 'rxjs/operators';
-import { forkJoin, from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
@@ -10,9 +10,10 @@ import { GithubIssue } from '../models/github/github-issue.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import { GithubRelease } from '../models/github/github.release';
 import { GithubResponse } from '../models/github/github-response.model';
-import { IssuesEtagManager } from '../models/github/cache-manager/issues-etag-manager.model';
+import { IssuesCacheManager } from '../models/github/cache-manager/issues-cache-manager.model';
 import { IssueLastModifiedManagerModel } from '../models/github/cache-manager/issue-last-modified-manager.model';
 import { CommentsEtagManager } from '../models/github/cache-manager/comments-etag-manager.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -28,7 +29,7 @@ let octokit = new Octokit();
   providedIn: 'root',
 })
 export class GithubService {
-  private issuesEtagManager = new IssuesEtagManager();
+  private issuesCacheManager = new IssuesCacheManager();
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private commentsEtagManager = new CommentsEtagManager();
 
@@ -66,7 +67,7 @@ export class GithubService {
    */
   fetchIssues(filter?: {}): Observable<Array<GithubIssue>> {
     let responseInFirstPage: GithubResponse<GithubIssue[]>;
-    return from(this.getIssueAPICall(filter, 1)).pipe(
+    return this.getIssuesAPICall(filter, 1).pipe(
       map((response: GithubResponse<GithubIssue[]>) => {
         responseInFirstPage = response;
         return this.getNumberOfPages(response);
@@ -74,16 +75,27 @@ export class GithubService {
       flatMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
-          apiCalls.push(from(this.getIssueAPICall(filter, i)));
+          apiCalls.push(this.getIssuesAPICall(filter, i));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
-      map((resultArray: GithubResponse<GithubIssue[]>[]) => {
+      flatMap((resultArray: GithubResponse<GithubIssue[]>[]) => {
+        /// Check whether all responses are from cache, if so, then throw error.
         const responses = [responseInFirstPage, ...resultArray];
+        const isCached = responses.reduce((result, response) => {
+          return result && response.isCached;
+        }, true);
+        if (isCached) {
+          return throwError(new HttpErrorResponse({ status: 304 }));
+        } else {
+          return of(responses);
+        }
+      }),
+      map((responses: GithubResponse<GithubIssue[]>[]) => {
         const collatedData: GithubIssue[] = [];
         let pageNum = 1;
         for (const response of responses) {
-          this.issuesEtagManager.set(pageNum, response.headers.etag);
+          this.issuesCacheManager.set(pageNum, response);
           pageNum++;
           for (const issue of response.data) {
             collatedData.push(new GithubIssue(issue));
@@ -286,7 +298,7 @@ export class GithubService {
   }
 
   reset(): void {
-    this.issuesEtagManager.clear();
+    this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
     this.commentsEtagManager.clear();
   }
@@ -304,9 +316,16 @@ export class GithubService {
     return numberOfPages;
   }
 
-  private getIssueAPICall(filter: {}, pageNumber: number): Promise<GithubResponse<GithubIssue[]>> {
-    return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
-      direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtagManager.get(pageNumber) }});
+  private getIssuesAPICall(filter: {}, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {
+    const apiCall: Promise<GithubResponse<GithubIssue[]>> = octokit.issues.listForRepo({...filter, owner: ORG_NAME,
+      repo: REPO, sort: 'created', direction: 'desc', per_page: 100, page: pageNumber,
+      headers: { 'If-None-Match': this.issuesCacheManager.getEtagFor(pageNumber) }});
+    const apiCall$ = from(apiCall);
+    return apiCall$.pipe(
+      catchError(err => {
+        return of(this.issuesCacheManager.get(pageNumber));
+      })
+    );
   }
 
   private getCommentsAPICall(issueId: number, pageNumber: number): Promise<GithubResponse<GithubComment[]>> {

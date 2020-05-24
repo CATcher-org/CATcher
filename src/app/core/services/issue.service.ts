@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, exhaustMap, flatMap, map } from 'rxjs/operators';
-import { BehaviorSubject, EMPTY, forkJoin, interval, Observable, of } from 'rxjs';
+import { catchError, exhaustMap, finalize, flatMap, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, forkJoin, interval, timer, Observable, of, Subscription } from 'rxjs';
 import {
   Issue,
   Issues,
@@ -23,11 +23,15 @@ import { IssueComment } from '../models/comment.model';
 })
 export class IssueService {
   static readonly POLL_INTERVAL = 5000; // 5 seconds
+  readonly MINIMUM_MATCHES = 1;
 
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
+
   private issueTeamFilter = 'All Teams';
-  readonly MINIMUM_MATCHES = 1;
+  private issuesPollSubscription: Subscription;
+  /** Whether the IssueService is downloading the data from Github*/
+  public isLoading = new BehaviorSubject<boolean>(false);
 
   constructor(private githubService: GithubService,
               private userService: UserService,
@@ -39,11 +43,37 @@ export class IssueService {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
+  startPollIssues() {
+    if (this.issuesPollSubscription === undefined) {
+      if (this.issues$.getValue().length === 0) {
+        this.isLoading.next(true);
+      }
+
+      this.issuesPollSubscription = timer(0, IssueService.POLL_INTERVAL).pipe(
+        exhaustMap(() => {
+          return this.reloadAllIssues().pipe(
+            catchError(() => {
+              return EMPTY;
+            }),
+            finalize(() => this.isLoading.next(false))
+        );
+        }),
+      ).subscribe();
+    }
+  }
+
+  stopPollIssues() {
+    if (this.issuesPollSubscription) {
+      this.issuesPollSubscription.unsubscribe();
+      this.issuesPollSubscription = undefined;
+    }
+  }
+
   /**
    * Will constantly poll and update the application's state with the updated issues.
    */
   pollIssues(): Observable<Issue[]> {
-    return interval(IssueService.POLL_INTERVAL).pipe(
+    return timer(0, IssueService.POLL_INTERVAL).pipe(
       exhaustMap(() => {
         return this.reloadAllIssues().pipe(
           catchError(() => EMPTY)
@@ -58,7 +88,7 @@ export class IssueService {
    * @param issueId - The issue's id to poll for.
    */
   pollIssue(issueId: number): Observable<Issue> {
-    return interval(IssueService.POLL_INTERVAL).pipe(
+    return timer(0, IssueService.POLL_INTERVAL).pipe(
       exhaustMap(() => {
         return this.githubService.fetchIssue(issueId).pipe(
           flatMap((response) => {
@@ -69,7 +99,7 @@ export class IssueService {
             return issue;
           }),
           catchError((err) => {
-            return EMPTY;
+            return this.getIssue(issueId);
           })
         );
       })
@@ -233,6 +263,10 @@ export class IssueService {
   reset() {
     this.issues = undefined;
     this.issues$.next(new Array<Issue>());
+
+    this.stopPollIssues();
+    this.isLoading.complete();
+    this.isLoading = new BehaviorSubject<boolean>(false);
   }
 
   private initializeData(): Observable<Issue[]> {
