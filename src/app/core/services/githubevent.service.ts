@@ -55,19 +55,19 @@ export class GithubEventService {
     );
   }
 
-  setLastModifiedTime(lastModified: string) {
+  private setLastModifiedTime(lastModified: string): void {
     this.lastModified = lastModified;
   }
 
-  setLastModifiedCommentTime(lastModified: string) {
+  private setLastModifiedCommentTime(lastModified: string): void {
     this.lastModifiedComment = lastModified;
   }
 
-  getLastModifiedTime() {
+  getLastModifiedTime(): string {
     return this.lastModified;
   }
 
-  getLastModifiedCommentTime() {
+  getLastModifiedCommentTime(): string {
     return this.lastModifiedComment;
   }
 
