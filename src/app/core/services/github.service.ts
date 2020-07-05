@@ -14,7 +14,6 @@ import { IssuesEtagManager } from '../models/github/cache-manager/issues-etag-ma
 import { IssueLastModifiedManagerModel } from '../models/github/cache-manager/issue-last-modified-manager.model';
 import { CommentsEtagManager } from '../models/github/cache-manager/comments-etag-manager.model';
 import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
