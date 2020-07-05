@@ -73,7 +73,6 @@ export class AppModule {
       return { headers: {Accept: 'charset=utf-8' }};
     });
     const auth = setContext(() => {
-      console.log('auth token is: ', authService.oauthToken);
       return { headers: { Authorization: `Token ${authService.oauthToken}` } };
     });
     const link = ApolloLink.from([basic, auth, this.httpLink.create({ uri: URI })]);
