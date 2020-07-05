@@ -3,9 +3,8 @@ import {GithubService} from './github.service';
 import {User, UserRole} from '../models/user.model';
 import {map} from 'rxjs/operators';
 import {Team} from '../models/team.model';
-import {Observable, of, throwError} from 'rxjs';
+import {Observable} from 'rxjs';
 import {DataService} from './data.service';
-import {flatMap} from 'rxjs/internal/operators';
 import { GithubUser } from '../models/github-user.model';
 
 @Injectable({
@@ -33,11 +32,11 @@ export class UserService {
         this.currentUser = this.createUser(jsonData, userLoginId.toLowerCase());
         return this.currentUser;
       }),
-      flatMap((user) => {
+      map((user) => {
         if (user) { // valid user
-          return of(user);
+          return user;
         } else {
-          return throwError('Unauthorized user.');
+          throw new Error('Unauthorized user.');
         }
       })
     );
