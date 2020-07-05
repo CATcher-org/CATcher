@@ -34,21 +34,10 @@ export class GithubService {
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private commentsEtagManager = new CommentsEtagManager();
 
-  CurrentUserForProfile = gql`
-    query CurrentUserForProfile {
-      viewer {
-        login
-      }
-    }`;
-
   constructor(
     private errorHandlingService: ErrorHandlingService,
     private apollo: Apollo,
   ) {}
-
-  testQuery(): Observable<any> {
-    return this.apollo.watchQuery({query: this.CurrentUserForProfile}).valueChanges;
-  }
 
   storeCredentials(user: String, passw: String) {
     octokit = new Octokit({
