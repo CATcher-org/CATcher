@@ -21,6 +21,13 @@ Before building the application using the build commands below, go to `index.htm
 |`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
 | `npm run lint` | Runs the linter (TSLint) |
 
+# Workflow
+When a pull request is merged, it should be accompanied by a helpful commit message.
+[Here](https://oss-generic.github.io/process/docs/FormatsAndConventions.html#commit-message) are
+some good guidelines for crafting the commit message.
+
+Contributors can propose a commit message for their pull requests.
+
 # Testing
 
 We use [Scuri](https://github.com/gparlakov/scuri) to generate spec files for unit tests.
