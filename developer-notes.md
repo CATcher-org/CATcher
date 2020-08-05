@@ -40,6 +40,8 @@ To generate spec files for files that have existing spec files.
 
 Scuri uses [Jasmine's spy feature](https://jasmine.github.io/2.0/introduction.html#section-Spies) to stub dependencies.
 
+We loosely follow [this style guide](https://github.com/CareMessagePlatform/jasmine-styleguide) when writing tests. One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
+
 # Future Developments
 Here are a few suggestions that future developers can work on to improve this application!
 
