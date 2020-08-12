@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {GithubService} from './github.service';
 import {User, UserRole} from '../models/user.model';
-import {map} from 'rxjs/operators';
+import { filter, map, throwIfEmpty } from 'rxjs/operators';
 import {Team} from '../models/team.model';
 import {Observable} from 'rxjs';
 import {DataService} from './data.service';
@@ -32,13 +32,8 @@ export class UserService {
         this.currentUser = this.createUser(jsonData, userLoginId.toLowerCase());
         return this.currentUser;
       }),
-      map((user) => {
-        if (user) { // valid user
-          return user;
-        } else {
-          throw new Error('Unauthorized user.');
-        }
-      })
+      filter(user => user !== null),
+      throwIfEmpty(() => new Error('Unauthorized user.'))
     );
   }
 
