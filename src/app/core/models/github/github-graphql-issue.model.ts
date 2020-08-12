@@ -1,8 +1,8 @@
 import { IssueModelFragment } from '../../../../../graphql/graphql-types';
 import { flattenEdges } from '../../../shared/lib/graphgql-common';
-import { GithubRestIssue } from './github-issue.model';
+import { GithubIssue } from './github-issue.model';
 
-export class GithubGraphQlIssueModel extends GithubRestIssue {
+export class GithubGraphQlIssueModel extends GithubIssue {
   constructor(issue: IssueModelFragment) {
     super({
       id: issue.id,

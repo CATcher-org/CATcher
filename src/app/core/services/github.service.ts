@@ -6,7 +6,7 @@ import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { GithubUser } from '../models/github-user.model';
-import { GithubRestIssue } from '../models/github/github-issue.model';
+import { GithubIssue } from '../models/github/github-issue.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import { GithubRelease } from '../models/github/github.release';
 import { GithubResponse } from '../models/github/github-response.model';
@@ -78,29 +78,29 @@ export class GithubService {
   /**
    * Will return an Observable with array of all of the issues in Github including the paginated issues.
    */
-  fetchIssues(filter?: {}): Observable<Array<GithubRestIssue>> {
-    let responseInFirstPage: GithubResponse<GithubRestIssue[]>;
+  fetchIssues(filter?: {}): Observable<Array<GithubIssue>> {
+    let responseInFirstPage: GithubResponse<GithubIssue[]>;
     return from(this.getIssueAPICall(filter, 1)).pipe(
-      map((response: GithubResponse<GithubRestIssue[]>) => {
+      map((response: GithubResponse<GithubIssue[]>) => {
         responseInFirstPage = response;
         return this.getNumberOfPages(response);
       }),
       flatMap((numOfPages: number) => {
-        const apiCalls: Observable<GithubResponse<GithubRestIssue[]>>[] = [];
+        const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
           apiCalls.push(from(this.getIssueAPICall(filter, i)));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
-      map((resultArray: GithubResponse<GithubRestIssue[]>[]) => {
+      map((resultArray: GithubResponse<GithubIssue[]>[]) => {
         const responses = [responseInFirstPage, ...resultArray];
-        const collatedData: GithubRestIssue[] = [];
+        const collatedData: GithubIssue[] = [];
         let pageNum = 1;
         for (const response of responses) {
           this.issuesEtagManager.set(pageNum, response.headers.etag);
           pageNum++;
           for (const issue of response.data) {
-            collatedData.push(new GithubRestIssue({
+            collatedData.push(new GithubIssue({
               ...issue,
               id: issue['node_id'],
             }));
@@ -194,7 +194,7 @@ export class GithubService {
   toFetchIssue(id: number): Observable<boolean> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, issue_number: id,
       headers: { 'If-Modified-Since': this.issuesLastModifiedManager.get(id) }})).pipe(
-      map((response: GithubResponse<GithubRestIssue>) => {
+      map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return true;
       }),
@@ -228,7 +228,7 @@ export class GithubService {
     octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor});
   }
 
-  closeIssueGraphql(id: string): Observable<GithubRestIssue> {
+  closeIssueGraphql(id: string): Observable<GithubIssue> {
     return this.apollo.mutate<CloseIssueMutation>({
       mutation: CloseIssue,
       variables: {
@@ -241,19 +241,19 @@ export class GithubService {
     );
   }
 
-  closeIssue(id: number): Observable<GithubRestIssue> {
+  closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed'})).pipe(
-      map((response: GithubResponse<GithubRestIssue>) => {
+      map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubRestIssue(response.data);
+        return new GithubIssue(response.data);
       })
     );
   }
 
-  createIssue(title: string, description: string, labels: string[]): Observable<GithubRestIssue> {
+  createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels})).pipe(
-      map((response: GithubResponse<GithubRestIssue>) => {
-        return new GithubRestIssue(response.data);
+      map((response: GithubResponse<GithubIssue>) => {
+        return new GithubIssue(response.data);
       })
     );
   }
@@ -267,12 +267,12 @@ export class GithubService {
     );
   }
 
-  updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubRestIssue> {
+  updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description, labels: labels,
       assignees: assignees})).pipe(
-      map((response: GithubResponse<GithubRestIssue>) => {
+      map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubRestIssue(response.data);
+        return new GithubIssue(response.data);
       }),
       catchError(err => {
         return throwError(err);
@@ -362,7 +362,7 @@ export class GithubService {
     return numberOfPages;
   }
 
-  private getIssueAPICall(filter: {}, pageNumber: number): Promise<GithubResponse<GithubRestIssue[]>> {
+  private getIssueAPICall(filter: {}, pageNumber: number): Promise<GithubResponse<GithubIssue[]>> {
     return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
       direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtagManager.get(pageNumber) }});
   }

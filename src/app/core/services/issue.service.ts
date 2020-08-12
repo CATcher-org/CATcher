@@ -14,7 +14,7 @@ import { PermissionService } from './permission.service';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { IssueDispute } from '../models/issue-dispute.model';
-import { GithubRestIssue } from '../models/github/github-issue.model';
+import { GithubIssue } from '../models/github/github-issue.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import { IssueComment } from '../models/comment.model';
 import { GithubLabel } from '../models/github/github-label.model';
@@ -90,7 +90,7 @@ export class IssueService {
 
   getLatestIssue(id: number): Observable<Issue> {
     return this.githubService.fetchIssueGraphql(id).pipe(
-      flatMap((response: GithubRestIssue) => {
+      flatMap((response: GithubIssue) => {
         return this.createAndSaveIssueModel(response);
       }),
       map((isSaveSuccess: boolean) => {
@@ -105,7 +105,7 @@ export class IssueService {
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
     return this.githubService.createIssue(title, description, labelsArray).pipe(
-      flatMap((response: GithubRestIssue) => {
+      flatMap((response: GithubIssue) => {
         return this.createIssueModel(response);
       })
     );
@@ -115,7 +115,7 @@ export class IssueService {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
       this.createLabelsForIssue(issue), assignees).pipe(
-        flatMap((response: GithubRestIssue) => {
+        flatMap((response: GithubIssue) => {
           console.log('github updated issue');
           return this.createIssueModel(response);
         })
@@ -182,7 +182,7 @@ export class IssueService {
 
   deleteIssue(id: string): Observable<Issue> {
     return this.githubService.closeIssueGraphql(id).pipe(
-      flatMap((response: GithubRestIssue) => {
+      flatMap((response: GithubIssue) => {
         return this.createIssueModel(response).pipe(
           map(deletedIssue => {
             this.deleteFromLocalStore(deletedIssue);
@@ -290,7 +290,7 @@ export class IssueService {
     );
   }
 
-  private createAndSaveIssueModel(githubIssue: GithubRestIssue): Observable<boolean> {
+  private createAndSaveIssueModel(githubIssue: GithubIssue): Observable<boolean> {
     return this.createIssueModel(githubIssue).pipe(
       map((issue: Issue) => {
         this.updateLocalStore(issue);
@@ -352,11 +352,11 @@ export class IssueService {
     return `${prepend}.${value}`;
   }
 
-  private extractTeamIdFromGithubIssue(githubIssue: GithubRestIssue): string {
+  private extractTeamIdFromGithubIssue(githubIssue: GithubIssue): string {
     return githubIssue.findLabel(GithubLabel.LABELS.tutorial).concat('-').concat(githubIssue.findLabel(GithubLabel.LABELS.team));
   }
 
-  private createIssueModel(githubIssue: GithubRestIssue): Observable<Issue> {
+  private createIssueModel(githubIssue: GithubIssue): Observable<Issue> {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseBugReporting:
         return of(Issue.createPhaseBugReportingIssue(githubIssue));

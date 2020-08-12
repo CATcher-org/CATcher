@@ -2,7 +2,7 @@ import { Team } from './team.model';
 import { TesterResponse } from './tester-response.model';
 import { IssueComment } from './comment.model';
 import { IssueDispute } from './issue-dispute.model';
-import { GithubRestIssue } from './github/github-issue.model';
+import { GithubIssue } from './github/github-issue.model';
 import { GithubLabel } from './github/github-label.model';
 import { GithubComment } from './github/github-comment.model';
 import { TeamResponseTemplate } from './templates/team-response-template.model';
@@ -18,7 +18,7 @@ export class Issue {
   readonly globalId: string;
   readonly id: number;
   readonly created_at: string;
-  readonly githubIssue: GithubRestIssue;
+  readonly githubIssue: GithubIssue;
   githubComments: GithubComment[];
   title: string;
   description: string;
@@ -70,7 +70,7 @@ export class Issue {
     return stringA.length !== 0 ? stringA : def;
   }
 
-  protected constructor(githubIssue: GithubRestIssue) {
+  protected constructor(githubIssue: GithubIssue) {
     /** Basic Fields */
     this.globalId = githubIssue.id;
     this.id = +githubIssue.number;
@@ -88,11 +88,11 @@ export class Issue {
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
-  public static createPhaseBugReportingIssue(githubIssue: GithubRestIssue): Issue {
+  public static createPhaseBugReportingIssue(githubIssue: GithubIssue): Issue {
     return new Issue(githubIssue);
   }
 
-  public static createPhaseTeamResponseIssue(githubIssue: GithubRestIssue, githubComments: GithubComment[],
+  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
                                              teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const template = new TeamResponseTemplate(githubComments);
@@ -107,7 +107,7 @@ export class Issue {
     return issue;
   }
 
-  public static createPhaseTesterResponseIssue(githubIssue: GithubRestIssue, githubComments: GithubComment[]): Issue {
+  public static createPhaseTesterResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
     const issue = new Issue(githubIssue);
     const template = new TesterResponseTemplate(githubComments);
 
@@ -118,7 +118,7 @@ export class Issue {
     return issue;
   }
 
-  public static createPhaseModerationIssue(githubIssue: GithubRestIssue, githubComments: GithubComment[],
+  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
                                            teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);

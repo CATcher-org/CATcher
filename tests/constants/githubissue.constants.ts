@@ -1,4 +1,4 @@
-import {GithubRestIssue} from '../../src/app/core/models/github/github-issue.model';
+import {GithubIssue} from '../../src/app/core/models/github/github-issue.model';
 import {
   GITHUB_LABEL_FUNCTIONALITY_BUG,
   GITHUB_LABEL_MEDIUM_SEVERITY,
@@ -7,7 +7,7 @@ import {
 } from '../constants/githublabel.constants';
 import {IssueState} from '../../graphql/graphql-types';
 
-export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubRestIssue({
+export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubIssue({
     id: '574085971',
     number: 92,
     assignees: [],
@@ -28,7 +28,7 @@ export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubRestIssue({
     },
 });
 
-export const ISSUE_WITH_ASSIGNEES = new GithubRestIssue({
+export const ISSUE_WITH_ASSIGNEES = new GithubIssue({
     id: '551732011',
     number: 91,
     assignees: [

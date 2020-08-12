@@ -2,7 +2,7 @@ import { GithubComment } from './github-comment.model';
 import { IssueState } from '../../../../../graphql/graphql-types';
 import { GithubLabel } from './github-label.model';
 
-export class GithubRestIssue {
+export class GithubIssue {
   id: string; // Github's backend's id
   number: number; // Issue's display id
   assignees: Array<{
