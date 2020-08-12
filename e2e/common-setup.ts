@@ -9,7 +9,6 @@ export default function setup() {
     this.app = new Application({
       path: electronPath,
       args: ['.'],
-      webdriverOptions: {}
     });
 
     await this.app.start();
@@ -21,9 +20,9 @@ export default function setup() {
   /**
    * Will close the Electron application after testing.
    */
-  afterEach(function () {
+  afterEach(async function () {
     if (this.app && this.app.isRunning()) {
-      return this.app.stop();
+      await this.app.stop();
     }
   });
 }
