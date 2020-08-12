@@ -1,0 +1,14 @@
+overwrite: true
+schema: "graphql/schema/github-schema.graphql"
+documents:
+  - graphql/fragments/*.graphql
+  - graphql/queries/*.graphql
+  - graphql/mutations/*.graphql
+generates:
+  graphql/graphql-types.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-document-nodes"
+      - "typescript-resolvers"
+      - "fragment-matcher"

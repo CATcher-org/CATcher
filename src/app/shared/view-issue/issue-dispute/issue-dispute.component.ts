@@ -8,9 +8,8 @@ import { IssueCommentService } from '../../../core/services/issue-comment.servic
 import { UserService } from '../../../core/services/user.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, flatMap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { flatMap } from 'rxjs/internal/operators';
 import { shell } from 'electron';
 import { GithubService } from '../../../core/services/github.service';
 import { PhaseService } from '../../../core/services/phase.service';

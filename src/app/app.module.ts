@@ -20,8 +20,9 @@ import {HttpLink, HttpLinkModule} from 'apollo-angular-link-http';
 import {AuthService} from './core/services/auth.service';
 import {setContext} from 'apollo-link-context';
 import {ApolloLink} from 'apollo-link';
-import {InMemoryCache} from 'apollo-cache-inmemory';
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import {Apollo, ApolloModule} from 'apollo-angular';
+import graphqlTypes from '../../graphql/graphql-types';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,10 @@ export class AppModule {
       return { headers: { Authorization: `Token ${authService.oauthToken}` } };
     });
     const link = ApolloLink.from([basic, auth, this.httpLink.create({ uri: URI })]);
-    const cache = new InMemoryCache();
+    const fragmentMatcher = new IntrospectionFragmentMatcher({
+      introspectionQueryResultData: graphqlTypes
+    });
+    const cache = new InMemoryCache({ fragmentMatcher });
     apollo.create({
       link: link,
       cache: cache,

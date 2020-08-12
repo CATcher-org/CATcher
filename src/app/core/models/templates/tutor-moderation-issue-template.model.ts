@@ -1,7 +1,7 @@
 import { Header, Template } from './template.model';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
-import { GithubIssue } from '../github/github-issue.model';
+import { GithubRestIssue } from '../github/github-issue.model';
 
 
 const tutorModerationIssueDescriptionHeaders = {
@@ -15,7 +15,7 @@ export class TutorModerationIssueTemplate extends Template {
   teamResponse: Section;
   dispute: IssueDisputeSection;
 
-  constructor(githubIssue: GithubIssue) {
+  constructor(githubIssue: GithubRestIssue) {
     super(Object.values(tutorModerationIssueDescriptionHeaders));
 
     const issueContent = githubIssue.body;

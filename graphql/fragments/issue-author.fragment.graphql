@@ -1,0 +1,5 @@
+fragment issueAuthor on Actor {
+  login
+  url
+  avatarUrl
+}

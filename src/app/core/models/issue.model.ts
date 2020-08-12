@@ -2,7 +2,8 @@ import { Team } from './team.model';
 import { TesterResponse } from './tester-response.model';
 import { IssueComment } from './comment.model';
 import { IssueDispute } from './issue-dispute.model';
-import { GithubIssue, GithubLabel } from './github/github-issue.model';
+import { GithubRestIssue } from './github/github-issue.model';
+import { GithubLabel } from './github/github-label.model';
 import { GithubComment } from './github/github-comment.model';
 import { TeamResponseTemplate } from './templates/team-response-template.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
@@ -14,9 +15,10 @@ import * as moment from 'moment';
 export class Issue {
 
   /** Basic Fields */
+  readonly globalId: string;
   readonly id: number;
   readonly created_at: string;
-  readonly githubIssue: GithubIssue;
+  readonly githubIssue: GithubRestIssue;
   githubComments: GithubComment[];
   title: string;
   description: string;
@@ -68,8 +70,9 @@ export class Issue {
     return stringA.length !== 0 ? stringA : def;
   }
 
-  protected constructor(githubIssue: GithubIssue) {
+  protected constructor(githubIssue: GithubRestIssue) {
     /** Basic Fields */
+    this.globalId = githubIssue.id;
     this.id = +githubIssue.number;
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
@@ -85,11 +88,11 @@ export class Issue {
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
-  public static createPhaseBugReportingIssue(githubIssue: GithubIssue): Issue {
+  public static createPhaseBugReportingIssue(githubIssue: GithubRestIssue): Issue {
     return new Issue(githubIssue);
   }
 
-  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
+  public static createPhaseTeamResponseIssue(githubIssue: GithubRestIssue, githubComments: GithubComment[],
                                              teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const template = new TeamResponseTemplate(githubComments);
@@ -104,7 +107,7 @@ export class Issue {
     return issue;
   }
 
-  public static createPhaseTesterResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
+  public static createPhaseTesterResponseIssue(githubIssue: GithubRestIssue, githubComments: GithubComment[]): Issue {
     const issue = new Issue(githubIssue);
     const template = new TesterResponseTemplate(githubComments);
 
@@ -115,7 +118,7 @@ export class Issue {
     return issue;
   }
 
-  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
+  public static createPhaseModerationIssue(githubIssue: GithubRestIssue, githubComments: GithubComment[],
                                            teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);

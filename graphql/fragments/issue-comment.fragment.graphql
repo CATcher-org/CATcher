@@ -1,0 +1,6 @@
+fragment issueComment on IssueComment {
+  id
+  body
+  createdAt
+  updatedAt
+}

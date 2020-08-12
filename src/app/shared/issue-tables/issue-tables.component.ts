@@ -47,7 +47,7 @@ export class IssueTablesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   issues: IssuesDataTable;
-  issuesPendingDeletion: {[id: number]: boolean};
+  issuesPendingDeletion: {[id: string]: boolean};
   private readonly action_buttons = ACTION_BUTTONS;
 
   constructor(public userService: UserService,
@@ -125,7 +125,7 @@ export class IssueTablesComponent implements OnInit {
     return issue.issueDisputes && issue.numOfUnresolvedDisputes() === 0;
   }
 
-  deleteIssue(id: number) {
+  deleteIssue(id: string) {
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
       [id]: true,
