@@ -22,6 +22,13 @@ Before building the application using the build commands below, go to `index.htm
 | `npm run test` | Runs unit tests |
 | `npm run e2e` | Runs End-to-End tests |
 
+# Workflow
+When a pull request is merged, it should be accompanied by a helpful commit message.
+[Here](https://oss-generic.github.io/process/docs/FormatsAndConventions.html#commit-message) are
+some good guidelines for crafting the commit message.
+
+Contributors can propose a commit message for their pull requests.
+
 # Testing
 
 We use [Scuri](https://github.com/gparlakov/scuri) to generate spec files for unit tests.
@@ -33,6 +40,8 @@ To generate spec files for files that have existing spec files.
 `npm run ng g scuri:spec --name src/app/app.component.ts --force`
 
 Scuri uses [Jasmine's spy feature](https://jasmine.github.io/2.0/introduction.html#section-Spies) to stub dependencies.
+
+We loosely follow [this style guide](https://github.com/CareMessagePlatform/jasmine-styleguide) when writing tests. One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
 
 # Future Developments
 Here are a few suggestions that future developers can work on to improve this application!

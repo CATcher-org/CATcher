@@ -17,3 +17,10 @@ This application will support the following order of workflow:
 * [Setting up the required GitHub organisation and repositories](./docs/setup-notes.md) (for **admin users** only)
 
 * [Developing CATcher](./docs/developer-notes.md)
+
+# Current Dev Team
+
+* Anubhav
+* Ge Shuming
+* Koh Jun Wei (team lead)
+* Prithivi Raj
