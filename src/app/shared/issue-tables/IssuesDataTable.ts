@@ -1,10 +1,10 @@
-import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
-import {DataSource} from '@angular/cdk/table';
-import {IssueService} from '../../core/services/issue.service';
-import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.model';
-import {MatPaginator, MatSort} from '@angular/material';
-import {delay, flatMap, map, tap} from 'rxjs/operators';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
+import { DataSource } from '@angular/cdk/table';
+import { IssueService } from '../../core/services/issue.service';
+import { Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER } from '../../core/models/issue.model';
+import { MatPaginator, MatSort } from '@angular/material';
+import { delay, flatMap, map, tap } from 'rxjs/operators';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
@@ -16,8 +16,8 @@ export class IssuesDataTable extends DataSource<Issue> {
   public isLoading$ = this.loadingSubject.asObservable();
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private sort: MatSort,
-              private paginator: MatPaginator, private displayedColumn: string[],
-              private defaultFilter?: (issue: Issue) => boolean) {
+    private paginator: MatPaginator, private displayedColumn: string[],
+    private defaultFilter?: (issue: Issue) => boolean) {
     super();
   }
 
@@ -112,6 +112,8 @@ export class IssuesDataTable extends DataSource<Issue> {
           return this.compareValue(a.teamAssigned.id, b.teamAssigned.id);
         case 'Todo Remaining':
           return -this.compareValue(a.numOfUnresolvedDisputes(), b.numOfUnresolvedDisputes());
+        case 'id':
+          return this.compareValue(a.id, b.id);
         default: // id, title, responseTag
           return this.compareValue(a[this.sort.active], b[this.sort.active]);
       }
@@ -161,7 +163,15 @@ export class IssuesDataTable extends DataSource<Issue> {
     return result;
   }
 
+  private compareIntegerValue(valueA: number, valueB: number): number {
+    return (valueA < valueB ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
+  }
+
   private compareValue(valueA: string | number, valueB: string | number): number {
+    if (typeof valueA === "number" && typeof valueB === "number") {
+      return this.compareIntegerValue(valueA, valueB);
+    }
+
     const a = String(valueA || '').toUpperCase();
     const b = String(valueB || '').toUpperCase();
     return (a < b ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
