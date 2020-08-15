@@ -2,7 +2,7 @@ import { IssueModelFragment } from '../../../../../graphql/graphql-types';
 import { flattenEdges } from '../../../shared/lib/graphgql-common';
 import { GithubIssue } from './github-issue.model';
 
-export class GithubGraphQlIssueModel extends GithubIssue {
+export class GithubGraphqlIssue extends GithubIssue {
   constructor(issue: IssueModelFragment) {
     super({
       id: issue.id,
@@ -20,7 +20,10 @@ export class GithubGraphQlIssueModel extends GithubIssue {
       },
       assignees: flattenEdges(issue.assignees.edges),
       labels: flattenEdges(issue.labels.edges),
-      comments: flattenEdges(issue.comments.edges),
+      comments: flattenEdges(issue.comments.edges, node => ({
+        ...node,
+        id: node.databaseId,
+      })),
     });
   }
 }

@@ -157,9 +157,14 @@ export class AuthComponent implements OnInit, OnDestroy {
     const username: string = this.loginForm.get('username').value;
     const password: string = this.loginForm.get('password').value;
 
-    return this.auth.authenticate(username, password).subscribe((loginConfirmation: {login: string}) => {
-      this.completeLoginProcess(loginConfirmation.login);
-    });
+    return this.auth.authenticate(username, password).subscribe(
+      (loginConfirmation: {login: string}) => {
+        this.completeLoginProcess(loginConfirmation.login);
+      },
+      (error) => {
+        this.auth.changeAuthState(AuthState.NotAuthenticated);
+        this.errorHandlingService.handleError(error);
+      });
   }
 
   /**

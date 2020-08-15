@@ -17961,7 +17961,7 @@ export type IssueAuthorFragment = IssueAuthor_EnterpriseUserAccount_Fragment | I
 
 export type IssueCommentFragment = (
   { __typename?: 'IssueComment' }
-  & Pick<IssueComment, 'id' | 'body' | 'createdAt' | 'updatedAt'>
+  & Pick<IssueComment, 'id' | 'databaseId' | 'body' | 'createdAt' | 'updatedAt'>
 );
 
 export type IssueLabelFragment = (
@@ -18121,8 +18121,8 @@ export type UpdateIssueMutationVariables = Exact<{
   issueId: Scalars['ID'];
   title: Scalars['String'];
   body: Scalars['String'];
-  labelIds: Array<Scalars['ID']>;
-  assigneeIds: Array<Scalars['ID']>;
+  labelIds?: Maybe<Array<Scalars['ID']>>;
+  assigneeIds?: Maybe<Array<Scalars['ID']>>;
 }>;
 
 
@@ -18214,9 +18214,71 @@ export type FetchIssueQuery = (
   )> }
 );
 
+export type FetchIssuesByTeamQueryVariables = Exact<{
+  owner: Scalars['String'];
+  name: Scalars['String'];
+  tutorial: Scalars['String'];
+  filter?: Maybe<IssueFilters>;
+  cursor?: Maybe<Scalars['String']>;
+  commentCursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type FetchIssuesByTeamQuery = (
+  { __typename?: 'Query' }
+  & { repository?: Maybe<(
+    { __typename?: 'Repository' }
+    & { label?: Maybe<(
+      { __typename?: 'Label' }
+      & { issues: (
+        { __typename?: 'IssueConnection' }
+        & { edges?: Maybe<Array<Maybe<(
+          { __typename?: 'IssueEdge' }
+          & Pick<IssueEdge, 'cursor'>
+          & { node?: Maybe<(
+            { __typename?: 'Issue' }
+            & { labels?: Maybe<(
+              { __typename?: 'LabelConnection' }
+              & { edges?: Maybe<Array<Maybe<(
+                { __typename?: 'LabelEdge' }
+                & { node?: Maybe<(
+                  { __typename?: 'Label' }
+                  & IssueLabelFragment
+                )> }
+              )>>> }
+            )>, assignees: (
+              { __typename?: 'UserConnection' }
+              & { edges?: Maybe<Array<Maybe<(
+                { __typename?: 'UserEdge' }
+                & { node?: Maybe<(
+                  { __typename?: 'User' }
+                  & IssueAssigneeFragment
+                )> }
+              )>>> }
+            ), comments: (
+              { __typename?: 'IssueCommentConnection' }
+              & { edges?: Maybe<Array<Maybe<(
+                { __typename?: 'IssueCommentEdge' }
+                & Pick<IssueCommentEdge, 'cursor'>
+                & { node?: Maybe<(
+                  { __typename?: 'IssueComment' }
+                  & IssueCommentFragment
+                )> }
+              )>>> }
+            ) }
+            & IssueFragment
+          )> }
+        )>>> }
+      ) }
+    )> }
+  )> }
+);
+
 export type FetchIssuesQueryVariables = Exact<{
   owner: Scalars['String'];
   name: Scalars['String'];
+  filter?: Maybe<IssueFilters>;
+  cursor?: Maybe<Scalars['String']>;
   commentCursor?: Maybe<Scalars['String']>;
 }>;
 
@@ -18229,6 +18291,7 @@ export type FetchIssuesQuery = (
       { __typename?: 'IssueConnection' }
       & { edges?: Maybe<Array<Maybe<(
         { __typename?: 'IssueEdge' }
+        & Pick<IssueEdge, 'cursor'>
         & { node?: Maybe<(
           { __typename?: 'Issue' }
           & { labels?: Maybe<(
@@ -18307,6 +18370,7 @@ export const IssueAssignee = gql`
 export const IssueComment = gql`
     fragment issueComment on IssueComment {
   id
+  databaseId
   body
   createdAt
   updatedAt
@@ -18411,7 +18475,7 @@ ${IssueLabel}
 ${IssueAssignee}
 ${IssueComment}`;
 export const UpdateIssue = gql`
-    mutation UpdateIssue($issueId: ID!, $title: String!, $body: String!, $labelIds: [ID!]!, $assigneeIds: [ID!]!) {
+    mutation UpdateIssue($issueId: ID!, $title: String!, $body: String!, $labelIds: [ID!], $assigneeIds: [ID!]) {
   updateIssue(input: {id: $issueId, title: $title, body: $body, labelIds: $labelIds, assigneeIds: $assigneeIds}) {
     issue {
       ...issue
@@ -18478,11 +18542,53 @@ export const FetchIssue = gql`
 ${IssueLabel}
 ${IssueAssignee}
 ${IssueComment}`;
-export const FetchIssues = gql`
-    query FetchIssues($owner: String!, $name: String!, $commentCursor: String) {
+export const FetchIssuesByTeam = gql`
+    query FetchIssuesByTeam($owner: String!, $name: String!, $tutorial: String!, $filter: IssueFilters, $cursor: String, $commentCursor: String) {
   repository(owner: $owner, name: $name) {
-    issues(first: 100) {
+    label(name: $tutorial) {
+      issues(first: 100, filterBy: $filter, after: $cursor) {
+        edges {
+          cursor
+          node {
+            ...issue
+            labels(first: 100) {
+              edges {
+                node {
+                  ...issueLabel
+                }
+              }
+            }
+            assignees(first: 100) {
+              edges {
+                node {
+                  ...issueAssignee
+                }
+              }
+            }
+            comments(first: 100, after: $commentCursor) {
+              edges {
+                cursor
+                node {
+                  ...issueComment
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${Issue}
+${IssueLabel}
+${IssueAssignee}
+${IssueComment}`;
+export const FetchIssues = gql`
+    query FetchIssues($owner: String!, $name: String!, $filter: IssueFilters, $cursor: String, $commentCursor: String) {
+  repository(owner: $owner, name: $name) {
+    issues(first: 100, filterBy: $filter, after: $cursor) {
       edges {
+        cursor
         node {
           ...issue
           labels(first: 100) {

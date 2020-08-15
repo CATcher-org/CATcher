@@ -96,14 +96,14 @@ export const USER_WITH_TWO_ROLES = {
 
 export const dataFileTeamStructure: DataFile = {
   teamStructure: new Map<string, Team>([
-    ['CS2103T-W12-3', {id: 'CS2103T-W12-3', teamMembers: [
+    ['CS2103T-W12-3', new Team({id: 'CS2103T-W12-3', teamMembers: [
       {loginId: 'junwei96', role: UserRole.Student},
       {loginId: '003-samuel', role: UserRole.Student},
       {loginId: 'damithc', role: UserRole.Student},
       {loginId: 'ptvrajsk', role: UserRole.Student}
-    ]}],
-    ['CS2103T-W12-4', {id: 'CS2103T-W12-4', teamMembers: [
+    ]})],
+    ['CS2103T-W12-4', new Team({id: 'CS2103T-W12-4', teamMembers: [
       {loginId: 'ronaklakhotia', role: UserRole.Student}
-    ]}]
+    ]})]
   ])
 };

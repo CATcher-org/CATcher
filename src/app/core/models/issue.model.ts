@@ -92,12 +92,11 @@ export class Issue {
     return new Issue(githubIssue);
   }
 
-  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
-                                             teamData: Team): Issue {
+  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, teamData: Team): Issue {
     const issue = new Issue(githubIssue);
-    const template = new TeamResponseTemplate(githubComments);
+    const template = new TeamResponseTemplate(githubIssue.comments);
 
-    issue.githubComments = githubComments;
+    issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
@@ -107,24 +106,23 @@ export class Issue {
     return issue;
   }
 
-  public static createPhaseTesterResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
+  public static createPhaseTesterResponseIssue(githubIssue: GithubIssue): Issue {
     const issue = new Issue(githubIssue);
-    const template = new TesterResponseTemplate(githubComments);
+    const template = new TesterResponseTemplate(githubIssue.comments);
 
-    issue.githubComments = githubComments;
+    issue.githubComments = githubIssue.comments;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
     issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
     return issue;
   }
 
-  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
-                                           teamData: Team): Issue {
+  public static createPhaseModerationIssue(githubIssue: GithubIssue, teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
-    const todoTemplate = new TutorModerationTodoTemplate(githubComments);
+    const todoTemplate = new TutorModerationTodoTemplate(githubIssue.comments);
 
-    issue.githubComments = githubComments;
+    issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse !== undefined
@@ -152,11 +150,11 @@ export class Issue {
       case Phase.phaseBugReporting:
         return Issue.createPhaseBugReportingIssue(this.githubIssue);
       case Phase.phaseTeamResponse:
-        return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+        return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.teamAssigned);
       case Phase.phaseTesterResponse:
-        return Issue.createPhaseTesterResponseIssue(this.githubIssue, this.githubComments);
+        return Issue.createPhaseTesterResponseIssue(this.githubIssue);
       case Phase.phaseModeration:
-        return Issue.createPhaseModerationIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+        return Issue.createPhaseModerationIssue(this.githubIssue, this.teamAssigned);
       default:
         return Issue.createPhaseBugReportingIssue(this.githubIssue);
     }

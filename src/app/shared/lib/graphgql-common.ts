@@ -7,4 +7,3 @@ export function flattenEdges(edges: Array<any>, transformFunc?: (node) => {}): A
     }
   });
 }
-

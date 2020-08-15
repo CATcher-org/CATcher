@@ -1,5 +1,6 @@
 fragment issueComment on IssueComment {
   id
+  databaseId
   body
   createdAt
   updatedAt

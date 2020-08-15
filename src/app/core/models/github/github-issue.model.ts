@@ -1,15 +1,12 @@
 import { GithubComment } from './github-comment.model';
 import { IssueState } from '../../../../../graphql/graphql-types';
 import { GithubLabel } from './github-label.model';
+import { UserData } from '../assignee.model';
 
 export class GithubIssue {
   id: string; // Github's backend's id
   number: number; // Issue's display id
-  assignees: Array<{
-    id: number,
-    login: string,
-    url: string,
-  }>;
+  assignees: Array<UserData>;
   body: string;
   created_at: string;
   labels: Array<GithubLabel>;
@@ -26,13 +23,10 @@ export class GithubIssue {
 
   constructor(githubIssue: {}) {
     Object.assign(this, githubIssue);
-    console.log(githubIssue);
     this.labels = [];
     for (const label of githubIssue['labels']) {
       this.labels.push(new GithubLabel(label));
     }
-    Object.freeze(this);
-    Object.freeze(this.labels);
   }
 
   /**

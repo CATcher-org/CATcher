@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {GithubService} from './github.service';
-import {User, UserRole} from '../models/user.model';
+import { Injectable } from '@angular/core';
+import { GithubService } from './github.service';
+import { User, UserRole } from '../models/user.model';
 import { filter, map, throwIfEmpty } from 'rxjs/operators';
-import {Team} from '../models/team.model';
-import {Observable} from 'rxjs';
-import {DataService} from './data.service';
+import { Team } from '../models/team.model';
+import { Observable } from 'rxjs';
+import { DataService } from './data.service';
 import { GithubUser } from '../models/github-user.model';
 
 @Injectable({
@@ -72,7 +72,7 @@ export class UserService {
     for (const teammate of Object.keys(teamData[teamId])) {
       teammates.push(<User>{loginId: teammate, role: UserRole.Student});
     }
-    return <Team>{id: teamId, teamMembers: teammates};
+    return new Team({id: teamId, teamMembers: teammates});
   }
 
   /**
