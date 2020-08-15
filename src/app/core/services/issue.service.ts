@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, map } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY, forkJoin, timer, Observable, of, Subscription } from 'rxjs';
 import {
   Issue,
@@ -15,7 +15,6 @@ import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { IssueDispute } from '../models/issue-dispute.model';
 import { GithubIssue } from '../models/github/github-issue.model';
-import { GithubComment } from '../models/github/github-comment.model';
 import { IssueComment } from '../models/comment.model';
 import { GithubLabel } from '../models/github/github-label.model';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';

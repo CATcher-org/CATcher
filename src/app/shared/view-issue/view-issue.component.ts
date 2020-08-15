@@ -61,7 +61,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
               private phaseService: PhaseService) { }
 
   ngOnInit() {
-    this.pollIssue(this.issueId);
+    this.getAndPollIssue(this.issueId);
   }
 
   /**
@@ -72,7 +72,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
     if (!changes.issueId.firstChange) {
       this.stopPolling();
       this.isIssueLoading = true;
-      this.pollIssue(changes.issueId.currentValue);
+      this.getAndPollIssue(changes.issueId.currentValue);
     }
   }
 
@@ -107,6 +107,17 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
 
   updateTutorResponseEditState(updatedState: boolean) {
     this.isTutorResponseEditing = updatedState;
+  }
+
+  private getAndPollIssue(id: number): void {
+    this.issueService.getIssue(id).subscribe(
+      (issue: Issue) => {
+        this.isIssueLoading = false;
+        this.issue = issue;
+        this.pollIssue(id);
+      },
+      (err) => this.errorHandlingService.handleError(err)
+    );
   }
 
   private pollIssue(id: number): void {
