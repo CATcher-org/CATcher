@@ -14,10 +14,8 @@ import { IssuesCacheManager } from '../models/github/cache-manager/issues-cache-
 import { IssueLastModifiedManagerModel } from '../models/github/cache-manager/issue-last-modified-manager.model';
 import { Apollo, QueryRef } from 'apollo-angular';
 import {
-  CloseIssue,
-  CloseIssueMutation,
   FetchIssue,
-  FetchIssueQuery, FetchIssues, FetchIssuesByTeam, FetchIssuesByTeamQuery, FetchIssuesQuery, UpdateIssue, UpdateIssueMutation,
+  FetchIssueQuery, FetchIssues, FetchIssuesByTeam, FetchIssuesByTeamQuery, FetchIssuesQuery,
 } from '../../../../graphql/graphql-types';
 import { GithubGraphqlIssue } from '../models/github/github-graphql.issue';
 import { ApolloQueryResult } from 'apollo-client';
@@ -275,19 +273,6 @@ export class GithubService {
     octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor});
   }
 
-  closeIssueGraphql(id: string): Observable<GithubIssue> {
-    return this.apollo.mutate<CloseIssueMutation>({
-      mutation: CloseIssue,
-      variables: {
-        issueId: id,
-      }
-    }).pipe(
-      map(value => {
-        return new GithubGraphqlIssue(value.data.closeIssue.issue);
-      })
-    );
-  }
-
   closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed'})).pipe(
       map((response: GithubResponse<GithubIssue>) => {
@@ -310,24 +295,6 @@ export class GithubService {
       body: description})).pipe(
       map((response: GithubResponse<GithubComment>) => {
         return response.data;
-      })
-    );
-  }
-
-  updateIssueGraphql(id: string, title: string, description: string,
-                     labels: string[], assignees?: Assignee[]
-  ): Observable<GithubGraphqlIssue> {
-    return this.apollo.mutate<UpdateIssueMutation>({
-      mutation: UpdateIssue,
-      variables: {
-        issueId: id,
-        body: description,
-        assigneeIds: assignees.map(a => a.id),
-        title,
-      }
-    }).pipe(
-      map(value => {
-        return new GithubGraphqlIssue(value.data.updateIssue.issue);
       })
     );
   }

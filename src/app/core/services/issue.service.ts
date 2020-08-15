@@ -196,8 +196,8 @@ export class IssueService {
     return issueDisputeString;
   }
 
-  deleteIssue(id: string): Observable<Issue> {
-    return this.githubService.closeIssueGraphql(id).pipe(
+  deleteIssue(id: number): Observable<Issue> {
+    return this.githubService.closeIssue(id).pipe(
       map((response: GithubIssue) => {
         const deletedIssue = this.createIssueModel(response);
         this.deleteFromLocalStore(deletedIssue);
