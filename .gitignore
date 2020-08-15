@@ -50,3 +50,7 @@ profiles.json
 # System Files
 .DS_Store
 Thumbs.db
+
+# graphql types
+graphql/schema/github-schema.graphql
+graphql/graphql-types.ts
