@@ -7,7 +7,7 @@ import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
 import { PhaseService } from './phase.service';
 import { ErrorHandlingService } from './error-handling.service';
-import { GithubService} from './github.service';
+import { GithubService } from './github.service';
 import { IssueService } from './issue.service';
 import { IssueCommentService } from './issue-comment.service';
 import { DataService } from './data.service';

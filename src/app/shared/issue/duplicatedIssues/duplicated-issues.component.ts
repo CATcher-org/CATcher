@@ -1,8 +1,8 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {Issue} from '../../../core/models/issue.model';
-import {IssueService} from '../../../core/services/issue.service';
-import {PermissionService} from '../../../core/services/permission.service';
-import {Observable} from 'rxjs';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Issue } from '../../../core/models/issue.model';
+import { IssueService } from '../../../core/services/issue.service';
+import { PermissionService } from '../../../core/services/permission.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-duplicated-issues-component',

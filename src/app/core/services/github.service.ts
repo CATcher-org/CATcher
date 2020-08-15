@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { catchError, flatMap, map } from 'rxjs/operators';
-import { forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
+import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
@@ -10,10 +10,20 @@ import { GithubIssue } from '../models/github/github-issue.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import { GithubRelease } from '../models/github/github.release';
 import { GithubResponse } from '../models/github/github-response.model';
-import { IssuesEtagManager } from '../models/github/cache-manager/issues-etag-manager.model';
+import { IssuesCacheManager } from '../models/github/cache-manager/issues-cache-manager.model';
 import { IssueLastModifiedManagerModel } from '../models/github/cache-manager/issue-last-modified-manager.model';
-import { CommentsEtagManager } from '../models/github/cache-manager/comments-etag-manager.model';
-import { Apollo } from 'apollo-angular';
+import { Apollo, QueryRef } from 'apollo-angular';
+import {
+  FetchIssue,
+  FetchIssueQuery, FetchIssues, FetchIssuesByTeam, FetchIssuesByTeamQuery, FetchIssuesQuery,
+} from '../../../../graphql/graphql-types';
+import { GithubGraphqlIssue } from '../models/github/github-graphql.issue';
+import { ApolloQueryResult } from 'apollo-client';
+import { CommentsCacheManager } from '../models/github/cache-manager/comments-cache-manager.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
+import { DocumentNode } from 'graphql';
+import Assignee from '../models/assignee.model';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -29,9 +39,11 @@ let octokit = new Octokit();
   providedIn: 'root',
 })
 export class GithubService {
-  private issuesEtagManager = new IssuesEtagManager();
+  private issuesCacheManager = new IssuesCacheManager();
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
-  private commentsEtagManager = new CommentsEtagManager();
+  private commentsCacheManager = new CommentsCacheManager();
+  private issueQueryRefs = new Map<Number, QueryRef<FetchIssueQuery>>();
+  private issuesQueryRef;
 
   constructor(
     private errorHandlingService: ErrorHandlingService,
@@ -65,12 +77,45 @@ export class GithubService {
     ORG_NAME = phaseRepoOwner;
   }
 
+  fetchIssuesGraphqlByTeam(tutorial: string, team: string, issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
+    const graphqlFilter = issuesFilter.convertToGraphqlFilter();
+    return this.toFetchIssues(issuesFilter).pipe(
+      filter(toFetch => toFetch),
+      flatMap(() => {
+        return this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
+          FetchIssuesByTeam,
+          { owner: ORG_NAME, name: REPO, filter: {
+              ...graphqlFilter,
+              labels: [...(graphqlFilter.labels ? graphqlFilter.labels : []), team]
+            }, tutorial },
+          (result) => result.data.repository.label.issues.edges,
+          GithubGraphqlIssue
+        );
+      })
+    );
+  }
+
+  fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
+    const graphqlFilter = issuesFilter.convertToGraphqlFilter();
+    return this.toFetchIssues(issuesFilter).pipe(
+      filter(toFetch => toFetch),
+      flatMap(() => {
+        return this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
+          FetchIssues,
+          { owner: ORG_NAME, name: REPO, filter: graphqlFilter },
+          (result) => result.data.repository.issues.edges,
+          GithubGraphqlIssue
+        );
+      })
+    );
+  }
+
   /**
-   * Will return an Observable with array of all of the issues in Github including the paginated issues.
+   * Will make multiple request to Github as per necessary and determine whether a graphql fetch is required.
    */
-  fetchIssues(filter?: {}): Observable<Array<GithubIssue>> {
+  private toFetchIssues(filter: RestGithubIssueFilter): Observable<boolean> {
     let responseInFirstPage: GithubResponse<GithubIssue[]>;
-    return from(this.getIssueAPICall(filter, 1)).pipe(
+    return this.getIssuesAPICall(filter, 1).pipe(
       map((response: GithubResponse<GithubIssue[]>) => {
         responseInFirstPage = response;
         return this.getNumberOfPages(response);
@@ -78,46 +123,32 @@ export class GithubService {
       flatMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
-          apiCalls.push(from(this.getIssueAPICall(filter, i)));
+          apiCalls.push(this.getIssuesAPICall(filter, i));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
       map((resultArray: GithubResponse<GithubIssue[]>[]) => {
         const responses = [responseInFirstPage, ...resultArray];
-        const collatedData: GithubIssue[] = [];
-        let pageNum = 1;
-        for (const response of responses) {
-          this.issuesEtagManager.set(pageNum, response.headers.etag);
-          pageNum++;
-          for (const issue of response.data) {
-            collatedData.push(new GithubIssue(issue));
-          }
-        }
-        return collatedData;
-      })
-    );
+        const isCached = responses.reduce((result, response) => {
+          return result && response.isCached;
+        }, true);
+        responses.forEach((resp, index) => this.issuesCacheManager.set(index + 1, resp));
+        return !isCached;
+      }));
   }
 
+  /**
+   * Will make multiple request to Github as per necessary so as to fetch all the comments in from different pages.
+   * @param issueId
+   * @returns - The different responses that Github responded with.
+   */
   fetchIssueComments(issueId: number): Observable<Array<GithubComment>> {
-    let responseInFirstPage: GithubResponse<GithubComment[]>;
-    return from(this.getCommentsAPICall(issueId, 1)).pipe(
-      map((response: GithubResponse<GithubComment[]>) => {
-        responseInFirstPage = response;
-        return this.getNumberOfPages(response);
-      }),
-      flatMap((numOfPages: number) => {
-        const apiCalls: Observable<GithubResponse<GithubComment[]>>[] = [];
-        for (let i = 2; i <= numOfPages; i++) {
-          apiCalls.push(from(this.getCommentsAPICall(issueId, i)));
-        }
-        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
-      }),
-      map((resultArray: GithubResponse<GithubComment[]>[]) => {
-        const responses = [responseInFirstPage, ...resultArray];
+    return this.makeMultipleRequestsToFetchComments(issueId).pipe(
+      map((responses: GithubResponse<GithubComment[]>[]) => {
         const collatedData: GithubComment[] = [];
         let pageNum = 1;
         for (const response of responses) {
-          this.commentsEtagManager.set(issueId, pageNum, response.headers.etag);
+          this.commentsCacheManager.set(issueId, pageNum, response);
           pageNum++;
           for (const comment of response.data) {
             collatedData.push(comment);
@@ -126,6 +157,33 @@ export class GithubService {
         return collatedData;
       })
     );
+  }
+
+  private makeMultipleRequestsToFetchComments(issueId: number) {
+    let responseInFirstPage: GithubResponse<GithubComment[]>;
+    return this.getCommentsAPICall(issueId, 1).pipe(
+      map((response: GithubResponse<GithubComment[]>) => {
+        responseInFirstPage = response;
+        return this.getNumberOfPages(response);
+      }),
+      flatMap((numOfPages: number) => {
+        const apiCalls: Observable<GithubResponse<GithubComment[]>>[] = [];
+        for (let i = 2; i <= numOfPages; i++) {
+          apiCalls.push(this.getCommentsAPICall(issueId, i));
+        }
+        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
+      }),
+      flatMap((resultArray: GithubResponse<GithubComment[]>[]) => {
+        const responses = [responseInFirstPage, ...resultArray];
+        const isCached = responses.reduce((result, response) => {
+          return result && response.isCached;
+        }, true);
+        if (isCached) {
+          return throwError(new HttpErrorResponse({status: 304}));
+        } else {
+          return of(responses);
+        }
+      }));
   }
 
   /**
@@ -154,13 +212,38 @@ export class GithubService {
     octokit.repos.createForAuthenticatedUser({name: name});
   }
 
-  fetchIssue(id: number): Observable<GithubIssue> {
+  fetchIssueGraphql(id: number): Observable<GithubGraphqlIssue> {
+    if (this.issueQueryRefs.get(id) === undefined) {
+      const newQueryRef = this.apollo.watchQuery<FetchIssueQuery>({
+        query: FetchIssue,
+        variables: {
+          owner: ORG_NAME,
+          name: REPO,
+          issueId: id,
+        }
+      });
+      this.issueQueryRefs.set(id, newQueryRef);
+    }
+
+    const queryRef = this.issueQueryRefs.get(id);
+    return this.toFetchIssue(id).pipe(
+      filter(toFetch => toFetch),
+      flatMap(() => from(queryRef.refetch())),
+      map((value: ApolloQueryResult<FetchIssueQuery>) => {
+        return new GithubGraphqlIssue(value.data.repository.issue);
+      }),
+      throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
+    );
+  }
+
+  toFetchIssue(id: number): Observable<boolean> {
     return from(octokit.issues.get({owner: ORG_NAME, repo: REPO, issue_number: id,
       headers: { 'If-Modified-Since': this.issuesLastModifiedManager.get(id) }})).pipe(
-        map((response: GithubResponse<GithubIssue>) => {
-          this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-          return new GithubIssue(response.data);
-        })
+      map((response: GithubResponse<GithubIssue>) => {
+        this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
+        return true;
+      }),
+      catchError(err => err.status === 304 ? of(false) : throwError(err))
     );
   }
 
@@ -222,6 +305,9 @@ export class GithubService {
       map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return new GithubIssue(response.data);
+      }),
+      catchError(err => {
+        return throwError(err);
       })
     );
   }
@@ -290,9 +376,11 @@ export class GithubService {
   }
 
   reset(): void {
-    this.issuesEtagManager.clear();
+    this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
-    this.commentsEtagManager.clear();
+    this.commentsCacheManager.clear();
+    this.issuesQueryRef = undefined;
+    this.issueQueryRefs.clear();
   }
 
   /**
@@ -308,13 +396,71 @@ export class GithubService {
     return numberOfPages;
   }
 
-  private getIssueAPICall(filter: {}, pageNumber: number): Promise<GithubResponse<GithubIssue[]>> {
-    return octokit.issues.listForRepo({...filter, owner: ORG_NAME, repo: REPO, sort: 'created',
-      direction: 'desc', per_page: 100, page: pageNumber, headers: { 'If-None-Match': this.issuesEtagManager.get(pageNumber) }});
+  private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {
+    const apiCall: Promise<GithubResponse<GithubIssue[]>> = octokit.issues.listForRepo({...filter, owner: ORG_NAME,
+      repo: REPO, sort: 'created', direction: 'desc', per_page: 100, page: pageNumber,
+      headers: { 'If-None-Match': this.issuesCacheManager.getEtagFor(pageNumber) }});
+    const apiCall$ = from(apiCall);
+    return apiCall$.pipe(
+      catchError(err => {
+        return of(this.issuesCacheManager.get(pageNumber));
+      })
+    );
   }
 
-  private getCommentsAPICall(issueId: number, pageNumber: number): Promise<GithubResponse<GithubComment[]>> {
-    return octokit.issues.listComments({owner: ORG_NAME, repo: REPO, issue_number: issueId, page: pageNumber, per_page: 100,
-      headers: { 'If-None-Match': this.commentsEtagManager.get(issueId, pageNumber)}});
+  private getCommentsAPICall(issueId: number, pageNumber: number): Observable<GithubResponse<GithubComment[]>> {
+    const apiCall: Promise<GithubResponse<GithubComment[]>> = octokit.issues.listComments({owner: ORG_NAME, repo: REPO,
+      issue_number: issueId, page: pageNumber, per_page: 100,
+      headers: { 'If-None-Match': this.commentsCacheManager.getEtagFor(issueId, pageNumber)}});
+    const apiCall$ = from(apiCall);
+    return apiCall$.pipe(
+      catchError(err => {
+        return of(this.commentsCacheManager.get(issueId, pageNumber));
+      })
+    );
+  }
+
+  private fetchGraphqlList<T, M>(
+    query: DocumentNode,
+    variables: {},
+    pluckEdges: (results: ApolloQueryResult<T>) => Array<any>,
+    Model: new (data) => M,
+  ): Observable<Array<M>> {
+    return from(this.withPagination<T>(pluckEdges)(query, variables)).pipe(
+      map((results: Array<ApolloQueryResult<T>>) => {
+        const issues = results.reduce((accumulated, current) => accumulated.concat(pluckEdges(current)), []);
+        return issues.map(issue => new Model(issue.node));
+      }),
+      throwIfEmpty(() => {
+        return new HttpErrorResponse({ status: 304 });
+      })
+    );
+  }
+
+  private withPagination<T>(pluckEdges: (results: ApolloQueryResult<T>) => Array<any>) {
+    return async (
+      query: DocumentNode,
+      variables: { [key: string]: any } = {}
+    ): Promise<Array<ApolloQueryResult<T>>> => {
+      const maxResultsCount = 100;
+      const cursor = variables.cursor || null;
+      const graphqlQuery = this.apollo.watchQuery<T>({ query, variables: { ...variables, cursor } });
+      return graphqlQuery.refetch().then(async (results: ApolloQueryResult<T>) => {
+        const intermediate = Array.isArray(results) ? results : [results];
+        const edges = pluckEdges(results);
+        const nextCursor = (edges.length === 0) ? null : edges[edges.length - 1].cursor;
+
+        if (edges.length < maxResultsCount || !nextCursor) {
+          return intermediate;
+        }
+        const nextResults = await this.withPagination<T>(pluckEdges)(
+          query, {
+            ...variables,
+            cursor: nextCursor,
+          }
+        );
+        return intermediate.concat(nextResults);
+      });
+    };
   }
 }

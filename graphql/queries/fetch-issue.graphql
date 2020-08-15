@@ -1,0 +1,29 @@
+query FetchIssue($owner: String!, $name: String!, $issueId: Int!, $commentCursor: String) {
+  repository(owner: $owner, name: $name) {
+    issue(number: $issueId) {
+      ...issue
+      labels(first: 100) {
+        edges {
+          node {
+            ...issueLabel
+          }
+        }
+      }
+      assignees(first: 100) {
+        edges {
+          node {
+            ...issueAssignee
+          }
+        }
+      }
+      comments(first: 100, after: $commentCursor) {
+        edges {
+          cursor
+          node {
+            ...issueComment
+          }
+        }
+      }
+    }
+  }
+}

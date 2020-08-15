@@ -1,82 +1,32 @@
-export class GithubLabel {
-  static readonly LABEL_ORDER = {
-    severity: { Low: 0, Medium: 1, High: 2 },
-    type: { DocumentationBug: 0, FunctionalityBug: 1 },
-  };
-  static readonly LABELS = {
-    severity: 'severity',
-    type: 'type',
-    response: 'response',
-    duplicated: 'duplicated',
-    status: 'status',
-    unsure: 'unsure',
-    pending: 'pending',
-    team: 'team',
-    tutorial: 'tutorial'
-  };
-
-  color: string;
-  id: number;
-  name: string;
-  url: string;
-
-  constructor(githubLabels: {}) {
-    Object.assign(this, githubLabels);
-    Object.freeze(this);
-  }
-
-  getCategory(): string {
-    if (this.isCategorical()) {
-      return this.name.split('.')[0];
-    } else {
-      return this.name;
-    }
-  }
-
-  getValue(): string {
-    if (this.isCategorical()) {
-      return this.name.split('.')[1];
-    } else {
-      return this.name;
-    }
-  }
-
-  isCategorical(): boolean {
-    const regex = /^\S+.\S+$/;
-    return regex.test(this.name);
-  }
-}
+import { GithubComment } from './github-comment.model';
+import { IssueState } from '../../../../../graphql/graphql-types';
+import { GithubLabel } from './github-label.model';
+import { UserData } from '../assignee.model';
 
 export class GithubIssue {
-  id: number; // Github's backend's id
+  id: string; // Github's backend's id
   number: number; // Issue's display id
-  assignees: Array<{
-    id: number,
-    login: string,
-    url: string,
-  }>;
+  assignees: Array<UserData>;
   body: string;
   created_at: string;
   labels: Array<GithubLabel>;
-  state: string;
+  state: IssueState;
   title: string;
   updated_at: string;
   url: string;
   user: { // Author of the issue
     login: string,
-    id: number,
     avatar_url: string,
     url: string,
   };
+  comments: Array<GithubComment>;
 
-  constructor(githubIssue: GithubIssue) {
+  constructor(githubIssue: {}) {
     Object.assign(this, githubIssue);
     this.labels = [];
     for (const label of githubIssue['labels']) {
       this.labels.push(new GithubLabel(label));
     }
-    Object.freeze(this);
-    Object.freeze(this.labels);
   }
 
   /**
