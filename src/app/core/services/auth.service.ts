@@ -28,6 +28,7 @@ export class AuthService {
 
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
+  oauthToken: String;
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -54,6 +55,19 @@ export class AuthService {
     return this.http.get('https://api.github.com/user', { headers: header });
   }
 
+  /**
+   * Will store the OAuth token.
+   */
+  storeOAuthAccessToken(token: string) {
+    this.oauthToken = token;
+  }
+
+  reset(): void {
+    this.oauthToken = undefined;
+    this.changeAuthState(AuthState.NotAuthenticated);
+    this.ngZone.run(() => this.router.navigate(['']));
+  }
+
   logOut(): void {
     this.githubService.reset();
     this.userService.reset();
@@ -68,9 +82,7 @@ export class AuthService {
       .concat(require('../../../../package.json').version)
     );
     this.issueService.setIssueTeamFilter('All Teams');
-
-    this.changeAuthState(AuthState.NotAuthenticated);
-    this.ngZone.run(() => this.router.navigate(['']));
+    this.reset();
   }
 
   isAuthenticated(): boolean {

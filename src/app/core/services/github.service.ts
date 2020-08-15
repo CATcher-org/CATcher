@@ -13,6 +13,7 @@ import { GithubResponse } from '../models/github/github-response.model';
 import { IssuesEtagManager } from '../models/github/cache-manager/issues-etag-manager.model';
 import { IssueLastModifiedManagerModel } from '../models/github/cache-manager/issue-last-modified-manager.model';
 import { CommentsEtagManager } from '../models/github/cache-manager/comments-etag-manager.model';
+import { Apollo } from 'apollo-angular';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -32,7 +33,10 @@ export class GithubService {
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private commentsEtagManager = new CommentsEtagManager();
 
-  constructor(private errorHandlingService: ErrorHandlingService) {}
+  constructor(
+    private errorHandlingService: ErrorHandlingService,
+    private apollo: Apollo,
+  ) {}
 
   storeCredentials(user: String, passw: String) {
     octokit = new Octokit({
