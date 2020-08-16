@@ -6,9 +6,9 @@ export class GithubIssue {
   id: string; // Github's backend's id
   number: number; // Issue's display id
   assignees: Array<{
-    id: number;
-    login: string;
-    url: string;
+    id: number,
+    login: string,
+    url: string,
   }>;
   body: string;
   created_at: string;
