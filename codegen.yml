@@ -1,5 +1,5 @@
 overwrite: true
-schema: "graphql/schema/github-schema.graphql"
+schema: "graphql/schema/github-schema.ts"
 documents:
   - graphql/fragments/*.graphql
   - graphql/queries/*.graphql

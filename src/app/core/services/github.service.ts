@@ -23,7 +23,6 @@ import { CommentsCacheManager } from '../models/github/cache-manager/comments-ca
 import { HttpErrorResponse } from '@angular/common/http';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { DocumentNode } from 'graphql';
-import Assignee from '../models/assignee.model';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
