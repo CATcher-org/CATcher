@@ -7,7 +7,14 @@
 
 4. Install dependencies with npm: `npm install` 
 
-5. Compile and start the application: `npm start`
+5. Install IDE (Intellij or VSCode would be good) for development:
+
+6. Install the following IDE plugins:
+    5.1. Graphql (Link for [Intellij](https://plugins.jetbrains.com/plugin/8097-js-graphql) and [VSCode](https://github.com/prisma-labs/vscode-graphql))
+
+7. Use the Graphql plugin to do `introspection` on Github's graphql schema.
+
+8. Compile and start the application: `npm start`
 
 # Commands
 Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file. 
