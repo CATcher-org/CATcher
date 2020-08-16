@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { flatMap, map } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
@@ -111,9 +111,9 @@ export class PhaseService {
 
   assertSessionDataIntegrity(sessionData: SessionData): void {
     if (sessionData === undefined) {
-      throwError('Session Data Unavailable.');
+      throw new Error('Session Data Unavailable.');
     } else if (!this.isSessionDataCorrectlyDefined(sessionData)) {
-      throwError('Session Data is Incorrectly Defined');
+      throw new Error('Session Data is Incorrectly Defined');
     }
   }
 
@@ -161,12 +161,12 @@ export class PhaseService {
 
   /**
    * Stores session data and sets current session's phase.
-   * @throws throwError - If there are no open phases in this session.
+   * @throws Error - If there are no open phases in this session.
    * @param sessionData
    */
   updateSessionParameters(sessionData: SessionData) {
     if (sessionData.openPhases.length === 0) {
-      throwError('There are no accessible phases.');
+      throw new Error('There are no accessible phases.');
     }
 
     this.sessionData = sessionData;

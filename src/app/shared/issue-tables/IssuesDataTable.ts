@@ -156,7 +156,15 @@ export class IssuesDataTable extends DataSource<Issue> {
     return result;
   }
 
+  private compareIntegerValue(valueA: number, valueB: number): number {
+    return (valueA < valueB ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
+  }
+
   private compareValue(valueA: string | number, valueB: string | number): number {
+    if (typeof valueA === 'number' && typeof valueB === 'number') {
+      return this.compareIntegerValue(valueA, valueB);
+    }
+
     const a = String(valueA || '').toUpperCase();
     const b = String(valueB || '').toUpperCase();
     return (a < b ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
