@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "3.2.2",
+  "version": "3.2.4",
   "main": "main.js",
   "scripts": {
     "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
@@ -20,7 +20,8 @@
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "test": "jasmine-ts --config=jasmine.json",
     "e2e": "npm run postinstall:web && ng e2e",
-    "lint": "ng lint --tslint-config",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
     "coverage": "nyc --reporter=lcov npm test"
   },
   "dependencies": {

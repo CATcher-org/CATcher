@@ -1,8 +1,8 @@
-import { GithubComment } from "../../src/app/core/models/github/github-comment.model";
+import { GithubComment } from '../../src/app/core/models/github/github-comment.model';
 
-export const EMPTY_TEAM_RESPONSE : GithubComment = {
+export const EMPTY_TEAM_RESPONSE: GithubComment = {
     author_association: 'CONTRIBUTOR',
-    body: "# Team's Response\n" +
+    body: '# Team\'s Response\n' +
     '\n' +
     ' ## Duplicate status (if any):\n' +
     '--',
@@ -18,4 +18,4 @@ export const EMPTY_TEAM_RESPONSE : GithubComment = {
       avatar_url: 'https://avatars3.githubusercontent.com/u/46639862?v=4',
       url: 'https://api.github.com/users/testathorStudent',
     },
-  }
+  };

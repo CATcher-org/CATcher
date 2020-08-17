@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { catchError, flatMap, map } from 'rxjs/operators';
-import { forkJoin, from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
@@ -90,7 +90,8 @@ export class GithubService {
           }
         }
         return collatedData;
-      })
+      }),
+      catchError(err => throwError('Failed to fetch issues'))
     );
   }
 
@@ -120,7 +121,8 @@ export class GithubService {
           }
         }
         return collatedData;
-      })
+      }),
+      catchError(err => throwError('Failed to fetch issueComments'))
     );
   }
 
@@ -136,7 +138,8 @@ export class GithubService {
       }),
       catchError(err => {
         return of(false);
-      })
+      }),
+      catchError(err => throwError('Failed to fetch repo data.'))
     );
   }
 
@@ -156,7 +159,8 @@ export class GithubService {
         map((response: GithubResponse<GithubIssue>) => {
           this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
           return new GithubIssue(response.data);
-        })
+        }),
+        catchError(err => throwError('Failed to fetch issue.'))
     );
   }
 
@@ -164,7 +168,8 @@ export class GithubService {
     return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
       map(response => {
         return response['data'];
-      })
+      }),
+      catchError(err => throwError('Failed to fetch labels.'))
     );
   }
 
@@ -240,7 +245,8 @@ export class GithubService {
     return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO })).pipe(
       map(response => {
         return response['data'];
-      })
+      }),
+      catchError(err => throwError('Failed to fetch events for repo.'))
     );
   }
 
@@ -248,12 +254,16 @@ export class GithubService {
     return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv'})).pipe(
       map(rawData => {
           return {data: atob(rawData['data']['content'])};
-        })
+        }),
+      catchError(err => throwError('Failed to fetch data file.'))
     );
   }
 
   fetchLatestRelease(): Observable<GithubRelease> {
-    return from(octokit.repos.getLatestRelease({owner: CATCHER_ORG, repo: CATCHER_REPO})).pipe(map(res => res['data']));
+    return from(octokit.repos.getLatestRelease({owner: CATCHER_ORG, repo: CATCHER_REPO})).pipe(
+      map(res => res['data']),
+      catchError(err => throwError('Failed to fetch latest release.'))
+    );
   }
 
   /**
@@ -261,15 +271,19 @@ export class GithubService {
    * @return Observable<{}> representing session information.
    */
   fetchSettingsFile(): Observable<{}> {
-    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json'}))
-        .pipe(map(rawData => JSON.parse(atob(rawData['data']['content']))));
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json'})).pipe(
+      map(rawData => JSON.parse(atob(rawData['data']['content']))),
+      catchError(err => throwError('Failed to fetch settings file.'))
+    );
   }
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
-    return from(octokit.users.getAuthenticated())
-      .pipe(map(response => {
+    return from(octokit.users.getAuthenticated()).pipe(
+      map(response => {
         return response['data'];
-      }));
+      }),
+      catchError(err => throwError('Failed to fetch authenticated user.'))
+    );
   }
 
   getRepoURL(): string {

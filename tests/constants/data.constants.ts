@@ -8,15 +8,16 @@ student,JunWei96,CS2103T-W12-3
 admin,damithc,
 tutor,anubh-v,CS2103T-W12-3
 admin,geshuming,
+
 tutor,jj-lim,CS2103T-W12-3
 tutor,jj-lim,CS2103T-W12-3
 tutor,jj-lim,CS2103T-W12-4
-tutor,q,CS2103T-W12-4
+tutor,q     ,CS2103T-W12-4
 student,003-samuel,CS2103T-W12-3
 student,damithc,CS2103T-W12-3
 student,RonakLakhotia,CS2103T-W12-4
-student,ptvrajsk,CS2103T-W12-3
-`;
+student,ptvrajsk,CS2103T-W12-3` +
+`                       `;
 
 // jsonData is a json representation of csvString
 export const jsonData = {
@@ -53,7 +54,7 @@ export const jsonData = {
       q: { 'CS2103T-W12-4': 'true' }
     },
     'admins-allocation': { damithc: {}, geshuming: {} }
-  }
+  };
 
   // These are objects representing some users and teams in jsonData
 const TEAM_3 = {
@@ -62,36 +63,36 @@ const TEAM_3 = {
                 {loginId: '003-samuel', role: UserRole.Student}  ,
                 {loginId: 'damithc',  role: UserRole.Student},
                 {loginId: 'ptvrajsk', role: UserRole.Student}]
-}
+};
 
 const TEAM_4 = {
   id: 'CS2103T-W12-4',
   teamMembers: [{loginId: 'ronaklakhotia', role: UserRole.Student}]
-}
+};
 
 export const USER_JUNWEI = {
   loginId: 'junwei96',
   role: UserRole.Student,
   team: TEAM_3
-}
+};
 
 export const USER_Q = {
   loginId: 'q',
   role: UserRole.Tutor,
   allocatedTeams: [TEAM_4]
-}
+};
 
 export const USER_SHUMING = {
   loginId: 'geshuming',
   role: UserRole.Admin,
   allocatedTeams: []
-}
+};
 
 export const USER_WITH_TWO_ROLES = {
   loginId: 'damithc',
   role: UserRole.Admin,
   allocatedTeams: []
-}
+};
 
 export const dataFileTeamStructure: DataFile = {
   teamStructure: new Map<string, Team>([

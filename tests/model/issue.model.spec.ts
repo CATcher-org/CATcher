@@ -1,6 +1,6 @@
-import { Issue } from '../../src/app/core/models/issue.model'
+import { Issue } from '../../src/app/core/models/issue.model';
 
-import { ISSUE_WITH_EMPTY_DESCRIPTION, ISSUE_WITH_ASSIGNEES } from '../constants/githubissue.constants'
+import { ISSUE_WITH_EMPTY_DESCRIPTION, ISSUE_WITH_ASSIGNEES } from '../constants/githubissue.constants';
 import { EMPTY_TEAM_RESPONSE } from '../constants/githubcomment.constants';
 
 describe('Issue model class', () => {
@@ -33,8 +33,8 @@ describe('Issue model class', () => {
             expect(Issue.updateDescription(null)).toBe(noDetailsFromBugReporter);
             expect(Issue.updateTeamResponse(undefined)).toBe(noDetailsFromTeam);
 
-            const typicalDescription = 'The app crashes after parsing config files.'
-            const typicalTeamResponse = 'Cannot replicate the bug.'
+            const typicalDescription = 'The app crashes after parsing config files.';
+            const typicalTeamResponse = 'Cannot replicate the bug.';
             expect(Issue.updateDescription(typicalDescription)).toBe(typicalDescription);
             expect(Issue.updateTeamResponse(typicalTeamResponse)).toBe(typicalTeamResponse);
 
