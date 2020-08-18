@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
@@ -14,7 +14,6 @@ import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
-import { map } from 'rxjs/operators';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated', 'ConfirmOAuthUser'}
 
@@ -41,19 +40,6 @@ export class AuthService {
               private githubEventService: GithubEventService,
               private titleService: Title) {}
 
-  /**
-   * Authenticates the user to the github api and stores the necessary credentials in
-   * all remote services.
-   * @param username - User's Username
-   * @param password - User's Password
-   */
-  authenticate(username: string, password: string): Observable<any> {
-    this.changeAuthState(AuthState.AwaitingAuthentication);
-    const header = new HttpHeaders().set('Authorization', 'Basic ' + btoa(username + ':' + password));
-    this.githubService.storeCredentials(username, password);
-    return this.http.get('https://api.github.com/user', { headers: header });
-  }
-
   logOut(): void {
     this.githubService.reset();
     this.userService.reset();
@@ -75,14 +61,6 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.authStateSource.getValue() === AuthState.Authenticated;
-  }
-
-  hasExistingAuthWithGithub(): Observable<boolean> {
-    return this.electronService.cookieFor(this.githubUrl, this.githubLoginCacheName).pipe(
-      map((value) => {
-        return value === 'yes';
-      })
-    );
   }
 
   setLoginStatusWithGithub(isLoggedIn: boolean) {
