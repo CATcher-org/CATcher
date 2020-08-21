@@ -26,7 +26,7 @@ for:
     only: 
       - job_name: Build 
   build_script:
-    - npm run build 
+    - npm run electron:windows
 
 -
   matrix:
