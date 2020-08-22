@@ -1,6 +1,7 @@
 # Introduction
 
 [![Build Status](https://travis-ci.org/CATcher-org/CATcher.svg?branch=master)](https://travis-ci.org/CATcher-org/CATcher)
+[![Build status](https://ci.appveyor.com/api/projects/status/63aj5630ib8tpmk5?svg=true)](https://ci.appveyor.com/project/JunWei96/catcher)
 
 **CAT**cher is a desktop application for **C**rowd-sourced **A**nonymous **T**esting software. It uses GitHub as the backend for hosting bug reports.
 
