@@ -13,6 +13,7 @@ branches:
     - master
 
 install:
+  - ps: Install-Product node $env:nodejs_version
   - npm install
 
 cache:
