@@ -25,6 +25,11 @@
     "codegen:gql": "graphql-codegen --config codegen.yml",
     "codegen:gql-watch": "graphql-codegen --config -w codegen.yml"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint && npm run test"
+    }
+  },
   "dependencies": {
     "@angular/animations": "^7.2.16",
     "@angular/cdk": "^7.3.7",
@@ -76,6 +81,7 @@
     "electron-builder": "22.2.0",
     "electron-reload": "1.5.0",
     "graphql-codegen-fragment-matcher": "^0.18.2",
+    "husky": "^4.2.5",
     "jasmine": "^3.5.0",
     "jasmine-core": "3.5.0",
     "jasmine-spec-reporter": "4.2.1",
