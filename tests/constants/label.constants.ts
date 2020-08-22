@@ -1,3 +1,5 @@
+import { Label } from '../../src/app/core/models/label.model';
+
 // Label name constants
 export const SEVERITY_LOW = 'Low';
 export const SEVERITY_MEDIUM = 'Medium';
@@ -66,3 +68,8 @@ export const LABEL_ARRAY = [
         name: TYPE + '.' + TYPE_FUNCTIONALITY_BUG
     }
 ];
+
+// List of labels
+export const SEVERITY_LABELS = [new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERITY_LOW),
+  new Label(SEVERITY, SEVERITY_MEDIUM, COLOR_SEVERITY_MEDIUM),
+  new Label(SEVERITY, SEVERITY_HIGH, COLOR_SEVERITY_HIGH)];

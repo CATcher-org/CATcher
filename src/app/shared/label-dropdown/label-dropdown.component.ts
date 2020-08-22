@@ -3,6 +3,9 @@ import { LabelService } from '../../core/services/label.service';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { Label } from '../../core/models/label.model';
 
+export const WHITE_TEXT_CLASS = 'white-text';
+export const BLACK_TEXT_CLASS = 'black-text';
+
 @Component({
   selector: 'app-label-dropdown',
   templateUrl: './label-dropdown.component.html',
@@ -30,7 +33,7 @@ export class LabelDropdownComponent implements OnInit {
   }
 
   get dropdownTextColor(): string {
-    return this.labelService.isDarkColor(this.selectedColor) ? 'white-text' : 'black-text';
+    return this.labelService.isDarkColor(this.selectedColor) ? WHITE_TEXT_CLASS : BLACK_TEXT_CLASS;
   }
 
 }
