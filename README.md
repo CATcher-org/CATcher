@@ -1,3 +1,5 @@
+![CATcher logo](./src/assets/images/CATcher.png)
+
 # Introduction
 
 [![Build Status](https://travis-ci.org/CATcher-org/CATcher.svg?branch=master)](https://travis-ci.org/CATcher-org/CATcher)
