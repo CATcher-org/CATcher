@@ -1,3 +1,5 @@
+<img src="./src/assets/images/CATcher_logo.png" alt="CATcher" width="420" height="120"/>
+
 # Introduction
 
 [![Build Status](https://travis-ci.org/CATcher-org/CATcher.svg?branch=master)](https://travis-ci.org/CATcher-org/CATcher)
