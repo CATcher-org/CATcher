@@ -49,15 +49,6 @@ export class GithubService {
     private apollo: Apollo,
   ) {}
 
-  storeCredentials(user: String, passw: String) {
-    octokit = new Octokit({
-      auth: {
-        username: user,
-        password: passw,
-      },
-    });
-  }
-
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
       auth() {
