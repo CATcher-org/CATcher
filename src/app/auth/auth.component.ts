@@ -138,8 +138,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   /**
    * Will complete the process of logging in the given user.
-   * Some preconditions includes:
-   *  - User must be authenticated either through OAuth or username/password.
    * @param username - The user to log in.
    */
   completeLoginProcess(username: string): void {

@@ -15,7 +15,7 @@ import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
 
-export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'Authenticated', 'ConfirmOAuthUser'}
+export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
 
 @Injectable({
   providedIn: 'root'
