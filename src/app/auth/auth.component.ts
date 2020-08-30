@@ -60,7 +60,6 @@ export class AuthComponent implements OnInit, OnDestroy {
           if (!isWindowClosed) {
             this.errorHandlingService.handleError(error);
           }
-          this.authService.changeAuthState(AuthState.NotAuthenticated);
           this.goToSessionSelect();
           return;
         }
