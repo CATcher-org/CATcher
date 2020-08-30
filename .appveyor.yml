@@ -1,0 +1,43 @@
+environment: # Default Set Already to Windows 
+  nodejs_version: "12"
+
+  matrix:
+    - job_name: Build
+
+    - job_name: Linter Tests
+
+    - job_name: Unit Tests
+
+branches:
+  only:
+    - master
+
+install:
+  - npm install
+
+cache:
+  - node_modules
+
+build: off # Skip Visual Studio Build
+
+for:
+-
+  matrix:
+    only: 
+      - job_name: Build 
+  build_script:
+    - npm run electron:windows
+
+-
+  matrix:
+    only:
+      - job_name: Linter Tests
+  test_script:
+  - npm run lint
+
+-
+  matrix:
+    only:
+      - job_name: Unit Tests
+  test_script:
+  - npm run test

@@ -23,6 +23,11 @@
     "lint": "ng lint",
     "lint:fix": "ng lint --fix"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint && npm run test"
+    }
+  },
   "dependencies": {
     "@angular/animations": "^7.2.16",
     "@angular/cdk": "^7.3.7",
@@ -59,6 +64,7 @@
     "electron": "7.1.9",
     "electron-builder": "22.2.0",
     "electron-reload": "1.5.0",
+    "husky": "^4.2.5",
     "jasmine": "^3.5.0",
     "jasmine-core": "3.5.0",
     "jasmine-spec-reporter": "4.2.1",
