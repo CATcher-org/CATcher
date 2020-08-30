@@ -34,15 +34,6 @@ export class GithubService {
 
   constructor(private errorHandlingService: ErrorHandlingService) {}
 
-  storeCredentials(user: String, passw: String) {
-    octokit = new Octokit({
-      auth: {
-        username: user,
-        password: passw,
-      },
-    });
-  }
-
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
       auth() {
