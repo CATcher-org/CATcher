@@ -9,6 +9,7 @@ import { ErrorHandlingService } from '../../core/services/error-handling.service
 import { finalize } from 'rxjs/operators';
 import { IssuesDataTable } from './IssuesDataTable';
 import { MatPaginator, MatSort } from '@angular/material';
+import { Phase, PhaseService } from '../../core/services/phase.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -55,6 +56,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
               private labelService: LabelService,
               private githubService: GithubService,
               private issueService: IssueService,
+              private phaseService: PhaseService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
@@ -102,6 +104,10 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
+  }
+
+  isResponseEditable() {
+    return this.permissions.isTeamResponseEditable() || this.permissions.isTesterResponseEditable();
   }
 
   markAsPending(issue: Issue) {
