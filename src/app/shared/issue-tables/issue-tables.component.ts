@@ -102,14 +102,7 @@ export class IssueTablesComponent implements OnInit {
   }
 
   isResponseEditable() {
-    switch (this.phaseService.currentPhase) {
-      case Phase.phaseBugReporting:
-      case Phase.phaseModeration:
-      case Phase.phaseTeamResponse:
-        return this.permissions.isTeamResponseEditable();
-      case Phase.phaseTesterResponse:
-        return this.permissions.isTesterResponseEditable();
-    }
+    return this.permissions.isTeamResponseEditable() || this.permissions.isTesterResponseEditable();
   }
 
   markAsPending(issue: Issue) {
