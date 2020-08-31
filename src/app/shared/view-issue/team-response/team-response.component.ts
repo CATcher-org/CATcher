@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {IssueService} from '../../../core/services/issue.service';
-import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {PermissionService} from '../../../core/services/permission.service';
-import {Issue} from '../../../core/models/issue.model';
-import {IssueCommentService} from '../../../core/services/issue-comment.service';
-import {IssueComment} from '../../../core/models/comment.model';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
+import { IssueService } from '../../../core/services/issue.service';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { PermissionService } from '../../../core/services/permission.service';
+import { Issue, STATUS } from '../../../core/models/issue.model';
+import { IssueCommentService } from '../../../core/services/issue-comment.service';
+import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { forkJoin, Observable, throwError } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
@@ -147,6 +147,9 @@ export class TeamResponseComponent implements OnInit {
   private getUpdatedIssue(): Issue {
     const clone = this.issue.clone(this.phaseService.currentPhase);
     clone.teamResponse = Issue.updateTeamResponse(this.responseForm.get('description').value);
+    if (!clone.status) {
+      clone.status = clone.teamResponse === '' ? STATUS.Incomplete : STATUS.Done;
+    }
     return clone;
   }
 }
