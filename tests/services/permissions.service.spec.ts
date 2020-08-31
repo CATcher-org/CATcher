@@ -32,7 +32,7 @@ describe('Test a few permissions for each role in each phase', () => {
         expect(permissionService.isIssueLabelsEditable()).toBe(true);
         expect(permissionService.isTeamResponseEditable()).toBe(true);
         mockPhaseService.currentPhase = Phase.phaseTesterResponse;
-        expect(permissionService.isIssueEditable()).toBe(false);
+        expect(permissionService.isIssueEditable()).toBe(true);
         expect(permissionService.isIssueDescriptionEditable()).toBe(false);
         mockPhaseService.currentPhase = Phase.phaseModeration;
         expect(permissionService.isIssueDeletable()).toBe(false);
