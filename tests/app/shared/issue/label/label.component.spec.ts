@@ -48,7 +48,7 @@ describe('LabelDropdownComponent', () => {
 
     issueService.updateIssue.and.returnValue({ subscribe: (latestIssue) => {
       labelComponent.issueUpdated.emit(latestIssue);
-      labelComponent.labelColor = labelService.getColorOfLabel(COLOR_SEVERITY_HIGH);
+      labelComponent.labelColor = labelService.getColorOfLabel(latestIssue[labelComponent.attributeName]);
     } });
 
     labelComponent.updateLabel(COLOR_SEVERITY_HIGH);
