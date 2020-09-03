@@ -28,7 +28,7 @@ describe('LabelComponent', () => {
 
   });
 
-  it('should be initialised with a list of labels, an initial colour and a dropdown control', () => {
+  it('should be initialised with a list of label values and a labelColor', () => {
     labelService.getLabelList.and.returnValue(SEVERITY_LABELS);
     labelService.getColorOfLabel.and.returnValue(COLOR_SEVERITY_LOW);
     labelComponent.ngOnInit();
