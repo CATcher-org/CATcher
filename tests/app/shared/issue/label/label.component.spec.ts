@@ -5,7 +5,7 @@ import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH } from '../../../../constants/label.constants';
 
-describe('LabelDropdownComponent', () => {
+describe('LabelComponent', () => {
   let labelComponent: LabelComponent;
   let issueService: any;
   let permissionService: any;
