@@ -3,7 +3,8 @@ import { LabelService } from '../../../../../src/app/core/services/label.service
 import { PermissionService } from '../../../../../src/app/core/services/permission.service';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
-import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH } from '../../../../constants/label.constants';
+import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH, SEVERITY_HIGH, SEVERITY_MEDIUM } from '../../../../constants/label.constants';
+import { of } from 'rxjs';
 
 describe('LabelComponent', () => {
   let labelComponent: LabelComponent;
@@ -17,7 +18,7 @@ describe('LabelComponent', () => {
 
   beforeEach(() => {
     labelService = jasmine.createSpyObj(LabelService, ['getLabelList',
-      'getColorOfLabel', 'isDarkColor']);
+      'getColorOfLabel', 'isDarkColor', 'getRequiredLabelsAsArray']);
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
     permissionService = new PermissionService(null, null, null);
 
@@ -25,7 +26,6 @@ describe('LabelComponent', () => {
     thisIssue =  Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;
-
   });
 
   it('should be initialised with a list of label values and a labelColor', () => {
@@ -44,14 +44,13 @@ describe('LabelComponent', () => {
     labelComponent.ngOnInit();
     labelComponent.ngOnChanges();
 
+    const latestIssue = {
+        severity: SEVERITY_HIGH,
+        ...ISSUE_WITH_EMPTY_DESCRIPTION
+    };
     labelService.getColorOfLabel.and.returnValue(COLOR_SEVERITY_HIGH);
-
-    issueService.updateIssue.and.returnValue({ subscribe: (latestIssue) => {
-      labelComponent.issueUpdated.emit(latestIssue);
-      labelComponent.labelColor = labelService.getColorOfLabel(latestIssue[labelComponent.attributeName]);
-    } });
-
-    labelComponent.updateLabel(COLOR_SEVERITY_HIGH);
+    issueService.updateIssue.and.returnValue(of(latestIssue));
+    labelComponent.updateLabel(SEVERITY_HIGH);
 
     expect(labelComponent.labelValues).toEqual(SEVERITY_LABELS);
     expect(labelComponent.labelColor).toEqual(COLOR_SEVERITY_HIGH);
