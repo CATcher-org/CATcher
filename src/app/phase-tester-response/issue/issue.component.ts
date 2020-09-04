@@ -19,7 +19,6 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.TESTER_RESPONSE,
     ISSUE_COMPONENTS.SEVERITY_LABEL,
     ISSUE_COMPONENTS.TYPE_LABEL,
-    ISSUE_COMPONENTS.RESPONSE_LABEL
   ];
 
   @ViewChild(ViewIssueComponent) viewIssue: ViewIssueComponent;
