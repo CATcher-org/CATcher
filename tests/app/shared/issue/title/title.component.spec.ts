@@ -1,28 +1,26 @@
 import { TitleComponent } from '../../../../../src/app/shared/issue/title/title.component';
-import { LabelService } from '../../../../../src/app/core/services/label.service';
-import { PermissionService } from '../../../../../src/app/core/services/permission.service';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, NgForm } from '@angular/forms';
+import { of } from 'rxjs';
 
 describe('TitleComponent', () => {
   let titleComponent: TitleComponent;
   let issueService: any;
-  let permissionService: any;
-  let labelService: any;
   let thisIssue: Issue;
-
   let formBuilder: any;
-  const errorHandlingService: any = null;
+
+  let form: any;
+  let formResetForm: any;
 
   beforeEach(() => {
-    labelService = jasmine.createSpyObj(LabelService, ['getLabelList',
-      'getColorOfLabel', 'isDarkColor']);
     formBuilder = new FormBuilder();
-    issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
-    permissionService = new PermissionService(null, null, null);
 
-    titleComponent = new TitleComponent(issueService, formBuilder, errorHandlingService, labelService, permissionService);
+    form = new NgForm([], []);
+    formResetForm = spyOn(form, 'resetForm');
+    issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
+
+    titleComponent = new TitleComponent(issueService, formBuilder, null, null, null);
     thisIssue =  Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     titleComponent.issue = thisIssue;
   });
@@ -52,6 +50,17 @@ describe('TitleComponent', () => {
     titleComponent.ngOnInit();
     titleComponent.changeToEditMode();
     titleComponent.cancelEditMode();
+    expect(titleComponent.isEditing).toEqual(false);
+  });
+
+  it('should be configured correctly when title is updated', () => {
+    titleComponent.ngOnInit();
+    titleComponent.changeToEditMode();
+
+    issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    titleComponent.updateTitle(form);
+
+    expect(formResetForm).toHaveBeenCalledTimes(1);
     expect(titleComponent.isEditing).toEqual(false);
   });
 });
