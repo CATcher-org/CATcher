@@ -9,21 +9,15 @@ import { of } from 'rxjs';
 describe('LabelComponent', () => {
   let labelComponent: any;
   let issueService: any;
-  let permissionService: any;
   let labelService: any;
   let thisIssue: Issue;
   let issueUpdatedEmit: any;
 
-  const formBuilder: any = null;
-  const errorHandlingService: any = null;
-
   beforeEach(() => {
-    labelService = jasmine.createSpyObj(LabelService, ['getLabelList',
-      'getColorOfLabel', 'isDarkColor', 'getRequiredLabelsAsArray']);
+    labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel']);
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
-    permissionService = new PermissionService(null, null, null);
 
-    labelComponent = new LabelComponent(issueService, formBuilder, errorHandlingService, labelService, permissionService);
+    labelComponent = new LabelComponent(issueService, null, null, labelService, null);
     thisIssue =  Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;
