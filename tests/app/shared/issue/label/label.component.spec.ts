@@ -47,12 +47,8 @@ describe('LabelComponent', () => {
     labelComponent.ngOnInit();
     labelComponent.ngOnChanges();
 
-    const latestIssue = {
-        severity: SEVERITY_HIGH,
-        ...ISSUE_WITH_EMPTY_DESCRIPTION
-    };
     labelService.getColorOfLabel.and.returnValue(COLOR_SEVERITY_HIGH);
-    issueService.updateIssue.and.returnValue(of(latestIssue));
+    issueService.updateIssue.and.callFake((x: Issue) => of(x));
     labelComponent.updateLabel(SEVERITY_HIGH);
 
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
