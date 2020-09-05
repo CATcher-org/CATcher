@@ -3,15 +3,16 @@ import { LabelService } from '../../../../../src/app/core/services/label.service
 import { PermissionService } from '../../../../../src/app/core/services/permission.service';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
-import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH, SEVERITY_HIGH, SEVERITY_MEDIUM } from '../../../../constants/label.constants';
+import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH, SEVERITY_HIGH } from '../../../../constants/label.constants';
 import { of } from 'rxjs';
 
 describe('LabelComponent', () => {
-  let labelComponent: LabelComponent;
+  let labelComponent: any;
   let issueService: any;
   let permissionService: any;
   let labelService: any;
   let thisIssue: Issue;
+  let issueUpdatedEmit: any;
 
   const formBuilder: any = null;
   const errorHandlingService: any = null;
@@ -26,6 +27,8 @@ describe('LabelComponent', () => {
     thisIssue =  Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;
+
+    issueUpdatedEmit = spyOn(labelComponent.issueUpdated, 'emit');
   });
 
   it('should be initialised with a list of label values and a labelColor', () => {
@@ -52,6 +55,7 @@ describe('LabelComponent', () => {
     issueService.updateIssue.and.returnValue(of(latestIssue));
     labelComponent.updateLabel(SEVERITY_HIGH);
 
+    expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
     expect(labelComponent.labelValues).toEqual(SEVERITY_LABELS);
     expect(labelComponent.labelColor).toEqual(COLOR_SEVERITY_HIGH);
   });
