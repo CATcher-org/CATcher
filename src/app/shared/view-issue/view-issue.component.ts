@@ -4,7 +4,6 @@ import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
 import { FormBuilder } from '@angular/forms';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { UserService } from '../../core/services/user.service';
 import { Subscription } from 'rxjs';
 import { PermissionService } from '../../core/services/permission.service';
@@ -51,8 +50,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   public readonly issueComponentsEnum = ISSUE_COMPONENTS;
   public readonly userRole = UserRole;
 
-  constructor(private issueCommentService: IssueCommentService,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,

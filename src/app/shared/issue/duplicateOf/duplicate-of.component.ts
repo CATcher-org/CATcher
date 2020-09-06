@@ -13,11 +13,9 @@ import {
 import { Issue, SEVERITY_ORDER } from '../../../core/models/issue.model';
 import { IssueService } from '../../../core/services/issue.service';
 import { map } from 'rxjs/operators';
-import { forkJoin, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
 import { PermissionService } from '../../../core/services/permission.service';
-import { IssueCommentService } from '../../../core/services/issue-comment.service';
-import { IssueComment } from '../../../core/models/comment.model';
 import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
@@ -43,7 +41,6 @@ export class DuplicateOfComponent implements OnInit {
   readonly MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE = 37;
 
   constructor(public issueService: IssueService,
-              public issueCommentService: IssueCommentService,
               public permissions: PermissionService,
               private errorHandlingService: ErrorHandlingService,
               private phaseService: PhaseService) {
@@ -72,12 +69,10 @@ export class DuplicateOfComponent implements OnInit {
 
   updateDuplicateStatus(event: MatSelectChange) {
     const latestIssue = this.getUpdatedIssue(event);
-    forkJoin([
-      this.issueService.updateIssue(latestIssue),
-      this.issueCommentService.updateIssueComment(latestIssue.id, latestIssue.issueComment)
-    ]).subscribe(
-      () => this.issueUpdated.emit(latestIssue),
-      (error) => this.errorHandlingService.handleError(error));
+    this.issueService.updateIssueWithComment(latestIssue, latestIssue.issueComment).subscribe(
+      (issue) => this.issueUpdated.emit(issue),
+      (error) => this.errorHandlingService.handleError(error)
+    );
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {

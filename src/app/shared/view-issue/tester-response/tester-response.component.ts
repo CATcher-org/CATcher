@@ -6,7 +6,6 @@ import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { UserService } from '../../../core/services/user.service';
 import { UserRole } from '../../../core/models/user.model';
-import { IssueCommentService } from '../../../core/services/issue-comment.service';
 import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { finalize, map, flatMap } from 'rxjs/operators';
@@ -34,7 +33,6 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
-              private issueCommentService: IssueCommentService,
               public userService: UserService,
               private errorHandlingService: ErrorHandlingService,
               private dialog: MatDialog,

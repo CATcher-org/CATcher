@@ -9,7 +9,6 @@ import { PhaseService } from './phase.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { GithubService } from './github.service';
 import { IssueService } from './issue.service';
-import { IssueCommentService } from './issue-comment.service';
 import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
@@ -35,7 +34,6 @@ export class AuthService {
               private userService: UserService,
               private issueService: IssueService,
               private phaseService: PhaseService,
-              private issueCommentService: IssueCommentService,
               private labelService: LabelService,
               private dataService: DataService,
               private githubEventService: GithubEventService,
@@ -58,7 +56,6 @@ export class AuthService {
     this.githubService.reset();
     this.userService.reset();
     this.issueService.reset();
-    this.issueCommentService.reset();
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();

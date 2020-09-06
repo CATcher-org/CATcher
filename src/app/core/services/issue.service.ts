@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, exhaustMap, finalize, map } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY, forkJoin, timer, Observable, of, Subscription } from 'rxjs';
 import {
   Issue,
@@ -9,7 +9,6 @@ import {
 } from '../models/issue.model';
 import { UserService } from './user.service';
 import { Phase, PhaseService } from './phase.service';
-import { IssueCommentService } from './issue-comment.service';
 import { PermissionService } from './permission.service';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
@@ -18,6 +17,7 @@ import { GithubIssue } from '../models/github/github-issue.model';
 import { IssueComment } from '../models/comment.model';
 import { GithubLabel } from '../models/github/github-label.model';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
+import { GithubComment } from '../models/github/github-comment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,6 @@ export class IssueService {
   constructor(private githubService: GithubService,
               private userService: UserService,
               private phaseService: PhaseService,
-              private issueCommentService: IssueCommentService,
               private permissionService: PermissionService,
               private errorHandlingService: ErrorHandlingService,
               private dataService: DataService) {
@@ -134,6 +133,15 @@ export class IssueService {
     );
   }
 
+  updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
+    return this.githubService.updateIssueComment(issueComment).pipe(
+      flatMap((updatedComment: GithubComment) => {
+        issue.githubComments = [updatedComment];
+        return this.updateIssue(issue);
+      })
+    );
+  }
+
   updateTesterResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     const isTesterResponseExist = this.issues[issue.id].testerResponses;
     const commentApiToCall = isTesterResponseExist ? this.githubService.updateIssueComment(issueComment)
@@ -157,6 +165,16 @@ export class IssueService {
         const [githubComment, issue] = responses;
         issue.updateDispute(githubComment);
         return issue;
+      })
+    );
+  }
+
+  createTeamResponse(issue: Issue): Observable<Issue> {
+    const teamResponse = issue.createGithubTeamResponse();
+    return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
+      flatMap((githubComment: GithubComment) => {
+        issue.githubComments = [githubComment];
+        return this.updateIssue(issue);
       })
     );
   }
