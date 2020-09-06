@@ -136,7 +136,10 @@ export class IssueService {
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
       flatMap((updatedComment: GithubComment) => {
-        issue.githubComments = [updatedComment];
+        issue.githubComments = [
+          updatedComment,
+          ...issue.githubComments.filter(c => c.id !== updatedComment.id),
+        ];
         return this.updateIssue(issue);
       })
     );
@@ -173,7 +176,10 @@ export class IssueService {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
       flatMap((githubComment: GithubComment) => {
-        issue.githubComments = [githubComment];
+        issue.githubComments = [
+          githubComment,
+          ...issue.githubComments.filter(c => c.id !== githubComment.id),
+        ];
         return this.updateIssue(issue);
       })
     );

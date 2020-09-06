@@ -25,9 +25,6 @@ export class DuplicatedIssuesComponent implements OnInit {
 
   ngOnInit() {
     this.duplicatedIssues = this.issueService.getDuplicateIssuesFor(this.issue);
-    this.issueService.getDuplicateIssuesFor(this.issue).subscribe(result => {
-      console.log('result', result);
-    });
   }
 
   removeDuplicateStatus(duplicatedIssue: Issue) {
