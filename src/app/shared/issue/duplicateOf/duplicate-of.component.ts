@@ -72,15 +72,12 @@ export class DuplicateOfComponent implements OnInit {
 
   updateDuplicateStatus(event: MatSelectChange) {
     const latestIssue = this.getUpdatedIssue(event);
-    forkJoin([this.issueService.updateIssue(latestIssue),
-      this.issueCommentService.updateIssueComment(latestIssue.id, latestIssue.issueComment)])
-      .subscribe((resultArr: [Issue, IssueComment]) => {
-        const [updatedIssue, updatedIssueComment] = resultArr;
-        updatedIssue.issueComment = updatedIssueComment;
-        this.issueUpdated.emit(updatedIssue);
-      }, (error) => {
-        this.errorHandlingService.handleError(error);
-      });
+    forkJoin([
+      this.issueService.updateIssue(latestIssue),
+      this.issueCommentService.updateIssueComment(latestIssue.id, latestIssue.issueComment)
+    ]).subscribe(
+      () => this.issueUpdated.emit(latestIssue),
+      (error) => this.errorHandlingService.handleError(error));
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {

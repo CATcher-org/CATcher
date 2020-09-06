@@ -7,6 +7,7 @@ import { IssueCommentService } from '../../../core/services/issue-comment.servic
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueComment } from '../../../core/models/comment.model';
 import { PhaseService } from '../../../core/services/phase.service';
+import { flatMap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-duplicated-issues-component',
@@ -28,19 +29,19 @@ export class DuplicatedIssuesComponent implements OnInit {
 
   ngOnInit() {
     this.duplicatedIssues = this.issueService.getDuplicateIssuesFor(this.issue);
+    this.issueService.getDuplicateIssuesFor(this.issue).subscribe(result => {
+      console.log('result', result);
+    });
   }
 
   removeDuplicateStatus(duplicatedIssue: Issue) {
     const latestIssue = this.getUpdatedIssueWithRemovedDuplicate(duplicatedIssue);
-    forkJoin([this.issueService.updateIssue(latestIssue),
-      this.issueCommentService.updateIssueComment(latestIssue.id, latestIssue.issueComment)]).subscribe(
-      (resultArr: [Issue, IssueComment]) => {
-        const [updatedIssue, updatedIssueComment] = resultArr;
-        updatedIssue.issueComment = updatedIssueComment;
-        this.issueService.updateLocalStore(updatedIssue);
-      }, (error) => {
-        this.errorHandlingService.handleError(error);
-      }
+    forkJoin([
+      this.issueService.updateIssue(latestIssue),
+      this.issueCommentService.updateIssueComment(latestIssue.id, latestIssue.issueComment)
+    ]).subscribe(
+      () => this.issueService.updateLocalStore(latestIssue),
+      (error) => this.errorHandlingService.handleError(error)
     );
   }
 
