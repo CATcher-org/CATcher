@@ -4,12 +4,10 @@ import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { Issue, STATUS } from '../../../core/models/issue.model';
-import { IssueCommentService } from '../../../core/services/issue-comment.service';
 import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
-import { forkJoin, Observable, throwError } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
-import { flatMap } from 'rxjs/internal/operators';
+import { Observable, throwError } from 'rxjs';
+import { finalize, map, flatMap } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { ConflictDialogComponent } from '../../issue/conflict-dialog/conflict-dialog.component';
 import { MatDialog } from '@angular/material';
@@ -34,7 +32,6 @@ export class TeamResponseComponent implements OnInit {
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
-              private issueCommentService: IssueCommentService,
               private errorHandlingService: ErrorHandlingService,
               private permissions: PermissionService,
               private dialog: MatDialog,
@@ -70,11 +67,9 @@ export class TeamResponseComponent implements OnInit {
     this.isSafeToUpdate().pipe(
       flatMap((isSaveToUpdate: boolean) => {
         if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
-          return forkJoin([this.issueService.updateIssue(updatedIssue),
-            this.issueCommentService.updateIssueComment(updatedIssue.id, updatedIssueComment)]);
+          return this.issueService.updateIssueWithComment(updatedIssue, updatedIssueComment);
         } else if (this.isUpdatingDeletedResponse()) {
-          return forkJoin([this.issueService.updateIssue(updatedIssue),
-            this.issueCommentService.createIssueComment(this.issue.id, updatedIssueComment.description)]);
+          return this.issueService.createTeamResponse(updatedIssue);
         } else {
           this.conflict = new Conflict(this.issue.teamResponse, this.issueService.issues[this.issue.id].teamResponse);
           this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
@@ -83,12 +78,8 @@ export class TeamResponseComponent implements OnInit {
         }
       }),
       finalize(() => this.isSavePending = false)
-    ).subscribe((resultArr: [Issue, IssueComment]) => {
-      const [issue, comment] = resultArr;
-      issue.issueComment = comment;
-      issue.teamResponse = this.issueService.parseTeamResponseForTeamResponsePhase(comment.description);
-      issue.duplicateOf = +this.issueService.parseDuplicateOfForTeamResponsePhase(comment.description);
-      this.issueUpdated.emit(issue);
+    ).subscribe((updatedIssue: Issue) => {
+      this.issueUpdated.emit(updatedIssue);
       this.resetToDefault();
       form.resetForm();
     }, (error) => {

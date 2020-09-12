@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {IssueService} from '../../../core/services/issue.service';
-import {Issue} from '../../../core/models/issue.model';
-import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {finalize} from 'rxjs/operators';
-import {PermissionService} from '../../../core/services/permission.service';
-import {PhaseService} from '../../../core/services/phase.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IssueService } from '../../../core/services/issue.service';
+import { Issue } from '../../../core/models/issue.model';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { finalize } from 'rxjs/operators';
+import { PermissionService } from '../../../core/services/permission.service';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue-title',

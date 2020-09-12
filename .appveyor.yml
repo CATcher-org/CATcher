@@ -13,6 +13,7 @@ branches:
     - master
 
 install:
+  - ps: Install-Product node $env:nodejs_version
   - npm install
 
 cache:
@@ -26,6 +27,7 @@ for:
     only: 
       - job_name: Build 
   build_script:
+    - node --version
     - npm run electron:windows
 
 -
@@ -40,4 +42,5 @@ for:
     only:
       - job_name: Unit Tests
   test_script:
+  - node --version
   - npm run test

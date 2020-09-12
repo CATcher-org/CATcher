@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AuthModule} from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporting.module';
 import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
 import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
