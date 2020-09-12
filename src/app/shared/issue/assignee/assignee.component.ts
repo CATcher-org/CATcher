@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation} from '@angular/core';
-import {Issue} from '../../../core/models/issue.model';
-import {MatSelect} from '@angular/material';
-import {Team} from '../../../core/models/team.model';
-import {IssueService} from '../../../core/services/issue.service';
-import {ErrorHandlingService} from '../../../core/services/error-handling.service';
-import {PermissionService} from '../../../core/services/permission.service';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Issue } from '../../../core/models/issue.model';
+import { MatSelect } from '@angular/material';
+import { Team } from '../../../core/models/team.model';
+import { IssueService } from '../../../core/services/issue.service';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { PermissionService } from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-assignee-component',
