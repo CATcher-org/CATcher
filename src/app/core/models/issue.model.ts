@@ -189,10 +189,6 @@ export class Issue {
     }
   }
 
-  updateDuplicatedStatus(githubComment: GithubComment): void {
-
-  }
-
   /**
    * Updates the tester's responses and team response based on the given githubComment.
    * @param githubComment - A version of githubComment to update the issue with.
