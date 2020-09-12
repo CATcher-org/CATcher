@@ -1,0 +1,6 @@
+fragment issueLabel on Label {
+  id
+  color
+  name
+  url
+}

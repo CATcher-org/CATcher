@@ -40,7 +40,7 @@ describe('UserService', () => {
           done();
         },
         error => {
-          expect(error).toBe('Unauthorized user.');
+          expect(error).toEqual(new Error('Unauthorized user.'));
           done();
         }
       );

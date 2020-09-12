@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {GithubService} from './github.service';
-import {UserService} from './user.service';
-import {Phase, PhaseService} from './phase.service';
-import {UserRole} from '../models/user.model';
+import { Injectable } from '@angular/core';
+import { GithubService } from './github.service';
+import { UserService } from './user.service';
+import { Phase, PhaseService } from './phase.service';
+import { UserRole } from '../models/user.model';
 
 const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 

@@ -7,9 +7,8 @@ import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
 import { PhaseService } from './phase.service';
 import { ErrorHandlingService } from './error-handling.service';
-import { GithubService} from './github.service';
+import { GithubService } from './github.service';
 import { IssueService } from './issue.service';
-import { IssueCommentService } from './issue-comment.service';
 import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
@@ -27,6 +26,7 @@ export class AuthService {
 
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
+  oauthToken: String;
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -34,17 +34,28 @@ export class AuthService {
               private userService: UserService,
               private issueService: IssueService,
               private phaseService: PhaseService,
-              private issueCommentService: IssueCommentService,
               private labelService: LabelService,
               private dataService: DataService,
               private githubEventService: GithubEventService,
               private titleService: Title) {}
 
+  /**
+   * Will store the OAuth token.
+   */
+  storeOAuthAccessToken(token: string) {
+    this.oauthToken = token;
+  }
+
+  reset(): void {
+    this.oauthToken = undefined;
+    this.changeAuthState(AuthState.NotAuthenticated);
+    this.ngZone.run(() => this.router.navigate(['']));
+  }
+
   logOut(): void {
     this.githubService.reset();
     this.userService.reset();
     this.issueService.reset();
-    this.issueCommentService.reset();
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
@@ -54,9 +65,7 @@ export class AuthService {
       .concat(require('../../../../package.json').version)
     );
     this.issueService.setIssueTeamFilter('All Teams');
-
-    this.changeAuthState(AuthState.NotAuthenticated);
-    this.ngZone.run(() => this.router.navigate(['']));
+    this.reset();
   }
 
   isAuthenticated(): boolean {
