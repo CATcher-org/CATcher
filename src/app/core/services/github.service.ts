@@ -19,7 +19,6 @@ import {
 } from '../../../../graphql/graphql-types';
 import { GithubGraphqlIssue } from '../models/github/github-graphql.issue';
 import { ApolloQueryResult } from 'apollo-client';
-import { CommentsCacheManager } from '../models/github/cache-manager/comments-cache-manager.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { DocumentNode } from 'graphql';
@@ -40,7 +39,6 @@ let octokit = new Octokit();
 export class GithubService {
   private issuesCacheManager = new IssuesCacheManager();
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
-  private commentsCacheManager = new CommentsCacheManager();
   private issueQueryRefs = new Map<Number, QueryRef<FetchIssueQuery>>();
 
   constructor(
@@ -329,7 +327,6 @@ export class GithubService {
   reset(): void {
     this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
-    this.commentsCacheManager.clear();
     this.issueQueryRefs.clear();
   }
 

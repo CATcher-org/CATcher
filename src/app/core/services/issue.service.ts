@@ -24,7 +24,6 @@ import { GithubComment } from '../models/github/github-comment.model';
 })
 export class IssueService {
   static readonly POLL_INTERVAL = 5000; // 5 seconds
-  readonly MINIMUM_MATCHES = 1;
 
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
@@ -402,28 +401,6 @@ export class IssueService {
       default:
         return;
     }
-  }
-
-  parseTeamResponseForTeamResponsePhase(toParse: string): string {
-    let teamResponse = '';
-    const regex = /# Team's Response[\r\n]*([\S\s]*?)[\r\n]*## Duplicate status \(if any\):/gi;
-    const matches = regex.exec(toParse);
-
-    if (matches && matches.length > this.MINIMUM_MATCHES) {
-      teamResponse = matches[1].trim();
-    }
-    return teamResponse;
-  }
-
-  parseDuplicateOfForTeamResponsePhase(toParse: string): string {
-    let duplicateOf = '';
-    const regex = /## Duplicate status \(if any\):[\r\n]*Duplicate of #(.*)/gi;
-    const matches = regex.exec(toParse);
-
-    if (matches && matches.length > this.MINIMUM_MATCHES) {
-      duplicateOf = matches[1].trim();
-    }
-    return duplicateOf;
   }
 
   setIssueTeamFilter(filterValue: string) {
