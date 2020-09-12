@@ -236,7 +236,7 @@ export class DataService {
       for (const teamMemberId of teamMemberIds) {
         teamMembers.push(<User>{loginId: teamMemberId, role: UserRole.Student});
       }
-      teamStructure.set(teamId, <Team>{id: teamId, teamMembers: teamMembers});
+      teamStructure.set(teamId, new Team({id: teamId, teamMembers: teamMembers}));
     }
     return teamStructure;
   }

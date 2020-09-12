@@ -1,0 +1,13 @@
+fragment issue on Issue {
+  id
+  number
+  title
+  body
+  state
+  createdAt
+  updatedAt
+  url
+  author {
+    ...issueAuthor
+  }
+}

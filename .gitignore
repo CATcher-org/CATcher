@@ -50,3 +50,6 @@ profiles.json
 # System Files
 .DS_Store
 Thumbs.db
+
+# graphql types
+graphql/graphql-types.ts

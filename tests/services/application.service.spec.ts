@@ -1,4 +1,4 @@
-import {ApplicationService} from '../../src/app/core/services/application.service';
+import { ApplicationService } from '../../src/app/core/services/application.service';
 
 const applicationService = new ApplicationService(null);
 const currentVersion = '3.2.5';

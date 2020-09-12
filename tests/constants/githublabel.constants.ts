@@ -1,4 +1,4 @@
-import { GithubLabel } from '../../src/app/core/models/github/github-issue.model';
+import { GithubLabel } from '../../src/app/core/models/github/github-label.model';
 
 export const GITHUB_LABEL_FUNCTIONALITY_BUG = {
     color: '9900cc',

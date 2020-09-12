@@ -4,7 +4,6 @@ import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
 import { FormBuilder } from '@angular/forms';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { IssueCommentService } from '../../core/services/issue-comment.service';
 import { UserService } from '../../core/services/user.service';
 import { Subscription } from 'rxjs';
 import { PermissionService } from '../../core/services/permission.service';
@@ -51,8 +50,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   public readonly issueComponentsEnum = ISSUE_COMPONENTS;
   public readonly userRole = UserRole;
 
-  constructor(private issueCommentService: IssueCommentService,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,
@@ -61,7 +59,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
               private phaseService: PhaseService) { }
 
   ngOnInit() {
-    this.pollIssue(this.issueId);
+    this.getAndPollIssue(this.issueId);
   }
 
   /**
@@ -72,7 +70,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
     if (!changes.issueId.firstChange) {
       this.stopPolling();
       this.isIssueLoading = true;
-      this.pollIssue(changes.issueId.currentValue);
+      this.getAndPollIssue(changes.issueId.currentValue);
     }
   }
 
@@ -107,6 +105,17 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
 
   updateTutorResponseEditState(updatedState: boolean) {
     this.isTutorResponseEditing = updatedState;
+  }
+
+  private getAndPollIssue(id: number): void {
+    this.issueService.getIssue(id).subscribe(
+      (issue: Issue) => {
+        this.isIssueLoading = false;
+        this.issue = issue;
+        this.pollIssue(id);
+      },
+      (err) => this.errorHandlingService.handleError(err)
+    );
   }
 
   private pollIssue(id: number): void {
