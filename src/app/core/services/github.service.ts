@@ -42,7 +42,6 @@ export class GithubService {
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private commentsCacheManager = new CommentsCacheManager();
   private issueQueryRefs = new Map<Number, QueryRef<FetchIssueQuery>>();
-  private issuesQueryRef;
 
   constructor(
     private errorHandlingService: ErrorHandlingService,
@@ -381,7 +380,6 @@ export class GithubService {
     this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
     this.commentsCacheManager.clear();
-    this.issuesQueryRef = undefined;
     this.issueQueryRefs.clear();
   }
 
