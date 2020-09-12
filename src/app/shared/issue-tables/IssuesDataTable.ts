@@ -1,19 +1,18 @@
-import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
-import {DataSource} from '@angular/cdk/table';
-import {IssueService} from '../../core/services/issue.service';
-import {Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER} from '../../core/models/issue.model';
-import {MatPaginator, MatSort} from '@angular/material';
-import {delay, flatMap, map, tap} from 'rxjs/operators';
-import {ErrorHandlingService} from '../../core/services/error-handling.service';
+import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
+import { DataSource } from '@angular/cdk/table';
+import { IssueService } from '../../core/services/issue.service';
+import { Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER } from '../../core/models/issue.model';
+import { MatPaginator, MatSort } from '@angular/material';
+import { delay, flatMap, map, startWith, tap } from 'rxjs/operators';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
   private teamFilterChange = new BehaviorSubject('');
   private issuesSubject = new BehaviorSubject<Issue[]>([]);
-  private loadingSubject = new BehaviorSubject<boolean>(false);
   private issueSubscription: Subscription;
 
-  public isLoading$ = this.loadingSubject.asObservable();
+  public isLoading$ = this.issueService.isLoading.asObservable();
 
   constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private sort: MatSort,
               private paginator: MatPaginator, private displayedColumn: string[],
@@ -29,8 +28,8 @@ export class IssuesDataTable extends DataSource<Issue> {
     this.filterChange.complete();
     this.teamFilterChange.complete();
     this.issuesSubject.complete();
-    this.loadingSubject.complete();
     this.issueSubscription.unsubscribe();
+    this.issueService.stopPollIssues();
   }
 
   loadIssues() {
@@ -42,12 +41,8 @@ export class IssuesDataTable extends DataSource<Issue> {
       this.teamFilterChange,
     ];
 
-    this.loadingSubject.next(true);
-
-    this.issueSubscription = this.issueService.pollIssues().pipe(
-      tap(() => {
-        this.loadingSubject.next(false);
-      }),
+    this.issueService.startPollIssues();
+    this.issueSubscription = this.issueService.issues$.pipe(
       flatMap(() => {
         return merge(...displayDataChanges).pipe(
           map(() => {

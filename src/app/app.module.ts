@@ -16,6 +16,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
 import { SessionFixConfirmationComponent } from './core/services/session-fix-confirmation/session-fix-confirmation.component';
+import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
+import { AuthService } from './core/services/auth.service';
+import { setContext } from 'apollo-link-context';
+import { ApolloLink } from 'apollo-link';
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
+import { Apollo, ApolloModule } from 'apollo-angular';
+import graphqlTypes from '../../graphql/graphql-types';
 
 @NgModule({
   declarations: [
@@ -49,6 +56,8 @@ import { SessionFixConfirmationComponent } from './core/services/session-fix-con
       },
     }),
     AppRoutingModule,
+    ApolloModule,
+    HttpLinkModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
@@ -57,4 +66,24 @@ import { SessionFixConfirmationComponent } from './core/services/session-fix-con
     SessionFixConfirmationComponent
   ]
 })
-export class AppModule { }
+
+export class AppModule {
+  constructor(private apollo: Apollo, private httpLink: HttpLink, private authService: AuthService) {
+    const URI = 'https://api.github.com/graphql';
+    const basic = setContext(() => {
+      return { headers: {Accept: 'charset=utf-8' }};
+    });
+    const auth = setContext(() => {
+      return { headers: { Authorization: `Token ${authService.oauthToken}` } };
+    });
+    const link = ApolloLink.from([basic, auth, this.httpLink.create({ uri: URI })]);
+    const fragmentMatcher = new IntrospectionFragmentMatcher({
+      introspectionQueryResultData: graphqlTypes
+    });
+    const cache = new InMemoryCache({ fragmentMatcher });
+    apollo.create({
+      link: link,
+      cache: cache,
+    });
+  }
+}
