@@ -127,56 +127,6 @@ export class GithubService {
   }
 
   /**
-   * Will make multiple request to Github as per necessary so as to fetch all the comments in from different pages.
-   * @param issueId
-   * @returns - The different responses that Github responded with.
-   */
-  fetchIssueComments(issueId: number): Observable<Array<GithubComment>> {
-    return this.makeMultipleRequestsToFetchComments(issueId).pipe(
-      map((responses: GithubResponse<GithubComment[]>[]) => {
-        const collatedData: GithubComment[] = [];
-        let pageNum = 1;
-        for (const response of responses) {
-          this.commentsCacheManager.set(issueId, pageNum, response);
-          pageNum++;
-          for (const comment of response.data) {
-            collatedData.push(comment);
-          }
-        }
-        return collatedData;
-      }),
-      catchError(err => throwError('Failed to fetch issues'))
-    );
-  }
-
-  private makeMultipleRequestsToFetchComments(issueId: number) {
-    let responseInFirstPage: GithubResponse<GithubComment[]>;
-    return this.getCommentsAPICall(issueId, 1).pipe(
-      map((response: GithubResponse<GithubComment[]>) => {
-        responseInFirstPage = response;
-        return this.getNumberOfPages(response);
-      }),
-      flatMap((numOfPages: number) => {
-        const apiCalls: Observable<GithubResponse<GithubComment[]>>[] = [];
-        for (let i = 2; i <= numOfPages; i++) {
-          apiCalls.push(this.getCommentsAPICall(issueId, i));
-        }
-        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
-      }),
-      flatMap((resultArray: GithubResponse<GithubComment[]>[]) => {
-        const responses = [responseInFirstPage, ...resultArray];
-        const isCached = responses.reduce((result, response) => {
-          return result && response.isCached;
-        }, true);
-        if (isCached) {
-          return throwError(new HttpErrorResponse({status: 304}));
-        } else {
-          return of(responses);
-        }
-      }));
-  }
-
-  /**
    * Checks if the specified repository exists.
    * @param owner - Owner of Specified Repository.
    * @param repo - Name of Repository.
@@ -404,18 +354,6 @@ export class GithubService {
     return apiCall$.pipe(
       catchError(err => {
         return of(this.issuesCacheManager.get(pageNumber));
-      })
-    );
-  }
-
-  private getCommentsAPICall(issueId: number, pageNumber: number): Observable<GithubResponse<GithubComment[]>> {
-    const apiCall: Promise<GithubResponse<GithubComment[]>> = octokit.issues.listComments({owner: ORG_NAME, repo: REPO,
-      issue_number: issueId, page: pageNumber, per_page: 100,
-      headers: { 'If-None-Match': this.commentsCacheManager.getEtagFor(issueId, pageNumber)}});
-    const apiCall$ = from(apiCall);
-    return apiCall$.pipe(
-      catchError(err => {
-        return of(this.commentsCacheManager.get(issueId, pageNumber));
       })
     );
   }
