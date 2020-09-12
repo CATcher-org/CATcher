@@ -38,12 +38,12 @@ jobs:
       script:
         - npm install
         - npm update
-    - <<: *Linux-Setup-and_Tests
+    - <<: *Linux-Setup-and-Tests
       os: linux
       name: "Lint"
       script:
         - npm run lint
-    - <<: *Linux-Setup-and_Tests
+    - <<: *Linux-Setup-and-Tests
       os: linux
       name: "Jasmine"
       script:
