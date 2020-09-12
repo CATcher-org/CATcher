@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "main": "main.js",
   "scripts": {
     "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
@@ -72,7 +72,7 @@
     "@graphql-codegen/typescript-document-nodes": "1.17.7",
     "@graphql-codegen/typescript-operations": "^1.17.7",
     "@graphql-codegen/typescript-resolvers": "^1.17.7",
-    "@octokit/graphql-schema": "^8.18.0",
+    "@octokit/graphql-schema": "^8.24.0",
     "@types/jasmine": "^3.5.1",
     "@types/jasminewd2": "2.0.8",
     "@types/node": "~12.12.6",
