@@ -20,29 +20,29 @@ jobs:
       script:
         - npm install
         - npm update
-    - <<: *Mac-Setup
+    - <<: *Mac-Setup-and-Tests
       os: osx
       name: "Lint"
       script:
         - npm run lint
-    - <<: *Mac-Setup
+    - <<: *Mac-Setup-and-Tests
       os: osx
       name: "Jasmine"
       script:
         - npm run test
 
-    - stage: Linux Setup
+    - stage: Linux Setup and Tests 
       os: linux
       name: "Prepare Dependencies"
       script:
         - npm install
         - npm update
-    - <<: *Linux-Setup
+    - <<: *Linux-Setup-and_Tests
       os: linux
       name: "Lint"
       script:
         - npm run lint
-    - <<: *Linux-Setup
+    - <<: *Linux-Setup-and_Tests
       os: linux
       name: "Jasmine"
       script:
