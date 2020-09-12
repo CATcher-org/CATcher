@@ -42,7 +42,7 @@ export class GithubLabel {
   }
 
   isCategorical(): boolean {
-    const regex = /^\S+.\S+$/;
+    const regex = /^\S+\.\S+$/;
     return regex.test(this.name);
   }
 }
