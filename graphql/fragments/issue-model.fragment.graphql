@@ -1,0 +1,25 @@
+fragment issueModel on Issue {
+  ...issue
+  labels(first: 100) {
+    edges {
+      node {
+        ...issueLabel
+      }
+    }
+  }
+  assignees(first: 100) {
+    edges {
+      node {
+        ...issueAssignee
+      }
+    }
+  }
+  comments(first: 100) {
+    edges {
+      cursor
+      node {
+        ...issueComment
+      }
+    }
+  }
+}

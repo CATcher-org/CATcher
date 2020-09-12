@@ -64,6 +64,7 @@ export class AuthComponent implements OnInit, OnDestroy {
           return;
         }
         this.githubService.storeOAuthAccessToken(token);
+        this.authService.storeOAuthAccessToken(token);
         this.userService.getAuthenticatedUser().subscribe((user: GithubUser) => {
           auth.setLoginStatusWithGithub(true);
           this.currentUserName = user.login;
@@ -149,7 +150,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       }),
       flatMap(() => {
         return this.githubEventService.setLatestChangeEvent();
-      })
+      }),
     ).subscribe(() => {
       this.handleAuthSuccess();
     }, (error) => {

@@ -11,7 +11,6 @@ import { IssueService } from '../../core/services/issue.service';
 import { shell } from 'electron';
 import { GithubService } from '../../core/services/github.service';
 import { UserRole } from '../../core/models/user.model';
-import { IssueCommentService } from '../../core/services/issue-comment.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -27,8 +26,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
               private location: Location, private githubEventService: GithubEventService, private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService, private githubService: GithubService,
-              private issueCommentService: IssueCommentService) {
+              private errorHandlingService: ErrorHandlingService, private githubService: GithubService) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()
@@ -57,7 +55,6 @@ export class HeaderComponent implements OnInit {
     // Remove current phase issues and load selected phase issues.
     this.githubService.reset();
     this.issueService.reset();
-    this.issueCommentService.reset();
     this.reload();
 
     // Route app to new phase.

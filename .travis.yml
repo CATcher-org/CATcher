@@ -6,6 +6,7 @@ sudo: required
 branches:
   only:
     - master
+    - graphql-migration
 install: true
 cache:
   directories:
