@@ -63,7 +63,7 @@ export class GithubEventService {
     this.lastModifiedComment = lastModified;
   }
 
-  getLastModifiedTime(): string {
+  private getLastModifiedTime(): string {
     return this.lastModified;
   }
 
