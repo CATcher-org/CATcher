@@ -3,6 +3,8 @@ import * as path from 'path';
 import * as url from 'url';
 import { getAccessToken } from './oauth';
 
+const ICON_PATH = path.join(__dirname, 'dist/favicon.512x512.png');
+
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
@@ -33,11 +35,8 @@ ipcMain.on('github-oauth', (event, clearAuthState, repoPermissionLevel) => {
 
 function createWindow() {
 
-  const electronScreen = screen;
   const size = screen.getPrimaryDisplay().workAreaSize;
-
-  // Create the browser window.
-  win = new BrowserWindow({
+  const windowOptions = {
     x: 0,
     y: 0,
     width: size.width,
@@ -46,7 +45,15 @@ function createWindow() {
       nodeIntegration: true,
       allowRunningInsecureContent: !isDevMode,
     },
-  });
+  };
+
+  if (process.platform === 'linux') {
+    // app icon needs to be set manually on Linux platforms
+    windowOptions['icon'] = ICON_PATH;
+  }
+
+  // Create the browser window.
+  win = new BrowserWindow(windowOptions);
 
   nativeTheme.themeSource = 'light';
 
