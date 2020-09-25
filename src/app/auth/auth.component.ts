@@ -1,14 +1,14 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
-import { Subscription, throwError } from 'rxjs';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { Router } from '@angular/router';
 import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
-import { flatMap } from 'rxjs/operators';
+import { flatMap, map } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { ElectronService } from '../core/services/electron.service';
@@ -32,11 +32,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   // Errors
   isAppOutdated: boolean;
   versionCheckingError: boolean;
-
-  // The different login dialogs available
-  isAtSessionSelection = true;
-  isAtGithubAccountConfirmation: boolean;
-  isAtNewGithubLogin: boolean;
 
   authState: AuthState;
   authStateSubscription: Subscription;
@@ -65,15 +60,15 @@ export class AuthComponent implements OnInit, OnDestroy {
           if (!isWindowClosed) {
             this.errorHandlingService.handleError(error);
           }
-          this.authService.changeAuthState(AuthState.NotAuthenticated);
-          this.goToNewGithubLogin();
+          this.goToSessionSelect();
           return;
         }
         this.githubService.storeOAuthAccessToken(token);
+        this.authService.storeOAuthAccessToken(token);
         this.userService.getAuthenticatedUser().subscribe((user: GithubUser) => {
           auth.setLoginStatusWithGithub(true);
           this.currentUserName = user.login;
-          if (this.isAtGithubAccountConfirmation) {
+          if (this.isUserAuthenticating() || this.isAwaitingOAuthUserConfirm()) {
             this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
           } else {
             this.completeLoginProcess(this.currentUserName);
@@ -143,28 +138,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Logs in the user using basic authentication (username and password).
-   * DEPRECIATION WARNING: https://developer.github.com/changes/2019-11-05-deprecated-passwords-and-authorizations-api/
-   * @param form - The login form to complete the login process.
-   */
-  loginWithUserNamePassword() {
-    if (this.loginForm.invalid) {
-      return;
-    }
-
-    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-    const username: string = this.loginForm.get('username').value;
-    const password: string = this.loginForm.get('password').value;
-
-    return this.auth.authenticate(username, password).subscribe((loginConfirmation: {login: string}) => {
-      this.completeLoginProcess(loginConfirmation.login);
-    });
-  }
-
-  /**
    * Will complete the process of logging in the given user.
-   * Some preconditions includes:
-   *  - User must be authenticated either through OAuth or username/password.
    * @param username - The user to log in.
    */
   completeLoginProcess(username: string): void {
@@ -176,7 +150,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       }),
       flatMap(() => {
         return this.githubEventService.setLatestChangeEvent();
-      })
+      }),
     ).subscribe(() => {
       this.handleAuthSuccess();
     }, (error) => {
@@ -196,32 +170,22 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
     this.phaseService.storeSessionData().pipe(
-      flatMap((isValidSession: boolean) => {
+      map((isValidSession: boolean) => {
         if (!isValidSession) {
-          throwError('Invalid Session');
+          throw new Error('Invalid Session');
         }
-        return this.authService.hasExistingAuthWithGithub();
-      }),
-    ).subscribe((hasExistingSession: boolean) => {
-      if (hasExistingSession) {
-        this.goToGithubAccountConfirmation();
-        this.auth.startOAuthProcess();
-      } else {
-        this.goToNewGithubLogin();
-      }
+      })
+    ).subscribe(() => {
+      this.auth.startOAuthProcess();
     }, (error) => {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
-    }, () => {
-      this.isSettingUpSession = false;
-    });
+    }, () => this.isSettingUpSession = false);
   }
 
   logIntoAnotherAccount() {
     this.auth.setLoginStatusWithGithub(false);
-    this.isAtGithubAccountConfirmation = false;
-    this.isAtNewGithubLogin = true;
-    this.auth.changeAuthState(AuthState.NotAuthenticated);
+    this.auth.startOAuthProcess();
   }
 
   /**
@@ -238,21 +202,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   goToSessionSelect() {
-    this.isAtSessionSelection = true;
-    this.isAtNewGithubLogin = false;
-    this.isAtGithubAccountConfirmation = false;
-  }
-
-  goToGithubAccountConfirmation() {
-    this.isAtSessionSelection = false;
-    this.isAtNewGithubLogin = false;
-    this.isAtGithubAccountConfirmation = true;
-  }
-
-  goToNewGithubLogin() {
-    this.isAtSessionSelection = false;
-    this.isAtNewGithubLogin = true;
-    this.isAtGithubAccountConfirmation = false;
+    this.authService.changeAuthState(AuthState.NotAuthenticated);
   }
 
   isUserNotAuthenticated(): boolean {
@@ -261,6 +211,10 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   isUserAuthenticating(): boolean {
     return this.authState === AuthState.AwaitingAuthentication;
+  }
+
+  isAwaitingOAuthUserConfirm(): boolean {
+    return this.authState === AuthState.ConfirmOAuthUser;
   }
 
   get currentSessionOrg(): string {

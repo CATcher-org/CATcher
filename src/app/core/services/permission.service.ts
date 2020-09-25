@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {GithubService} from './github.service';
-import {UserService} from './user.service';
-import {Phase, PhaseService} from './phase.service';
-import {UserRole} from '../models/user.model';
+import { Injectable } from '@angular/core';
+import { GithubService } from './github.service';
+import { UserService } from './user.service';
+import { Phase, PhaseService } from './phase.service';
+import { UserRole } from '../models/user.model';
 
 const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 
@@ -15,6 +15,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': true,
       'isIssueLabelsEditable': true,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
@@ -24,6 +25,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': false,
       'isIssueLabelsEditable': false,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
@@ -33,6 +35,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': true,
       'isIssueLabelsEditable': true,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     }
   },
@@ -45,6 +48,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': false,
       'isIssueLabelsEditable': true,
       'isTeamResponseEditable': true,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
@@ -54,6 +58,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': false,
       'isIssueLabelsEditable': false,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
@@ -63,6 +68,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': true,
       'isIssueLabelsEditable': true,
       'isTeamResponseEditable': true,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     }
   },
@@ -75,6 +81,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': false,
       'isIssueLabelsEditable': false,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': true,
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
@@ -84,6 +91,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': false,
       'isIssueLabelsEditable': false,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     },
     [UserRole.Admin]: {
@@ -93,6 +101,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': true,
       'isIssueLabelsEditable': true,
       'isTeamResponseEditable': true,
+      'isTesterResponseEditable': true,
       'isTutorResponseEditable': false,
     }
   },
@@ -106,6 +115,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': false,
       'isIssueLabelsEditable': false,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': false,
     },
     [UserRole.Tutor]: {
@@ -115,6 +125,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': true,
       'isIssueLabelsEditable': true,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': true,
     },
     [UserRole.Admin]: {
@@ -124,6 +135,7 @@ const PERMISSIONS = {
       'isIssueDescriptionEditable': true,
       'isIssueLabelsEditable': true,
       'isTeamResponseEditable': false,
+      'isTesterResponseEditable': false,
       'isTutorResponseEditable': true,
     }
   }
@@ -155,6 +167,10 @@ export class PermissionService {
     return this.askForPermission(PermissionLevel.User, 'isIssueLabelsEditable');
   }
 
+  isTesterResponseEditable(): boolean {
+    return this.askForPermission(PermissionLevel.User, 'isTesterResponseEditable');
+  }
+
   isTeamResponseEditable(): boolean {
     return this.askForPermission(PermissionLevel.User, 'isTeamResponseEditable');
   }
@@ -166,7 +182,7 @@ export class PermissionService {
   isIssueEditable(): boolean {
     return this.isIssueTitleEditable() || this.isIssueDescriptionEditable()
            || this.isIssueLabelsEditable() || this.isTeamResponseEditable()
-           || this.isTutorResponseEditable();
+           || this.isTesterResponseEditable() || this.isTutorResponseEditable();
   }
 
   private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {
