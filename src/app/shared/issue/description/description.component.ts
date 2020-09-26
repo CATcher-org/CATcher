@@ -33,8 +33,8 @@ export class DescriptionComponent implements OnInit {
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private dialog: MatDialog,
-              public permissions: PermissionService,
-              public phaseService: PhaseService) {
+              private phaseService: PhaseService,
+              public permissions: PermissionService) {
   }
 
   ngOnInit() {
