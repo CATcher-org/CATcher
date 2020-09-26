@@ -11,6 +11,7 @@ import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import { Phase } from '../services/phase.service';
 import * as moment from 'moment';
+import { HiddenData } from './hidden-data.model';
 
 export class Issue {
 
@@ -22,6 +23,7 @@ export class Issue {
   githubComments: GithubComment[];
   title: string;
   description: string;
+  hiddenDataInDescription: HiddenData;
 
   /** Fields derived from Labels */
   severity: string;
@@ -76,7 +78,8 @@ export class Issue {
     this.id = +githubIssue.number;
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
-    this.description = Issue.updateDescription(githubIssue.body);
+    this.hiddenDataInDescription = new HiddenData(githubIssue.body);
+    this.description = Issue.updateDescription(this.hiddenDataInDescription.originalStringWithoutHiddenData);
     this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
@@ -211,6 +214,10 @@ export class Issue {
       dispute.description = this.issueDisputes[i].description;
       return dispute;
     });
+  }
+
+  createGithubIssueDescription(): string {
+    return `${this.description}\n${this.hiddenDataInDescription.toString()}`;
   }
 
   // Template url: https://github.com/CATcher-org/templates#dev-response-phase
