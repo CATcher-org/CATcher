@@ -52,27 +52,27 @@ export class ProfilesComponent implements OnInit {
   readonly defaultProfiles: Profile[] = [
     <Profile>{
       profileName: 'CS2103/T Alpha Test',
-      encodedText: 'nus-cs2103-AY1920S2/alpha'
+      encodedText: 'nus-cs2103-AY2021S1/alpha'
     },
     <Profile>{
       profileName: 'CS2103/T PE Dry run',
-      encodedText: 'nus-cs2103-AY1920S2/PED'
+      encodedText: 'nus-cs2103-AY2021S1/PED'
     },
     <Profile>{
       profileName: 'CS2103/T PE',
-      encodedText: 'nus-cs2103-AY1920S2/PE'
+      encodedText: 'nus-cs2103-AY2021S1/PE'
     },
     <Profile>{
       profileName: 'CS2113/T Alpha Test',
-      encodedText: 'nus-cs2113-AY1920S2/alpha'
+      encodedText: 'nus-cs2113-AY2021S1/alpha'
     },
     <Profile>{
       profileName: 'CS2113/T PE Dry run',
-      encodedText: 'nus-cs2113-AY1920S2/PED'
+      encodedText: 'nus-cs2113-AY2021S1/PED'
     },
     <Profile>{
       profileName: 'CS2113/T PE',
-      encodedText: 'nus-cs2113-AY1920S2/PE'
+      encodedText: 'nus-cs2113-AY2021S1/PE'
     }
   ];
 
