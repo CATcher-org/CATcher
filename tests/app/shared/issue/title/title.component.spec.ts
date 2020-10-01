@@ -10,16 +10,10 @@ describe('TitleComponent', () => {
   let thisIssue: Issue;
   let formBuilder: any;
 
-  let form: any;
-  let formResetForm: any;
-
   beforeEach(() => {
     formBuilder = new FormBuilder();
 
-    form = new NgForm([], []);
-    formResetForm = spyOn(form, 'resetForm');
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
-
     titleComponent = new TitleComponent(issueService, formBuilder, null, null, null);
     thisIssue =  Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     titleComponent.issue = thisIssue;
@@ -54,6 +48,10 @@ describe('TitleComponent', () => {
   });
 
   it('should be configured correctly when title is updated', () => {
+    const form = new NgForm([], []);
+    const formResetForm = spyOn(form, 'resetForm');
+    const titleComponentEmitter = spyOn(titleComponent.issueUpdated, 'emit');
+
     titleComponent.ngOnInit();
     titleComponent.changeToEditMode();
 
@@ -61,6 +59,7 @@ describe('TitleComponent', () => {
     titleComponent.updateTitle(form);
 
     expect(formResetForm).toHaveBeenCalledTimes(1);
+    expect(titleComponentEmitter).toHaveBeenCalledTimes(1);
     expect(titleComponent.isEditing).toEqual(false);
   });
 });
