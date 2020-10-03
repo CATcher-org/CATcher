@@ -1,5 +1,5 @@
-import { pipe } from "rxjs";
-import { throwIfFalse } from "../../../custom-ops";
+import { pipe } from 'rxjs';
+import { throwIfFalse } from '../../../custom-ops';
 
 export interface SessionData {
     openPhases: string[];
