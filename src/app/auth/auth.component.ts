@@ -8,7 +8,7 @@ import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
-import { flatMap, filter, throwIfEmpty } from 'rxjs/operators';
+import { flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { ElectronService } from '../core/services/electron.service';
