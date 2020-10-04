@@ -5,6 +5,7 @@ import { Team } from '../../../core/models/team.model';
 import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { PermissionService } from '../../../core/services/permission.service';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-assignee-component',
@@ -25,7 +26,9 @@ export class AssigneeComponent implements OnInit {
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService,
+  constructor(private issueService: IssueService,
+              private errorHandlingService: ErrorHandlingService,
+              private phaseService: PhaseService,
               public permissions: PermissionService) {
   }
 
@@ -46,12 +49,10 @@ export class AssigneeComponent implements OnInit {
   }
 
   updateAssignee(): void {
-    const latestIssue = <Issue>{
-      ...this.issue,
-      assignees: this.assignees
-    };
-    this.issueService.updateIssue(latestIssue).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(latestIssue);
+    const newIssue = this.issue.clone(this.phaseService.currentPhase);
+    newIssue.assignees = this.assignees;
+    this.issueService.updateIssue(newIssue).subscribe((updatedIssue: Issue) => {
+      this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleError(error);
     });

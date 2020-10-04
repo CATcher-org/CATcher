@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Issue } from '../../../core/models/issue.model';
 import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-unsure-checkbox',
@@ -15,7 +16,8 @@ export class UnsureCheckboxComponent implements OnInit {
   @Output() issueUpdated = new EventEmitter<Issue>();
 
   constructor(private issueService: IssueService,
-    private errorHandlingService: ErrorHandlingService) { }
+              private errorHandlingService: ErrorHandlingService,
+              private phaseService: PhaseService) { }
 
   ngOnInit() {
   }
@@ -27,10 +29,9 @@ export class UnsureCheckboxComponent implements OnInit {
       UNSURE = true;
     }
 
-    this.issueService.updateIssue(<Issue>{
-      ...this.issue,
-      unsure: UNSURE,
-    }).subscribe((updatedIssue: Issue) => {
+    const newIssue = this.issue.clone(this.phaseService.currentPhase);
+    newIssue.unsure = UNSURE;
+    this.issueService.updateIssue(newIssue).subscribe((updatedIssue: Issue) => {
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleError(error);

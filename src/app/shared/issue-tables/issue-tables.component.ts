@@ -95,10 +95,9 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsResponded(issue: Issue) {
-    this.issueService.updateIssue(<Issue>{
-      ...issue,
-      status: STATUS.Done
-    }).subscribe((updatedIssue) => {
+    const newIssue = issue.clone(this.phaseService.currentPhase);
+    newIssue.status = STATUS.Done;
+    this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
       this.errorHandlingService.handleError(error);
@@ -111,10 +110,9 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsPending(issue: Issue) {
-    this.issueService.updateIssue(<Issue>{
-      ...issue,
-      status: STATUS.Incomplete
-    }).subscribe((updatedIssue) => {
+    const newIssue = issue.clone(this.phaseService.currentPhase);
+    newIssue.status = STATUS.Incomplete;
+    this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
       this.errorHandlingService.handleError(error);
