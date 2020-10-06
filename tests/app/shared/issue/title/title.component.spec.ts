@@ -44,13 +44,6 @@ describe('TitleComponent', () => {
     expect(titleComponent.issueTitleForm.value).toEqual({ title: '' });
   });
 
-  it('should be updated with correct flags when editing mode is off', () => {
-    titleComponent.ngOnInit();
-    titleComponent.changeToEditMode();
-    titleComponent.cancelEditMode();
-    expect(titleComponent.isEditing).toEqual(false);
-  });
-
   it('should be configured correctly when title is updated', () => {
     const form = new NgForm([], []);
     const formResetForm = spyOn(form, 'resetForm');
