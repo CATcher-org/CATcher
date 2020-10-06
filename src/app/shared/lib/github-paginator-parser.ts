@@ -1,4 +1,4 @@
-import { GithubResponse } from 'src/app/core/models/github/github-response.model';
+import { GithubResponse } from '../../core/models/github/github-response.model';
 
 /**
  * Get the number of paginated pages of issues specified in a GitHubResponse
