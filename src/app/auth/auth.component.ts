@@ -8,12 +8,12 @@ import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
-import { flatMap, map } from 'rxjs/operators';
+import { flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { ElectronService } from '../core/services/electron.service';
 import { ApplicationService } from '../core/services/application.service';
-import { session } from 'electron';
+import { throwIfFalse } from '../shared/lib/custom-ops';
 import { GithubUser } from '../core/models/github-user.model';
 
 const appSetting = require('../../../package.json');
@@ -170,11 +170,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
     this.phaseService.storeSessionData().pipe(
-      map((isValidSession: boolean) => {
-        if (!isValidSession) {
-          throw new Error('Invalid Session');
-        }
-      })
+      throwIfFalse(isValidSession => isValidSession,
+                   () => new Error('Invalid Session'))
     ).subscribe(() => {
       this.auth.startOAuthProcess();
     }, (error) => {

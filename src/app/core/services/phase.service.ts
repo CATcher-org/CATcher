@@ -6,6 +6,7 @@ import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
 import { UserRole } from '../models/user.model';
+import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 
@@ -14,15 +15,6 @@ export enum Phase {
   phaseTeamResponse = 'phaseTeamResponse',
   phaseTesterResponse = 'phaseTesterResponse',
   phaseModeration = 'phaseModeration'
-}
-
-
-export interface SessionData {
-  openPhases: string[];
-  phaseBugReporting: string;
-  phaseTeamResponse: string;
-  phaseTesterResponse: string;
-  phaseModeration: string;
 }
 
 @Injectable({
@@ -89,8 +81,8 @@ export class PhaseService {
    */
   storeSessionData(): Observable<boolean> {
     return this.fetchSessionData().pipe(
+      assertSessionDataIntegrity(),
       map((sessionData: SessionData) => {
-        this.assertSessionDataIntegrity(sessionData);
         this.updateSessionParameters(sessionData);
         return this.currentPhase !== undefined;
       })
@@ -106,14 +98,6 @@ export class PhaseService {
       return 'repo';
     } else {
       return 'public_repo';
-    }
-  }
-
-  assertSessionDataIntegrity(sessionData: SessionData): void {
-    if (sessionData === undefined) {
-      throw new Error('Session Data Unavailable.');
-    } else if (!this.isSessionDataCorrectlyDefined(sessionData)) {
-      throw new Error('Session Data is Incorrectly Defined');
     }
   }
 
@@ -145,30 +129,12 @@ export class PhaseService {
     });
   }
 
-  /**
-   * Ensures that the input session Data has been correctly defined.
-   * Returns true if satisfies these properties, false otherwise.
-   * @param sessionData
-   */
-  isSessionDataCorrectlyDefined(sessionData: SessionData): boolean {
-    for (const data of Object.values(sessionData)) {
-      if (data === undefined || data === '') {
-        return false;
-      }
-    }
-    return true;
-  }
 
   /**
    * Stores session data and sets current session's phase.
-   * @throws Error - If there are no open phases in this session.
    * @param sessionData
    */
   updateSessionParameters(sessionData: SessionData) {
-    if (sessionData.openPhases.length === 0) {
-      throw new Error('There are no accessible phases.');
-    }
-
     this.sessionData = sessionData;
     this.currentPhase = Phase[sessionData.openPhases[0]];
     this.repoName = sessionData[sessionData.openPhases[0]];
@@ -194,8 +160,8 @@ export class PhaseService {
    */
   sessionSetup(): Observable<any> {
     return this.fetchSessionData().pipe(
+      assertSessionDataIntegrity(),
       flatMap((sessionData: SessionData) => {
-        this.assertSessionDataIntegrity(sessionData);
         this.updateSessionParameters(sessionData);
         return this.verifySessionAvailability(sessionData);
       }),
