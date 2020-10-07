@@ -51,13 +51,13 @@ describe('DescriptionComponent', () => {
   });
 
   it('should returnan error in event of a conflict', () => {
-    // Simulation of getting updated issue from Github. 
-    let updatedIssue = thisIssue.clone(phaseService.currentPhase);
+    // Simulation of getting updated issue from Github.
+    const updatedIssue = thisIssue.clone(phaseService.currentPhase);
     updatedIssue.description = 'Sample Text';
     issueService.issues = [];
     issueService.issues[updatedIssue.id] = updatedIssue;
 
-    let newDescriptionComponent = new DescriptionComponent(issueService, formBuilder, errorHandlingService, dialog, phaseService, null);
+    const newDescriptionComponent = new DescriptionComponent(issueService, formBuilder, errorHandlingService, dialog, phaseService, null);
     newDescriptionComponent.issue = thisIssue;
 
     const viewChangesCaLL = spyOn(newDescriptionComponent, 'viewChanges');
@@ -67,7 +67,7 @@ describe('DescriptionComponent', () => {
     newDescriptionComponent.changeToEditMode();
 
     issueService.getLatestIssue.and.callFake((x: number) => of(updatedIssue));
-    dialog.open.and.callFake((x: any) => {})
+    dialog.open.and.callFake((x: any) => {});
     errorHandlingService.handleError.and.callFake((x: any) => {});
     newDescriptionComponent.updateDescription(form);
 
