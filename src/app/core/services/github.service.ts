@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { githubPaginatorParser } from '../../shared/lib/github-paginator-parser';
+import { getNumberOfPages } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
@@ -105,7 +105,7 @@ export class GithubService {
     return this.getIssuesAPICall(filter, 1).pipe(
       map((response: GithubResponse<GithubIssue[]>) => {
         responseInFirstPage = response;
-        return this.getNumberOfPages(response);
+        return getNumberOfPages(response);
       }),
       flatMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
@@ -328,19 +328,6 @@ export class GithubService {
     this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
     this.issueQueryRefs.clear();
-  }
-
-  /**
-   * Get the number of paginated pages of issues in Github.
-   * @param response
-   */
-  private getNumberOfPages<T>(response: GithubResponse<T>): number {
-    let numberOfPages = 1;
-    if (response.headers.link) {
-      const paginatedData = githubPaginatorParser(response.headers.link);
-      numberOfPages = +paginatedData['last'] || 1;
-    }
-    return numberOfPages;
   }
 
   private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {
