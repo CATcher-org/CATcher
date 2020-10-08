@@ -70,8 +70,8 @@ describe('Issue', () => {
         expect(phaseTeamResponseIssue.githubComments).toEqual(dummyIssueWithTeam.githubComments);
         expect(phaseTeamResponseIssue.teamAssigned).toEqual(dummyTeam);
 
-        const phaseTesterResponseIssue = dummyIssue.clone(Phase.phaseTesterResponse);
-        expect(phaseTesterResponseIssue.githubComments).toEqual(dummyIssue.githubComments);
+        const phaseTesterResponseIssue = dummyIssueWithTeam.clone(Phase.phaseTesterResponse);
+        expect(phaseTesterResponseIssue.githubComments).toEqual(dummyIssueWithTeam.githubComments);
 
         const phaseModerationIssue = dummyIssueWithTeam.clone(Phase.phaseModeration);
         expect(phaseModerationIssue.githubComments).toEqual(dummyIssueWithTeam.githubComments);
