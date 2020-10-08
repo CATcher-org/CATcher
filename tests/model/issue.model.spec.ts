@@ -1,4 +1,6 @@
 import { Issue } from '../../src/app/core/models/issue.model';
+import { Team } from '../../src/app/core/models/team.model';
+import { Phase } from '../../src/app/core/services/phase.service';
 
 import { ISSUE_WITH_EMPTY_DESCRIPTION, ISSUE_WITH_ASSIGNEES } from '../constants/githubissue.constants';
 
@@ -42,4 +44,38 @@ describe('Issue model class', () => {
             expect(Issue.updateTeamResponse(inputWithSpecialChars)).toBe(inputWithSpecialChars);
         });
     });
+});
+
+describe('Issue', () => {
+    let dummyTeam: Team;
+    let dummyIssue: Issue;
+    let otherDummyIssue: Issue;
+    let dummyIssueWithTeam: Issue;
+
+    beforeEach(() => {
+        dummyTeam = new Team({
+            id: 'F09-2',
+            teamMembers: []
+        });
+        dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
+        otherDummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_ASSIGNEES);
+        dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
+    });
+
+    it('should be initialized with the correct phase and team with clone()', () => {
+        const phaseBugReportingIssue = dummyIssue.clone(Phase.phaseBugReporting);
+        expect(phaseBugReportingIssue).toEqual(dummyIssue);
+
+        const phaseTeamResponseIssue = dummyIssueWithTeam.clone(Phase.phaseTeamResponse);
+        expect(phaseTeamResponseIssue.githubComments).toEqual(dummyIssueWithTeam.githubComments);
+        expect(phaseTeamResponseIssue.teamAssigned).toEqual(dummyTeam);
+
+        const phaseTesterResponseIssue = dummyIssue.clone(Phase.phaseTesterResponse);
+        expect(phaseTesterResponseIssue.githubComments).toEqual(dummyIssue.githubComments);
+
+        const phaseModerationIssue = dummyIssueWithTeam.clone(Phase.phaseModeration);
+        expect(phaseModerationIssue.githubComments).toEqual(dummyIssueWithTeam.githubComments);
+        expect(phaseModerationIssue.teamAssigned).toEqual(dummyTeam);
+    });
+
 });
