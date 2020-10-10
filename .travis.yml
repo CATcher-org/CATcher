@@ -25,7 +25,7 @@ jobs:
       os: osx
       name: "Build"
       script:
-        - npm run build
+        - npm run electron:mac
     - <<: *Mac-Setup-and-Tests
       os: osx
       name: "Lint"
@@ -47,7 +47,7 @@ jobs:
       os: linux
       name: "Build"
       script:
-        - npm run build
+        - npm run electron:linux
     - <<: *Linux-Setup-and-Tests
       os: linux
       name: "Lint"
