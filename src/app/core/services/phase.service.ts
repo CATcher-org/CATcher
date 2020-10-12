@@ -9,7 +9,7 @@ import { UserRole } from '../models/user.model';
 import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
-import { throwIfFalse } from 'src/app/shared/lib/custom-ops';
+import { throwIfFalse } from '../../shared/lib/custom-ops';
 
 export enum Phase {
   phaseBugReporting = 'phaseBugReporting',
