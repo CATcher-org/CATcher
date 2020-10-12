@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, flatMap, map, tap } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY, forkJoin, timer, Observable, of, Subscription } from 'rxjs';
 import {
   Issue,
@@ -79,11 +79,8 @@ export class IssueService {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
       exhaustMap(() => {
         return this.githubService.fetchIssueGraphql(issueId).pipe(
-          map((response) => {
-            const issue = this.createIssueModel(response);
-            this.updateLocalStore(issue);
-            return issue;
-          }),
+          map(this.createIssueModel),
+          tap(this.updateLocalStore),
           catchError((err) => {
             return this.getIssue(issueId);
           })
@@ -106,10 +103,8 @@ export class IssueService {
 
   getLatestIssue(id: number): Observable<Issue> {
     return this.githubService.fetchIssueGraphql(id).pipe(
-      map((response: GithubIssue) => {
-        this.createAndSaveIssueModel(response);
-        return this.issues[id];
-      }),
+      tap(this.createAndSaveIssueModel),
+      map((response: GithubIssue) => this.issues[id]),
       catchError((err) => {
         return of(this.issues[id]);
       })
@@ -224,11 +219,8 @@ export class IssueService {
 
   deleteIssue(id: number): Observable<Issue> {
     return this.githubService.closeIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const deletedIssue = this.createIssueModel(response);
-        this.deleteFromLocalStore(deletedIssue);
-        return deletedIssue;
-      })
+      map(this.createIssueModel),
+      tap(this.deleteFromLocalStore)
     );
   }
 
