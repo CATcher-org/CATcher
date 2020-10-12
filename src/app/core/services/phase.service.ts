@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { flatMap, map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { flatMap, map, tap } from 'rxjs/operators';
+import { Observable, of, pipe } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
@@ -9,6 +9,7 @@ import { UserRole } from '../models/user.model';
 import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
+import { throwIfFalse } from 'src/app/shared/lib/custom-ops';
 
 export enum Phase {
   phaseBugReporting = 'phaseBugReporting',
@@ -82,10 +83,8 @@ export class PhaseService {
   storeSessionData(): Observable<boolean> {
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
-      map((sessionData: SessionData) => {
-        this.updateSessionParameters(sessionData);
-        return this.currentPhase !== undefined;
-      })
+      tap(this.updateSessionParameters),
+      map(() => this.currentPhase !== undefined)
     );
   }
 
@@ -153,7 +152,6 @@ export class PhaseService {
     return dialogRef.afterClosed();
   }
 
-
   /**
    * Ensures that the necessary data for the current session is available
    * and synchronized with the remote server.
@@ -161,10 +159,8 @@ export class PhaseService {
   sessionSetup(): Observable<any> {
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
-      flatMap((sessionData: SessionData) => {
-        this.updateSessionParameters(sessionData);
-        return this.verifySessionAvailability(sessionData);
-      }),
+      tap(this.updateSessionParameters),
+      flatMap(this.verifySessionAvailability),
       flatMap((isSessionAvailable: boolean) => {
         if (!isSessionAvailable && this.currentPhase === Phase.phaseBugReporting) {
           return this.openSessionFixConfirmation();
@@ -191,12 +187,10 @@ export class PhaseService {
           return this.verifySessionAvailability(this.sessionData);
         }
       }),
-      flatMap((isSessionCreated: boolean) => {
-        if (!isSessionCreated) {
-          throw new Error('Session Availability Fix failed.');
-        }
-        return this.labelService.synchronizeRemoteLabels();
-      })
+      throwIfFalse(isSessionCreated => !isSessionCreated,
+        () => new Error('Session Availability Fix failed.')
+      ),
+      flatMap(this.labelService.synchronizeRemoteLabels)
     );
   }
 
