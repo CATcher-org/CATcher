@@ -52,6 +52,7 @@
     "core-js": "^3.6.4",
     "csv-parse": "^4.4.3",
     "diff-match-patch": "^1.0.4",
+    "electron-log": "^4.2.4",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.0",
     "moment": "^2.24.0",
