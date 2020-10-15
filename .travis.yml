@@ -23,6 +23,11 @@ jobs:
         - npm update
     - <<: *Mac-Setup-and-Tests
       os: osx
+      name: "Build"
+      script:
+        - npm run electron:mac
+    - <<: *Mac-Setup-and-Tests
+      os: osx
       name: "Lint"
       script:
         - npm run lint
@@ -38,6 +43,11 @@ jobs:
       script:
         - npm install
         - npm update
+    - <<: *Linux-Setup-and-Tests
+      os: linux
+      name: "Build"
+      script:
+        - npm run electron:linux
     - <<: *Linux-Setup-and-Tests
       os: linux
       name: "Lint"
