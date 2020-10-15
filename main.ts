@@ -2,8 +2,8 @@ import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptio
 import * as path from 'path';
 import * as url from 'url';
 import { getAccessToken } from './oauth';
-import Logger from './src/app/shared/lib/logger';
 
+const Logger = require('electron-log');
 const ICON_PATH = path.join(__dirname, 'dist/favicon.512x512.png');
 
 let win: BrowserWindow = null;
