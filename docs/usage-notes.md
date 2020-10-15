@@ -38,3 +38,9 @@ There are 2 methods to achieve this:
   - Enable the `Allow executing file as program` option. 
   - Note: the GUI menus may differ slightly on different Linux distributions.
 - From the command line: Use `chmod +x CATcher-x.y.z.AppImage`
+
+# Reporting problems with CATcher
+If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs. You can retrieve them in the following directory:
+- Linux: ~/.config/CATcher/logs/*.log
+- macOS: ~/Library/Logs/CATcher/*.log
+- Windows: %USERPROFILE%\AppData\Roaming\CATcher\logs\*.log
