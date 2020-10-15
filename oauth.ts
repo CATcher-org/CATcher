@@ -1,8 +1,8 @@
 import { BrowserWindow, shell } from 'electron';
-import Logger from './src/app/shared/lib/logger';
 
 const nodeUrl = require('url');
 const fetch = require('node-fetch');
+const Logger = require('electron-log');
 
 const CLIENT_ID = '6750652c0c9001314434';
 const BASE_URL = 'https://github.com';
