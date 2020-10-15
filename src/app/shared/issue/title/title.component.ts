@@ -50,10 +50,9 @@ export class TitleComponent implements OnInit {
     }
 
     this.isSavePending = true;
-    this.issueService.updateIssue(<Issue>{
-      ...this.issue,
-      title: this.issueTitleForm.get('title').value,
-    }).pipe(finalize(() => {
+    const newIssue = this.issue.clone(this.phaseService.currentPhase);
+    newIssue.title = this.issueTitleForm.get('title').value;
+    this.issueService.updateIssue(newIssue).pipe(finalize(() => {
       this.isEditing = false;
       this.isSavePending = false;
     })).subscribe((editedIssue: Issue) => {

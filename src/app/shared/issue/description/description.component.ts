@@ -10,6 +10,7 @@ import { throwError } from 'rxjs';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue-description',
@@ -32,6 +33,7 @@ export class DescriptionComponent implements OnInit {
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private dialog: MatDialog,
+              private phaseService: PhaseService,
               public permissions: PermissionService) {
   }
 
@@ -103,9 +105,8 @@ export class DescriptionComponent implements OnInit {
   }
 
   private getUpdatedIssue(): Issue {
-    return <Issue> {
-      ...this.issue,
-      ['description']: Issue.updateDescription(this.issueDescriptionForm.get('description').value)
-    };
+    const newIssue = this.issue.clone(this.phaseService.currentPhase);
+    newIssue.description = Issue.updateDescription(this.issueDescriptionForm.get('description').value);
+    return newIssue;
   }
 }

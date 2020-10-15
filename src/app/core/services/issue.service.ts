@@ -18,6 +18,7 @@ import { IssueComment } from '../models/comment.model';
 import { GithubLabel } from '../models/github/github-label.model';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { GithubComment } from '../models/github/github-comment.model';
+import { HiddenData } from '../models/hidden-data.model';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,7 @@ export class IssueService {
   issues: Issues;
   issues$: BehaviorSubject<Issue[]>;
 
+  private sessionId: string;
   private issueTeamFilter = 'All Teams';
   private issuesPollSubscription: Subscription;
   /** Whether the IssueService is downloading the data from Github*/
@@ -116,7 +118,9 @@ export class IssueService {
 
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
-    return this.githubService.createIssue(title, description, labelsArray).pipe(
+    const hiddenData = new Map([['session', this.sessionId]]);
+    const issueDescription = HiddenData.embedDataIntoString(description, hiddenData);
+    return this.githubService.createIssue(title, issueDescription, labelsArray).pipe(
       map((response: GithubIssue) => this.createIssueModel(response))
     );
   }
@@ -202,11 +206,11 @@ export class IssueService {
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseModeration:
-        return `# Issue Description\n${issue.description}\n# Team\'s Response\n${issue.teamResponse}\n ` +
+        return `# Issue Description\n${issue.createGithubIssueDescription()}\n# Team\'s Response\n${issue.teamResponse}\n ` +
          // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
           `# Disputes\n\n${this.getIssueDisputeString(issue.issueDisputes)}\n`;
       default:
-        return issue.description;
+        return issue.createGithubIssueDescription();
     }
   }
 
@@ -268,6 +272,7 @@ export class IssueService {
 
   reset() {
     this.issues = undefined;
+    this.sessionId = undefined;
     this.issues$.next(new Array<Issue>());
 
     this.stopPollIssues();
@@ -407,6 +412,10 @@ export class IssueService {
     if (filterValue) {
       this.issueTeamFilter = filterValue;
     }
+  }
+
+  setSessionId(sessionId: string) {
+    this.sessionId = sessionId;
   }
 
   getIssueTeamFilter(): string {

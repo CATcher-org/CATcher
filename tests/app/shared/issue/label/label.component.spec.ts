@@ -5,19 +5,22 @@ import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH, SEVERITY_HIGH } from '../../../../constants/label.constants';
 import { of } from 'rxjs';
+import { Phase, PhaseService } from '../../../../../src/app/core/services/phase.service';
 
 describe('LabelComponent', () => {
   let labelComponent: any;
   let issueService: any;
   let labelService: any;
+  let phaseService: any;
   let thisIssue: Issue;
   let issueUpdatedEmit: any;
 
   beforeEach(() => {
     labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel']);
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
+    phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
 
-    labelComponent = new LabelComponent(issueService, null, null, labelService, null);
+    labelComponent = new LabelComponent(issueService, null, null, phaseService, labelService, null);
     thisIssue =  Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;
@@ -42,6 +45,7 @@ describe('LabelComponent', () => {
     labelComponent.ngOnChanges();
 
     labelService.getColorOfLabel.and.returnValue(COLOR_SEVERITY_HIGH);
+    phaseService.currentPhase.and.returnValue(Phase.phaseBugReporting);
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
     labelComponent.updateLabel(SEVERITY_HIGH);
 

@@ -13,6 +13,7 @@ import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
+import { uuid } from '../../shared/lib/uuid';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
 
@@ -81,6 +82,9 @@ export class AuthService {
   }
 
   changeAuthState(newAuthState: AuthState) {
+    if (newAuthState === AuthState.Authenticated) {
+      this.issueService.setSessionId(`${Date.now()}-${uuid()}`);
+    }
     this.authStateSource.next(newAuthState);
   }
 

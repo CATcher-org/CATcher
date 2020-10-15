@@ -42,6 +42,24 @@ Scuri uses [Jasmine's spy feature](https://jasmine.github.io/2.0/introduction.ht
 
 We loosely follow [this style guide](https://github.com/CareMessagePlatform/jasmine-styleguide) when writing tests. One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
 
+# Implementation
+
+## Overview
+To understand how the various types of users (software testers, developers, tutors) interact with CATcher, refer to the README at the [templates](https://github.com/CATcher-org/templates) repository. This document also provides the formats that must be followed in order for GitHub comments to be successfully parsed by CATcher.
+
+## User authentication
+
+CATcher uses the OAuth 2.0 protocol to authenticate users. Below is a summary of the authentication process:
+
+1. A user launches CATcher, and is prompted to log into GitHub. This is a direct interaction between the user and GitHub. Once the user has logged in, GitHub provides CATcher with an authorization code meant for this user.
+
+2. CATcher sends this authorization code and its own client secret to GitHub's authorization server - in exchange for an access token.
+
+3. Authentication is complete, and CATcher can now use the access token when it uses the GitHub API for its logic (e.g. submitting new issues, editing existing issues)
+
+The authentication process is kicked off in the `AuthComponent`, but the code that co-ordinates steps 1 and 2 can be found in [`oauth.ts`](../oauth.ts). Step 2 requires a client secret granted to CATcher. To protect this, we run a web service, [gatekeeper](https://github.com/CATcher-org/gatekeeper) that executes step 2 on behalf of the client CATcher app.
+
+
 # Future Developments
 Here are a few suggestions that future developers can work on to improve this application!
 
