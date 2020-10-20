@@ -43,4 +43,4 @@ There are 2 methods to achieve this:
 If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs. You can retrieve them in the following directory:
 - Linux: ~/.config/CATcher/logs/*.log
 - macOS: ~/Library/Logs/CATcher/*.log
-- Windows: %USERPROFILE%\AppData\Roaming\CATcher\logs\*.log
+- Windows: %USERPROFILE%\AppData\Roaming\CATcher\logs\\*.log
