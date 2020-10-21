@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
-const { ipcRenderer } = require('electron');
 import {
   trigger,
   state,
@@ -9,6 +8,7 @@ import {
   animate,
   transition
 } from '@angular/animations';
+import { ElectronService } from '../../core/services/electron.service';
 
 /**
  * Indicates all the elements that make up a Profile.
@@ -76,8 +76,6 @@ export class ProfilesComponent implements OnInit {
     }
   ];
 
-  private readonly fs = require('fs');
-
   private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar).*/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
   private filePath: string;
@@ -92,14 +90,11 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog) { }
+  constructor(private electronService: ElectronService, public errorDialog: MatDialog) { }
 
   ngOnInit() {
-    const path = require('path');
-    const temp = ipcRenderer.sendSync('synchronous-message', 'getDirectory');
-    this.filePath = path.join(
-        temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
-        this.PROFILES_FILE_NAME);
+    const temp = this.electronService.sendIpcSycMessage('synchronous-message', 'getDirectory');
+    this.filePath = [temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''), this.PROFILES_FILE_NAME].join('/');
     this.readProfiles();
   }
 
@@ -138,7 +133,7 @@ export class ProfilesComponent implements OnInit {
 
     if (isFileExists) {
       try {
-        this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
+        this.profiles = JSON.parse(this.electronService.readFile(this.filePath))['profiles'];
       } catch (e) {
         // Do nothing if there is a parsing error because this.profiles will be set to undefined on error.
       }
@@ -184,7 +179,7 @@ export class ProfilesComponent implements OnInit {
    * @param filePath - Path of file to check.
    */
   userProfileFileExists(filePath: string): boolean {
-    return this.fs.existsSync(filePath);
+    return this.electronService.fileExists(filePath);
   }
 
   /**

@@ -34,6 +34,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   versionCheckingError: boolean;
 
   authState: AuthState;
+  oauthTokenSubscription: Subscription;
   authStateSubscription: Subscription;
   loginForm: FormGroup;
   profileForm: FormGroup;
@@ -53,7 +54,7 @@ export class AuthComponent implements OnInit, OnDestroy {
               private titleService: Title,
               private ngZone: NgZone,
               private appService: ApplicationService) {
-    this.electronService.ipcRenderer.on('github-oauth-reply',
+    this.electronService.registerIpcListener('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
       this.ngZone.run(() => {
         if (error) {
@@ -79,7 +80,18 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.checkAppIsOutdated();
+  this.checkAppIsOutdated();
+    this.oauthTokenSubscription = this.auth.oauthToken.pipe(flatMap(() => this.userService.getAuthenticatedUser()))
+      .subscribe((user) => {
+        this.ngZone.run(() => {
+          this.currentUserName = user.login;
+          if (this.isUserAuthenticating () || this.isAwaitingOAuthUserConfirm ()) {
+            this.auth.changeAuthState (AuthState.ConfirmOAuthUser);
+          } else {
+            this.completeLoginProcess (this.currentUserName);
+          }
+        });
+      });
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
       this.authState = state;
     });
@@ -93,8 +105,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.electronService.ipcRenderer.removeAllListeners('github-oauth-reply');
+    this.electronService.removeIpcListeners('github-oauth-reply');
     this.authStateSubscription.unsubscribe();
+    this.oauthTokenSubscription.unsubscribe();
   }
 
   /**

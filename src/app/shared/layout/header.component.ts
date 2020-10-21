@@ -8,9 +8,9 @@ import { filter, pairwise } from 'rxjs/operators';
 import { GithubEventService } from '../../core/services/githubevent.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssueService } from '../../core/services/issue.service';
-import { shell } from 'electron';
 import { GithubService } from '../../core/services/github.service';
 import { UserRole } from '../../core/models/user.model';
+import { ElectronService } from '../../core/services/electron.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -24,9 +24,16 @@ export class HeaderComponent implements OnInit {
   TEAM_LABEL = '+label:team.';
   EXCLUDE_DUPLICATE = '+-label:duplicate'; // exclude duplicate issues
 
-  constructor(private router: Router, public auth: AuthService, public phaseService: PhaseService, public userService: UserService,
-              private location: Location, private githubEventService: GithubEventService, private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService, private githubService: GithubService) {
+  constructor(private router: Router,
+              public auth: AuthService,
+              public phaseService: PhaseService,
+              public userService: UserService,
+              private location: Location,
+              private githubEventService: GithubEventService,
+              private issueService: IssueService,
+              private errorHandlingService: ErrorHandlingService,
+              private githubService: GithubService,
+              private electronService: ElectronService) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()
@@ -97,7 +104,7 @@ export class HeaderComponent implements OnInit {
       issueUrl = routerUrl.substring(issueUrlIndex);
     }
     // Open the url in user's preferred browser
-    shell.openExternal('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
+    this.electronService.openLink('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
   }
 
   private getTeamFilterString() {
