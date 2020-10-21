@@ -4,6 +4,14 @@ import * as fs from 'fs';
 import { AppConfig } from '../../../environments/environment';
 import * as moment from 'moment';
 
+declare var window: Window;
+declare global {
+  interface Window {
+    process: any;
+    require: any;
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,7 +25,7 @@ export class ElectronService {
   clipboard: typeof clipboard;
   fs: typeof fs;
 
-  constructor() {
+constructor() {
     if (this.isElectron()) {
       this.ipcRenderer = window.require('electron').ipcRenderer;
       this.remote = window.require('electron').remote;

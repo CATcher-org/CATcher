@@ -209,7 +209,7 @@ export class DataService {
    * @return - Subjects that tracks the parsed data.
    */
   private csvParser(csvText: string): {}[] {
-    const lines = csvText.split('\n');
+    const lines = csvText.split('\n').filter(v => v.trim());
     const headers = lines[0].split(',').map(h => h.trim());
     const result = [];
     for (let i = 1; i < lines.length; i++) {
