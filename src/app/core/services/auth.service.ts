@@ -106,9 +106,9 @@ export class AuthService {
     const authService = this;
     windowHandle.addEventListener('unload', function(event) {
       const url = this.location.href;
-      if (url.includes ('code')) {
-        const urlSegments = url.split ('?');
-        const oauthCode = urlSegments[1].split ('=')[1];
+      if (url.includes('code')) {
+        const urlSegments = url.split('?');
+        const oauthCode = urlSegments[1].split('=')[1];
         const accessTokenUrl = `${ACCESS_TOKEN_URL}/${oauthCode}`;
         fetch(accessTokenUrl).then(res => res.json())
           .then(data => {
@@ -120,7 +120,7 @@ export class AuthService {
             }
           );
       }
-      this.close();
+      windowHandle.close();
     });
   }
 
