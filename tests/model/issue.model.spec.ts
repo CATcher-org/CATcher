@@ -75,7 +75,7 @@ describe('Issue', () => {
         githubComment.body = 'Sample Text';
 
         newIssueDispute = new IssueDispute('Cannot Work', 'Help Please');
-        newTesterResponse = new TesterResponse('Cannot Work', 'Help Please', 'Checkbox', 'Reason');
+        newTesterResponse = new TesterResponse('Cannot Work', 'Help Please', '- [ ] Not Done', 'Reason');
     });
 
     it('should be initialized with the correct phase and team with clone()', () => {
@@ -141,5 +141,19 @@ describe('Issue', () => {
         expect(phaseTesterResponseIssue2.createGithubTesterResponse()).toEqual(
             `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n ` +
         `# Items for the Tester to Verify\n${newTesterResponse.toString()}`);
+    });
+
+    it ('returns the correct number of issue disputes', () => {
+        const phaseModerationIssue = dummyIssueWithTeam.clone(Phase.phaseModeration);
+        expect(phaseModerationIssue.numOfUnresolvedDisputes()).toEqual(0);
+
+        const phaseModerationIssue2 = dummyIssueWithTeam.clone(Phase.phaseModeration);
+        phaseModerationIssue2.issueDisputes = [newIssueDispute];
+        expect(phaseModerationIssue2.numOfUnresolvedDisputes()).toEqual(1);
+
+        const phaseModerationIssue3 = dummyIssueWithTeam.clone(Phase.phaseModeration);
+        phaseModerationIssue3.issueDisputes = [newIssueDispute];
+        newIssueDispute.todo = '- [x] Done' ;
+        expect(phaseModerationIssue3.numOfUnresolvedDisputes()).toEqual(0);
     });
 });
