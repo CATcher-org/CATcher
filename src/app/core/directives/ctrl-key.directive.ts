@@ -7,9 +7,9 @@ import { Directive, Output, EventEmitter, HostListener } from '@angular/core';
 export class CtrlKeysDirective  {
   @Output() ctrlV = new EventEmitter();
 
-  @HostListener('window:keydown',['$event'])
+  @HostListener('window:keydown', ['$event'])
   onKeyPress($event: KeyboardEvent) {
-      if(($event.ctrlKey || $event.metaKey) && $event.code == "KeyV") {
+      if (($event.ctrlKey || $event.metaKey) && $event.code === 'KeyV') {
         this.ctrlV.emit();
       }
   }
