@@ -16,7 +16,6 @@ import { ApplicationService } from '../core/services/application.service';
 import { throwIfFalse } from '../shared/lib/custom-ops';
 import { GithubUser } from '../core/models/github-user.model';
 import { AppConfig } from '../../environments/environment';
-import { Location } from '@angular/common';
 
 const appSetting = require('../../../package.json');
 
@@ -30,13 +29,14 @@ export class AuthComponent implements OnInit, OnDestroy {
   isReady: boolean;
   // isSettingUpSession is used to indicate whether CATcher is in the midst of setting up the session.
   isSettingUpSession: boolean;
+  isFromGithubOAuthRedirect: boolean;
 
   // Errors
   isAppOutdated: boolean;
   versionCheckingError: boolean;
 
   authState: AuthState;
-  oauthTokenSubscription: Subscription;
+  accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
   loginForm: FormGroup;
   profileForm: FormGroup;
@@ -56,8 +56,7 @@ export class AuthComponent implements OnInit, OnDestroy {
               private authService: AuthService,
               private titleService: Title,
               private ngZone: NgZone,
-              private activatedRoute: ActivatedRoute,
-              private location: Location) {
+              private activatedRoute: ActivatedRoute) {
     this.electronService.registerIpcListener('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
       this.ngZone.run(() => {
@@ -88,14 +87,22 @@ export class AuthComponent implements OnInit, OnDestroy {
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     if (oauthCode) {
       window.opener.postMessage({ oauthCode }, AppConfig.origin);
-      window.opener.focus();
-      window.close();
+      this.isFromGithubOAuthRedirect = true;
+      window.addEventListener('message', (event) => {
+        if (event.origin !== AppConfig.origin) {
+          return;
+        }
+        if (event.data === 'close') {
+          window.opener.focus();
+          window.close();
+        }
+      });
     }
-    this.oauthTokenSubscription = this.auth.oauthToken.pipe(flatMap(() => this.userService.getAuthenticatedUser()))
+    this.accessTokenSubscription = this.auth.accessToken.pipe(flatMap(() => this.userService.getAuthenticatedUser()))
       .subscribe((user) => {
         this.ngZone.run(() => {
           this.currentUserName = user.login;
-          if (this.isUserAuthenticating () || this.isAwaitingOAuthUserConfirm ()) {
+          if (this.isUserAuthenticating() || this.isAwaitingOAuthUserConfirm()) {
             this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
           } else {
             this.completeLoginProcess(this.currentUserName);
@@ -117,11 +124,11 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:message', ['$event'])
-  onMessage(e) {
-    if (e.origin !== AppConfig.origin) {
+  onMessage(event) {
+    if (event.origin !== AppConfig.origin) {
       return;
     }
-    const { oauthCode } = e.data;
+    const { oauthCode } = event.data;
 
     if (!oauthCode) {
       return;
@@ -134,6 +141,7 @@ export class AuthComponent implements OnInit, OnDestroy {
           }
           this.githubService.storeOAuthAccessToken(data.token);
           this.auth.storeOAuthAccessToken(data.token);
+          event.source.postMessage('close', AppConfig.origin);
         }
       );
   }
@@ -141,13 +149,16 @@ export class AuthComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.electronService.removeIpcListeners('github-oauth-reply');
     this.authStateSubscription.unsubscribe();
-    this.oauthTokenSubscription.unsubscribe();
+    this.accessTokenSubscription.unsubscribe();
   }
 
   /**
    * Checks whether the current version of CATcher is outdated.
    */
   checkAppIsOutdated(): void {
+    if (this.isFromGithubOAuthRedirect) {
+      return;
+    }
     this.isReady = false;
     this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
       this.isAppOutdated = isOutdated;

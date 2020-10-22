@@ -28,7 +28,7 @@ export class AuthService {
 
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
-  oauthToken = new ReplaySubject();
+  accessToken = new ReplaySubject();
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -45,11 +45,11 @@ export class AuthService {
    * Will store the OAuth token.
    */
   storeOAuthAccessToken(token: string) {
-    this.oauthToken.next(token);
+    this.accessToken.next(token);
   }
 
   reset(): void {
-    this.oauthToken.next(undefined);
+    this.accessToken.next(undefined);
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));
   }
@@ -95,25 +95,29 @@ export class AuthService {
    * Will start the Github OAuth web flow process.
    * @param clearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
    */
-  startOAuthProcess (clearAuthState: boolean = false) {
-    const githubRepoPermission = this.phaseService.githubRepoPermissionLevel ();
-    this.changeAuthState (AuthState.AwaitingAuthentication);
+  startOAuthProcess(clearAuthState: boolean = false) {
+    const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
+    this.changeAuthState(AuthState.AwaitingAuthentication);
     this.electronService.sendIpcMessage('github-oauth', clearAuthState, githubRepoPermission);
     const authService = this;
-    const windowHandle = this.createOauthWindow(encodeURI(`${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`));
-    windowHandle.addEventListener('unload', function(event) {
-      if (!windowHandle.closed) {
-        authService.confirmOAuthWindowClosed(windowHandle);
+    const oauthWindow = this.createOauthWindow(encodeURI(
+      `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
+    ));
+    oauthWindow.addEventListener('unload', function(event) {
+      if (!oauthWindow.closed) {
+        authService.confirmWindowClosed(oauthWindow);
       }
     });
   }
 
-  private confirmOAuthWindowClosed(popUpWindow) {
+  private confirmWindowClosed(window) {
     const authService = this;
     const pollTimer = window.setInterval(function() {
-      if (popUpWindow.closed) {
+      if (window.closed) {
         window.clearInterval(pollTimer);
-        authService.changeAuthState(AuthState.NotAuthenticated);
+        if (!authService.accessToken) {
+          authService.changeAuthState(AuthState.NotAuthenticated);
+        }
       }
     }, 1000);
   }

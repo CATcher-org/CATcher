@@ -71,7 +71,7 @@ export class AppModule {
   oauthToken: string;
 
   constructor(private apollo: Apollo, private httpLink: HttpLink, private authService: AuthService) {
-    authService.oauthToken.subscribe((token: string) => {
+    authService.accessToken.subscribe((token: string) => {
       this.oauthToken = token;
     });
 
