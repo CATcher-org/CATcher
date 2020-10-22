@@ -6,13 +6,11 @@ import { Directive, Output, EventEmitter, HostListener } from '@angular/core';
 })
 export class CtrlKeysDirective  {
   @Output() ctrlV = new EventEmitter();
-  @Output() ctrlC = new EventEmitter();
 
-  @HostListener('keydown.control.v') onCtrlV() {
-    this.ctrlV.emit();
-  }
-
-  @HostListener('keydown.control.c') onCtrlC() {
-    this.ctrlC.emit();
+  @HostListener('window:keydown',['$event'])
+  onKeyPress($event: KeyboardEvent) {
+      if(($event.ctrlKey || $event.metaKey) && $event.code == "KeyV") {
+        this.ctrlV.emit();
+      }
   }
 }
