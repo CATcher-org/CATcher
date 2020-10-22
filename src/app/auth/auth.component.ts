@@ -83,11 +83,11 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.checkAppIsOutdated();
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     if (oauthCode) {
-      window.opener.postMessage({ oauthCode }, AppConfig.origin);
       this.isFromGithubOAuthRedirect = true;
+      this.isReady = false;
+      window.opener.postMessage({ oauthCode }, AppConfig.origin);
       window.addEventListener('message', (event) => {
         if (event.origin !== AppConfig.origin) {
           return;
@@ -98,6 +98,8 @@ export class AuthComponent implements OnInit, OnDestroy {
         }
       });
     }
+
+    this.checkAppIsOutdated();
     this.accessTokenSubscription = this.auth.accessToken.pipe(flatMap(() => this.userService.getAuthenticatedUser()))
       .subscribe((user) => {
         this.ngZone.run(() => {
