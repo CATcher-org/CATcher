@@ -1,9 +1,9 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
@@ -15,6 +15,8 @@ import { ElectronService } from '../core/services/electron.service';
 import { ApplicationService } from '../core/services/application.service';
 import { throwIfFalse } from '../shared/lib/custom-ops';
 import { GithubUser } from '../core/models/github-user.model';
+import { AppConfig } from '../../environments/environment';
+import { Location } from '@angular/common';
 
 const appSetting = require('../../../package.json');
 
@@ -41,7 +43,8 @@ export class AuthComponent implements OnInit, OnDestroy {
   profileLocationPrompt: string;
   currentUserName: string;
 
-  constructor(private auth: AuthService,
+  constructor(public auth: AuthService,
+              public appService: ApplicationService,
               private githubService: GithubService,
               private githubEventService: GithubEventService,
               private userService: UserService,
@@ -53,7 +56,8 @@ export class AuthComponent implements OnInit, OnDestroy {
               private authService: AuthService,
               private titleService: Title,
               private ngZone: NgZone,
-              private appService: ApplicationService) {
+              private activatedRoute: ActivatedRoute,
+              private location: Location) {
     this.electronService.registerIpcListener('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
       this.ngZone.run(() => {
@@ -80,20 +84,28 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-  this.checkAppIsOutdated();
+    this.checkAppIsOutdated();
+    const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
+    if (oauthCode) {
+      window.opener.postMessage({ oauthCode }, AppConfig.origin);
+      window.opener.focus();
+      window.close();
+    }
     this.oauthTokenSubscription = this.auth.oauthToken.pipe(flatMap(() => this.userService.getAuthenticatedUser()))
       .subscribe((user) => {
         this.ngZone.run(() => {
           this.currentUserName = user.login;
           if (this.isUserAuthenticating () || this.isAwaitingOAuthUserConfirm ()) {
-            this.auth.changeAuthState (AuthState.ConfirmOAuthUser);
+            this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
           } else {
-            this.completeLoginProcess (this.currentUserName);
+            this.completeLoginProcess(this.currentUserName);
           }
         });
       });
     this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
-      this.authState = state;
+      this.ngZone.run(() => {
+        this.authState = state;
+      });
     });
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
@@ -102,6 +114,28 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.profileForm = this.formBuilder.group({
       session: ['', Validators.required],
     });
+  }
+
+  @HostListener('window:message', ['$event'])
+  onMessage(e) {
+    if (e.origin !== AppConfig.origin) {
+      return;
+    }
+    const { oauthCode } = e.data;
+
+    if (!oauthCode) {
+      return;
+    }
+    const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
+    fetch(accessTokenUrl).then(res => res.json())
+      .then(data => {
+          if (data.error) {
+            throw(new Error(data.error));
+          }
+          this.githubService.storeOAuthAccessToken(data.token);
+          this.auth.storeOAuthAccessToken(data.token);
+        }
+      );
   }
 
   ngOnDestroy() {

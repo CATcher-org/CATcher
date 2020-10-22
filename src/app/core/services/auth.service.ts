@@ -14,10 +14,8 @@ import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
 import { uuid } from '../../shared/lib/uuid';
+import { AppConfig } from '../../../environments/environment';
 
-const CLIENT_ID = '6750652c0c9001314434';
-const BASE_URL = 'https://github.com';
-const ACCESS_TOKEN_URL = 'https://catcher-proxy.herokuapp.com/authenticate';
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
 
 @Injectable({
@@ -101,27 +99,23 @@ export class AuthService {
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel ();
     this.changeAuthState (AuthState.AwaitingAuthentication);
     this.electronService.sendIpcMessage('github-oauth', clearAuthState, githubRepoPermission);
-    const windowHandle = this.createOauthWindow(encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${githubRepoPermission},read:user`));
-
     const authService = this;
+    const windowHandle = this.createOauthWindow(encodeURI(`${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`));
     windowHandle.addEventListener('unload', function(event) {
-      const url = this.location.href;
-      if (url.includes('code')) {
-        const urlSegments = url.split('?');
-        const oauthCode = urlSegments[1].split('=')[1];
-        const accessTokenUrl = `${ACCESS_TOKEN_URL}/${oauthCode}`;
-        fetch(accessTokenUrl).then(res => res.json())
-          .then(data => {
-              if (data.error) {
-                throw(new Error(data.error));
-              }
-              authService.githubService.storeOAuthAccessToken(data.token);
-              authService.storeOAuthAccessToken(data.token);
-            }
-          );
+      if (!windowHandle.closed) {
+        authService.confirmOAuthWindowClosed(windowHandle);
       }
-      windowHandle.close();
     });
+  }
+
+  private confirmOAuthWindowClosed(popUpWindow) {
+    const authService = this;
+    const pollTimer = window.setInterval(function() {
+      if (popUpWindow.closed) {
+        window.clearInterval(pollTimer);
+        authService.changeAuthState(AuthState.NotAuthenticated);
+      }
+    }, 1000);
   }
 
   private createOauthWindow(url: string, name = 'Authorization', width = 500, height = 600, left = 0, top = 0) {
@@ -129,6 +123,6 @@ export class AuthService {
       return null;
     }
     const options = `width=${width},height=${height},left=${left},top=${top}`;
-    return window.open(url, name, options);
+    return window.open(`${url}`, name, options);
   }
 }

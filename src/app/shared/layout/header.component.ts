@@ -69,7 +69,7 @@ export class HeaderComponent implements OnInit {
   }
 
   isBackButtonShown(): boolean {
-    return `/${this.phaseService.currentPhase}` !== this.router.url && this.router.url !== '/';
+    return `/${this.phaseService.currentPhase}` !== this.router.url && this.router.url !== '/' && !this.router.url.startsWith('/?code');
   }
 
   isReloadButtonShown(): boolean {
