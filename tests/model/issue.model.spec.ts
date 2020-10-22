@@ -1,5 +1,8 @@
+import { GithubComment } from '../../src/app/core/models/github/github-comment.model';
+import { IssueDispute } from '../../src/app/core/models/issue-dispute.model';
 import { Issue } from '../../src/app/core/models/issue.model';
 import { Team } from '../../src/app/core/models/team.model';
+import { TesterResponse } from '../../src/app/core/models/tester-response.model';
 import { Phase } from '../../src/app/core/services/phase.service';
 
 import { ISSUE_WITH_EMPTY_DESCRIPTION, ISSUE_WITH_ASSIGNEES } from '../constants/githubissue.constants';
@@ -52,6 +55,13 @@ describe('Issue', () => {
     let otherDummyIssue: Issue;
     let dummyIssueWithTeam: Issue;
 
+    let githubComment: GithubComment;
+    let newIssueDispute: IssueDispute;
+    let newTesterResponse: TesterResponse;
+
+    const noReportedDescriptionString = 'No details provided by bug reporter.\n';
+    const tutorResponseStringHeader = '# Tutor Moderation\n\n';
+
     beforeEach(() => {
         dummyTeam = new Team({
             id: 'F09-2',
@@ -60,6 +70,12 @@ describe('Issue', () => {
         dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
         otherDummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_ASSIGNEES);
         dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
+
+        githubComment = new GithubComment();
+        githubComment.body = 'Sample Text';
+
+        newIssueDispute = new IssueDispute('Cannot Work', 'Help Please');
+        newTesterResponse = new TesterResponse('Cannot Work', 'Help Please', 'Checkbox', 'Reason');
     });
 
     it('should be initialized with the correct phase and team with clone()', () => {
@@ -78,4 +94,52 @@ describe('Issue', () => {
         expect(phaseModerationIssue.teamAssigned).toEqual(dummyTeam);
     });
 
+    it('should be able to get the proper Github Issue descriptions', () => {
+        const phaseBugReportingIssue = dummyIssue.clone(Phase.phaseBugReporting);
+        expect(phaseBugReportingIssue.createGithubIssueDescription()).toEqual(noReportedDescriptionString);
+
+        const phaseBugReportingIssueWithDescription = otherDummyIssue.clone(Phase.phaseBugReporting);
+        expect(phaseBugReportingIssueWithDescription.createGithubIssueDescription())
+            .toEqual(`${phaseBugReportingIssueWithDescription.description}\n`);
+    });
+
+    it('should be able to get the proper Team Response', () => {
+        const phaseTeamResponseIssue = dummyIssue.clone(Phase.phaseTeamResponse);
+        phaseTeamResponseIssue.teamResponse = 'Sample Text';
+        expect(phaseTeamResponseIssue.createGithubTeamResponse())
+            .toEqual(`# Team\'s Response\n${phaseTeamResponseIssue.teamResponse}\n ## Duplicate status (if any):\n--`);
+
+        const phaseTeamResponseIssue2 = dummyIssue.clone(Phase.phaseTeamResponse);
+        phaseTeamResponseIssue2.teamResponse = 'Sample Text';
+        phaseTeamResponseIssue2.duplicateOf = 10;
+        expect(phaseTeamResponseIssue2.createGithubTeamResponse())
+            .toEqual(`# Team\'s Response\n${phaseTeamResponseIssue2.teamResponse}\n `
+                + `## Duplicate status (if any):\nDuplicate of #${phaseTeamResponseIssue2.duplicateOf}`);
+    });
+
+    it ('should be able to get the proper Tutor Response', () => {
+        const phaseModerationIssue = dummyIssueWithTeam.clone(Phase.phaseModeration);
+        expect(phaseModerationIssue.createGithubTutorResponse()).toEqual(tutorResponseStringHeader);
+
+        const phaseModerationIssue2 = dummyIssueWithTeam.clone(Phase.phaseModeration);
+        phaseModerationIssue2.issueDisputes = [newIssueDispute];
+        expect(phaseModerationIssue2.createGithubTutorResponse()).toEqual(tutorResponseStringHeader
+            + newIssueDispute.toTutorResponseString());
+    });
+
+    it ('should be able to get the proper Tester Response', () => {
+        const phaseTesterResponseIssue = dummyIssueWithTeam.clone(Phase.phaseTesterResponse);
+        phaseTesterResponseIssue.teamResponse = 'Sample Text';
+        phaseTesterResponseIssue.testerResponses = [];
+        expect(phaseTesterResponseIssue.createGithubTesterResponse()).toEqual(
+            `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n ` +
+        `# Items for the Tester to Verify\n${''}`);
+
+        const phaseTesterResponseIssue2 = dummyIssueWithTeam.clone(Phase.phaseTesterResponse);
+        phaseTesterResponseIssue2.teamResponse = 'Sample Text';
+        phaseTesterResponseIssue2.testerResponses = [newTesterResponse];
+        expect(phaseTesterResponseIssue2.createGithubTesterResponse()).toEqual(
+            `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n ` +
+        `# Items for the Tester to Verify\n${newTesterResponse.toString()}`);
+    });
 });
