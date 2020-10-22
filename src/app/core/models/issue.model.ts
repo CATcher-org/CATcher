@@ -52,9 +52,19 @@ export class Issue {
    * Brought over from comment-editor.component.ts
    */
   static formatText(text: string): string {
+    if (text === null) {
+      return null;
+    }
+
+    if (text === undefined) {
+      return undefined;
+    }
+
     const newLinesRegex = /[\n\r]/gi;
-    if (text.split(newLinesRegex).filter(split => split.trim() !== '').length > 0) {
-      return text + '\n\r';
+    const textSplitArray = text.split(newLinesRegex);
+    console.log(textSplitArray);
+    if (textSplitArray.filter(split => split.trim() !== '').length > 0) {
+      return `${text}\n\n`;
     } else {
       return text;
     }
