@@ -45,12 +45,27 @@ export class Issue {
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
 
-    /**
+  /**
+   * Formats the text to create space at the end of the user input to prevent any issues with
+   * the markdown interpretation.
+   *
+   * Brought over from comment-editor.component.ts
+   */
+  static formatText(text: string): string {
+    const newLinesRegex = /[\n\r]/gi;
+    if (text.split(newLinesRegex).filter(split => split.trim() !== '').length > 0) {
+      return text + '\n\r';
+    } else {
+      return text;
+    }
+  }
+
+  /**
    * Processes and cleans a raw issue description obtained from user input.
    */
   static updateDescription(description: string): string {
     const defaultString = 'No details provided by bug reporter.';
-    return Issue.orDefaultString(description, defaultString);
+    return Issue.orDefaultString(Issue.formatText(description), defaultString);
   }
 
   /**
@@ -58,7 +73,7 @@ export class Issue {
    */
   static updateTeamResponse(teamResponse: string): string {
     const defaultString = 'No details provided by team.';
-    return Issue.orDefaultString(teamResponse, defaultString);
+    return Issue.orDefaultString(Issue.formatText(teamResponse), defaultString);
   }
 
   /**
@@ -217,17 +232,20 @@ export class Issue {
   }
 
   createGithubIssueDescription(): string {
+    console.log(1);
     return `${this.description}\n${this.hiddenDataInDescription.toString()}`;
   }
 
   // Template url: https://github.com/CATcher-org/templates#dev-response-phase
   createGithubTeamResponse(): string {
+    console.log(2);
     return `# Team\'s Response\n${this.teamResponse}\n ` +
       `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
   }
 
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(): string {
+    console.log(3);
     let tutorResponseString = '# Tutor Moderation\n\n';
     for (const issueDispute of this.issueDisputes) {
       tutorResponseString += issueDispute.toTutorResponseString();
@@ -237,6 +255,7 @@ export class Issue {
 
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   createGithubTesterResponse(): string {
+    console.log(4);
     return `# Team\'s Response\n${this.teamResponse}\n ` +
       `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
   }
