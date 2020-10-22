@@ -62,7 +62,6 @@ export class Issue {
 
     const newLinesRegex = /[\n\r]/gi;
     const textSplitArray = text.split(newLinesRegex);
-    console.log(textSplitArray);
     if (textSplitArray.filter(split => split.trim() !== '').length > 0) {
       return `${text}\n\n`;
     } else {
@@ -242,20 +241,17 @@ export class Issue {
   }
 
   createGithubIssueDescription(): string {
-    console.log(1);
     return `${this.description}\n${this.hiddenDataInDescription.toString()}`;
   }
 
   // Template url: https://github.com/CATcher-org/templates#dev-response-phase
   createGithubTeamResponse(): string {
-    console.log(2);
     return `# Team\'s Response\n${this.teamResponse}\n ` +
       `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
   }
 
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(): string {
-    console.log(3);
     let tutorResponseString = '# Tutor Moderation\n\n';
     for (const issueDispute of this.issueDisputes) {
       tutorResponseString += issueDispute.toTutorResponseString();
@@ -265,7 +261,6 @@ export class Issue {
 
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   createGithubTesterResponse(): string {
-    console.log(4);
     return `# Team\'s Response\n${this.teamResponse}\n ` +
       `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
   }
