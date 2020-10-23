@@ -23,10 +23,10 @@ describe('GithubLabel', () => {
     expect(githubLabel.isCategorical()).toEqual(true);
 
     githubLabel = new GithubLabel({ name: `${category}.......${value}` });
-    expect(githubLabel.isCategorical()).toEqual(true);
+    expect(githubLabel.isCategorical()).toEqual(false);
 
     githubLabel = new GithubLabel({ name: `${category}.................${value}` });
-    expect(githubLabel.isCategorical()).toEqual(true);
+    expect(githubLabel.isCategorical()).toEqual(false);
   });
 
   it ('should return correct values on getCategory() and getValue()', () => {
