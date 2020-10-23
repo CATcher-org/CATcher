@@ -145,12 +145,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.auth.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
     this.userService.createUserModel(username).pipe(
-      flatMap(() => {
-        return this.phaseService.sessionSetup();
-      }),
-      flatMap(() => {
-        return this.githubEventService.setLatestChangeEvent();
-      }),
+      flatMap(() => this.phaseService.sessionSetup()),
+      flatMap(() => this.githubEventService.setLatestChangeEvent()),
     ).subscribe(() => {
       this.handleAuthSuccess();
     }, (error) => {

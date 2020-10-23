@@ -28,7 +28,7 @@ export abstract class Template {
       numOfMatch += 1;
     }
     this.regex.lastIndex = 0;
-    return numOfMatch === this.headers.length;
+    return numOfMatch >= this.headers.length;
   }
 }
 
