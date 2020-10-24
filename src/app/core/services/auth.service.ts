@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
@@ -28,7 +28,7 @@ export class AuthService {
 
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
-  accessToken = new ReplaySubject();
+  accessToken = new BehaviorSubject(undefined);
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,

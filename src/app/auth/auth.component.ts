@@ -8,7 +8,7 @@ import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
-import { flatMap } from 'rxjs/operators';
+import { filter, flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { ElectronService } from '../core/services/electron.service';
@@ -45,6 +45,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   constructor(public auth: AuthService,
               public appService: ApplicationService,
+              public electronService: ElectronService,
               private githubService: GithubService,
               private githubEventService: GithubEventService,
               private userService: UserService,
@@ -52,7 +53,6 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-              private electronService: ElectronService,
               private authService: AuthService,
               private titleService: Title,
               private ngZone: NgZone,
@@ -100,7 +100,10 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     this.checkAppIsOutdated();
-    this.accessTokenSubscription = this.auth.accessToken.pipe(flatMap(() => this.userService.getAuthenticatedUser()))
+    this.accessTokenSubscription = this.auth.accessToken.pipe(
+      filter((token: string) => !!token),
+      flatMap(() => this.userService.getAuthenticatedUser())
+    )
       .subscribe((user) => {
         this.ngZone.run(() => {
           this.currentUserName = user.login;

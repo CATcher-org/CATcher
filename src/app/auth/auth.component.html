@@ -63,8 +63,11 @@
           <span> Continue as {{this.currentUserName}} </span>
         </button>
 
-        <button mat-button style="margin-top: 10px; margin-bottom: 10px;" [disabled]="isUserAuthenticating()"
+        <button *ngIf="electronService.isElectron()" mat-button style="margin-top: 10px; margin-bottom: 10px;" [disabled]="isUserAuthenticating()"
                 (click)="logIntoAnotherAccount()"> Log in to another account </button>
+        <div *ngIf="!electronService.isElectron()" class="mat-body-1" style="margin-top: 20px;">
+          To change account, please sign out from the official Github website
+        </div>
       </div>
       <div *ngIf="isUserAuthenticating()" class="spinner-centralize">
         <mat-spinner [diameter]="47"></mat-spinner>
