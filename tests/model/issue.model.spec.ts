@@ -34,12 +34,12 @@ describe('Issue model class', () => {
 
             const typicalDescription = 'The app crashes after parsing config files.';
             const typicalTeamResponse = 'Cannot replicate the bug.';
-            expect(Issue.updateDescription(typicalDescription)).toBe(typicalDescription);
-            expect(Issue.updateTeamResponse(typicalTeamResponse)).toBe(typicalTeamResponse);
+            expect(Issue.updateDescription(typicalDescription)).toBe(typicalDescription + '\n\n');
+            expect(Issue.updateTeamResponse(typicalTeamResponse)).toBe(typicalTeamResponse + '\n\n');
 
             const inputWithSpecialChars = '$%^!@&-_test';
-            expect(Issue.updateDescription(inputWithSpecialChars)).toBe(inputWithSpecialChars);
-            expect(Issue.updateTeamResponse(inputWithSpecialChars)).toBe(inputWithSpecialChars);
+            expect(Issue.updateDescription(inputWithSpecialChars)).toBe(inputWithSpecialChars + '\n\n');
+            expect(Issue.updateTeamResponse(inputWithSpecialChars)).toBe(inputWithSpecialChars + '\n\n');
         });
     });
 });
