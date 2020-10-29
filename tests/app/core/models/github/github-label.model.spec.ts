@@ -33,5 +33,9 @@ describe('GithubLabel', () => {
     githubLabel = new GithubLabel({ name: `${category}.${value}` });
     expect(githubLabel.getCategory()).toEqual(category);
     expect(githubLabel.getValue()).toEqual(value);
+
+    githubLabel = new GithubLabel({ name: `${category}.......${value}` });
+    expect(githubLabel.getCategory()).toEqual(githubLabel.name);
+    expect(githubLabel.getValue()).toEqual(githubLabel.name);
   });
 });
