@@ -28,12 +28,12 @@ describe('DescriptionComponent', () => {
     descriptionComponent.issue = thisIssue;
   });
 
-  it('should be initialised with an issueDescriptionForm', () => {
+  it('should be initialised with a FromGroup instance', () => {
     descriptionComponent.ngOnInit();
     expect(descriptionComponent.issueDescriptionForm.value).toEqual({ description: '' });
   });
 
-  it('should be updated with correct flag and form value when in edit mode', () => {
+  it('should update the form value correctly and emit an event when entering edit mode', () => {
     const descriptionComponentEditState = spyOn(descriptionComponent.changeEditState, 'emit');
 
     descriptionComponent.ngOnInit();
@@ -43,37 +43,34 @@ describe('DescriptionComponent', () => {
   });
 
   it('should not have its value updated with issue description is invalid', () => {
-    thisIssue.description = undefined;
-    descriptionComponent.issue = thisIssue;
+    descriptionComponent.issue.description = undefined;
     descriptionComponent.ngOnInit();
     descriptionComponent.changeToEditMode();
     expect(descriptionComponent.issueDescriptionForm.value).toEqual({ description: '' });
   });
 
-  it('should returnan error in event of a conflict', () => {
+  it('should highlight conflicting changes, if the issue description was updated simultaneously by another user', () => {
     // Simulation of getting updated issue from Github.
     const updatedIssue = thisIssue.clone(phaseService.currentPhase);
-    updatedIssue.description = 'Sample Text';
+    updatedIssue.description = 'Issue description was modified simultaneously on GitHub';
     issueService.issues = [];
     issueService.issues[updatedIssue.id] = updatedIssue;
+    descriptionComponent.issue = thisIssue;
 
-    const newDescriptionComponent = new DescriptionComponent(issueService, formBuilder, errorHandlingService, dialog, phaseService, null);
-    newDescriptionComponent.issue = thisIssue;
-
-    const viewChangesCaLL = spyOn(newDescriptionComponent, 'viewChanges');
+    const viewChangesCaLL = spyOn(descriptionComponent, 'viewChanges');
 
     const form = new NgForm([], []);
-    newDescriptionComponent.ngOnInit();
-    newDescriptionComponent.changeToEditMode();
+    descriptionComponent.ngOnInit();
+    descriptionComponent.changeToEditMode();
 
     issueService.getLatestIssue.and.callFake((x: number) => of(updatedIssue));
     dialog.open.and.callFake((x: any) => {});
     errorHandlingService.handleError.and.callFake((x: any) => {});
-    newDescriptionComponent.updateDescription(form);
+    descriptionComponent.updateDescription(form);
 
     expect(viewChangesCaLL).toHaveBeenCalledTimes(1);
-    expect(newDescriptionComponent.conflict.outdatedContent).toEqual(thisIssue.description);
-    expect(newDescriptionComponent.conflict.updatedContent).toEqual(updatedIssue.description);
+    expect(descriptionComponent.conflict.outdatedContent).toEqual(thisIssue.description);
+    expect(descriptionComponent.conflict.updatedContent).toEqual(updatedIssue.description);
   });
 
   it('should be configured correctly when description is updated', () => {
