@@ -57,7 +57,7 @@ describe('DescriptionComponent', () => {
     issueService.issues[updatedIssue.id] = updatedIssue;
     descriptionComponent.issue = thisIssue;
 
-    const viewChangesCaLL = spyOn(descriptionComponent, 'viewChanges');
+    const viewChangesCall = spyOn(descriptionComponent, 'viewChanges');
 
     const form = new NgForm([], []);
     descriptionComponent.ngOnInit();
@@ -68,7 +68,7 @@ describe('DescriptionComponent', () => {
     errorHandlingService.handleError.and.callFake((x: any) => {});
     descriptionComponent.updateDescription(form);
 
-    expect(viewChangesCaLL).toHaveBeenCalledTimes(1);
+    expect(viewChangesCall).toHaveBeenCalledTimes(1);
     expect(descriptionComponent.conflict.outdatedContent).toEqual(thisIssue.description);
     expect(descriptionComponent.conflict.updatedContent).toEqual(updatedIssue.description);
   });
