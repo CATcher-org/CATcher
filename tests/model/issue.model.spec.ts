@@ -50,25 +50,21 @@ describe('Issue model class', () => {
 });
 
 describe('Issue', () => {
-    let newIssueDispute: IssueDispute;
-    let newTesterResponse: TesterResponse;
+    const dummyTeam = new Team({
+        id: 'F09-2',
+        teamMembers: []
+    });
+    const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
+    const otherDummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_ASSIGNEES);
+    const dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
 
     const noReportedDescriptionString = 'No details provided by bug reporter.\n';
     const tutorResponseStringHeader = '# Tutor Moderation\n\n';
 
-    beforeEach(() => {
-        newIssueDispute = new IssueDispute('Cannot Work', 'Help Please');
-        newTesterResponse = new TesterResponse('Cannot Work', 'Help Please', '- [ ] Not Done', 'Reason');
-    });
+    const newIssueDispute = new IssueDispute('Cannot Work', 'Help Please');
+    const newTesterResponse = new TesterResponse('Cannot Work', 'Help Please', '- [ ] Not Done', 'Reason');
 
     it('.clone() should intialise the cloned issue with the correct phase and team', () => {
-        const dummyTeam = new Team({
-            id: 'F09-2',
-            teamMembers: []
-        });
-        const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
-        const dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-
         const phaseBugReportingIssue = dummyIssue.clone(Phase.phaseBugReporting);
         expect(phaseBugReportingIssue).toEqual(dummyIssue);
 
@@ -85,9 +81,6 @@ describe('Issue', () => {
     });
 
     it('.createGithubIssueDescription() forms the correct GitHub Issue description for the issue', () => {
-        const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
-        const otherDummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_ASSIGNEES);
-
         const phaseBugReportingIssue = dummyIssue.clone(Phase.phaseBugReporting);
         expect(phaseBugReportingIssue.createGithubIssueDescription()).toEqual(noReportedDescriptionString);
 
@@ -96,9 +89,7 @@ describe('Issue', () => {
             .toEqual(`${phaseBugReportingIssueWithDescription.description}\n`);
     });
 
-    it('should be able to get the proper Team Response', () => {
-        const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
-
+    it('.clone() should be able to get the proper Team Response', () => {
         const phaseTeamResponseIssue = dummyIssue.clone(Phase.phaseTeamResponse);
         phaseTeamResponseIssue.teamResponse = 'Sample Text';
         expect(phaseTeamResponseIssue.createGithubTeamResponse())
@@ -112,13 +103,7 @@ describe('Issue', () => {
                 + `## Duplicate status (if any):\nDuplicate of #${phaseTeamResponseIssue2.duplicateOf}`);
     });
 
-    it ('should be able to get the proper Tutor Response', () => {
-        const dummyTeam = new Team({
-            id: 'F09-2',
-            teamMembers: []
-        });
-        const dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-
+    it ('.clone() should be able to get the proper Tutor Response', () => {
         const phaseModerationIssue = dummyIssueWithTeam.clone(Phase.phaseModeration);
         expect(phaseModerationIssue.createGithubTutorResponse()).toEqual(tutorResponseStringHeader);
 
@@ -128,13 +113,7 @@ describe('Issue', () => {
             + newIssueDispute.toTutorResponseString());
     });
 
-    it ('should be able to get the proper Tester Response', () => {
-        const dummyTeam = new Team({
-            id: 'F09-2',
-            teamMembers: []
-        });
-        const dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-
+    it ('.clone() should be able to get the proper Tester Response', () => {
         const phaseTesterResponseIssue = dummyIssueWithTeam.clone(Phase.phaseTesterResponse);
         phaseTesterResponseIssue.teamResponse = 'Sample Text';
         phaseTesterResponseIssue.testerResponses = [];
@@ -151,12 +130,6 @@ describe('Issue', () => {
     });
 
     it ('.numOfUnresolvedDisputes() returns the correct number of issue disputes', () => {
-        const dummyTeam = new Team({
-            id: 'F09-2',
-            teamMembers: []
-        });
-        const dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-
         const phaseModerationIssue = dummyIssueWithTeam.clone(Phase.phaseModeration);
         expect(phaseModerationIssue.numOfUnresolvedDisputes()).toEqual(0);
 
