@@ -1,4 +1,3 @@
-import { GithubComment } from '../../src/app/core/models/github/github-comment.model';
 import { IssueDispute } from '../../src/app/core/models/issue-dispute.model';
 import { Issue } from '../../src/app/core/models/issue.model';
 import { Team } from '../../src/app/core/models/team.model';
@@ -52,7 +51,7 @@ describe('Issue model class', () => {
 describe('Issue', () => {
     const dummyTeam = new Team({
         id: 'F09-2',
-        teamMembers: []
+        teamMembers: [],
     });
     const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     const otherDummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_ASSIGNEES);
