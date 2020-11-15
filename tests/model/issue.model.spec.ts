@@ -98,7 +98,7 @@ describe('Issue', () => {
 
     it('should be able to get the proper Team Response', () => {
         const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
-        
+
         const phaseTeamResponseIssue = dummyIssue.clone(Phase.phaseTeamResponse);
         phaseTeamResponseIssue.teamResponse = 'Sample Text';
         expect(phaseTeamResponseIssue.createGithubTeamResponse())
