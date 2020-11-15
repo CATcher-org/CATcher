@@ -89,7 +89,7 @@ describe('Issue', () => {
             .toEqual(`${phaseBugReportingIssueWithDescription.description}\n`);
     });
 
-    it('.clone() should be able to get the proper Team Response', () => {
+    it('.createGithubTeamResponse() should be able to get the proper Team Response', () => {
         const phaseTeamResponseIssue = dummyIssue.clone(Phase.phaseTeamResponse);
         phaseTeamResponseIssue.teamResponse = 'Sample Text';
         expect(phaseTeamResponseIssue.createGithubTeamResponse())
@@ -103,7 +103,7 @@ describe('Issue', () => {
                 + `## Duplicate status (if any):\nDuplicate of #${phaseTeamResponseIssue2.duplicateOf}`);
     });
 
-    it ('.clone() should be able to get the proper Tutor Response', () => {
+    it ('.createGithubTutorResponse() should be able to get the proper Tutor Response', () => {
         const phaseModerationIssue = dummyIssueWithTeam.clone(Phase.phaseModeration);
         expect(phaseModerationIssue.createGithubTutorResponse()).toEqual(tutorResponseStringHeader);
 
@@ -113,7 +113,7 @@ describe('Issue', () => {
             + newIssueDispute.toTutorResponseString());
     });
 
-    it ('.clone() should be able to get the proper Tester Response', () => {
+    it ('.createGithubTesterResponse() should be able to get the proper Tester Response', () => {
         const phaseTesterResponseIssue = dummyIssueWithTeam.clone(Phase.phaseTesterResponse);
         phaseTesterResponseIssue.teamResponse = 'Sample Text';
         phaseTesterResponseIssue.testerResponses = [];
