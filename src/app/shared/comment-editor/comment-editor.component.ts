@@ -160,43 +160,18 @@ export class CommentEditorComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  onPaste() {
-    this.uploadErrorMessage = null;
-
-    const imageFileType = clipboard.availableFormats().filter(type => type.includes('image'));
-    if (imageFileType.length === 0) {
-      return;
-    }
-
-    const filename = `image.${imageFileType[0].split('/')[1]}`;
-    const insertedText = this.insertUploadingText(filename);
-
-    if (!this.uploadService.isSupportedFileType(filename)) {
-      this.handleUploadError(FILE_TYPE_SUPPORT_ERROR, insertedText);
-      return;
-    }
-
-    // Log the most recent upload.
-    this.lastUploadingTime = new Date().getTime().toString();
-    const currentFileUploadTime = this.lastUploadingTime;
-
-    // Prevents Form Submission during Upload
-    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(this.initialSubmitButtonText));
-
-    this.uploadService.uploadFile(clipboard.readImage().toDataURL(), filename).subscribe((response) => {
-      this.insertUploadUrl(filename, response.data.content.download_url);
-    }, (error) => {
-      this.handleUploadError(error, insertedText);
-      // Allow button enabling if this is the last file that was uploaded.
-      if (currentFileUploadTime === this.lastUploadingTime) {
-        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+  onPaste(event) {
+    const items = event.clipboardData.items;
+    let blob = null;
+    for (const item of items) {
+      if (item.type.indexOf('image') === 0) {
+        blob = item.getAsFile();
+        break;
       }
-    }, () => {
-      // Allow button enabling if this is the last file that was uploaded.
-      if (currentFileUploadTime === this.lastUploadingTime) {
-        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
-      }
-    });
+    }
+    if (blob) {
+      this.readAndUploadFile(blob);
+    }
   }
 
   get isInErrorState(): boolean {
