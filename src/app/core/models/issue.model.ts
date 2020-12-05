@@ -45,12 +45,36 @@ export class Issue {
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
 
-    /**
+  /**
+   * Formats the text to create space at the end of the user input to prevent any issues with
+   * the markdown interpretation.
+   *
+   * Brought over from comment-editor.component.ts
+   */
+  static formatText(text: string): string {
+    if (text === null) {
+      return null;
+    }
+
+    if (text === undefined) {
+      return undefined;
+    }
+
+    const newLinesRegex = /[\n\r]/gi;
+    const textSplitArray = text.split(newLinesRegex);
+    if (textSplitArray.filter(split => split.trim() !== '').length > 0) {
+      return `${text}\n\n`;
+    } else {
+      return text;
+    }
+  }
+
+  /**
    * Processes and cleans a raw issue description obtained from user input.
    */
   static updateDescription(description: string): string {
     const defaultString = 'No details provided by bug reporter.';
-    return Issue.orDefaultString(description, defaultString);
+    return Issue.orDefaultString(Issue.formatText(description), defaultString);
   }
 
   /**
@@ -58,7 +82,7 @@ export class Issue {
    */
   static updateTeamResponse(teamResponse: string): string {
     const defaultString = 'No details provided by team.';
-    return Issue.orDefaultString(teamResponse, defaultString);
+    return Issue.orDefaultString(Issue.formatText(teamResponse), defaultString);
   }
 
   /**
