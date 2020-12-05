@@ -98,16 +98,20 @@ export class AuthService {
   startOAuthProcess(clearAuthState: boolean = false) {
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
-    this.electronService.sendIpcMessage('github-oauth', clearAuthState, githubRepoPermission);
-    const authService = this;
-    const oauthWindow = this.createOauthWindow(encodeURI(
-      `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
-    ));
-    oauthWindow.addEventListener('unload', function(event) {
-      if (!oauthWindow.closed) {
-        authService.confirmWindowClosed(oauthWindow);
-      }
-    });
+
+    if (this.electronService.isElectron()) {
+      this.electronService.sendIpcMessage('github-oauth', clearAuthState, githubRepoPermission);
+    } else {
+      const authService = this;
+      const oauthWindow = this.createOauthWindow(encodeURI(
+        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
+      ));
+      oauthWindow.addEventListener('unload', function(event) {
+        if (!oauthWindow.closed) {
+          authService.confirmWindowClosed(oauthWindow);
+        }
+      });
+    }
   }
 
   private confirmWindowClosed(window) {
