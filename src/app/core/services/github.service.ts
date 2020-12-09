@@ -50,7 +50,6 @@ export class GithubService {
   ) {}
 
   storeOAuthAccessToken(accessToken: string) {
-    console.log('store github access token: ', accessToken);
     octokit = new Octokit({
       auth() {
         return `Token ${accessToken}`;

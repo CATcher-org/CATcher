@@ -171,7 +171,6 @@ export class CommentEditorComponent implements OnInit {
       }
     }
     if (blob) {
-      console.log('hello', blob);
       this.readAndUploadFile(blob);
     }
   }
