@@ -40,7 +40,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm update 
-    - run: npm run electron:linux
+    - run: npm run electron:mac
     - run: npm run lint 
     - run: npm test
 
@@ -57,6 +57,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm update 
-    - run: npm run electron:linux
+    - run: npm run electron:windows
     - run: npm run lint 
     - run: npm test
