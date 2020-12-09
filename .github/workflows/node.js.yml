@@ -11,13 +11,10 @@ on:
 
 jobs:
   linux-setup-and-tests:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x]
-
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -30,3 +27,36 @@ jobs:
     - run: npm run lint 
     - run: npm test
       
+  macos-setup-and-tests:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm update 
+    - run: npm run electron:linux
+    - run: npm run lint 
+    - run: npm test
+
+  windows-setup-and-tests:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm update 
+    - run: npm run electron:linux
+    - run: npm run lint 
+    - run: npm test
