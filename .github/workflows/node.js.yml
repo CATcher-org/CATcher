@@ -24,13 +24,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Install dependencies
     - run: npm install
     - run: npm update 
-    - name: Build
     - run: npm run electron:linux
-    - name: Lint
     - run: npm run lint 
-    - name: Unix Tests
     - run: npm test
       
