@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DataFile } from '../models/data-file.model';
 import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
-import { Observable, of } from 'rxjs';
-const parse = require('csv-parse/lib/sync');
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -64,7 +63,7 @@ export class DataService {
     const ROLE = 'role';
 
     const admins = {};
-    let parsedCSV: [{}];
+    let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
     // Formats the parsed information for easier app reading
@@ -90,7 +89,7 @@ export class DataService {
     const ROLE = 'role';
 
     const tutors = {};
-    let parsedCSV: [{}];
+    let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
     // Formats the parsed information for easier app reading
@@ -121,7 +120,7 @@ export class DataService {
     const TEAM_ID = 'teamId';
 
     const students = {};
-    let parsedCSV: [{}];
+    let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
     // Formats the parsed information for easier app reading
@@ -150,7 +149,7 @@ export class DataService {
     const ROLE = 'role';
 
     const teams = {};
-    let parsedCSV: [{}];
+    let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
     // Formats the parsed information for easier app reading
@@ -181,7 +180,7 @@ export class DataService {
     const students = {};
     const tutors = {};
     const admins = {};
-    let parsedCSV: [{}];
+    let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
     // Formats the parsed information for easier app reading
@@ -209,12 +208,27 @@ export class DataService {
    * @param csvText - csv information.
    * @return - Subjects that tracks the parsed data.
    */
-  private csvParser(csvText: string): [{}] {
-    return parse(csvText, {
-      columns: true,
-      skip_empty_lines: true,
-      trim: true
-    });
+  private csvParser(csvText: string): {}[] {
+    const lines = csvText.split('\n').filter(v => v.trim());
+    const headers = lines[0].split(',').map(h => h.trim());
+    const result = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) {
+        continue;
+      }
+      const lineValues = line.split(',').map(v => v.trim());
+      const lineObj = {};
+      for (let j = 0; j < headers.length; j++) {
+        const header = headers[j];
+        if (!lineValues[j]) {
+          lineObj[header] = null;
+        }
+        lineObj[header] = lineValues[j];
+      }
+      result.push(lineObj);
+    }
+    return result;
   }
 
   getTeam(teamId: string): Team {
