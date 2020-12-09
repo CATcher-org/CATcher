@@ -2,9 +2,9 @@ name: Setup Builds and Tests
 
 on:
   push:
-    branches: [ master, graphql-migration ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, graphql-migration ]
+    branches: [ master ]
 
 jobs:
   linux-setup-and-tests:
