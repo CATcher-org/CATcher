@@ -56,7 +56,6 @@
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.0",
     "moment": "^2.24.0",
-    "ngx-csv-parser": "0.0.6",
     "ngx-markdown": "^8.2.1",
     "node-fetch": "^2.6.0",
     "rxjs": "6.5.3",

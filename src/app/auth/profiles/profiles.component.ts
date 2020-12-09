@@ -15,8 +15,6 @@ import { ElectronService } from '../../core/services/electron.service';
  */
 export interface Profile {
   profileName: string;
-  username: string;
-  password: string;
   encodedText: string;
 }
 
@@ -45,7 +43,7 @@ export class ProfilesComponent implements OnInit {
   private readonly ANIMATION_DURATION: number = 250;
 
   profiles: Profile[] = undefined; // List of profiles taken from profiles.json
-  blankProfile: Profile = {profileName: '', password: '', username: '', encodedText: ''}; // A blank profile to reset values
+  blankProfile: Profile = {profileName: '', encodedText: ''}; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
 
   // To be set to undefined array if not used.

@@ -22,8 +22,6 @@ export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOA
   providedIn: 'root'
 })
 export class AuthService {
-  readonly githubUrl = 'http://www.github.com';
-  readonly githubDomain = 'github.com';
   readonly githubLoginCacheName = 'is_logged_in';
 
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
@@ -45,6 +43,7 @@ export class AuthService {
    * Will store the OAuth token.
    */
   storeOAuthAccessToken(token: string) {
+    this.githubService.storeOAuthAccessToken(token);
     this.accessToken.next(token);
   }
 
@@ -72,14 +71,6 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.authStateSource.getValue() === AuthState.Authenticated;
-  }
-
-  setLoginStatusWithGithub(isLoggedIn: boolean) {
-    if (!isLoggedIn) {
-      this.electronService.clearCookies();
-    } else {
-      this.electronService.setCookie(this.githubUrl, this.githubDomain, this.githubLoginCacheName, 'yes');
-    }
   }
 
   changeAuthState(newAuthState: AuthState) {
