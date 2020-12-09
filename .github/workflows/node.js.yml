@@ -17,8 +17,6 @@ jobs:
         node-version: [12.x]
     steps:
     - uses: actions/checkout@v2
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -26,6 +24,8 @@ jobs:
     - run: npm install
     - run: npm update 
     - run: npm run electron:linux
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint 
     - run: npm test
       
@@ -36,8 +36,6 @@ jobs:
         node-version: [12.x]
     steps:
     - uses: actions/checkout@v2
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -45,6 +43,8 @@ jobs:
     - run: npm install
     - run: npm update 
     - run: npm run electron:mac
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint 
     - run: npm test
 
