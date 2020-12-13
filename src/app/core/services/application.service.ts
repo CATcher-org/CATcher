@@ -40,7 +40,7 @@ export class ApplicationService {
    * @param latestVersion
    * @param currentVersion
    */
-  isOutdatedVersion(latestVersion: string, currentVersion: string): boolean {
+  private isOutdatedVersion(latestVersion: string, currentVersion: string): boolean {
     const result = this.compareVersions(latestVersion, currentVersion);
     return result === 1;
   }
