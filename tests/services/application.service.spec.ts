@@ -1,6 +1,5 @@
 import { ApplicationService } from '../../src/app/core/services/application.service';
 
-const upToDateAppService = new ApplicationService(null);
 const currentVersion = '3.2.5';
 
 class ApplicationServiceStub extends ApplicationService {
