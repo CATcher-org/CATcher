@@ -12,8 +12,8 @@ class ApplicationServiceStub extends ApplicationService {
   }
 }
 
-describe('Test the ApplicationService', () => {
-  it('Test whether the ApplicationService can detect outdated versions', () => {
+describe('Test for ApplicationService#isApplicationOutdated', () => {
+  it('should return an Observable of false if the ApplicationService is outdated', () => {
     const outdatedAppService1 = new ApplicationServiceStub('2.2.5', currentVersion);
     outdatedAppService1.isApplicationOutdated().subscribe((bool) => expect(bool).toBe(false));
     const outdatedAppService2 = new ApplicationServiceStub('3.1', currentVersion);
@@ -24,7 +24,9 @@ describe('Test the ApplicationService', () => {
     longVersionedAppService.isApplicationOutdated().subscribe((bool) => expect(bool).toBe(false));
     const latestApplicationService = new ApplicationServiceStub(currentVersion, currentVersion);
     latestApplicationService.isApplicationOutdated().subscribe((bool) => expect(bool).toBe(false));
-    // expect(upToDateAppService.isApplicationOutdated()).toBe(false);
+  });
+
+  it('should return an Observable of true if the ApplicationService is up to date', () => {
     const upToDateAppService1 = new ApplicationServiceStub('3.2.5.0', currentVersion);
     upToDateAppService1.isApplicationOutdated().subscribe((bool) => expect(bool).toBe(true));
     const upToDateAppService2 = new ApplicationServiceStub('3.2.5.5', currentVersion);
