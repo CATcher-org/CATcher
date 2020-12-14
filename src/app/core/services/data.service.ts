@@ -220,11 +220,11 @@ export class DataService {
       const lineValues = line.split(',').map(v => v.trim());
       const lineObj = {};
       for (let j = 0; j < headers.length; j++) {
-        const header = headers[j];
         if (!lineValues[j]) {
-          lineObj[header] = null;
+          lineObj[headers[j]] = null;
+        } else {
+          lineObj[headers[j]] = lineValues[j];
         }
-        lineObj[header] = lineValues[j];
       }
       result.push(lineObj);
     }
