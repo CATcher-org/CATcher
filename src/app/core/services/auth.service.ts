@@ -22,8 +22,6 @@ export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOA
   providedIn: 'root'
 })
 export class AuthService {
-  readonly githubLoginCacheName = 'is_logged_in';
-
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
@@ -84,14 +82,13 @@ export class AuthService {
 
   /**
    * Will start the Github OAuth web flow process.
-   * @param clearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
    */
-  startOAuthProcess(clearAuthState: boolean = false) {
+  startOAuthProcess() {
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
     if (this.electronService.isElectron()) {
-      this.electronService.sendIpcMessage('github-oauth', clearAuthState, githubRepoPermission);
+      this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
     } else {
       const authService = this;
       const oauthWindow = this.createOauthWindow(encodeURI(
@@ -105,7 +102,7 @@ export class AuthService {
     }
   }
 
-  private confirmWindowClosed(window) {
+  private confirmWindowClosed(window: Window): void {
     const authService = this;
     const pollTimer = window.setInterval(function() {
       if (window.closed) {
@@ -117,7 +114,14 @@ export class AuthService {
     }, 1000);
   }
 
-  private createOauthWindow(url: string, name = 'Authorization', width = 500, height = 600, left = 0, top = 0) {
+  private createOauthWindow(
+    url: string,
+    name: string = 'Authorization',
+    width: number = 500,
+    height: number = 600,
+    left: number = 0,
+    top: number = 0
+  ): Window {
     if (url == null) {
       return null;
     }

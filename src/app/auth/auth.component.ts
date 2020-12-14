@@ -90,7 +90,6 @@ export class AuthComponent implements OnInit, OnDestroy {
         filter((token: string) => !!token),
         flatMap(() => this.userService.getAuthenticatedUser())
       ).subscribe((user: GithubUser) => {
-        console.log(user);
         this.ngZone.run(() => {
           this.currentUserName = user.login;
           if (this.isUserAuthenticating() || this.isAwaitingOAuthUserConfirm()) {
@@ -219,6 +218,11 @@ export class AuthComponent implements OnInit, OnDestroy {
   logIntoAnotherAccount() {
     this.electronService.clearCookies();
     this.auth.startOAuthProcess();
+  }
+
+  onGithubWebsiteClicked() {
+    window.open('https://github.com/', '_blank');
+    window.location.reload();
   }
 
   /**

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ipcRenderer, remote, clipboard, Menu, MenuItem } from 'electron';
 import * as fs from 'fs';
 import { AppConfig } from '../../../environments/environment';
-import * as moment from 'moment';
 
 declare var window: Window;
 declare global {
@@ -25,7 +24,7 @@ export class ElectronService {
   clipboard: typeof clipboard;
   fs: typeof fs;
 
-constructor() {
+  constructor() {
     if (this.isElectron()) {
       this.ipcRenderer = window.require('electron').ipcRenderer;
       this.remote = window.require('electron').remote;
@@ -57,18 +56,6 @@ constructor() {
       this.rightClickPosition = {x: e.x, y: e.y};
       this.rightClickMenu.popup({window: this.remote.getCurrentWindow()});
     }, false);
-  }
-
-  setCookie(url: string, domain: string, key: string, value: string) {
-    if (this.isElectron()) {
-      this.remote.getCurrentWebContents().session.cookies.set({
-        url: url,
-        name: key,
-        value: value,
-        domain: domain,
-        expirationDate: moment().add(7, 'days').unix()
-      });
-    }
   }
 
   clearCookies() {
@@ -123,27 +110,6 @@ constructor() {
       return this.fs.existsSync(filePath);
     } else {
       return false;
-    }
-  }
-
-  retrieveClipboardImageFileTypes(event: ClipboardEvent): string[] {
-    if (this.isElectron()) {
-      return this.clipboard.availableFormats().filter(type => type.includes('image'));
-    }
-    const result = [];
-    const items = event.clipboardData.items;
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') === 0) {
-        result.push(items[i]);
-      }
-    }
-  }
-
-  readClipboardImage(): string {
-    if (this.isElectron()) {
-      return this.clipboard.readImage().toDataURL();
-    } else {
-      return '';
     }
   }
 }

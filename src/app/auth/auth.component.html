@@ -66,7 +66,8 @@
         <button *ngIf="electronService.isElectron()" mat-button style="margin-top: 10px; margin-bottom: 10px;" [disabled]="isUserAuthenticating()"
                 (click)="logIntoAnotherAccount()"> Log in to another account </button>
         <div *ngIf="!electronService.isElectron()" class="mat-body-1" style="margin-top: 20px;">
-          To change account, please sign out from the official Github website
+          To change account, please sign into the desired account from the
+          <a href="https://github.com/" (click)="onGithubWebsiteClicked()">official Github website</a>.
         </div>
       </div>
       <div *ngIf="isUserAuthenticating()" class="spinner-centralize">
