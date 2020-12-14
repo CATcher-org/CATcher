@@ -15,6 +15,7 @@ import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
 import { uuid } from '../../shared/lib/uuid';
 import { AppConfig } from '../../../environments/environment';
+import { LoggingService } from './logging.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
 
@@ -35,7 +36,8 @@ export class AuthService {
               private labelService: LabelService,
               private dataService: DataService,
               private githubEventService: GithubEventService,
-              private titleService: Title) {}
+              private titleService: Title,
+              private logger: LoggingService) {}
 
   /**
    * Will store the OAuth token.
@@ -75,7 +77,7 @@ export class AuthService {
     if (newAuthState === AuthState.Authenticated) {
       const sessionId = `${Date.now()}-${uuid()}`;
       this.issueService.setSessionId(sessionId);
-      console.log(`Successfully authenticated with session: ${sessionId}`);
+      this.logger.info(`Successfully authenticated with session: ${sessionId}`);
     }
     this.authStateSource.next(newAuthState);
   }
