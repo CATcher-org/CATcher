@@ -8,7 +8,7 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
     outputs:
-      upload-url: ${{ steps.draft_release.outputs.upload-url }}
+      upload-url: ${{ steps.set_upload_url.outputs.upload-url }}
     steps:
       - name: Create Draft Release
         id: draft_release
@@ -20,6 +20,8 @@ jobs:
           release_name: ${{ github.ref }}
           draft: true
           prerelease: false
+      - name: Set upload_url Context
+        id: set_upload_url
         run: echo "::set-output name=upload-url::{\"upload-url\":{\"${{steps.draft_release.outputs.upload_url}}\"}"
 
 
