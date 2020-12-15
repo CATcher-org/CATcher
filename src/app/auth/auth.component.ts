@@ -54,9 +54,10 @@ export class AuthComponent implements OnInit, OnDestroy {
               private authService: AuthService,
               private titleService: Title,
               private ngZone: NgZone,
-              private activatedRoute: ActivatedRoute) {
-  this.electronService.registerIpcListener('github-oauth-reply',
-    (event, {token, error, isWindowClosed}) => {
+              private activatedRoute: ActivatedRoute
+  ) {
+    this.electronService.registerIpcListener('github-oauth-reply',
+      (event, {token, error, isWindowClosed}) => {
       this.ngZone.run(() => {
         if (error) {
           if (!isWindowClosed) {
@@ -71,20 +72,18 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
-    if (oauthCode) {
-      this.isReady = false;
+
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate([this.phaseService.currentPhase]);
+      return;
+    }
+
+    if (oauthCode) { // In the web's oauth window
       window.opener.postMessage({ oauthCode }, AppConfig.origin);
-      window.addEventListener('message', (event) => {
-        if (event.origin !== AppConfig.origin) {
-          return;
-        }
-        if (event.data === 'close') {
-          window.opener.focus();
-          window.close();
-        }
-      });
-    } else {
+      this.listenForCloseOAuthWindowMessage();
+    } else { // In the main app window
       this.checkAppIsOutdated();
       this.accessTokenSubscription = this.auth.accessToken.pipe(
         filter((token: string) => !!token),
@@ -110,8 +109,11 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * A listener for receiving the access token from the oauth window.
+   */
   @HostListener('window:message', ['$event'])
-  onMessage(event) {
+  onMessage(event: MessageEvent) {
     if (event.origin !== AppConfig.origin) {
       return;
     }
@@ -127,22 +129,27 @@ export class AuthComponent implements OnInit, OnDestroy {
             throw(new Error(data.error));
           }
           this.auth.storeOAuthAccessToken(data.token);
-          event.source.postMessage('close', AppConfig.origin);
+          if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
+            event.source.postMessage('close', AppConfig.origin);
+          }
         }
       );
   }
 
   ngOnDestroy() {
     this.electronService.removeIpcListeners('github-oauth-reply');
-    this.authStateSubscription.unsubscribe();
-    this.accessTokenSubscription.unsubscribe();
+    if (this.authStateSubscription) {
+      this.authStateSubscription.unsubscribe();
+    }
+    if (this.accessTokenSubscription) {
+      this.accessTokenSubscription.unsubscribe();
+    }
   }
 
   /**
    * Checks whether the current version of CATcher is outdated.
    */
   checkAppIsOutdated(): void {
-    this.isReady = false;
     this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
       this.isAppOutdated = isOutdated;
       this.isReady = true;
@@ -257,6 +264,21 @@ export class AuthComponent implements OnInit, OnDestroy {
   get currentSessionOrg(): string {
     const sessionInformation: string = this.profileForm.get('session').value;
     return this.getOrgDetails(sessionInformation);
+  }
+
+  /**
+   * Will wait for the message from parent window to close the window.
+   */
+  private listenForCloseOAuthWindowMessage() {
+    window.addEventListener('message', (event) => {
+      if (event.origin !== AppConfig.origin) {
+        return;
+      }
+      if (event.data === 'close') {
+        window.opener.focus();
+        window.close();
+      }
+    });
   }
 
   /**

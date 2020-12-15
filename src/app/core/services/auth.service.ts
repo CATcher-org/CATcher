@@ -96,14 +96,19 @@ export class AuthService {
       const oauthWindow = this.createOauthWindow(encodeURI(
         `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
       ));
-      oauthWindow.addEventListener('unload', function(event) {
+      oauthWindow.addEventListener('unload', () => {
         if (!oauthWindow.closed) {
+          // unload event could be triggered when there is a redirection, hence, a confirmation needed.
           authService.confirmWindowClosed(oauthWindow);
         }
       });
     }
   }
 
+  /**
+   * Will do a poll on whether the given window is closed.
+   * If it is closed and user is still not authenticated, change the auth status to not authenticated.
+   */
   private confirmWindowClosed(window: Window): void {
     const authService = this;
     const pollTimer = window.setInterval(function() {
@@ -116,9 +121,11 @@ export class AuthService {
     }, 1000);
   }
 
+  /**
+   * Will create a web version of oauth window.
+   */
   private createOauthWindow(
     url: string,
-    name: string = 'Authorization',
     width: number = 500,
     height: number = 600,
     left: number = 0,
@@ -128,6 +135,6 @@ export class AuthService {
       return null;
     }
     const options = `width=${width},height=${height},left=${left},top=${top}`;
-    return window.open(`${url}`, name, options);
+    return window.open(`${url}`, 'Authorization', options);
   }
 }
