@@ -5,10 +5,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  draft-release:
+  draft_release:
     runs-on: ubuntu-latest
     outputs:
-      upload-url: ${{ steps.set_upload_url.outputs.upload-url }}
+      upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
+      version_num: ${{ steps.set_version.outputs.version_num }}
     steps:
       - name: Create Draft Release
         id: draft_release
@@ -22,11 +23,17 @@ jobs:
           prerelease: false
       - name: Set upload_url Context
         id: set_upload_url
-        run: echo "::set-output name=upload-url::${{steps.draft_release.outputs.upload_url}}"
+        run: echo "::set-output name=upload_url::${{steps.draft_release.outputs.upload_url}}"
+      - name: Get Version Number
+        id: get_version
+        uses: martinbeentjes/npm-get-version-action@master
+      - name: Set Version Number
+        id: set_version
+        run: echo "::set-output name=version_num::${{steps.get_version.outputs.version_num}}"
 
-  deploy-linux:
+  deploy_linux:
     runs-on: ubuntu-latest
-    needs: draft-release
+    needs: draft_release
     strategy:
       matrix:
         node-version: [ 12.x ]
@@ -45,13 +52,13 @@ jobs:
           npm run electron:linux
       - name: test
         run: |
-          echo ${{ needs.draft-release.outputs.upload-url }}
+          echo ${{ needs.draft_release.outputs.upload_url }}
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          upload_url: ${{ needs.draft-release.outputs.upload-url }}
-          asset_path: ./release/CATcher*.AppImage
-          asset_name: CATcher-linux.AppImage
+          upload_url: ${{ needs.draft_release.outputs.upload_url }}
+          asset_path: ./release/CATcher-${{ needs.draft_release.outputs.version_num }}.AppImage
+          asset_name: CATcher-${{ needs.draft_release.outputs.version_num }}.AppImage
           asset_content_type: application/octet-stream
