@@ -53,3 +53,4 @@ jobs:
         with:
           upload_url: ${{ needs.draft-release.outputs.upload-url }}
           asset_path: ./release/CATcher*.exe
+          asset_name: CATcher-linux.exe
