@@ -91,7 +91,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.draft_release.outputs.upload_url }}
-          asset_path: ./release/CATcher-${{ needs.draft_release.outputs.version_num }}^ .exe
+          asset_path: ./release/CATcher-${{ needs.draft_release.outputs.version_num }} .exe
           asset_name: CATcher-${{ needs.draft_release.outputs.version_num }}.exe
           asset_content_type: application/octet-stream
 
