@@ -22,7 +22,7 @@ jobs:
           prerelease: false
       - name: Set upload_url Context
         id: set_upload_url
-        run: echo "::set-output name=upload-url::{\"upload-url\":${{steps.draft_release.outputs.upload_url}} }"
+        run: echo "::set-output name=upload-url::${{steps.draft_release.outputs.upload_url}}"
 
   deploy-linux:
     runs-on: ubuntu-latest
