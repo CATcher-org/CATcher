@@ -54,3 +54,4 @@ jobs:
           upload_url: ${{ needs.draft-release.outputs.upload-url }}
           asset_path: ./release/CATcher*.AppImage
           asset_name: CATcher-linux.AppImage
+          asset_content_type: application/octet-stream
