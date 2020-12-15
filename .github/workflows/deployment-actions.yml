@@ -52,5 +52,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           upload_url: ${{ needs.draft-release.outputs.upload-url }}
-          asset_path: ./release/CATcher*.exe
-          asset_name: CATcher-linux.exe
+          asset_path: ./release/CATcher*.AppImage
+          asset_name: CATcher-linux.AppImage
