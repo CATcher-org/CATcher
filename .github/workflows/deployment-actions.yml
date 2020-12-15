@@ -26,6 +26,7 @@ jobs:
 
   deploy-linux:
     runs-on: ubuntu-latest
+    needs: draft-release
     strategy:
       matrix:
         node-version: [ 12.x ]
