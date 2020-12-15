@@ -26,7 +26,7 @@ jobs:
         run: echo "::set-output name=upload_url::${{ steps.draft_release.outputs.upload_url }}"
       - name: Get Version Number
         id: get_version
-        uses: Saionaro/extract-package-version@v1.1.1
+        uses: tyankatsu0105/read-package-version-actions@v1
       - name: Set Version Number
         id: set_version
         run: echo "::set-output name=version_num::${{ steps.get_version.outputs.version }}"
