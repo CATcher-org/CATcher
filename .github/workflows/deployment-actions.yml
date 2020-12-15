@@ -23,4 +23,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm install
-          npm run deploy:web
+          npm run deploy:web -- --repo=https://${{secrets.GH_TOKEN}}@github.com/JunWei96/CATcher.git
