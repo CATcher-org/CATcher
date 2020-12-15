@@ -14,7 +14,7 @@
     "build:prod:web": "npm run codegen:gql && ng build --prod --base-href=https://JunWei96.github.io/CATcher/",
     "ng:serve": "ng serve",
     "ng:serve:web": "npm run postinstall:web && ng serve -o",
-    "deploy:web": "npm run build:prod:web && ngh --dir=dist --no-silent",
+    "deploy:web": "npm run build:prod:web && ngh --dir=dist --name=CATcher --email=kjunwei1996@gmail.com --no-silent",
     "electron:serve-tsc": "tsc -p tsconfig-serve.json",
     "electron:serve": "wait-on http-get://localhost:4200/ && npm run electron:serve-tsc && electron . --serve",
     "electron:local": "npm run build:prod && electron .",
