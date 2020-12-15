@@ -10,7 +10,7 @@
     "start": "npm run postinstall:electron && npm-run-all -p codegen:gql-watch ng:serve electron:serve",
     "build": "npm run postinstall:electron && npm run codegen:gql && npm run electron:serve-tsc && ng build",
     "build:dev": "npm run build -- -c dev",
-    "build:prod": "npm run build -- -c production -- --base-href=./",
+    "build:prod": "npm run build -- -c production --base-href=./",
     "build:prod:web": "npm run codegen:gql && ng build --prod --base-href=https://JunWei96.github.io/CATcher/",
     "ng:serve": "ng serve",
     "ng:serve:web": "npm run postinstall:web && ng serve -o",

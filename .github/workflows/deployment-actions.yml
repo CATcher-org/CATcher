@@ -5,12 +5,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  draft-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload-url: ${{ steps.draft_release.outputs.upload-url }}
+    steps:
+      - name: Create Draft Release
+        id: draft_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: true
+          prerelease: false
+        run: echo "::set-output name=upload-url::{\"upload-url\":{\"${{steps.draft_release.outputs.upload_url}}\"}"
+
+
+  deploy-web:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [12.x]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -18,9 +35,33 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Prepare and deploy
+      - name: Deploy on Web
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm install
           npm run deploy:web -- --repo=https://${{secrets.GH_TOKEN}}@github.com/JunWei96/CATcher.git
+
+  deploy-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 12.x ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Build
+        run: |
+          npm install
+          npm run electron:linux
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.draft_release.outputs.upload_url }}
+          asset_path: ./release/CATcher*.exe
