@@ -44,11 +44,11 @@ jobs:
           npm run electron:linux
       - name: test
         run: |
-          echo ${{ needs.draft-release.outputs.upload_url }}
+          echo ${{ needs.draft-release.outputs.upload-url }}
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          upload_url: ${{ needs.draft-release.outputs.upload_url }}
+          upload_url: ${{ needs.draft-release.outputs.upload-url }}
           asset_path: ./release/CATcher*.exe
