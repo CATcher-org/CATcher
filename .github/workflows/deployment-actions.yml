@@ -29,7 +29,7 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@master
       - name: Set Version Number
         id: set_version
-        run: echo "::set-output name=version_num::${{steps.get_version.outputs.version_num}}"
+        run: echo "::set-output name=version_num::${{steps.get_version.outputs.current-version}}"
 
   deploy_linux:
     runs-on: ubuntu-latest
