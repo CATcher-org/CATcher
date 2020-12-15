@@ -37,6 +37,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Build
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm install
           npm run electron:linux
