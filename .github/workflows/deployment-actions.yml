@@ -42,7 +42,7 @@ jobs:
         run: |
           npm install
           npm run electron:linux
-      - name test
+      - name: test
         run: |
           echo ${{ needs.draft-release.outputs.upload_url }}
       - name: Upload Release Asset
