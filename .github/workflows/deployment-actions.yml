@@ -5,6 +5,25 @@ on:
   workflow_dispatch:
 
 jobs:
+  deploy-web:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Deploy on Web
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          npm install
+          npm run deploy:web -- --repo=https://${{secrets.GH_TOKEN}}@github.com/JunWei96/CATcher.git
+
   draft_release:
     runs-on: ubuntu-latest
     outputs:
@@ -13,16 +32,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Create Draft Release
-        id: draft_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: true
-          prerelease: false
       - name: Set upload_url Context
         id: set_upload_url
         run: echo "::set-output name=upload_url::${{ steps.draft_release.outputs.upload_url }}"
@@ -32,6 +41,16 @@ jobs:
       - name: Set Version Number
         id: set_version
         run: echo "::set-output name=version_num::${{ steps.get_version.outputs.version }}"
+      - name: Create Draft Release
+        id: draft_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: V${{ steps.get_version.outputs.version }}
+          release_name: V${{ steps.get_version.outputs.version }}
+          draft: true
+          prerelease: false
 
   deploy_linux:
     runs-on: ubuntu-latest
