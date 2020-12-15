@@ -23,13 +23,13 @@ jobs:
           prerelease: false
       - name: Set upload_url Context
         id: set_upload_url
-        run: echo "::set-output name=upload_url::${{steps.draft_release.outputs.upload_url}}"
+        run: echo "::set-output name=upload_url::${{ steps.draft_release.outputs.upload_url }}"
       - name: Get Version Number
         id: get_version
-        uses: martinbeentjes/npm-get-version-action@master
+        uses: Saionaro/extract-package-version@v1.1.1
       - name: Set Version Number
         id: set_version
-        run: echo "::set-output name=version_num::${{steps.get_version.outputs.current-version}}"
+        run: echo "::set-output name=version_num::${{ steps.get_version.outputs.version }}"
 
   deploy_linux:
     runs-on: ubuntu-latest
@@ -53,6 +53,8 @@ jobs:
       - name: test
         run: |
           echo ${{ needs.draft_release.outputs.upload_url }}
+          echo ${{ needs.draft_release.outputs.version_num }}
+          ls release
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
