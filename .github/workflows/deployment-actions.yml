@@ -83,7 +83,6 @@ jobs:
           npm run electron:windows
       - name: test
         run: |
-          echo ${{ needs.draft_release.outputs.upload_url }}
           echo ${{ needs.draft_release.outputs.version_num }}
           ls release
       - name: Upload Release Asset
