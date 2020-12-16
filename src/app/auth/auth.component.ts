@@ -110,7 +110,8 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * A listener for receiving the access token from the oauth window.
+   * A listener for receiving the oauthCode from the oauth window.
+   * With the oauth code, we can retrieve the accessToken from github.
    */
   @HostListener('window:message', ['$event'])
   onMessage(event: MessageEvent) {
