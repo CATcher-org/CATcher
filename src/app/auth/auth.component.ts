@@ -91,11 +91,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       ).subscribe((user: GithubUser) => {
         this.ngZone.run(() => {
           this.currentUserName = user.login;
-          if (this.isUserAuthenticating() || this.isAwaitingOAuthUserConfirm()) {
-            this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
-          } else {
-            this.completeLoginProcess(this.currentUserName);
-          }
+          this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
         });
       });
       this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
