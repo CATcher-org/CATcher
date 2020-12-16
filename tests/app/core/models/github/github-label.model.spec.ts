@@ -5,22 +5,17 @@ describe('GithubLabel', () => {
   const category = 'severity';
   const value = 'LOW';
 
-  it('should returns false on isCategorical() when provided wit no name', () => {
+  it('.isCategorical() should return false when provided with no name', () => {
     githubLabel = new GithubLabel({ });
     expect(githubLabel.isCategorical()).toEqual(false);
   });
 
-  it('should returns false on isCategorical() when provided with invalid label name', () => {
+  it('.isCategorical() should return false when provided with an invalid label name', () => {
     githubLabel = new GithubLabel({ name: `${category}${value}`  });
     expect(githubLabel.isCategorical()).toEqual(false);
 
     githubLabel = new GithubLabel({ name: `${category}             ${value}`  });
     expect(githubLabel.isCategorical()).toEqual(false);
-  });
-
-  it('should returns true on isCategorical() when provided with valid label name', () => {
-    githubLabel = new GithubLabel({ name: `${category}.${value}` });
-    expect(githubLabel.isCategorical()).toEqual(true);
 
     githubLabel = new GithubLabel({ name: `${category}.......${value}` });
     expect(githubLabel.isCategorical()).toEqual(false);
@@ -29,11 +24,18 @@ describe('GithubLabel', () => {
     expect(githubLabel.isCategorical()).toEqual(false);
   });
 
-  it ('should return correct values on getCategory() and getValue()', () => {
+  it('.isCategorical() should return true when provided with valid label name', () => {
+    githubLabel = new GithubLabel({ name: `${category}.${value}` });
+    expect(githubLabel.isCategorical()).toEqual(true);
+  });
+
+  it ('.getCategory() and .getValue() should return the correct values given a categorical label name', () => {
     githubLabel = new GithubLabel({ name: `${category}.${value}` });
     expect(githubLabel.getCategory()).toEqual(category);
     expect(githubLabel.getValue()).toEqual(value);
+  });
 
+  it ('.getCategory() and .getValue() should return the exact label name given an invalid label name', () => {
     githubLabel = new GithubLabel({ name: `${category}.......${value}` });
     expect(githubLabel.getCategory()).toEqual(githubLabel.name);
     expect(githubLabel.getValue()).toEqual(githubLabel.name);
