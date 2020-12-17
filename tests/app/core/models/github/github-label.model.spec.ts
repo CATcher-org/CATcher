@@ -10,7 +10,7 @@ describe('GithubLabel', () => {
     expect(githubLabel.isCategorical()).toEqual(false);
   });
 
-  it('.isCategorical() should return false when provided with an non-categorical label name', () => {
+  it('.isCategorical() should return false when provided with a non-categorical label name', () => {
     githubLabel = new GithubLabel({ name: `${category}${value}`  });
     expect(githubLabel.isCategorical()).toEqual(false);
 
@@ -24,7 +24,7 @@ describe('GithubLabel', () => {
     expect(githubLabel.isCategorical()).toEqual(false);
   });
 
-  it('.isCategorical() should return true when provided with categorical label name', () => {
+  it('.isCategorical() should return true when provided with a categorical label name', () => {
     githubLabel = new GithubLabel({ name: `${category}.${value}` });
     expect(githubLabel.isCategorical()).toEqual(true);
   });
@@ -35,7 +35,7 @@ describe('GithubLabel', () => {
     expect(githubLabel.getValue()).toEqual(value);
   });
 
-  it ('.getCategory() and .getValue() should return the exact label name given an non-categorical label name', () => {
+  it ('.getCategory() and .getValue() should return the exact label name given a non-categorical label name', () => {
     githubLabel = new GithubLabel({ name: `${category}.......${value}` });
     expect(githubLabel.getCategory()).toEqual(githubLabel.name);
     expect(githubLabel.getValue()).toEqual(githubLabel.name);
