@@ -18,31 +18,33 @@ export class GithubLabel {
   color: string;
   id: number;
   name: string;
+  category: string;
+  label: string;
   url: string;
 
   constructor(githubLabels: {}) {
     Object.assign(this, githubLabels);
+
+    if (this.isCategorical()) {
+      this.category = this.name.split('.')[0];
+      this.label = this.name.split('.')[1];
+    } else {
+      this.category = this.name;
+      this.label = this.name;
+    }
     Object.freeze(this);
   }
 
   getCategory(): string {
-    if (this.isCategorical()) {
-      return this.name.split('.')[0];
-    } else {
-      return this.name;
-    }
+    return this.category;
   }
 
   getValue(): string {
-    if (this.isCategorical()) {
-      return this.name.split('.')[1];
-    } else {
-      return this.name;
-    }
+    return this.label;
   }
 
   isCategorical(): boolean {
-    const regex = /^\S+\.\S+$/;
+    const regex = /^[^.]+\.[^.]+$/;
     return regex.test(this.name);
   }
 }
