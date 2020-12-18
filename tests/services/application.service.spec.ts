@@ -12,7 +12,7 @@ class ApplicationServiceStub extends ApplicationService {
   }
 }
 
-describe('Test for ApplicationService#isApplicationOutdated', () => {
+describe('ApplicationService#isApplicationOutdated', () => {
   const githubService = jasmine.createSpyObj('GithubService', ['fetchLatestRelease']);
   it('should return the appropriate Observable if the ApplicationService is outdated', () => {
     githubService.fetchLatestRelease.and.returnValue(of({tag_name: 'v2.2.5'}));
