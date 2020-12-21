@@ -21,8 +21,15 @@ Before building the application using the build commands below, go to `index.htm
 |`npm run electron:linux`| Builds your application and creates an app consumable on linux system |
 |`npm run electron:windows`| On a Windows OS, builds your application and creates an app consumable in windows 32/64 bit systems |
 |`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
-|`npm run deploy:web`| Environment variable prerequisite: `GH_TOKEN=<Github Personal Access Token>`. Will deploy the app onto the Github's `gh-pages` branch. |
+|`npm run deploy:web`| Prerequisites:<br/> 1. Add Environment variable of `GH_TOKEN=<Github Personal Access Token>`. <br/>2. `build:prod:web` command's `--base-href` argument in `package.json` must have the following format `https://<OrgName or Username>.github.io/CATcher/`. <br/> Will deploy the app onto the Github's `gh-pages` branch. |
 | `npm run lint` | Runs the linter (TSLint) |
+
+# Deployment of Web
+There are a few things to take note when deploying the web version of CATcher:
+1. Change the `build:prod:web` command in `package.json` file. 
+In this command there is an argument, `--base-href`. Change the value for this argument to the following format
+`https://<OrgName or Username>.github.io/CATcher/`.
+2. 
 
 # Workflow
 When a pull request is merged, it should be accompanied by a helpful commit message.
