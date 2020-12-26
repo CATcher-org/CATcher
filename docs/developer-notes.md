@@ -21,15 +21,8 @@ Before building the application using the build commands below, go to `index.htm
 |`npm run electron:linux`| Builds your application and creates an app consumable on linux system |
 |`npm run electron:windows`| On a Windows OS, builds your application and creates an app consumable in windows 32/64 bit systems |
 |`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
-|`npm run deploy:web`| Prerequisites:<br/> 1. Add Environment variable of `GH_TOKEN=<Github Personal Access Token>`. <br/>2. `build:prod:web` command's `--base-href` argument in `package.json` must have the following format `https://<OrgName or Username>.github.io/CATcher/`. <br/> Will deploy the app onto the Github's `gh-pages` branch. |
+|`npm run deploy:web`| Will deploy the app onto the Github's `gh-pages` branch. <br/> Prerequisites:<br/> 1. Add Environment variable of `GH_TOKEN=<Github Personal Access Token>` with the permission of `repo`. <br/>2. `build:prod:web` command's `--base-href` argument in `package.json` must have the following format `https://<OrgName or Username>.github.io/CATcher/`. |
 | `npm run lint` | Runs the linter (TSLint) |
-
-# Deployment of Web
-There are a few things to take note when deploying the web version of CATcher:
-1. Change the `build:prod:web` command in `package.json` file. 
-In this command there is an argument, `--base-href`. Change the value for this argument to the following format
-`https://<OrgName or Username>.github.io/CATcher/`.
-2. 
 
 # Workflow
 When a pull request is merged, it should be accompanied by a helpful commit message.
@@ -67,7 +60,7 @@ CATcher uses the OAuth 2.0 protocol to authenticate users. Below is a summary of
 
 3. Authentication is complete, and CATcher can now use the access token when it uses the GitHub API for its logic (e.g. submitting new issues, editing existing issues)
 
-The authentication process is kicked off in the `AuthComponent`, but the code that co-ordinates steps 1 and 2 can be found in [`oauth.ts`](../oauth.ts). Step 2 requires a client secret granted to CATcher. To protect this, we run a web service, [gatekeeper](https://github.com/CATcher-org/gatekeeper) that executes step 2 on behalf of the client CATcher app.
+The authentication process is kicked off in the `AuthComponent`, but the code that co-ordinates steps 1 and 2 can be found in [`oauth.ts`](../oauth.ts)(For Electron) or `AuthService`(For Web). Step 2 requires a client secret granted to CATcher. To protect this, we run a web service, [gatekeeper](https://github.com/CATcher-org/gatekeeper) that executes step 2 on behalf of the client CATcher app.
 
 
 # Future Developments
