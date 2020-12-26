@@ -1,46 +1,66 @@
-# Getting started
+# Setting up 
+This section guides you through the steps required to set up your computer for developing CATcher.
+
+## Prerequisites
+You need Node 12 to develop this project. 
+Run `node -v` in your OS terminal to check the version of Node on your computer. 
+
+If you do not have Node 12 installed in your computer, click on [this link](https://nodejs.org/en/blog/release/v12.20.0/) to download Node 12. 
+
+## Getting Started
 1. Fork this repository into your Github account.
 
 2. Clone the forked repository into your computer.
 
-3. Make sure you are using Node 12 for this project.
+3. Install dependencies with npm: Run `npm install`.
 
-4. Install dependencies with npm: `npm install` 
-
-5. Compile and start the application: `npm start`
+4. Compile and start the application: Run `npm start`.
 
 # Commands
-Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file. 
+This section shows you different commands you can run to build the application in different operating systems.
+<div markdown="block" class="alert alert-info">
+
+**:information_source: Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file. **<br>
+
+</div>
+
 |Command|Description|
 |--|--|
-|`npm run build`| Build the app. Your built files are in the /dist folder. |
-|`npm run build:prod`| Build the app with Angular aot. Your built files are in the /dist folder. |
-|`npm run electron:local`| Builds your application and start electron
-|`npm run electron:linux`| Builds your application and creates an app consumable on linux system |
-|`npm run electron:windows`| On a Windows OS, builds your application and creates an app consumable in windows 32/64 bit systems |
-|`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
-| `npm run lint` | Runs the linter (TSLint) |
+|`npm run build`| Builds the application. Your built files are in the /dist folder. |
+|`npm run build:prod`| Builds the application with Angular aot. Your built files are in the /dist folder. |
+|`npm run electron:local`| Builds your application and starts electron. |
+|`npm run electron:linux`| **(Linux OS)** Builds your application and creates an app consumable in linux systems. |
+|`npm run electron:windows`| **(Windows OS)** Builds your application and creates an app consumable in Windows 32/64 bit systems. |
+|`npm run electron:mac`|  **(Mac OS)** Builds your application and generates a `.app` file of your application that can be run on a Mac OS. |
+| `npm run lint` | Runs the linter (TSLint). |
 
 # Workflow
-When a pull request is merged, it should be accompanied by a helpful commit message.
+
+The following is the workflow that contributors need to follow when proposing changes to CATcher.
+
+## Submitting PRs
+
+When a pull request is merged, it should be accompanied by a helpful commit message. Hence, contributors are recommended to propose a commit message for their pull requests.
 [Here](https://oss-generic.github.io/process/docs/FormatsAndConventions.html#commit-message) are
 some good guidelines for crafting the commit message.
 
-Contributors can propose a commit message for their pull requests.
-
-# Testing
+## Testing
 
 We use [Scuri](https://github.com/gparlakov/scuri) to generate spec files for unit tests.
-
-To generate spec files for files that have none.
-`npm run ng g scuri:spec --name src/app/app.component.ts`
-
-To generate spec files for files that have existing spec files.
-`npm run ng g scuri:spec --name src/app/app.component.ts --force`
-
 Scuri uses [Jasmine's spy feature](https://jasmine.github.io/2.0/introduction.html#section-Spies) to stub dependencies.
 
-We loosely follow [this style guide](https://github.com/CareMessagePlatform/jasmine-styleguide) when writing tests. One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
+### Generating Spec Files
+
+- To generate spec files for files that have none:
+    Run `npm run ng g scuri:spec --name src/app/app.component.ts`
+
+- To generate spec files for files that have existing spec files:  
+    Run `npm run ng g scuri:spec --name src/app/app.component.ts --force`
+
+### Style Guide 
+
+We loosely follow the [Jasmine Style Guide](https://github.com/CareMessagePlatform/jasmine-styleguide) when writing tests. 
+One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
 
 # Implementation
 
