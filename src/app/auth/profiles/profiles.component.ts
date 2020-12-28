@@ -64,7 +64,7 @@ export class ProfilesComponent implements OnInit {
   constructor(private electronService: ElectronService, public errorDialog: MatDialog) { }
 
   ngOnInit() {
-    const temp = this.electronService.sendIpcSycMessage('synchronous-message', 'getDirectory');
+    const temp = this.electronService.getCurrentDirectory();
     this.filePath = [temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''), this.PROFILES_FILE_NAME].join('/');
     this.readProfiles();
   }
