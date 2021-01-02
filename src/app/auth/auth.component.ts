@@ -51,7 +51,6 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-              private authService: AuthService,
               private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute
@@ -66,7 +65,7 @@ export class AuthComponent implements OnInit, OnDestroy {
           this.goToSessionSelect();
           return;
         }
-        this.authService.storeOAuthAccessToken(token);
+        this.auth.storeOAuthAccessToken(token);
       });
     });
   }
@@ -75,7 +74,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
 
-    if (this.authService.isAuthenticated()) {
+    if (this.auth.isAuthenticated()) {
       this.router.navigate([this.phaseService.currentPhase]);
       return;
     }
@@ -130,7 +129,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       )
       .catch(err => {
         this.errorHandlingService.handleError(err);
-        this.authService.changeAuthState(AuthState.NotAuthenticated);
+        this.auth.changeAuthState(AuthState.NotAuthenticated);
       })
       .finally(() => {
         if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
@@ -245,11 +244,11 @@ export class AuthComponent implements OnInit, OnDestroy {
       .concat(' - ')
       .concat(this.phaseService.getPhaseDetail()));
     this.router.navigateByUrl(this.phaseService.currentPhase);
-    this.authService.changeAuthState(AuthState.Authenticated);
+    this.auth.changeAuthState(AuthState.Authenticated);
   }
 
   goToSessionSelect() {
-    this.authService.changeAuthState(AuthState.NotAuthenticated);
+    this.auth.changeAuthState(AuthState.NotAuthenticated);
   }
 
   isUserNotAuthenticated(): boolean {
