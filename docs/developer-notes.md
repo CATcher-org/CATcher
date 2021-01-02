@@ -18,11 +18,9 @@ If you do not have Node 12 installed in your computer, click on [this link](http
 
 # Commands
 This section shows you different commands you can run to build the application in different operating systems.
-<div markdown="block" class="alert alert-info">
 
-**:information_source: Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file. **<br>
+**Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file.**
 
-</div>
 
 |Command|Description|
 |--|--|
