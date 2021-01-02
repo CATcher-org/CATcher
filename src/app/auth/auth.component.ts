@@ -126,11 +126,17 @@ export class AuthComponent implements OnInit, OnDestroy {
             throw(new Error(data.error));
           }
           this.auth.storeOAuthAccessToken(data.token);
-          if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
-            event.source.postMessage('close', AppConfig.origin);
-          }
         }
-      );
+      )
+      .catch(err => {
+        this.errorHandlingService.handleError(err);
+        this.authService.changeAuthState(AuthState.NotAuthenticated);
+      })
+      .finally(() => {
+        if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
+          event.source.postMessage('close', AppConfig.origin);
+        }
+      });
   }
 
   ngOnDestroy() {
