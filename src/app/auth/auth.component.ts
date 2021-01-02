@@ -41,10 +41,10 @@ export class AuthComponent implements OnInit, OnDestroy {
   profileLocationPrompt: string;
   currentUserName: string;
 
-  constructor(public auth: AuthService,
-              public appService: ApplicationService,
+  constructor(public appService: ApplicationService,
               public electronService: ElectronService,
               private githubService: GithubService,
+              private authService: AuthService,
               private githubEventService: GithubEventService,
               private userService: UserService,
               private formBuilder: FormBuilder,
@@ -65,7 +65,7 @@ export class AuthComponent implements OnInit, OnDestroy {
           this.goToSessionSelect();
           return;
         }
-        this.auth.storeOAuthAccessToken(token);
+        this.authService.storeOAuthAccessToken(token);
       });
     });
   }
@@ -74,7 +74,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
 
-    if (this.auth.isAuthenticated()) {
+    if (this.authService.isAuthenticated()) {
       this.router.navigate([this.phaseService.currentPhase]);
       return;
     }
@@ -84,16 +84,16 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.listenForCloseOAuthWindowMessage();
     } else { // In the main app window
       this.checkAppIsOutdated();
-      this.accessTokenSubscription = this.auth.accessToken.pipe(
+      this.accessTokenSubscription = this.authService.accessToken.pipe(
         filter((token: string) => !!token),
         flatMap(() => this.userService.getAuthenticatedUser())
       ).subscribe((user: GithubUser) => {
         this.ngZone.run(() => {
           this.currentUserName = user.login;
-          this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
+          this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
         });
       });
-      this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
+      this.authStateSubscription = this.authService.currentAuthState.subscribe((state) => {
         this.ngZone.run(() => {
           this.authState = state;
         });
@@ -124,12 +124,12 @@ export class AuthComponent implements OnInit, OnDestroy {
           if (data.error) {
             throw(new Error(data.error));
           }
-          this.auth.storeOAuthAccessToken(data.token);
+          this.authService.storeOAuthAccessToken(data.token);
         }
       )
       .catch(err => {
         this.errorHandlingService.handleError(err);
-        this.auth.changeAuthState(AuthState.NotAuthenticated);
+        this.authService.changeAuthState(AuthState.NotAuthenticated);
       })
       .finally(() => {
         if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
@@ -190,7 +190,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param username - The user to log in.
    */
   completeLoginProcess(username: string): void {
-    this.auth.changeAuthState(AuthState.AwaitingAuthentication);
+    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
     this.userService.createUserModel(username).pipe(
       flatMap(() => this.phaseService.sessionSetup()),
@@ -198,7 +198,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.handleAuthSuccess();
     }, (error) => {
-      this.auth.changeAuthState(AuthState.NotAuthenticated);
+      this.authService.changeAuthState(AuthState.NotAuthenticated);
       this.errorHandlingService.handleError(error);
     });
   }
@@ -217,7 +217,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       throwIfFalse(isValidSession => isValidSession,
                    () => new Error('Invalid Session'))
     ).subscribe(() => {
-      this.auth.startOAuthProcess();
+      this.authService.startOAuthProcess();
     }, (error) => {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
@@ -226,7 +226,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   logIntoAnotherAccount() {
     this.electronService.clearCookies();
-    this.auth.startOAuthProcess();
+    this.authService.startOAuthProcess();
   }
 
   onGithubWebsiteClicked() {
@@ -244,11 +244,11 @@ export class AuthComponent implements OnInit, OnDestroy {
       .concat(' - ')
       .concat(this.phaseService.getPhaseDetail()));
     this.router.navigateByUrl(this.phaseService.currentPhase);
-    this.auth.changeAuthState(AuthState.Authenticated);
+    this.authService.changeAuthState(AuthState.Authenticated);
   }
 
   goToSessionSelect() {
-    this.auth.changeAuthState(AuthState.NotAuthenticated);
+    this.authService.changeAuthState(AuthState.NotAuthenticated);
   }
 
   isUserNotAuthenticated(): boolean {
