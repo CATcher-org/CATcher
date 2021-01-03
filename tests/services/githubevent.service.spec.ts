@@ -81,6 +81,6 @@ describe('GithubEventService', () => {
 });
 
 function assertLastModified(githubEventService: GithubEventService, expectedEvents) {
-  // expect(githubEventService.getLastModifiedTime()).toBe(expectedEvents[0].created_at);
-  // expect(githubEventService.getLastModifiedCommentTime()).toBe(expectedEvents[0].issue.updated_at);
+  expect(githubEventService['lastModified']).toBe(expectedEvents[0].created_at);
+  expect(githubEventService['lastModifiedComment']).toBe(expectedEvents[0].issue.updated_at);
 }
