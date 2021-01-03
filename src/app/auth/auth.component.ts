@@ -84,23 +84,9 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.listenForCloseOAuthWindowMessage();
     } else { // In the main app window
       this.checkAppIsOutdated();
-      this.accessTokenSubscription = this.authService.accessToken.pipe(
-        filter((token: string) => !!token),
-        flatMap(() => this.userService.getAuthenticatedUser())
-      ).subscribe((user: GithubUser) => {
-        this.ngZone.run(() => {
-          this.currentUserName = user.login;
-          this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
-        });
-      });
-      this.authStateSubscription = this.authService.currentAuthState.subscribe((state) => {
-        this.ngZone.run(() => {
-          this.authState = state;
-        });
-      });
-      this.profileForm = this.formBuilder.group({
-        session: ['', Validators.required],
-      });
+      this.initAccessTokenSubscription();
+      this.initAuthStateSubscription();
+      this.initProfileForm();
     }
   }
 
@@ -297,5 +283,31 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   private getDataRepoDetails(sessionInformation: string) {
     return sessionInformation.split('/')[1];
+  }
+
+  private initProfileForm() {
+    this.profileForm = this.formBuilder.group({
+      session: ['', Validators.required],
+    });
+  }
+
+  private initAuthStateSubscription() {
+    this.authStateSubscription = this.authService.currentAuthState.subscribe((state) => {
+      this.ngZone.run(() => {
+        this.authState = state;
+      });
+    });
+  }
+
+  private initAccessTokenSubscription() {
+    this.accessTokenSubscription = this.authService.accessToken.pipe(
+      filter((token: string) => !!token),
+      flatMap(() => this.userService.getAuthenticatedUser())
+    ).subscribe((user: GithubUser) => {
+      this.ngZone.run(() => {
+        this.currentUserName = user.login;
+        this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
+      });
+    });
   }
 }
