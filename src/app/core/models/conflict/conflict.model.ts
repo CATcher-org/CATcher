@@ -1,4 +1,4 @@
-import DiffMatchPatch from 'diff-match-patch';
+import { diff_match_patch } from 'diff-match-patch';
 import { escapeHTML, replaceNewlinesWithBreakLines } from '../../../shared/lib/html';
 import { Changes } from './changes.model';
 import { Removal } from './removal.model';
@@ -17,7 +17,7 @@ export class Conflict {
     this.outdatedContent = outdatedContent;
     this.updatedContent = updatedContent;
 
-    const matcher = new DiffMatchPatch();
+    const matcher = new diff_match_patch();
     const diffs = matcher.diff_main(outdatedContent, updatedContent);
     matcher.diff_cleanupSemantic(diffs);
     for (const diff of diffs) {

@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import { getAccessToken } from './oauth';
 
+const Logger = require('electron-log');
 const ICON_PATH = path.join(__dirname, 'dist/favicon.512x512.png');
 
 let win: BrowserWindow = null;
@@ -34,7 +35,7 @@ ipcMain.on('github-oauth', (event, clearAuthState, repoPermissionLevel) => {
 
 
 function createWindow() {
-
+  Logger.info('Creating primary window.');
   const size = screen.getPrimaryDisplay().workAreaSize;
   const windowOptions = {
     x: 0,
@@ -141,12 +142,12 @@ if (isDevMode) {
 }
 
 try {
-
+  Logger.info('Initializing Electron app.');
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', () => {
-
+    Logger.info('Electron app in ready state.');
     // Build and Attach Menu-bar template to application.
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
@@ -156,6 +157,7 @@ try {
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
+    Logger.info('Closing all windows in Electron.');
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
@@ -164,6 +166,7 @@ try {
   });
 
   app.on('activate', () => {
+    Logger.info('Electron app is activated.');
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (win === null) {
@@ -172,6 +175,5 @@ try {
   });
 
 } catch (e) {
-  // Catch Error
-  // throw e;
+  Logger.error('Something went wrong in Electron.', e);
 }

@@ -14,6 +14,7 @@ import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
 import { uuid } from '../../shared/lib/uuid';
+import Logger from '../../shared/lib/logger';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
 
@@ -83,7 +84,9 @@ export class AuthService {
 
   changeAuthState(newAuthState: AuthState) {
     if (newAuthState === AuthState.Authenticated) {
-      this.issueService.setSessionId(`${Date.now()}-${uuid()}`);
+      const sessionId = `${Date.now()}-${uuid()}`;
+      this.issueService.setSessionId(sessionId);
+      Logger.info(`Successfully authenticated with session: ${sessionId}`);
     }
     this.authStateSource.next(newAuthState);
   }

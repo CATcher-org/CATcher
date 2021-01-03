@@ -148,7 +148,6 @@ export class ProfilesComponent implements OnInit {
         try {
           this.assertProfilesValidity(this.profiles);
         } catch (e) {
-          console.log(e);
           setTimeout(() => {
             this.profiles = undefined;
             this.openErrorDialog();

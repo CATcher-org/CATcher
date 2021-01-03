@@ -37,6 +37,8 @@ let octokit = new Octokit();
   providedIn: 'root',
 })
 export class GithubService {
+  private static readonly IF_NONE_MATCH_EMPTY = { 'If-None-Match': '' };
+
   private issuesCacheManager = new IssuesCacheManager();
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private issueQueryRefs = new Map<Number, QueryRef<FetchIssueQuery>>();
@@ -130,7 +132,7 @@ export class GithubService {
    * @param repo - Name of Repository.
    */
   isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
-    return from(octokit.repos.get({owner: owner, repo: repo})).pipe(
+    return from(octokit.repos.get({owner: owner, repo: repo, headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
       map((rawData: {status: number}) => {
         return rawData.status !== ERRORCODE_NOT_FOUND;
       }),
@@ -187,7 +189,7 @@ export class GithubService {
   }
 
   fetchAllLabels(): Observable<Array<{}>> {
-    return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO})).pipe(
+    return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
       map(response => {
         return response['data'];
       }),
@@ -267,7 +269,7 @@ export class GithubService {
   }
 
   fetchEventsForRepo(): Observable<any[]> {
-    return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO })).pipe(
+    return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
       map(response => {
         return response['data'];
       }),
@@ -276,8 +278,9 @@ export class GithubService {
   }
 
   fetchDataFile(): Observable<{}> {
-    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv'})).pipe(
-      map(rawData => {
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv',
+      headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
+        map(rawData => {
           return {data: atob(rawData['data']['content'])};
         }),
       catchError(err => throwError('Failed to fetch data file.'))
@@ -285,7 +288,7 @@ export class GithubService {
   }
 
   fetchLatestRelease(): Observable<GithubRelease> {
-    return from(octokit.repos.getLatestRelease({owner: CATCHER_ORG, repo: CATCHER_REPO})).pipe(
+    return from(octokit.repos.getLatestRelease({owner: CATCHER_ORG, repo: CATCHER_REPO, headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
       map(res => res['data']),
       catchError(err => throwError('Failed to fetch latest release.'))
     );
@@ -296,8 +299,9 @@ export class GithubService {
    * @return Observable<{}> representing session information.
    */
   fetchSettingsFile(): Observable<{}> {
-    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json'})).pipe(
-      map(rawData => JSON.parse(atob(rawData['data']['content']))),
+    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json',
+      headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
+        map(rawData => JSON.parse(atob(rawData['data']['content']))),
       catchError(err => throwError('Failed to fetch settings file.'))
     );
   }

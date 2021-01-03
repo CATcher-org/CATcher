@@ -2,6 +2,7 @@ import { BrowserWindow, shell } from 'electron';
 
 const nodeUrl = require('url');
 const fetch = require('node-fetch');
+const Logger = require('electron-log');
 
 const CLIENT_ID = '6750652c0c9001314434';
 const BASE_URL = 'https://github.com';
@@ -67,13 +68,13 @@ function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boo
         onCallback(newUrl);
       } else {
         event.preventDefault();
-        shell.openExternal(newUrl).then(() => console.log('External link is clicked on auth window, opening system browser...'));
+        shell.openExternal(newUrl).then(() => Logger.info('External link is clicked on auth window, opening system browser...'));
       }
     });
 
     authWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
       event.preventDefault();
-      shell.openExternal(url).then(() => console.log('External link is clicked on auth window, opening system browser...'));
+      shell.openExternal(url).then(() => Logger.info('External link is clicked on auth window, opening system browser...'));
     });
 
     authWindow.webContents.on('will-redirect', (event, newUrl) => {

@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "3.3.1",
+  "version": "3.3.4",
   "main": "main.js",
   "scripts": {
     "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
@@ -50,8 +50,8 @@
     "apollo-link": "^1.2.14",
     "apollo-link-context": "^1.0.20",
     "core-js": "^3.6.4",
-    "csv-parse": "^4.4.3",
     "diff-match-patch": "^1.0.4",
+    "electron-log": "^4.2.4",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.0",
     "moment": "^2.24.0",
