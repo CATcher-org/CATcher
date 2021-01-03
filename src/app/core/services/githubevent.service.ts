@@ -44,8 +44,8 @@ export class GithubEventService {
         const eventResponse = response[0];
         // Will only allow page to reload if the latest modify time is different
         // from last modified, meaning that some changes to the repo has occured.
-        if (eventResponse['created_at'] !== this.getLastModifiedTime() ||
-        eventResponse['issue']['updated_at'] !== this.getLastModifiedCommentTime()) {
+        if (eventResponse['created_at'] !== this.lastModified ||
+        eventResponse['issue']['updated_at'] !== this.lastModifiedComment) {
           this.setLastModifiedTime(eventResponse['created_at']);
           this.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
           return this.issueService.reloadAllIssues();
@@ -63,16 +63,8 @@ export class GithubEventService {
     this.lastModifiedComment = lastModified;
   }
 
-  getLastModifiedTime(): string {
-    return this.lastModified;
-  }
-
-  getLastModifiedCommentTime(): string {
-    return this.lastModifiedComment;
-  }
-
   reset() {
-    this.lastModified = undefined;
-    this.lastModifiedComment = undefined;
+    this.setLastModifiedTime(undefined);
+    this.setLastModifiedCommentTime(undefined);
   }
 }
