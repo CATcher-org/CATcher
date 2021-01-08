@@ -125,7 +125,7 @@ export class AuthService {
     top: number = 0
   ): void {
     if (url == null) {
-      return null;
+      return;
     }
     const options = `width=${width},height=${height},left=${left},top=${top}`;
     const oauthWindow = window.open(`${url}`, 'Authorization', options);
@@ -136,6 +136,5 @@ export class AuthService {
         authService.confirmWindowClosed(oauthWindow);
       }
     });
-    window.open(`${url}`, 'Authorization', options);
   }
 }
