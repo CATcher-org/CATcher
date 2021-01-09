@@ -3,7 +3,7 @@ import { ElectronService } from './core/services/electron.service';
 import { AppConfig } from '../environments/environment';
 import { fromEvent, merge, Observable, of } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
-import Logger from './shared/lib/logger';
+import { LoggingService } from './core/services/logging.service';
 
 @Component({
   selector: 'app-root',
@@ -13,14 +13,14 @@ import Logger from './shared/lib/logger';
 export class AppComponent implements AfterViewInit {
   isNetworkOnline$: Observable<boolean>;
 
-  constructor(public electronService: ElectronService) {
+  constructor(public electronService: ElectronService, logger: LoggingService) {
 
-    Logger.info('AppConfig', AppConfig);
+    logger.info('AppConfig', AppConfig);
 
     if (electronService.isElectron()) {
-      Logger.info('Mode electron');
+      logger.info('Mode electron');
     } else {
-      Logger.info('Mode web');
+      logger.info('Mode web');
     }
     this.isNetworkOnline$ = merge(
       of(navigator.onLine),
@@ -43,7 +43,7 @@ export class AppComponent implements AfterViewInit {
       if (elem) {
         event.preventDefault();
         event.stopPropagation();
-        this.electronService.remote.shell.openExternal(elem.href);
+        this.electronService.openLink(elem.href);
       }
     }, false);
   }
