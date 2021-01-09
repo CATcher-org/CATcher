@@ -16,6 +16,20 @@ If you do not have Node 12 installed in your computer, click on [this link](http
 
 4. Compile and start the application: Run `npm start`.
 
+## Debugging with Visual Studio Code
+You can use Visual Studio Code to debug CATcher with Chrome, Firefox or Edge.
+Refer to the `Debugging Angular` section of [this guide](https://code.visualstudio.com/docs/nodejs/angular-tutorial#_debugging-angular) for a step-by-step walkthrough of the debugger setup.
+
+In summary, the following steps are needed:
+
+1. Install the `Debugger for Chrome` extension for VS Code. You can also install debugger extensions for Firefox and Edge.
+
+2. Create VS Code's debugger config file (`launch.json` ) as shown in [the guide](https://code.visualstudio.com/docs/nodejs/angular-tutorial#_debugging-angular). Particularly, set the `url` attribute to `http://localhost:4200` (reason: CATcher app is served locally on port 4200, by default.)
+
+3. In the root project folder, run `ng serve`.
+
+4. In VS Code's Debug View, launch the debugger by clicking the green arrow (or F5). You should see the CATcher app loading within a new browser window.
+
 # Commands
 This section shows you different commands you can run to build the application in different operating systems.
 
