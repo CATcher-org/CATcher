@@ -1,5 +1,4 @@
-import { LoginPage } from './app.po';
-import { browser, element, by } from 'protractor';
+import { LoginPage } from './login.po';
 
 describe("CATcher's login page", () => {
   let page: LoginPage;
@@ -8,15 +7,15 @@ describe("CATcher's login page", () => {
     page = new LoginPage();
   });
 
-  it('displays "CATcher" in header bar', () => {
+  it('displays "CATcher" in header bar', async () => {
     page.navigateTo('/');
-    expect(page.getTitle()).toEqual('CATcher');
+    expect(await page.getTitle()).toEqual('CATcher');
   });
 
   it('allows users to authenticate themselves', async () => {
     page.navigateTo('/');
     await page.login();
-    expect(page.getConfirmationScreenTitle()).toEqual('Confirm Login Account');
+    expect(await page.getConfirmationScreenTitle()).toEqual('Confirm Login Account');
     await page.confirmUser();
   });
 });

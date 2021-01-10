@@ -7,12 +7,12 @@ export class LoginPage {
     return browser.get(route);
   }
 
-  getTitle() {
-    return element(by.css('app-root')).element(by.css('app-layout-header')).getText();
+  async getTitle() {
+    return await element(by.css('app-root')).element(by.css('app-layout-header')).getText();
   }
 
-  getConfirmationScreenTitle() {
-    return element(by.className('login-title'));
+  async getConfirmationScreenTitle() {
+    return await element(by.className('login-title')).getText();
   }
 
   async login() {
