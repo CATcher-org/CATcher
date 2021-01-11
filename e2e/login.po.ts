@@ -1,4 +1,4 @@
-import { browser, element, by } from 'protractor';
+import { browser, element, by, ExpectedConditions } from 'protractor';
 import { credentials } from '../test.credentials';
 
 
@@ -22,6 +22,7 @@ export class LoginPage {
   }
 
   async confirmUser() {
+    await browser.wait(ExpectedConditions.presenceOf(element(by.className('sign-in-button'))));
     const confirm = element(by.className('sign-in-button'));
     await confirm.click();
   }
@@ -40,7 +41,7 @@ export class LoginPage {
   private async fillCredentials() {
     await browser.waitForAngularEnabled(false);
     await this.selectWindow(1);
-
+    await browser.wait(ExpectedConditions.presenceOf(element(by.name('login'))));
     await element(by.name('login')).sendKeys(credentials.username);
     await element(by.name('password')).sendKeys(credentials.password);
     await element(by.name('commit')).click();
