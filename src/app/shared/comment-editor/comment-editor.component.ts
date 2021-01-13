@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { FILE_TYPE_SUPPORT_ERROR, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { clipboard } from 'electron';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ElectronService } from '../../core/services/electron.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
@@ -17,7 +17,8 @@ export class CommentEditorComponent implements OnInit {
   readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
 
   constructor(private uploadService: UploadService,
-              private errorHandlingService: ErrorHandlingService) {}
+              private errorHandlingService: ErrorHandlingService,
+              private electronService: ElectronService) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input

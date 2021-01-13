@@ -14,11 +14,10 @@ let authWindow;
 /**
  * Will retrieve the access token from a proxy server which acts as a intermediary to retrieve the tokens from Github.
  * @param window - The main window of CATcher.
- * @param toClearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
  * @param repoPermissionLevel - The level of permission required to be granted by the user to use CATcher.
  */
-export function getAccessToken(window: BrowserWindow, toClearAuthState: boolean, repoPermissionLevel: string): Promise<any> {
-  return getAuthorizationCode(window, toClearAuthState, repoPermissionLevel).then((code) => {
+export function getAccessToken(window: BrowserWindow, repoPermissionLevel: string): Promise<any> {
+  return getAuthorizationCode(window, repoPermissionLevel).then((code) => {
     const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
     return fetch(accessTokenUrl).then(res => res.json()).then(data => {
       if (data.error) {
@@ -34,10 +33,9 @@ export function getAccessToken(window: BrowserWindow, toClearAuthState: boolean,
 /**
  * Get the authorization code from Github after success login.
  * @param parentWindow - The main window of CATcher
- * @param toClearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
  * @param repoPermissionLevel - The level of permission required to be granted by the user to use CATcher.
  */
-function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boolean, repoPermissionLevel: string) {
+function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: string) {
   const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${repoPermissionLevel},read:user`);
 
   return new Promise(function (resolve, reject) {
@@ -51,11 +49,6 @@ function getAuthorizationCode(parentWindow: BrowserWindow, toClearAuthState: boo
       }
     };
     authWindow = new BrowserWindow(windowParams);
-
-    if (toClearAuthState) {
-      parentWindow.webContents.session.clearStorageData();
-      authWindow.webContents.session.clearStorageData();
-    }
     authWindow.loadURL(oauthUrl);
     authWindow.show();
 

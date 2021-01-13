@@ -69,12 +69,13 @@ import graphqlTypes from '../../graphql/graphql-types';
 
 export class AppModule {
   constructor(private apollo: Apollo, private httpLink: HttpLink, private authService: AuthService) {
+
     const URI = 'https://api.github.com/graphql';
     const basic = setContext(() => {
       return { headers: {Accept: 'charset=utf-8' }};
     });
     const auth = setContext(() => {
-      return { headers: { Authorization: `Token ${authService.oauthToken}` } };
+      return { headers: { Authorization: `Token ${this.authService.accessToken.getValue()}` } };
     });
     const link = ApolloLink.from([basic, auth, this.httpLink.create({ uri: URI })]);
     const fragmentMatcher = new IntrospectionFragmentMatcher({
