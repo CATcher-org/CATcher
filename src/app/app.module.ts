@@ -23,6 +23,10 @@ import { ApolloLink } from 'apollo-link';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { Apollo, ApolloModule } from 'apollo-angular';
 import graphqlTypes from '../../graphql/graphql-types';
+import { GithubService } from './core/services/github.service';
+import { ErrorHandlingService } from './core/services/error-handling.service';
+import { ElectronService } from './core/services/electron.service';
+import { GithubServiceFactory } from './GithubServiceFactory';
 
 @NgModule({
   declarations: [
@@ -59,7 +63,13 @@ import graphqlTypes from '../../graphql/graphql-types';
     ApolloModule,
     HttpLinkModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: GithubService,
+      useFactory: GithubServiceFactory,
+      deps: [Apollo, ErrorHandlingService, ElectronService]
+    }
+  ],
   bootstrap: [AppComponent],
   entryComponents: [
     UserConfirmationComponent,
