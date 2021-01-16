@@ -2,7 +2,6 @@ import { app } from 'electron';
 
 // Edited version of a template menu-bar provided by the electron API,
 // refer to https://electronjs.org/docs/api/menu for more information.
-
 const fileMenu: Electron.MenuItemConstructorOptions = {
   label: 'File',
   submenu: [
