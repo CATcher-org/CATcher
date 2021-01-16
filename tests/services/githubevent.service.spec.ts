@@ -8,6 +8,8 @@ let issueService: any;
 describe('GithubEventService', () => {
   beforeAll(() => {
     githubService = jasmine.createSpyObj('GithubService', ['fetchEventsForRepo']);
+    issueService = jasmine.createSpyObj('IssueService', ['reloadAllIssues']);
+    issueService.reloadAllIssues.and.returnValue(of([]));
   });
 
   describe('.setLatestChangeEvent()', () => {
@@ -20,11 +22,6 @@ describe('GithubEventService', () => {
   });
 
   describe('.reloadPage()', () => {
-    beforeAll(() => {
-      issueService = jasmine.createSpyObj('IssueService', ['reloadAllIssues']);
-      issueService.reloadAllIssues.and.returnValue(of([]));
-    });
-
     afterEach(() => {
       issueService.reloadAllIssues.calls.reset();
     });
@@ -40,9 +37,7 @@ describe('GithubEventService', () => {
       githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
     });
 
-    it('does not trigger the IssueService to re-initialise the issue list, if there are no new events',
-      async () => {
-
+    it('does not trigger the IssueService to re-initialise the issue list, if there are no new events', () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
       githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
