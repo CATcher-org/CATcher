@@ -45,4 +45,3 @@ export const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     //   ]
     // }
   ];
-  
