@@ -92,16 +92,9 @@ export class AuthService {
     if (this.electronService.isElectron()) {
       this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
     } else {
-      const authService = this;
-      const oauthWindow = this.createOauthWindow(encodeURI(
+      this.createOauthWindow(encodeURI(
         `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
       ));
-      oauthWindow.addEventListener('unload', () => {
-        if (!oauthWindow.closed) {
-          // unload event could be triggered when there is a redirection, hence, a confirmation needed.
-          authService.confirmWindowClosed(oauthWindow);
-        }
-      });
     }
   }
 
@@ -130,11 +123,18 @@ export class AuthService {
     height: number = 600,
     left: number = 0,
     top: number = 0
-  ): Window {
+  ): void {
     if (url == null) {
-      return null;
+      return;
     }
     const options = `width=${width},height=${height},left=${left},top=${top}`;
-    return window.open(`${url}`, 'Authorization', options);
+    const oauthWindow = window.open(`${url}`, 'Authorization', options);
+    const authService = this;
+    oauthWindow.addEventListener('unload', () => {
+      if (!oauthWindow.closed) {
+        // unload event could be triggered when there is a redirection, hence, a confirmation needed.
+        authService.confirmWindowClosed(oauthWindow);
+      }
+    });
   }
 }

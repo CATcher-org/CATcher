@@ -41,17 +41,25 @@ export class AuthComponent implements OnInit, OnDestroy {
   profileLocationPrompt: string;
   currentUserName: string;
 
+<<<<<<< HEAD
   constructor(public auth: AuthService,
               public appService: ApplicationService,
+=======
+  constructor(public appService: ApplicationService,
+>>>>>>> master
               public electronService: ElectronService,
               private githubService: GithubService,
+              private authService: AuthService,
               private githubEventService: GithubEventService,
               private userService: UserService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
+<<<<<<< HEAD
               private authService: AuthService,
+=======
+>>>>>>> master
               private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute
@@ -67,6 +75,7 @@ export class AuthComponent implements OnInit, OnDestroy {
           return;
         }
         this.authService.storeOAuthAccessToken(token);
+<<<<<<< HEAD
       });
     });
   }
@@ -97,6 +106,8 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.completeLoginProcess(this.currentUserName);
           }
         });
+=======
+>>>>>>> master
       });
       this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
         this.ngZone.run(() => {
@@ -109,8 +120,34 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
   }
 
+<<<<<<< HEAD
   /**
    * A listener for receiving the access token from the oauth window.
+=======
+  ngOnInit() {
+    this.isReady = false;
+    const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
+
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate([this.phaseService.currentPhase]);
+      return;
+    }
+
+    if (oauthCode) { // In the web's oauth window
+      window.opener.postMessage({ oauthCode }, AppConfig.origin);
+      this.listenForCloseOAuthWindowMessage();
+    } else { // In the main app window
+      this.checkAppIsOutdated();
+      this.initAccessTokenSubscription();
+      this.initAuthStateSubscription();
+      this.initProfileForm();
+    }
+  }
+
+  /**
+   * A listener for receiving the oauthCode from the oauth window.
+   * With the oauth code, we can retrieve the accessToken from the proxy.
+>>>>>>> master
    */
   @HostListener('window:message', ['$event'])
   onMessage(event: MessageEvent) {
@@ -128,12 +165,27 @@ export class AuthComponent implements OnInit, OnDestroy {
           if (data.error) {
             throw(new Error(data.error));
           }
+<<<<<<< HEAD
           this.auth.storeOAuthAccessToken(data.token);
           if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
             event.source.postMessage('close', AppConfig.origin);
           }
         }
       );
+=======
+          this.authService.storeOAuthAccessToken(data.token);
+        }
+      )
+      .catch(err => {
+        this.errorHandlingService.handleError(err);
+        this.authService.changeAuthState(AuthState.NotAuthenticated);
+      })
+      .finally(() => {
+        if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
+          event.source.postMessage('close', AppConfig.origin);
+        }
+      });
+>>>>>>> master
   }
 
   ngOnDestroy() {
@@ -188,7 +240,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param username - The user to log in.
    */
   completeLoginProcess(username: string): void {
-    this.auth.changeAuthState(AuthState.AwaitingAuthentication);
+    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
     this.userService.createUserModel(username).pipe(
       flatMap(() => this.phaseService.sessionSetup()),
@@ -196,7 +248,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.handleAuthSuccess();
     }, (error) => {
-      this.auth.changeAuthState(AuthState.NotAuthenticated);
+      this.authService.changeAuthState(AuthState.NotAuthenticated);
       this.errorHandlingService.handleError(error);
     });
   }
@@ -215,7 +267,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       throwIfFalse(isValidSession => isValidSession,
                    () => new Error('Invalid Session'))
     ).subscribe(() => {
-      this.auth.startOAuthProcess();
+      this.authService.startOAuthProcess();
     }, (error) => {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
@@ -224,7 +276,16 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   logIntoAnotherAccount() {
     this.electronService.clearCookies();
+<<<<<<< HEAD
     this.auth.startOAuthProcess();
+=======
+    this.authService.startOAuthProcess();
+  }
+
+  onGithubWebsiteClicked() {
+    window.open('https://github.com/', '_blank');
+    window.location.reload();
+>>>>>>> master
   }
 
   onGithubWebsiteClicked() {
@@ -295,5 +356,31 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   private getDataRepoDetails(sessionInformation: string) {
     return sessionInformation.split('/')[1];
+  }
+
+  private initProfileForm() {
+    this.profileForm = this.formBuilder.group({
+      session: ['', Validators.required],
+    });
+  }
+
+  private initAuthStateSubscription() {
+    this.authStateSubscription = this.authService.currentAuthState.subscribe((state) => {
+      this.ngZone.run(() => {
+        this.authState = state;
+      });
+    });
+  }
+
+  private initAccessTokenSubscription() {
+    this.accessTokenSubscription = this.authService.accessToken.pipe(
+      filter((token: string) => !!token),
+      flatMap(() => this.userService.getAuthenticatedUser())
+    ).subscribe((user: GithubUser) => {
+      this.ngZone.run(() => {
+        this.currentUserName = user.login;
+        this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
+      });
+    });
   }
 }

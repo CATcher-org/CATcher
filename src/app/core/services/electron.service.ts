@@ -76,9 +76,9 @@ export class ElectronService {
     }
   }
 
-  sendIpcSycMessage(channel: string, ...args: any): any {
+  getCurrentDirectory(): string {
     if (this.isElectron()) {
-      return this.ipcRenderer.sendSync(channel, args);
+      this.ipcRenderer.sendSync('synchronous-message', 'getDirectory');
     }
     return '';
   }
