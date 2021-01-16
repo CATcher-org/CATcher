@@ -57,17 +57,17 @@ export class AuthComponent implements OnInit, OnDestroy {
   ) {
     this.electronService.registerIpcListener('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
-        this.ngZone.run(() => {
-          if (error) {
-            if (!isWindowClosed) {
-              this.errorHandlingService.handleError(error);
-            }
-            this.goToSessionSelect();
-            return;
+      this.ngZone.run(() => {
+        if (error) {
+          if (!isWindowClosed) {
+            this.errorHandlingService.handleError(error);
           }
-          this.authService.storeOAuthAccessToken(token);
-        });
+          this.goToSessionSelect();
+          return;
+        }
+        this.authService.storeOAuthAccessToken(token);
       });
+    });
   }
 
   ngOnInit() {
@@ -156,10 +156,10 @@ export class AuthComponent implements OnInit, OnDestroy {
   onProfilesMissing(profilesDetails: {isDirectoryMessageVisible: boolean, fileName: string, fileDirectory: string}): void {
     this.profileLocationPrompt = profilesDetails.isDirectoryMessageVisible
       ? 'No custom '
-        .concat(profilesDetails['fileName'])
-        .concat(' file found in ')
-        .concat(profilesDetails['fileDirectory'])
-        .concat(' .')
+      .concat(profilesDetails['fileName'])
+      .concat(' file found in ')
+      .concat(profilesDetails['fileDirectory'])
+      .concat(' .')
       : '';
   }
 
@@ -200,8 +200,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
     this.phaseService.storeSessionData().pipe(
-      throwIfFalse(isValidSession => isValidSession,
-        () => new Error('Invalid Session'))
+        throwIfFalse(isValidSession => isValidSession,
+                     () => new Error('Invalid Session'))
     ).subscribe(() => {
       this.authService.startOAuthProcess();
     }, (error) => {
