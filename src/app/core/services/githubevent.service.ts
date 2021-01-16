@@ -34,7 +34,7 @@ export class GithubEventService {
   /**
    * Returns the result whether the latest github event (e.g renaming an issue's title)
    * of current repository has been retrieved or not.
-   * @returns true  if the issues were fetched from GitHub.
+   * @returns true if the issues were fetched from GitHub.
    */
   reloadPage(): Observable<boolean> {
     return this.githubService.fetchEventsForRepo().pipe(
@@ -45,7 +45,6 @@ export class GithubEventService {
         const eventResponse = response[0];
         // Will only allow page to reload if the latest modify time is different
         // from last modified, meaning that some changes to the repo has occured.
-        // If reloadAllIssues() has been called, it will return an Observable of true.
         if (eventResponse['created_at'] !== this.lastModified ||
         eventResponse['issue']['updated_at'] !== this.lastModifiedComment) {
           this.setLastModifiedTime(eventResponse['created_at']);

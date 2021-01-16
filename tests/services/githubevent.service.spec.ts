@@ -35,11 +35,9 @@ describe('GithubEventService', () => {
       githubService.fetchEventsForRepo.and.returnValue(of(FIRST_EVENT));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
       githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
-      expect(issueService.reloadAllIssues.calls.count()).toBe(1);
 
       githubService.fetchEventsForRepo.and.returnValue(of(SECOND_EVENT));
       githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
-      expect(issueService.reloadAllIssues.calls.count()).toBe(2);
     });
 
     it('does not trigger the IssueService to re-initialise the issue list, if there are no new events',
@@ -47,13 +45,10 @@ describe('GithubEventService', () => {
 
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
-
       githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
-      expect(issueService.reloadAllIssues.calls.count()).toBe(1);
 
       // issueService.reloadAllIssues must not have been called again
       githubEventService.reloadPage().subscribe(result => expect(result).toBe(false));
-      expect(issueService.reloadAllIssues.calls.count()).toBe(1);
     });
 
   });
