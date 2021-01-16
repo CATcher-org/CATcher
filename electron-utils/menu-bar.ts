@@ -2,38 +2,43 @@ import { app } from 'electron';
 
 // Edited version of a template menu-bar provided by the electron API,
 // refer to https://electronjs.org/docs/api/menu for more information.
-export const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
+
+const fileMenu : Electron.MenuItemConstructorOptions = {
+  label: 'File',
+  submenu: [
     {
-      label: 'File',
-      submenu: [
-        {
-          label: 'Quit CATcher', accelerator: 'CmdOrCtrl+Q', click() { app.quit(); }
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'selectAll' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'delete' },
-      ]
-    },
-    {
-      label: 'View',
-      submenu: [
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
-    },
+      label: 'Quit CATcher', accelerator: 'CmdOrCtrl+Q', click() { app.quit(); }
+    }
+  ]
+};
+
+const editMenu : Electron.MenuItemConstructorOptions = {
+  label: 'Edit',
+  submenu: [
+    { role: 'undo' },
+    { role: 'redo' },
+    { type: 'separator' },
+    { role: 'selectAll' },
+    { role: 'cut' },
+    { role: 'copy' },
+    { role: 'paste' },
+    { role: 'delete' },
+  ]
+};
+
+const viewMenu : Electron.MenuItemConstructorOptions = {
+  label: 'View',
+  submenu: [
+    { role: 'resetZoom' },
+    { role: 'zoomIn' },
+    { role: 'zoomOut' },
+    { type: 'separator' },
+    { role: 'togglefullscreen' }
+  ]
+};
+
+export const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [fileMenu, editMenu, viewMenu];
+
     // ,
     // {
     //   role: 'help',
@@ -44,4 +49,4 @@ export const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     //     }
     //   ]
     // }
-  ];
+  
