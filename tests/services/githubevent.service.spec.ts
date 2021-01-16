@@ -13,7 +13,7 @@ describe('GithubEventService', () => {
   describe('.setLatestChangeEvent()', () => {
     it('stores the time of the most recent issue event\ and most recent issue update.', async () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
-      const githubEventService: GithubEventService = new GithubEventService(githubService, null);
+      const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
       await githubEventService.setLatestChangeEvent().toPromise();
       githubEventService.reloadPage().subscribe(result => expect(result).toBe(false));
     });
@@ -61,7 +61,7 @@ describe('GithubEventService', () => {
   describe('.reset()', () => {
     it('clears the details of the most recent event', async () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
-      const githubEventService: GithubEventService = new GithubEventService(githubService, null);
+      const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
       await githubEventService.setLatestChangeEvent().toPromise();
       githubEventService.reset();
 
