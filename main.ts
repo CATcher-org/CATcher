@@ -1,7 +1,7 @@
 import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { mainMenuTemplate } from './electron-utils/menu-bar';
+import { mainMenuTemplate, createDevModeMenuOptions } from './electron-utils/menu-bar';
 import { getAccessToken } from './oauth';
 
 const Logger = require('electron-log');
@@ -87,14 +87,7 @@ function createWindow() {
 
 }
 
-if (isDevMode) {
-  let viewSubMenu: MenuItemConstructorOptions[];
-  viewSubMenu = mainMenuTemplate[2].submenu as MenuItemConstructorOptions[];
-  viewSubMenu.push(
-    { type: 'separator' },
-    { role: 'toggleDevTools'}
-  );
-}
+createDevModeMenuOptions(isDevMode);
 
 try {
   Logger.info('Initializing Electron app.');

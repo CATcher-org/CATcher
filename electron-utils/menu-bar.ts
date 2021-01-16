@@ -37,3 +37,14 @@ const viewMenu: Electron.MenuItemConstructorOptions = {
 };
 
 export const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [fileMenu, editMenu, viewMenu];
+
+export function createDevModeMenuOptions(isDevMode: boolean): void {
+  if (isDevMode) {
+    let viewSubMenu: Electron.MenuItemConstructorOptions[];
+    viewSubMenu = mainMenuTemplate[2].submenu as Electron.MenuItemConstructorOptions[];
+    viewSubMenu.push(
+      { type: 'separator' },
+      { role: 'toggleDevTools'}
+    );
+  }
+}
