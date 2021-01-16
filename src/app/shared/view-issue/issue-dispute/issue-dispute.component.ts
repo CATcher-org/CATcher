@@ -9,9 +9,9 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { finalize, map, flatMap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { shell } from 'electron';
 import { GithubService } from '../../../core/services/github.service';
 import { PhaseService } from '../../../core/services/phase.service';
+import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({
   selector: 'app-issue-dispute',
@@ -35,7 +35,8 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
               public userService: UserService,
               private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
-              private phaseService: PhaseService) { }
+              private phaseService: PhaseService,
+              private electronService: ElectronService) { }
 
   ngOnInit() {
     this.resetForm();
@@ -132,7 +133,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
   }
 
   viewInGithub(): void {
-    shell.openExternal(`https://github.com/${this.githubService.getRepoURL()}/issues/` +
+    this.electronService.openLink(`https://github.com/${this.githubService.getRepoURL()}/issues/` +
       `${this.issue.id}#issuecomment-${this.issue.issueComment.id}`);
   }
 

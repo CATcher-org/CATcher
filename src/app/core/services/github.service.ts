@@ -3,7 +3,6 @@ import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { getNumberOfPages } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
-import { shell } from 'electron';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { GithubUser } from '../models/github-user.model';
 import { GithubIssue } from '../models/github/github-issue.model';
@@ -22,6 +21,7 @@ import { ApolloQueryResult } from 'apollo-client';
 import { HttpErrorResponse } from '@angular/common/http';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { DocumentNode } from 'graphql';
+import { ElectronService } from './electron.service';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -46,12 +46,13 @@ export class GithubService {
   constructor(
     private errorHandlingService: ErrorHandlingService,
     private apollo: Apollo,
+    private electronService: ElectronService,
   ) {}
 
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
       auth() {
-        return `token ${accessToken}`;
+        return `Token ${accessToken}`;
       }
     });
   }
@@ -321,7 +322,7 @@ export class GithubService {
 
   viewIssueInBrowser(id: number) {
     if (id) {
-      shell.openExternal('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
+      this.electronService.openLink('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
     } else {
       this.errorHandlingService.handleError('Unable to open this issue in Browser');
     }
