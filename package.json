@@ -13,6 +13,7 @@
     "build:prod": "npm run build -- -c production --base-href=./",
     "build:prod:web": "npm run codegen:gql && ng build --prod --base-href=https://CATcher-org.github.io/CATcher/",
     "ng:serve": "ng serve",
+    "ng:serve:test": "ng serve -o --configuration=test",
     "ng:serve:web": "npm run postinstall:web && ng serve -o",
     "deploy:web": "npm run build:prod:web && ngh --dir=dist --name=CATcher --email=se-edu@comp.nus.edu.sg --no-silent",
     "electron:serve-tsc": "tsc -p tsconfig-serve.json",

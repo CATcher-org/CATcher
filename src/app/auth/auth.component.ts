@@ -71,6 +71,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('Starting');
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
 
@@ -80,6 +81,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     if (oauthCode) { // In the web's oauth window
+      console.log('Printing Here');
+      console.log(AppConfig);
       window.opener.postMessage({ oauthCode }, AppConfig.origin);
       this.listenForCloseOAuthWindowMessage();
     } else { // In the main app window
@@ -258,8 +261,11 @@ export class AuthComponent implements OnInit, OnDestroy {
    * Will wait for the message from parent window to close the window.
    */
   private listenForCloseOAuthWindowMessage() {
+    console.log('Printing Event Here');
+    console.log(event);
     window.addEventListener('message', (event) => {
       if (event.origin !== AppConfig.origin) {
+        console.log('here');
         return;
       }
       if (event.data === 'close') {

@@ -26,7 +26,7 @@ import graphqlTypes from '../../graphql/graphql-types';
 import { GithubService } from './core/services/github.service';
 import { ErrorHandlingService } from './core/services/error-handling.service';
 import { ElectronService } from './core/services/electron.service';
-import { GithubServiceFactory } from './GithubServiceFactory';
+import { GithubServiceFactory } from './core/services/factories/factory.github.service';
 
 @NgModule({
   declarations: [
