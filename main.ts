@@ -23,8 +23,8 @@ ipcMain.on('synchronous-message', (event, arg) => {
 /**
  * Will start the OAuth Web Flow and obtain the access token from Github.
  */
-ipcMain.on('github-oauth', (event, clearAuthState, repoPermissionLevel) => {
-  getAccessToken(win, clearAuthState, repoPermissionLevel).then((data) => {
+ipcMain.on('github-oauth', (event, repoPermissionLevel) => {
+  getAccessToken(win, repoPermissionLevel).then((data) => {
     event.sender.send('github-oauth-reply', {token: data.token});
   }).catch(error => {
     event.sender.send('github-oauth-reply', {

@@ -92,13 +92,13 @@ describe('Issue', () => {
         const phaseTeamResponseIssue = dummyIssue.clone(Phase.phaseTeamResponse);
         phaseTeamResponseIssue.teamResponse = 'Sample Text';
         expect(phaseTeamResponseIssue.createGithubTeamResponse())
-            .toEqual(`# Team\'s Response\n${phaseTeamResponseIssue.teamResponse}\n ## Duplicate status (if any):\n--`);
+            .toEqual(`# Team\'s Response\n${phaseTeamResponseIssue.teamResponse}\n## Duplicate status (if any):\n--`);
 
         const phaseTeamResponseIssue2 = dummyIssue.clone(Phase.phaseTeamResponse);
         phaseTeamResponseIssue2.teamResponse = 'Sample Text';
         phaseTeamResponseIssue2.duplicateOf = 10;
         expect(phaseTeamResponseIssue2.createGithubTeamResponse())
-            .toEqual(`# Team\'s Response\n${phaseTeamResponseIssue2.teamResponse}\n `
+            .toEqual(`# Team\'s Response\n${phaseTeamResponseIssue2.teamResponse}\n`
                 + `## Duplicate status (if any):\nDuplicate of #${phaseTeamResponseIssue2.duplicateOf}`);
     });
 
@@ -117,14 +117,14 @@ describe('Issue', () => {
         phaseTesterResponseIssue.teamResponse = 'Sample Text';
         phaseTesterResponseIssue.testerResponses = [];
         expect(phaseTesterResponseIssue.createGithubTesterResponse()).toEqual(
-            `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n ` +
+            `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n` +
         `# Items for the Tester to Verify\n${''}`);
 
         const phaseTesterResponseIssue2 = dummyIssueWithTeam.clone(Phase.phaseTesterResponse);
         phaseTesterResponseIssue2.teamResponse = 'Sample Text';
         phaseTesterResponseIssue2.testerResponses = [newTesterResponse];
         expect(phaseTesterResponseIssue2.createGithubTesterResponse()).toEqual(
-            `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n ` +
+            `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n` +
         `# Items for the Tester to Verify\n${newTesterResponse.toString()}`);
     });
 

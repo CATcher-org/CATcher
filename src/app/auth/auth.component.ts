@@ -1,19 +1,20 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from './profiles/profiles.component';
-import { flatMap } from 'rxjs/operators';
+import { filter, flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { ElectronService } from '../core/services/electron.service';
 import { ApplicationService } from '../core/services/application.service';
 import { throwIfFalse } from '../shared/lib/custom-ops';
+import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
 
 const appSetting = require('../../../package.json');
@@ -34,26 +35,27 @@ export class AuthComponent implements OnInit, OnDestroy {
   versionCheckingError: boolean;
 
   authState: AuthState;
+  accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
-  loginForm: FormGroup;
   profileForm: FormGroup;
   profileLocationPrompt: string;
   currentUserName: string;
 
-  constructor(private auth: AuthService,
+  constructor(public appService: ApplicationService,
+              public electronService: ElectronService,
               private githubService: GithubService,
+              private authService: AuthService,
               private githubEventService: GithubEventService,
               private userService: UserService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-              private electronService: ElectronService,
-              private authService: AuthService,
               private titleService: Title,
               private ngZone: NgZone,
-              private appService: ApplicationService) {
-    this.electronService.ipcRenderer.on('github-oauth-reply',
+              private activatedRoute: ActivatedRoute
+  ) {
+    this.electronService.registerIpcListener('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
       this.ngZone.run(() => {
         if (error) {
@@ -63,45 +65,79 @@ export class AuthComponent implements OnInit, OnDestroy {
           this.goToSessionSelect();
           return;
         }
-        this.githubService.storeOAuthAccessToken(token);
         this.authService.storeOAuthAccessToken(token);
-        this.userService.getAuthenticatedUser().subscribe((user: GithubUser) => {
-          auth.setLoginStatusWithGithub(true);
-          this.currentUserName = user.login;
-          if (this.isUserAuthenticating() || this.isAwaitingOAuthUserConfirm()) {
-            this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
-          } else {
-            this.completeLoginProcess(this.currentUserName);
-          }
-        });
       });
     });
   }
 
   ngOnInit() {
-    this.checkAppIsOutdated();
-    this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
-      this.authState = state;
-    });
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required],
-    });
-    this.profileForm = this.formBuilder.group({
-      session: ['', Validators.required],
-    });
+    this.isReady = false;
+    const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
+
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate([this.phaseService.currentPhase]);
+      return;
+    }
+
+    if (oauthCode) { // In the web's oauth window
+      window.opener.postMessage({ oauthCode }, AppConfig.origin);
+      this.listenForCloseOAuthWindowMessage();
+    } else { // In the main app window
+      this.checkAppIsOutdated();
+      this.initAccessTokenSubscription();
+      this.initAuthStateSubscription();
+      this.initProfileForm();
+    }
+  }
+
+  /**
+   * A listener for receiving the oauthCode from the oauth window.
+   * With the oauth code, we can retrieve the accessToken from the proxy.
+   */
+  @HostListener('window:message', ['$event'])
+  onMessage(event: MessageEvent) {
+    if (event.origin !== AppConfig.origin) {
+      return;
+    }
+    const { oauthCode } = event.data;
+
+    if (!oauthCode) {
+      return;
+    }
+    const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
+    fetch(accessTokenUrl).then(res => res.json())
+      .then(data => {
+          if (data.error) {
+            throw(new Error(data.error));
+          }
+          this.authService.storeOAuthAccessToken(data.token);
+        }
+      )
+      .catch(err => {
+        this.errorHandlingService.handleError(err);
+        this.authService.changeAuthState(AuthState.NotAuthenticated);
+      })
+      .finally(() => {
+        if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
+          event.source.postMessage('close', AppConfig.origin);
+        }
+      });
   }
 
   ngOnDestroy() {
-    this.electronService.ipcRenderer.removeAllListeners('github-oauth-reply');
-    this.authStateSubscription.unsubscribe();
+    this.electronService.removeIpcListeners('github-oauth-reply');
+    if (this.authStateSubscription) {
+      this.authStateSubscription.unsubscribe();
+    }
+    if (this.accessTokenSubscription) {
+      this.accessTokenSubscription.unsubscribe();
+    }
   }
 
   /**
    * Checks whether the current version of CATcher is outdated.
    */
   checkAppIsOutdated(): void {
-    this.isReady = false;
     this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
       this.isAppOutdated = isOutdated;
       this.isReady = true;
@@ -133,8 +169,6 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   onProfileSelect(profile: Profile): void {
     this.profileForm.get('session').setValue(profile.encodedText);
-    this.loginForm.get('username').setValue(this.loginForm.get('username').value || profile.username);
-    this.loginForm.get('password').setValue(this.loginForm.get('password').value || profile.password);
   }
 
   /**
@@ -142,7 +176,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param username - The user to log in.
    */
   completeLoginProcess(username: string): void {
-    this.auth.changeAuthState(AuthState.AwaitingAuthentication);
+    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
     this.userService.createUserModel(username).pipe(
       flatMap(() => this.phaseService.sessionSetup()),
@@ -150,7 +184,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.handleAuthSuccess();
     }, (error) => {
-      this.auth.changeAuthState(AuthState.NotAuthenticated);
+      this.authService.changeAuthState(AuthState.NotAuthenticated);
       this.errorHandlingService.handleError(error);
     });
   }
@@ -169,7 +203,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       throwIfFalse(isValidSession => isValidSession,
                    () => new Error('Invalid Session'))
     ).subscribe(() => {
-      this.auth.startOAuthProcess();
+      this.authService.startOAuthProcess();
     }, (error) => {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
@@ -177,8 +211,13 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   logIntoAnotherAccount() {
-    this.auth.setLoginStatusWithGithub(false);
-    this.auth.startOAuthProcess();
+    this.electronService.clearCookies();
+    this.authService.startOAuthProcess();
+  }
+
+  onGithubWebsiteClicked() {
+    window.open('https://github.com/', '_blank');
+    window.location.reload();
   }
 
   /**
@@ -216,6 +255,21 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Will wait for the message from parent window to close the window.
+   */
+  private listenForCloseOAuthWindowMessage() {
+    window.addEventListener('message', (event) => {
+      if (event.origin !== AppConfig.origin) {
+        return;
+      }
+      if (event.data === 'close') {
+        window.opener.focus();
+        window.close();
+      }
+    });
+  }
+
+  /**
    * Extracts the Organization Details from the input sessionInformation.
    * @param sessionInformation - string in the format of 'orgName/dataRepo'
    */
@@ -229,5 +283,31 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   private getDataRepoDetails(sessionInformation: string) {
     return sessionInformation.split('/')[1];
+  }
+
+  private initProfileForm() {
+    this.profileForm = this.formBuilder.group({
+      session: ['', Validators.required],
+    });
+  }
+
+  private initAuthStateSubscription() {
+    this.authStateSubscription = this.authService.currentAuthState.subscribe((state) => {
+      this.ngZone.run(() => {
+        this.authState = state;
+      });
+    });
+  }
+
+  private initAccessTokenSubscription() {
+    this.accessTokenSubscription = this.authService.accessToken.pipe(
+      filter((token: string) => !!token),
+      flatMap(() => this.userService.getAuthenticatedUser())
+    ).subscribe((user: GithubUser) => {
+      this.ngZone.run(() => {
+        this.currentUserName = user.login;
+        this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
+      });
+    });
   }
 }

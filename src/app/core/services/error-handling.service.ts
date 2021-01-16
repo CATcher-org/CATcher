@@ -4,7 +4,7 @@ import { GeneralMessageErrorComponent } from '../../shared/error-toasters/genera
 import { FormErrorComponent } from '../../shared/error-toasters/form-error/form-error.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RequestError } from '@octokit/request-error';
-import Logger from '../../shared/lib/logger';
+import { LoggingService } from './logging.service';
 
 export const ERRORCODE_NOT_FOUND = 404;
 
@@ -13,10 +13,10 @@ export const ERRORCODE_NOT_FOUND = 404;
 })
 export class ErrorHandlingService {
 
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 
   handleError(error: HttpErrorResponse | string | RequestError, actionCallback?: () => void) {
-    Logger.error(error);
+    this.logger.error(error);
     if (error instanceof HttpErrorResponse || error instanceof RequestError) {
       this.handleHttpError(error, actionCallback);
     } else {

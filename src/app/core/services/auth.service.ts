@@ -13,8 +13,9 @@ import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
-import { uuid } from '../../shared/lib/uuid';
-import Logger from '../../shared/lib/logger';
+import { generateSessionId } from '../../shared/lib/session';
+import { AppConfig } from '../../../environments/environment';
+import { LoggingService } from './logging.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
 
@@ -22,13 +23,9 @@ export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOA
   providedIn: 'root'
 })
 export class AuthService {
-  readonly githubUrl = 'http://www.github.com';
-  readonly githubDomain = 'github.com';
-  readonly githubLoginCacheName = 'is_logged_in';
-
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
-  oauthToken: String;
+  accessToken = new BehaviorSubject(undefined);
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -39,17 +36,19 @@ export class AuthService {
               private labelService: LabelService,
               private dataService: DataService,
               private githubEventService: GithubEventService,
-              private titleService: Title) {}
+              private titleService: Title,
+              private logger: LoggingService) {}
 
   /**
    * Will store the OAuth token.
    */
   storeOAuthAccessToken(token: string) {
-    this.oauthToken = token;
+    this.githubService.storeOAuthAccessToken(token);
+    this.accessToken.next(token);
   }
 
   reset(): void {
-    this.oauthToken = undefined;
+    this.accessToken.next(undefined);
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));
   }
@@ -74,30 +73,68 @@ export class AuthService {
     return this.authStateSource.getValue() === AuthState.Authenticated;
   }
 
-  setLoginStatusWithGithub(isLoggedIn: boolean) {
-    if (!isLoggedIn) {
-      this.electronService.clearCookies();
-    } else {
-      this.electronService.setCookie(this.githubUrl, this.githubDomain, this.githubLoginCacheName, 'yes');
-    }
-  }
-
   changeAuthState(newAuthState: AuthState) {
     if (newAuthState === AuthState.Authenticated) {
-      const sessionId = `${Date.now()}-${uuid()}`;
+      const sessionId = generateSessionId();
       this.issueService.setSessionId(sessionId);
-      Logger.info(`Successfully authenticated with session: ${sessionId}`);
+      this.logger.info(`Successfully authenticated with session: ${sessionId}`);
     }
     this.authStateSource.next(newAuthState);
   }
 
   /**
    * Will start the Github OAuth web flow process.
-   * @param clearAuthState - A boolean to define whether to clear any auth cookies so prevent auto login.
    */
-  startOAuthProcess(clearAuthState: boolean = false) {
+  startOAuthProcess() {
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
-    this.electronService.ipcRenderer.send('github-oauth', clearAuthState, githubRepoPermission);
+
+    if (this.electronService.isElectron()) {
+      this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
+    } else {
+      this.createOauthWindow(encodeURI(
+        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
+      ));
+    }
+  }
+
+  /**
+   * Will do a poll on whether the given window is closed.
+   * If it is closed and user is still not authenticated, change the auth status to not authenticated.
+   */
+  private confirmWindowClosed(window: Window): void {
+    const authService = this;
+    const pollTimer = window.setInterval(function() {
+      if (window.closed) {
+        window.clearInterval(pollTimer);
+        if (!authService.accessToken) {
+          authService.changeAuthState(AuthState.NotAuthenticated);
+        }
+      }
+    }, 1000);
+  }
+
+  /**
+   * Will create a web version of oauth window.
+   */
+  private createOauthWindow(
+    url: string,
+    width: number = 500,
+    height: number = 600,
+    left: number = 0,
+    top: number = 0
+  ): void {
+    if (url == null) {
+      return;
+    }
+    const options = `width=${width},height=${height},left=${left},top=${top}`;
+    const oauthWindow = window.open(`${url}`, 'Authorization', options);
+    const authService = this;
+    oauthWindow.addEventListener('unload', () => {
+      if (!oauthWindow.closed) {
+        // unload event could be triggered when there is a redirection, hence, a confirmation needed.
+        authService.confirmWindowClosed(oauthWindow);
+      }
+    });
   }
 }

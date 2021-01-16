@@ -246,7 +246,7 @@ export class Issue {
 
   // Template url: https://github.com/CATcher-org/templates#dev-response-phase
   createGithubTeamResponse(): string {
-    return `# Team\'s Response\n${this.teamResponse}\n ` +
+    return `# Team\'s Response\n${this.teamResponse}\n` +
       `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
   }
 
@@ -261,7 +261,7 @@ export class Issue {
 
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   createGithubTesterResponse(): string {
-    return `# Team\'s Response\n${this.teamResponse}\n ` +
+    return `# Team\'s Response\n${this.teamResponse}\n` +
       `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
   }
 
