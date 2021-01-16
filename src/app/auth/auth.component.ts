@@ -200,8 +200,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
     this.phaseService.storeSessionData().pipe(
-       throwIfFalse(isValidSession => isValidSession,
-                    () => new Error('Invalid Session'))
+     throwIfFalse(isValidSession => isValidSession,
+                  () => new Error('Invalid Session'))
     ).subscribe(() => {
       this.authService.startOAuthProcess();
     }, (error) => {
