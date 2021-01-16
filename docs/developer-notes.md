@@ -26,7 +26,7 @@ In summary, the following steps are needed:
 
 2. Create VS Code's debugger config file (`launch.json` ) as shown in [the guide](https://code.visualstudio.com/docs/nodejs/angular-tutorial#_debugging-angular). Particularly, set the `url` attribute to `http://localhost:4200` (reason: CATcher app is served locally on port 4200, by default.)
 
-3. In the root project folder, run `ng serve`.
+3. In the root project folder, run `npm run ng:serve:web`.
 
 4. In VS Code's Debug View, launch the debugger by clicking the green arrow (or F5). You should see the CATcher app loading within a new browser window.
 
