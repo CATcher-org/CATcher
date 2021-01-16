@@ -38,15 +38,3 @@ const viewMenu : Electron.MenuItemConstructorOptions = {
 };
 
 export const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [fileMenu, editMenu, viewMenu];
-
-    // ,
-    // {
-    //   role: 'help',
-    //   submenu: [
-    //     {
-    //       label: 'User Guide',
-    //       click () { require('electron').shell.openExternal('https://catcher-org.github.io/'); }
-    //     }
-    //   ]
-    // }
-  
