@@ -41,12 +41,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   profileLocationPrompt: string;
   currentUserName: string;
 
-<<<<<<< HEAD
-  constructor(public auth: AuthService,
-              public appService: ApplicationService,
-=======
   constructor(public appService: ApplicationService,
->>>>>>> master
               public electronService: ElectronService,
               private githubService: GithubService,
               private authService: AuthService,
@@ -56,74 +51,25 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-<<<<<<< HEAD
-              private authService: AuthService,
-=======
->>>>>>> master
               private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute
   ) {
     this.electronService.registerIpcListener('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
-      this.ngZone.run(() => {
-        if (error) {
-          if (!isWindowClosed) {
-            this.errorHandlingService.handleError(error);
-          }
-          this.goToSessionSelect();
-          return;
-        }
-        this.authService.storeOAuthAccessToken(token);
-<<<<<<< HEAD
-      });
-    });
-  }
-
-  ngOnInit() {
-    this.isReady = false;
-    const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
-
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate([this.phaseService.currentPhase]);
-      return;
-    }
-
-    if (oauthCode) { // In the web's oauth window
-      window.opener.postMessage({ oauthCode }, AppConfig.origin);
-      this.listenForCloseOAuthWindowMessage();
-    } else { // In the main app window
-      this.checkAppIsOutdated();
-      this.accessTokenSubscription = this.auth.accessToken.pipe(
-        filter((token: string) => !!token),
-        flatMap(() => this.userService.getAuthenticatedUser())
-      ).subscribe((user: GithubUser) => {
         this.ngZone.run(() => {
-          this.currentUserName = user.login;
-          if (this.isUserAuthenticating() || this.isAwaitingOAuthUserConfirm()) {
-            this.auth.changeAuthState(AuthState.ConfirmOAuthUser);
-          } else {
-            this.completeLoginProcess(this.currentUserName);
+          if (error) {
+            if (!isWindowClosed) {
+              this.errorHandlingService.handleError(error);
+            }
+            this.goToSessionSelect();
+            return;
           }
-        });
-=======
->>>>>>> master
-      });
-      this.authStateSubscription = this.auth.currentAuthState.subscribe((state) => {
-        this.ngZone.run(() => {
-          this.authState = state;
+          this.authService.storeOAuthAccessToken(token);
         });
       });
-      this.profileForm = this.formBuilder.group({
-        session: ['', Validators.required],
-      });
-    }
   }
 
-<<<<<<< HEAD
-  /**
-   * A listener for receiving the access token from the oauth window.
-=======
   ngOnInit() {
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
@@ -147,7 +93,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   /**
    * A listener for receiving the oauthCode from the oauth window.
    * With the oauth code, we can retrieve the accessToken from the proxy.
->>>>>>> master
    */
   @HostListener('window:message', ['$event'])
   onMessage(event: MessageEvent) {
@@ -165,14 +110,6 @@ export class AuthComponent implements OnInit, OnDestroy {
           if (data.error) {
             throw(new Error(data.error));
           }
-<<<<<<< HEAD
-          this.auth.storeOAuthAccessToken(data.token);
-          if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
-            event.source.postMessage('close', AppConfig.origin);
-          }
-        }
-      );
-=======
           this.authService.storeOAuthAccessToken(data.token);
         }
       )
@@ -185,7 +122,6 @@ export class AuthComponent implements OnInit, OnDestroy {
           event.source.postMessage('close', AppConfig.origin);
         }
       });
->>>>>>> master
   }
 
   ngOnDestroy() {
@@ -220,10 +156,10 @@ export class AuthComponent implements OnInit, OnDestroy {
   onProfilesMissing(profilesDetails: {isDirectoryMessageVisible: boolean, fileName: string, fileDirectory: string}): void {
     this.profileLocationPrompt = profilesDetails.isDirectoryMessageVisible
       ? 'No custom '
-          .concat(profilesDetails['fileName'])
-          .concat(' file found in ')
-          .concat(profilesDetails['fileDirectory'])
-          .concat(' .')
+        .concat(profilesDetails['fileName'])
+        .concat(' file found in ')
+        .concat(profilesDetails['fileDirectory'])
+        .concat(' .')
       : '';
   }
 
@@ -265,7 +201,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     this.phaseService.storeSessionData().pipe(
       throwIfFalse(isValidSession => isValidSession,
-                   () => new Error('Invalid Session'))
+        () => new Error('Invalid Session'))
     ).subscribe(() => {
       this.authService.startOAuthProcess();
     }, (error) => {
@@ -276,16 +212,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   logIntoAnotherAccount() {
     this.electronService.clearCookies();
-<<<<<<< HEAD
-    this.auth.startOAuthProcess();
-=======
     this.authService.startOAuthProcess();
-  }
-
-  onGithubWebsiteClicked() {
-    window.open('https://github.com/', '_blank');
-    window.location.reload();
->>>>>>> master
   }
 
   onGithubWebsiteClicked() {
