@@ -34,7 +34,7 @@ export class GithubEventService {
   /**
    * Returns the result whether the latest github event (e.g renaming an issue's title)
    * of current repository has been retrieved or not.
-   * @returns true  if the issues were fetched from GitHub. 
+   * @returns true  if the issues were fetched from GitHub.
    */
   reloadPage(): Observable<boolean> {
     return this.githubService.fetchEventsForRepo().pipe(
