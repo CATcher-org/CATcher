@@ -1,4 +1,4 @@
-import { app } from 'electron';
+import { app, MenuItemConstructorOptions } from 'electron';
 
 // Edited version of a template menu-bar provided by the electron API,
 // refer to https://electronjs.org/docs/api/menu for more information.
@@ -36,15 +36,16 @@ const viewMenu: Electron.MenuItemConstructorOptions = {
   ]
 };
 
-export const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [fileMenu, editMenu, viewMenu];
+export function createMenuOptions(isDevMode: boolean): MenuItemConstructorOptions[] {
+  const mainMenuTemplate: MenuItemConstructorOptions[] = [fileMenu, editMenu, viewMenu];
 
-export function createDevModeMenuOptions(isDevMode: boolean): void {
   if (isDevMode) {
-    let viewSubMenu: Electron.MenuItemConstructorOptions[];
-    viewSubMenu = mainMenuTemplate[2].submenu as Electron.MenuItemConstructorOptions[];
+    let viewSubMenu: MenuItemConstructorOptions[];
+    viewSubMenu = mainMenuTemplate[2].submenu as MenuItemConstructorOptions[];
     viewSubMenu.push(
       { type: 'separator' },
       { role: 'toggleDevTools'}
     );
   }
+  return mainMenuTemplate;
 }
