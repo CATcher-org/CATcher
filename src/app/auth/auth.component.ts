@@ -71,7 +71,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('Starting');
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
 

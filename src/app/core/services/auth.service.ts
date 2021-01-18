@@ -127,9 +127,11 @@ export class AuthService {
     if (url == null) {
       return;
     }
+
     const options = `width=${width},height=${height},left=${left},top=${top}`;
     const oauthWindow = window.open(`${url}`, 'Authorization', options);
     const authService = this;
+
     oauthWindow.addEventListener('unload', () => {
       if (!oauthWindow.closed) {
         // unload event could be triggered when there is a redirection, hence, a confirmation needed.

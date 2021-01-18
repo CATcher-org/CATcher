@@ -84,7 +84,6 @@ export class MockGithubService {
   }
 
   fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
-    console.log('here');
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter(toFetch => toFetch),
@@ -283,7 +282,7 @@ export class MockGithubService {
         map(rawData => {
           return {data: atob(rawData['data']['content'])};
         }),
-      catchError(err => throwError('Failed to fetch data file.'))
+        catchError(err => throwError('Failed to fetch data file.'))
     );
   }
 
@@ -291,7 +290,7 @@ export class MockGithubService {
     return from(octokit.repos.getLatestRelease({owner: CATCHER_ORG, repo: CATCHER_REPO, headers: MockGithubService.IF_NONE_MATCH_EMPTY}))
       .pipe(
         map(res => res['data']),
-          catchError(err => throwError('Failed to fetch latest release.'))
+        catchError(err => throwError('Failed to fetch latest release.'))
     );
   }
 
@@ -302,13 +301,18 @@ export class MockGithubService {
   fetchSettingsFile(): Observable<{}> {
     return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json',
       headers: MockGithubService.IF_NONE_MATCH_EMPTY})).pipe(
-        map(rawData => JSON.parse(atob(rawData['data']['content']))),
+      map(rawData => JSON.parse(atob(rawData['data']['content']))),
       catchError(err => throwError('Failed to fetch settings file.'))
     );
   }
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
-    return of();
+    return from(octokit.users.getAuthenticated()).pipe(
+      map(response => {
+        return response['data'];
+      }),
+      catchError(err => throwError('Failed to fetch authenticated user.'))
+    );
   }
 
   getRepoURL(): string {
