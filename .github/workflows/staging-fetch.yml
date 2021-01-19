@@ -8,6 +8,10 @@ on:
 
 jobs:
   deploy_web:
+    rules:
+      - if: '${{ github.repository != 'CATcher-org/CATcher' }}' 
+        when: never
+      - when: always
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,7 +32,3 @@ jobs:
           git fetch upstream
           git merge upstream/master --allow-unrelated-histories
           git push origin master -f
-      rules:
-        - if: '${{ github.repository != 'CATcher-org/CATcher-staging' }}' 
-          when: never
-        - when: always

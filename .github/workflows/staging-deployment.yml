@@ -6,6 +6,10 @@ on:
 
 jobs:
   deploy_web:
+    rules:
+      - if: '${{ github.repository != 'CATcher-org/CATcher' }}' 
+        when: never
+      - when: always
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -23,7 +27,3 @@ jobs:
         run: |
           npm install
           npm run deploy:staging -- --repo=https://${{secrets.GH_TOKEN}}@github.com/CATcher-org/CATcher-staging.git
-      rules:
-        - if: '${{ github.repository != 'CATcher-org/CATcher' }}' 
-          when: never
-        - when: always
