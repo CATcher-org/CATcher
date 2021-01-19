@@ -32,25 +32,26 @@ export class GithubEventService {
   }
 
   /**
-   * Returns the latest github event (e.g renaming an issue's title) of current repository
-   * @returns the json data of the latest event
+   * Returns the result whether the latest github event (e.g renaming an issue's title)
+   * of current repository has been retrieved or not.
+   * @returns true if the issues were fetched from GitHub.
    */
-  reloadPage() {
+  reloadPage(): Observable<boolean> {
     return this.githubService.fetchEventsForRepo().pipe(
       flatMap((response: any[]) => {
         if (response.length === 0) {
-          return of(response);
+          return of(false);
         }
         const eventResponse = response[0];
         // Will only allow page to reload if the latest modify time is different
         // from last modified, meaning that some changes to the repo has occured.
-        if (eventResponse['created_at'] !== this.getLastModifiedTime() ||
-        eventResponse['issue']['updated_at'] !== this.getLastModifiedCommentTime()) {
+        if (eventResponse['created_at'] !== this.lastModified ||
+        eventResponse['issue']['updated_at'] !== this.lastModifiedComment) {
           this.setLastModifiedTime(eventResponse['created_at']);
           this.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
-          return this.issueService.reloadAllIssues();
+          return this.issueService.reloadAllIssues().pipe(map((response: any[]) => true));
         }
-        return of(response);
+        return of(false);
       })
     );
   }
@@ -63,16 +64,8 @@ export class GithubEventService {
     this.lastModifiedComment = lastModified;
   }
 
-  getLastModifiedTime(): string {
-    return this.lastModified;
-  }
-
-  getLastModifiedCommentTime(): string {
-    return this.lastModifiedComment;
-  }
-
   reset() {
-    this.lastModified = undefined;
-    this.lastModifiedComment = undefined;
+    this.setLastModifiedTime(undefined);
+    this.setLastModifiedCommentTime(undefined);
   }
 }

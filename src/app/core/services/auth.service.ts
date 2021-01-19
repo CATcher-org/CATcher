@@ -13,7 +13,7 @@ import { DataService } from './data.service';
 import { LabelService } from './label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from './githubevent.service';
-import { uuid } from '../../shared/lib/uuid';
+import { generateSessionId } from '../../shared/lib/session';
 import { AppConfig } from '../../../environments/environment';
 import { LoggingService } from './logging.service';
 
@@ -75,7 +75,7 @@ export class AuthService {
 
   changeAuthState(newAuthState: AuthState) {
     if (newAuthState === AuthState.Authenticated) {
-      const sessionId = `${Date.now()}-${uuid()}`;
+      const sessionId = generateSessionId();
       this.issueService.setSessionId(sessionId);
       this.logger.info(`Successfully authenticated with session: ${sessionId}`);
     }
