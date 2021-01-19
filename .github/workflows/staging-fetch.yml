@@ -18,9 +18,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: CATcher-org/CATcher-staging
-          ref: master # refers to the branch name  
+          ref: master 
           token: ${{ secrets.GH_TOKEN }}
-          fetch-depth: 0 # fetches everything 
+          fetch-depth: 0 
       - name: Merge Upstream # Note, we use seanlowjk/CATcher.git in this example commit
         run: |
           git config user.name "GitHub Actions"
