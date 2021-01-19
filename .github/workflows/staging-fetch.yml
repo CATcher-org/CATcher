@@ -28,7 +28,7 @@ jobs:
           git fetch upstream
           git merge upstream/master --allow-unrelated-histories
           git push origin master -f
-    rules:
-      - if: '${{ github.repository != 'CATcher-org/CATcher-staging' }}' 
-        when: never
-      - when: always
+  rules:
+    - if: '${{ github.repository != 'CATcher-org/CATcher-staging' }}' 
+      when: never
+    - when: always
