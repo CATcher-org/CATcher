@@ -8,23 +8,20 @@ let issueService: any;
 describe('GithubEventService', () => {
   beforeAll(() => {
     githubService = jasmine.createSpyObj('GithubService', ['fetchEventsForRepo']);
+    issueService = jasmine.createSpyObj('IssueService', ['reloadAllIssues']);
+    issueService.reloadAllIssues.and.returnValue(of([]));
   });
 
   describe('.setLatestChangeEvent()', () => {
     it('stores the time of the most recent issue event\ and most recent issue update.', async () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
-      const githubEventService: GithubEventService = new GithubEventService(githubService, null);
+      const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
       await githubEventService.setLatestChangeEvent().toPromise();
-      assertLastModified(githubEventService, EVENTS);
+      githubEventService.reloadPage().subscribe(result => expect(result).toBe(false));
     });
   });
 
   describe('.reloadPage()', () => {
-    beforeAll(() => {
-      issueService = jasmine.createSpyObj('IssueService', ['reloadAllIssues']);
-      issueService.reloadAllIssues.and.returnValue(of([]));
-    });
-
     afterEach(() => {
       issueService.reloadAllIssues.calls.reset();
     });
@@ -34,30 +31,19 @@ describe('GithubEventService', () => {
       const SECOND_EVENT = [CHANGE_TITLE_EVENT];
       githubService.fetchEventsForRepo.and.returnValue(of(FIRST_EVENT));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
-
-      await githubEventService.reloadPage().toPromise();
-      expect(issueService.reloadAllIssues.calls.count()).toBe(1);
-      assertLastModified(githubEventService, FIRST_EVENT);
+      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
 
       githubService.fetchEventsForRepo.and.returnValue(of(SECOND_EVENT));
-      await githubEventService.reloadPage().toPromise();
-      expect(issueService.reloadAllIssues.calls.count()).toBe(2);
-      assertLastModified(githubEventService, SECOND_EVENT);
+      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
     });
 
-    it('does not trigger the IssueService to re-initialise the issue list, if there are no new events',
-      async () => {
-
+    it('does not trigger the IssueService to re-initialise the issue list, if there are no new events', () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
+      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
 
-      await githubEventService.reloadPage().toPromise();
-      expect(issueService.reloadAllIssues.calls.count()).toBe(1);
-      assertLastModified(githubEventService, EVENTS);
-      await githubEventService.reloadPage().toPromise();
       // issueService.reloadAllIssues must not have been called again
-      expect(issueService.reloadAllIssues.calls.count()).toBe(1);
-      assertLastModified(githubEventService, EVENTS);
+      githubEventService.reloadPage().subscribe(result => expect(result).toBe(false));
     });
 
   });
@@ -65,19 +51,14 @@ describe('GithubEventService', () => {
   describe('.reset()', () => {
     it('clears the details of the most recent event', async () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
-      const githubEventService: GithubEventService = new GithubEventService(githubService, null);
+      const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
       await githubEventService.setLatestChangeEvent().toPromise();
-      expect(githubEventService.getLastModifiedTime()).toBeDefined();
-      expect(githubEventService.getLastModifiedCommentTime()).toBeDefined();
       githubEventService.reset();
-      expect(githubEventService.getLastModifiedTime()).toBeUndefined();
-      expect(githubEventService.getLastModifiedCommentTime()).toBeUndefined();
+
+       // reloadPage should return an Observable of true due to reset()
+      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
     });
   });
 
 });
 
-function assertLastModified(githubEventService: GithubEventService, expectedEvents) {
-  expect(githubEventService.getLastModifiedTime()).toBe(expectedEvents[0].created_at);
-  expect(githubEventService.getLastModifiedCommentTime()).toBe(expectedEvents[0].issue.updated_at);
-}
