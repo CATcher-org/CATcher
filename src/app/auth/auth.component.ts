@@ -80,8 +80,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     if (oauthCode) { // In the web's oauth window
-      console.log('Printing Here');
-      console.log(AppConfig);
       window.opener.postMessage({ oauthCode }, AppConfig.origin);
       this.listenForCloseOAuthWindowMessage();
     } else { // In the main app window
