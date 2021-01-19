@@ -22,7 +22,9 @@ This application will support the following order of workflow:
 
 # Current Dev Team
 
-* Anubhav
-* Ge Shuming
-* Koh Jun Wei (team lead)
+* Anubhav (team lead)
+* Ding Yu Chen
+* Kang Su Min
+* Koh Jun Wei
+* Low Jun Kai, Sean
 * Prithivi Raj
