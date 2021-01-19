@@ -87,8 +87,6 @@ function createWindow() {
 
 }
 
-const mainMenuTemplate: MenuItemConstructorOptions[] = createMenuOptions(isDevMode);
-
 try {
   Logger.info('Initializing Electron app.');
   // This method will be called when Electron has finished
@@ -97,6 +95,7 @@ try {
   app.on('ready', () => {
     Logger.info('Electron app in ready state.');
     // Build and Attach Menu-bar template to application.
+    const mainMenuTemplate: MenuItemConstructorOptions[] = createMenuOptions(isDevMode);
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
 
