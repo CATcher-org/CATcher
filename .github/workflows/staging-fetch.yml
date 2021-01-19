@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy_web:
-    if: '${{ github.repository == 'CATcher-org/CATcher' || github.repository == 'seanlowjk/CATcher' }}' 
+    if: ${{ github.repository == 'CATcher-org/CATcher' || github.repository == 'seanlowjk/CATcher' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:

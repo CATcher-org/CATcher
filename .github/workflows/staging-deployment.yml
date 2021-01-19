@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy_web:
-    if: '${{ github.repository == 'CATcher-org/CATcher-staging' }}' 
+    if: ${{ github.repository == 'CATcher-org/CATcher-staging' }} 
     runs-on: ubuntu-latest
     strategy:
       matrix:
