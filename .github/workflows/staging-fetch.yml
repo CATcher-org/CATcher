@@ -1,0 +1,34 @@
+name: Staging Deployment
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  deploy_web:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: CATcher-org/CATcher-staging
+          ref: master # refers to the branch name  
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0 # fetches everything 
+      - name: Merge Upstream # Note, we use seanlowjk/CATcher.git in this example commit
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email noreply@github.com
+          git remote add upstream https://github.com/seanlowjk/CATcher.git 
+          git fetch upstream
+          git merge upstream/master --allow-unrelated-histories
+          git push origin master -f
+    rules:
+      - if: '${{ github.repository != 'CATcher-org/CATcher-staging' }}' 
+        when: never
+      - when: always
