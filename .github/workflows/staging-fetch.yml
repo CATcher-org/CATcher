@@ -8,10 +8,7 @@ on:
 
 jobs:
   deploy_web:
-    rules:
-      - if: '${{ github.repository != 'CATcher-org/CATcher' }}' 
-        when: never
-      - when: always
+    if: '${{ github.repository == 'CATcher-org/CATcher' || github.repository == 'seanlowjk/CATcher' }}' 
     runs-on: ubuntu-latest
     strategy:
       matrix:
