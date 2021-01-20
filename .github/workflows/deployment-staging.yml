@@ -1,0 +1,26 @@
+name: Staging Deployment
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy_web:
+    if: ${{ github.repository == 'CATcher-org/CATcher-staging' }} 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Deploy on Staging Website
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          npm install
+          npm run deploy:staging -- --repo=https://${{secrets.GH_TOKEN}}@github.com/CATcher-org/CATcher-staging.git

@@ -1,0 +1,29 @@
+name: Fetch Upstream Master to Staging
+
+on:
+  push:
+    branches: [ master, cicd/staging-deployment ]
+
+jobs:
+  deploy_web:
+    if: ${{ github.repository == 'CATcher-org/CATcher' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: CATcher-org/CATcher-staging
+          ref: master 
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0 
+      - name: Merge Upstream 
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email noreply@github.com
+          git remote add upstream https://github.com/CATcher/CATcher.git 
+          git fetch upstream
+          git merge upstream/cicd/staging-deployment --allow-unrelated-histories
+          git push origin master -f
