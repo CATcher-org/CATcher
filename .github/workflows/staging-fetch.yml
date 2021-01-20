@@ -26,6 +26,8 @@ jobs:
           git remote add upstream https://github.com/CATcher-org/CATcher.git 
           git fetch upstream
           git merge upstream/cicd/staging-deployment --allow-unrelated-histories
-          git push https://github-actions:$GITHUB_TOKEN@github.com/CATcher-org/CATcher-staging master -f
+          git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | \
+            xargs -L1 git config --unset-all
+          git push --prune https://token:$GITHUB_TOKEN@github.com/CATcher-org/CATcher-staging.git master
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
