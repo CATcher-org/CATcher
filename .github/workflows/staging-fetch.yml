@@ -21,13 +21,9 @@ jobs:
           fetch-depth: 0 
       - name: Merge Upstream 
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email noreply@github.com
+          git config user.name "Sean Low"
+          git config user.email sean.low.jk@gmail.com
           git remote add upstream https://github.com/CATcher-org/CATcher.git 
           git fetch upstream
           git merge upstream/cicd/staging-deployment --allow-unrelated-histories
-          git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | \
-            xargs -L1 git config --unset-all
-          git push --prune https://token:$GITHUB_TOKEN@github.com/CATcher-org/CATcher-staging.git master
-        env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git push origin master -f
