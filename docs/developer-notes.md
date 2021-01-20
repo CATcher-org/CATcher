@@ -33,9 +33,6 @@ In summary, the following steps are needed:
 # Commands
 This section shows you different commands you can run to build the application in different operating systems.
 
-**Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file.**
-
-
 |Command|Description|
 |--|--|
 |`npm start`| Start the app from Electron in development mode. |
