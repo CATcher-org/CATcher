@@ -19,6 +19,7 @@ jobs:
           ref: master 
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0 
+          persist-credentials: false
       - name: Merge Upstream 
         run: |
           git config user.name "Sean Low"
