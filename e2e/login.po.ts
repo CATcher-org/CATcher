@@ -17,8 +17,13 @@ export class LoginPage {
 
   async login() {
     await this.selectSession();
-    await this.fillCredentials();
-    await this.selectWindow(0);
+    /**
+     * TODO: Remove these lines since auth is mocked up and
+     * does not require the filling of credentials or spawning of
+     * new window.
+     */
+    // await this.fillCredentials();
+    // await this.selectWindow(0);
   }
 
   async confirmUser() {

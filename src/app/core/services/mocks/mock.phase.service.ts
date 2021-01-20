@@ -213,7 +213,10 @@ export class MockPhaseService {
         if (!isSessionCreated) {
           throw new Error('Session Availability Fix failed.');
         }
-        return this.labelService.synchronizeRemoteLabels();
+
+        // TODO: Label synchronization unnecessary in mockup. To Remove.
+        // return this.labelService.synchronizeRemoteLabels();
+        return of(undefined);
       })
     );
   }

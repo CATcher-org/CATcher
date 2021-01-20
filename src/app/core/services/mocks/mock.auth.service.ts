@@ -70,9 +70,7 @@ export class MockAuthService {
   }
 
   isAuthenticated(): boolean {
-    return true;
-    // TODO: Modify Below Line
-    // return this.authStateSource.getValue() === AuthState.Authenticated;
+    return this.authStateSource.getValue() === AuthState.Authenticated;
   }
 
   changeAuthState(newAuthState: AuthState) {
@@ -88,16 +86,19 @@ export class MockAuthService {
    * Will start the Github OAuth web flow process.
    */
   startOAuthProcess() {
-    const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
-    this.changeAuthState(AuthState.AwaitingAuthentication);
+    this.accessToken.next('FabricatedToken');
 
-    if (this.electronService.isElectron()) {
-      this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
-    } else {
-      this.createOauthWindow(encodeURI(
-        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
-      ));
-    }
+    // TODO: Remove Lines once Full E2E Structure is working
+    // const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
+    // this.changeAuthState(AuthState.AwaitingAuthentication);
+    //
+    // if (this.electronService.isElectron()) {
+    //   this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
+    // } else {
+    //   this.createOauthWindow(encodeURI(
+    //     `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
+    //   ));
+    // }
   }
 
   /**
