@@ -17,7 +17,7 @@ jobs:
         with:
           repository: CATcher-org/CATcher-staging
           ref: master 
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0 
       - name: Merge Upstream 
         run: |
