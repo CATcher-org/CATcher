@@ -4,16 +4,14 @@ import { Issue } from '../../../core/models/issue.model';
 import { IssueComment } from '../../../core/models/comment.model';
 import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
 import { IssueService } from '../../../core/services/issue.service';
-import { IssueCommentService } from '../../../core/services/issue-comment.service';
 import { UserService } from '../../../core/services/user.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, flatMap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { flatMap } from 'rxjs/internal/operators';
-import { shell } from 'electron';
 import { GithubService } from '../../../core/services/github.service';
 import { PhaseService } from '../../../core/services/phase.service';
+import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({
   selector: 'app-issue-dispute',
@@ -34,11 +32,11 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
-              private issueCommentService: IssueCommentService,
               public userService: UserService,
               private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
-              private phaseService: PhaseService) { }
+              private phaseService: PhaseService,
+              private electronService: ElectronService) { }
 
   ngOnInit() {
     this.resetForm();
@@ -135,7 +133,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
   }
 
   viewInGithub(): void {
-    shell.openExternal(`https://github.com/${this.githubService.getRepoURL()}/issues/` +
+    this.electronService.openLink(`https://github.com/${this.githubService.getRepoURL()}/issues/` +
       `${this.issue.id}#issuecomment-${this.issue.issueComment.id}`);
   }
 

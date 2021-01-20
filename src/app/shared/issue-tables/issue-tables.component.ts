@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { LabelService } from '../../core/services/label.service';
@@ -9,6 +9,7 @@ import { ErrorHandlingService } from '../../core/services/error-handling.service
 import { finalize } from 'rxjs/operators';
 import { IssuesDataTable } from './IssuesDataTable';
 import { MatPaginator, MatSort } from '@angular/material';
+import { Phase, PhaseService } from '../../core/services/phase.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -37,7 +38,7 @@ export enum TABLE_COLUMNS {
   templateUrl: './issue-tables.component.html',
   styleUrls: ['./issue-tables.component.css']
 })
-export class IssueTablesComponent implements OnInit {
+export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
@@ -55,13 +56,19 @@ export class IssueTablesComponent implements OnInit {
               private labelService: LabelService,
               private githubService: GithubService,
               private issueService: IssueService,
+              private phaseService: PhaseService,
               private errorHandlingService: ErrorHandlingService) { }
 
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
       this.paginator, this.headers, this.filters);
-    this.issues.loadIssues();
     this.issuesPendingDeletion = {};
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.issues.loadIssues();
+    });
   }
 
   /**
@@ -88,10 +95,9 @@ export class IssueTablesComponent implements OnInit {
   }
 
   markAsResponded(issue: Issue) {
-    this.issueService.updateIssue(<Issue>{
-      ...issue,
-      status: STATUS.Done
-    }).subscribe((updatedIssue) => {
+    const newIssue = issue.clone(this.phaseService.currentPhase);
+    newIssue.status = STATUS.Done;
+    this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
       this.errorHandlingService.handleError(error);
@@ -99,11 +105,14 @@ export class IssueTablesComponent implements OnInit {
     event.stopPropagation();
   }
 
+  isResponseEditable() {
+    return this.permissions.isTeamResponseEditable() || this.permissions.isTesterResponseEditable();
+  }
+
   markAsPending(issue: Issue) {
-    this.issueService.updateIssue(<Issue>{
-      ...issue,
-      status: STATUS.Incomplete
-    }).subscribe((updatedIssue) => {
+    const newIssue = issue.clone(this.phaseService.currentPhase);
+    newIssue.status = STATUS.Incomplete;
+    this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
       this.issueService.updateLocalStore(updatedIssue);
     }, error => {
       this.errorHandlingService.handleError(error);

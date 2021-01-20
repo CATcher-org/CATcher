@@ -4,9 +4,8 @@ import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Issue, SEVERITY_ORDER, STATUS } from '../../../core/models/issue.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { finalize, flatMap, map } from 'rxjs/operators';
-import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { LabelService } from '../../../core/services/label.service';
-import { IssueCommentService } from '../../../core/services/issue-comment.service';
 import { IssueComment } from '../../../core/models/comment.model';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
@@ -35,7 +34,6 @@ export class NewTeamResponseComponent implements OnInit {
 
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
-              private issueCommentService: IssueCommentService,
               public labelService: LabelService,
               private errorHandlingService: ErrorHandlingService,
               private dialog: MatDialog,
@@ -80,16 +78,13 @@ export class NewTeamResponseComponent implements OnInit {
       flatMap((isSaveToSubmit: boolean) => {
         const newCommentDescription = latestIssue.createGithubTeamResponse();
         if (isSaveToSubmit) {
-          return forkJoin([this.issueService.updateIssue(latestIssue),
-            this.issueCommentService.createIssueComment(this.issue.id, newCommentDescription)]);
+          return this.issueService.createTeamResponse(latestIssue);
         } else if (this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
           const issueCommentId = this.issueService.issues[this.issue.id].issueComment.id;
-          return forkJoin([this.issueService.updateIssue(latestIssue),
-            this.issueCommentService.updateIssueComment(latestIssue.id, <IssueComment>{
-              id: issueCommentId,
-              description: newCommentDescription,
-            })
-          ]);
+          return this.issueService.updateIssueWithComment(latestIssue, <IssueComment>{
+            id: issueCommentId,
+            description: newCommentDescription,
+          });
         } else {
           this.conflict = new Conflict(' ', this.issueService.issues[this.issue.id].teamResponse);
           this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
@@ -98,9 +93,8 @@ export class NewTeamResponseComponent implements OnInit {
         }
       }),
       finalize(() => this.isFormPending = false)
-    ).subscribe((resultArr: [Issue, IssueComment]) => {
-        const [updatedIssue, updatedComment] = resultArr;
-      updatedIssue.issueComment = updatedComment;
+    ).subscribe((updatedIssue: Issue) => {
+      // updatedIssue.issueComment = updatedComment;
       this.issueUpdated.emit(updatedIssue);
       form.resetForm();
     }, (error) => {

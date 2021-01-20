@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {GithubService} from './github.service';
-import {uuid} from '../../shared/lib/uuid';
-import {throwError} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { GithubService } from './github.service';
+import { uuid } from '../../shared/lib/uuid';
+import { throwError } from 'rxjs';
 
 export const SUPPORTED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png', 'docx', 'gz', 'log', 'pdf', 'pptx', 'txt', 'xlsx', 'zip'];
 export const FILE_TYPE_SUPPORT_ERROR = 'We don\'t support that file type.' +

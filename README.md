@@ -1,6 +1,8 @@
+<img src="./src/assets/images/CATcher_logo.png" alt="CATcher" width="420" height="120"/>
+
 # Introduction
 
-[![Build Status](https://travis-ci.org/CATcher-org/CATcher.svg?branch=master)](https://travis-ci.org/CATcher-org/CATcher)
+![Build Status](https://github.com/CATcher-org/CATcher/workflows/Setup%20Builds%20and%20Tests/badge.svg)
 
 **CAT**cher is a desktop application for **C**rowd-sourced **A**nonymous **T**esting software. It uses GitHub as the backend for hosting bug reports.
 
@@ -12,15 +14,17 @@ This application will support the following order of workflow:
 
 # Getting Started
 
-* [Notes on using the CATcher Desktop App](./usage-notes.md)
+* [Notes on using the CATcher Desktop App](./docs/usage-notes.md)
 
-* [Setting up the required GitHub organisation and repositories](./setup-notes.md) (for **admin users** only)
+* [Setting up the required GitHub organisation and repositories](./docs/setup-notes.md) (for **admin users** only)
 
-* [Developing CATcher](./developer-notes.md)
+* [Developing CATcher](./docs/developer-notes.md)
 
 # Current Dev Team
 
-* Anubhav
-* Ge Shuming
-* Koh Jun Wei (team lead)
+* Anubhav (team lead)
+* Ding Yu Chen
+* Kang Su Min
+* Koh Jun Wei
+* Low Jun Kai, Sean
 * Prithivi Raj

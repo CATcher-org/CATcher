@@ -1,8 +1,10 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {Issue} from '../../../core/models/issue.model';
-import {IssueService} from '../../../core/services/issue.service';
-import {PermissionService} from '../../../core/services/permission.service';
-import {Observable} from 'rxjs';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Issue } from '../../../core/models/issue.model';
+import { IssueService } from '../../../core/services/issue.service';
+import { PermissionService } from '../../../core/services/permission.service';
+import { Observable } from 'rxjs';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-duplicated-issues-component',
@@ -16,6 +18,8 @@ export class DuplicatedIssuesComponent implements OnInit {
   @Input() issue: Issue;
 
   constructor(public issueService: IssueService,
+              public errorHandlingService: ErrorHandlingService,
+              public phaseService: PhaseService,
               public permissions: PermissionService) {
   }
 
@@ -24,12 +28,18 @@ export class DuplicatedIssuesComponent implements OnInit {
   }
 
   removeDuplicateStatus(duplicatedIssue: Issue) {
-    this.issueService.updateIssue(<Issue>{
-      ...duplicatedIssue,
-      duplicated: false,
-      duplicateOf: null,
-    }).subscribe((updatedIssue) => {
-      this.issueService.updateLocalStore(updatedIssue);
-    });
+    const latestIssue = this.getUpdatedIssueWithRemovedDuplicate(duplicatedIssue);
+    this.issueService.updateIssueWithComment(latestIssue, latestIssue.issueComment).subscribe(
+      (issue) => this.issueService.updateLocalStore(issue),
+      (error) => this.errorHandlingService.handleError(error)
+    );
+  }
+
+  getUpdatedIssueWithRemovedDuplicate(duplicatedIssue: Issue): Issue {
+    const clone = duplicatedIssue.clone(this.phaseService.currentPhase);
+    clone.duplicated = false;
+    clone.duplicateOf = null;
+    clone.issueComment.description = clone.createGithubTeamResponse();
+    return clone;
   }
 }

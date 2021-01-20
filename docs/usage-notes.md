@@ -5,6 +5,7 @@ You can download the latest release from https://github.com/CATcher-org/CATcher/
 Start the application by clicking on the executable file, no installation is required.
 
 The app will prompt you to enter the session you are participating in, using a dropdown.
+
 ![session_select](https://imgur.com/nBOy7zH.png)
 
 ## For Windows Users
@@ -12,8 +13,9 @@ For normal usage, you can run the `CATcher.exe` and the following dialog would a
 
 ![windows_warning](https://imgur.com/4p0Yn7s.png)
 
-In some cases, the "Run Anyway" button would not appear. To troubleshoot this, you can open up "Windows Security" and under "App & browser control", make sure your setting conforms to the following.
-![app_control](https://imgur.com/lFgVPSd.png=50x)
+In some cases, the "Run Anyway" button may not appear. To troubleshoot this, you can open up "Windows Security" and under "App & browser control", click on "Reputation-based protection settings" and make sure CATcher is not blocked here.
+
+If you are using an older version of Windows, you may not be able to find the "Reputation-based protection settings". Under "App and browser control", you would instead see "Check apps and files". In this section, make sure it is set to "Warn".
 
 ## For Mac Users
 To run CATcher on MacOS, you would need to go to "System Preferences" and in "Security & Privacy", select "Open Anyway" for CATcher, as shown below.
@@ -36,3 +38,9 @@ There are 2 methods to achieve this:
   - Enable the `Allow executing file as program` option. 
   - Note: the GUI menus may differ slightly on different Linux distributions.
 - From the command line: Use `chmod +x CATcher-x.y.z.AppImage`
+
+# Reporting problems in using CATcher
+If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs. You can retrieve them in the following directory:
+- Linux: ~/.config/CATcher/logs/*.log
+- macOS: ~/Library/Logs/CATcher/*.log
+- Windows: %USERPROFILE%\AppData\Roaming\CATcher\logs\\*.log

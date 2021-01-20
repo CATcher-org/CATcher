@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
-const { ipcRenderer } = require('electron');
 import {
   trigger,
   state,
@@ -9,14 +8,14 @@ import {
   animate,
   transition
 } from '@angular/animations';
+import { ElectronService } from '../../core/services/electron.service';
+import { AppConfig } from '../../../environments/environment';
 
 /**
  * Indicates all the elements that make up a Profile.
  */
 export interface Profile {
   profileName: string;
-  username: string;
-  password: string;
   encodedText: string;
 }
 
@@ -44,39 +43,9 @@ export class ProfilesComponent implements OnInit {
 
   private readonly ANIMATION_DURATION: number = 250;
 
-  profiles: Profile[] = undefined; // List of profiles taken from profiles.json
-  blankProfile: Profile = {profileName: '', password: '', username: '', encodedText: ''}; // A blank profile to reset values
+  profiles: Profile[] = []; // List of profiles taken from profiles.json
+  blankProfile: Profile = {profileName: '', encodedText: ''}; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
-
-  // To be set to undefined array if not used.
-  readonly defaultProfiles: Profile[] = [
-    <Profile>{
-      profileName: 'CS2103/T Alpha Test',
-      encodedText: 'nus-cs2103-AY1920S2/alpha'
-    },
-    <Profile>{
-      profileName: 'CS2103/T PE Dry run',
-      encodedText: 'nus-cs2103-AY1920S2/PED'
-    },
-    <Profile>{
-      profileName: 'CS2103/T PE',
-      encodedText: 'nus-cs2103-AY1920S2/PE'
-    },
-    <Profile>{
-      profileName: 'CS2113/T Alpha Test',
-      encodedText: 'nus-cs2113-AY1920S2/alpha'
-    },
-    <Profile>{
-      profileName: 'CS2113/T PE Dry run',
-      encodedText: 'nus-cs2113-AY1920S2/PED'
-    },
-    <Profile>{
-      profileName: 'CS2113/T PE',
-      encodedText: 'nus-cs2113-AY1920S2/PE'
-    }
-  ];
-
-  private readonly fs = require('fs');
 
   private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar).*/g;
   private readonly PROFILES_FILE_NAME = 'profiles.json';
@@ -92,14 +61,11 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog) { }
+  constructor(private electronService: ElectronService, public errorDialog: MatDialog) { }
 
   ngOnInit() {
-    const path = require('path');
-    const temp = ipcRenderer.sendSync('synchronous-message', 'getDirectory');
-    this.filePath = path.join(
-        temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''),
-        this.PROFILES_FILE_NAME);
+    const temp = this.electronService.getCurrentDirectory();
+    this.filePath = [temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''), this.PROFILES_FILE_NAME].join('/');
     this.readProfiles();
   }
 
@@ -117,16 +83,30 @@ export class ProfilesComponent implements OnInit {
 
   /**
    * Reads the user selected file
-   * @param fileInput - OS default file selector.
    */
-  fileSelected(fileInput: HTMLInputElement): void {
-    this.filePath = (fileInput.files[0].path);
-    fileInput.value = '';
-    this.readProfiles();
+  fileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (!(reader.result instanceof ArrayBuffer)) {
+        try {
+          this.profiles = JSON.parse(reader.result).profiles
+            .concat(AppConfig.profiles)
+            .filter(p => !!p);
+          target.value = '';
+        } catch (e) {
+          this.openErrorDialog();
+        }
+      }
+    };
+    reader.readAsText(file);
   }
 
   /**
-   * Processes all available Profiles information.
+   * Processes available Profiles information from application's directory.
+   * The automatic detection of profiles in the current directory will only be available in Electron version.
    */
   readProfiles(): void {
     const isFileExists: boolean = this.userProfileFileExists(this.filePath);
@@ -136,31 +116,28 @@ export class ProfilesComponent implements OnInit {
     this.profilesData.isDirectoryMessageVisible = !isFileExists;
     this.profileDataEmitter.emit(this.profilesData);
 
-    if (isFileExists) {
+    if (this.electronService.isElectron() && isFileExists) {
       try {
-        this.profiles = JSON.parse(this.fs.readFileSync(this.filePath))['profiles'];
+        this.profiles = [];
+        this.profiles = JSON.parse(this.electronService.readFile(this.filePath))['profiles'];
       } catch (e) {
-        // Do nothing if there is a parsing error because this.profiles will be set to undefined on error.
+        this.openErrorDialog();
       }
 
       // Validity Check if custom profile.json file has values in it.
-      if (this.profiles !== undefined) {
-        try {
-          this.assertProfilesValidity(this.profiles);
-        } catch (e) {
-          console.log(e);
-          setTimeout(() => {
-            this.profiles = undefined;
-            this.openErrorDialog();
-          });
-        }
+      try {
+        this.assertProfilesValidity(this.profiles);
+      } catch (e) {
+        setTimeout(() => {
+          this.profiles = AppConfig.profiles || [];
+          this.openErrorDialog();
+        });
       }
     }
 
-    // Several Layers of True False Statements to decide which values to assign to this.profiles.
-    this.profiles = this.profiles === undefined
-      ? this.defaultProfiles === undefined ? undefined : this.defaultProfiles
-      : this.defaultProfiles === undefined ? this.profiles : this.profiles.concat(this.defaultProfiles);
+    this.profiles = this.profiles
+      .concat(AppConfig.profiles)
+      .filter(p => !!p);
   }
 
   /**
@@ -185,7 +162,7 @@ export class ProfilesComponent implements OnInit {
    * @param filePath - Path of file to check.
    */
   userProfileFileExists(filePath: string): boolean {
-    return this.fs.existsSync(filePath);
+    return this.electronService.fileExists(filePath);
   }
 
   /**

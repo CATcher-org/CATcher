@@ -2,7 +2,8 @@ import { Team } from './team.model';
 import { TesterResponse } from './tester-response.model';
 import { IssueComment } from './comment.model';
 import { IssueDispute } from './issue-dispute.model';
-import { GithubIssue, GithubLabel } from './github/github-issue.model';
+import { GithubIssue } from './github/github-issue.model';
+import { GithubLabel } from './github/github-label.model';
 import { GithubComment } from './github/github-comment.model';
 import { TeamResponseTemplate } from './templates/team-response-template.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
@@ -10,16 +11,19 @@ import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import { Phase } from '../services/phase.service';
 import * as moment from 'moment';
+import { HiddenData } from './hidden-data.model';
 
 export class Issue {
 
   /** Basic Fields */
+  readonly globalId: string;
   readonly id: number;
   readonly created_at: string;
   readonly githubIssue: GithubIssue;
   githubComments: GithubComment[];
   title: string;
   description: string;
+  hiddenDataInDescription: HiddenData;
 
   /** Fields derived from Labels */
   severity: string;
@@ -41,12 +45,36 @@ export class Issue {
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
 
-    /**
+  /**
+   * Formats the text to create space at the end of the user input to prevent any issues with
+   * the markdown interpretation.
+   *
+   * Brought over from comment-editor.component.ts
+   */
+  static formatText(text: string): string {
+    if (text === null) {
+      return null;
+    }
+
+    if (text === undefined) {
+      return undefined;
+    }
+
+    const newLinesRegex = /[\n\r]/gi;
+    const textSplitArray = text.split(newLinesRegex);
+    if (textSplitArray.filter(split => split.trim() !== '').length > 0) {
+      return `${text}\n\n`;
+    } else {
+      return text;
+    }
+  }
+
+  /**
    * Processes and cleans a raw issue description obtained from user input.
    */
   static updateDescription(description: string): string {
     const defaultString = 'No details provided by bug reporter.';
-    return Issue.orDefaultString(description, defaultString);
+    return Issue.orDefaultString(Issue.formatText(description), defaultString);
   }
 
   /**
@@ -54,7 +82,7 @@ export class Issue {
    */
   static updateTeamResponse(teamResponse: string): string {
     const defaultString = 'No details provided by team.';
-    return Issue.orDefaultString(teamResponse, defaultString);
+    return Issue.orDefaultString(Issue.formatText(teamResponse), defaultString);
   }
 
   /**
@@ -70,10 +98,12 @@ export class Issue {
 
   protected constructor(githubIssue: GithubIssue) {
     /** Basic Fields */
+    this.globalId = githubIssue.id;
     this.id = +githubIssue.number;
     this.created_at = moment(githubIssue.created_at).format('lll');
     this.title = githubIssue.title;
-    this.description = Issue.updateDescription(githubIssue.body);
+    this.hiddenDataInDescription = new HiddenData(githubIssue.body);
+    this.description = Issue.updateDescription(this.hiddenDataInDescription.originalStringWithoutHiddenData);
     this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
@@ -89,12 +119,11 @@ export class Issue {
     return new Issue(githubIssue);
   }
 
-  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
-                                             teamData: Team): Issue {
+  public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, teamData: Team): Issue {
     const issue = new Issue(githubIssue);
-    const template = new TeamResponseTemplate(githubComments);
+    const template = new TeamResponseTemplate(githubIssue.comments);
 
-    issue.githubComments = githubComments;
+    issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
@@ -104,24 +133,23 @@ export class Issue {
     return issue;
   }
 
-  public static createPhaseTesterResponseIssue(githubIssue: GithubIssue, githubComments: GithubComment[]): Issue {
+  public static createPhaseTesterResponseIssue(githubIssue: GithubIssue): Issue {
     const issue = new Issue(githubIssue);
-    const template = new TesterResponseTemplate(githubComments);
+    const template = new TesterResponseTemplate(githubIssue.comments);
 
-    issue.githubComments = githubComments;
+    issue.githubComments = githubIssue.comments;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
     issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
     return issue;
   }
 
-  public static createPhaseModerationIssue(githubIssue: GithubIssue, githubComments: GithubComment[],
-                                           teamData: Team): Issue {
+  public static createPhaseModerationIssue(githubIssue: GithubIssue, teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const issueTemplate = new TutorModerationIssueTemplate(githubIssue);
-    const todoTemplate = new TutorModerationTodoTemplate(githubComments);
+    const todoTemplate = new TutorModerationTodoTemplate(githubIssue.comments);
 
-    issue.githubComments = githubComments;
+    issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
     issue.description = issueTemplate.description.content;
     issue.teamResponse = issueTemplate.teamResponse !== undefined
@@ -149,11 +177,11 @@ export class Issue {
       case Phase.phaseBugReporting:
         return Issue.createPhaseBugReportingIssue(this.githubIssue);
       case Phase.phaseTeamResponse:
-        return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+        return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.teamAssigned);
       case Phase.phaseTesterResponse:
-        return Issue.createPhaseTesterResponseIssue(this.githubIssue, this.githubComments);
+        return Issue.createPhaseTesterResponseIssue(this.githubIssue);
       case Phase.phaseModeration:
-        return Issue.createPhaseModerationIssue(this.githubIssue, this.githubComments, this.teamAssigned);
+        return Issue.createPhaseModerationIssue(this.githubIssue, this.teamAssigned);
       default:
         return Issue.createPhaseBugReportingIssue(this.githubIssue);
     }
@@ -212,9 +240,13 @@ export class Issue {
     });
   }
 
+  createGithubIssueDescription(): string {
+    return `${this.description}\n${this.hiddenDataInDescription.toString()}`;
+  }
+
   // Template url: https://github.com/CATcher-org/templates#dev-response-phase
   createGithubTeamResponse(): string {
-    return `# Team\'s Response\n${this.teamResponse}\n ` +
+    return `# Team\'s Response\n${this.teamResponse}\n` +
       `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
   }
 
@@ -229,7 +261,7 @@ export class Issue {
 
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   createGithubTesterResponse(): string {
-    return `# Team\'s Response\n${this.teamResponse}\n ` +
+    return `# Team\'s Response\n${this.teamResponse}\n` +
       `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
   }
 

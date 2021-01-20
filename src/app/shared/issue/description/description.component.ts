@@ -1,16 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
 import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, flatMap } from 'rxjs/operators';
 import { PermissionService } from '../../../core/services/permission.service';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
-import { flatMap } from 'rxjs/internal/operators';
 import { throwError } from 'rxjs';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue-description',
@@ -33,6 +33,7 @@ export class DescriptionComponent implements OnInit {
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private dialog: MatDialog,
+              private phaseService: PhaseService,
               public permissions: PermissionService) {
   }
 
@@ -104,9 +105,8 @@ export class DescriptionComponent implements OnInit {
   }
 
   private getUpdatedIssue(): Issue {
-    return <Issue> {
-      ...this.issue,
-      ['description']: Issue.updateDescription(this.issueDescriptionForm.get('description').value)
-    };
+    const newIssue = this.issue.clone(this.phaseService.currentPhase);
+    newIssue.description = Issue.updateDescription(this.issueDescriptionForm.get('description').value);
+    return newIssue;
   }
 }

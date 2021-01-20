@@ -1,4 +1,4 @@
-import {UploadService, SUPPORTED_FILE_TYPES, FILE_TYPE_SUPPORT_ERROR} from '../../src/app/core/services/upload.service';
+import { UploadService, SUPPORTED_FILE_TYPES, FILE_TYPE_SUPPORT_ERROR } from '../../src/app/core/services/upload.service';
 
 const PERIOD = '.';
 

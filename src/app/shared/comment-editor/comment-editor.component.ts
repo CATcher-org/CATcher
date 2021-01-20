@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import {FILE_TYPE_SUPPORT_ERROR, SUPPORTED_FILE_TYPES, UploadService} from '../../core/services/upload.service';
+import { FILE_TYPE_SUPPORT_ERROR, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { clipboard } from 'electron';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ElectronService } from '../../core/services/electron.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
@@ -17,7 +17,8 @@ export class CommentEditorComponent implements OnInit {
   readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
 
   constructor(private uploadService: UploadService,
-              private errorHandlingService: ErrorHandlingService) {}
+              private errorHandlingService: ErrorHandlingService,
+              private electronService: ElectronService) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
@@ -160,56 +161,18 @@ export class CommentEditorComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  /**
-   * Formats the text to create space at the end of the user input to prevent any issues with
-   * the markdown interpretation.
-   */
-  formatText() {
-    const newLinesRegex = /[\n\r]/gi;
-    if (this.commentTextArea.nativeElement.value.split(newLinesRegex).filter(split => split.trim() !== '').length > 0) {
-      this.commentField.setValue(this.commentTextArea.nativeElement.value + '\n\r');
-    } else {
-      this.commentField.setValue('');
-    }
-  }
-
-  onPaste() {
-    this.uploadErrorMessage = null;
-
-    const imageFileType = clipboard.availableFormats().filter(type => type.includes('image'));
-    if (imageFileType.length === 0) {
-      return;
-    }
-
-    const filename = `image.${imageFileType[0].split('/')[1]}`;
-    const insertedText = this.insertUploadingText(filename);
-
-    if (!this.uploadService.isSupportedFileType(filename)) {
-      this.handleUploadError(FILE_TYPE_SUPPORT_ERROR, insertedText);
-      return;
-    }
-
-    // Log the most recent upload.
-    this.lastUploadingTime = new Date().getTime().toString();
-    const currentFileUploadTime = this.lastUploadingTime;
-
-    // Prevents Form Submission during Upload
-    this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(this.initialSubmitButtonText));
-
-    this.uploadService.uploadFile(clipboard.readImage().toDataURL(), filename).subscribe((response) => {
-      this.insertUploadUrl(filename, response.data.content.download_url);
-    }, (error) => {
-      this.handleUploadError(error, insertedText);
-      // Allow button enabling if this is the last file that was uploaded.
-      if (currentFileUploadTime === this.lastUploadingTime) {
-        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+  onPaste(event) {
+    const items = event.clipboardData.items;
+    let blob = null;
+    for (const item of items) {
+      if (item.type.indexOf('image') === 0) {
+        blob = item.getAsFile();
+        break;
       }
-    }, () => {
-      // Allow button enabling if this is the last file that was uploaded.
-      if (currentFileUploadTime === this.lastUploadingTime) {
-        this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
-      }
-    });
+    }
+    if (blob) {
+      this.readAndUploadFile(blob);
+    }
   }
 
   get isInErrorState(): boolean {

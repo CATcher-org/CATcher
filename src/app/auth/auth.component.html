@@ -15,7 +15,7 @@
 </div>
 
 <div *ngIf="isReady && !versionCheckingError && !isAppOutdated">
-  <div *ngIf="isAtSessionSelection" class="login-page">
+  <div *ngIf="isUserNotAuthenticated()" class="login-page">
     <mat-card class="login-card">
       <mat-card-header style="margin-bottom: 20px;">
         <mat-card-title class="login-title"> Select Your Session </mat-card-title>
@@ -43,7 +43,7 @@
     </mat-card>
   </div>
 
-  <div *ngIf="isAtGithubAccountConfirmation" class="login-page">
+  <div *ngIf="isUserAuthenticating() || isAwaitingOAuthUserConfirm()" class="login-page">
     <mat-card class="login-card">
       <mat-card-header style="margin-bottom: 20px;">
         <mat-card-title class="login-title"> Confirm Login Account </mat-card-title>
@@ -63,54 +63,15 @@
           <span> Continue as {{this.currentUserName}} </span>
         </button>
 
-        <button mat-button style="margin-top: 10px; margin-bottom: 10px;" [disabled]="isUserAuthenticating()"
+        <button *ngIf="electronService.isElectron()" mat-button style="margin-top: 10px; margin-bottom: 10px;" [disabled]="isUserAuthenticating()"
                 (click)="logIntoAnotherAccount()"> Log in to another account </button>
+        <div *ngIf="!electronService.isElectron()" class="mat-body-1" style="margin-top: 20px;">
+          To change account, please sign into the desired account from the
+          <a href="https://github.com/" (click)="onGithubWebsiteClicked()">official Github website</a>.
+        </div>
       </div>
       <div *ngIf="isUserAuthenticating()" class="spinner-centralize">
         <mat-spinner [diameter]="47"></mat-spinner>
-      </div>
-    </mat-card>
-  </div>
-
-  <div *ngIf="isAtNewGithubLogin" class="login-page">
-    <mat-card>
-      <mat-card-header style="margin-bottom: 20px;">
-        <mat-card-title class="login-title">Github Login</mat-card-title>
-        <mat-card-subtitle> Session on {{currentSessionOrg}} </mat-card-subtitle>
-      </mat-card-header>
-
-      <div>
-        <div style="position: absolute; top: 15px; left: 15px">
-          <button mat-icon-button (click)="goToSessionSelect()" [disabled]="isUserAuthenticating()" class="mat-primary">
-            <mat-icon>arrow_back_ios</mat-icon>
-          </button>
-        </div>
-
-        <button mat-raised-button class="login-with-oauth-btn" [class.hover-blue]="isUserNotAuthenticated()" (click)="auth.startOAuthProcess()" [disabled]="isUserAuthenticating()">
-          <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo"> </span>
-          <span> Use Github Login Interface </span>
-        </button>
-        <h6 class="or-text">OR</h6>
-
-        <mat-card-content>
-          <form [formGroup]="loginForm" (ngSubmit)="loginWithUserNamePassword()">
-            <mat-form-field class="login-field">
-              <input matInput placeholder="Github Username" formControlName="username" required>
-            </mat-form-field>
-            <mat-form-field class="login-field">
-              <input matInput placeholder="Github Password" formControlName="password" type="password" required>
-            </mat-form-field>
-
-            <mat-card-actions>
-              <button *ngIf="isUserNotAuthenticated()" class="sign-in-button" type="submit" [disabled]="loginForm.invalid" mat-stroked-button color="primary">
-                <div>Sign In</div>
-              </button>
-              <div *ngIf="isUserAuthenticating()" class="spinner-centralize">
-                <mat-spinner [diameter]="47"></mat-spinner>
-              </div>
-            </mat-card-actions>
-          </form>
-        </mat-card-content>
       </div>
     </mat-card>
   </div>

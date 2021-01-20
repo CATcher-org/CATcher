@@ -6,6 +6,7 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
 import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
 import { LabelService } from '../../../core/services/label.service';
+import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({
   selector: 'app-issue-label',
@@ -24,6 +25,7 @@ export class LabelComponent implements OnInit, OnChanges {
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
+              private phaseService: PhaseService,
               public labelService: LabelService,
               public permissions: PermissionService) {
   }
@@ -39,13 +41,11 @@ export class LabelComponent implements OnInit, OnChanges {
   }
 
   updateLabel(value: string) {
-    const latestIssue = <Issue>{
-    ...this.issue,
-      [this.attributeName]: value
-    };
-    this.issueService.updateIssue(latestIssue).subscribe((editedIssue: Issue) => {
-      this.issueUpdated.emit(latestIssue);
-      this.labelColor = this.labelService.getColorOfLabel(editedIssue[this.attributeName]);
+    const newIssue = this.issue.clone(this.phaseService.currentPhase);
+    newIssue[this.attributeName] = value;
+    this.issueService.updateIssue(newIssue).subscribe((updatedIssue: Issue) => {
+      this.issueUpdated.emit(updatedIssue);
+      this.labelColor = this.labelService.getColorOfLabel(updatedIssue[this.attributeName]);
     }, (error) => {
       this.errorHandlingService.handleError(error);
     });

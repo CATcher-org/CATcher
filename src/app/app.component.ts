@@ -1,8 +1,9 @@
-import {AfterViewInit, Component} from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { ElectronService } from './core/services/electron.service';
 import { AppConfig } from '../environments/environment';
-import {fromEvent, merge, Observable, of} from 'rxjs';
-import {mapTo} from 'rxjs/operators';
+import { fromEvent, merge, Observable, of } from 'rxjs';
+import { mapTo } from 'rxjs/operators';
+import { LoggingService } from './core/services/logging.service';
 
 @Component({
   selector: 'app-root',
@@ -12,16 +13,14 @@ import {mapTo} from 'rxjs/operators';
 export class AppComponent implements AfterViewInit {
   isNetworkOnline$: Observable<boolean>;
 
-  constructor(public electronService: ElectronService) {
+  constructor(public electronService: ElectronService, logger: LoggingService) {
 
-    console.log('AppConfig', AppConfig);
+    logger.info('AppConfig', AppConfig);
 
     if (electronService.isElectron()) {
-      console.log('Mode electron');
-      console.log('Electron ipcRenderer', electronService.ipcRenderer);
-      console.log('NodeJS childProcess', electronService.childProcess);
+      logger.info('Mode electron');
     } else {
-      console.log('Mode web');
+      logger.info('Mode web');
     }
     this.isNetworkOnline$ = merge(
       of(navigator.onLine),
@@ -44,7 +43,7 @@ export class AppComponent implements AfterViewInit {
       if (elem) {
         event.preventDefault();
         event.stopPropagation();
-        this.electronService.remote.shell.openExternal(elem.href);
+        this.electronService.openLink(elem.href);
       }
     }, false);
   }
