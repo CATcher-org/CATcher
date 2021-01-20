@@ -15,15 +15,15 @@ export function getSortedData(sort: MatSort, data: Issue[]): Issue[] {
       case 'severity':
         return direction * compareBySeverity(a.severity, b.severity);
       case 'assignees':
-        return direction * compareStringValue(a.assignees.join(', '), b.assignees.join(', '));
+        return direction * compareByStringValue(a.assignees.join(', '), b.assignees.join(', '));
       case 'teamAssigned':
-        return direction * compareStringValue(a.teamAssigned.id, b.teamAssigned.id);
+        return direction * compareByStringValue(a.teamAssigned.id, b.teamAssigned.id);
       case 'Todo Remaining':
-        return -direction * compareIntegerValue(a.numOfUnresolvedDisputes(), b.numOfUnresolvedDisputes());
+        return -direction * compareByIntegerValue(a.numOfUnresolvedDisputes(), b.numOfUnresolvedDisputes());
       case 'id':
-        return direction * compareIntegerValue(a.id, b.id);
+        return direction * compareByIntegerValue(a.id, b.id);
       default: // title, responseTag are string values
-        return direction * compareStringValue(a[sort.active], b[sort.active]);
+        return direction * compareByStringValue(a[sort.active], b[sort.active]);
     }
   });
 }
@@ -42,12 +42,12 @@ function compareByIssueType(issueTypeA: string, issueTypeB: string): number {
   return orderA < orderB ? -1 : 1;
 }
 
-function compareStringValue(valueA: string, valueB: string): number {
+function compareByStringValue(valueA: string, valueB: string): number {
   const orderA = String(valueA || '').toUpperCase();
   const orderB = String(valueB || '').toUpperCase();
   return (orderA < orderB ? -1 : 1);
 }
 
-function compareIntegerValue(valueA: number, valueB: number): number {
+function compareByIntegerValue(valueA: number, valueB: number): number {
   return (valueA < valueB ? -1 : 1);
 }
