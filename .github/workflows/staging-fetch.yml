@@ -26,4 +26,6 @@ jobs:
           git remote add upstream https://github.com/CATcher-org/CATcher.git 
           git fetch upstream
           git merge upstream/cicd/staging-deployment --allow-unrelated-histories
-          git push origin master -f
+          git push https://github-actions:$GITHUB_TOKEN@github.com/CATcher-org/CATcher-staging master -f
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
