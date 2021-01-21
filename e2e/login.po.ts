@@ -1,5 +1,4 @@
 import { browser, element, by, ExpectedConditions } from 'protractor';
-import { credentials } from '../test.credentials';
 
 
 export class LoginPage {

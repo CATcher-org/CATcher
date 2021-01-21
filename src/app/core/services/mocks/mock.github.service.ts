@@ -22,7 +22,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import RestGithubIssueFilter from '../../models/github/github-issue-filter.model';
 import { DocumentNode } from 'graphql';
 import { ElectronService } from '../electron.service';
-import { credentials } from '../../../../../test.credentials';
+import { AppConfig } from '../../../../environments/environment.test';
 import { Phase } from '../phase.service';
 import { SessionData } from '../../models/session.model';
 
@@ -286,7 +286,7 @@ export class MockGithubService {
   fetchDataFile(): Observable<{}> {
     return of({
       data: 'role,name,team\n' +
-        `student,${credentials.username},CS2103T-W12-3\n`
+        `student,${AppConfig.username},CS2103T-W12-3\n`
     });
 
     // TODO: Remove original lines below
@@ -330,8 +330,8 @@ export class MockGithubService {
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
     return of({
-      login: credentials.username,
-      name: credentials.username
+      login: AppConfig.username,
+      name: AppConfig.username
     } as GithubUser);
 
     // TODO: Remove lines once e2e setup is done
