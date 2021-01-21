@@ -12,7 +12,7 @@ let win: BrowserWindow = null;
 const isDevMode = isDeveloperMode();
 
 ipcMain.on('synchronous-message', (event) => {
-  event.returnValue = isWindowsOs
+  event.returnValue = isWindowsOs()
     ? isDevMode
         ? app.getAppPath()
         : process.env.PORTABLE_EXECUTABLE_FILE
@@ -47,7 +47,7 @@ function createWindow() {
     },
   };
 
-  if (isLinuxOs) {
+  if (isLinuxOs()) {
     // app icon needs to be set manually on Linux platforms
     windowOptions['icon'] = ICON_PATH;
   }
@@ -105,7 +105,7 @@ try {
     Logger.info('Closing all windows in Electron.');
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (!isMacOs) {
+    if (!isMacOs()) {
       app.quit();
     }
   });
