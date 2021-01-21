@@ -1,4 +1,4 @@
-import { LoginPage } from './login.po';
+import { LoginPage } from './page-objects/login.po';
 
 describe('CATcher\'s login page', () => {
   let page: LoginPage;
