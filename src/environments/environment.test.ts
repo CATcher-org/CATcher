@@ -12,5 +12,6 @@ export const AppConfig = {
       profileName: 'CATcher',
       encodedText: 'CATcher-org/public_data'
     }
-  ]
+  ],
+  username: 'e2eTester'
 };

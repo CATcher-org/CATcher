@@ -1,12 +1,28 @@
 import { GithubIssue } from '../../src/app/core/models/github/github-issue.model';
 import {
-  GITHUB_LABEL_FUNCTIONALITY_BUG,
+  GITHUB_LABEL_DOCUMENTATION_BUG,
+  GITHUB_LABEL_FEATURE_FLAW,
+  GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_HIGH_SEVERITY, GITHUB_LABEL_LOW_SEVERITY,
   GITHUB_LABEL_MEDIUM_SEVERITY,
   GITHUB_LABEL_TEAM_LABEL,
   GITHUB_LABEL_TUTORIAL_LABEL
-} from '../constants/githublabel.constants';
+} from './githublabel.constants';
 import { IssueState } from '../../graphql/graphql-types';
 import { EMPTY_TEAM_RESPONSE } from './githubcomment.constants';
+import { GithubLabel } from '../../src/app/core/models/github/github-label.model';
+
+const randomId: () => string = () => {
+  return Math.floor(Math.random() * 1000000000).toString();
+};
+
+const randomIssueNumber: () => number = () => {
+  return Math.round(Math.random() * 1000);
+};
+
+const randomISODate: (startDate?: Date, endDate?: Date) => string = (startDate: Date = new Date(2020, 1, 1),
+                                                                     endDate: Date = new Date()) => {
+  return new Date(startDate.getTime() + Math.random() * (startDate.getTime() - endDate.getTime())).toISOString();
+};
 
 export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubIssue({
   id: '574085971',
@@ -54,3 +70,29 @@ export const ISSUE_WITH_ASSIGNEES = new GithubIssue({
   },
   comments: [EMPTY_TEAM_RESPONSE],
 });
+
+export const generateIssueWithRandomData: () => GithubIssue = () => {
+  const created_and_updated_date: string = randomISODate();
+  const issueNumber: number = randomIssueNumber();
+  const severityLabels: GithubLabel[] = [GITHUB_LABEL_LOW_SEVERITY, GITHUB_LABEL_MEDIUM_SEVERITY, GITHUB_LABEL_HIGH_SEVERITY];
+  const typeLabels: GithubLabel[] = [GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_FEATURE_FLAW, GITHUB_LABEL_DOCUMENTATION_BUG];
+  return new GithubIssue({
+    id: randomId(),
+    number: issueNumber,
+    assignees: [],
+    comments: [],
+    body: `Issue No.: ${issueNumber}\nSample Content.`,
+    created_at: created_and_updated_date,
+    labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
+      typeLabels[issueNumber % 3], severityLabels[issueNumber % 3]],
+    state: IssueState.Open,
+    title: `Random Issue: ${issueNumber}`,
+    updated_at: created_and_updated_date,
+    url: `https://api.github.com/repos/CATcher-org/pe-results/issues/${issueNumber}`,
+    user: {
+      login: 'anubh-v',
+      avatar_url: 'https://avatars1.githubusercontent.com/u/35621759?v=4',
+      url: 'https://api.github.com/users/anubh-v',
+    },
+  });
+};

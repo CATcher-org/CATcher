@@ -41,6 +41,8 @@ import { PhaseServiceFactory } from './core/services/factories/factory.phase.ser
 import { UserServiceFactory } from './core/services/factories/factory.user.service';
 import { ApplicationService } from './core/services/application.service';
 import { ApplicationServiceFactory } from './core/services/factories/factory.application.service';
+import { IssueServiceFactory } from './core/services/factories/factory.issue.service';
+import { PermissionService } from './core/services/permission.service';
 
 @NgModule({
   declarations: [
@@ -106,6 +108,12 @@ import { ApplicationServiceFactory } from './core/services/factories/factory.app
       provide: ApplicationService,
       useFactory: ApplicationServiceFactory,
       deps: [GithubService]
+    },
+    {
+      provide: IssueService,
+      useFactory: IssueServiceFactory,
+      deps: [GithubService, UserService, PhaseService,
+      PermissionService, ErrorHandlingService, DataService]
     }
   ],
   bootstrap: [AppComponent],

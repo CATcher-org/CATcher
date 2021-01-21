@@ -43,15 +43,16 @@ export class LoginPage {
     await button.click();
   }
 
-  private async fillCredentials() {
-    await browser.waitForAngularEnabled(false);
-    await this.selectWindow(1);
-    await browser.wait(ExpectedConditions.presenceOf(element(by.name('login'))));
-    await element(by.name('login')).sendKeys(credentials.username);
-    await element(by.name('password')).sendKeys(credentials.password);
-    await element(by.name('commit')).click();
-    await browser.waitForAngularEnabled(true);
-  }
+  // TODO: Remove. Since Creds need not be filled now that login is not through GH
+  // private async fillCredentials() {
+  //   await browser.waitForAngularEnabled(false);
+  //   await this.selectWindow(1);
+  //   await browser.wait(ExpectedConditions.presenceOf(element(by.name('login'))));
+  //   await element(by.name('login')).sendKeys(credentials.username);
+  //   await element(by.name('password')).sendKeys(credentials.password);
+  //   await element(by.name('commit')).click();
+  //   await browser.waitForAngularEnabled(true);
+  // }
 
   private async selectWindow(index) {
 
