@@ -2,19 +2,17 @@ import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptio
 import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions } from './electron-utils/menu-bar';
+import { isDeveloperMode, isLinuxOs, isMacOs, isWindowsOs, appTitle } from './electron-utils/supporting-logic';
 import { getAccessToken } from './oauth';
 
 const Logger = require('electron-log');
 const ICON_PATH = path.join(__dirname, 'dist/favicon.512x512.png');
 
 let win: BrowserWindow = null;
-const args = process.argv.slice(1),
-  serve = args.some(val => val === '--serve');
+const isDevMode = isDeveloperMode();
 
-const isDevMode = !!serve;
-
-ipcMain.on('synchronous-message', (event, arg) => {
-  event.returnValue = process.platform === 'win32'
+ipcMain.on('synchronous-message', (event) => {
+  event.returnValue = isWindowsOs
     ? isDevMode
         ? app.getAppPath()
         : process.env.PORTABLE_EXECUTABLE_FILE
@@ -49,7 +47,7 @@ function createWindow() {
     },
   };
 
-  if (process.platform === 'linux') {
+  if (isLinuxOs) {
     // app icon needs to be set manually on Linux platforms
     windowOptions['icon'] = ICON_PATH;
   }
@@ -59,8 +57,8 @@ function createWindow() {
 
   nativeTheme.themeSource = 'light';
 
-  win.setTitle(require('./package.json').name + ' ' + require('./package.json').version);
-  if (serve) {
+  win.setTitle(appTitle);
+  if (isDevMode) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
     });
@@ -107,7 +105,7 @@ try {
     Logger.info('Closing all windows in Electron.');
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
+    if (!isMacOs) {
       app.quit();
     }
   });
