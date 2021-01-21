@@ -1,28 +1,20 @@
 import { browser, element, by, ExpectedConditions } from 'protractor';
 
-
 export class LoginPage {
-  navigateTo(route: string) {
-    return browser.get(route);
+  navigateToRoot() {
+    return browser.get('/');
   }
 
   async getTitle() {
-    return await element(by.css('app-root')).element(by.css('app-layout-header')).getText();
+    return element(by.css('app-root')).element(by.css('app-layout-header')).getText();
   }
 
   async getConfirmationScreenTitle() {
-    return await element(by.className('login-title')).getText();
+    return element(by.className('login-title')).getText();
   }
 
   async login() {
     await this.selectSession();
-    /**
-     * TODO: Remove these lines since auth is mocked up and
-     * does not require the filling of credentials or spawning of
-     * new window.
-     */
-    // await this.fillCredentials();
-    // await this.selectWindow(0);
   }
 
   async confirmUser() {
@@ -42,31 +34,9 @@ export class LoginPage {
     await button.click();
   }
 
-  // TODO: Remove. Since Creds need not be filled now that login is not through GH
-  // private async fillCredentials() {
-  //   await browser.waitForAngularEnabled(false);
-  //   await this.selectWindow(1);
-  //   await browser.wait(ExpectedConditions.presenceOf(element(by.name('login'))));
-  //   await element(by.name('login')).sendKeys(credentials.username);
-  //   await element(by.name('password')).sendKeys(credentials.password);
-  //   await element(by.name('commit')).click();
-  //   await browser.waitForAngularEnabled(true);
-  // }
-
-  private async selectWindow(index) {
-
-      // wait for handels[index] to exist
-    await browser.driver.wait(function() {
-        return browser.driver.getAllWindowHandles().then(function (handles) {
-            if(handles.length > index) {
-              return true;
-            }
-          });
-      });
-
-      // switch to the window
-      return browser.driver.getAllWindowHandles().then(function (handles) {
-        return browser.driver.switchTo().window(handles[index]);
-      });
-    };
+  async bypassAuthentication() {
+    await this.login();
+    await this.confirmUser();
+    console.log('\nAuthentication Bypass Complete.\n');
+  }
 }

@@ -6,9 +6,10 @@ const { SpecReporter } = require('jasmine-spec-reporter');
 exports.config = {
   allScriptsTimeout: 25000,
   delayBrowserTimeInSeconds: 0,
-  specs: [
-    './**/*.e2e-spec.ts'
-  ],
+  suites: {
+    login: './spec/login/*.e2e-spec.ts',
+    bugReporting: './spec/bugReporting/*.e2e-spec.ts'
+  },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
   framework: 'jasmine2',
@@ -24,6 +25,7 @@ exports.config = {
       project: 'e2e/tsconfig.e2e.json'
     });
   },
+  random: false,
   onPrepare() {
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
   }
