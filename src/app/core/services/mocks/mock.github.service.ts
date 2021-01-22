@@ -24,6 +24,7 @@ import { ElectronService } from '../electron.service';
 import { AppConfig } from '../../../../environments/environment.test';
 import { Phase } from '../phase.service';
 import { SessionData } from '../../models/session.model';
+import { GithubRelease } from '../../models/github/github.release';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -276,6 +277,14 @@ export class MockGithubService {
       data: 'role,name,team\n' +
         `${AppConfig.role},${AppConfig.username},${AppConfig.team}\n`
     });
+  }
+
+  fetchLatestRelease(): Observable<GithubRelease> {
+    const appSetting = require('../../../../../package.json');
+    return of({
+      html_url: `www.github.com/CATcher-org/releases/v${appSetting.version}`,
+      tag_name: `v${appSetting.version}`
+    } as GithubRelease);
   }
 
   /**
