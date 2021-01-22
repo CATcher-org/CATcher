@@ -3,7 +3,6 @@ import { GithubService } from './github.service';
 import { map } from 'rxjs/operators';
 import { Label } from '../models/label.model';
 import { Observable } from 'rxjs';
-import { User } from '../models/user.model';
 
 /* The threshold to decide if color is dark or light.
 A higher threshold value will result in more colors determined to be "dark".
@@ -18,53 +17,63 @@ const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
 
+const REQUIRED_LABELS = {
+  severity: {
+    VeryLow: new Label('severity', 'VeryLow', 'ffe0e0'),
+    Low: new Label('severity', 'Low', 'ffcccc'),
+    Medium: new Label('severity', 'Medium', 'ff9999'),
+    High: new Label('severity', 'High', 'ff6666')
+  },
+  type: {
+    DocumentationBug: new Label('type', 'DocumentationBug', 'd966ff'),
+    FeatureFlaw: new Label('type', 'FeatureFlaw', 'd966ff'),
+    FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc')
+  },
+  response: {
+    Accepted: new Label('response', 'Accepted', '00802b'),
+    CannotReproduce: new Label('response', 'CannotReproduce', 'ffebcc'),
+    IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80'),
+    NotInScope: new Label('response', 'NotInScope', 'ffcc80'),
+    Rejected: new Label('response', 'Rejected', 'ff9900')
+  },
+  status: {
+    Done: new Label('status', 'Done', 'a6a6a6'),
+    Incomplete: new Label('status', 'Incomplete', '000000')
+  },
+  others: {
+    duplicate: new Label(undefined, 'duplicate', '0066ff')
+  }
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class LabelService {
 
-  private readonly REQUIRED_LABELS = {
-    severity: {
-      VeryLow: new Label('severity', 'VeryLow', 'ffe0e0'),
-      Low: new Label('severity', 'Low', 'ffcccc'),
-      Medium: new Label('severity', 'Medium', 'ff9999'),
-      High: new Label('severity', 'High', 'ff6666')
-    },
-    type: {
-      DocumentationBug: new Label('type', 'DocumentationBug', 'd966ff'),
-      FeatureFlaw: new Label('type', 'FeatureFlaw', 'd966ff'),
-      FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc')
-    },
-    response: {
-      Accepted: new Label('response', 'Accepted', '00802b'),
-      CannotReproduce: new Label('response', 'CannotReproduce', 'ffebcc'),
-      IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80'),
-      NotInScope: new Label('response', 'NotInScope', 'ffcc80'),
-      Rejected: new Label('response', 'Rejected', 'ff9900')
-    },
-    status: {
-      Done: new Label('status', 'Done', 'a6a6a6'),
-      Incomplete: new Label('status', 'Incomplete', '000000')
-    },
-    others: {
-      duplicate: new Label(undefined, 'duplicate', '0066ff')
-    }
-  };
-
-  private severityLabels: Label[] = Object.values(this.REQUIRED_LABELS.severity);
-  private typeLabels: Label[] = Object.values(this.REQUIRED_LABELS.type);
-  private responseLabels: Label[] = Object.values(this.REQUIRED_LABELS.response);
-  private statusLabels: Label[] = Object.values(this.REQUIRED_LABELS.status);
-  private otherLabels: Label[] = Object.values(this.REQUIRED_LABELS.others);
-  private labelArrays = {
-    severity: this.severityLabels,
-    type: this.typeLabels,
-    response: this.responseLabels,
-    status: this.statusLabels,
-    others: this.otherLabels
+  private static severityLabels: Label[] = Object.values(REQUIRED_LABELS.severity);
+  private static typeLabels: Label[] = Object.values(REQUIRED_LABELS.type);
+  private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
+  private static statusLabels: Label[] = Object.values(REQUIRED_LABELS.status);
+  private static otherLabels: Label[] = Object.values(REQUIRED_LABELS.others);
+  private static labelArrays = {
+    severity: LabelService.severityLabels,
+    type: LabelService.typeLabels,
+    response: LabelService.responseLabels,
+    status: LabelService.statusLabels,
+    others: LabelService.otherLabels
   };
 
   constructor(private githubService: GithubService) {
+  }
+
+  public static getRequiredLabelsAsArray(): Label[] {
+    let requiredLabels: Label[] = [];
+
+    for (const category of Object.keys(this.labelArrays)) {
+      requiredLabels = requiredLabels.concat(this.labelArrays[category]);
+    }
+
+    return requiredLabels;
   }
 
   /**
@@ -73,7 +82,7 @@ export class LabelService {
   synchronizeRemoteLabels(): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), this.getRequiredLabelsAsArray());
+          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray());
           return response;
         })
       );
@@ -87,12 +96,12 @@ export class LabelService {
   getLabelList(attributeName: string): Label[] {
     switch (attributeName) {
       case 'severity':
-        return this.severityLabels;
+        return LabelService.severityLabels;
       case 'type':
-        return this.typeLabels;
+        return LabelService.typeLabels;
       case 'responseTag':
       case 'response':
-        return this.responseLabels;
+        return LabelService.responseLabels;
     }
   }
 
@@ -123,23 +132,13 @@ export class LabelService {
       return WHITE_COLOR;
     }
 
-    const existingLabel = this.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
+    const existingLabel = LabelService.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
       return WHITE_COLOR;
     } else {
       return existingLabel.labelColor;
     }
-  }
-
-  private getRequiredLabelsAsArray(): Label[] {
-    let requiredLabels: Label[] = [];
-
-    for (const category of Object.keys(this.labelArrays)) {
-      requiredLabels = requiredLabels.concat(this.labelArrays[category]);
-    }
-
-    return requiredLabels;
   }
 
   /**

@@ -25,6 +25,8 @@ import { AppConfig } from '../../../../environments/environment.test';
 import { Phase } from '../phase.service';
 import { SessionData } from '../../models/session.model';
 import { GithubRelease } from '../../models/github/github.release';
+import { LabelService } from '../label.service';
+import { Label } from '../../models/label.model';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -183,12 +185,12 @@ export class MockGithubService {
   }
 
   fetchAllLabels(): Observable<Array<{}>> {
-    return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO, headers: MockGithubService.IF_NONE_MATCH_EMPTY})).pipe(
-      map(response => {
-        return response['data'];
-      }),
-      catchError(err => throwError('Failed to fetch labels.'))
-    );
+    return of(LabelService.getRequiredLabelsAsArray().map((label: Label) => {
+      return {
+        name: label.labelCategory ? `${label.labelCategory}.${label.labelValue}` : `${label.labelValue}`,
+        color: `${label.labelColor}`
+      };
+    }));
   }
 
   /**
