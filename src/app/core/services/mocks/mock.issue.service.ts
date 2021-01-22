@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from '../github.service';
-import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
-import { BehaviorSubject, EMPTY, forkJoin, timer, Observable, of, Subscription } from 'rxjs';
+import { catchError, exhaustMap, flatMap, map } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, timer, Observable, of, Subscription } from 'rxjs';
 import {
   Issue,
   Issues,
-  IssuesFilter, STATUS,
+  STATUS,
 } from '../../models/issue.model';
 import { UserService } from '../user.service';
 import { Phase, PhaseService } from '../phase.service';
@@ -16,7 +16,6 @@ import { IssueDispute } from '../../models/issue-dispute.model';
 import { GithubIssue } from '../../models/github/github-issue.model';
 import { IssueComment } from '../../models/comment.model';
 import { GithubLabel } from '../../models/github/github-label.model';
-import RestGithubIssueFilter from '../../models/github/github-issue-filter.model';
 import { GithubComment } from '../../models/github/github-comment.model';
 import { HiddenData } from '../../models/hidden-data.model';
 import { generateIssueWithRandomData } from '../../../../../tests/constants/githubissue.constants';
@@ -45,6 +44,9 @@ export class MockIssueService {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
+  /**
+   * Loads Issues and Prevents polling during testing.
+   */
   startPollIssues() {
     if (this.issuesPollSubscription === undefined) {
       if (this.issues$.getValue().length === 0) {
@@ -53,18 +55,6 @@ export class MockIssueService {
 
       this.issuesPollSubscription = of(this.reloadAllIssues())
         .subscribe(result => this.isLoading.next(false));
-
-      // TODO: Remove after stabilizing
-      // this.issuesPollSubscription = timer(0, MockIssueService.POLL_INTERVAL).pipe(
-      //   exhaustMap(() => {
-      //     return this.reloadAllIssues().pipe(
-      //       catchError(() => {
-      //         return EMPTY;
-      //       }),
-      //       finalize(() => this.isLoading.next(false))
-      //   );
-      //   }),
-      // ).subscribe();
     }
   }
 
@@ -285,13 +275,15 @@ export class MockIssueService {
     this.isLoading = new BehaviorSubject<boolean>(false);
   }
 
+  /**
+   * Populates store with random issues depending on the current test phase.
+   */
   private initializeData(): Observable<Issue[]> {
     if (this.issues != null) {
       return of(Object.values(this.issues));
     }
 
     const NUM_ISSUES = 10;
-    // const issuesAPICallsByFilter: Array<Observable<Array<GithubIssue>>> = [];
     const generatedIssues: Array<GithubIssue> = [];
 
     switch (this.phaseService.currentPhase) {
@@ -302,58 +294,11 @@ export class MockIssueService {
         break;
     }
 
-    // TODO: Remove once stabilized e2e code.
-    // switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
-    //   case 'FILTER_BY_CREATOR':
-    //     issuesAPICallsByFilter.push(
-    //       this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
-    //     );
-    //     break;
-    //   case 'FILTER_BY_TEAM': // Only student has this filter
-    //     issuesAPICallsByFilter.push(
-    //       this.githubService.fetchIssuesGraphqlByTeam(
-    //         this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
-    //         this.createLabel('team', this.userService.currentUser.team.teamId),
-    //         new RestGithubIssueFilter({}))
-    //     );
-    //     break;
-    //   case 'FILTER_BY_TEAM_ASSIGNED': // Only for Tutors and Admins
-    //     const allocatedTeams = this.userService.currentUser.allocatedTeams;
-    //     allocatedTeams.forEach(team => {
-    //       issuesAPICallsByFilter.push(
-    //         this.githubService.fetchIssuesGraphqlByTeam(
-    //           this.createLabel('tutorial', team.tutorialClassId),
-    //           this.createLabel('team', team.teamId),
-    //           new RestGithubIssueFilter({}))
-    //       );
-    //     });
-    //     break;
-    //   case 'NO_FILTER':
-    //     issuesAPICallsByFilter.push(
-    //       this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({}))
-    //     );
-    //     break;
-    //   case 'NO_ACCESS':
-    //   default:
-    //     return of([]);
-    // }
-
-    // const issuesAPICallsByFilter = filters.map(filter => this.githubService.fetchIssuesGraphql(filter));
-
     for (const issue of generatedIssues) {
       this.createAndSaveIssueModel((issue));
     }
+
     return of(Object.values(this.issues));
-    // return forkJoin(issuesAPICallsByFilter).pipe(
-    //   map((issuesByFilter: [][]) => {
-    //     for (const issues of issuesByFilter) {
-    //       for (const issue of issues) {
-    //         this.createAndSaveIssueModel(issue);
-    //       }
-    //     }
-    //     return Object.values(this.issues);
-    //   })
-    // );
   }
 
   private createAndSaveIssueModel(githubIssue: GithubIssue): boolean {

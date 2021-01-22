@@ -13,5 +13,7 @@ export const AppConfig = {
       encodedText: 'CATcher-org/public_data'
     }
   ],
-  username: 'e2eTester'
+  role: 'student',
+  username: 'CAT-Tester',
+  team: 'CS2103T-W12-3'
 };

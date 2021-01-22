@@ -14,7 +14,6 @@ import { LabelService } from '../label.service';
 import { Title } from '@angular/platform-browser';
 import { GithubEventService } from '../githubevent.service';
 import { uuid } from '../../../shared/lib/uuid';
-import { AppConfig } from '../../../../environments/environment';
 import { LoggingService } from '../logging.service';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
@@ -83,63 +82,9 @@ export class MockAuthService {
   }
 
   /**
-   * Will start the Github OAuth web flow process.
+   * Will start the Github OAuth web flow process by issuing 'FabricatedToken'.
    */
   startOAuthProcess() {
     this.accessToken.next('FabricatedToken');
-
-    // TODO: Remove Lines once Full E2E Structure is working
-    // const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
-    // this.changeAuthState(AuthState.AwaitingAuthentication);
-    //
-    // if (this.electronService.isElectron()) {
-    //   this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
-    // } else {
-    //   this.createOauthWindow(encodeURI(
-    //     `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
-    //   ));
-    // }
-  }
-
-  /**
-   * Will do a poll on whether the given window is closed.
-   * If it is closed and user is still not authenticated, change the auth status to not authenticated.
-   */
-  private confirmWindowClosed(window: Window): void {
-    const authService = this;
-    const pollTimer = window.setInterval(function() {
-      if (window.closed) {
-        window.clearInterval(pollTimer);
-        if (!authService.accessToken) {
-          authService.changeAuthState(AuthState.NotAuthenticated);
-        }
-      }
-    }, 1000);
-  }
-
-  /**
-   * Will create a web version of oauth window.
-   */
-  private createOauthWindow(
-    url: string,
-    width: number = 500,
-    height: number = 600,
-    left: number = 0,
-    top: number = 0
-  ): void {
-    if (url == null) {
-      return;
-    }
-
-    const options = `width=${width},height=${height},left=${left},top=${top}`;
-    const oauthWindow = window.open(`${url}`, 'Authorization', options);
-    const authService = this;
-
-    oauthWindow.addEventListener('unload', () => {
-      if (!oauthWindow.closed) {
-        // unload event could be triggered when there is a redirection, hence, a confirmation needed.
-        authService.confirmWindowClosed(oauthWindow);
-      }
-    });
   }
 }

@@ -38,7 +38,6 @@ import { GithubEventService } from './core/services/githubevent.service';
 import { LoggingService } from './core/services/logging.service';
 import { MatDialog } from '@angular/material';
 import { PhaseServiceFactory } from './core/services/factories/factory.phase.service';
-import { UserServiceFactory } from './core/services/factories/factory.user.service';
 import { ApplicationService } from './core/services/application.service';
 import { ApplicationServiceFactory } from './core/services/factories/factory.application.service';
 import { IssueServiceFactory } from './core/services/factories/factory.issue.service';
@@ -98,11 +97,6 @@ import { PermissionService } from './core/services/permission.service';
       useFactory: PhaseServiceFactory,
       deps: [HttpClient, GithubService, LabelService,
       UserService, MatDialog]
-    },
-    {
-      provide: UserService,
-      useFactory: UserServiceFactory,
-      deps: [GithubService, DataService]
     },
     {
       provide: ApplicationService,

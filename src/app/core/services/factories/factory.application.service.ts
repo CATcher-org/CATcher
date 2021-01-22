@@ -5,7 +5,7 @@ import { ApplicationService } from '../application.service';
 
 export function ApplicationServiceFactory(githubService: GithubService) {
   if (AppConfig.test) {
-      return new MockApplicationService(githubService);
+      return new MockApplicationService();
   }
   return new ApplicationService(githubService);
 }

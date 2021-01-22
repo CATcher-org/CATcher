@@ -3,11 +3,10 @@ import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { getNumberOfPages } from '../../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../../models/comment.model';
-import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from '../error-handling.service';
+import { ErrorHandlingService } from '../error-handling.service';
 import { GithubUser } from '../../models/github-user.model';
 import { GithubIssue } from '../../models/github/github-issue.model';
 import { GithubComment } from '../../models/github/github-comment.model';
-import { GithubRelease } from '../../models/github/github.release';
 import { GithubResponse } from '../../models/github/github-response.model';
 import { IssuesCacheManager } from '../../models/github/cache-manager/issues-cache-manager.model';
 import { IssueLastModifiedManagerModel } from '../../models/github/cache-manager/issue-last-modified-manager.model';
@@ -129,21 +128,12 @@ export class MockGithubService {
   }
 
   /**
-   * Checks if the specified repository exists.
+   * Always informs that repository exists for testing purposes.
    * @param owner - Owner of Specified Repository.
    * @param repo - Name of Repository.
    */
   isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
     return of(true);
-    // return from(octokit.repos.get({owner: owner, repo: repo, headers: MockGithubService.IF_NONE_MATCH_EMPTY})).pipe(
-    //   map((rawData: {status: number}) => {
-    //     return rawData.status !== ERRORCODE_NOT_FOUND;
-    //   }),
-    //   catchError(err => {
-    //     return of(false);
-    //   }),
-    //   catchError(err => throwError('Failed to fetch repo data.'))
-    // );
   }
 
   /**
@@ -271,44 +261,25 @@ export class MockGithubService {
       message: 'upload file', content: base64String}));
   }
 
+  /**
+   * @return Empty Observable<[]>
+   */
   fetchEventsForRepo(): Observable<any[]> {
     return of([]);
-
-    // TODO: Remove lines once full e2e structure is setup.
-    // return from(octokit.issues.listEventsForRepo({owner: ORG_NAME, repo: REPO, headers: MockGithubService.IF_NONE_MATCH_EMPTY})).pipe(
-    //   map(response => {
-    //     return response['data'];
-    //   }),
-    //   catchError(err => throwError('Failed to fetch events for repo.'))
-    // );
-  }
-
-  fetchDataFile(): Observable<{}> {
-    return of({
-      data: 'role,name,team\n' +
-        `student,${AppConfig.username},CS2103T-W12-3\n`
-    });
-
-    // TODO: Remove original lines below
-    // return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv',
-    //   headers: MockGithubService.IF_NONE_MATCH_EMPTY})).pipe(
-    //     map(rawData => {
-    //       return {data: atob(rawData['data']['content'])};
-    //     }),
-    //     catchError(err => throwError('Failed to fetch data file.'))
-    // );
-  }
-
-  fetchLatestRelease(): Observable<GithubRelease> {
-    return from(octokit.repos.getLatestRelease({owner: CATCHER_ORG, repo: CATCHER_REPO, headers: MockGithubService.IF_NONE_MATCH_EMPTY}))
-      .pipe(
-        map(res => res['data']),
-        catchError(err => throwError('Failed to fetch latest release.'))
-    );
   }
 
   /**
-   * Fetches the data file that is regulates session information.
+   * Creates Fabricated Data File with Tester's Credentials.
+   */
+  fetchDataFile(): Observable<{}> {
+    return of({
+      data: 'role,name,team\n' +
+        `${AppConfig.role},${AppConfig.username},${AppConfig.team}\n`
+    });
+  }
+
+  /**
+   * Fabricates session data in accordance with SessionData Requirements.
    * @return Observable<{}> representing session information.
    */
   fetchSettingsFile(): Observable<{}> {
@@ -319,28 +290,16 @@ export class MockGithubService {
       [Phase.phaseTesterResponse]: 'undefined',
       [Phase.phaseModeration]: 'undefined'
     } as SessionData);
-
-    // TODO: Remove lines below
-    // return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json',
-    //   headers: MockGithubService.IF_NONE_MATCH_EMPTY})).pipe(
-    //   map(rawData => JSON.parse(atob(rawData['data']['content']))),
-    //   catchError(err => throwError('Failed to fetch settings file.'))
-    // );
   }
 
+  /**
+   * @return Observable<GithubUser> representation of TestUser Credentials.
+   */
   fetchAuthenticatedUser(): Observable<GithubUser> {
     return of({
       login: AppConfig.username,
       name: AppConfig.username
     } as GithubUser);
-
-    // TODO: Remove lines once e2e setup is done
-    // return from(octokit.users.getAuthenticated()).pipe(
-    //   map(response => {
-    //     return response['data'];
-    //   }),
-    //   catchError(err => throwError('Failed to fetch authenticated user.'))
-    // );
   }
 
   getRepoURL(): string {
