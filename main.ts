@@ -2,7 +2,7 @@ import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptio
 import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions } from './electron-utils/menu-bar';
-import { isDeveloperMode, isLinuxOs, isMacOs, isWindowsOs, appTitle } from './electron-utils/supporting-logic';
+import { isDeveloperMode, isLinuxOs, isMacOs, isWindowsOs, getCurrentDirectory, appTitle } from './electron-utils/supporting-logic';
 import { getAccessToken } from './oauth';
 
 const Logger = require('electron-log');
@@ -12,11 +12,7 @@ let win: BrowserWindow = null;
 const isDevMode = isDeveloperMode();
 
 ipcMain.on('synchronous-message', (event) => {
-  event.returnValue = isWindowsOs()
-    ? isDevMode
-        ? app.getAppPath()
-        : process.env.PORTABLE_EXECUTABLE_FILE
-    : app.getAppPath();
+  event.returnValue = getCurrentDirectory(isWindowsOs(), isDevMode);
 });
 
 /**
