@@ -17,6 +17,13 @@ export enum Phase {
   phaseModeration = 'phaseModeration'
 }
 
+export const PhaseDescription = {
+  [Phase.phaseBugReporting]: 'Bug Reporting Phase',
+  [Phase.phaseTeamResponse]: 'Team\'s Response Phase',
+  [Phase.phaseTesterResponse]: 'Tester\'s Response Phase',
+  [Phase.phaseModeration]: 'Moderation Phase'
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -25,20 +32,8 @@ export class MockPhaseService {
   public currentPhase: Phase = Phase.phaseBugReporting;
   private repoName: string;
   private orgName: string;
-  public readonly phaseDescription = {
-    'phaseBugReporting': 'Bug Reporting Phase',
-    'phaseTeamResponse': 'Team\'s Response Phase',
-    'phaseTesterResponse': 'Tester\'s Response Phase',
-    'phaseModeration': 'Moderation Phase'
-  };
 
-  public sessionData: SessionData = {
-    openPhases: [Phase.phaseBugReporting],
-    phaseBugReporting: 'undefined',
-    phaseTeamResponse: 'undefined',
-    phaseTesterResponse: 'undefined',
-    phaseModeration: 'undefined'
-  };
+  public sessionData: SessionData;
 
   private phaseRepoOwners = {
     phaseBugReporting: '',
@@ -80,14 +75,6 @@ export class MockPhaseService {
    * all phases for testing.
    */
   fetchSessionData(): Observable<SessionData> {
-    // return of({
-    //   openPhases: [Phase.phaseBugReporting, Phase.phaseTeamResponse, Phase.phaseTesterResponse, Phase.phaseModeration],
-    //   phaseBugReporting: 'undefined',
-    //   phaseTeamResponse: 'undefined',
-    //   phaseTesterResponse: 'undefined',
-    //   phaseModeration: 'undefined'
-    // } as SessionData);
-    // // TODO: Remove comments.
     return this.githubService.fetchSettingsFile().pipe(
       map(data => data as SessionData)
     );
@@ -173,8 +160,8 @@ export class MockPhaseService {
 
 
   /**
-   * Ensures that the necessary data for the current session is available
-   * and synchronized with the remote server.
+   * Fetches "Mock" Session Data from the MockGithubService and parses it through
+   * session data verification.
    */
   sessionSetup(): Observable<any> {
     return this.fetchSessionData().pipe(
@@ -213,9 +200,6 @@ export class MockPhaseService {
         if (!isSessionCreated) {
           throw new Error('Session Availability Fix failed.');
         }
-
-        // TODO: Label synchronization unnecessary in mockup. To Remove.
-        // return this.labelService.synchronizeRemoteLabels();
         return of(undefined);
       })
     );
