@@ -46,7 +46,6 @@ profiles.json
 /e2e/*.js
 !/e2e/*.conf.js
 /e2e/*.map
-test.credentials.ts
 
 # System Files
 .DS_Store
