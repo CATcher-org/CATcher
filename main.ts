@@ -1,6 +1,7 @@
 import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { createMenuOptions } from './electron-utils/menu-bar';
 import { getAccessToken } from './oauth';
 
 const Logger = require('electron-log');
@@ -86,61 +87,6 @@ function createWindow() {
 
 }
 
-// Edited version of a template menu-bar provided by the electron API,
-// refer to https://electronjs.org/docs/api/menu for more information.
-const mainMenuTemplate: Electron.MenuItemConstructorOptions[] = [
-  {
-    label: 'File',
-    submenu: [
-      {
-        label: 'Quit CATcher', accelerator: 'CmdOrCtrl+Q', click() { app.quit(); }
-      }
-    ]
-  },
-  {
-    label: 'Edit',
-    submenu: [
-      { role: 'undo' },
-      { role: 'redo' },
-      { type: 'separator' },
-      { role: 'selectAll' },
-      { role: 'cut' },
-      { role: 'copy' },
-      { role: 'paste' },
-      { role: 'delete' },
-    ]
-  },
-  {
-    label: 'View',
-    submenu: [
-      { role: 'resetZoom' },
-      { role: 'zoomIn' },
-      { role: 'zoomOut' },
-      { type: 'separator' },
-      { role: 'togglefullscreen' }
-    ]
-  },
-  // ,
-  // {
-  //   role: 'help',
-  //   submenu: [
-  //     {
-  //       label: 'User Guide',
-  //       click () { require('electron').shell.openExternal('https://catcher-org.github.io/'); }
-  //     }
-  //   ]
-  // }
-];
-
-if (isDevMode) {
-  let viewSubMenu: MenuItemConstructorOptions[];
-  viewSubMenu = mainMenuTemplate[2].submenu as MenuItemConstructorOptions[];
-  viewSubMenu.push(
-    { type: 'separator' },
-    { role: 'toggleDevTools'}
-  );
-}
-
 try {
   Logger.info('Initializing Electron app.');
   // This method will be called when Electron has finished
@@ -149,6 +95,7 @@ try {
   app.on('ready', () => {
     Logger.info('Electron app in ready state.');
     // Build and Attach Menu-bar template to application.
+    const mainMenuTemplate: MenuItemConstructorOptions[] = createMenuOptions(isDevMode);
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
 

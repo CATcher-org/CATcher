@@ -26,15 +26,12 @@ In summary, the following steps are needed:
 
 2. Create VS Code's debugger config file (`launch.json` ) as shown in [the guide](https://code.visualstudio.com/docs/nodejs/angular-tutorial#_debugging-angular). Particularly, set the `url` attribute to `http://localhost:4200` (reason: CATcher app is served locally on port 4200, by default.)
 
-3. In the root project folder, run `ng serve`.
+3. In the root project folder, run `npm run ng:serve:web`.
 
 4. In VS Code's Debug View, launch the debugger by clicking the green arrow (or F5). You should see the CATcher app loading within a new browser window.
 
 # Commands
 This section shows you different commands you can run to build the application in different operating systems.
-
-**Before building the application using the build commands below, go to `index.html` and comment out the necessary `base href` as explained in the file.**
-
 
 |Command|Description|
 |--|--|
@@ -48,6 +45,8 @@ This section shows you different commands you can run to build the application i
 |`npm run electron:mac`|  On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
 |`npm run deploy:web`| Will deploy the app onto the Github's `gh-pages` branch. <br/> Prerequisites:<br/> 1. Add Environment variable of `GH_TOKEN=<Github Personal Access Token>` with the permission of `repo`. <br/>2. `build:prod:web` command's `--base-href` argument in `package.json` must have the following format `https://<OrgName or Username>.github.io/CATcher/`. <br/> 3. If you are deploying outside of CATcher-org then it would be necessary to create a new OAuth application and change the `clientId` in `environment.prod.ts` <br/> 4. If you are deploying outside of CATcher-org, you would also need to deploy your own instance of proxy server using [gatekeeper](https://github.com/CATcher-org/gatekeeper) and change the appropriate variables in `environment.prod.ts`. |
 | `npm run lint` | Runs the linter (TSLint) |
+| `npm run test` | Runs the tests           |
+| `npm run test -- "--code-coverage"` | Runs the tests and generates code coverage report under `tests/coverage` folder |
 
 # Workflow
 
