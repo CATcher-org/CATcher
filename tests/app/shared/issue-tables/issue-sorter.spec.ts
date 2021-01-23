@@ -31,25 +31,25 @@ describe('issuer-sorter', () => {
     });
 
     it('sorts issues based on their string fields correctly', () => {
-        matSort.active = 'title';
-        matSort.direction = 'asc';
-        const sortedIssuesByTitleAsc = getSortedData(matSort, issuesList);
-        assertOrder(sortedIssuesByTitleAsc, dummyIssue, otherDummyIssue);
+      matSort.active = 'title';
+      matSort.direction = 'asc';
+      const sortedIssuesByTitleAsc = getSortedData(matSort, issuesList);
+      assertOrder(sortedIssuesByTitleAsc, dummyIssue, otherDummyIssue);
 
-        matSort.direction = 'desc';
-        const sortedIssuesByTitleDesc = getSortedData(matSort, issuesList);
-        assertOrder(sortedIssuesByTitleDesc, otherDummyIssue, dummyIssue);
+      matSort.direction = 'desc';
+      const sortedIssuesByTitleDesc = getSortedData(matSort, issuesList);
+      assertOrder(sortedIssuesByTitleDesc, otherDummyIssue, dummyIssue);
     });
 
     it('sorts issues based on their integer fields correctly', () => {
-        matSort.active = 'id';
-        matSort.direction = 'asc';
-        const sortedIssuedByIdAsc = getSortedData(matSort, issuesList);
-        assertOrder(sortedIssuedByIdAsc, otherDummyIssue, dummyIssue);
+      matSort.active = 'id';
+      matSort.direction = 'asc';
+      const sortedIssuedByIdAsc = getSortedData(matSort, issuesList);
+      assertOrder(sortedIssuedByIdAsc, otherDummyIssue, dummyIssue);
 
-        matSort.direction = 'desc';
-        const sortedIssuedByIdDesc = getSortedData(matSort, issuesList);
-        assertOrder(sortedIssuedByIdDesc, dummyIssue, otherDummyIssue);
+      matSort.direction = 'desc';
+      const sortedIssuedByIdDesc = getSortedData(matSort, issuesList);
+      assertOrder(sortedIssuedByIdDesc, dummyIssue, otherDummyIssue);
     });
 
     it('sorts issues based on their todos left correctly', () => {
