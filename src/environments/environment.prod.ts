@@ -5,7 +5,7 @@ export const AppConfig = {
   clientId: '5e1ed08cff7f0de1d68d',
   githubUrl: 'https://github.com',
   accessTokenUrl: 'https://catcher-proxy.herokuapp.com/authenticate',
-  origin: 'https://CATcher-org.github.io',
+  origin: 'https://catcher-org.github.io',
   profiles: [
     <Profile>{
       profileName: 'CS2103/T Alpha Test',
