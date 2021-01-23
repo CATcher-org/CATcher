@@ -24,7 +24,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint 
-    - run: npm test
+    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
       
   macos-setup-and-tests:
     runs-on: macos-latest
@@ -43,7 +43,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint 
-    - run: npm test
+    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
 
   windows-setup-and-tests:
     runs-on: windows-latest
@@ -60,4 +60,4 @@ jobs:
     - run: npm update 
     - run: npm run electron:windows
     - run: npm run lint 
-    - run: npm test
+    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
