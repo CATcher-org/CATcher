@@ -32,14 +32,14 @@ function compareBySeverity(severityA: string, severityB: string): number {
   const orderA = SEVERITY_ORDER[severityA];
   const orderB = SEVERITY_ORDER[severityB];
 
-  return orderA < orderB ? -1 : 1;
+  return compareByIntegerValue(orderA, orderB);
 }
 
 function compareByIssueType(issueTypeA: string, issueTypeB: string): number {
   const orderA = ISSUE_TYPE_ORDER[issueTypeA];
   const orderB = ISSUE_TYPE_ORDER[issueTypeB];
 
-  return orderA < orderB ? -1 : 1;
+  return compareByIntegerValue(orderA, orderB);
 }
 
 function compareByStringValue(valueA: string, valueB: string): number {

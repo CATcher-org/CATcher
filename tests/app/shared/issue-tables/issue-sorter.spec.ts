@@ -14,61 +14,63 @@ describe('issuer-sorter', () => {
     const otherDummyIssue: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_ASSIGNEES, dummyTeam);
     const issuesList: Issue[] = [dummyIssue, otherDummyIssue];
 
-    const dummyTodoIssue: Issue = Issue.createPhaseModerationIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-    const otherDummTodoIssue: Issue = Issue.createPhaseModerationIssue(ISSUE_PENDING_MODERATION, dummyTeam);
-    const todoIssuesList: Issue[] = [dummyTodoIssue, otherDummTodoIssue];
+    const moderationIssue: Issue = Issue.createPhaseModerationIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
+    const otherModerationIssue: Issue = Issue.createPhaseModerationIssue(ISSUE_PENDING_MODERATION, dummyTeam);
+    const todoIssuesList: Issue[] = [moderationIssue, otherModerationIssue];
     const matSort: MatSort = new MatSort();
 
     it('sorts issues based on their assignees correctly', () => {
       matSort.active = 'assignees';
       matSort.direction = 'asc';
-      const sortedIssuesByTitleAsc = getSortedData(matSort, issuesList);
-      expect(sortedIssuesByTitleAsc[0].id).toBe(dummyIssue.id);
-      expect(sortedIssuesByTitleAsc[1].id).toBe(otherDummyIssue.id);
+      const sortedIssuesByAssigneesAsc = getSortedData(matSort, issuesList);
+      assertOrder(sortedIssuesByAssigneesAsc, dummyIssue, otherDummyIssue);
 
       matSort.direction = 'desc';
-      const sortedIssuesByTitleDesc = getSortedData(matSort, issuesList);
-      expect(sortedIssuesByTitleDesc[0].id).toBe(otherDummyIssue.id);
-      expect(sortedIssuesByTitleDesc[1].id).toBe(dummyIssue.id);
+      const sortedIssuesByAssigneesDesc = getSortedData(matSort, issuesList);
+      assertOrder(sortedIssuesByAssigneesDesc, otherDummyIssue, dummyIssue);
     });
 
     it('sorts issues based on their string fields correctly', () => {
         matSort.active = 'title';
         matSort.direction = 'asc';
         const sortedIssuesByTitleAsc = getSortedData(matSort, issuesList);
-        expect(sortedIssuesByTitleAsc[0].id).toBe(dummyIssue.id);
-        expect(sortedIssuesByTitleAsc[1].id).toBe(otherDummyIssue.id);
+        assertOrder(sortedIssuesByTitleAsc, dummyIssue, otherDummyIssue);
 
         matSort.direction = 'desc';
         const sortedIssuesByTitleDesc = getSortedData(matSort, issuesList);
-        expect(sortedIssuesByTitleDesc[0].id).toBe(otherDummyIssue.id);
-        expect(sortedIssuesByTitleDesc[1].id).toBe(dummyIssue.id);
+        assertOrder(sortedIssuesByTitleDesc, otherDummyIssue, dummyIssue);
     });
 
     it('sorts issues based on their integer fields correctly', () => {
         matSort.active = 'id';
         matSort.direction = 'asc';
         const sortedIssuedByIdAsc = getSortedData(matSort, issuesList);
-        expect(sortedIssuedByIdAsc[0].id).toBe(otherDummyIssue.id);
-        expect(sortedIssuedByIdAsc[1].id).toBe(dummyIssue.id);
+        assertOrder(sortedIssuedByIdAsc, otherDummyIssue, dummyIssue);
 
         matSort.direction = 'desc';
         const sortedIssuedByIdDesc = getSortedData(matSort, issuesList);
-        expect(sortedIssuedByIdDesc[0].id).toBe(dummyIssue.id);
-        expect(sortedIssuedByIdDesc[1].id).toBe(otherDummyIssue.id);
+        assertOrder(sortedIssuedByIdDesc, dummyIssue, otherDummyIssue);
     });
 
     it('sorts issues based on their todos left correctly', () => {
       matSort.active = 'Todo Remaining';
       matSort.direction = 'asc';
-      const sortedIssuesByTitleAsc = getSortedData(matSort, todoIssuesList);
-      expect(sortedIssuesByTitleAsc[0].id).toBe(otherDummTodoIssue.id);
-      expect(sortedIssuesByTitleAsc[1].id).toBe(dummyTodoIssue.id);
+      const sortedIssuesByTodoAsc = getSortedData(matSort, todoIssuesList);
+      assertOrder(sortedIssuesByTodoAsc, otherModerationIssue, moderationIssue);
 
       matSort.direction = 'desc';
-      const sortedIssuesByTitleDesc = getSortedData(matSort, todoIssuesList);
-      expect(sortedIssuesByTitleDesc[0].id).toBe(dummyTodoIssue.id);
-      expect(sortedIssuesByTitleDesc[1].id).toBe(otherDummTodoIssue.id);
+      const sortedIssuesByTodoDesc = getSortedData(matSort, todoIssuesList);
+      assertOrder(sortedIssuesByTodoDesc, moderationIssue, otherModerationIssue);
     });
   });
 });
+
+/**
+ * This helper method helps to check if the sorted issues are in their
+ * correct order based on the variable arguments provided.
+ */
+function assertOrder(sortedIssues: Issue[], ...expectedSortedIssues: Issue[]) {
+  for (let i = 0; i < sortedIssues.length; i++) {
+    expect(sortedIssues[i].id).toBe(expectedSortedIssues[i].id);
+  }
+}
