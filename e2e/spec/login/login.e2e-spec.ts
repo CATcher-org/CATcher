@@ -1,7 +1,6 @@
 import { LoginPage } from '../../page-objects/login.po';
-import { browser } from 'protractor';
 
-describe('CATcher\'s login page', () => {
+describe('CATcher\'s Login Page', () => {
   let page: LoginPage;
 
   beforeAll(() => {
