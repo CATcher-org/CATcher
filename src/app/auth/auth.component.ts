@@ -258,11 +258,8 @@ export class AuthComponent implements OnInit, OnDestroy {
    * Will wait for the message from parent window to close the window.
    */
   private listenForCloseOAuthWindowMessage() {
-    console.log('Printing Event Here');
-    console.log(event);
     window.addEventListener('message', (event) => {
       if (event.origin !== AppConfig.origin) {
-        console.log('here');
         return;
       }
       if (event.data === 'close') {
