@@ -33,7 +33,9 @@ let REPO = '';
 let DATA_REPO = '';
 let octokit = new Octokit();
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class GithubService {
   private static readonly IF_NONE_MATCH_EMPTY = { 'If-None-Match': '' };
 
