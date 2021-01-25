@@ -3,8 +3,8 @@
     <mat-icon>arrow_back_ios</mat-icon>
   </button>
   <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher</a>
-  <span *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
-    ({{phaseService.phaseDescription[phaseService.currentPhase]}})
+  <span id="phase-descriptor" *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
+    ({{this.getPhaseDescription(phaseService.currentPhase)}})
   </span>
 
   <div *ngIf="auth.isAuthenticated() && this.phaseService.sessionData.openPhases.length > 1">
@@ -15,7 +15,7 @@
         <span>
           <mat-icon [ngStyle]="{color: 'green',
             visibility: this.phaseService.currentPhase === openPhase ? 'visible' : 'hidden'}">done</mat-icon>
-          {{ phaseService.phaseDescription[openPhase] }}
+          {{this.getPhaseDescription(openPhase)}}
         </span>
       </button>
     </mat-menu>

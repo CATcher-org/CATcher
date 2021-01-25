@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
-import { PhaseService, Phase } from '../../core/services/phase.service';
+import { PhaseService, Phase, PhaseDescription } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { Router, RoutesRecognized } from '@angular/router';
 import { filter, pairwise } from 'rxjs/operators';
@@ -80,6 +80,10 @@ export class HeaderComponent implements OnInit {
     return this.phaseService.currentPhase === Phase.phaseBugReporting ||
     this.userService.currentUser.role === UserRole.Student ||
     (this.issueService.getIssueTeamFilter() !== 'All Teams' || this.router.url.includes('/issues'));
+  }
+
+  getPhaseDescription(openPhase: string): string {
+    return PhaseDescription[openPhase];
   }
 
   goBack() {
