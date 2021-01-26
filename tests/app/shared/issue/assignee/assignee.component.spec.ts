@@ -44,7 +44,7 @@ describe('AssigneeComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         AssigneeComponent
-      ], 
+      ],
       providers: [
         UserService, IssueService, ErrorHandlingService, PhaseService, PermissionService
       ],
