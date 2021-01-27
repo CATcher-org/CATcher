@@ -1,3 +1,7 @@
+# The Purpose of this workflow file is to enable us to automatically 
+# Synchronize the staging repository with the upstream repository
+# of CATcher-org/CATcher. 
+
 name: Fetch Upstream Master to Staging
 
 on:
@@ -5,14 +9,14 @@ on:
     branches: [ master, cicd/staging-deployment ]
 
 jobs:
-  deploy_web:
-    if: ${{ github.repository == 'CATcher-org/CATcher' }}
+  fetch_from_upstream:
+    if: ${{ github.repository == 'CATcher-org/CATcher' }} 
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [12.x]
     steps: 
-      - name: Checkout
+      - name: Checkout Upstream 
         uses: actions/checkout@v2
         with:
           repository: CATcher-org/CATcher-staging
