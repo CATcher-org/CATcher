@@ -95,8 +95,6 @@ describe('AssigneeComponent', () => {
     matOption.click();
     fixture.detectChanges();
     expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('true');
-
-    fixture.detectChanges();
     const matAssigneeValue: HTMLElement = debugElement.query(By.css('.mat-select-value-text')).nativeElement;
     expect(matAssigneeValue).toBeDefined();
   });
