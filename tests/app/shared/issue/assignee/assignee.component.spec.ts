@@ -18,9 +18,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../../../../../src/app/core/services/user.service';
 import { By } from '@angular/platform-browser';
+import { of } from 'rxjs';
+import { DebugElement } from '@angular/core';
 
 describe('AssigneeComponent', () => {
   let component: AssigneeComponent;
+  let debugElement: DebugElement;
   let fixture: ComponentFixture<AssigneeComponent>;
 
   const testStudent: User = {
@@ -34,12 +37,12 @@ describe('AssigneeComponent', () => {
   });
   const dummyIssue: Issue =  Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
 
-  const phaseService: PhaseService = new PhaseService(null, null, null, null, null);
-  phaseService.currentPhase = Phase.phaseTeamResponse;
-  const issueService: IssueService = new IssueService(null, null, phaseService, null, null, null);
   const userService: UserService = new UserService(null, null);
   userService.currentUser = testStudent;
+  const phaseService: PhaseService = new PhaseService(null, null, null, userService, null);
+  phaseService.currentPhase = Phase.phaseTeamResponse;
   const permissionsService: PermissionService = new PermissionService(null, userService, phaseService);
+  const issueService: IssueService = new IssueService(null, userService, phaseService, permissionsService, null, null);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -53,9 +56,9 @@ describe('AssigneeComponent', () => {
         FormsModule, MaterialModule, ApolloTestingModule, HttpClientModule, BrowserAnimationsModule
       ]
     })
+    .overrideProvider(UserService, { useValue: userService })
     .overrideProvider(PhaseService, { useValue: phaseService })
     .overrideProvider(IssueService, { useValue: issueService })
-    .overrideProvider(UserService, { useValue: userService })
     .overrideProvider(PermissionService, { useValue: permissionsService })
     .compileComponents();
   }));
@@ -66,22 +69,23 @@ describe('AssigneeComponent', () => {
     component.team = dummyTeam;
     component.issue = dummyIssue;
     fixture.detectChanges();
+
+    debugElement = fixture.debugElement;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should be able to assign a new assignee', () => {
-    const debugElement = fixture.debugElement;
-
+  it('should be able to see the placeholder value', () => {
     // Expect a Placeholder Value to be defined if no assignees
-    const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
     const matPlaceholderValue: HTMLElement = debugElement.query(By.css('.mat-select-placeholder')).nativeElement;
     expect(matPlaceholderValue).toBeDefined();
     expect(matPlaceholderValue.innerText).toEqual('-'); // Placeholder Value
+  });
 
-    // Option the Assignee Selector
+  it('should be able to open the assignee selector', () => {
+    const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
     matSelect.click();
     fixture.detectChanges();
     const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
@@ -90,12 +94,22 @@ describe('AssigneeComponent', () => {
     const inputElementOptions = inputElement.children;
     expect(inputElementOptions.length).toBe(dummyTeam.teamMembers.length);
     expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('false');
+  });
+
+  it('should be able to assign a new assignee', () => {
+    const updateAssigneeCall = spyOn(component, 'updateAssignee');
+    const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
+
+    // Option the Assignee Selector
+    matSelect.click();
+    fixture.detectChanges();
+    const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
+    const matOptionAttributes = matOption.attributes;
 
     // Assign a new assignee
     matOption.click();
     fixture.detectChanges();
     expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('true');
-    const matAssigneeValue: HTMLElement = debugElement.query(By.css('.mat-select-value-text')).nativeElement;
-    expect(matAssigneeValue).toBeDefined();
+    expect(component.assignees).toEqual(component.teamMembers);
   });
 });
