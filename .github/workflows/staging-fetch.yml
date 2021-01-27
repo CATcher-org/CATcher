@@ -1,6 +1,6 @@
 # The Purpose of this workflow file is to enable us to automatically 
-# Synchronize the staging repository with the upstream repository
-# of CATcher-org/CATcher. 
+# Synchronize the staging repository with the commits of 
+# CATcher-org/CATcher. 
 
 name: Fetch Upstream Master to Staging
 
