@@ -7,7 +7,6 @@
 /app-builds
 /release
 main.js
-oauth.js
 src/**/*.js
 electron-utils/*.js
 *.js.map
