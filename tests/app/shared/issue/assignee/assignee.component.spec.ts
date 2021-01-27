@@ -4,7 +4,6 @@ import { MaterialModule } from '../../../../../src/app/shared/material.module';
 import { AssigneeComponent } from '../../../../../src/app/shared/issue/assignee/assignee.component';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
-import { of } from 'rxjs';
 import { Phase, PhaseService } from '../../../../../src/app/core/services/phase.service';
 import { Team } from '../../../../../src/app/core/models/team.model';
 import { User, UserRole } from '../../../../../src/app/core/models/user.model';
@@ -15,8 +14,10 @@ import { PermissionService } from '../../../../../src/app/core/services/permissi
 import {
   ApolloTestingModule,
 } from 'apollo-angular/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../../../../../src/app/core/services/user.service';
+import { By } from '@angular/platform-browser';
 
 describe('AssigneeComponent', () => {
   let component: AssigneeComponent;
@@ -49,7 +50,7 @@ describe('AssigneeComponent', () => {
         UserService, IssueService, ErrorHandlingService, PhaseService, PermissionService
       ],
       imports: [
-        FormsModule, MaterialModule, ApolloTestingModule, HttpClientModule
+        FormsModule, MaterialModule, ApolloTestingModule, HttpClientModule, BrowserAnimationsModule
       ]
     })
     .overrideProvider(PhaseService, { useValue: phaseService })
@@ -71,4 +72,32 @@ describe('AssigneeComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should be able to assign a new assignee', () => {
+    const debugElement = fixture.debugElement;
+
+    // Expect a Placeholder Value to be defined if no assignees
+    const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
+    const matPlaceholderValue: HTMLElement = debugElement.query(By.css('.mat-select-placeholder')).nativeElement;
+    expect(matPlaceholderValue).toBeDefined();
+    expect(matPlaceholderValue.innerText).toEqual('-'); // Placeholder Value
+
+    // Option the Assignee Selector
+    matSelect.click();
+    fixture.detectChanges();
+    const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
+    const inputElement: HTMLElement = debugElement.query(By.css('.mat-select-panel')).nativeElement;
+    const matOptionAttributes = matOption.attributes;
+    const inputElementOptions = inputElement.children;
+    expect(inputElementOptions.length).toBe(dummyTeam.teamMembers.length);
+    expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('false');
+
+    // Assign a new assignee
+    matOption.click();
+    fixture.detectChanges();
+    expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('true');
+
+    fixture.detectChanges();
+    const matAssigneeValue: HTMLElement = debugElement.query(By.css('.mat-select-value-text')).nativeElement;
+    expect(matAssigneeValue).toBeDefined();
+  });
 });
