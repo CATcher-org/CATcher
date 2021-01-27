@@ -1,6 +1,6 @@
-# The Purpose of this workflow file is to enable us to automatically 
-# send a build request for the staging repository based 
-# on the latest commit from upstream (CATcher-org/CATcher)
+# The Purpose of this workflow file is to enable us to 
+# automatically deploy the app based on the latest 
+# commit on the staging repo.
 
 name: Staging Deployment
 

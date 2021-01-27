@@ -1,6 +1,6 @@
 # The Purpose of this workflow file is to enable us to automatically 
-# utomatically deploy the app based on the latest commit 
-# on the staging repo.
+# synchronize the staging repository with the latest commit
+# of CATcher-org/CATcher. 
 
 name: Fetch Upstream Master to Staging
 
