@@ -44,7 +44,7 @@ profiles.json
 
 # e2e
 /e2e/*.js
-!/e2e/protractor.conf.js
+!/e2e/*.conf.js
 /e2e/*.map
 
 # System Files
