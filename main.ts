@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions } from './electron-utils/menu-bar';
 import { isDeveloperMode, isLinuxOs, isMacOs, isWindowsOs, getCurrentDirectory, appTitle } from './electron-utils/supporting-logic';
-import { getAccessToken } from './oauth';
+import { getAccessToken } from './electron-utils/oauth';
 
 const Logger = require('electron-log');
 const ICON_PATH = path.join(__dirname, 'dist/favicon.512x512.png');
