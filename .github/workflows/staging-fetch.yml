@@ -6,7 +6,7 @@ name: Fetch Upstream Master to Staging
 
 on:
   push:
-    branches: [ master, cicd/staging-deployment ]
+    branches: [ master ]
 
 jobs:
   fetch_from_upstream:
@@ -29,5 +29,5 @@ jobs:
           git config user.email github-actions@github.com
           git remote add upstream https://github.com/CATcher-org/CATcher.git 
           git fetch upstream
-          git merge upstream/cicd/staging-deployment --allow-unrelated-histories
+          git merge upstream/master --allow-unrelated-histories
           git push origin master -f
