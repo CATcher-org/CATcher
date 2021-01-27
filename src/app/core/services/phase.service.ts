@@ -17,6 +17,13 @@ export enum Phase {
   phaseModeration = 'phaseModeration'
 }
 
+export const PhaseDescription = {
+  [Phase.phaseBugReporting]: 'Bug Reporting Phase',
+  [Phase.phaseTeamResponse]: 'Team\'s Response Phase',
+  [Phase.phaseTesterResponse]: 'Tester\'s Response Phase',
+  [Phase.phaseModeration]: 'Moderation Phase'
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -25,12 +32,6 @@ export class PhaseService {
   public currentPhase: Phase;
   private repoName: string;
   private orgName: string;
-  public readonly phaseDescription = {
-    'phaseBugReporting': 'Bug Reporting Phase',
-    'phaseTeamResponse': 'Team\'s Response Phase',
-    'phaseTesterResponse': 'Tester\'s Response Phase',
-    'phaseModeration': 'Moderation Phase'
-  };
 
   public sessionData: SessionData;
 
