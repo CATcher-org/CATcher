@@ -48,7 +48,7 @@ describe('AssigneeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AssigneeComponent, MatSelect
+        AssigneeComponent
       ],
       providers: [
         UserService, IssueService, ErrorHandlingService, PhaseService, PermissionService
@@ -98,7 +98,7 @@ describe('AssigneeComponent', () => {
     const inputElement: HTMLElement = debugElement.query(By.css('.mat-select-panel')).nativeElement;
     const matOptionAttributes = matOption.attributes;
     const inputElementOptions = inputElement.children;
-    
+
     expect(inputElementOptions.length).toBe(dummyTeam.teamMembers.length);
     expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('false');
   });
