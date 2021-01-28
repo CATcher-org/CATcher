@@ -17,3 +17,23 @@ export const EMPTY_TEAM_RESPONSE: GithubComment = {
       url: 'https://api.github.com/users/testathorStudent',
     },
   };
+
+  export const PENDING_TUTOR_MODERATION: GithubComment = {
+    body: '# Tutor Moderation\n\n' +
+      '## :question: Issue Type\n\n- [x] Done\n\ntest\n\n-------------------\n' +
+      '## :question: Issue Severity\n\n- [ ] Done\n\n' +
+      '[replace this with your explanation]\n\n-------------------\n' +
+      '## :question: Not Related Question\n\n- [ ] Done\n\n' +
+      '[replace this with your explanation]\n\n-------------------\n',
+    created_at: '2020-08-15T06:39:24Z',
+    id: 674357972,
+    issue_url: 'https://api.github.com/repos/CATcher-org/pe-evaluation/issues/26',
+    updated_at: '2020-08-15T06:39:40Z',
+    url: 'https://api.github.com/repos/CATcher-org/pe-evaluation/issues/comments/674357972',
+    user: {
+      login: 'testathorTutor',
+      id: 46640218,
+      avatar_url: 'https://avatars2.githubusercontent.com/u/46640218?v=4',
+      url: 'https://api.github.com/users/testathorTutor',
+    },
+  };

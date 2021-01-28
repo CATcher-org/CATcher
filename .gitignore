@@ -7,8 +7,8 @@
 /app-builds
 /release
 main.js
-oauth.js
 src/**/*.js
+electron-utils/*.js
 *.js.map
 
 # dependencies
@@ -44,7 +44,7 @@ profiles.json
 
 # e2e
 /e2e/*.js
-!/e2e/protractor.conf.js
+!/e2e/*.conf.js
 /e2e/*.map
 
 # System Files
