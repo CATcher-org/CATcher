@@ -160,6 +160,8 @@ export class PhaseService {
    * and synchronized with the remote server.
    */
   sessionSetup(): Observable<any> {
+    let isSessionFixPermissionGranted = false;
+
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
       flatMap((sessionData: SessionData) => {
@@ -168,6 +170,9 @@ export class PhaseService {
       }),
       flatMap((isSessionAvailable: boolean) => {
         if (!isSessionAvailable && this.currentPhase === Phase.phaseBugReporting) {
+          if (isSessionFixPermissionGranted) {
+            return of(true);
+          }
           return this.openSessionFixConfirmation();
         } else {
           return of(null);
@@ -178,6 +183,7 @@ export class PhaseService {
           // No Session Fix Necessary
           return of(null);
         } if (sessionFixPermission === true) {
+          isSessionFixPermissionGranted = sessionFixPermission;
           return this.attemptSessionAvailabilityFix(this.sessionData);
         } else {
           throw new Error('You cannot proceed without the required repository.');
