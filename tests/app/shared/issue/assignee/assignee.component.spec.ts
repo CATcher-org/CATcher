@@ -1,30 +1,31 @@
-import { TestBed, async, ComponentFixture } from '@angular/core/testing';
-import { MaterialModule } from '../../../../../src/app/shared/material.module';
-
-import { AssigneeComponent } from '../../../../../src/app/shared/issue/assignee/assignee.component';
-import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
-import { Issue } from '../../../../../src/app/core/models/issue.model';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { Phase, PhaseService } from '../../../../../src/app/core/services/phase.service';
-import { Team } from '../../../../../src/app/core/models/team.model';
 import { User, UserRole } from '../../../../../src/app/core/models/user.model';
-import { FormsModule } from '@angular/forms';
-import { IssueService } from '../../../../../src/app/core/services/issue.service';
-import { ErrorHandlingService } from '../../../../../src/app/core/services/error-handling.service';
-import { PermissionService } from '../../../../../src/app/core/services/permission.service';
+
 import {
   ApolloTestingModule,
 } from 'apollo-angular/testing';
+import { AssigneeComponent } from '../../../../../src/app/shared/issue/assignee/assignee.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-import { UserService } from '../../../../../src/app/core/services/user.service';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
 import { DebugElement } from '@angular/core';
+import { ErrorHandlingService } from '../../../../../src/app/core/services/error-handling.service';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
+import { Issue } from '../../../../../src/app/core/models/issue.model';
+import { IssueService } from '../../../../../src/app/core/services/issue.service';
+import { MatSelect } from '@angular/material/select';
+import { MaterialModule } from '../../../../../src/app/shared/material.module';
+import { PermissionService } from '../../../../../src/app/core/services/permission.service';
+import { Team } from '../../../../../src/app/core/models/team.model';
+import { UserService } from '../../../../../src/app/core/services/user.service';
 
 describe('AssigneeComponent', () => {
   let component: AssigneeComponent;
   let debugElement: DebugElement;
   let fixture: ComponentFixture<AssigneeComponent>;
+  let childFixture: ComponentFixture<MatSelect>;
 
   const testStudent: User = {
       loginId: 'testStudent',
@@ -47,7 +48,7 @@ describe('AssigneeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AssigneeComponent
+        AssigneeComponent, MatSelect
       ],
       providers: [
         UserService, IssueService, ErrorHandlingService, PhaseService, PermissionService
@@ -66,6 +67,9 @@ describe('AssigneeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AssigneeComponent);
     component = fixture.componentInstance;
+
+    childFixture = TestBed.createComponent(MatSelect);
+    component.assigneeSelection = childFixture.componentInstance;
     component.team = dummyTeam;
     component.issue = dummyIssue;
     fixture.detectChanges();
@@ -86,21 +90,23 @@ describe('AssigneeComponent', () => {
 
   it('should be able to open the assignee selector', () => {
     const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
+
+    // Open the assignee Selector
     matSelect.click();
     fixture.detectChanges();
     const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
     const inputElement: HTMLElement = debugElement.query(By.css('.mat-select-panel')).nativeElement;
     const matOptionAttributes = matOption.attributes;
     const inputElementOptions = inputElement.children;
+    
     expect(inputElementOptions.length).toBe(dummyTeam.teamMembers.length);
     expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('false');
   });
 
   it('should be able to assign a new assignee', () => {
-    const updateAssigneeCall = spyOn(component, 'updateAssignee');
     const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
 
-    // Option the Assignee Selector
+    // Open the Assignee Selector
     matSelect.click();
     fixture.detectChanges();
     const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
@@ -111,5 +117,8 @@ describe('AssigneeComponent', () => {
     fixture.detectChanges();
     expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('true');
     expect(component.assignees).toEqual(component.teamMembers);
+
+    const textValue: HTMLElement = debugElement.query(By.css('.mat-select-value-text')).nativeElement;
+    expect(textValue).toBeDefined();
   });
 });
