@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { flatMap, map } from 'rxjs/operators';
+import { flatMap, map, retry } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
@@ -197,7 +197,8 @@ export class PhaseService {
           throw new Error('Session Availability Fix failed.');
         }
         return this.labelService.synchronizeRemoteLabels();
-      })
+      }),
+      retry(1)
     );
   }
 
