@@ -46,7 +46,7 @@ describe('PhaseService', () => {
     });
 
     describe('.updateSessionParameters()', () => {
-      it('should correctly update the currentPhase and repoName', () => {
+      it('should update the currentPhase and repoName based on given sessionData', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(mockSessionData);
 
@@ -56,7 +56,7 @@ describe('PhaseService', () => {
     });
 
     describe('.attemptSessionAvailabilityFix()', () => {
-      it('should throw no errors given phaseBugReporting and studentrole', () => {
+      it('should throw no errors given phaseBugReporting and student role', () => {
         userService.currentUser = testStudent;
         // refresh phaseService with new userService
         phaseService = new PhaseService(null, githubService, null, userService, null);
@@ -75,7 +75,7 @@ describe('PhaseService', () => {
         );
       });
 
-      it('should throw an error given admin user', () => {
+      it('should throw an error given non-student role and phaseBugReporting', () => {
         userService.currentUser = testTutor;
         phaseService = new PhaseService(null, githubService, null, userService, null);
         githubService.storePhaseDetails.and.callFake(() => {});
@@ -88,12 +88,8 @@ describe('PhaseService', () => {
     });
 
     describe('.githubRepoPermissionLevel()', () => {
-      beforeAll(() => {
-        phaseService = new PhaseService(null, githubService, null, userService, null);
-      });
-
       it('should return "repo" if phaseModeration is included in openPhases', () => {
-        const newMockSessionData = mockSessionData;
+        const newMockSessionData = { ...mockSessionData };
         newMockSessionData.openPhases.push(Phase.phaseModeration);
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(newMockSessionData);
@@ -101,6 +97,7 @@ describe('PhaseService', () => {
       });
 
       it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
+        phaseService = new PhaseService(null, githubService, null, userService, null);
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(mockSessionData);
         expect(phaseService.githubRepoPermissionLevel()).toEqual('public_repo');
@@ -108,10 +105,10 @@ describe('PhaseService', () => {
     });
 
     describe('.reset()', () => {
-      it('should correctly reset the currentPhase of the PhaseService', () => {
+      it('should reset the currentPhase of the PhaseService', () => {
         phaseService.currentPhase = Phase.phaseBugReporting;
         phaseService.reset();
-        expect(phaseService.currentPhase).toEqual(null);
+        expect(phaseService.currentPhase).toBeNull();
       });
     });
 });
