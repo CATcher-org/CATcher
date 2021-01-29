@@ -29,7 +29,7 @@ let githubService: any;
 let userService: any;
 
 describe('PhaseService', () => {
-    beforeAll(() => {
+    beforeEach(() => {
       githubService = jasmine.createSpyObj('GithubService',
         ['fetchSettingsFile', 'storePhaseDetails', 'createRepository']);
       userService = new UserService(null, null);
@@ -88,16 +88,18 @@ describe('PhaseService', () => {
     });
 
     describe('.githubRepoPermissionLevel()', () => {
-      it('should return "repo" if phaseModeration is included in openPhases', () => {
-        const newMockSessionData = { ...mockSessionData };
-        newMockSessionData.openPhases.push(Phase.phaseModeration);
+      beforeEach(() => {
+        phaseService = new PhaseService(null, githubService, null, userService, null);
+      });
+
+      it('should return "repo" if phaseModeration is included in openPhases', () => {;
         githubService.storePhaseDetails.and.callFake(() => {});
-        phaseService.updateSessionParameters(newMockSessionData);
+        phaseService.updateSessionParameters(mockSessionData);
+        phaseService.sessionData.openPhases.push(Phase.phaseModeration);
         expect(phaseService.githubRepoPermissionLevel()).toEqual('repo');
       });
 
       it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
-        phaseService = new PhaseService(null, githubService, null, userService, null);
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(mockSessionData);
         expect(phaseService.githubRepoPermissionLevel()).toEqual('public_repo');
