@@ -91,7 +91,7 @@ describe('PhaseService', () => {
       it('should return "repo" if phaseModeration is included in openPhases', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.sessionData = {
-          ...mockSessionData, 
+          ...mockSessionData,
           openPhases: [ Phase.phaseModeration ]
         };
         expect(phaseService.sessionData.openPhases).toContain(Phase.phaseModeration);
@@ -101,7 +101,7 @@ describe('PhaseService', () => {
       it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.sessionData = {
-          ...mockSessionData, 
+          ...mockSessionData,
           openPhases: [ ]
         };
         expect(phaseService.sessionData.openPhases).not.toContain(Phase.phaseModeration);
