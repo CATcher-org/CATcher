@@ -1,25 +1,25 @@
 import { of } from 'rxjs';
 import { SessionData } from '../../src/app/core/models/session.model';
-import { UserRole } from '../../src/app/core/models/user.model';
+import { User, UserRole } from '../../src/app/core/models/user.model';
 import { Phase, PhaseService } from '../../src/app/core/services/phase.service';
 import { UserService } from '../../src/app/core/services/user.service';
 
-const testStudent = {
+const testStudent: User  = {
   loginId: 'testStudent',
   role: UserRole.Student
 };
 
-const testTutor = {
+const testTutor: User = {
   loginId: 'testTutor',
   role: UserRole.Tutor
 };
 
 const mockSettingsFile: {} = {
   'openPhases' : [Phase.phaseBugReporting],
-  'phaseBugReporting': 'bugreporting',
-  'phaseTeamResponse': 'pe-results',
-  'phaseTesterResponse': 'testerresponse',
-  'phaseModeration': 'pe-evaluation'
+  [Phase.phaseBugReporting]: 'bugreporting',
+  [Phase.phaseTeamResponse]: 'pe-results',
+  [Phase.phaseTesterResponse]: 'testerresponse',
+  [Phase.phaseModeration]: 'pe-evaluation'
 };
 
 const mockSessionData: SessionData = mockSettingsFile as SessionData;
@@ -49,7 +49,6 @@ describe('PhaseService', () => {
       it('should update the currentPhase and repoName based on given sessionData', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(mockSessionData);
-
         expect(phaseService.currentPhase).toEqual(Phase.phaseBugReporting);
         expect(phaseService.repoName).toEqual(mockSettingsFile[Phase.phaseBugReporting]);
       });
@@ -63,16 +62,14 @@ describe('PhaseService', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(mockSessionData);
         githubService.createRepository.and.callFake(() => {});
-        expect(() => phaseService.attemptSessionAvailabilityFix(mockSessionData)).not.toThrowError();
+        expect(() => phaseService.attemptSessionAvailabilityFix(mockSessionData)).not.toThrow();
       });
 
       it('should throw an error given no openPhases', () => {
         userService.currentUser = testStudent;
         phaseService = new PhaseService(null, githubService, null, userService, null);
         githubService.createRepository.and.callFake(() => {});
-        expect(() => phaseService.attemptSessionAvailabilityFix(mockSessionData)).toThrow(
-          new Error('Current Phase\'s Repository has not been opened.')
-        );
+        expect(() => phaseService.attemptSessionAvailabilityFix(mockSessionData)).toThrow();
       });
 
       it('should throw an error given non-student role and phaseBugReporting', () => {
@@ -81,9 +78,7 @@ describe('PhaseService', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(mockSessionData);
         githubService.createRepository.and.callFake(() => {});
-        expect(() => phaseService.attemptSessionAvailabilityFix(mockSessionData)).toThrow(
-          new Error('Bug-Reporting Phase\'s repository initialisation is only available to Students.')
-        );
+        expect(() => phaseService.attemptSessionAvailabilityFix(mockSessionData)).toThrow();
       });
     });
 
@@ -92,7 +87,7 @@ describe('PhaseService', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.sessionData = {
           ...mockSessionData,
-          openPhases: [ Phase.phaseModeration ]
+          openPhases: [Phase.phaseModeration]
         };
         expect(phaseService.sessionData.openPhases).toContain(Phase.phaseModeration);
         expect(phaseService.githubRepoPermissionLevel()).toEqual('repo');
@@ -102,7 +97,7 @@ describe('PhaseService', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.sessionData = {
           ...mockSessionData,
-          openPhases: [ ]
+          openPhases: []
         };
         expect(phaseService.sessionData.openPhases).not.toContain(Phase.phaseModeration);
         expect(phaseService.githubRepoPermissionLevel()).toEqual('public_repo');
