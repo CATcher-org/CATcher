@@ -88,20 +88,23 @@ describe('PhaseService', () => {
     });
 
     describe('.githubRepoPermissionLevel()', () => {
-      beforeEach(() => {
-        phaseService = new PhaseService(null, githubService, null, userService, null);
-      });
-
       it('should return "repo" if phaseModeration is included in openPhases', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
-        phaseService.updateSessionParameters(mockSessionData);
-        phaseService.sessionData.openPhases.push(Phase.phaseModeration);
+        phaseService.sessionData = {
+          ...mockSessionData, 
+          openPhases: [ Phase.phaseModeration ]
+        };
+        expect(phaseService.sessionData.openPhases).toContain(Phase.phaseModeration);
         expect(phaseService.githubRepoPermissionLevel()).toEqual('repo');
       });
 
       it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
-        phaseService.updateSessionParameters(mockSessionData);
+        phaseService.sessionData = {
+          ...mockSessionData, 
+          openPhases: [ ]
+        };
+        expect(phaseService.sessionData.openPhases).not.toContain(Phase.phaseModeration);
         expect(phaseService.githubRepoPermissionLevel()).toEqual('public_repo');
       });
     });
