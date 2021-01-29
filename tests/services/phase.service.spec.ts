@@ -15,7 +15,7 @@ const testTutor: User = {
 };
 
 const mockSettingsFile: {} = {
-  'openPhases' : [Phase.phaseBugReporting],
+  'openPhases': [Phase.phaseBugReporting],
   [Phase.phaseBugReporting]: 'bugreporting',
   [Phase.phaseTeamResponse]: 'pe-results',
   [Phase.phaseTesterResponse]: 'testerresponse',
