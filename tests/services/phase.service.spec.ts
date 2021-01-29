@@ -92,7 +92,7 @@ describe('PhaseService', () => {
         phaseService = new PhaseService(null, githubService, null, userService, null);
       });
 
-      it('should return "repo" if phaseModeration is included in openPhases', () => {;
+      it('should return "repo" if phaseModeration is included in openPhases', () => {
         githubService.storePhaseDetails.and.callFake(() => {});
         phaseService.updateSessionParameters(mockSessionData);
         phaseService.sessionData.openPhases.push(Phase.phaseModeration);
