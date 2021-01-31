@@ -2,7 +2,7 @@ import { app, MenuItemConstructorOptions } from 'electron';
 
 // Edited version of a template menu-bar provided by the electron API,
 // refer to https://electronjs.org/docs/api/menu for more information.
-const fileMenu: Electron.MenuItemConstructorOptions = {
+const fileMenu: MenuItemConstructorOptions = {
   label: 'File',
   submenu: [
     {
@@ -11,7 +11,7 @@ const fileMenu: Electron.MenuItemConstructorOptions = {
   ]
 };
 
-const editMenu: Electron.MenuItemConstructorOptions = {
+const editMenu: MenuItemConstructorOptions = {
   label: 'Edit',
   submenu: [
     { role: 'undo' },
@@ -25,7 +25,7 @@ const editMenu: Electron.MenuItemConstructorOptions = {
   ]
 };
 
-const viewMenu: Electron.MenuItemConstructorOptions = {
+const viewMenu: MenuItemConstructorOptions = {
   label: 'View',
   submenu: [
     { role: 'resetZoom' },

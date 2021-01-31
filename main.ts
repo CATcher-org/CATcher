@@ -2,23 +2,17 @@ import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptio
 import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions } from './electron-utils/menu-bar';
-import { getAccessToken } from './oauth';
+import { isDeveloperMode, isLinuxOs, isMacOs, isWindowsOs, getCurrentDirectory, appTitle } from './electron-utils/supporting-logic';
+import { getAccessToken } from './electron-utils/oauth';
 
 const Logger = require('electron-log');
 const ICON_PATH = path.join(__dirname, 'dist/favicon.512x512.png');
 
 let win: BrowserWindow = null;
-const args = process.argv.slice(1),
-  serve = args.some(val => val === '--serve');
+const isDevMode = isDeveloperMode();
 
-const isDevMode = !!serve;
-
-ipcMain.on('synchronous-message', (event, arg) => {
-  event.returnValue = process.platform === 'win32'
-    ? isDevMode
-        ? app.getAppPath()
-        : process.env.PORTABLE_EXECUTABLE_FILE
-    : app.getAppPath();
+ipcMain.on('synchronous-message', (event) => {
+  event.returnValue = getCurrentDirectory(isWindowsOs(), isDevMode);
 });
 
 /**
@@ -49,32 +43,29 @@ function createWindow() {
     },
   };
 
-  if (process.platform === 'linux') {
+  if (isLinuxOs()) {
     // app icon needs to be set manually on Linux platforms
     windowOptions['icon'] = ICON_PATH;
   }
 
   // Create the browser window.
   win = new BrowserWindow(windowOptions);
+  win.setTitle(appTitle);
 
   nativeTheme.themeSource = 'light';
 
-  win.setTitle(require('./package.json').name + ' ' + require('./package.json').version);
-  if (serve) {
+  if (isDevMode) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
     });
     win.loadURL('http://localhost:4200');
+    win.webContents.openDevTools();
   } else {
     win.loadURL(url.format({
       pathname: path.join(__dirname, 'dist/index.html'),
       protocol: 'file:',
       slashes: true
     }));
-  }
-
-  if (isDevMode) {
-    win.webContents.openDevTools();
   }
 
   // Emitted when the window is closed.
@@ -107,7 +98,7 @@ try {
     Logger.info('Closing all windows in Electron.');
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
+    if (!isMacOs()) {
       app.quit();
     }
   });

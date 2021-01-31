@@ -5,6 +5,7 @@ import { Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER } from '../../core/models/issue
 import { MatPaginator, MatSort } from '@angular/material';
 import { delay, flatMap, map, startWith, tap } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { getSortedData } from './issue-sorter';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
@@ -50,7 +51,7 @@ export class IssuesDataTable extends DataSource<Issue> {
             if (this.defaultFilter) {
               data = data.filter(this.defaultFilter);
             }
-            data = this.getSortedData(data);
+            data = getSortedData(this.sort, data);
             data = this.getFilteredTeamData(data);
             data = this.getFilteredData(data);
             data = this.getPaginatedData(data);
@@ -88,28 +89,6 @@ export class IssuesDataTable extends DataSource<Issue> {
         return true;
       }
       return issue.teamAssigned.id === this.teamFilter;
-    });
-  }
-
-  private getSortedData(data: Issue[]): Issue[] {
-    if (!this.sort.active) {
-      return data;
-    }
-    return data.sort((a, b) => {
-      switch (this.sort.active) {
-        case 'type':
-          return this.compareValue(ISSUE_TYPE_ORDER[a.type], ISSUE_TYPE_ORDER[b.type]);
-        case 'severity':
-          return this.compareValue(SEVERITY_ORDER[a.severity], SEVERITY_ORDER[b.severity]);
-        case 'assignees':
-          return this.compareValue(a.assignees.join(', '), b.assignees.join(', '));
-        case 'teamAssigned':
-          return this.compareValue(a.teamAssigned.id, b.teamAssigned.id);
-        case 'Todo Remaining':
-          return -this.compareValue(a.numOfUnresolvedDisputes(), b.numOfUnresolvedDisputes());
-        default: // id, title, responseTag
-          return this.compareValue(a[this.sort.active], b[this.sort.active]);
-      }
     });
   }
 
@@ -154,19 +133,5 @@ export class IssuesDataTable extends DataSource<Issue> {
     });
     this.paginator.length = result.length;
     return result;
-  }
-
-  private compareIntegerValue(valueA: number, valueB: number): number {
-    return (valueA < valueB ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
-  }
-
-  private compareValue(valueA: string | number, valueB: string | number): number {
-    if (typeof valueA === 'number' && typeof valueB === 'number') {
-      return this.compareIntegerValue(valueA, valueB);
-    }
-
-    const a = String(valueA || '').toUpperCase();
-    const b = String(valueB || '').toUpperCase();
-    return (a < b ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
   }
 }
