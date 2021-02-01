@@ -11,6 +11,9 @@ src/**/*.js
 electron-utils/*.js
 *.js.map
 
+# tests coverage
+/tests/coverage/*
+
 # dependencies
 /node_modules
 
