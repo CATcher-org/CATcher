@@ -6,7 +6,7 @@ import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { UserService } from '../../../../src/app/core/services/user.service';
 import { USER_Q } from '../../../constants/data.constants';
 
-describe('IssuesPendingComponent', () => {
+fdescribe('IssuesPendingComponent', () => {
     describe('.ngOnInit', () => {
         const dummyTeam: Team = new Team({
             id: 'dummyId',
@@ -20,11 +20,9 @@ describe('IssuesPendingComponent', () => {
         const issuesPendingComponent: IssuesPendingComponent = new IssuesPendingComponent(issueService, null, userService);
         const DUMMY_DUPLICATE_ISSUE_ID = 1;
         const DUMMY_RESPONSE = 'dummy response';
-        let issueServiceHasTeamResponse: any;
 
         beforeEach(() => {
             issuesPendingComponent.ngOnInit();
-            issueServiceHasTeamResponse = spyOn(issueService, 'hasTeamResponse').and.callThrough();
         });
 
         it('should set default filter to return false for duplicate issues with no team response', () => {
@@ -32,7 +30,6 @@ describe('IssuesPendingComponent', () => {
             issueService.issues[dummyIssue.id].teamResponse = undefined;
 
             expect(issuesPendingComponent.filter(dummyIssue)).toBeFalse();
-            expect(issueServiceHasTeamResponse).toHaveBeenCalled();
         });
 
         it('should set default filter to return false for non-duplicate issues with responses', () => {
@@ -41,7 +38,6 @@ describe('IssuesPendingComponent', () => {
             dummyIssue.status = 'Done';
 
             expect(issuesPendingComponent.filter(dummyIssue)).toBeFalse();
-            expect(issueServiceHasTeamResponse).toHaveBeenCalled();
         });
 
         it('should set default filter to return false for duplicate issues with responses', () => {
@@ -50,7 +46,6 @@ describe('IssuesPendingComponent', () => {
             dummyIssue.status = 'Done';
 
             expect(issuesPendingComponent.filter(dummyIssue)).toBeFalse();
-            expect(issueServiceHasTeamResponse).toHaveBeenCalled();
         });
 
         it('should set default filter to return true for non-duplicate issues with no responses', () => {
@@ -58,7 +53,6 @@ describe('IssuesPendingComponent', () => {
             issueService.issues[dummyIssue.id].teamResponse = undefined;
 
             expect(issuesPendingComponent.filter(dummyIssue)).toBeTrue();
-            expect(issueServiceHasTeamResponse).toHaveBeenCalled();
         });
     });
 });
