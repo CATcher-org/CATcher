@@ -212,7 +212,7 @@ export class PhaseService {
         }
         return this.labelService.synchronizeRemoteLabels();
       }),
-      retry(1)
+      retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }
 
