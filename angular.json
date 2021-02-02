@@ -38,23 +38,6 @@
             ]
           },
           "configurations": {
-            "dev": {
-              "optimization": false,
-              "outputHashing": "all",
-              "sourceMap": true,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ]
-            },
             "staging": {
               "optimization": true,
               "outputHashing": "all",
@@ -71,7 +54,7 @@
                   "with": "src/environments/environment.staging.ts"
                 }
               ]
-            }, 
+            },
             "production": {
               "optimization": true,
               "outputHashing": "all",
@@ -114,9 +97,6 @@
             "browserTarget": "CATcher:build"
           },
           "configurations": {
-            "dev": {
-              "browserTarget": "CATcher:build:dev"
-            },
             "production": {
               "browserTarget": "CATcher:build:production"
             },
