@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { flatMap, map, retry } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { flatMap, map, retry, tap } from 'rxjs/operators';
+import { Observable, of, pipe } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
@@ -160,7 +160,15 @@ export class PhaseService {
    * and synchronized with the remote server.
    */
   sessionSetup(): Observable<any> {
+    // Permission Caching Mechanism to prevent repeating permission request.
     let isSessionFixPermissionGranted = false;
+    const cacheSessionFixPermission = () => {
+      return pipe(
+        tap((sessionFixPermission: boolean | null) => {
+          isSessionFixPermissionGranted = sessionFixPermission ? sessionFixPermission : false;
+        })
+      );
+    };
 
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
@@ -178,12 +186,12 @@ export class PhaseService {
           return of(null);
         }
       }),
+      cacheSessionFixPermission(),
       flatMap((sessionFixPermission: boolean | null) => {
         if (sessionFixPermission === null) {
           // No Session Fix Necessary
           return of(null);
         } if (sessionFixPermission === true) {
-          isSessionFixPermissionGranted = sessionFixPermission;
           return this.attemptSessionAvailabilityFix(this.sessionData);
         } else {
           throw new Error('You cannot proceed without the required repository.');
