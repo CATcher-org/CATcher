@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { flatMap, map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { flatMap, map, retry, tap } from 'rxjs/operators';
+import { Observable, of, pipe } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
@@ -160,6 +160,16 @@ export class PhaseService {
    * and synchronized with the remote server.
    */
   sessionSetup(): Observable<any> {
+    // Permission Caching Mechanism to prevent repeating permission request.
+    let isSessionFixPermissionGranted = false;
+    const cacheSessionFixPermission = () => {
+      return pipe(
+        tap((sessionFixPermission: boolean | null) => {
+          isSessionFixPermissionGranted = sessionFixPermission ? sessionFixPermission : false;
+        })
+      );
+    };
+
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
       flatMap((sessionData: SessionData) => {
@@ -168,11 +178,15 @@ export class PhaseService {
       }),
       flatMap((isSessionAvailable: boolean) => {
         if (!isSessionAvailable && this.currentPhase === Phase.phaseBugReporting) {
+          if (isSessionFixPermissionGranted) {
+            return of(true);
+          }
           return this.openSessionFixConfirmation();
         } else {
           return of(null);
         }
       }),
+      cacheSessionFixPermission(),
       flatMap((sessionFixPermission: boolean | null) => {
         if (sessionFixPermission === null) {
           // No Session Fix Necessary
@@ -197,7 +211,8 @@ export class PhaseService {
           throw new Error('Session Availability Fix failed.');
         }
         return this.labelService.synchronizeRemoteLabels();
-      })
+      }),
+      retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }
 
