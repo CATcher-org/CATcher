@@ -10,9 +10,9 @@ export interface SessionData {
   [Phase.phaseModeration]: string;
 }
 
-export const SESSION_DATA_UNAVAILABLE = 'Session Data Unavailable'
-export const SESSION_DATA_INCORRECTLY_DEFINED = 'Session Data is Incorrectly Defined'
-export const NO_ACCESSIBLE_PHASES = 'There are no accessible phases'
+export const SESSION_DATA_UNAVAILABLE = 'Session Data Unavailable';
+export const SESSION_DATA_INCORRECTLY_DEFINED = 'Session Data is Incorrectly Defined';
+export const NO_ACCESSIBLE_PHASES = 'There are no accessible phases';
 
 export function assertSessionDataIntegrity() {
   return pipe(

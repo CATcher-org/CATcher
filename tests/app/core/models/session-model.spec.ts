@@ -4,9 +4,9 @@ import {
   SESSION_DATA_INCORRECTLY_DEFINED,
   SESSION_DATA_UNAVAILABLE,
   NO_ACCESSIBLE_PHASES,
-} from "../../../../src/app/core/models/session.model";
-import { Phase } from "../../../../src/app/core/services/phase.service";
-import { of } from "rxjs";
+} from '../../../../src/app/core/models/session.model';
+import { Phase } from '../../../../src/app/core/services/phase.service';
+import { of } from 'rxjs';
 
 const validSessionData: SessionData = {
   openPhases: [
@@ -15,15 +15,15 @@ const validSessionData: SessionData = {
     Phase.phaseTesterResponse,
     Phase.phaseModeration,
   ],
-  phaseBugReporting: "bugreporting",
-  phaseTeamResponse: "pe-results",
-  phaseTesterResponse: "testerresponse",
-  phaseModeration: "pe-evaluation",
+  phaseBugReporting: 'bugreporting',
+  phaseTeamResponse: 'pe-results',
+  phaseTesterResponse: 'testerresponse',
+  phaseModeration: 'pe-evaluation',
 };
 
-describe("Session Model", () => {
-  describe("assertSessionDataIntegrity", () => {
-    it("should throw error on unavailable session", () => {
+describe('Session Model', () => {
+  describe('assertSessionDataIntegrity', () => {
+    it('should throw error on unavailable session', () => {
       of(undefined)
         .pipe(assertSessionDataIntegrity())
         .subscribe({
@@ -32,8 +32,8 @@ describe("Session Model", () => {
         });
     });
 
-    it("should throw error on session data with missing values", () => {
-      of({ key: "" })
+    it('should throw error on session data with missing values', () => {
+      of({ key: '' })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           error: (err) =>
@@ -47,7 +47,7 @@ describe("Session Model", () => {
         });
     });
 
-    it("should throw error on session with no open phases", () => {
+    it('should throw error on session with no open phases', () => {
       of({ openPhases: [] })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
@@ -55,7 +55,7 @@ describe("Session Model", () => {
         });
     });
 
-    it("should pass valid session data", () => {
+    it('should pass valid session data', () => {
       of(validSessionData)
         .pipe(assertSessionDataIntegrity())
         .subscribe((el) => expect(el).toEqual(validSessionData));
