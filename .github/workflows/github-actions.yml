@@ -61,3 +61,10 @@ jobs:
     - run: npm run electron:windows
     - run: npm run lint 
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+
+  code-coverage:
+    steps: 
+    - uses: actions/checkout@v2
+    - uses: codecov/codecov-action@v1
+      with: 
+        directory: ./tests/coverage
