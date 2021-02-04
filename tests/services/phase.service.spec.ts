@@ -20,7 +20,7 @@ const multipleOpenPhasesSettingsFile: {} = {
   'openPhases': [Phase.phaseBugReporting, Phase.phaseTeamResponse]
 };
 
-let phaseService: any;
+let phaseService: PhaseService;
 let githubService: any;
 
 describe('PhaseService', () => {
@@ -33,39 +33,39 @@ describe('PhaseService', () => {
   describe('.storeSessionData()', () => {
     it('should return an Observable of true if an openPhase is defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(moderationPhaseSettingsFile));
-      githubService.storePhaseDetails.and.callFake(() => {});
+      githubService.storePhaseDetails();
       phaseService.storeSessionData().subscribe((result: boolean) => {
-        expect(result).toBeTruthy();
+        expect(result).toBeTrue();
       });
     });
 
     it('should return an Observable of true if multiple openPhases are defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(multipleOpenPhasesSettingsFile));
-      githubService.storePhaseDetails.and.callFake(() => {});
+      githubService.storePhaseDetails();
       phaseService.storeSessionData().subscribe((result: boolean) => {
-        expect(result).toBeTruthy();
+        expect(result).toBeTrue();
       });
     });
 
     it('should return an Observable of false if no openPhases are defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(invalidPhasesSettingsFile));
-      githubService.storePhaseDetails.and.callFake(() => {});
+      githubService.storePhaseDetails();
       phaseService.storeSessionData().subscribe((result: boolean) => {
-        expect(result).toBeFalsy();
+        expect(result).toBeFalse();
       });
     });
   });
 
   describe('.githubRepoPermissionLevel()', () => {
     it('should return "repo" if phaseModeration is included in openPhases', () => {
-      githubService.storePhaseDetails.and.callFake(() => {});
+      githubService.storePhaseDetails();
       phaseService.sessionData = moderationPhaseSettingsFile as SessionData;
       expect(phaseService.sessionData.openPhases).toContain(Phase.phaseModeration);
       expect(phaseService.githubRepoPermissionLevel()).toEqual('repo');
     });
 
     it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
-      githubService.storePhaseDetails.and.callFake(() => {});
+      githubService.storePhaseDetails();
       phaseService.sessionData = {
         ...moderationPhaseSettingsFile,
         openPhases: []
