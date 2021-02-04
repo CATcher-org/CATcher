@@ -22,7 +22,7 @@ const validSessionData: SessionData = {
 };
 
 describe('Session Model', () => {
-  describe('assertSessionDataIntegrity', () => {
+  describe('assertSessionDataIntegrity()', () => {
     it('should throw error on unavailable session', () => {
       of(undefined)
         .pipe(assertSessionDataIntegrity())
