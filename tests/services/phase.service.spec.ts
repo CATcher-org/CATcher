@@ -33,7 +33,6 @@ describe('PhaseService', () => {
   describe('.storeSessionData()', () => {
     it('should return an Observable of true if an openPhase is defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(moderationPhaseSettingsFile));
-      githubService.storePhaseDetails();
       phaseService.storeSessionData().subscribe((result: boolean) => {
         expect(result).toBeTrue();
       });
@@ -41,7 +40,6 @@ describe('PhaseService', () => {
 
     it('should return an Observable of true if multiple openPhases are defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(multipleOpenPhasesSettingsFile));
-      githubService.storePhaseDetails();
       phaseService.storeSessionData().subscribe((result: boolean) => {
         expect(result).toBeTrue();
       });
@@ -49,7 +47,6 @@ describe('PhaseService', () => {
 
     it('should return an Observable of false if no openPhases are defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(invalidPhasesSettingsFile));
-      githubService.storePhaseDetails();
       phaseService.storeSessionData().subscribe((result: boolean) => {
         expect(result).toBeFalse();
       });
@@ -58,14 +55,12 @@ describe('PhaseService', () => {
 
   describe('.githubRepoPermissionLevel()', () => {
     it('should return "repo" if phaseModeration is included in openPhases', () => {
-      githubService.storePhaseDetails();
       phaseService.sessionData = moderationPhaseSettingsFile as SessionData;
       expect(phaseService.sessionData.openPhases).toContain(Phase.phaseModeration);
       expect(phaseService.githubRepoPermissionLevel()).toEqual('repo');
     });
 
     it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
-      githubService.storePhaseDetails();
       phaseService.sessionData = {
         ...moderationPhaseSettingsFile,
         openPhases: []
