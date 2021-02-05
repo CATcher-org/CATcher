@@ -222,19 +222,9 @@ export class AuthComponent implements OnInit, OnDestroy {
    * Handles the clean up required after authentication and setting up of user data is completed.
    */
   handleAuthSuccess() {
-    this.setTitle();
+    this.authService.setTitleWithPhaseDetail();
     this.router.navigateByUrl(this.phaseService.currentPhase);
     this.authService.changeAuthState(AuthState.Authenticated);
-  }
-
-  setTitle(): void {
-    const appSetting = require('../../../package.json');
-    const title = appSetting.name
-      .concat(' ')
-      .concat(appSetting.version)
-      .concat(' - ')
-      .concat(this.phaseService.getPhaseDetail());
-    this.titleService.setTitle(title);
   }
 
   goToSessionSelect() {
