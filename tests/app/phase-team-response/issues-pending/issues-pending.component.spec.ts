@@ -44,6 +44,7 @@ describe('IssuesPendingComponent', () => {
             dummyIssue.duplicateOf = DUMMY_DUPLICATE_ISSUE_ID;
             issueService.issues[dummyIssue.id].teamResponse = DUMMY_RESPONSE;
             dummyIssue.status = STATUS.Done;
+
             expect(issuesPendingComponent.filter(dummyIssue)).toBeFalse();
         });
 
