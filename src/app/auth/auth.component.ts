@@ -17,8 +17,6 @@ import { throwIfFalse } from '../shared/lib/custom-ops';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
 
-const appSetting = require('../../../package.json');
-
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
@@ -224,11 +222,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * Handles the clean up required after authentication and setting up of user data is completed.
    */
   handleAuthSuccess() {
-    this.titleService.setTitle(appSetting.name
-      .concat(' ')
-      .concat(appSetting.version)
-      .concat(' - ')
-      .concat(this.phaseService.getPhaseDetail()));
+    this.authService.setTitleWithPhaseDetail();
     this.router.navigateByUrl(this.phaseService.currentPhase);
     this.authService.changeAuthState(AuthState.Authenticated);
   }
