@@ -1,12 +1,12 @@
 import { IssuesPendingComponent } from '../../../../src/app/phase-team-response/issues-pending/issues-pending.component';
-import { Issue } from '../../../../src/app/core/models/issue.model';
+import { Issue, STATUS } from '../../../../src/app/core/models/issue.model';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../constants/githubissue.constants';
 import { Team } from '../../../../src/app/core/models/team.model';
 import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { UserService } from '../../../../src/app/core/services/user.service';
 import { USER_Q } from '../../../constants/data.constants';
 
-fdescribe('IssuesPendingComponent', () => {
+describe('IssuesPendingComponent', () => {
     describe('.ngOnInit', () => {
         const dummyTeam: Team = new Team({
             id: 'dummyId',
@@ -25,30 +25,29 @@ fdescribe('IssuesPendingComponent', () => {
             issuesPendingComponent.ngOnInit();
         });
 
-        it('should set default filter to return false for duplicate issues with no team response', () => {
+        it('should set filter to return false for a duplicate issue with no team response', () => {
             dummyIssue.duplicateOf = DUMMY_DUPLICATE_ISSUE_ID;
             issueService.issues[dummyIssue.id].teamResponse = undefined;
 
             expect(issuesPendingComponent.filter(dummyIssue)).toBeFalse();
         });
 
-        it('should set default filter to return false for non-duplicate issues with responses', () => {
+        it('should set filter to return false for a non-duplicate issue with responses', () => {
             dummyIssue.duplicateOf = undefined;
             issueService.issues[dummyIssue.id].teamResponse = DUMMY_RESPONSE;
-            dummyIssue.status = 'Done';
+            dummyIssue.status = STATUS.Done;
 
             expect(issuesPendingComponent.filter(dummyIssue)).toBeFalse();
         });
 
-        it('should set default filter to return false for duplicate issues with responses', () => {
+        it('should set filter to return false for a duplicate issue with responses', () => {
             dummyIssue.duplicateOf = DUMMY_DUPLICATE_ISSUE_ID;
             issueService.issues[dummyIssue.id].teamResponse = DUMMY_RESPONSE;
-            dummyIssue.status = 'Done';
-
+            dummyIssue.status = STATUS.Done;
             expect(issuesPendingComponent.filter(dummyIssue)).toBeFalse();
         });
 
-        it('should set default filter to return true for non-duplicate issues with no responses', () => {
+        it('should set filter to return true for a non-duplicate issue with no responses', () => {
             dummyIssue.duplicateOf = undefined;
             issueService.issues[dummyIssue.id].teamResponse = undefined;
 
