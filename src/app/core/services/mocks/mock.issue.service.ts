@@ -71,20 +71,7 @@ export class MockIssueService {
    * @param issueId - The issue's id to poll for.
    */
   pollIssue(issueId: number): Observable<Issue> {
-    return timer(0, MockIssueService.POLL_INTERVAL).pipe(
-      exhaustMap(() => {
-        return this.githubService.fetchIssueGraphql(issueId).pipe(
-          map((response) => {
-            const issue = this.createIssueModel(response);
-            this.updateLocalStore(issue);
-            return issue;
-          }),
-          catchError((err) => {
-            return this.getIssue(issueId);
-          })
-        );
-      })
-    );
+    return of(this.issues[issueId]);
   }
 
   reloadAllIssues() {
