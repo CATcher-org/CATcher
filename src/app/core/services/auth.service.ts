@@ -60,13 +60,21 @@ export class AuthService {
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
-    this.titleService.setTitle(
-      require('../../../../package.json').name
-      .concat(' ')
-      .concat(require('../../../../package.json').version)
-    );
+    this.setLandingPageTitle();
     this.issueService.setIssueTeamFilter('All Teams');
     this.reset();
+  }
+
+  setTitleWithPhaseDetail(): void {
+    const appSetting = require('../../../../package.json');
+    const title = `${appSetting.name} ${appSetting.version} - ${this.phaseService.getPhaseDetail()}`;
+    this.titleService.setTitle(title);
+  }
+
+  setLandingPageTitle(): void {
+    const appSetting = require('../../../../package.json');
+    const title = `${appSetting.name} ${appSetting.version}`;
+    this.titleService.setTitle(title);
   }
 
   isAuthenticated(): boolean {
