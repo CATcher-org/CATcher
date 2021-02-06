@@ -66,9 +66,7 @@ export class MockIssueService {
   }
 
   /**
-   * Will constantly poll and update the application's state's with the updated issue.
-   *
-   * @param issueId - The issue's id to poll for.
+   * Simply returns the existing issue, to simulate polling.
    */
   pollIssue(issueId: number): Observable<Issue> {
     return of(this.issues[issueId]);
