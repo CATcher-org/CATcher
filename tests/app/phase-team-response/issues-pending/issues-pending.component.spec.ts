@@ -7,21 +7,23 @@ import { UserService } from '../../../../src/app/core/services/user.service';
 import { USER_Q } from '../../../constants/data.constants';
 
 describe('IssuesPendingComponent', () => {
-    describe('.ngOnInit', () => {
+    describe('.ngOnInit()', () => {
         const dummyTeam: Team = new Team({
             id: 'dummyId',
             teamMembers: [],
           });
-        const dummyIssue: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
+        let dummyIssue: Issue;
+        let issuesPendingComponent: IssuesPendingComponent;
         const issueService: IssueService = new IssueService(null, null, null, null, null, null);
-        issueService.updateLocalStore(dummyIssue);
         const userService: UserService = new UserService(null, null);
         userService.currentUser = USER_Q;
-        const issuesPendingComponent: IssuesPendingComponent = new IssuesPendingComponent(issueService, null, userService);
         const DUMMY_DUPLICATE_ISSUE_ID = 1;
         const DUMMY_RESPONSE = 'dummy response';
 
         beforeEach(() => {
+            dummyIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
+            issueService.updateLocalStore(dummyIssue);
+            issuesPendingComponent = new IssuesPendingComponent(issueService, null, userService);
             issuesPendingComponent.ngOnInit();
         });
 
