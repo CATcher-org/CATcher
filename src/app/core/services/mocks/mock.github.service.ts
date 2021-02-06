@@ -59,7 +59,6 @@ export class MockGithubService {
    * Creates a GithubIssue with the specified title / description / labels.
    */
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
-
       const githubLabels: GithubLabel[] = labels.map(labelString => new GithubLabel({name: labelString}));
 
       const githubIssueData = {
