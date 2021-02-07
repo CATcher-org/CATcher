@@ -96,7 +96,7 @@ export class MockGithubService {
 
   /**
    * Fabricates session data in accordance with SessionData Requirements.
-   * @return Observable<{}> representing session information.
+   * @return Observable<SessionData> representing session information.
    */
   fetchSettingsFile(): Observable<SessionData> {
     return of({
