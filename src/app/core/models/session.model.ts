@@ -29,6 +29,10 @@ export function assertSessionDataIntegrity() {
  * @param sessionData
  */
 function isSessionDataCorrectlyDefined(sessionData: SessionData): boolean {
+  return checkForUndefinedData(sessionData);
+}
+
+function checkForUndefinedData(sessionData: SessionData): boolean {
   for (const data of Object.values(sessionData)) {
     if (data === undefined || data === '') {
       return false;
