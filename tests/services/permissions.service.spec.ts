@@ -1,5 +1,6 @@
 import { PermissionService } from '../../src/app/core/services/permission.service';
-import { Phase, PhaseService } from '../../src/app/core/services/phase.service';
+import { PhaseService } from '../../src/app/core/services/phase.service';
+import { Phase } from '../../src/app/core/models/phase.model';
 import { UserService } from '../../src/app/core/services/user.service';
 import { UserRole } from '../../src/app/core/models/user.model';
 
