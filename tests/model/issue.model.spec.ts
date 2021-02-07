@@ -51,7 +51,7 @@ describe('Issue model class', () => {
 describe('Issue', () => {
   const dummyTeam = new Team({
     id: 'F09-2',
-    teamMembers: [],
+    teamMembers: []
   });
   const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
   const otherDummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_ASSIGNEES);
