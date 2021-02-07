@@ -2,9 +2,9 @@ name: Setup Builds and Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   linux-setup-and-tests:
@@ -13,37 +13,37 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm update 
-    - run: npm run electron:linux
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: npm run lint 
-    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
-      
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm update
+      - run: npm run electron:linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run lint
+      - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+
   macos-setup-and-tests:
     runs-on: macos-latest
     strategy:
       matrix:
         node-version: [12.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm update 
-    - run: npm run electron:mac
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: npm run lint 
-    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm update
+      - run: npm run electron:mac
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run lint
+      - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
 
   windows-setup-and-tests:
     runs-on: windows-latest
@@ -51,32 +51,13 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm update 
-    - run: npm run electron:windows
-    - run: npm run lint 
-    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
-
-  code-coverage:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
-    steps: 
-    - uses: actions/checkout@v2
-      with: 
-        fetch-depth: "0"
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm run test -- "--code-coverage"
-    - uses: codecov/codecov-action@v1
-      with: 
-        directory: ./tests/coverage
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm update
+      - run: npm run electron:windows
+      - run: npm run lint
+      - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
