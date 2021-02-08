@@ -35,7 +35,7 @@ describe('AssigneeComponent', () => {
       id: 'F09-2',
       teamMembers: [ testStudent ],
   });
-  
+
   const dummyIssue: Issue =  Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
 
   const userService: UserService = new UserService(null, null);
@@ -107,7 +107,7 @@ describe('AssigneeComponent', () => {
     matSelect.click();
     fixture.detectChanges();
 
-    // Close the matSelect element and make relevant fake calls. 
+    // Close the matSelect element and make relevant fake calls.
     const matSelectElement = debugElement.query(By.css('.mat-select')).nativeElement;
     issueService.updateIssue.and.callFake(() => of(dummyIssue));
     matSelectElement.dispatchEvent(new Event('closed'));
@@ -130,7 +130,7 @@ describe('AssigneeComponent', () => {
     fixture.detectChanges();
     expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('true');
 
-    // Close the matSelect element and make relevant fake calls. 
+    // Close the matSelect element and make relevant fake calls.
     const matSelectElement = debugElement.query(By.css('.mat-select')).nativeElement;
     issueService.updateIssue.and.callFake(() => of(dummyIssue));
     matSelectElement.dispatchEvent(new Event('closed'));
