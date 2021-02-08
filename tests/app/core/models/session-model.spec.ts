@@ -1,7 +1,6 @@
 import {
   assertSessionDataIntegrity,
   SessionData,
-  SESSION_DATA_INCORRECTLY_DEFINED,
   SESSION_DATA_UNAVAILABLE,
   NO_ACCESSIBLE_PHASES,
 } from '../../../../src/app/core/models/session.model';
@@ -32,18 +31,13 @@ describe('Session Model', () => {
         });
     });
 
-    it('should throw error on session data with missing values', () => {
-      of({ key: '' })
+    it('should throw error on session data with missing crucial values', () => {
+      of({ dummyKey: undefined })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
+          next: () => fail(),
           error: (err) =>
-            expect(err).toEqual(new Error(SESSION_DATA_INCORRECTLY_DEFINED)),
-        });
-      of({ key: undefined })
-        .pipe(assertSessionDataIntegrity())
-        .subscribe({
-          error: (err) =>
-            expect(err).toEqual(new Error(SESSION_DATA_INCORRECTLY_DEFINED)),
+            expect(err).toBeInstanceOf(Error),
         });
     });
 
