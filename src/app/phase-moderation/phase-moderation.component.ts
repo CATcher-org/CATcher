@@ -3,7 +3,7 @@ import { IssuesFilter } from '../core/models/issue.model';
 import { IssueService } from '../core/services/issue.service';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { UserService } from '../core/services/user.service';
-import { Phase } from '../core/services/phase.service';
+import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
 import { LabelService } from '../core/services/label.service';
 import { GithubService } from '../core/services/github.service';
