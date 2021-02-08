@@ -1,6 +1,7 @@
 import { DescriptionComponent } from '../../../../../src/app/shared/issue/description/description.component';
 import { FormBuilder, NgForm } from '@angular/forms';
-import { Phase, PhaseService } from '../../../../../src/app/core/services/phase.service';
+import { PhaseService } from '../../../../../src/app/core/services/phase.service';
+import { Phase } from '../../../../../src/app/core/models/phase.model';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
 import { of } from 'rxjs';

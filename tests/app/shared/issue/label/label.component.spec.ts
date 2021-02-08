@@ -5,7 +5,8 @@ import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH, SEVERITY_HIGH } from '../../../../constants/label.constants';
 import { of } from 'rxjs';
-import { Phase, PhaseService } from '../../../../../src/app/core/services/phase.service';
+import { PhaseService } from '../../../../../src/app/core/services/phase.service';
+import { Phase } from '../../../../../src/app/core/models/phase.model';
 
 describe('LabelComponent', () => {
   let labelComponent: any;
