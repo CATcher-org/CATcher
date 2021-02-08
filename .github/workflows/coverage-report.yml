@@ -1,3 +1,7 @@
+# The purpose of this workflow file is to generate
+# a code coverage report from Codecov on new
+# pushes and pull requests to the master branch
+
 name: Get Code Coverage Report
 
 on:
