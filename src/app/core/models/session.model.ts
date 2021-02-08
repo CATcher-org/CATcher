@@ -20,10 +20,11 @@ export function assertSessionDataIntegrity() {
       () => new Error(SESSION_DATA_UNAVAILABLE)),
     throwIfFalse(isRequiredFieldsPresent,
       () => new Error(SESSION_DATA_MISSING_CRUCIAL_INFO)),
+    throwIfFalse(hasOpenPhases,
+      () => new Error(NO_ACCESSIBLE_PHASES)),
     throwIfFalse(isSessionDataCorrectlyDefined,
       () => new Error(SESSION_DATA_INCORRECTLY_DEFINED)),
-    throwIfFalse(hasOpenPhases,
-      () => new Error(NO_ACCESSIBLE_PHASES)));
+  );
 }
 
 /**
