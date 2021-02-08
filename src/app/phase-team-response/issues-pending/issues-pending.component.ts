@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IssueService } from '../../core/services/issue.service';
 import { IssuesDataTable } from '../../shared/issue-tables/IssuesDataTable';
-import { Issue } from '../../core/models/issue.model';
+import { Issue, STATUS } from '../../core/models/issue.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
@@ -58,10 +58,10 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.filter = (issue: Issue) => {
-      return (!this.issueService.hasTeamResponse(issue.id) || (!issue.status || issue.status === 'Incomplete')) &&
-        !issue.duplicateOf;
-    };
+    const isNotDuplicate = (issue: Issue) => !issue.duplicateOf;
+    const doesNotHaveFinalisedResponse = (issue: Issue) =>
+        (!this.issueService.hasTeamResponse(issue.id) || (!issue.status || issue.status === STATUS.Incomplete));
+    this.filter = (issue: Issue) => doesNotHaveFinalisedResponse(issue) && isNotDuplicate(issue);
   }
 
   applyFilter(filterValue: string) {

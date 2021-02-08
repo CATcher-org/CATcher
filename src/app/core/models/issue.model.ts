@@ -9,7 +9,7 @@ import { TeamResponseTemplate } from './templates/team-response-template.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
-import { Phase } from '../services/phase.service';
+import { Phase } from '../models/phase.model';
 import * as moment from 'moment';
 import { HiddenData } from './hidden-data.model';
 
