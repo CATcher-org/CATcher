@@ -1,5 +1,6 @@
 import { pipe } from 'rxjs';
 import { throwIfFalse } from '../../shared/lib/custom-ops';
+import { Phase } from '../services/phase.service';
 
 export interface SessionData {
   openPhases: string[];
@@ -11,8 +12,9 @@ export interface SessionData {
 
 export const SESSION_DATA_UNAVAILABLE = 'Session Data Unavailable';
 const SESSION_DATA_MISSING_CRUCIAL_INFO = 'Session Data is missing crucial components';
-export const SESSION_DATA_INCORRECTLY_DEFINED = 'Session Data is Incorrectly Defined';
 export const NO_ACCESSIBLE_PHASES = 'There are no accessible phases';
+export const SESSION_DATA_INCORRECTLY_DEFINED = 'Session Data is Incorrectly Defined';
+
 
 export function assertSessionDataIntegrity() {
   return pipe(
@@ -41,16 +43,17 @@ function isRequiredFieldsPresent(sessionData: SessionData): boolean {
  * @param sessionData
  */
 function isSessionDataCorrectlyDefined(sessionData: SessionData): boolean {
-  return checkForUndefinedData(sessionData);
+  return isOpenPhasesValid(sessionData);
 }
 
-function checkForUndefinedData(sessionData: SessionData): boolean {
-  for (const data of Object.values(sessionData)) {
-    if (data === undefined || data === '') {
-      return false;
-    }
-  }
-  return true;
+/**
+ * Checks if Open Phases belong to a pre-defined Phase.
+ * @param sessionData
+ */
+function isOpenPhasesValid(sessionData: SessionData): boolean {
+  return sessionData.openPhases.reduce((isOpenPhasesValidSoFar: boolean, currentOpenPhase: string) =>
+    isOpenPhasesValidSoFar && currentOpenPhase in Phase,
+    true);
 }
 
 function hasOpenPhases(sessionData: SessionData): boolean {
