@@ -1,24 +1,26 @@
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { Phase, PhaseService } from '../../../../../src/app/core/services/phase.service';
-import { User, UserRole } from '../../../../../src/app/core/models/user.model';
-
 import { ApolloTestingModule } from 'apollo-angular/testing';
-import { AssigneeComponent } from '../../../../../src/app/shared/issue/assignee/assignee.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-import { ErrorHandlingService } from '../../../../../src/app/core/services/error-handling.service';
-import { FormsModule } from '@angular/forms';
+import { of } from 'rxjs';
+
 import { HttpClientModule } from '@angular/common/http';
+import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatSelect } from '@angular/material/select';
+import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { PhaseService } from '../../../../../src/app/core/services/phase.service';
+import { User, UserRole } from '../../../../../src/app/core/models/user.model';
+import { AssigneeComponent } from '../../../../../src/app/shared/issue/assignee/assignee.component';
+import { ErrorHandlingService } from '../../../../../src/app/core/services/error-handling.service';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { IssueService } from '../../../../../src/app/core/services/issue.service';
-import { MatSelect } from '@angular/material/select';
 import { MaterialModule } from '../../../../../src/app/shared/material.module';
 import { PermissionService } from '../../../../../src/app/core/services/permission.service';
 import { Team } from '../../../../../src/app/core/models/team.model';
 import { UserService } from '../../../../../src/app/core/services/user.service';
-import { of } from 'rxjs';
+import { Phase } from '../../../../../src/app/core/models/phase.model';
 
 describe('AssigneeComponent', () => {
   let component: AssigneeComponent;
