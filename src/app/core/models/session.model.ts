@@ -43,7 +43,8 @@ function isRequiredFieldsPresent(sessionData: SessionData): boolean {
  * @param sessionData
  */
 function isSessionDataCorrectlyDefined(sessionData: SessionData): boolean {
-  return isOpenPhasesValid(sessionData);
+  return isOpenPhasesValid(sessionData) &&
+    isOpenPhasesRepoDefined(sessionData);
 }
 
 /**
@@ -53,6 +54,16 @@ function isSessionDataCorrectlyDefined(sessionData: SessionData): boolean {
 function isOpenPhasesValid(sessionData: SessionData): boolean {
   return sessionData.openPhases.reduce((isOpenPhasesValidSoFar: boolean, currentOpenPhase: string) =>
     isOpenPhasesValidSoFar && currentOpenPhase in Phase,
+    true);
+}
+
+/**
+ * Checks if each stated Open Phase has an associated repo defined as well.
+ * @param sessionData
+ */
+function isOpenPhasesRepoDefined(sessionData: SessionData): boolean {
+  return sessionData.openPhases.reduce((isOpenPhasesRepoDefinedSoFar: boolean, currentOpenPhase: string) =>
+    isOpenPhasesRepoDefinedSoFar && !!sessionData[currentOpenPhase],
     true);
 }
 

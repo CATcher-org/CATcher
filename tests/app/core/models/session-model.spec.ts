@@ -41,21 +41,52 @@ describe('Session Model', () => {
         });
     });
 
-    it('should throw error on session data with invalid open phases', () => {
-      of({ ...validSessionData, openPhases: ['invalidPhase'] })
-        .pipe(assertSessionDataIntegrity())
-        .subscribe({
-          next: () => fail(),
-          error: (err) =>
-            expect(err).toBeInstanceOf(Error),
-        });
-    });
-
     it('should throw error on session with no open phases', () => {
       of({ openPhases: [] })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES)),
+        });
+    });
+
+    it('should throw error on session data with invalid open phases', () => {
+      of({ ...validSessionData, openPhases: ['unknownPhase'] })
+        .pipe(assertSessionDataIntegrity())
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toBeInstanceOf(Error),
+        });
+    });
+
+    it('should throw error on undefined open phase', () => {
+      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      of({ ...modifiedSessionData, phaseBugReporting: undefined })
+        .pipe(assertSessionDataIntegrity())
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toBeInstanceOf(Error),
+        });
+      of({ ...modifiedSessionData, phaseBugReporting: null })
+        .pipe(assertSessionDataIntegrity())
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toBeInstanceOf(Error),
+        });
+      of({ ...modifiedSessionData, phaseBugReporting: '' })
+        .pipe(assertSessionDataIntegrity())
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toBeInstanceOf(Error),
+        });
+    });
+
+    it('should not throw error on containing repo information of unopened phases', () => {
+      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      of({ ...modifiedSessionData })
+        .pipe(assertSessionDataIntegrity())
+        .subscribe({
+          next: (el) => expect(el).toEqual(modifiedSessionData),
+          error: () => fail(),
         });
     });
 
