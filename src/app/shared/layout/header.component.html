@@ -23,7 +23,7 @@
 
   <span style="flex: 1 1 auto"></span>
   <button *ngIf="auth.isAuthenticated() && isOpenUrlButtonShown()" mat-button matTooltip="View current page on Github" (click)="viewBrowser()">
-    View on Github
+    View on GitHub
     <mat-icon>link</mat-icon>
   </button>
   <button *ngIf="auth.isAuthenticated() && isReloadButtonShown() && !this.isReloadButtonDisabled"
