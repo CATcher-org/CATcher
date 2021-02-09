@@ -4,7 +4,7 @@ import {
   SESSION_DATA_UNAVAILABLE,
   NO_ACCESSIBLE_PHASES,
 } from '../../../../src/app/core/models/session.model';
-import { Phase } from '../../../../src/app/core/services/phase.service';
+import { Phase } from '../../../../src/app/core/models/phase.model';
 import { of } from 'rxjs';
 
 const validSessionData: SessionData = {

@@ -1,6 +1,7 @@
 import { of } from 'rxjs';
 import { SessionData } from '../../src/app/core/models/session.model';
-import { Phase, PhaseService } from '../../src/app/core/services/phase.service';
+import { PhaseService } from '../../src/app/core/services/phase.service';
+import { Phase } from '../../src/app/core/models/phase.model';
 
 const moderationPhaseSettingsFile: {} = {
   'openPhases': [Phase.phaseModeration],

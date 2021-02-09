@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
-import { PhaseService, Phase, PhaseDescription } from '../../core/services/phase.service';
+import { PhaseService, PhaseDescription } from '../../core/services/phase.service';
+import { Phase } from '../../core/models/phase.model';
 import { UserService } from '../../core/services/user.service';
 import { Router, RoutesRecognized } from '@angular/router';
 import { filter, pairwise } from 'rxjs/operators';
