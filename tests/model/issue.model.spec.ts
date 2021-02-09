@@ -2,7 +2,7 @@ import { IssueDispute } from '../../src/app/core/models/issue-dispute.model';
 import { Issue } from '../../src/app/core/models/issue.model';
 import { Team } from '../../src/app/core/models/team.model';
 import { TesterResponse } from '../../src/app/core/models/tester-response.model';
-import { Phase } from '../../src/app/core/services/phase.service';
+import { Phase } from '../../src/app/core/models/phase.model';
 
 import { ISSUE_WITH_EMPTY_DESCRIPTION, ISSUE_WITH_ASSIGNEES } from '../constants/githubissue.constants';
 

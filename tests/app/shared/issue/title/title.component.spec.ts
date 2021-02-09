@@ -3,7 +3,8 @@ import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { FormBuilder, NgForm } from '@angular/forms';
 import { of } from 'rxjs';
-import { Phase, PhaseService } from '../../../../../src/app/core/services/phase.service';
+import { PhaseService } from '../../../../../src/app/core/services/phase.service';
+import { Phase } from '../../../../../src/app/core/models/phase.model';
 
 describe('TitleComponent', () => {
   let titleComponent: TitleComponent;
