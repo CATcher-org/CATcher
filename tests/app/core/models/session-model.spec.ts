@@ -41,6 +41,16 @@ describe('Session Model', () => {
         });
     });
 
+    it('should throw error on session data with invalid open phases', () => {
+      of({ ...validSessionData, openPhases: ['invalidPhase'] })
+        .pipe(assertSessionDataIntegrity())
+        .subscribe({
+          next: () => fail(),
+          error: (err) =>
+            expect(err).toBeInstanceOf(Error),
+        });
+    });
+
     it('should throw error on session with no open phases', () => {
       of({ openPhases: [] })
         .pipe(assertSessionDataIntegrity())
