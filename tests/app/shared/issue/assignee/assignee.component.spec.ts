@@ -90,11 +90,9 @@ describe('AssigneeComponent', () => {
     fixture.detectChanges();
     const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
     const inputElement: HTMLElement = debugElement.query(By.css('.mat-select-panel')).nativeElement;
-    const matOptionAttributes = matOption.attributes;
-    const inputElementOptions = inputElement.children;
 
-    expect(inputElementOptions.length).toBe(dummyTeam.teamMembers.length);
-    expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('false');
+    expect(inputElement.children.length).toBe(dummyTeam.teamMembers.length);
+    expect(matOption.attributes.getNamedItem('aria-selected').value).toEqual('false');
   });
 
   it('should emit the issueUpdated event upon closing the MatSelect', () => {
@@ -121,12 +119,11 @@ describe('AssigneeComponent', () => {
     matSelect.click();
     fixture.detectChanges();
     const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
-    const matOptionAttributes = matOption.attributes;
 
     // Assign a new assignee
     matOption.click();
     fixture.detectChanges();
-    expect(matOptionAttributes.getNamedItem('aria-selected').value).toEqual('true');
+    expect(matOption.attributes.getNamedItem('aria-selected').value).toEqual('true');
 
     // Close the matSelect element and make relevant fake calls.
     const matSelectElement = debugElement.query(By.css('.mat-select')).nativeElement;
