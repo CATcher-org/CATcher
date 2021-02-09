@@ -15,7 +15,6 @@ const SESSION_DATA_MISSING_CRUCIAL_INFO = 'Session Data is missing crucial compo
 export const NO_ACCESSIBLE_PHASES = 'There are no accessible phases';
 export const SESSION_DATA_INCORRECTLY_DEFINED = 'Session Data is Incorrectly Defined';
 
-
 export function assertSessionDataIntegrity() {
   return pipe(
     throwIfFalse(sessionData => sessionData !== undefined,
