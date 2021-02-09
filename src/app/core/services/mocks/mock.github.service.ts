@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { GithubUser } from '../../models/github-user.model';
 import { AppConfig } from '../../../../environments/environment.test';
-import { Phase } from '../phase.service';
+import { Phase } from '../../models/phase.model';
 import { SessionData } from '../../models/session.model';
 import { GithubRelease } from '../../models/github/github.release';
 import { LabelService } from '../label.service';
@@ -118,9 +118,9 @@ export class MockGithubService {
 
   /**
    * Fabricates session data in accordance with SessionData Requirements.
-   * @return Observable<{}> representing session information.
+   * @return Observable<SessionData> representing session information.
    */
-  fetchSettingsFile(): Observable<{}> {
+  fetchSettingsFile(): Observable<SessionData> {
     return of({
       openPhases : [Phase.phaseBugReporting, Phase.phaseTeamResponse, Phase.phaseTesterResponse, Phase.phaseModeration],
       [Phase.phaseBugReporting]: 'undefined',
