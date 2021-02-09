@@ -5,7 +5,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatSelect } from '@angular/material/select';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -26,7 +25,6 @@ describe('AssigneeComponent', () => {
   let component: AssigneeComponent;
   let debugElement: DebugElement;
   let fixture: ComponentFixture<AssigneeComponent>;
-  let childFixture: ComponentFixture<MatSelect>;
 
   const testStudent: User = {
       loginId: 'testStudent',
@@ -68,8 +66,6 @@ describe('AssigneeComponent', () => {
     fixture = TestBed.createComponent(AssigneeComponent);
     component = fixture.componentInstance;
 
-    childFixture = TestBed.createComponent(MatSelect);
-    component.assigneeSelection = childFixture.componentInstance;
     component.team = dummyTeam;
     component.issue = dummyIssue;
     fixture.detectChanges();
