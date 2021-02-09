@@ -22,6 +22,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { DocumentNode } from 'graphql';
 import { ElectronService } from './electron.service';
+import { SessionData } from '../models/session.model';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -297,9 +298,9 @@ export class GithubService {
 
   /**
    * Fetches the data file that is regulates session information.
-   * @return Observable<{}> representing session information.
+   * @return Observable<SessionData> representing session information.
    */
-  fetchSettingsFile(): Observable<{}> {
+  fetchSettingsFile(): Observable<SessionData> {
     return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json',
       headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
         map(rawData => JSON.parse(atob(rawData['data']['content']))),

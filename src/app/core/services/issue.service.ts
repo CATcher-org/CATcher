@@ -8,7 +8,8 @@ import {
   IssuesFilter, STATUS,
 } from '../models/issue.model';
 import { UserService } from './user.service';
-import { Phase, PhaseService } from './phase.service';
+import { PhaseService } from './phase.service';
+import { Phase } from '../models/phase.model';
 import { PermissionService } from './permission.service';
 import { DataService } from './data.service';
 import { ErrorHandlingService } from './error-handling.service';
