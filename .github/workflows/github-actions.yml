@@ -25,8 +25,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
-    - run: sudo apt install webdriver-manager
-    - run: webdriver-manager start
+    - run: npm run e2e
 
   macos-setup-and-tests:
     runs-on: macos-latest
