@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { flatMap, map, retry, tap } from 'rxjs/operators';
 import { Observable, of, pipe } from 'rxjs';
 import { GithubService } from './github.service';
-import { LabelService } from './label.service';
 import { UserService } from './user.service';
 import { UserRole } from '../models/user.model';
 import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
@@ -39,7 +38,6 @@ export class PhaseService {
 
   constructor(private http: HttpClient,
               private githubService: GithubService,
-              private labelService: LabelService,
               private userService: UserService,
               private repositoryService: RepositoryService,
               public phaseFixConfirmationDialog: MatDialog) {}
