@@ -33,7 +33,7 @@ describe('AssigneeComponent', () => {
 
   const dummyTeam = new Team({
       id: 'F09-2',
-      teamMembers: [ testStudent ],
+      teamMembers: [testStudent]
   });
 
   const dummyIssue: Issue =  Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
