@@ -201,12 +201,7 @@ export class PhaseService {
           return this.verifySessionAvailability(this.sessionData);
         }
       }),
-      flatMap((isSessionCreated: boolean) => {
-        if (!isSessionCreated) {
-          throw new Error('Session Availability Fix failed.');
-        }
-        return this.labelService.synchronizeRemoteLabels();
-      }),
+      this.repositoryService.syncLabels(),
       retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }
