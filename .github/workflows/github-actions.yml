@@ -19,13 +19,15 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npm update 
+    - run: npm update
     - run: npm run electron:linux
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: npm run lint 
+    - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
-      
+    - run: webdriver-manager update --versions.chrome 2.37
+    - run: npm run e2e
+
   macos-setup-and-tests:
     runs-on: macos-latest
     strategy:
@@ -38,11 +40,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npm update 
+    - run: npm update
     - run: npm run electron:mac
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: npm run lint 
+    - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
 
   windows-setup-and-tests:
@@ -57,7 +59,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npm update 
+    - run: npm update
     - run: npm run electron:windows
-    - run: npm run lint 
+    - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
