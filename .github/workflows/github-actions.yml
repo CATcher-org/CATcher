@@ -19,13 +19,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
+    - run: npm run e2e
     - run: npm update
     - run: npm run electron:linux
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
-    - run: npm run e2e
 
   macos-setup-and-tests:
     runs-on: macos-latest
