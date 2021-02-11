@@ -26,7 +26,7 @@ jobs:
     - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
     - run: npm run e2e -- --protractor-config=e2e/protractor.gh-chrome.conf
-    - run: npm run e2e -- --protractor-config=e2e/protractor.firefox.conf
+    - run: npm run e2e -- --protractor-config=e2e/protractor.gh-firefox.conf
 
   macos-setup-and-tests:
     runs-on: macos-latest
