@@ -9,7 +9,7 @@ import { ErrorHandlingService } from '../../core/services/error-handling.service
 import { finalize } from 'rxjs/operators';
 import { IssuesDataTable } from './IssuesDataTable';
 import { MatPaginator, MatSort } from '@angular/material';
-import { Phase, PhaseService } from '../../core/services/phase.service';
+import { PhaseService } from '../../core/services/phase.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../core/services/user.service';
 import { IssuesFilter } from '../core/models/issue.model';
-import { Phase } from '../core/services/phase.service';
+import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
 import { IssueService } from '../core/services/issue.service';
 

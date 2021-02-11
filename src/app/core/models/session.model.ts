@@ -1,12 +1,13 @@
 import { pipe } from 'rxjs';
 import { throwIfFalse } from '../../shared/lib/custom-ops';
+import { Phase } from '../models/phase.model';
 
 export interface SessionData {
-  openPhases: string[];
-  phaseBugReporting: string;
-  phaseTeamResponse: string;
-  phaseTesterResponse: string;
-  phaseModeration: string;
+  openPhases: Phase[];
+  [Phase.phaseBugReporting]: string;
+  [Phase.phaseTeamResponse]: string;
+  [Phase.phaseTesterResponse]: string;
+  [Phase.phaseModeration]: string;
 }
 
 export const SESSION_DATA_UNAVAILABLE = 'Session Data Unavailable';

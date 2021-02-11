@@ -8,7 +8,8 @@ import {
   STATUS,
 } from '../../models/issue.model';
 import { UserService } from '../user.service';
-import { Phase, PhaseService } from '../phase.service';
+import { PhaseService } from '../phase.service';
+import { Phase } from '../../models/phase.model';
 import { PermissionService } from '../permission.service';
 import { DataService } from '../data.service';
 import { ErrorHandlingService } from '../error-handling.service';
@@ -66,25 +67,10 @@ export class MockIssueService {
   }
 
   /**
-   * Will constantly poll and update the application's state's with the updated issue.
-   *
-   * @param issueId - The issue's id to poll for.
+   * Simply returns the existing issue, to simulate polling.
    */
   pollIssue(issueId: number): Observable<Issue> {
-    return timer(0, MockIssueService.POLL_INTERVAL).pipe(
-      exhaustMap(() => {
-        return this.githubService.fetchIssueGraphql(issueId).pipe(
-          map((response) => {
-            const issue = this.createIssueModel(response);
-            this.updateLocalStore(issue);
-            return issue;
-          }),
-          catchError((err) => {
-            return this.getIssue(issueId);
-          })
-        );
-      })
-    );
+    return of(this.issues[issueId]);
   }
 
   reloadAllIssues() {
