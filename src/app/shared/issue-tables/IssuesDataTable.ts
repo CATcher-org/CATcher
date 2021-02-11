@@ -6,6 +6,7 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { delay, flatMap, map, startWith, tap } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { getSortedData } from './issue-sorter';
+import { applySearchFilter } from './search-filter';
 
 export class IssuesDataTable extends DataSource<Issue> {
   private filterChange = new BehaviorSubject('');
@@ -53,7 +54,7 @@ export class IssuesDataTable extends DataSource<Issue> {
             }
             data = getSortedData(this.sort, data);
             data = this.getFilteredTeamData(data);
-            data = this.getFilteredData(data);
+            data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, this.paginator, data);
             data = this.getPaginatedData(data);
 
             return data;
@@ -100,38 +101,6 @@ export class IssuesDataTable extends DataSource<Issue> {
       startIndex = this.paginator.pageIndex * this.paginator.pageSize;
       return data.splice(startIndex, this.paginator.pageSize);
     }
-    return result;
-  }
-
-  private getFilteredData(data: Issue[]): Issue[] {
-    const searchKey = this.filter.toLowerCase();
-    const result = data.slice().filter((issue: Issue) => {
-      for (const column of this.displayedColumn) {
-        switch (column) {
-          case 'assignees':
-            for (const assignee of issue.assignees) {
-              if (assignee.toLowerCase().indexOf(searchKey) !== -1) {
-                return true;
-              }
-            }
-            break;
-          case 'duplicatedIssues':
-            const duplicatedIssues = this.issueService.issues$.getValue().filter(el => el.duplicateOf === issue.id);
-            if (duplicatedIssues.filter(el => `#${String(el.id)}`.includes(searchKey)).length !== 0) {
-              return true;
-            }
-            break;
-          default:
-            const searchStr = String(issue[column]).toLowerCase();
-            if (searchStr.indexOf(searchKey) !== -1) {
-              return true;
-            }
-            break;
-        }
-      }
-      return false;
-    });
-    this.paginator.length = result.length;
     return result;
   }
 }
