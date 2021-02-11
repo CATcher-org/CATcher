@@ -7,7 +7,7 @@ const config = protractorBaseConfig.config;
 config.capabilities = {
     browserName: 'chrome',
     chromeOptions: {
-      args: ["--headless", "--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu"]
+      args: ["--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu"]
     }
 };
 
