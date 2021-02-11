@@ -20,14 +20,14 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm update
-    - run: npm run webdriver-manager update
-    - run: npm run e2e -- --protractor-config=e2e/protractor.gh-firefox.conf
     - run: npm run electron:linux
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+    - run: npm run webdriver-manager update
     - run: npm run e2e -- --protractor-config=e2e/protractor.gh-chrome.conf
+    - run: npm run e2e -- --protractor-config=e2e/protractor.gh-firefox.conf
 
   macos-setup-and-tests:
     runs-on: macos-latest
