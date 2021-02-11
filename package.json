@@ -25,6 +25,7 @@
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "test": "npm run codegen:gql && ng test",
     "e2e": "npm run codegen:gql && npm run postinstall:web && ng e2e",
+    "webdriver-manager": "webdriver-manager",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "codegen:gql": "graphql-codegen --config codegen.yml",

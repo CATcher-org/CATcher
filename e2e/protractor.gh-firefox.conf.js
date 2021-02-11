@@ -4,11 +4,16 @@
 protractorBaseConfig = require('./protractor.base.conf');
 const config = protractorBaseConfig.config;
 
-config.capabilities = {
-  browserName: 'firefox',
-  firefoxOptions: {
-    args: ["--headless", "--no-sandbox", "--disable-gpu"]
+config.multiCapabilities = [
+  {
+    browserName: 'firefox',
+    firefoxOptions: {
+      args: ['--headless']
+    },
+    'moz:firefoxOptions': {
+      args: [ '--headless' ]
+    }
   }
-};
+];
 
 exports.config = config;
