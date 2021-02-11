@@ -1,8 +1,11 @@
 import {
   assertSessionDataIntegrity,
+  NO_ACCESSIBLE_PHASES,
+  NO_VALID_OPEN_PHASES,
+  OPENED_PHASE_REPO_UNDEFINED,
   SessionData,
   SESSION_DATA_UNAVAILABLE,
-  NO_ACCESSIBLE_PHASES,
+  SESSION_DATA_MISSING_CRUCIAL_INFO
 } from '../../../../src/app/core/models/session.model';
 import { Phase } from '../../../../src/app/core/models/phase.model';
 import { of } from 'rxjs';
@@ -36,8 +39,7 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) =>
-            expect(err).toBeInstanceOf(Error),
+          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_MISSING_CRUCIAL_INFO)),
         });
     });
 
@@ -54,7 +56,7 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toBeInstanceOf(Error),
+          error: (err) => expect(err).toEqual(new Error(NO_VALID_OPEN_PHASES)),
         });
     });
 
@@ -64,19 +66,19 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toBeInstanceOf(Error),
+          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
       of({ ...modifiedSessionData, phaseBugReporting: null })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toBeInstanceOf(Error),
+          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
       of({ ...modifiedSessionData, phaseBugReporting: '' })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toBeInstanceOf(Error),
+          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
     });
 

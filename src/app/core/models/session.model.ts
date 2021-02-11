@@ -11,9 +11,10 @@ export interface SessionData {
 }
 
 export const SESSION_DATA_UNAVAILABLE = 'Session Data Unavailable';
-const SESSION_DATA_MISSING_CRUCIAL_INFO = 'Session Data is missing crucial components';
+export const SESSION_DATA_MISSING_CRUCIAL_INFO = 'Session Data is missing crucial components';
 export const NO_ACCESSIBLE_PHASES = 'There are no accessible phases';
-export const SESSION_DATA_INCORRECTLY_DEFINED = 'Session Data is Incorrectly Defined';
+export const NO_VALID_OPEN_PHASES = 'Invalid Open Phases detected';
+export const OPENED_PHASE_REPO_UNDEFINED = 'Opened Phase has no repo defined';
 
 export function assertSessionDataIntegrity() {
   return pipe(
@@ -23,8 +24,10 @@ export function assertSessionDataIntegrity() {
       () => new Error(SESSION_DATA_MISSING_CRUCIAL_INFO)),
     throwIfFalse(hasOpenPhases,
       () => new Error(NO_ACCESSIBLE_PHASES)),
-    throwIfFalse(isSessionDataCorrectlyDefined,
-      () => new Error(SESSION_DATA_INCORRECTLY_DEFINED)),
+    throwIfFalse(isOpenPhasesValid,
+      () => new Error(NO_VALID_OPEN_PHASES)),
+    throwIfFalse(isOpenPhasesRepoDefined,
+      () => new Error(OPENED_PHASE_REPO_UNDEFINED)),
   );
 }
 
@@ -34,16 +37,6 @@ export function assertSessionDataIntegrity() {
  */
 function isRequiredFieldsPresent(sessionData: SessionData): boolean {
   return sessionData.openPhases != null;
-}
-
-/**
- * Ensures that the input session Data has been correctly defined.
- * Returns true if satisfies these properties, false otherwise.
- * @param sessionData
- */
-function isSessionDataCorrectlyDefined(sessionData: SessionData): boolean {
-  return isOpenPhasesValid(sessionData) &&
-    isOpenPhasesRepoDefined(sessionData);
 }
 
 /**
