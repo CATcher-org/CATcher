@@ -1,7 +1,5 @@
-import { ApolloTestingModule } from 'apollo-angular/testing';
 import { of } from 'rxjs';
 
-import { HttpClientModule } from '@angular/common/http';
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
