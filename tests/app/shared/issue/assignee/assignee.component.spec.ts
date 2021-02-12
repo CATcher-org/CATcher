@@ -100,8 +100,8 @@ describe('AssigneeComponent', () => {
   });
 
   it('should show the new assignee value upon adding a new assignee', () => {
-    component.assignees = [ testStudent.loginId ];
-    component.issue.assignees = [ testStudent.loginId ];
+    component.assignees = [testStudent.loginId];
+    component.issue.assignees = [testStudent.loginId];
     fixture.detectChanges();
 
     const matListText: HTMLElement = debugElement.query(By.css('.mat-list-item-content')).nativeElement;
