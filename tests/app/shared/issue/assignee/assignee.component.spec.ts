@@ -70,7 +70,7 @@ describe('AssigneeComponent', () => {
     component.team = dummyTeam;
     component.issue = dummyIssue;
     fixture.detectChanges();
-    
+
     debugElement = fixture.debugElement;
     nativeElement = fixture.nativeElement;
     permissionsService.isIssueLabelsEditable.and.callFake(() => true);
@@ -111,7 +111,7 @@ describe('AssigneeComponent', () => {
     const matSelectButton: HTMLElement = nativeElement.querySelector('button');
     matSelectButton.click();
     fixture.detectChanges();
-  }  
+  }
 
   function dispatchClosedEvent() {
     const matSelectElement: HTMLElement = debugElement.query(By.css('.mat-select')).nativeElement;
