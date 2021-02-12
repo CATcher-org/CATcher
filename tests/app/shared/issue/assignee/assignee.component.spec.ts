@@ -63,6 +63,7 @@ describe('AssigneeComponent', () => {
   }));
 
   beforeEach(() => {
+    permissionsService.isIssueLabelsEditable.and.callFake(() => true);
     fixture = TestBed.createComponent(AssigneeComponent);
     component = fixture.componentInstance;
 
@@ -73,7 +74,6 @@ describe('AssigneeComponent', () => {
 
     debugElement = fixture.debugElement;
     nativeElement = fixture.nativeElement;
-    permissionsService.isIssueLabelsEditable.and.callFake(() => true);
   });
 
   it('should have a placeholder value of - given no assignees', () => {
@@ -93,6 +93,7 @@ describe('AssigneeComponent', () => {
   it('should emit the issueUpdated event upon closing the MatSelect', () => {
     spyOn(component.issueUpdated, 'emit');
     openMatSelect();
+    addAssignee();
     dispatchClosedEvent();
 
     expect(component.issueUpdated.emit).toHaveBeenCalledWith(jasmine.objectContaining({assignees: [testStudent.loginId]}));
@@ -110,6 +111,12 @@ describe('AssigneeComponent', () => {
   function openMatSelect(): void {
     const matSelectButton: HTMLElement = nativeElement.querySelector('button');
     matSelectButton.click();
+    fixture.detectChanges();
+  }
+
+  function addAssignee(): void {
+    const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
+    matOption.click();
     fixture.detectChanges();
   }
 
