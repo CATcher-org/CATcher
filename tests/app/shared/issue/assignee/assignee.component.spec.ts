@@ -24,7 +24,9 @@ import { Phase } from '../../../../../src/app/core/models/phase.model';
 describe('AssigneeComponent', () => {
   let component: AssigneeComponent;
   let debugElement: DebugElement;
+  let nativeElement: HTMLElement;
   let fixture: ComponentFixture<AssigneeComponent>;
+  let dummyIssue: Issue;
 
   const testStudent: User = {
       loginId: 'testStudent',
@@ -36,13 +38,10 @@ describe('AssigneeComponent', () => {
       teamMembers: [testStudent]
   });
 
-  const dummyIssue: Issue =  Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-
-  const userService: UserService = new UserService(null, null);
-  userService.currentUser = testStudent;
-  const phaseService: PhaseService = new PhaseService(null, null, null, userService, null);
-  phaseService.currentPhase = Phase.phaseTeamResponse;
-  const issueService = jasmine.createSpyObj('IssueService', ['getLatestIssue', 'updateIssue']);
+  const userService: any = jasmine.createSpyObj('UserService', [], { currentUser: testStudent });
+  const phaseService: any = jasmine.createSpyObj('PhaseService', [], { currentPhase: Phase.phaseTeamResponse, userService: userService });
+  const issueService: any = jasmine.createSpyObj('IssueService', ['getLatestIssue', 'updateIssue']);
+  const permissionsService: any = jasmine.createSpyObj('PermissionService', ['isIssueLabelsEditable']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -53,12 +52,13 @@ describe('AssigneeComponent', () => {
         UserService, IssueService, ErrorHandlingService, PhaseService, PermissionService
       ],
       imports: [
-        FormsModule, MaterialModule, ApolloTestingModule, HttpClientModule, BrowserAnimationsModule
+        FormsModule, MaterialModule, BrowserAnimationsModule
       ]
     })
     .overrideProvider(UserService, { useValue: userService })
-    .overrideProvider(PhaseService, { useValue: phaseService })
     .overrideProvider(IssueService, { useValue: issueService })
+    .overrideProvider(PhaseService, { useValue: phaseService })
+    .overrideProvider(PermissionService, { useValue: permissionsService })
     .compileComponents();
   }));
 
@@ -66,28 +66,23 @@ describe('AssigneeComponent', () => {
     fixture = TestBed.createComponent(AssigneeComponent);
     component = fixture.componentInstance;
 
+    dummyIssue =  Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
     component.team = dummyTeam;
     component.issue = dummyIssue;
     fixture.detectChanges();
+    
     debugElement = fixture.debugElement;
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    nativeElement = fixture.nativeElement;
+    permissionsService.isIssueLabelsEditable.and.callFake(() => true);
   });
 
   it('should have a placeholder value of - given no assignees', () => {
     const matPlaceholderValue: HTMLElement = debugElement.query(By.css('.mat-select-placeholder')).nativeElement;
-    expect(matPlaceholderValue).toBeDefined();
     expect(matPlaceholderValue.innerText).toEqual('-'); // Placeholder Value
   });
 
   it('should be able to open the assignee selector', () => {
-    const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
-
-    // Open the assignee selector
-    matSelect.click();
-    fixture.detectChanges();
+    openMatSelect();
     const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
     const inputElement: HTMLElement = debugElement.query(By.css('.mat-select-panel')).nativeElement;
 
@@ -97,42 +92,31 @@ describe('AssigneeComponent', () => {
 
   it('should emit the issueUpdated event upon closing the MatSelect', () => {
     spyOn(component.issueUpdated, 'emit');
-    const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
+    openMatSelect();
+    dispatchClosedEvent();
 
-    // Open the assignee selector
-    matSelect.click();
-    fixture.detectChanges();
-
-    // Close the matSelect element and make relevant fake calls.
-    const matSelectElement = debugElement.query(By.css('.mat-select')).nativeElement;
-    issueService.updateIssue.and.callFake(() => of(dummyIssue));
-    matSelectElement.dispatchEvent(new Event('closed'));
-    fixture.detectChanges();
-
-    expect(component.issueUpdated.emit).toHaveBeenCalledTimes(1);
+    expect(component.issueUpdated.emit).toHaveBeenCalledWith(jasmine.objectContaining({assignees: [testStudent.loginId]}));
   });
 
   it('should show the new assignee value upon adding a new assignee', () => {
-    const matSelect: HTMLElement = debugElement.query(By.css('.mat-select-trigger')).nativeElement;
-
-    // Open the Assignee Selector
-    matSelect.click();
-    fixture.detectChanges();
-    const matOption: HTMLElement = debugElement.query(By.css('.mat-option')).nativeElement;
-
-    // Assign a new assignee
-    matOption.click();
-    fixture.detectChanges();
-    expect(matOption.attributes.getNamedItem('aria-selected').value).toEqual('true');
-
-    // Close the matSelect element and make relevant fake calls.
-    const matSelectElement = debugElement.query(By.css('.mat-select')).nativeElement;
-    issueService.updateIssue.and.callFake(() => of(dummyIssue));
-    matSelectElement.dispatchEvent(new Event('closed'));
+    component.assignees = [ testStudent.loginId ];
     component.issue.assignees = [ testStudent.loginId ];
     fixture.detectChanges();
 
     const matListText: HTMLElement = debugElement.query(By.css('.mat-list-item-content')).nativeElement;
     expect(matListText.innerText).toEqual(component.assignees[0]);
   });
+
+  function openMatSelect(): void {
+    const matSelectButton: HTMLElement = nativeElement.querySelector('button');
+    matSelectButton.click();
+    fixture.detectChanges();
+  }  
+
+  function dispatchClosedEvent() {
+    const matSelectElement: HTMLElement = debugElement.query(By.css('.mat-select')).nativeElement;
+    issueService.updateIssue.and.callFake((updatedIssue: Issue) => of(updatedIssue));
+    matSelectElement.dispatchEvent(new Event('closed'));
+    fixture.detectChanges();
+  }
 });
