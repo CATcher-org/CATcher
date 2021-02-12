@@ -1,8 +1,24 @@
-# Notes on using the CATcher Desktop App
+- [Accessing the CATcher Web App](#accessing-the-catcher-web-app)
+- [Downloading the CATcher Desktop App](#downloading-the-catcher-desktop-app)
+  - [For Windows Users](#for-windows-users)
+  - [For Mac Users](#for-mac-users)
+  - [For Linux Users](#for-linux-users)
+- [Reporting Problems in using CATcher](#reporting-problems-in-using-catcher)
+
+
+# Accessing the CATcher Web App
+
+The CATcher web application can be
+accessed at
+https://catcher-org.github.io/CATcher
+
+# Downloading the CATcher Desktop App
 
 You can download the latest release from https://github.com/CATcher-org/CATcher/releases
 
 Start the application by clicking on the executable file, no installation is required.
+
+# Notes on using CATcher
 
 The app will prompt you to enter the session you are participating in, using a dropdown.
 
