@@ -9,13 +9,7 @@ import { UserRole } from '../models/user.model';
 import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
-
-export enum Phase {
-  phaseBugReporting = 'phaseBugReporting',
-  phaseTeamResponse = 'phaseTeamResponse',
-  phaseTesterResponse = 'phaseTesterResponse',
-  phaseModeration = 'phaseModeration'
-}
+import { Phase } from '../models/phase.model';
 
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',
