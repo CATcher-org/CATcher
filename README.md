@@ -2,7 +2,7 @@
 
 # Introduction
 
-![Build Status](https://github.com/CATcher-org/CATcher/workflows/Setup%20Builds%20and%20Tests/badge.svg)
+![Build Status](https://github.com/CATcher-org/CATcher/workflows/Setup%20Builds%20and%20Tests/badge.svg) [![codecov](https://codecov.io/gh/CATcher-org/CATcher/branch/master/graph/badge.svg?token=XPTILL9ZFM)](https://codecov.io/gh/CATcher-org/CATcher)
 
 **CAT**cher is a desktop application for **C**rowd-sourced **A**nonymous **T**esting software. It uses GitHub as the backend for hosting bug reports.
 

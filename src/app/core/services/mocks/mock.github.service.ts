@@ -7,6 +7,8 @@ import { SessionData } from '../../models/session.model';
 import { GithubRelease } from '../../models/github/github.release';
 import { LabelService } from '../label.service';
 import { Label } from '../../models/label.model';
+import { GithubIssue } from '../../models/github/github-issue.model';
+import { GithubLabel } from '../../models/github/github-label.model';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -20,8 +22,11 @@ let octokit = new Octokit();
 
 @Injectable()
 export class MockGithubService {
+  numIssuesCreated: number;  // tracks the number of GithubIssues created by this mock service
 
-  constructor() {}
+  constructor() {
+    this.numIssuesCreated = 0;
+  }
 
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
@@ -48,6 +53,23 @@ export class MockGithubService {
    */
   isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
     return of(true);
+  }
+
+  /**
+   * Creates a GithubIssue with the specified title / description / labels.
+   */
+  createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
+      const githubLabels: GithubLabel[] = labels.map(labelString => new GithubLabel({name: labelString}));
+
+      const githubIssueData = {
+        number: this.numIssuesCreated, // Issue's display ID
+        title: title,
+        body: description,
+        labels: githubLabels
+      };
+
+      this.numIssuesCreated++;
+      return of(new GithubIssue(githubIssueData));
   }
 
   /**
