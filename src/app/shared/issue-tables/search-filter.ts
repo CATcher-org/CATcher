@@ -1,9 +1,8 @@
 import { IssueService } from '../../core/services/issue.service';
 import { Issue } from '../../core/models/issue.model';
-import { MatPaginator } from '@angular/material';
 import { TABLE_COLUMNS } from './issue-tables.component';
 
-export function applySearchFilter(filter: string, displayedColumn: string[], issueService: IssueService, paginator: MatPaginator, data: Issue[]): Issue[] {
+export function applySearchFilter(filter: string, displayedColumn: string[], issueService: IssueService, data: Issue[]): Issue[] {
     const searchKey = filter.toLowerCase();
     const result = data.slice().filter((issue: Issue) => {
       for (const column of displayedColumn) {
@@ -32,7 +31,6 @@ export function applySearchFilter(filter: string, displayedColumn: string[], iss
       }
       return false;
     });
-    paginator.length = result.length;
     return result;
 }
 

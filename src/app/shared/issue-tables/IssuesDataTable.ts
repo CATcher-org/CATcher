@@ -54,7 +54,7 @@ export class IssuesDataTable extends DataSource<Issue> {
             }
             data = getSortedData(this.sort, data);
             data = this.getFilteredTeamData(data);
-            data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, this.paginator, data);
+            data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
             data = this.getPaginatedData(data);
 
             return data;
@@ -94,6 +94,7 @@ export class IssuesDataTable extends DataSource<Issue> {
   }
 
   private getPaginatedData(data: Issue[]): Issue[] {
+    this.paginator.length = data.length;
     let startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const result = data.splice(startIndex, this.paginator.pageSize);
     if (result.length === 0) {
