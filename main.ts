@@ -2,7 +2,7 @@ import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptio
 import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions } from './electron-utils/menu-bar';
-import { isDeveloperMode, isLinuxOs, isMacOs, isWindowsOs, getCurrentDirectory, appTitle } from './electron-utils/supporting-logic';
+import { isDeveloperMode, isLinuxOs, isMacOs, appTitle } from './electron-utils/supporting-logic';
 import { getAccessToken } from './electron-utils/oauth';
 
 const Logger = require('electron-log');
@@ -10,10 +10,6 @@ const ICON_PATH = path.join(__dirname, 'dist/favicon.512x512.png');
 
 let win: BrowserWindow = null;
 const isDevMode = isDeveloperMode();
-
-ipcMain.on('synchronous-message', (event) => {
-  event.returnValue = getCurrentDirectory(isWindowsOs(), isDevMode);
-});
 
 /**
  * Will start the OAuth Web Flow and obtain the access token from Github.
