@@ -47,13 +47,8 @@ export class ProfilesComponent implements OnInit {
   blankProfile: Profile = {profileName: '', encodedText: ''}; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
 
-  private readonly APPLICATION_AND_SUBDIRECTORIES: RegExp = /[\/\\]+[^\/\\]+\.(exe|app|AppImage|asar).*/g;
-  private readonly PROFILES_FILE_NAME = 'profiles.json';
-  private filePath: string;
-
   selectedProfile: Profile = this.blankProfile;
   @Output() selectedProfileEmitter: EventEmitter<Profile> = new EventEmitter<Profile>();
-  @Output() profileDataEmitter: EventEmitter<{}> = new EventEmitter<{}>();
 
   profilesData = {
     isDirectoryMessageVisible: false,
@@ -61,12 +56,10 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(private electronService: ElectronService, public errorDialog: MatDialog) { }
+  constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
-    const temp = this.electronService.getCurrentDirectory();
-    this.filePath = [temp.replace(this.APPLICATION_AND_SUBDIRECTORIES, ''), this.PROFILES_FILE_NAME].join('/');
-    this.readProfiles();
+    this.initProfiles();
   }
 
   /**
@@ -105,36 +98,9 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Processes available Profiles information from application's directory.
-   * The automatic detection of profiles in the current directory will only be available in Electron version.
+   * Processes available Profiles information from application's configuration.
    */
-  readProfiles(): void {
-    const isFileExists: boolean = this.userProfileFileExists(this.filePath);
-    // Informing Parent Component (Auth) of file selection
-    this.profilesData.fileName = this.PROFILES_FILE_NAME;
-    this.profilesData.fileDirectory = this.filePath.split(this.PROFILES_FILE_NAME)[0];
-    this.profilesData.isDirectoryMessageVisible = !isFileExists;
-    this.profileDataEmitter.emit(this.profilesData);
-
-    if (this.electronService.isElectron() && isFileExists) {
-      try {
-        this.profiles = [];
-        this.profiles = JSON.parse(this.electronService.readFile(this.filePath))['profiles'];
-      } catch (e) {
-        this.openErrorDialog();
-      }
-
-      // Validity Check if custom profile.json file has values in it.
-      try {
-        this.assertProfilesValidity(this.profiles);
-      } catch (e) {
-        setTimeout(() => {
-          this.profiles = AppConfig.profiles || [];
-          this.openErrorDialog();
-        });
-      }
-    }
-
+  initProfiles(): void {
     this.profiles = this.profiles
       .concat(AppConfig.profiles)
       .filter(p => !!p);
@@ -145,24 +111,6 @@ export class ProfilesComponent implements OnInit {
    */
   openErrorDialog(): void {
     this.errorDialog.open(JsonParseErrorDialogComponent);
-  }
-
-  /**
-   * Verifies that every profile is correctly defined in the array of profiles.
-   * @param profiles - Array of profiles sourced from profiles.json
-   */
-  assertProfilesValidity(profiles: Profile[]): void {
-    if (profiles.filter(profile => (profile.profileName === undefined || profile.encodedText === undefined)).length !== 0) {
-      throw new Error();
-    }
-  }
-
-  /**
-   * Returns true if the file indicated by the filePath exists.
-   * @param filePath - Path of file to check.
-   */
-  userProfileFileExists(filePath: string): boolean {
-    return this.electronService.fileExists(filePath);
   }
 
   /**
