@@ -14,7 +14,7 @@ This application will support the following order of workflow:
 
 # Getting Started
 
-* [Notes on using the CATcher Desktop App](./docs/usage-notes.md)
+* [Notes on using CATcher](./docs/usage-notes.md)
 
 * [Setting up the required GitHub organisation and repositories](./docs/setup-notes.md) (for **admin users** only)
 
