@@ -46,7 +46,7 @@ describe('AssigneeComponent', () => {
     role: UserRole.Student
   };
 
-  const dummyTeam = new Team({
+  const dummyTeam: Team = new Team({
     id: 'F09-2',
     teamMembers: [testStudent, testStudent2, testStudent3, testStudent4]
   });
