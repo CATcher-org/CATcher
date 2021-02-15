@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { SESSION_DATA_MISSING_OPENPHASES_KEY, SessionData } from '../../src/app/core/models/session.model';
+import { NO_ACCESSIBLE_PHASES, SessionData } from '../../src/app/core/models/session.model';
 import { PhaseService } from '../../src/app/core/services/phase.service';
 import { Phase } from '../../src/app/core/models/phase.model';
 
@@ -50,7 +50,7 @@ describe('PhaseService', () => {
       githubService.fetchSettingsFile.and.returnValue(of(invalidPhasesSettingsFile));
       phaseService.storeSessionData().subscribe({
         next: () => fail(),
-        error: (err) => expect(err).toEqual(new Error(SESSION_DATA_MISSING_OPENPHASES_KEY))
+        error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES))
       });
     });
   });
