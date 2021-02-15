@@ -29,16 +29,3 @@ describe('RepositoryService', () => {
     });
   });
 });
-
-/*
-
-  syncLabels(): UnaryFunction<Observable<boolean>, Observable<any>> {
-    return pipe(
-      throwIfFalse(
-        (isSessionCreated: boolean) => isSessionCreated,
-        () => new Error(SESSION_AVALIABILITY_FIX_FAILED)
-      ),
-      map(() => this.labelService.synchronizeRemoteLabels())
-    );
-  }
- */
