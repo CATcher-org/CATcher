@@ -60,7 +60,7 @@ describe('Session Model', () => {
         });
     });
 
-    it('should throw error on undefined open phase', () => {
+    it('should throw error on session data with undefined repo for open phase', () => {
       const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
       of({ ...modifiedSessionData, phaseBugReporting: undefined })
         .pipe(assertSessionDataIntegrity())
@@ -82,7 +82,7 @@ describe('Session Model', () => {
         });
     });
 
-    it('should not throw error on containing repo information of unopened phases', () => {
+    it('should not throw error if session data contains repo information of unopened phases', () => {
       const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
       of({ ...modifiedSessionData })
         .pipe(assertSessionDataIntegrity())

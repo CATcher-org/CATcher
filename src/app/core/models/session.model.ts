@@ -20,11 +20,11 @@ export function assertSessionDataIntegrity() {
   return pipe(
     throwIfFalse(sessionData => sessionData !== undefined,
       () => new Error(SESSION_DATA_UNAVAILABLE)),
-    throwIfFalse(isRequiredFieldsPresent,
+    throwIfFalse(areRequiredFieldsPresent,
       () => new Error(SESSION_DATA_MISSING_CRUCIAL_INFO)),
     throwIfFalse(hasOpenPhases,
       () => new Error(NO_ACCESSIBLE_PHASES)),
-    throwIfFalse(isOpenPhasesValid,
+    throwIfFalse(areOpenPhasesValid,
       () => new Error(NO_VALID_OPEN_PHASES)),
     throwIfFalse(isOpenPhasesRepoDefined,
       () => new Error(OPENED_PHASE_REPO_UNDEFINED)),
@@ -35,7 +35,7 @@ export function assertSessionDataIntegrity() {
  * Checks if Session Data has all its crucial fields present.
  * @param sessionData
  */
-function isRequiredFieldsPresent(sessionData: SessionData): boolean {
+function areRequiredFieldsPresent(sessionData: SessionData): boolean {
   return sessionData.openPhases != null;
 }
 
@@ -43,7 +43,7 @@ function isRequiredFieldsPresent(sessionData: SessionData): boolean {
  * Checks if Open Phases belong to a pre-defined Phase.
  * @param sessionData
  */
-function isOpenPhasesValid(sessionData: SessionData): boolean {
+function areOpenPhasesValid(sessionData: SessionData): boolean {
   return sessionData.openPhases.reduce((isOpenPhasesValidSoFar: boolean, currentOpenPhase: string) =>
     isOpenPhasesValidSoFar && currentOpenPhase in Phase,
     true);
