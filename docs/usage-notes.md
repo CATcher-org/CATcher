@@ -1,5 +1,5 @@
 - [Get Started](#get-started)
-- [Notes on Using the Desktop App](#troubleshooting-the-catcher-desktop-app)
+- [Notes on Using the Desktop App](#notes-on-using-the-desktop-app)
   - [For Windows Users](#for-windows-users)
   - [For Mac Users](#for-mac-users)
   - [For Linux Users](#for-linux-users)
