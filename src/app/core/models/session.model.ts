@@ -11,7 +11,7 @@ export interface SessionData {
 }
 
 export const SESSION_DATA_UNAVAILABLE = 'Session Data Unavailable';
-export const SESSION_DATA_MISSING_CRUCIAL_INFO = 'Session Data is missing crucial components';
+export const SESSION_DATA_MISSING_OPENPHASES_KEY = 'Session data does not define an \'openPhases\' key';
 export const NO_ACCESSIBLE_PHASES = 'There are no accessible phases';
 export const NO_VALID_OPEN_PHASES = 'Invalid Open Phases detected';
 export const OPENED_PHASE_REPO_UNDEFINED = 'Opened Phase has no repo defined';
@@ -20,8 +20,8 @@ export function assertSessionDataIntegrity() {
   return pipe(
     throwIfFalse(sessionData => sessionData !== undefined,
       () => new Error(SESSION_DATA_UNAVAILABLE)),
-    throwIfFalse(areRequiredFieldsPresent,
-      () => new Error(SESSION_DATA_MISSING_CRUCIAL_INFO)),
+    throwIfFalse(isOpenPhasesKeyPresent,
+      () => new Error(SESSION_DATA_MISSING_OPENPHASES_KEY)),
     throwIfFalse(hasOpenPhases,
       () => new Error(NO_ACCESSIBLE_PHASES)),
     throwIfFalse(areOpenPhasesValid,
@@ -35,7 +35,7 @@ export function assertSessionDataIntegrity() {
  * Checks if Session Data has all its crucial fields present.
  * @param sessionData
  */
-function areRequiredFieldsPresent(sessionData: SessionData): boolean {
+function isOpenPhasesKeyPresent(sessionData: SessionData): boolean {
   return sessionData.openPhases != null;
 }
 

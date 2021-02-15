@@ -5,7 +5,7 @@ import {
   OPENED_PHASE_REPO_UNDEFINED,
   SessionData,
   SESSION_DATA_UNAVAILABLE,
-  SESSION_DATA_MISSING_CRUCIAL_INFO
+  SESSION_DATA_MISSING_OPENPHASES_KEY
 } from '../../../../src/app/core/models/session.model';
 import { Phase } from '../../../../src/app/core/models/phase.model';
 import { of } from 'rxjs';
@@ -39,7 +39,7 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_MISSING_CRUCIAL_INFO)),
+          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_MISSING_OPENPHASES_KEY)),
         });
     });
 
