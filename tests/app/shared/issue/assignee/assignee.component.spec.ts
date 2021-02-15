@@ -27,13 +27,28 @@ describe('AssigneeComponent', () => {
   let dummyIssue: Issue;
 
   const testStudent: User = {
-      loginId: 'testStudent',
-      role: UserRole.Student
+    loginId: 'testStudent',
+    role: UserRole.Student
+  };
+
+  const testStudent2: User = {
+    loginId: 'testStudent2',
+    role: UserRole.Student
+  };
+
+  const testStudent3: User = {
+    loginId: 'testStudent3',
+    role: UserRole.Student
+  };
+
+  const testStudent4: User = {
+    loginId: 'testStudent4',
+    role: UserRole.Student
   };
 
   const dummyTeam = new Team({
-      id: 'F09-2',
-      teamMembers: [testStudent]
+    id: 'F09-2',
+    teamMembers: [testStudent, testStudent2, testStudent3, testStudent4]
   });
 
   const userService: any = jasmine.createSpyObj('UserService', [], { currentUser: testStudent });
