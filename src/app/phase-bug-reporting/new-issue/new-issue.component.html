@@ -1,6 +1,6 @@
 <h1 class="mat-display-1 title">New Issue</h1>
 
-<form [formGroup]="newIssueForm" #myForm="ngForm" (ngSubmit)="submitNewIssue(myForm)">
+<form [formGroup]="newIssueForm" #myForm="ngForm" id="new-bugReport-issue-form" (ngSubmit)="submitNewIssue(myForm)">
   <div class="form">
 
     <div class="row">
@@ -23,7 +23,7 @@
           </app-comment-editor>
         </div>
 
-        <button style="float: right" type="submit" mat-stroked-button color="primary"
+        <button style="float: right" class="submit-new-bug-report" type="submit" mat-stroked-button color="primary"
           [disabled]="!newIssueForm.valid || isFormPending">
           {{ this.submitButtonText }}
         </button>
