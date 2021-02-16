@@ -1,27 +1,28 @@
-import { BugReportingPage } from '../../page-objects/bugReporting.po';
+import { BugReportingPhase } from '../../page-objects/bugReportingPhase.po';
 import { PhaseDescription } from '../../../src/app/core/services/phase.service';
 import { Phase } from '../../../src/app/core/models/phase.model';
 import { LoginPage } from '../../page-objects/login.po';
 import { browser } from 'protractor';
 
 describe('CATcher\'s Bug Reporting Page', () => {
-  let bugReportingPage: BugReportingPage;
+  let bugReportingPhase: BugReportingPhase;
   let loginPage: LoginPage;
 
   beforeEach(() => {
     loginPage = new LoginPage();
-    bugReportingPage = new BugReportingPage();
+    bugReportingPhase = new BugReportingPhase();
     loginPage.navigateToRoot();
   });
 
   it(`displays "${PhaseDescription[Phase.phaseBugReporting]}" in header bar`, async () => {
     await loginPage.bypassAuthentication();
-    expect(await bugReportingPage.getPhaseDescription()).toContain(PhaseDescription[Phase.phaseBugReporting]);
+    expect(await bugReportingPhase.getPhaseDescription()).toContain(PhaseDescription[Phase.phaseBugReporting]);
   });
 
   it('creates new bug report', async () => {
     await loginPage.bypassAuthentication();
-    await bugReportingPage.accessNewBugReportingPage();
-    browser.sleep(100000);
+    await bugReportingPhase.accessNewBugReportingPage()
+      .then(() => bugReportingPhase.enterNewIssueTitle('Test Issue Creation Title'));
+    browser.sleep(100000); // Added Temporarily to Visualize Actions TODO: Remove after task completion.
   });
 });
