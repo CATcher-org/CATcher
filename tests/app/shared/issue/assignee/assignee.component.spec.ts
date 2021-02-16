@@ -51,8 +51,7 @@ describe('AssigneeComponent', () => {
     teamMembers: [testStudent, testStudent2, testStudent3, testStudent4]
   });
 
-  const userService: any = jasmine.createSpyObj('UserService', [], { currentUser: testStudent });
-  const phaseService: any = jasmine.createSpyObj('PhaseService', [], { currentPhase: Phase.phaseTeamResponse, userService: userService });
+  const phaseService: any = jasmine.createSpyObj('PhaseService', [], { currentPhase: Phase.phaseTeamResponse });
   const issueService: any = jasmine.createSpyObj('IssueService', ['getLatestIssue', 'updateIssue']);
   const permissionsService: any = jasmine.createSpyObj('PermissionService', ['isIssueLabelsEditable']);
 
@@ -62,13 +61,12 @@ describe('AssigneeComponent', () => {
         AssigneeComponent
       ],
       providers: [
-        UserService, IssueService, ErrorHandlingService, PhaseService, PermissionService
+        IssueService, ErrorHandlingService, PhaseService, PermissionService
       ],
       imports: [
         FormsModule, MaterialModule, BrowserAnimationsModule
       ]
     })
-    .overrideProvider(UserService, { useValue: userService })
     .overrideProvider(IssueService, { useValue: issueService })
     .overrideProvider(PhaseService, { useValue: phaseService })
     .overrideProvider(PermissionService, { useValue: permissionsService })
@@ -90,7 +88,7 @@ describe('AssigneeComponent', () => {
   });
 
   it('should have a placeholder value of - given no assignees', () => {
-    const matPlaceholderValue: HTMLElement = debugElement.query(By.css('.mat-select-placeholder')).nativeElement;
+    const matPlaceholderValue: HTMLElement = debugElement.query(By.css('p')).nativeElement;
     expect(matPlaceholderValue.innerText).toEqual('-'); // Placeholder Value
   });
 
@@ -103,7 +101,7 @@ describe('AssigneeComponent', () => {
     expect(matOption.attributes.getNamedItem('aria-selected').value).toEqual('false');
   });
 
-  it('should emit the issueUpdated event upon closing the MatSelect', () => {
+  it('should emit an event containing the issue with updated assignees, upon closing the MatSelect', () => {
     spyOn(component.issueUpdated, 'emit');
     openMatSelect();
     addAssignee();
@@ -112,13 +110,12 @@ describe('AssigneeComponent', () => {
     expect(component.issueUpdated.emit).toHaveBeenCalledWith(jasmine.objectContaining({assignees: [testStudent.loginId]}));
   });
 
-  it('should show the new assignee value upon adding a new assignee', () => {
-    component.assignees = [testStudent.loginId];
+  it('should show the updated assignees upon receiving an updated issue', () => {
     component.issue.assignees = [testStudent.loginId];
     fixture.detectChanges();
 
     const matListText: HTMLElement = debugElement.query(By.css('.mat-list-item-content')).nativeElement;
-    expect(matListText.innerText).toEqual(component.assignees[0]);
+    expect(matListText.innerText).toEqual(testStudent.loginId);
   });
 
   function openMatSelect(): void {
