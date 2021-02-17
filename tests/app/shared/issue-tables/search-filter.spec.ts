@@ -5,8 +5,9 @@ import { DUPLICATED_ISSUE_WITH_EMPTY_DESCRIPTION_HIGH_SEVERITY, ISSUE_WITH_ASSIG
 import { TABLE_COLUMNS } from '../../../../src/app/shared/issue-tables/issue-tables.component';
 import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { applySearchFilter } from '../../../../src/app/shared/issue-tables/search-filter';
+import { USER_ANUBHAV } from '../../../constants/data.constants';
 
-describe('search-filter', () => {
+fdescribe('search-filter', () => {
     describe('applySearchFilter()', () => {
         const dummyTeam: Team = new Team({
         id: 'dummyId',
@@ -48,7 +49,7 @@ describe('search-filter', () => {
         });
 
         it('returns filtered list of issues which includes issues that contain the search key in any of its assignees', () => {
-            dummySearchKey = 'anubh-v';
+            dummySearchKey = USER_ANUBHAV.loginId;
             expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
                 .toEqual([mediumSeverityIssueWithAssigneee]);
         });
@@ -61,29 +62,29 @@ describe('search-filter', () => {
 
         it('returns filtered list of issues which includes issues that contain the search key in any other column', () => {
             // Checks id of issue
-            dummySearchKey = '92';
+            dummySearchKey = mediumSeverityIssueWithResponse.id.toString();
             expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
                 .toEqual([mediumSeverityIssueWithResponse]);
 
             // Checks title of issue
-            dummySearchKey = 'screen freezes';
+            dummySearchKey = mediumSeverityIssueWithAssigneee.title;
             expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
                 .toEqual([mediumSeverityIssueWithAssigneee]);
 
             // Checks type of issue
-            dummySearchKey = 'documentationbug';
+            dummySearchKey = highSeverityDocumentationBugIssue.type;
             expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
                 .toEqual([highSeverityDocumentationBugIssue]);
 
             // Checks severity of issue
-            dummySearchKey = 'low';
+            dummySearchKey = lowSeverityFeatureFlawIssue.severity;
             expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
                 .toEqual([lowSeverityFeatureFlawIssue]);
 
             // Checks response of issue
-            dummySearchKey = 'accepted';
+            dummySearchKey = mediumSeverityIssueWithResponse.responseTag;
             expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
-                .toEqual([mediumSeverityIssueWithResponse]);
+               .toEqual([mediumSeverityIssueWithResponse]);
         });
     });
 });

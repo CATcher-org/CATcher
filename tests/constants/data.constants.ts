@@ -76,6 +76,12 @@ export const USER_JUNWEI = {
   team: TEAM_3
 };
 
+export const USER_ANUBHAV = {
+  loginId: 'anubh-v',
+  role: UserRole.Student,
+  team: TEAM_3
+};
+
 export const USER_Q = {
   loginId: 'q',
   role: UserRole.Tutor,
