@@ -21,16 +21,17 @@ describe('IssuesPendingComponent', () => {
         ISSUE_WITH_EMPTY_DESCRIPTION,
         DUMMY_TEAM
       );
-      dummyIssue.status = STATUS.Done;
-      dummyIssue.issueComment = DUMMY_COMMENT;
     });
 
     it('should set filter to return true for an issue with comment and is done', () => {
+      dummyIssue.status = STATUS.Done;
+      dummyIssue.issueComment = DUMMY_COMMENT;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeTrue();
     });
 
     it('should set filter to return false for issues that are not done', () => {
       dummyIssue.status = STATUS.Incomplete;
+      dummyIssue.issueComment = DUMMY_COMMENT;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
 
       dummyIssue.status = undefined;
@@ -38,6 +39,7 @@ describe('IssuesPendingComponent', () => {
     });
 
     it('should set filter to return false for issues without comments', () => {
+      dummyIssue.status = STATUS.Done;
       dummyIssue.issueComment = undefined;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
