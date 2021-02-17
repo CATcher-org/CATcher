@@ -25,7 +25,9 @@ describe('CATcher\'s Bug Reporting Page', () => {
       .then(() => bugReportingPhase.enterNewIssueTitle('Test Issue Creation Title'))
       .then(() => bugReportingPhase.enterNewBugReportText('Test Issue Creation Text'))
       .then(() => bugReportingPhase.selectSeverityDropdown())
-      .then(() => bugReportingPhase.selectSeverityOption(1));
+      .then(() => bugReportingPhase.selectDropDownOption())
+      .then(() => bugReportingPhase.selectBugTypeDropdown())
+      .then(() => bugReportingPhase.selectDropDownOption());
     browser.sleep(100000); // Added Temporarily to Visualize Actions TODO: Remove after task completion.
   });
 });
