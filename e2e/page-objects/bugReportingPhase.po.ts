@@ -14,14 +14,10 @@ export class BugReportingPhase {
     return element(by.id('title')).sendKeys(title);
   }
 
-  async enterNewBugReportText(input: string) {
+  async enterNewBugReportDescription(desc: string) {
     const textArea = element(by.className('text-input-area'));
     await textArea.clear();
-    return textArea.sendKeys(input);
-  }
-
-  async clickBackButton() {
-    return element(by.className('back-button')).click();
+    return textArea.sendKeys(desc);
   }
 
   async selectSeverityDropdown() {
