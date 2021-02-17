@@ -30,7 +30,6 @@ describe('IssuePendingComponent', () => {
         });
 
         it('should set filter to return false for an issue that is not done and has no comment', () => {
-
             // Issue with no status
             expect(issuePendingComponent.filter(dummyIssue)).toBeFalse();
 
@@ -41,7 +40,6 @@ describe('IssuePendingComponent', () => {
 
         it('should set filter to return false for an issue that is done and has no comment', () => {
             dummyIssue.status = STATUS.Done;
-
             expect(issuePendingComponent.filter(dummyIssue)).toBeFalse();
         });
 
