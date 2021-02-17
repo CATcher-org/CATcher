@@ -1,6 +1,6 @@
 <form [formGroup]="dropdownForm">
   <mat-form-field style="width: 100%;">
-    <mat-select [ngClass]="dropdownTextColor" formControlName="{{attributeName}}" placeholder="{{this.labelService.getLabelTitle(attributeName)}}"
+    <mat-select [ngClass]="dropdownTextColor" class="severity-dropdown" formControlName="{{attributeName}}" placeholder="{{this.labelService.getLabelTitle(attributeName)}}"
       (selectionChange)="setSelectedLabelColor($event.value)" [ngStyle]="this.labelService.setLabelStyle(this.selectedColor)" required>
       <mat-select-trigger>
         {{dropdownControl.value}}

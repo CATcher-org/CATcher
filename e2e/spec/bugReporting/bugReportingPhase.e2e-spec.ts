@@ -23,7 +23,9 @@ describe('CATcher\'s Bug Reporting Page', () => {
     await loginPage.bypassAuthentication();
     await bugReportingPhase.accessNewBugReportingPage()
       .then(() => bugReportingPhase.enterNewIssueTitle('Test Issue Creation Title'))
-      .then(() => bugReportingPhase.enterNewBugReportText('Test Issue Creation Text'));
+      .then(() => bugReportingPhase.enterNewBugReportText('Test Issue Creation Text'))
+      .then(() => bugReportingPhase.selectSeverityDropdown())
+      .then(() => bugReportingPhase.selectSeverityOption(1));
     browser.sleep(100000); // Added Temporarily to Visualize Actions TODO: Remove after task completion.
   });
 });

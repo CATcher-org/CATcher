@@ -1,5 +1,4 @@
 import { by, element } from 'protractor';
-import { text } from '@angular/core/src/render3';
 
 export class BugReportingPhase {
 
@@ -19,5 +18,14 @@ export class BugReportingPhase {
     const textArea = element(by.className('text-input-area'));
     await textArea.clear();
     return textArea.sendKeys(input);
+  }
+
+  async selectSeverityDropdown() {
+    return element(by.className('severity-dropdown')).click();
+  }
+
+  async selectSeverityOption(optionNumber: number) {
+    const options = element.all(by.className('mat-option')).get(optionNumber);
+    return options.click();
   }
 }
