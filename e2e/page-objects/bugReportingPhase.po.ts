@@ -20,6 +20,10 @@ export class BugReportingPhase {
     return textArea.sendKeys(input);
   }
 
+  async clickBackButton() {
+    return element(by.className('back-button')).click();
+  }
+
   async selectSeverityDropdown() {
     return element(by.className('severity-dropdown')).click()
       .then(() => browser.sleep(100)); // Allow time for DOM to update. (Dropdown Selection may fail if DOM is stale)
@@ -35,8 +39,16 @@ export class BugReportingPhase {
     return selectedOption.click();
   }
 
+  async getNumberOfBugReports() {
+    return element.all(by.className('tr')).count();
+  }
+
   async selectBugTypeDropdown() {
     return element(by.className('bug-dropdown')).click()
       .then(() => browser.sleep(100)); // Allow time for DOM to update. (Dropdown Selection may fail if DOM is stale)
+  }
+
+  async submitBugReport() {
+    return element(by.className('submit-new-bug-report')).click();
   }
 }

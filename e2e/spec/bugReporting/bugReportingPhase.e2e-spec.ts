@@ -2,7 +2,6 @@ import { BugReportingPhase } from '../../page-objects/bugReportingPhase.po';
 import { PhaseDescription } from '../../../src/app/core/services/phase.service';
 import { Phase } from '../../../src/app/core/models/phase.model';
 import { LoginPage } from '../../page-objects/login.po';
-import { browser } from 'protractor';
 
 describe('CATcher\'s Bug Reporting Page', () => {
   let bugReportingPhase: BugReportingPhase;
@@ -21,13 +20,19 @@ describe('CATcher\'s Bug Reporting Page', () => {
 
   it('creates new bug report', async () => {
     await loginPage.bypassAuthentication();
+    const issueCount: number = await bugReportingPhase.getNumberOfBugReports();
+
     await bugReportingPhase.accessNewBugReportingPage()
       .then(() => bugReportingPhase.enterNewIssueTitle('Test Issue Creation Title'))
       .then(() => bugReportingPhase.enterNewBugReportText('Test Issue Creation Text'))
       .then(() => bugReportingPhase.selectSeverityDropdown())
       .then(() => bugReportingPhase.selectDropDownOption())
       .then(() => bugReportingPhase.selectBugTypeDropdown())
-      .then(() => bugReportingPhase.selectDropDownOption());
-    browser.sleep(100000); // Added Temporarily to Visualize Actions TODO: Remove after task completion.
+      .then(() => bugReportingPhase.selectDropDownOption())
+      .then(() => bugReportingPhase.submitBugReport())
+      .then(() => bugReportingPhase.clickBackButton());
+
+    const newIssueCount: number = await bugReportingPhase.getNumberOfBugReports();
+    expect(() => newIssueCount === (issueCount + 1)); // Confirm that new issue has been added to list of existing issues.
   });
 });
