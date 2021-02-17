@@ -22,7 +22,8 @@ describe('CATcher\'s Bug Reporting Page', () => {
   it('creates new bug report', async () => {
     await loginPage.bypassAuthentication();
     await bugReportingPhase.accessNewBugReportingPage()
-      .then(() => bugReportingPhase.enterNewIssueTitle('Test Issue Creation Title'));
+      .then(() => bugReportingPhase.enterNewIssueTitle('Test Issue Creation Title'))
+      .then(() => bugReportingPhase.enterNewBugReportText('Test Issue Creation Text'));
     browser.sleep(100000); // Added Temporarily to Visualize Actions TODO: Remove after task completion.
   });
 });
