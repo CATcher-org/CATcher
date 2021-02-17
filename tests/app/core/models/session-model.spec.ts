@@ -9,19 +9,7 @@ import {
 } from '../../../../src/app/core/models/session.model';
 import { Phase } from '../../../../src/app/core/models/phase.model';
 import { of } from 'rxjs';
-
-const validSessionData: SessionData = {
-  openPhases: [
-    Phase.phaseBugReporting,
-    Phase.phaseTeamResponse,
-    Phase.phaseTesterResponse,
-    Phase.phaseModeration,
-  ],
-  phaseBugReporting: 'bugreporting',
-  phaseTeamResponse: 'pe-results',
-  phaseTesterResponse: 'testerresponse',
-  phaseModeration: 'pe-evaluation',
-};
+import { MODERATION_PHASE_SESSION_DATA } from '../../../constants/session.constants';
 
 describe('Session Model', () => {
   describe('assertSessionDataIntegrity()', () => {
@@ -52,7 +40,7 @@ describe('Session Model', () => {
     });
 
     it('should throw error on session data with invalid open phases', () => {
-      of({ ...validSessionData, openPhases: ['unknownPhase'] })
+      of({ ...MODERATION_PHASE_SESSION_DATA, openPhases: ['unknownPhase'] })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
@@ -61,7 +49,7 @@ describe('Session Model', () => {
     });
 
     it('should throw error on session data with undefined repo for open phase', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = { ...MODERATION_PHASE_SESSION_DATA, openPhases: [Phase.phaseBugReporting] };
       of({ ...modifiedSessionData, phaseBugReporting: undefined })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
@@ -83,7 +71,7 @@ describe('Session Model', () => {
     });
 
     it('should not throw error if session data contains repo information of unopened phases', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = { ...MODERATION_PHASE_SESSION_DATA, openPhases: [Phase.phaseBugReporting] };
       of({ ...modifiedSessionData })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
@@ -93,9 +81,9 @@ describe('Session Model', () => {
     });
 
     it('should pass valid session data', () => {
-      of(validSessionData)
+      of(MODERATION_PHASE_SESSION_DATA)
         .pipe(assertSessionDataIntegrity())
-        .subscribe((el) => expect(el).toEqual(validSessionData));
+        .subscribe((el) => expect(el).toEqual(MODERATION_PHASE_SESSION_DATA));
     });
   });
 });
