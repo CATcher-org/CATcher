@@ -7,7 +7,7 @@ import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { applySearchFilter } from '../../../../src/app/shared/issue-tables/search-filter';
 import { USER_ANUBHAV } from '../../../constants/data.constants';
 
-fdescribe('search-filter', () => {
+describe('search-filter', () => {
     describe('applySearchFilter()', () => {
         const dummyTeam: Team = new Team({
         id: 'dummyId',
