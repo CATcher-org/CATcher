@@ -17,6 +17,7 @@ describe('IssuesPendingComponent', () => {
 
     beforeEach(() => {
       // generate a well-formed dummy-issue
+      // dummy issues does not have status and comment attributes
       dummyIssue = Issue.createPhaseTeamResponseIssue(
         ISSUE_WITH_EMPTY_DESCRIPTION,
         DUMMY_TEAM
@@ -24,23 +25,34 @@ describe('IssuesPendingComponent', () => {
     });
 
     it('should set filter to return true for an issue with comment and is done', () => {
+      // Issue with done status and a comment
       dummyIssue.status = STATUS.Done;
       dummyIssue.issueComment = DUMMY_COMMENT;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeTrue();
     });
 
-    it('should set filter to return false for issues that are not done', () => {
-      dummyIssue.status = STATUS.Incomplete;
+    it('should set filter to return false for issues that are not done and with comments', () => {
+      // Issue with no status but with comment
       dummyIssue.issueComment = DUMMY_COMMENT;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
 
-      dummyIssue.status = undefined;
+      // Issue with incomplete status and comment
+      dummyIssue.status = STATUS.Incomplete;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
 
-    it('should set filter to return false for issues without comments', () => {
+    it('should set filter to return false for issues that are done without comments', () => {
+      // Issue with done status and no comments
       dummyIssue.status = STATUS.Done;
-      dummyIssue.issueComment = undefined;
+      expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
+    });
+
+    it('should set filter to return false for issues that are not done and without comments', () => {
+      // Issue with no status and no comments
+      expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
+
+      // Issue with incomplete status and no comments
+      dummyIssue.status = STATUS.Incomplete;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
   });
