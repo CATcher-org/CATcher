@@ -1,14 +1,13 @@
 import { of } from 'rxjs';
 import { RepositoryService, SESSION_AVALIABILITY_FIX_FAILED } from '../../src/app/core/services/repository.service';
 
-
 let repositoryService: RepositoryService;
-let labelService: any;
+let githubService: any;
 
 describe('RepositoryService', () => {
   beforeEach(() => {
-    labelService = jasmine.createSpyObj('GithubService', ['synchronizeRemoteLabels']);
-    repositoryService = new RepositoryService(null, labelService, null);
+    githubService = jasmine.createSpyObj('GithubService', ['synchronizeRemoteLabels']);
+    repositoryService = new RepositoryService(null, githubService, null);
   });
 
   describe('.syncLabels()', () => {
@@ -22,7 +21,7 @@ describe('RepositoryService', () => {
     });
 
     it('should return the result of labelService.synchronizeRemoteLabels() given an Observable of true', () => {
-      labelService.synchronizeRemoteLabels.and.callFake(() => []);
+      githubService.synchronizeRemoteLabels.and.callFake(() => []);
       of(true)
         .pipe(repositoryService.syncLabels())
         .subscribe((result: {}[]) => expect(result).toEqual([]));
