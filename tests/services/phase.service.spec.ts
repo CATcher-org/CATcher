@@ -1,8 +1,13 @@
 import { of } from 'rxjs';
-import { NO_ACCESSIBLE_PHASES, SessionData } from '../../src/app/core/models/session.model';
+import { NO_ACCESSIBLE_PHASES } from '../../src/app/core/models/session.model';
 import { PhaseService } from '../../src/app/core/services/phase.service';
 import { Phase } from '../../src/app/core/models/phase.model';
-import { MODERATION_PHASE_SESSION_DATA, MULTIPLE_OPEN_PHASES_SESSION_DATA, NO_OPEN_PHASES_SESSION_DATA } from '../constants/session.constants';
+import {
+  BUG_REPORTING_PHASE_SESSION_DATA,
+  MODERATION_PHASE_SESSION_DATA,
+  MULTIPLE_OPEN_PHASES_SESSION_DATA,
+  NO_OPEN_PHASES_SESSION_DATA
+} from '../constants/session.constants';
 
 let phaseService: PhaseService;
 let githubService: any;
@@ -16,7 +21,7 @@ describe('PhaseService', () => {
 
   describe('.storeSessionData()', () => {
     it('should return an Observable of true if an openPhase is defined', () => {
-      githubService.fetchSettingsFile.and.returnValue(of(MODERATION_PHASE_SESSION_DATA));
+      githubService.fetchSettingsFile.and.returnValue(of(BUG_REPORTING_PHASE_SESSION_DATA));
       phaseService.storeSessionData().subscribe((result: boolean) => {
         expect(result).toBeTrue();
       });
