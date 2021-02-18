@@ -15,8 +15,8 @@ describe('RepositoryService', () => {
       of(false)
         .pipe(repositoryService.syncLabels())
         .subscribe({
-          error: (err) =>
-            expect(err).toEqual(new Error(SESSION_AVALIABILITY_FIX_FAILED)),
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(SESSION_AVALIABILITY_FIX_FAILED))
         });
     });
 
