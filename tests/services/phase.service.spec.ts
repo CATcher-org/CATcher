@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { NO_ACCESSIBLE_PHASES, SessionData } from '../../src/app/core/models/session.model';
-import { PhaseService } from '../../src/app/core/services/phase.service';
+import { PhaseService, SESSION_AVALIABILITY_FIX_FAILED } from '../../src/app/core/services/phase.service';
 import { Phase } from '../../src/app/core/models/phase.model';
 
 const moderationPhaseSettingsFile: {} = {
@@ -29,6 +29,23 @@ describe('PhaseService', () => {
     githubService = jasmine.createSpyObj('GithubService',
       ['fetchSettingsFile', 'storePhaseDetails']);
     phaseService = new PhaseService(null, githubService, null, null, null, null);
+  });
+
+  describe('.checkSessionCreation()', () => {
+    it('should throw an error given an Observable of false', () => {
+      of(false)
+        .pipe(phaseService.checkSessionCreation())
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(SESSION_AVALIABILITY_FIX_FAILED))
+        });
+    });
+
+    it('should return the original Observable given an Observable of true', () => {
+      of(true)
+        .pipe(phaseService.checkSessionCreation())
+        .subscribe((result: boolean) => expect(result).toEqual(true));
+    });
   });
 
   describe('.storeSessionData()', () => {
