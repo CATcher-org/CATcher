@@ -9,7 +9,7 @@ import { SessionData, assertSessionDataIntegrity } from '../models/session.model
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 import { Phase } from '../models/phase.model';
-import { RepositoryService } from './repo-creator.service';
+import { RepoCreatorService } from './repo-creator.service';
 
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',
@@ -39,7 +39,7 @@ export class PhaseService {
   constructor(private http: HttpClient,
               private githubService: GithubService,
               private userService: UserService,
-              private repositoryService: RepositoryService,
+              private RepoCreatorService: RepoCreatorService,
               public phaseFixConfirmationDialog: MatDialog) {}
   /**
    * Stores the location of the repositories belonging to
@@ -199,7 +199,7 @@ export class PhaseService {
           return this.verifySessionAvailability(this.sessionData);
         }
       }),
-      this.repositoryService.syncLabels(),
+      this.RepoCreatorService.syncLabels(),
       retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }

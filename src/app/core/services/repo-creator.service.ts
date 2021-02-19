@@ -11,7 +11,7 @@ export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.
 @Injectable({
   providedIn: 'root',
 })
-export class RepositoryService {
+export class RepoCreatorService {
   constructor(
     private githubService: GithubService,
     private labelService: LabelService,
