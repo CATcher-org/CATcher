@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
 import { map } from 'rxjs/operators';
 import { Label } from '../models/label.model';
-import { Observable } from 'rxjs';
+import { Observable, pipe, UnaryFunction } from 'rxjs';
 
 /* The threshold to decide if color is dark or light.
 A higher threshold value will result in more colors determined to be "dark".
@@ -74,6 +74,12 @@ export class LabelService {
     }
 
     return requiredLabels;
+  }
+
+  syncLabels(): UnaryFunction<Observable<boolean>, Observable<any>> {
+    return pipe(
+      map(() => this.synchronizeRemoteLabels())
+    );
   }
 
   /**
