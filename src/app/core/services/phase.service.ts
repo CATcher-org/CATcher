@@ -9,7 +9,7 @@ import { SessionData, assertSessionDataIntegrity } from '../models/session.model
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 import { Phase } from '../models/phase.model';
-import { RepositoryService } from './repository.service';
+import { RepositoryService } from './repo-creator.service';
 
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',

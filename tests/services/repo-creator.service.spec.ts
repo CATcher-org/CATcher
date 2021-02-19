@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { RepositoryService, SESSION_AVALIABILITY_FIX_FAILED } from '../../src/app/core/services/repository.service';
+import { RepositoryService, SESSION_AVALIABILITY_FIX_FAILED } from '../../src/app/core/services/repo-creator.service';
 
 let repositoryService: RepositoryService;
 let githubService: any;
