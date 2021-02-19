@@ -1,9 +1,30 @@
 import { LabelService } from '../../src/app/core/services/label.service';
 import { Label } from '../../src/app/core/models/label.model';
 import * as LabelConstant from '../constants/label.constants';
+import { Observable, of } from 'rxjs';
 
 let labelService: LabelService;
 let labelList: Label[];
+let githubService: any;
+
+describe('LabelService', () => {
+    beforeEach(() => {
+      githubService = jasmine.createSpyObj('GithubService', ['fetchAllLabels', 'createLabel']);
+      labelService = new LabelService(githubService);
+    });
+
+    describe('.syncLabels()', () => {
+      it('should return the result of labelService.synchronizeRemoteLabels()', () => {
+        githubService.fetchAllLabels.and.callFake(() => of([]));
+        githubService.createLabel.and.callFake(() => {});
+        of(true)
+          .pipe(labelService.syncLabels())
+          .subscribe((obcservable: Observable<any>) => obcservable.subscribe(
+            (result: {}[]) => expect(result).toEqual([])
+          ));
+      });
+    });
+});
 
 describe('LabelService: parseLabelData()', () => {
     beforeAll(() => {

@@ -76,6 +76,12 @@ export class LabelService {
     return requiredLabels;
   }
 
+    /**
+   * Returns an custom operator which checks if the session had been created
+   * either naturally or using a fix.
+   * If true, returns a call to synchronise the labels in our application
+   * with the remote repository. Else, throw an error.
+   */
   syncLabels(): UnaryFunction<Observable<boolean>, Observable<any>> {
     return pipe(
       map(() => this.synchronizeRemoteLabels())
