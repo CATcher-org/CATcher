@@ -5,7 +5,7 @@ import {
   OPENED_PHASE_REPO_UNDEFINED,
   SessionData,
   SESSION_DATA_UNAVAILABLE,
-  SESSION_DATA_MISSING_OPENPHASES_KEY
+  SESSION_DATA_MISSING_OPENPHASES_KEY,
 } from '../../../../src/app/core/models/session.model';
 import { Phase } from '../../../../src/app/core/models/phase.model';
 import { of } from 'rxjs';
@@ -29,6 +29,7 @@ describe('Session Model', () => {
       of(undefined)
         .pipe(assertSessionDataIntegrity())
         .subscribe({
+          next: fail,
           error: (err) =>
             expect(err).toEqual(new Error(SESSION_DATA_UNAVAILABLE)),
         });
@@ -38,8 +39,9 @@ describe('Session Model', () => {
       of({ dummyKey: undefined })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_MISSING_OPENPHASES_KEY)),
+          next: fail,
+          error: (err) =>
+            expect(err).toEqual(new Error(SESSION_DATA_MISSING_OPENPHASES_KEY)),
         });
     });
 
@@ -47,6 +49,7 @@ describe('Session Model', () => {
       of({ openPhases: [] })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
+          next: fail,
           error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES)),
         });
     });
@@ -55,40 +58,49 @@ describe('Session Model', () => {
       of({ ...validSessionData, openPhases: ['unknownPhase'] })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          next: () => fail(),
+          next: fail,
           error: (err) => expect(err).toEqual(new Error(NO_VALID_OPEN_PHASES)),
         });
     });
 
     it('should throw error on session data with undefined repo for open phase', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = {
+        ...validSessionData,
+        openPhases: [Phase.phaseBugReporting],
+      };
       of({ ...modifiedSessionData, phaseBugReporting: undefined })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          next: fail,
+          error: (err) =>
+            expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
       of({ ...modifiedSessionData, phaseBugReporting: null })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          next: fail,
+          error: (err) =>
+            expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
       of({ ...modifiedSessionData, phaseBugReporting: '' })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          next: fail,
+          error: (err) =>
+            expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
     });
 
     it('should not throw error if session data contains repo information of unopened phases', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = {
+        ...validSessionData,
+        openPhases: [Phase.phaseBugReporting],
+      };
       of({ ...modifiedSessionData })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: (el) => expect(el).toEqual(modifiedSessionData),
-          error: () => fail(),
+          error: fail,
         });
     });
 
