@@ -21,8 +21,10 @@ const randomIssueNumber: () => number = () => {
   return Math.round(Math.random() * 1000);
 };
 
-const randomISODate: (startDate?: Date, endDate?: Date) => string = (startDate: Date = new Date(2020, 1, 1),
-                                                                     endDate: Date = new Date()) => {
+const randomISODate: (startDate?: Date, endDate?: Date) => string = (
+  startDate: Date = new Date(2020, 1, 1),
+  endDate: Date = new Date()
+) => {
   return new Date(startDate.getTime() + Math.random() * (startDate.getTime() - endDate.getTime())).toISOString();
 };
 
@@ -33,8 +35,7 @@ export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubIssue({
   comments: [],
   body: '',
   created_at: '2020-03-02T16:19:02Z',
-  labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
-    GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY],
+  labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL, GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY],
   state: IssueState.Open,
   title: 'App starts to lag when given large amount of input',
   updated_at: '2020-03-13T13:37:32Z',
@@ -42,8 +43,8 @@ export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubIssue({
   user: {
     login: 'anubh-v',
     avatar_url: 'https://avatars1.githubusercontent.com/u/35621759?v=4',
-    url: 'https://api.github.com/users/anubh-v',
-  },
+    url: 'https://api.github.com/users/anubh-v'
+  }
 });
 
 export const ISSUE_WITH_ASSIGNEES = new GithubIssue({
@@ -53,14 +54,12 @@ export const ISSUE_WITH_ASSIGNEES = new GithubIssue({
     {
       login: 'anubh-v',
       id: 35621759,
-      url: 'https://api.github.com/users/anubh-v',
+      url: 'https://api.github.com/users/anubh-v'
     }
   ],
   body: 'Screen freezes every few minutes',
   created_at: '2020-01-18T07:01:45Z',
-  labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
-      GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY
-     ],
+  labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL, GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY],
   state: IssueState.Open,
   title: 'Screen freezes',
   updated_at: '2020-03-02T12:50:02Z',
@@ -68,9 +67,9 @@ export const ISSUE_WITH_ASSIGNEES = new GithubIssue({
   user: {
     login: 'anubh-v',
     avatar_url: 'https://avatars1.githubusercontent.com/u/35621759?v=4',
-    url: 'https://api.github.com/users/anubh-v',
+    url: 'https://api.github.com/users/anubh-v'
   },
-  comments: [EMPTY_TEAM_RESPONSE],
+  comments: [EMPTY_TEAM_RESPONSE]
 });
 
 export const generateIssueWithRandomData: () => GithubIssue = () => {
@@ -85,8 +84,7 @@ export const generateIssueWithRandomData: () => GithubIssue = () => {
     comments: [],
     body: `Issue No.: ${issueNumber}\nSample Content.`,
     created_at: created_and_updated_date,
-    labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
-      typeLabels[issueNumber % 3], severityLabels[issueNumber % 3]],
+    labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL, typeLabels[issueNumber % 3], severityLabels[issueNumber % 3]],
     state: IssueState.Open,
     title: `Random Issue: ${issueNumber}`,
     updated_at: created_and_updated_date,
@@ -94,8 +92,8 @@ export const generateIssueWithRandomData: () => GithubIssue = () => {
     user: {
       login: 'anubh-v',
       avatar_url: 'https://avatars1.githubusercontent.com/u/35621759?v=4',
-      url: 'https://api.github.com/users/anubh-v',
-    },
+      url: 'https://api.github.com/users/anubh-v'
+    }
   });
 };
 
@@ -106,21 +104,20 @@ export const ISSUE_PENDING_MODERATION = new GithubIssue({
     {
       login: 'geshuming',
       id: 43642522,
-      url: 'https://api.github.com/users/geshuming',
+      url: 'https://api.github.com/users/geshuming'
     }
   ],
-  body: '# Issue Description\n{original issue description}\n' +
-    '# Team\'s Response\n{team\'s response}\n # Disputes\n\n' +
-    '## :question: Issue Type\n\n### Team says:\r\n{the team\'s action that is being disputed}\r\n\r\n' +
-    '### Tester says:\r\n{tester\'s objection}\n\n-------------------\n## :question: Issue Severity\n\n' +
-    '### Team says:\r\n{the team\'s action that is being disputed}\r\n\r\n' +
-    '### Tester says:\r\n{tester\'s objection}\n\n-------------------\n## :question: Not Related Question\n\n' +
-    '### Team says:\r\n{the team\'s action that is being disputed}\r\n\r\n' +
-    '### Tester says:\r\n{tester\'s objection}\n\n-------------------\n\n',
+  body:
+    '# Issue Description\n{original issue description}\n' +
+    "# Team's Response\n{team's response}\n # Disputes\n\n" +
+    "## :question: Issue Type\n\n### Team says:\r\n{the team's action that is being disputed}\r\n\r\n" +
+    "### Tester says:\r\n{tester's objection}\n\n-------------------\n## :question: Issue Severity\n\n" +
+    "### Team says:\r\n{the team's action that is being disputed}\r\n\r\n" +
+    "### Tester says:\r\n{tester's objection}\n\n-------------------\n## :question: Not Related Question\n\n" +
+    "### Team says:\r\n{the team's action that is being disputed}\r\n\r\n" +
+    "### Tester says:\r\n{tester's objection}\n\n-------------------\n\n",
   created_at: '2020-03-03T13:38:32Z',
-  labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL,
-      GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY
-     ],
+  labels: [GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL, GITHUB_LABEL_FUNCTIONALITY_BUG, GITHUB_LABEL_MEDIUM_SEVERITY],
   state: IssueState.Open,
   title: 'Basic Issue, Three Disputes, Unsure',
   updated_at: '2020-08-15T06:39:40Z',
@@ -128,7 +125,7 @@ export const ISSUE_PENDING_MODERATION = new GithubIssue({
   user: {
     login: 'geshuming',
     avatar_url: 'https://avatars0.githubusercontent.com/u/43642522?v=4',
-    url: 'https://api.github.com/users/geshuming',
+    url: 'https://api.github.com/users/geshuming'
   },
-  comments: [PENDING_TUTOR_MODERATION],
+  comments: [PENDING_TUTOR_MODERATION]
 });

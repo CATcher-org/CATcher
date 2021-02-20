@@ -8,7 +8,7 @@ describe('issuer-sorter', () => {
   describe('getSortedData()', () => {
     const dummyTeam = new Team({
       id: 'F09-2',
-      teamMembers: [],
+      teamMembers: []
     });
     const dummyIssue: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
     const otherDummyIssue: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_ASSIGNEES, dummyTeam);
