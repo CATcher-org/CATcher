@@ -15,11 +15,11 @@ describe('IssuePendingComponent', () => {
         let dummyIssue: Issue;
         let issuePendingComponent: IssuePendingComponent;
         const issueComment: IssueComment = new TutorModerationTodoTemplate([PENDING_TUTOR_MODERATION]).comment;
+        issuePendingComponent = new IssuePendingComponent();
+        issuePendingComponent.ngOnInit();
 
         beforeEach(() => {
             dummyIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-            issuePendingComponent = new IssuePendingComponent();
-            issuePendingComponent.ngOnInit();
         });
 
         it('should set filter to return false for an issue that is done and has a comment', () => {
