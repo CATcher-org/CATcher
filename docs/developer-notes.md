@@ -76,6 +76,39 @@ Scuri uses [Jasmine's spy feature](https://jasmine.github.io/2.0/introduction.ht
 We loosely follow the [Jasmine Style Guide](https://github.com/CareMessagePlatform/jasmine-styleguide) when writing tests. 
 One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
 
+### E2E Testing
+#### CATcher Test Prep
+E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/) testing framework with the following stages. 
+1. Build CATcher with using `test` architecture.
+   - Using `test` build configuration located in `angular.json` under `projects.catcher.architect.configurations` we build a version of CATcher within a test environment that replaces `src/environments/environment.ts` with `src/environments/environment.test.ts` on runtime. This allows for the feeding of information into the application to differ its actions in comparison to the default / production environments.
+2. Provide Test Environment Information
+   - The Test Environment (in `src/environments/environment.test.ts`) provides information such as,
+     - Login Credentials (Username).
+     - User Team and Tutorial Information.
+     - "Test Mode" activation by setting `test` property to `true`.
+3. Mock Service Injections
+   - Data reflected in the environment file then assists the application replace the use of some existing services with those that bypass specific functions that are irrelevant to E2E Testing. This includes Authentication Bypassing, Backend API Simulation (so that tests can be carried out in isolationj) and others.
+   - These Service Injections are carried in the respective `*-module.ts` files with the help of Factories (located in `/src/app/core/services/factories`) that check the current build environment and make the Service Replacements accordingly.
+4. Browser Action Injections using Protractor
+   - With the application ready for testing, we then utilize `Protractor` to devise test cases that are located in the `/e2e` directory.
+#### Protractor Configuration
+- Protractor primarily requires the `*.conf.js` files to define E2E Testing Environments (this includes Browser Details, Base URL, etc...)
+- The base configuration data is stored in `protractor.base.conf.js` which is then extended by separate configuration files for individual browsers as well as the CI/CD pipeline.
+- E2E Tests are typically split into `Page-Objects Files` and `Test Files` in accordance with the [Protractor Style Guide](http://www.protractortest.org/#/style-guide) (more information regarding the interaction between the aforementioned filetypes can be found there).
+- E2E Tests are also grouped into suites based on the Application's Phase (i.e. Login, Bug-Reporting). Currently defined suite information is located in the `protractor.base.conf.js` file as well.
+#### Running E2E Tests
+E2E Tests can be executed by using `npm run e2e` which conducts testing  using the default `potractor.conf.js` in the Chrome Browser.   
+The following additional parameters would allow for further customisation,
+
+| Additional Parameter | Description | Full Command Example |
+| :---: | :-----: | :-------: |
+| `--potractor-config=e2e/potractor.*.conf.js` | Allows to substitute the default configuration file | `npm run e2e -- --potractor-config=e2e/potractor.firefox.conf.js` |
+| `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
+  
+**TO NOTE:**
+- Relevant Browsers must be installed prior to running tests (i.e. Chrome, Firefox).
+- CATcher can be launched in the Test Build by using the command `npm run ng:serve:test` to furhter develop mock services and debug E2E Tests.
+
 # Implementation
 
 ## Overview
