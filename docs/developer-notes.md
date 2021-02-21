@@ -104,6 +104,8 @@ The following additional parameters would allow for further customisation,
 | :---: | :-----: | :-------: |
 | `--potractor-config=e2e/potractor.*.conf.js` | Allows to substitute the default configuration file | `npm run e2e -- --potractor-config=e2e/potractor.firefox.conf.js` |
 | `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
+#### webdriver-manager
+If tests are not correctly carried out in your local machine due to outdated Browser Drivers (e.g. ChromeDriver, GeckoDriver) a possible solution is to run `webdriver-manager update` which will attempt to update all local drivers to the latest version and should help mitigate any incompatibility issues. If you are still unable to run the E2E tests, please check that the Browser itself is up-to-date and re-run the webdriver command post-browser update.
   
 **TO NOTE:**
 - Relevant Browsers must be installed prior to running tests (i.e. Chrome, Firefox).
