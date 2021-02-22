@@ -17,7 +17,7 @@ const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
 
-export const REQUIRED_LABELS = {
+const REQUIRED_LABELS = {
   severity: {
     VeryLow: new Label('severity', 'VeryLow', 'ffe0e0'),
     Low: new Label('severity', 'Low', 'ffcccc'),
