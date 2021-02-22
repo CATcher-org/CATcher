@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { SessionData } from '../../src/app/core/models/session.model';
+import { NO_ACCESSIBLE_PHASES, SessionData } from '../../src/app/core/models/session.model';
 import { PhaseService } from '../../src/app/core/services/phase.service';
 import { Phase } from '../../src/app/core/models/phase.model';
 
@@ -13,7 +13,7 @@ const moderationPhaseSettingsFile: {} = {
 
 const invalidPhasesSettingsFile: {} = {
   ...moderationPhaseSettingsFile,
-  'openPhases': ['dummyPhase']
+  'openPhases': []
 };
 
 const multipleOpenPhasesSettingsFile: {} = {
@@ -46,10 +46,11 @@ describe('PhaseService', () => {
       });
     });
 
-    it('should return an Observable of false if no openPhases are defined', () => {
+    it('should throw an error if no openPhases are defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(invalidPhasesSettingsFile));
-      phaseService.storeSessionData().subscribe((result: boolean) => {
-        expect(result).toBeFalse();
+      phaseService.storeSessionData().subscribe({
+        next: () => fail(),
+        error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES))
       });
     });
   });
