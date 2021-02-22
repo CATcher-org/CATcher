@@ -1,4 +1,5 @@
 import { Label } from '../../src/app/core/models/label.model';
+import { LabelService } from '../../src/app/core/services/label.service';
 
 // Label name constants
 export const SEVERITY_LOW = 'Low';
@@ -53,6 +54,14 @@ export const LIGHT_BG_DARK_TEXT = {
     'font-weight' : '410',
 };
 
+export const RESPONSE_REJECTED_LABEL = new Label(RESPONSE, RESPONSE_REJECTED, COLOR_RESPONSE_REJECTED);
+export const STATUS_DONE_LABEL = new Label(STATUS, STATUS_DONE, COLOR_STATUS_DONE);
+export const TYPE_DOCUMENTATION_BUG_LABEL = new Label(TYPE, TYPE_DOCUMENTATION_BUG, COLOR_TYPE_DOCUMENTATION_BUG);
+
+export const SEVERITY_HIGH_LABEL = new Label(SEVERITY, SEVERITY_HIGH, COLOR_SEVERITY_HIGH);
+export const SEVERITY_MEDIUM_LABEL = new Label(SEVERITY, SEVERITY_MEDIUM, COLOR_SEVERITY_MEDIUM);
+export const SEVERITY_LOW_LABEL = new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERITY_LOW);
+
 // Constant array of labels to simulate Github response
 export const LABEL_ARRAY = [
     {
@@ -69,7 +78,13 @@ export const LABEL_ARRAY = [
     }
 ];
 
+export const ALL_REQUIRED_LABELS_ARRAY: {}[] = LabelService.getRequiredLabelsAsArray()
+  .map((label: Label) => {
+    return {
+      color: label.labelColor,
+      name: label.getFormattedName()
+    }
+  })
+
 // List of labels
-export const SEVERITY_LABELS = [new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERITY_LOW),
-  new Label(SEVERITY, SEVERITY_MEDIUM, COLOR_SEVERITY_MEDIUM),
-  new Label(SEVERITY, SEVERITY_HIGH, COLOR_SEVERITY_HIGH)];
+export const SEVERITY_LABELS = [SEVERITY_LOW_LABEL, SEVERITY_MEDIUM_LABEL, SEVERITY_HIGH_LABEL];

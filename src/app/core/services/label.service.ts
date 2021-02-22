@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { map } from 'rxjs/operators';
+import { map, flatMap } from 'rxjs/operators';
 import { Label } from '../models/label.model';
 import { Observable, pipe, UnaryFunction } from 'rxjs';
 
@@ -17,7 +17,7 @@ const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
 
-const REQUIRED_LABELS = {
+export const REQUIRED_LABELS = {
   severity: {
     VeryLow: new Label('severity', 'VeryLow', 'ffe0e0'),
     Low: new Label('severity', 'Low', 'ffcccc'),
@@ -76,15 +76,14 @@ export class LabelService {
     return requiredLabels;
   }
 
-    /**
-   * Returns an custom operator which checks if the session had been created
-   * either naturally or using a fix.
-   * If true, returns a call to synchronise the labels in our application
-   * with the remote repository. Else, throw an error.
+  /**
+   * Returns an custom operator which helps to
+   * synchronise the labels in our application
+   * with the remote repository.
    */
   syncLabels(): UnaryFunction<Observable<boolean>, Observable<any>> {
     return pipe(
-      map(() => this.synchronizeRemoteLabels())
+      flatMap(() => this.synchronizeRemoteLabels())
     );
   }
 

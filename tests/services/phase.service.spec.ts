@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { NO_ACCESSIBLE_PHASES, SessionData } from '../../src/app/core/models/session.model';
-import { PhaseService, SESSION_AVALIABILITY_FIX_FAILED } from '../../src/app/core/services/phase.service';
+import { PhaseService } from '../../src/app/core/services/phase.service';
 import { Phase } from '../../src/app/core/models/phase.model';
 
 const moderationPhaseSettingsFile: {} = {
