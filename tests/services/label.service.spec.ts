@@ -37,7 +37,7 @@ describe('LabelService', () => {
         assertLabelCreated(githubService, LabelConstant.RESPONSE_REJECTED_LABEL);
         assertLabelCreated(githubService, LabelConstant.STATUS_DONE_LABEL);
         assertLabelCreated(githubService, LabelConstant.TYPE_DOCUMENTATION_BUG_LABEL);
-        expect(githubService.createLabel).toHaveBeenCalledTimes(LabelService.getRequiredLabelsAsArray().length - 
+        expect(githubService.createLabel).toHaveBeenCalledTimes(LabelService.getRequiredLabelsAsArray().length -
           LabelConstant.LABEL_ARRAY.length);
       });
 

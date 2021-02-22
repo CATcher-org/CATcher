@@ -83,8 +83,8 @@ export const ALL_REQUIRED_LABELS_ARRAY: {}[] = LabelService.getRequiredLabelsAsA
     return {
       color: label.labelColor,
       name: label.getFormattedName()
-    }
-  })
+    };
+  });
 
 // List of labels
 export const SEVERITY_LABELS = [SEVERITY_LOW_LABEL, SEVERITY_MEDIUM_LABEL, SEVERITY_HIGH_LABEL];
