@@ -77,7 +77,9 @@ We loosely follow the [Jasmine Style Guide](https://github.com/CareMessagePlatfo
 One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
 
 ### E2E Testing
+
 #### CATcher Test Prep
+
 E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/) testing framework with the following stages. 
 1. Build CATcher with using `test` architecture.
    - Using `test` build configuration located in `angular.json` under `projects.catcher.architect.configurations` we build a version of CATcher within a test environment that replaces `src/environments/environment.ts` with `src/environments/environment.test.ts` on runtime. This allows for the feeding of information into the application to differ its actions in comparison to the default / production environments.
@@ -91,12 +93,16 @@ E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/)
    - These Service Injections are carried in the respective `*-module.ts` files with the help of Factories (located in `/src/app/core/services/factories`) that check the current build environment and make the Service Replacements accordingly.
 4. Browser Action Injections using Protractor
    - With the application ready for testing, we then utilize `Protractor` to devise test cases that are located in the `/e2e` directory.
+
 #### Protractor Configuration
+
 - Protractor primarily requires the `*.conf.js` files to define E2E Testing Environments (this includes Browser Details, Base URL, etc...)
 - The base configuration data is stored in `protractor.base.conf.js` which is then extended by separate configuration files for individual browsers as well as the CI/CD pipeline.
 - E2E Tests are typically split into `Page-Objects Files` and `Test Files` in accordance with the [Protractor Style Guide](http://www.protractortest.org/#/style-guide) (more information regarding the interaction between the aforementioned filetypes can be found there).
 - E2E Tests are also grouped into suites based on the Application's Phase (i.e. Login, Bug-Reporting). Currently defined suite information is located in the `protractor.base.conf.js` file as well.
+
 #### Running E2E Tests
+
 E2E Tests can be executed by using `npm run e2e` which conducts testing  using the default `protractor.conf.js` in the Chrome Browser.   
 The following additional parameters would allow for further customisation,
 
@@ -104,7 +110,9 @@ The following additional parameters would allow for further customisation,
 | :---: | :-----: | :-------: |
 | `--protractor-config=e2e/protractor.*.conf.js` | Allows to substitute the default configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
 | `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
+
 #### webdriver-manager
+
 If tests are not correctly carried out in your local machine due to outdated Browser Drivers (e.g. ChromeDriver, GeckoDriver) a possible solution is to run `webdriver-manager update` which will attempt to update all local drivers to the latest version and should help mitigate any incompatibility issues. If you are still unable to run the E2E tests, please check that the Browser itself is up-to-date and re-run the webdriver command post-browser update.
   
 **TO NOTE:**
