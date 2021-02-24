@@ -87,7 +87,7 @@ E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/)
      - User Team and Tutorial Information.
      - "Test Mode" activation by setting `test` property to `true`.
 3. Mock Service Injections
-   - Data reflected in the environment file then assists the application replace the use of some existing services with those that bypass specific functions that are irrelevant to E2E Testing. This includes Authentication Bypassing, Backend API Simulation (so that tests can be carried out in isolationj) and others.
+   - Data reflected in the environment file then assists the application replace the use of some existing services with those that bypass specific functions that are irrelevant to E2E Testing. This includes Authentication Bypassing, Backend API Simulation (so that tests can be carried out in isolation) and others.
    - These Service Injections are carried in the respective `*-module.ts` files with the help of Factories (located in `/src/app/core/services/factories`) that check the current build environment and make the Service Replacements accordingly.
 4. Browser Action Injections using Protractor
    - With the application ready for testing, we then utilize `Protractor` to devise test cases that are located in the `/e2e` directory.
@@ -97,12 +97,12 @@ E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/)
 - E2E Tests are typically split into `Page-Objects Files` and `Test Files` in accordance with the [Protractor Style Guide](http://www.protractortest.org/#/style-guide) (more information regarding the interaction between the aforementioned filetypes can be found there).
 - E2E Tests are also grouped into suites based on the Application's Phase (i.e. Login, Bug-Reporting). Currently defined suite information is located in the `protractor.base.conf.js` file as well.
 #### Running E2E Tests
-E2E Tests can be executed by using `npm run e2e` which conducts testing  using the default `potractor.conf.js` in the Chrome Browser.   
+E2E Tests can be executed by using `npm run e2e` which conducts testing  using the default `protractor.conf.js` in the Chrome Browser.   
 The following additional parameters would allow for further customisation,
 
 | Additional Parameter | Description | Full Command Example |
 | :---: | :-----: | :-------: |
-| `--potractor-config=e2e/potractor.*.conf.js` | Allows to substitute the default configuration file | `npm run e2e -- --potractor-config=e2e/potractor.firefox.conf.js` |
+| `--protractor-config=e2e/protractor.*.conf.js` | Allows to substitute the default configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
 | `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
 #### webdriver-manager
 If tests are not correctly carried out in your local machine due to outdated Browser Drivers (e.g. ChromeDriver, GeckoDriver) a possible solution is to run `webdriver-manager update` which will attempt to update all local drivers to the latest version and should help mitigate any incompatibility issues. If you are still unable to run the E2E tests, please check that the Browser itself is up-to-date and re-run the webdriver command post-browser update.
