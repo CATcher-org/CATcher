@@ -1,6 +1,6 @@
 import { IssueDispute } from '../../src/app/core/models/issue-dispute.model';
 import { Issue } from '../../src/app/core/models/issue.model';
-import { Team } from '../../src/app/core/models/team.model';
+import { TEAM_4 } from '../constants/data.constants';
 import { TesterResponse } from '../../src/app/core/models/tester-response.model';
 import { Phase } from '../../src/app/core/models/phase.model';
 
@@ -49,10 +49,7 @@ describe('Issue model class', () => {
 });
 
 describe('Issue', () => {
-    const dummyTeam = new Team({
-        id: 'F09-2',
-        teamMembers: [],
-    });
+    const dummyTeam = TEAM_4;
     const dummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     const otherDummyIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_ASSIGNEES);
     const dummyIssueWithTeam = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
