@@ -18,7 +18,7 @@ describe('LabelService', () => {
         githubService.fetchAllLabels.and.callFake(() => of([]));
         of(true)
           .pipe(labelService.syncLabels())
-          .subscribe((result: {}[]) => expect(result).toEqual([]));
+          .subscribe();
 
         assertLabelCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
         assertLabelCreated(githubService, LabelConstant.RESPONSE_REJECTED_LABEL);
@@ -31,7 +31,7 @@ describe('LabelService', () => {
         githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.LABEL_ARRAY));
         of(true)
           .pipe(labelService.syncLabels())
-          .subscribe((result: {}[]) => expect(result).toEqual(LabelConstant.LABEL_ARRAY));
+          .subscribe();
 
         assertLabelNotCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
         assertLabelCreated(githubService, LabelConstant.RESPONSE_REJECTED_LABEL);
@@ -45,7 +45,7 @@ describe('LabelService', () => {
         githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.ALL_REQUIRED_LABELS_ARRAY));
         of(true)
           .pipe(labelService.syncLabels())
-          .subscribe((result: {}[]) => expect(result).toEqual(LabelConstant.ALL_REQUIRED_LABELS_ARRAY));
+          .subscribe();
 
         expect(githubService.createLabel).toHaveBeenCalledTimes(0);
       });
