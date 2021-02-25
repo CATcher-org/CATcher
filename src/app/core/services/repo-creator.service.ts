@@ -12,7 +12,7 @@ export class RepoCreatorService {
   ) {}
 
   /**
-   * Checks if the necessary repository has been created. 
+   * Checks if the necessary repository has been created.
    */
   public verifyRepoCreation(phaseOwner: string, phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
     return pipe(
