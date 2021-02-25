@@ -27,7 +27,8 @@ export class RepoCreatorService {
 
     /**
    * Checks if the necessary repository is available and creates it if the permissions are available.
-   * @param sessionData
+   * @param phaseOwner Owner of Specified Repository.
+   * @param phaseRepo Name of Repository.
    */
   private verifySessionAvailability(phaseOwner: string, phaseRepo: string): Observable<boolean> {
     return this.githubService.isRepositoryPresent(phaseOwner, phaseRepo);
