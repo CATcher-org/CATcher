@@ -11,6 +11,9 @@ export class RepoCreatorService {
     private githubService: GithubService
   ) {}
 
+  /**
+   * Checks if the necessary repository has been created. 
+   */
   public verifyRepoCreation(phaseOwner: string, phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
     return pipe(
       flatMap((isFixAttempted: boolean | null) => {
@@ -25,7 +28,7 @@ export class RepoCreatorService {
     );
   }
 
-    /**
+  /**
    * Checks if the necessary repository is available and creates it if the permissions are available.
    * @param phaseOwner Owner of Specified Repository.
    * @param phaseRepo Name of Repository.
