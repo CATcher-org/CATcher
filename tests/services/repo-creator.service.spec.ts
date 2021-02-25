@@ -35,7 +35,7 @@ describe('RepoCreatorService', () => {
         .pipe(repoCreatorService.verifyRepoCreation(PHASE_OWNER, PHASE_REPO))
         .subscribe();
 
-      expect(githubService.isRepositoryPresent).toHaveBeenCalledTimes(1);
+      expect(githubService.isRepositoryPresent).toHaveBeenCalled();
     });
   });
 });
