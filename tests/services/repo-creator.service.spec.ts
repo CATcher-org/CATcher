@@ -21,6 +21,14 @@ describe('RepoCreatorService', () => {
       expect(githubService.isRepositoryPresent).not.toHaveBeenCalled();
     });
 
+    it('should not need to check the prescence of the repository if the fix failed', () => {
+      of(false)
+        .pipe(repoCreatorService.verifyRepoCreation(PHASE_OWNER, PHASE_REPO))
+        .subscribe();
+
+      expect(githubService.isRepositoryPresent).not.toHaveBeenCalled();
+    });
+
     it('should check the prescence of the repository if a fix was done', () => {
       githubService.isRepositoryPresent.and.callFake(() => of(true));
       of(true)
@@ -28,14 +36,6 @@ describe('RepoCreatorService', () => {
         .subscribe();
 
       expect(githubService.isRepositoryPresent).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not need to check the prescence of the repository if the fix failed', () => {
-      of(false)
-        .pipe(repoCreatorService.verifyRepoCreation(PHASE_OWNER, PHASE_REPO))
-        .subscribe();
-
-      expect(githubService.isRepositoryPresent).not.toHaveBeenCalled();
     });
   });
 });
