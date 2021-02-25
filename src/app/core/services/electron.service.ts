@@ -76,13 +76,6 @@ export class ElectronService {
     }
   }
 
-  getCurrentDirectory(): string {
-    if (this.isElectron()) {
-      this.ipcRenderer.sendSync('synchronous-message', 'getDirectory');
-    }
-    return '';
-  }
-
   removeIpcListeners(channel: string) {
     if (this.isElectron()) {
       this.ipcRenderer.removeAllListeners(channel);
@@ -94,22 +87,6 @@ export class ElectronService {
       this.remote.shell.openExternal(address);
     } else {
       window.open(address);
-    }
-  }
-
-  readFile(filePath: string): string {
-    if (this.isElectron()) {
-      return this.fs.readFileSync(filePath, 'utf8');
-    } else {
-      return null;
-    }
-  }
-
-  fileExists(filePath: string): boolean {
-    if (this.isElectron()) {
-      return this.fs.existsSync(filePath);
-    } else {
-      return false;
     }
   }
 }
