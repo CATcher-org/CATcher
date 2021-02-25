@@ -2,7 +2,7 @@ import { Issue } from '../../../../src/app/core/models/issue.model';
 import { Team } from '../../../../src/app/core/models/team.model';
 import { DUPLICATED_ISSUE_WITH_EMPTY_DESCRIPTION_HIGH_SEVERITY, ISSUE_WITH_ASSIGNEES, ISSUE_WITH_EMPTY_DESCRIPTION,
     ISSUE_WITH_EMPTY_DESCRIPTION_HIGH_SEVERITY, ISSUE_WITH_EMPTY_DESCRIPTION_LOW_SEVERITY } from '../../../constants/githubissue.constants';
-import { TABLE_COLUMNS } from '../../../../src/app/shared/issue-tables/issue-tables.component';
+import { TABLE_COLUMNS } from '../../../../src/app/shared/issue-tables/issue-tables-columns';
 import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { applySearchFilter } from '../../../../src/app/shared/issue-tables/search-filter';
 import { USER_ANUBHAV } from '../../../constants/data.constants';

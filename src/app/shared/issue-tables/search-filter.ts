@@ -1,6 +1,6 @@
 import { IssueService } from '../../core/services/issue.service';
 import { Issue } from '../../core/models/issue.model';
-import { TABLE_COLUMNS } from './issue-tables.component';
+import { TABLE_COLUMNS } from './issue-tables-columns';
 
 /**
  * This module serves to improve separation of concerns in IssuesDataTable.ts module by containing the logic for
