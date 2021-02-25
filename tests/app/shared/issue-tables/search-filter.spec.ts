@@ -13,7 +13,7 @@ describe('search-filter', () => {
         id: 'dummyId',
         teamMembers: [],
         });
-        let dummySearchKey: string;
+        let searchKey: string;
         const mediumSeverityIssueWithResponse: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
         mediumSeverityIssueWithResponse.responseTag = 'Accepted';
         const mediumSeverityIssueWithAssigneee: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_ASSIGNEES, dummyTeam);
@@ -29,7 +29,7 @@ describe('search-filter', () => {
             lowSeverityFeatureFlawIssue,
             highSeverityDocumentationBugIssue
         ];
-        const displayedColumn: string[] = [
+        const displayedColumns: string[] = [
             TABLE_COLUMNS.ID,
             TABLE_COLUMNS.TITLE,
             TABLE_COLUMNS.TYPE,
@@ -48,42 +48,42 @@ describe('search-filter', () => {
             issueService.updateLocalStore(duplicatedIssue);
         });
 
-        it('returns filtered list of issues which includes issues that contain the search key in any of its assignees', () => {
-            dummySearchKey = USER_ANUBHAV.loginId;
-            expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
+        it('can filter for issues which are assigned to a specific user', () => {
+            searchKey = USER_ANUBHAV.loginId;
+            expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList))
                 .toEqual([mediumSeverityIssueWithAssigneee]);
         });
 
-        it('returns filtered list of issues which includes issues that contain the search key in any of its duplicate issues id', () => {
-            dummySearchKey = duplicatedIssue.id.toString();
-            expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
+        it('can filter for an issue by the id of its duplicate issues', () => {
+            searchKey = duplicatedIssue.id.toString();
+            expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList))
                 .toEqual([highSeverityDocumentationBugIssue]);
         });
 
-        it('returns filtered list of issues which includes issues that contain the search key in any other column', () => {
-            // Checks id of issue
-            dummySearchKey = mediumSeverityIssueWithResponse.id.toString();
-            expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
+        it('can filter for issues that contain the search key in any other column', () => {
+            // Search by id of issue
+            searchKey = mediumSeverityIssueWithResponse.id.toString();
+            expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList))
                 .toEqual([mediumSeverityIssueWithResponse]);
 
-            // Checks title of issue
-            dummySearchKey = mediumSeverityIssueWithAssigneee.title;
-            expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
+            // Search by title of issue
+            searchKey = mediumSeverityIssueWithAssigneee.title;
+            expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList))
                 .toEqual([mediumSeverityIssueWithAssigneee]);
 
-            // Checks type of issue
-            dummySearchKey = highSeverityDocumentationBugIssue.type;
-            expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
+            // Search by type of issue
+            searchKey = highSeverityDocumentationBugIssue.type;
+            expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList))
                 .toEqual([highSeverityDocumentationBugIssue]);
 
-            // Checks severity of issue
-            dummySearchKey = lowSeverityFeatureFlawIssue.severity;
-            expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
+            // Search by severity of issue
+            searchKey = lowSeverityFeatureFlawIssue.severity;
+            expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList))
                 .toEqual([lowSeverityFeatureFlawIssue]);
 
-            // Checks response of issue
-            dummySearchKey = mediumSeverityIssueWithResponse.responseTag;
-            expect(applySearchFilter(dummySearchKey, displayedColumn, issueService, issuesList))
+            // Search by response of issue
+            searchKey = mediumSeverityIssueWithResponse.responseTag;
+            expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList))
                .toEqual([mediumSeverityIssueWithResponse]);
         });
     });
