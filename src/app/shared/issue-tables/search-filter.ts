@@ -56,7 +56,5 @@ function matchesDuplicatedIssue(issueService: IssueService, id: number, searchKe
 
 function matchesOtherColumns(issue: Issue, column: string, searchKey: string): boolean {
   const searchStr = String(issue[column]).toLowerCase();
-  if (containsSearchKey(searchStr, searchKey)) {
-    return true;
-  }
+  return containsSearchKey(searchStr, searchKey);
 }
