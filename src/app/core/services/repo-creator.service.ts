@@ -20,9 +20,11 @@ export class RepoCreatorService {
         if (isFixAttempted === null) {
           // If no fix has been attempted, there is no need to verify fix outcome.
           return of(true);
-        } else if (isFixAttempted === true) {
+        } else if (isFixAttempted) {
           // Verify that Repository has been created if a fix attempt has occurred.
           return this.verifySessionAvailability(phaseOwner, phaseRepo);
+        } else {
+          return of(isFixAttempted);
         }
       })
     );
