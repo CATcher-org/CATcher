@@ -81,7 +81,7 @@ One main guideline is that a `describe` block should be created for each method 
 #### CATcher Test Prep
 
 E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/) testing framework with the following stages. 
-1. Build CATcher with using `test` architecture.
+1. Build CATcher using `test` architecture.
    - Using `test` build configuration located in `angular.json` under `projects.catcher.architect.configurations` we build a version of CATcher within a test environment that replaces `src/environments/environment.ts` with `src/environments/environment.test.ts` on runtime. This allows for the feeding of information into the application to differ its actions in comparison to the default / production environments.
 2. Provide Test Environment Information
    - The Test Environment (in `src/environments/environment.test.ts`) provides information such as,
@@ -89,8 +89,8 @@ E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/)
      - User Team and Tutorial Information.
      - "Test Mode" activation by setting `test` property to `true`.
 3. Mock Service Injections
-   - Data reflected in the environment file then assists the application replace the use of some existing services with those that bypass specific functions that are irrelevant to E2E Testing. This includes Authentication Bypassing, Backend API Simulation (so that tests can be carried out in isolation) and others.
-   - These Service Injections are carried in the respective `*-module.ts` files with the help of Factories (located in `/src/app/core/services/factories`) that check the current build environment and make the Service Replacements accordingly.
+   - Data reflected in the environment file then assists the application in replacing some existing services with those that bypass specific functions that are irrelevant to E2E Testing. This includes Authentication Bypassing, Backend API Simulation (so that tests can be carried out in isolation) and others.
+   - These Service Injections are carried out in the respective `*-module.ts` files with the help of Factories (located in `/src/app/core/services/factories`) that check the current build environment and make the Service Replacements accordingly.
 4. Browser Action Injections using Protractor
    - With the application ready for testing, we then utilize `Protractor` to devise test cases that are located in the `/e2e` directory.
 
@@ -108,7 +108,7 @@ The following additional parameters would allow for further customisation,
 
 | Additional Parameter | Description | Full Command Example |
 | :---: | :-----: | :-------: |
-| `--protractor-config=e2e/protractor.*.conf.js` | Allows to substitute the default configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
+| `--protractor-config=e2e/protractor.*.conf.js` | Allows substitution of the default configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
 | `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
 
 #### webdriver-manager
@@ -117,7 +117,7 @@ If tests are not correctly carried out in your local machine due to outdated Bro
   
 **TO NOTE:**
 - Relevant Browsers must be installed prior to running tests (i.e. Chrome, Firefox).
-- CATcher can be launched in the Test Build by using the command `npm run ng:serve:test` to furhter develop mock services and debug E2E Tests.
+- CATcher can be launched in the Test Build by using the command `npm run ng:serve:test` to further develop mock services and debug E2E Tests.
 
 # Implementation
 
