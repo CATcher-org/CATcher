@@ -23,8 +23,6 @@ export class RepoCreatorService {
         } else if (isFixAttempted) {
           // Verify that Repository has been created if a fix attempt has occurred.
           return this.verifySessionAvailability(phaseOwner, phaseRepo);
-        } else {
-          return of(isFixAttempted);
         }
       })
     );
