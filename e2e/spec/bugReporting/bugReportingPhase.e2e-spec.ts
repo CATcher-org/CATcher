@@ -33,9 +33,9 @@ describe('CATcher\'s Bug Reporting Phase', () => {
 
     await bugReportingPage.accessNewBugReportingPage()
       .then(() => viewIssuePage.enterNewIssueTitle(testIssueCreationTitle))
-      .then(() => viewIssuePage.enterNewBugReportDescription(testIssueCreationDescription))
       .then(() => viewIssuePage.selectSeverityDropdown())
       .then(() => viewIssuePage.selectDropDownOption())
+      .then(() => viewIssuePage.enterNewBugReportDescription(testIssueCreationDescription))
       .then(() => viewIssuePage.selectBugTypeDropdown())
       .then(() => viewIssuePage.selectDropDownOption())
       .then(() => viewIssuePage.submitBugReport())

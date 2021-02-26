@@ -1,4 +1,4 @@
-import { browser, by, element } from 'protractor';
+import { browser, by, element, ExpectedConditions } from 'protractor';
 
 export class ViewIssuePage {
 
@@ -13,13 +13,11 @@ export class ViewIssuePage {
   }
 
   async selectSeverityDropdown() {
-    return element(by.className('severity-dropdown')).click()
-      .then(() => browser.sleep(100)); // Allow time for DOM to update. (Dropdown Selection may fail if DOM is stale)
+    return element(by.className('severity-dropdown')).click();
   }
 
   async selectBugTypeDropdown() {
-    return element(by.className('bug-dropdown')).click()
-      .then(() => browser.sleep(100)); // Allow time for DOM to update. (Dropdown Selection may fail if DOM is stale)
+    return element(by.className('bug-dropdown')).click();
   }
 
   /**
@@ -28,6 +26,7 @@ export class ViewIssuePage {
    * @param optionNumber Index of dropdown option
    */
   async selectDropDownOption(optionNumber: number = 0) {
+    await browser.wait(ExpectedConditions.presenceOf(element(by.className('mat-option'))));
     const selectedOption =  element.all(by.className('mat-option')).get(optionNumber);
     return selectedOption.click();
   }
