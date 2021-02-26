@@ -4,7 +4,8 @@ import { IssuesDataTable } from '../../shared/issue-tables/IssuesDataTable';
 import { Issue } from '../../core/models/issue.model';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
-import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables.component';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
+import { TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables-columns';
 
 @Component({
   selector: 'app-issues-responded',

@@ -20,13 +20,11 @@ exports.config = {
     realtimeFailure: true
   },
   useAllAngular2AppRoots: true,
-  beforeLaunch: function () {
-    require('ts-node').register({
-      project: 'e2e/tsconfig.e2e.json'
-    });
-  },
   random: false,
   onPrepare() {
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+    require('ts-node').register({
+      project: 'e2e/tsconfig.e2e.json'
+    });
   }
 };

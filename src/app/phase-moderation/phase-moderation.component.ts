@@ -7,7 +7,8 @@ import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
 import { LabelService } from '../core/services/label.service';
 import { GithubService } from '../core/services/github.service';
-import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../shared/issue-tables/issue-tables.component';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/issue-tables.component';
+import { TABLE_COLUMNS } from '../shared/issue-tables/issue-tables-columns';
 
 @Component({
   selector: 'app-phase-moderation',
