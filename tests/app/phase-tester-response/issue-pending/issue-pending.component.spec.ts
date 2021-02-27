@@ -3,8 +3,6 @@ import { Issue, STATUS } from '../../../../src/app/core/models/issue.model';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../constants/githubissue.constants';
 import { Team } from '../../../../src/app/core/models/team.model';
 import { IssueComment } from '../../../../src/app/core/models/comment.model';
-import { EMPTY_TEAM_RESPONSE, PENDING_TUTOR_MODERATION } from '../../../constants/githubcomment.constants';
-import { TutorModerationTodoTemplate } from '../../../../src/app/core/models/templates/tutor-moderation-todo-template.model';
 
 describe('IssuePendingComponent', () => {
     describe('.ngOnInit()', () => {
@@ -14,7 +12,10 @@ describe('IssuePendingComponent', () => {
           });
         let dummyIssue: Issue;
         let issuePendingComponent: IssuePendingComponent;
-        const issueComment: IssueComment = new TutorModerationTodoTemplate([PENDING_TUTOR_MODERATION]).comment;
+        const issueComment: IssueComment = {
+            id: 1,
+            description: 'This is a dummy comment',
+          };
         issuePendingComponent = new IssuePendingComponent();
         issuePendingComponent.ngOnInit();
 
