@@ -10,6 +10,9 @@ import { SessionData, assertSessionDataIntegrity } from '../models/session.model
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 import { Phase } from '../models/phase.model';
+import { throwIfFalse } from '../../shared/lib/custom-ops';
+
+export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.';
 
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',
@@ -41,7 +44,6 @@ export class PhaseService {
               private labelService: LabelService,
               private userService: UserService,
               public phaseFixConfirmationDialog: MatDialog) {}
-
   /**
    * Stores the location of the repositories belonging to
    * each phase of the application.
@@ -200,12 +202,10 @@ export class PhaseService {
           return this.verifySessionAvailability(this.sessionData);
         }
       }),
-      flatMap((isSessionCreated: boolean) => {
-        if (!isSessionCreated) {
-          throw new Error('Session Availability Fix failed.');
-        }
-        return this.labelService.synchronizeRemoteLabels();
-      }),
+      throwIfFalse(
+        (isSessionCreated: boolean) => isSessionCreated,
+        () => new Error(SESSION_AVALIABILITY_FIX_FAILED)),
+      this.labelService.syncLabels(),
       retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }

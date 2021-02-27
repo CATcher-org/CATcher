@@ -36,7 +36,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
   profileForm: FormGroup;
-  profileLocationPrompt: string;
   currentUserName: string;
 
   constructor(public appService: ApplicationService,
@@ -145,20 +144,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.isReady = true;
       this.versionCheckingError = true;
     });
-  }
-
-  /**
-   * Informs user of missing profiles file.
-   * @param profilesDetails - profiles file information.
-   */
-  onProfilesMissing(profilesDetails: {isDirectoryMessageVisible: boolean, fileName: string, fileDirectory: string}): void {
-    this.profileLocationPrompt = profilesDetails.isDirectoryMessageVisible
-      ? 'No custom '
-          .concat(profilesDetails['fileName'])
-          .concat(' file found in ')
-          .concat(profilesDetails['fileDirectory'])
-          .concat(' .')
-      : '';
   }
 
   /**
