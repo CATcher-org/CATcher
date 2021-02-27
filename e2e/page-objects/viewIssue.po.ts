@@ -22,6 +22,17 @@ export class ViewIssuePage {
 
   /**
    * Selects dropdown option from Severity or Bug Type.
+   * NOTE: There is an issue where the page data isn't updated in
+   * realtime when dealing with drop-down clicks and option selection.
+   * As such stringing multiple of these actions (i.e. Select Severity Dropdown,
+   * Select Severity Option, Select BugType Dropdown, Select BugType option)
+   * can result in the test failing as the page does not update quickly and
+   * the driver receives stale data on the elements present on screen. Due
+   * to the fact that mat-option is a generic classname (which we have abstracted)
+   * the ExpectCondition would not accurately wait for the right dropdown list.
+   * But it has still been left in the function as a precautionary measure.
+   * A work-around to this is to place other actions in-between a dropdown option
+   * selection action. See 'creates new bug report' for example.
    * @default Selects the first option
    * @param optionNumber Index of dropdown option
    */
