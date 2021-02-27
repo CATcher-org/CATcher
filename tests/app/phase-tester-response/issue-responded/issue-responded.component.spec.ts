@@ -24,14 +24,14 @@ describe('IssuesPendingComponent', () => {
       );
     });
 
-    it('should set filter to return true for an issue with comment and is done', () => {
+    it('should set filter to return true for an issue that has a comment and is marked done', () => {
       // Issue with done status and a comment
       dummyIssue.status = STATUS.Done;
       dummyIssue.issueComment = DUMMY_COMMENT;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeTrue();
     });
 
-    it('should set filter to return false for issues that are not done and with comments', () => {
+    it('should set filter to return false for an issue that is not done and has a comment', () => {
       // Issue with no status but with comment
       dummyIssue.issueComment = DUMMY_COMMENT;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
@@ -41,13 +41,13 @@ describe('IssuesPendingComponent', () => {
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
 
-    it('should set filter to return false for issues that are done without comments', () => {
+    it('should set filter to return false for an issue that is marked done, and does not have a comment', () => {
       // Issue with done status and no comments
       dummyIssue.status = STATUS.Done;
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
 
-    it('should set filter to return false for issues that are not done and without comments', () => {
+    it('should set filter to return false for an issue that is not marked done, and does not have a comment', () => {
       // Issue with no status and no comments
       expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
 
