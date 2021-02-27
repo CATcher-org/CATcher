@@ -1,9 +1,51 @@
 import { LabelService } from '../../src/app/core/services/label.service';
 import { Label } from '../../src/app/core/models/label.model';
 import * as LabelConstant from '../constants/label.constants';
+import { of } from 'rxjs';
 
 let labelService: LabelService;
 let labelList: Label[];
+let githubService: any;
+
+describe('LabelService', () => {
+  beforeEach(() => {
+    githubService = jasmine.createSpyObj('GithubService', ['fetchAllLabels', 'createLabel']);
+    labelService = new LabelService(githubService);
+  });
+
+  describe('.syncLabels()', () => {
+    it('should create all required labels if no required labels are fetched', () => {
+      githubService.fetchAllLabels.and.callFake(() => of([]));
+      of(true).pipe(labelService.syncLabels()).subscribe();
+
+      assertLabelCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
+      assertLabelCreated(githubService, LabelConstant.RESPONSE_REJECTED_LABEL);
+      assertLabelCreated(githubService, LabelConstant.STATUS_DONE_LABEL);
+      assertLabelCreated(githubService, LabelConstant.TYPE_DOCUMENTATION_BUG_LABEL);
+      expect(githubService.createLabel).toHaveBeenCalledTimes(LabelService.getRequiredLabelsAsArray().length);
+    });
+
+    it('should create missing required labels if some required labels are fetched', () => {
+      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.LABEL_ARRAY));
+      of(true).pipe(labelService.syncLabels()).subscribe();
+
+      assertLabelNotCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
+      assertLabelCreated(githubService, LabelConstant.RESPONSE_REJECTED_LABEL);
+      assertLabelCreated(githubService, LabelConstant.STATUS_DONE_LABEL);
+      assertLabelCreated(githubService, LabelConstant.TYPE_DOCUMENTATION_BUG_LABEL);
+      expect(githubService.createLabel).toHaveBeenCalledTimes(
+        LabelService.getRequiredLabelsAsArray().length - LabelConstant.LABEL_ARRAY.length
+      );
+    });
+
+    it('should not need to create any required labels if all required labels are fetched', () => {
+      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.ALL_REQUIRED_LABELS_ARRAY));
+      of(true).pipe(labelService.syncLabels()).subscribe();
+
+      expect(githubService.createLabel).toHaveBeenCalledTimes(0);
+    });
+  });
+});
 
 describe('LabelService: parseLabelData()', () => {
   beforeAll(() => {
@@ -87,3 +129,11 @@ describe('LabelService: getColorOfLabel()', () => {
     expect(labelService.getColorOfLabel(null)).toEqual(LabelConstant.COLOR_WHITE.toLowerCase());
   });
 });
+
+function assertLabelCreated(githubService: any, label: Label) {
+  expect(githubService.createLabel).toHaveBeenCalledWith(label.getFormattedName(), label.labelColor);
+}
+
+function assertLabelNotCreated(githubService: any, label: Label) {
+  expect(githubService.createLabel).not.toHaveBeenCalledWith(label.getFormattedName(), label.labelColor);
+}

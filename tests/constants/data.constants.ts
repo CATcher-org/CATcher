@@ -67,13 +67,19 @@ const TEAM_3 = new Team({
   ]
 });
 
-const TEAM_4 = new Team({
+export const TEAM_4 = new Team({
   id: 'CS2103T-W12-4',
   teamMembers: [{ loginId: 'ronaklakhotia', role: UserRole.Student }]
 });
 
 export const USER_JUNWEI = {
   loginId: 'junwei96',
+  role: UserRole.Student,
+  team: TEAM_3
+};
+
+export const USER_ANUBHAV = {
+  loginId: 'anubh-v',
   role: UserRole.Student,
   team: TEAM_3
 };

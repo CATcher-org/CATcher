@@ -4,14 +4,11 @@ import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../constants/githubissue.con
 import { Team } from '../../../../src/app/core/models/team.model';
 import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { UserService } from '../../../../src/app/core/services/user.service';
-import { USER_Q } from '../../../constants/data.constants';
+import { USER_Q, TEAM_4 } from '../../../constants/data.constants';
 
 describe('IssuesPendingComponent', () => {
   describe('.ngOnInit()', () => {
-    const dummyTeam: Team = new Team({
-      id: 'dummyId',
-      teamMembers: []
-    });
+    const dummyTeam: Team = TEAM_4;
     let dummyIssue: Issue;
     let issuesPendingComponent: IssuesPendingComponent;
     const issueService: IssueService = new IssueService(null, null, null, null, null, null);

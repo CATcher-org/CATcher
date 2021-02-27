@@ -2,14 +2,11 @@ import { getSortedData } from '../../../../src/app/shared/issue-tables/issue-sor
 import { MatSort } from '@angular/material';
 import { Issue } from '../../../../src/app/core/models/issue.model';
 import { ISSUE_WITH_ASSIGNEES, ISSUE_WITH_EMPTY_DESCRIPTION, ISSUE_PENDING_MODERATION } from '../../../constants/githubissue.constants';
-import { Team } from '../../../../src/app/core/models/team.model';
+import { TEAM_4 } from '../../../constants/data.constants';
 
 describe('issuer-sorter', () => {
   describe('getSortedData()', () => {
-    const dummyTeam = new Team({
-      id: 'F09-2',
-      teamMembers: []
-    });
+    const dummyTeam = TEAM_4;
     const dummyIssue: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
     const otherDummyIssue: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_ASSIGNEES, dummyTeam);
     const issuesList: Issue[] = [dummyIssue, otherDummyIssue];
