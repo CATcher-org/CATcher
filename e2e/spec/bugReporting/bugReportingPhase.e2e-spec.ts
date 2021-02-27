@@ -29,7 +29,6 @@ describe('CATcher\'s Bug Reporting Phase', () => {
     const testIssueCreationDescription = 'Test Issue Creation Text';
 
     await loginPage.bypassAuthentication();
-    const issueCount: number = await bugReportingPage.getNumberOfBugReports();
 
     await bugReportingPage.accessNewBugReportingPage()
       .then(() => viewIssuePage.enterNewIssueTitle(testIssueCreationTitle))
@@ -41,7 +40,7 @@ describe('CATcher\'s Bug Reporting Phase', () => {
       .then(() => viewIssuePage.submitBugReport())
       .then(() => headerComponent.clickBackButton());
 
-    const newIssueCount: number = await bugReportingPage.getNumberOfBugReports();
-    expect(() => newIssueCount === (issueCount + 1)); // Confirm that new issue has been added to list of existing issues.
+    const newIssueCount: number = await bugReportingPage.isBugReportWithTitlePresent(testIssueCreationTitle);
+    expect(newIssueCount).toEqual(1); // Confirm that new issue has been added to list of existing issues.
   });
 });

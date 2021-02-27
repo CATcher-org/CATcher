@@ -10,7 +10,10 @@ export class BugReportingPage {
     return element(by.className('create-new-bug-report-button')).click();
   }
 
-  async getNumberOfBugReports() {
-    return element.all(by.className('tr')).count();
+  async isBugReportWithTitlePresent(title: string) {
+    return element.all(by.className('mat-row')).filter(async (element, index) => {
+      const elementText: string = await element.getText();
+      return elementText.includes(title);
+    }).count();
   }
 }
