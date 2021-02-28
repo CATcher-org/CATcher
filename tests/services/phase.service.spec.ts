@@ -49,7 +49,7 @@ describe('PhaseService', () => {
     it('should throw an error if no openPhases are defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(invalidPhasesSettingsFile));
       phaseService.storeSessionData().subscribe({
-        next: fail,
+        next: () => fail(),
         error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES))
       });
     });
