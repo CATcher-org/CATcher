@@ -17,7 +17,7 @@ export class RepoCreatorService {
   public verifyRepoCreation(phaseOwner: string, phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
     return pipe(
       flatMap((isFixAttempted: boolean | null) => {
-        if (isFixAttempted === null) {
+        if (!isFixAttempted) {
           // If no fix has been attempted, there is no need to verify fix outcome.
           return of(true);
         } else if (isFixAttempted) {

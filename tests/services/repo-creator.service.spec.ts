@@ -12,7 +12,7 @@ describe('RepoCreatorService', () => {
     repoCreatorService = new RepoCreatorService(githubService);
   });
 
-  describe('.verifyRepoCreation)_', () => {
+  describe('.verifyRepoCreation()', () => {
     it('should not need to check the prescence of the repository if no fix was done', () => {
       of(null)
         .pipe(repoCreatorService.verifyRepoCreation(PHASE_OWNER, PHASE_REPO))
