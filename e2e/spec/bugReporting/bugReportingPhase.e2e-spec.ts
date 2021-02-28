@@ -4,6 +4,7 @@ import { Phase } from '../../../src/app/core/models/phase.model';
 import { LoginPage } from '../../page-objects/login.po';
 import { Header } from '../../page-objects/header.po';
 import { ViewIssuePage } from '../../page-objects/viewIssue.po';
+import { SEVERITY_MEDIUM, TYPE_DOCUMENTATION_BUG } from '../../../tests/constants/label.constants';
 
 describe('CATcher\'s Bug Reporting Phase', () => {
   let bugReportingPage: BugReportingPage;
@@ -33,14 +34,18 @@ describe('CATcher\'s Bug Reporting Phase', () => {
     await bugReportingPage.accessNewBugReportingPage()
       .then(() => viewIssuePage.enterNewIssueTitle(testIssueCreationTitle))
       .then(() => viewIssuePage.selectSeverityDropdown())
-      .then(() => viewIssuePage.selectDropDownOption())
+      .then(() => viewIssuePage.selectDropDownOption({dropdownText: SEVERITY_MEDIUM}))
       .then(() => viewIssuePage.enterNewBugReportDescription(testIssueCreationDescription))
       .then(() => viewIssuePage.selectBugTypeDropdown())
-      .then(() => viewIssuePage.selectDropDownOption())
+      .then(() => viewIssuePage.selectDropDownOption({dropdownText: TYPE_DOCUMENTATION_BUG}))
       .then(() => viewIssuePage.submitBugReport())
       .then(() => headerComponent.clickBackButton());
 
-    const newIssueCount: number = await bugReportingPage.isBugReportWithTitlePresent(testIssueCreationTitle);
-    expect(newIssueCount).toEqual(1); // Confirm that new issue has been added to list of existing issues.
+    const isBugReportCorrectlyCreated: boolean = await bugReportingPage.isBugReportPresent({
+      title: testIssueCreationTitle,
+      severityLabel: SEVERITY_MEDIUM,
+      bugTypeLabel: TYPE_DOCUMENTATION_BUG
+    });
+    expect(isBugReportCorrectlyCreated).toEqual(true); // Confirm that new issue has been added to list of existing issues.
   });
 });

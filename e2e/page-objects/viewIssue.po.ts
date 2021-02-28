@@ -20,6 +20,7 @@ export class ViewIssuePage {
     return element(by.className('bug-dropdown')).click();
   }
 
+
   /**
    * Selects dropdown option from Severity or Bug Type.
    * NOTE: There is an issue where the page data isn't updated in
@@ -33,13 +34,30 @@ export class ViewIssuePage {
    * But it has still been left in the function as a precautionary measure.
    * A work-around to this is to place other actions in-between a dropdown option
    * selection action. See 'creates new bug report' for example.
-   * @default Selects the first option
-   * @param optionNumber Index of dropdown option
+   * @param optionNumber Position of Dropdown Option
+   * @param dropdownText Text within Dropdown Option
    */
-  async selectDropDownOption(optionNumber: number = 0) {
+  async selectDropDownOption({optionNumber, dropdownText}: {optionNumber?: number, dropdownText?: string}) {
+    if (optionNumber != null && dropdownText != null) {
+      throw new Error('Supply either Dropdown option number or text, not both.');
+    } else if (optionNumber == null && dropdownText == null) {
+      throw new Error('No Dropdown identification parameters supplied.');
+    }
+
     await browser.wait(ExpectedConditions.presenceOf(element(by.className('mat-option'))));
-    const selectedOption =  element.all(by.className('mat-option')).get(optionNumber);
+    const selectedOption = optionNumber != null ? this.selectDropwdownByOption(optionNumber) : this.selectDropdownByText(dropdownText);
     return selectedOption.click();
+  }
+
+  private selectDropwdownByOption(optionNumber: number) {
+    return element.all(by.className('mat-option')).get(optionNumber);
+  }
+
+  private selectDropdownByText(dropdownText: string) {
+    return element.all(by.className('mat-option')).filter((async (element, index) => {
+      const labelName: string = await element.getText();
+      return labelName.includes(dropdownText);
+    }));
   }
 
   async submitBugReport() {
