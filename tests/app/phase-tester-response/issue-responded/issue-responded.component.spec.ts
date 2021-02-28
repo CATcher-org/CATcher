@@ -4,7 +4,7 @@ import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../constants/githubissue.con
 import { IssueComment } from '../../../../src/app/core/models/comment.model';
 import { USER_JUNWEI } from '../../../constants/data.constants';
 
-describe('IssuesPendingComponent', () => {
+describe('IssueRespondedComponent', () => {
   describe('.ngOnInit()', () => {
     const issuesRespondedComponent = new IssueRespondedComponent();
     issuesRespondedComponent.ngOnInit();
