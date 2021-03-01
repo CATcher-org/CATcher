@@ -28,9 +28,9 @@ export class IssueRespondedComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.filter = (issue: Issue) => {
-      return (issue.status === STATUS.Done) && !!issue.issueComment;
-    };
+    const issueIsDone = (issue: Issue) => issue.status === STATUS.Done;
+    const issueHasComment = (issue: Issue) => !!issue.issueComment;
+    this.filter = (issue: Issue) => issueIsDone(issue) && issueHasComment(issue);
   }
 
   applyFilter(filterValue: string) {
