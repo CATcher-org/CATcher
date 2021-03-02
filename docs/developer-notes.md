@@ -78,7 +78,7 @@ One main guideline is that a `describe` block should be created for each method 
 
 ### E2E Testing
 
-#### CATcher Test Prep
+#### How the E2E tests work
 
 E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/) testing framework with the following stages. 
 1. Build CATcher using `test` architecture.
