@@ -13,6 +13,7 @@ import { Observable, throwError } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent, TesterResponseConflictData } from './conflict-dialog/conflict-dialog.component';
 import { PhaseService } from '../../../core/services/phase.service';
+import { TesterResponse } from '../../../core/models/tester-response.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -32,6 +33,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
   private readonly responseRadioIdentifier = 'response-radio';
+  private readonly responseTextIdentifier = 'tester-response';
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
@@ -192,28 +194,20 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     }
 
     const updatedIssue = this.issue.clone(this.phaseService.currentPhase);
-    const values = this.testerResponseForm.getRawValue();
-    const disagrees = [];
-    const reasons = [];
+    const values: {} = this.testerResponseForm.getRawValue();
 
-    let index = 0;
-    for (const [key, value] of Object.entries(values)) {
-      if (key.startsWith(this.responseRadioIdentifier) && value) {
-        disagrees.push(value);
-      } else if (key.startsWith('tester-response')) {
-        reasons.push(value);
-      }
-      index++;
-    }
+    updatedIssue.testerResponses.map((response: TesterResponse, index: number) => {
+      // Filter Keys based on Response Index
+      const responseDataKeys = Object.keys(values).filter((key: string) => key.includes(`${index}`));
+      const disagreeKey = responseDataKeys.find((key: string) => key.startsWith(this.responseRadioIdentifier));
+      const reasonKey = responseDataKeys.find((key: string) => key.startsWith(this.responseTextIdentifier));
+      const isDisagree = values[disagreeKey];
+      const reason = isDisagree ? (values[reasonKey] || response.reasonForDisagreement) : response.INITIAL_RESPONSE;
 
-    index = 0;
-    for (const response of updatedIssue.testerResponses) {
-      const isDisagree = disagrees[index] === undefined ? response.isDisagree() : disagrees[index];
-      const reason = isDisagree ? reasons[index] || response.reasonForDisagreement : response.INITIAL_RESPONSE;
       response.setDisagree(isDisagree);
       response.setReasonForDisagreement(reason);
-      index++;
-    }
+      return response;
+    });
 
     return updatedIssue.createGithubTesterResponse();
   }
@@ -222,7 +216,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
    * @param index - index of action which the tester disagree.
    */
   getTesterResponseFormId(index: number): string {
-    return `tester-response-${index}`;
+    return `${this.responseTextIdentifier}-${index}`;
   }
 
   /**
