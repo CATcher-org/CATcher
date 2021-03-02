@@ -111,7 +111,7 @@ The following additional parameters would allow for further customisation,
 | `--protractor-config=e2e/protractor.*.conf.js` | Allows substitution of the default configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
 | `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
 
-#### webdriver-manager
+#### Troubleshooting conflicts between the versions of the browser and browser driver
 
 If tests are not correctly carried out in your local machine due to outdated Browser Drivers (e.g. ChromeDriver, GeckoDriver) a possible solution is to run `webdriver-manager update` which will attempt to update all local drivers to the latest version and should help mitigate any incompatibility issues. If you are still unable to run the E2E tests, please check that the Browser itself is up-to-date and re-run the webdriver command post-browser update.
   
