@@ -113,7 +113,7 @@ The following additional parameters would allow for further customisation,
 
 #### Troubleshooting conflicts between the versions of the browser and browser driver
 
-If tests are not correctly carried out in your local machine due to outdated Browser Drivers (e.g. ChromeDriver, GeckoDriver) a possible solution is to run `webdriver-manager update` which will attempt to update all local drivers to the latest version and should help mitigate any incompatibility issues. If you are still unable to run the E2E tests, please check that the Browser itself is up-to-date and re-run the webdriver command post-browser update.
+If tests fail on your machine due to mismatches between the versions of the browser and the browser driver, you can use the [`webdriver-manager`](https://github.com/angular/webdriver-manager#readme) tool to install the right version of the driver.  By default, running `webdriver-manager update` updates all drivers to the latest version, but particular versions can be specified as options.
   
 **TO NOTE:**
 - Relevant Browsers must be installed prior to running tests (i.e. Chrome, Firefox).
