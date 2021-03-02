@@ -31,6 +31,8 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   @Output() updateEditState = new EventEmitter<boolean>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
+  private readonly responseRadioIdentifier = 'response-radio';
+
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
               public userService: UserService,
@@ -139,7 +141,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   }
 
   handleChangeOfDisagreeCheckbox(event, index: number) {
-    const checkboxFormControl = this.testerResponseForm.get(this.getDisagreeBoxFormId(index));
+    const checkboxFormControl = this.testerResponseForm.get(this.getDisagreeRadioFormId(index));
     const responseFormControl = this.testerResponseForm.get(this.getTesterResponseFormId(index));
     const isDisagreeChecked = checkboxFormControl.value;
     if (isDisagreeChecked) {
@@ -169,7 +171,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
         value: response.reasonForDisagreement,
         disabled: !response.isDisagree()
       }, Validators.required);
-      group[this.getDisagreeBoxFormId(i)] = new FormControl({
+      group[this.getDisagreeRadioFormId(i)] = new FormControl({
         value: response.isDisagree(),
         disabled: !this.isEditing
       }, Validators.required);
@@ -196,7 +198,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
     let index = 0;
     for (const [key, value] of Object.entries(values)) {
-      if (key.startsWith('disagree-box')) {
+      if (key.startsWith(this.responseRadioIdentifier) && value) {
         disagrees.push(value);
       } else if (key.startsWith('tester-response')) {
         reasons.push(value);
@@ -226,8 +228,8 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   /**
    * @param index - index of action which the tester disagree.
    */
-  getDisagreeBoxFormId(index: number): string {
-    return `disagree-box-${index}`;
+  getDisagreeRadioFormId(index: number): string {
+    return `${this.responseRadioIdentifier}-${index}`;
   }
 
   get conflict(): boolean {
