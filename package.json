@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "main": "main.js",
   "scripts": {
     "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
@@ -25,6 +25,8 @@
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "test": "npm run codegen:gql && ng test",
     "e2e": "npm run codegen:gql && npm run postinstall:web && ng e2e",
+    "actions:e2e": "npm run codegen:gql && npm run postinstall:web && ng e2e --protractor-config=e2e/protractor.gh-actions.conf",
+    "webdriver-manager": "webdriver-manager",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "codegen:gql": "graphql-codegen --config codegen.yml",
