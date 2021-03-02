@@ -76,9 +76,9 @@ Scuri uses [Jasmine's spy feature](https://jasmine.github.io/2.0/introduction.ht
 We loosely follow the [Jasmine Style Guide](https://github.com/CareMessagePlatform/jasmine-styleguide) when writing tests. 
 One main guideline is that a `describe` block should be created for each method / scenario under test, and an `it` block should be created for each property being verified.
 
-### E2E Testing
+# E2E Testing
 
-#### Running E2E Tests
+## Running E2E Tests
 
 E2E Tests can be executed by using `npm run e2e` which conducts testing  using the default `protractor.conf.js` in the Chrome Browser.   
 The following additional parameters would allow for further customisation,
@@ -88,7 +88,7 @@ The following additional parameters would allow for further customisation,
 | `--protractor-config=e2e/protractor.*.conf.js` | Allows substitution of the default configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
 | `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
 
-#### Troubleshooting conflicts between the versions of the browser and browser driver
+## Troubleshooting conflicts between the versions of the browser and browser driver
 
 If tests fail on your machine due to mismatches between the versions of the browser and the browser driver, you can use the [`webdriver-manager`](https://github.com/angular/webdriver-manager#readme) tool to install the right version of the driver.  By default, running `webdriver-manager update` updates all drivers to the latest version, but particular versions can be specified as options.
   
@@ -96,14 +96,14 @@ If tests fail on your machine due to mismatches between the versions of the brow
 - Relevant Browsers must be installed prior to running tests (i.e. Chrome, Firefox).
 - CATcher can be launched in the Test Build by using the command `npm run ng:serve:test` to further develop mock services and debug E2E Tests.
 
-#### Protractor Configuration
+## Protractor Configuration
 
 - Protractor primarily requires the `*.conf.js` files to define E2E Testing Environments (this includes Browser Details, Base URL, etc...)
 - The base configuration data is stored in `protractor.base.conf.js` which is then extended by separate configuration files for individual browsers as well as the CI/CD pipeline.
 - E2E Tests are typically split into `Page-Objects Files` and `Test Files` in accordance with the [Protractor Style Guide](http://www.protractortest.org/#/style-guide) (more information regarding the interaction between the aforementioned filetypes can be found there).
 - E2E Tests are also grouped into suites based on the Application's Phase (i.e. Login, Bug-Reporting). Currently defined suite information is located in the `protractor.base.conf.js` file as well.
 
-#### How the E2E tests work
+## How the E2E tests work
 
 E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/) testing framework with the following stages. 
 1. Build CATcher using `test` architecture.
