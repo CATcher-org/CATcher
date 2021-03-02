@@ -18,29 +18,29 @@ export class LoggingService {
   }
 
   saveToLocalStorage(...params: any[]) {
-    console.log('incoming params');
-    console.log(params);
+    const oldestSessionLogRegex = /(AppConfig,.*\n[\S\s]*)(?=AppConfig,.*)/g;
     const existingLog = localStorage.getItem(this.LOG_KEY);
-    localStorage.setItem(this.LOG_KEY, params.toString());
-    console.log('existing params');
-    console.log(existingLog);
+    const newLog = `${existingLog ? `${existingLog}\n` : ''}${params.toString()}`.replace(oldestSessionLogRegex, '');
+    localStorage.setItem(this.LOG_KEY, newLog);
   }
 
   info(...params: any[]) {
     this.saveToLocalStorage(params);
     this.logger.info(params);
-    this.saveToLocalStorage(params);
   }
 
   error(...params: any[]) {
+    this.saveToLocalStorage(params);
     this.logger.error(params);
   }
 
   warn(...params: any[]) {
+    this.saveToLocalStorage(params);
     this.logger.warn(params);
   }
 
   debug(...params: any[]) {
+    this.saveToLocalStorage(params);
     this.logger.debug(params);
   }
 }
