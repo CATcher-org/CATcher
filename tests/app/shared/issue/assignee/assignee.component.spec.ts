@@ -57,20 +57,14 @@ describe('AssigneeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        AssigneeComponent
-      ],
-      providers: [
-        IssueService, ErrorHandlingService, PhaseService, PermissionService
-      ],
-      imports: [
-        FormsModule, MaterialModule, BrowserAnimationsModule
-      ]
+      declarations: [AssigneeComponent],
+      providers: [IssueService, ErrorHandlingService, PhaseService, PermissionService],
+      imports: [FormsModule, MaterialModule, BrowserAnimationsModule]
     })
-    .overrideProvider(IssueService, { useValue: issueService })
-    .overrideProvider(PhaseService, { useValue: phaseService })
-    .overrideProvider(PermissionService, { useValue: permissionsService })
-    .compileComponents();
+      .overrideProvider(IssueService, { useValue: issueService })
+      .overrideProvider(PhaseService, { useValue: phaseService })
+      .overrideProvider(PermissionService, { useValue: permissionsService })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -78,7 +72,7 @@ describe('AssigneeComponent', () => {
     fixture = TestBed.createComponent(AssigneeComponent);
     component = fixture.componentInstance;
 
-    dummyIssue =  Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
+    dummyIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
     component.team = dummyTeam;
     component.issue = dummyIssue;
     fixture.detectChanges();
@@ -107,7 +101,7 @@ describe('AssigneeComponent', () => {
     addAssignee();
     dispatchClosedEvent();
 
-    expect(component.issueUpdated.emit).toHaveBeenCalledWith(jasmine.objectContaining({assignees: [testStudent.loginId]}));
+    expect(component.issueUpdated.emit).toHaveBeenCalledWith(jasmine.objectContaining({ assignees: [testStudent.loginId] }));
   });
 
   it('should show the updated assignees upon receiving an updated issue', () => {
