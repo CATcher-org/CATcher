@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables.component';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
+import { TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables-columns';
 import { Issue, STATUS } from '../../core/models/issue.model';
 
 @Component({
@@ -29,9 +30,9 @@ export class IssuePendingComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.filter = (issue: Issue) => {
-      return (!issue.status || issue.status === STATUS.Incomplete) && !!issue.issueComment;
-    };
+    const hasComment = (issue: Issue) => !!issue.issueComment;
+    const isNotDone = (issue: Issue) => (!issue.status || issue.status === STATUS.Incomplete);
+    this.filter = (issue: Issue) => isNotDone(issue) && hasComment(issue);
   }
 
   applyFilter(filterValue: string) {

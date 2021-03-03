@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ACTION_BUTTONS, IssueTablesComponent, TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables.component';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
+import { TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables-columns';
 import { Issue, STATUS } from '../../core/models/issue.model';
 
 @Component({
@@ -27,9 +28,9 @@ export class IssueRespondedComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.filter = (issue: Issue) => {
-      return (issue.status === STATUS.Done) && !!issue.issueComment;
-    };
+    const issueIsDone = (issue: Issue) => issue.status === STATUS.Done;
+    const issueHasComment = (issue: Issue) => !!issue.issueComment;
+    this.filter = (issue: Issue) => issueIsDone(issue) && issueHasComment(issue);
   }
 
   applyFilter(filterValue: string) {

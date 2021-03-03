@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "main": "main.js",
   "scripts": {
     "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
@@ -30,10 +30,12 @@
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "codegen:gql": "graphql-codegen --config codegen.yml",
-    "codegen:gql-watch": "graphql-codegen --config -w codegen.yml"
+    "codegen:gql-watch": "graphql-codegen --config -w codegen.yml",
+    "pretty-quick": "pretty-quick"
   },
   "husky": {
     "hooks": {
+      "pre-commit": "pretty-quick",
       "pre-push": "npm run lint && npm run test"
     }
   },
@@ -102,6 +104,8 @@
     "karma-jasmine": "3.1.0",
     "karma-jasmine-html-reporter": "1.5.1",
     "npm-run-all": "4.1.5",
+    "prettier": "2.2.1",
+    "pretty-quick": "^3.1.0",
     "protractor": "5.4.2",
     "scuri": "^0.9.4",
     "ts-node": "^7.0.1",

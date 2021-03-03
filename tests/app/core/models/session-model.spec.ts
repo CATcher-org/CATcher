@@ -11,16 +11,11 @@ import { Phase } from '../../../../src/app/core/models/phase.model';
 import { of } from 'rxjs';
 
 const validSessionData: SessionData = {
-  openPhases: [
-    Phase.phaseBugReporting,
-    Phase.phaseTeamResponse,
-    Phase.phaseTesterResponse,
-    Phase.phaseModeration,
-  ],
+  openPhases: [Phase.phaseBugReporting, Phase.phaseTeamResponse, Phase.phaseTesterResponse, Phase.phaseModeration],
   phaseBugReporting: 'bugreporting',
   phaseTeamResponse: 'pe-results',
   phaseTesterResponse: 'testerresponse',
-  phaseModeration: 'pe-evaluation',
+  phaseModeration: 'pe-evaluation'
 };
 
 describe('Session Model', () => {
@@ -29,8 +24,8 @@ describe('Session Model', () => {
       of(undefined)
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          error: (err) =>
-            expect(err).toEqual(new Error(SESSION_DATA_UNAVAILABLE)),
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_UNAVAILABLE))
         });
     });
 
@@ -39,7 +34,7 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_MISSING_OPENPHASES_KEY)),
+          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_MISSING_OPENPHASES_KEY))
         });
     });
 
@@ -47,7 +42,8 @@ describe('Session Model', () => {
       of({ openPhases: [] })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES)),
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES))
         });
     });
 
@@ -56,39 +52,45 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(NO_VALID_OPEN_PHASES)),
+          error: (err) => expect(err).toEqual(new Error(NO_VALID_OPEN_PHASES))
         });
     });
 
     it('should throw error on session data with undefined repo for open phase', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = {
+        ...validSessionData,
+        openPhases: [Phase.phaseBugReporting]
+      };
       of({ ...modifiedSessionData, phaseBugReporting: undefined })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED))
         });
       of({ ...modifiedSessionData, phaseBugReporting: null })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED))
         });
       of({ ...modifiedSessionData, phaseBugReporting: '' })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED))
         });
     });
 
     it('should not throw error if session data contains repo information of unopened phases', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = {
+        ...validSessionData,
+        openPhases: [Phase.phaseBugReporting]
+      };
       of({ ...modifiedSessionData })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: (el) => expect(el).toEqual(modifiedSessionData),
-          error: () => fail(),
+          error: () => fail()
         });
     });
 
