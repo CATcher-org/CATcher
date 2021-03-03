@@ -3,7 +3,7 @@ import { PhaseDescription } from '../../../src/app/core/services/phase.service';
 import { Phase } from '../../../src/app/core/models/phase.model';
 import { LoginPage } from '../../page-objects/login.po';
 
-describe('CATcher\'s Bug Reporting Page', () => {
+describe("CATcher's Bug Reporting Page", () => {
   let bugReportingPage: BugReportingPage;
   let loginPage: LoginPage;
 
