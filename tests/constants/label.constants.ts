@@ -21,8 +21,8 @@ export const RESPONSE = 'response';
 export const STATUS = 'status';
 
 // Label color constants
-export const COLOR_BLACK  = '000000';
-export const COLOR_WHITE  = 'FFFFFF';
+export const COLOR_BLACK = '000000';
+export const COLOR_WHITE = 'FFFFFF';
 export const COLOR_SEVERITY_LOW = 'ffcccc';
 export const COLOR_SEVERITY_MEDIUM = 'ff9999';
 export const COLOR_SEVERITY_HIGH = 'ff6666';
@@ -37,21 +37,21 @@ export const COLOR_STATUS_INCOMPLETE = '000000';
 
 // CSS style constants
 export const DARK_BG_LIGHT_TEXT = {
-    'background-color' : `#${COLOR_BLACK}`,
-    'border-radius' : '3px',
-    'cursor' : 'default',
-    'padding' : '3px',
-    'color' : `#${COLOR_WHITE}`,
-    'font-weight' : '410',
+  'background-color': `#${COLOR_BLACK}`,
+  'border-radius': '3px',
+  cursor: 'default',
+  padding: '3px',
+  color: `#${COLOR_WHITE}`,
+  'font-weight': '410'
 };
 
 export const LIGHT_BG_DARK_TEXT = {
-    'background-color' : `#${COLOR_WHITE}`,
-    'border-radius' : '3px',
-    'cursor' : 'default',
-    'padding' : '3px',
-    'color' : `#${COLOR_BLACK}`,
-    'font-weight' : '410',
+  'background-color': `#${COLOR_WHITE}`,
+  'border-radius': '3px',
+  cursor: 'default',
+  padding: '3px',
+  color: `#${COLOR_BLACK}`,
+  'font-weight': '410'
 };
 
 export const RESPONSE_REJECTED_LABEL = new Label(RESPONSE, RESPONSE_REJECTED, COLOR_RESPONSE_REJECTED);
@@ -64,27 +64,30 @@ export const SEVERITY_LOW_LABEL = new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERI
 
 // Constant array of labels to simulate Github response
 export const LABEL_ARRAY = [
-    {
-        color: COLOR_RESPONSE_ACCEPTED,
-        name: RESPONSE + '.' + RESPONSE_ACCEPTED
-    },
-    {
-        color: COLOR_SEVERITY_LOW,
-        name: SEVERITY + '.' + SEVERITY_LOW
-    },
-    {
-        color: COLOR_TYPE_FUNCTIONALITY_BUG,
-        name: TYPE + '.' + TYPE_FUNCTIONALITY_BUG
-    }
+  {
+    color: COLOR_RESPONSE_ACCEPTED,
+    name: RESPONSE + '.' + RESPONSE_ACCEPTED
+  },
+  {
+    color: COLOR_SEVERITY_LOW,
+    name: SEVERITY + '.' + SEVERITY_LOW
+  },
+  {
+    color: COLOR_TYPE_FUNCTIONALITY_BUG,
+    name: TYPE + '.' + TYPE_FUNCTIONALITY_BUG
+  }
 ];
 
-export const ALL_REQUIRED_LABELS_ARRAY: {}[] = LabelService.getRequiredLabelsAsArray()
-  .map((label: Label) => {
-    return {
-      color: label.labelColor,
-      name: label.getFormattedName()
-    };
-  });
+export const ALL_REQUIRED_LABELS_ARRAY: {}[] = LabelService.getRequiredLabelsAsArray().map((label: Label) => {
+  return {
+    color: label.labelColor,
+    name: label.getFormattedName()
+  };
+});
 
 // List of labels
-export const SEVERITY_LABELS = [SEVERITY_LOW_LABEL, SEVERITY_MEDIUM_LABEL, SEVERITY_HIGH_LABEL];
+export const SEVERITY_LABELS = [
+  new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERITY_LOW),
+  new Label(SEVERITY, SEVERITY_MEDIUM, COLOR_SEVERITY_MEDIUM),
+  new Label(SEVERITY, SEVERITY_HIGH, COLOR_SEVERITY_HIGH)
+];
