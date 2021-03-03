@@ -22,20 +22,10 @@ export class RepoCreatorService {
           return of(true);
         } else if (isFixAttempted) {
           // Verify that Repository has been created if a fix attempt has occurred.
-          return this.verifySessionAvailability(phaseOwner, phaseRepo);
+          return this.githubService.isRepositoryPresent(phaseOwner, phaseRepo);
         }
       })
     );
   }
-
-  /**
-   * Checks if the necessary repository is available and creates it if the permissions are available.
-   * @param phaseOwner Owner of Specified Repository.
-   * @param phaseRepo Name of Repository.
-   */
-  private verifySessionAvailability(phaseOwner: string, phaseRepo: string): Observable<boolean> {
-    return this.githubService.isRepositoryPresent(phaseOwner, phaseRepo);
-  }
-
 }
 
