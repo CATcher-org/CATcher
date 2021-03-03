@@ -6,23 +6,23 @@ import { csvString, jsonData, dataFileTeamStructure } from '../constants/data.co
 
 describe('DataService', () => {
   describe('.getDataFile()', () => {
-    it('returns a json representation of the repo\'s data csv', done => {
+    it("returns a json representation of the repo's data csv", (done) => {
       const { build, githubService } = setup();
       const dataService = build();
-      githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
+      githubService.fetchDataFile.and.returnValue(of({ data: csvString }));
 
-      dataService.getDataFile().subscribe(actual => {
+      dataService.getDataFile().subscribe((actual) => {
         expect(actual).toEqual(jsonData);
         done();
       });
     });
 
-    it('initializes an internal data structure that maps teamIds to Team objects', done => {
+    it('initializes an internal data structure that maps teamIds to Team objects', (done) => {
       const { build, githubService } = setup();
       const dataService = build();
-      githubService.fetchDataFile.and.returnValue(of({'data': csvString}));
+      githubService.fetchDataFile.and.returnValue(of({ data: csvString }));
 
-      dataService.getDataFile().subscribe(actual => {
+      dataService.getDataFile().subscribe((actual) => {
         expect(dataService.dataFile).toEqual(dataFileTeamStructure);
         done();
       });
@@ -49,7 +49,7 @@ describe('DataService', () => {
   });
 
   describe('.getTeams()', () => {
-    it('returns an array containing ids of the teams in the repo\'s data csv', () => {
+    it("returns an array containing ids of the teams in the repo's data csv", () => {
       // arrange
       const { build } = setup();
       const dataService = build();
@@ -57,10 +57,7 @@ describe('DataService', () => {
         dataService.dataFile = dataFileTeamStructure;
         return of({});
       });
-      const teams = [
-        'CS2103T-W12-3',
-        'CS2103T-W12-4'
-      ];
+      const teams = ['CS2103T-W12-3', 'CS2103T-W12-4'];
       // act
       dataService.getDataFile();
       const actual = dataService.getTeams();
@@ -70,7 +67,7 @@ describe('DataService', () => {
   });
 
   describe('.reset()', () => {
-      it('clears the internal state of the DataService', () => {
+    it('clears the internal state of the DataService', () => {
       // arrange
       const { build } = setup();
       const dataService = build();
@@ -83,7 +80,7 @@ describe('DataService', () => {
       expect(dataService.dataFile).toBeDefined();
       dataService.reset();
       expect(dataService.dataFile).toBeUndefined();
-      });
+    });
   });
 });
 

@@ -35,11 +35,11 @@ describe('UserService', () => {
     it('throws an error if the user is unauthorized', (done) => {
       const userService = new UserService(null, dataService);
       userService.createUserModel('RandomUser').subscribe(
-        user => {
+        (user) => {
           fail('This test case should have failed.');
           done();
         },
-        error => {
+        (error) => {
           expect(error).toEqual(new Error('Unauthorized user.'));
           done();
         }
