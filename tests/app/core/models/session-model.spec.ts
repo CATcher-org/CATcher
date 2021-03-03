@@ -4,7 +4,7 @@ import {
   NO_VALID_OPEN_PHASES,
   OPENED_PHASE_REPO_UNDEFINED,
   SESSION_DATA_UNAVAILABLE,
-  SESSION_DATA_MISSING_OPENPHASES_KEY
+  SESSION_DATA_MISSING_OPENPHASES_KEY,
 } from '../../../../src/app/core/models/session.model';
 import { of } from 'rxjs';
 import { BUG_REPORTING_PHASE_SESSION_DATA, NO_OPEN_PHASES_SESSION_DATA } from '../../../constants/session.constants';
@@ -15,8 +15,8 @@ describe('Session Model', () => {
       of(undefined)
         .pipe(assertSessionDataIntegrity())
         .subscribe({
-          error: (err) =>
-            expect(err).toEqual(new Error(SESSION_DATA_UNAVAILABLE)),
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(SESSION_DATA_UNAVAILABLE)),
         });
     });
 
@@ -33,6 +33,7 @@ describe('Session Model', () => {
       of(NO_OPEN_PHASES_SESSION_DATA)
         .pipe(assertSessionDataIntegrity())
         .subscribe({
+          next: () => fail(),
           error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES)),
         });
     });
@@ -51,19 +52,22 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          error: (err) =>
+            expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
       of({ ...BUG_REPORTING_PHASE_SESSION_DATA, phaseBugReporting: null })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          error: (err) =>
+            expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
       of({ ...BUG_REPORTING_PHASE_SESSION_DATA, phaseBugReporting: '' })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
+          error: (err) =>
+            expect(err).toEqual(new Error(OPENED_PHASE_REPO_UNDEFINED)),
         });
     });
 
