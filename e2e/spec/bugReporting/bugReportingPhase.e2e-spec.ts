@@ -6,7 +6,7 @@ import { Header } from '../../page-objects/header.po';
 import { ViewIssuePage } from '../../page-objects/viewIssue.po';
 import { SEVERITY_MEDIUM, TYPE_DOCUMENTATION_BUG } from '../../../tests/constants/label.constants';
 
-describe('CATcher\'s Bug Reporting Phase', () => {
+describe("CATcher's Bug Reporting Phase", () => {
   let bugReportingPage: BugReportingPage;
   let loginPage: LoginPage;
   let headerComponent: Header;
@@ -31,13 +31,14 @@ describe('CATcher\'s Bug Reporting Phase', () => {
 
     await loginPage.bypassAuthentication();
 
-    await bugReportingPage.accessNewBugReportingPage()
+    await bugReportingPage
+      .accessNewBugReportingPage()
       .then(() => viewIssuePage.enterNewIssueTitle(testIssueCreationTitle))
       .then(() => viewIssuePage.selectSeverityDropdown())
-      .then(() => viewIssuePage.selectDropDownOption({dropdownText: SEVERITY_MEDIUM}))
+      .then(() => viewIssuePage.selectDropDownOption({ dropdownText: SEVERITY_MEDIUM }))
       .then(() => viewIssuePage.enterNewBugReportDescription(testIssueCreationDescription))
       .then(() => viewIssuePage.selectBugTypeDropdown())
-      .then(() => viewIssuePage.selectDropDownOption({dropdownText: TYPE_DOCUMENTATION_BUG}))
+      .then(() => viewIssuePage.selectDropDownOption({ dropdownText: TYPE_DOCUMENTATION_BUG }))
       .then(() => viewIssuePage.submitBugReport())
       .then(() => headerComponent.clickBackButton());
 
