@@ -24,6 +24,7 @@ describe('Session Model', () => {
       of(undefined)
         .pipe(assertSessionDataIntegrity())
         .subscribe({
+          next: () => fail(),
           error: (err) => expect(err).toEqual(new Error(SESSION_DATA_UNAVAILABLE))
         });
     });
@@ -41,6 +42,7 @@ describe('Session Model', () => {
       of({ openPhases: [] })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
+          next: () => fail(),
           error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES))
         });
     });
@@ -55,7 +57,10 @@ describe('Session Model', () => {
     });
 
     it('should throw error on session data with undefined repo for open phase', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = {
+        ...validSessionData,
+        openPhases: [Phase.phaseBugReporting]
+      };
       of({ ...modifiedSessionData, phaseBugReporting: undefined })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
@@ -77,7 +82,10 @@ describe('Session Model', () => {
     });
 
     it('should not throw error if session data contains repo information of unopened phases', () => {
-      const modifiedSessionData: SessionData = { ...validSessionData, openPhases: [Phase.phaseBugReporting] };
+      const modifiedSessionData: SessionData = {
+        ...validSessionData,
+        openPhases: [Phase.phaseBugReporting]
+      };
       of({ ...modifiedSessionData })
         .pipe(assertSessionDataIntegrity())
         .subscribe({
