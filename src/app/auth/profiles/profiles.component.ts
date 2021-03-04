@@ -1,15 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations';
-import { ElectronService } from '../../core/services/electron.service';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 import { AppConfig } from '../../../environments/environment';
+import { Schema, isValidObject } from '../../shared/lib/validate';
 
 /**
  * Indicates all the elements that make up a Profile.
@@ -19,6 +13,15 @@ export interface Profile {
   encodedText: string;
 }
 
+/**
+ * Schema for validating profiles.json entries
+ */
+
+const profileSchema: Schema = {
+  profileName: { required: true, validate: (value) => !!value },
+  encodedText: { required: true, validate: (value) => !!value }
+};
+
 @Component({
   selector: 'app-profiles',
   templateUrl: './profiles.component.html',
@@ -27,24 +30,22 @@ export interface Profile {
     // animation triggers go here
     trigger('triggerFileInput', [
       state('normal', style({})),
-      state('pressed', style({
-        color: 'orange'
-      })),
-      transition('normal => pressed', [
-        animate('0.25s ease')
-      ]),
-      transition('pressed => normal', [
-        animate('0.25s ease')
-      ])
+      state(
+        'pressed',
+        style({
+          color: 'orange'
+        })
+      ),
+      transition('normal => pressed', [animate('0.25s ease')]),
+      transition('pressed => normal', [animate('0.25s ease')])
     ])
   ]
 })
 export class ProfilesComponent implements OnInit {
-
   private readonly ANIMATION_DURATION: number = 250;
 
   profiles: Profile[] = []; // List of profiles taken from profiles.json
-  blankProfile: Profile = {profileName: '', encodedText: ''}; // A blank profile to reset values
+  blankProfile: Profile = { profileName: '', encodedText: '' }; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
@@ -56,7 +57,7 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog) { }
+  constructor(public errorDialog: MatDialog) {}
 
   ngOnInit() {
     this.initProfiles();
@@ -85,9 +86,11 @@ export class ProfilesComponent implements OnInit {
     reader.onload = () => {
       if (!(reader.result instanceof ArrayBuffer)) {
         try {
-          this.profiles = JSON.parse(reader.result).profiles
-            .concat(AppConfig.profiles)
-            .filter(p => !!p);
+          const { profiles } = JSON.parse(reader.result);
+          if (!profiles.every((profile) => isValidObject(profile, profileSchema))) {
+            throw new Error('profiles.json is malformed');
+          }
+          this.profiles = profiles.concat(AppConfig.profiles).filter((p) => !!p);
           target.value = '';
         } catch (e) {
           this.openErrorDialog();
@@ -101,9 +104,7 @@ export class ProfilesComponent implements OnInit {
    * Processes available Profiles information from application's configuration.
    */
   initProfiles(): void {
-    this.profiles = this.profiles
-      .concat(AppConfig.profiles)
-      .filter(p => !!p);
+    this.profiles = this.profiles.concat(AppConfig.profiles).filter((p) => !!p);
   }
 
   /**
