@@ -8,7 +8,7 @@ import { ElectronLog } from 'electron-log';
 export class LoggingService {
   private logger: ElectronLog | Console;
   private readonly LOG_KEY = 'CATcher-Log';
-  private readonly LOG_FILE_NAME = 'CATcher-log.txt'
+  private readonly LOG_FILE_NAME = 'CATcher-log.txt';
 
   constructor(electronService: ElectronService) {
     if (electronService.isElectron()) {
@@ -42,7 +42,7 @@ export class LoggingService {
     hiddenElement.setAttribute('style', 'display: none;');
     hiddenElement.href = blobUrl;
     hiddenElement.download = this.LOG_FILE_NAME;
-    
+
     // Add to DOM and Click to prompt download.
     document.body.appendChild(hiddenElement);
     hiddenElement.click();
