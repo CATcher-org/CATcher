@@ -119,6 +119,10 @@ export class ProfilesComponent implements OnInit {
    * @param profile - Profile selected by user.
    */
   selectProfile(profile: Profile): void {
-    this.selectedProfileEmitter.emit(profile);
+    if (isValidObject(profile, profileSchema)) {
+      this.selectedProfileEmitter.emit(profile);
+    } else {
+      this.openErrorDialog();
+    }
   }
 }
