@@ -25,6 +25,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint
     - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+    - run: apt-get install google-chrome-stable
     - run: npm run webdriver-manager update
     - run: npm run actions:e2e
 
