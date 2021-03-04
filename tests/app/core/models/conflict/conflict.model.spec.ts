@@ -4,7 +4,6 @@ import { Addition } from '../../../../../src/app/core/models/conflict/addition.m
 import { Removal } from '../../../../../src/app/core/models/conflict/removal.model';
 import { replaceNewlinesWithBreakLines } from '../../../../../src/app/shared/lib/html';
 
-
 describe('TitleComponent', () => {
   let longerString: string;
   let shorterString: string;
