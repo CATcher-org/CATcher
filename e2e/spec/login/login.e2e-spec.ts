@@ -1,6 +1,6 @@
 import { LoginPage } from '../../page-objects/login.po';
 
-describe('CATcher\'s Login Page', () => {
+describe("CATcher's Login Page", () => {
   let page: LoginPage;
 
   beforeAll(() => {

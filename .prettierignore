@@ -1,0 +1,6 @@
+# Ignore everything
+/*
+
+# Except tests and e2e
+!tests
+!e2e

@@ -5,7 +5,7 @@ protractorBaseConfig = require('./protractor.base.conf');
 const config = protractorBaseConfig.config;
 
 config.capabilities = {
-    browserName: 'firefox',
+  browserName: 'firefox'
 };
 
 exports.config = config;

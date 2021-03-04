@@ -25,12 +25,12 @@ module.exports = function (config) {
       maxLogLines: 5, // limit number of lines per test
       suppressErrorSummary: true,
       suppressPassed: true,
-      showSpecTiming: false,
+      showSpecTiming: false
     },
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     browsers: ['ChromeHeadless'],
-    singleRun: true,
+    singleRun: true
   });
 };

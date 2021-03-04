@@ -13,11 +13,11 @@ describe('GithubEventService', () => {
   });
 
   describe('.setLatestChangeEvent()', () => {
-    it('stores the time of the most recent issue event\ and most recent issue update.', async () => {
+    it('stores the time of the most recent issue event and most recent issue update.', async () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
       await githubEventService.setLatestChangeEvent().toPromise();
-      githubEventService.reloadPage().subscribe(result => expect(result).toBe(false));
+      githubEventService.reloadPage().subscribe((result) => expect(result).toBe(false));
     });
   });
 
@@ -31,21 +31,20 @@ describe('GithubEventService', () => {
       const SECOND_EVENT = [CHANGE_TITLE_EVENT];
       githubService.fetchEventsForRepo.and.returnValue(of(FIRST_EVENT));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
-      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
+      githubEventService.reloadPage().subscribe((result) => expect(result).toBe(true));
 
       githubService.fetchEventsForRepo.and.returnValue(of(SECOND_EVENT));
-      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
+      githubEventService.reloadPage().subscribe((result) => expect(result).toBe(true));
     });
 
     it('does not trigger the IssueService to re-initialise the issue list, if there are no new events', () => {
       githubService.fetchEventsForRepo.and.returnValue(of(EVENTS));
       const githubEventService: GithubEventService = new GithubEventService(githubService, issueService);
-      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
+      githubEventService.reloadPage().subscribe((result) => expect(result).toBe(true));
 
       // issueService.reloadAllIssues must not have been called again
-      githubEventService.reloadPage().subscribe(result => expect(result).toBe(false));
+      githubEventService.reloadPage().subscribe((result) => expect(result).toBe(false));
     });
-
   });
 
   describe('.reset()', () => {
@@ -55,10 +54,8 @@ describe('GithubEventService', () => {
       await githubEventService.setLatestChangeEvent().toPromise();
       githubEventService.reset();
 
-       // reloadPage should return an Observable of true due to reset()
-      githubEventService.reloadPage().subscribe(result => expect(result).toBe(true));
+      // reloadPage should return an Observable of true due to reset()
+      githubEventService.reloadPage().subscribe((result) => expect(result).toBe(true));
     });
   });
-
 });
-

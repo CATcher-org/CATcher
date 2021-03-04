@@ -20,7 +20,7 @@ describe('TitleComponent', () => {
 
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
     titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService);
-    thisIssue =  Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
+    thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     titleComponent.issue = thisIssue;
   });
 
