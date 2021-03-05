@@ -1,4 +1,8 @@
-import { LabelDropdownComponent, BLACK_TEXT_CLASS, WHITE_TEXT_CLASS } from '../../../../src/app/shared/label-dropdown/label-dropdown.component';
+import {
+  LabelDropdownComponent,
+  BLACK_TEXT_CLASS,
+  WHITE_TEXT_CLASS
+} from '../../../../src/app/shared/label-dropdown/label-dropdown.component';
 import { LabelService } from '../../../../src/app/core/services/label.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SEVERITY_LABELS, COLOR_WHITE, SEVERITY } from '../../../constants/label.constants';
@@ -8,15 +12,14 @@ describe('LabelDropdownComponent', () => {
   let labelService: any;
 
   beforeEach(() => {
-    labelService = jasmine.createSpyObj(LabelService, ['getLabelList',
-      'getColorOfLabel', 'isDarkColor']);
+    labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel', 'isDarkColor']);
 
-    const formGroup: FormGroup = new FormBuilder().group(({
+    const formGroup: FormGroup = new FormBuilder().group({
       title: ['', Validators.required],
       description: ['No details provided.'],
       severity: ['', Validators.required],
-      type: ['', Validators.required],
-    }));
+      type: ['', Validators.required]
+    });
 
     labelDropdownComponent = new LabelDropdownComponent(labelService);
     labelDropdownComponent.dropdownForm = formGroup;
