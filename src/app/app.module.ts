@@ -78,7 +78,7 @@ import { PermissionService } from './core/services/permission.service';
     {
       provide: GithubService,
       useFactory: GithubServiceFactory,
-      deps: [Apollo, ErrorHandlingService, ElectronService]
+      deps: [ErrorHandlingService, Apollo, ElectronService]
     },
     {
       provide: AuthService,
