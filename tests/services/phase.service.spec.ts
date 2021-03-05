@@ -4,7 +4,7 @@ import { PhaseService } from '../../src/app/core/services/phase.service';
 import { Phase } from '../../src/app/core/models/phase.model';
 
 const moderationPhaseSettingsFile: {} = {
-  'openPhases': [Phase.phaseModeration],
+  openPhases: [Phase.phaseModeration],
   [Phase.phaseBugReporting]: 'bugreporting',
   [Phase.phaseTeamResponse]: 'pe-results',
   [Phase.phaseTesterResponse]: 'testerresponse',
@@ -13,12 +13,12 @@ const moderationPhaseSettingsFile: {} = {
 
 const invalidPhasesSettingsFile: {} = {
   ...moderationPhaseSettingsFile,
-  'openPhases': []
+  openPhases: []
 };
 
 const multipleOpenPhasesSettingsFile: {} = {
   ...moderationPhaseSettingsFile,
-  'openPhases': [Phase.phaseBugReporting, Phase.phaseTeamResponse]
+  openPhases: [Phase.phaseBugReporting, Phase.phaseTeamResponse]
 };
 
 let phaseService: PhaseService;
@@ -26,8 +26,7 @@ let githubService: any;
 
 describe('PhaseService', () => {
   beforeEach(() => {
-    githubService = jasmine.createSpyObj('GithubService',
-      ['fetchSettingsFile', 'storePhaseDetails']);
+    githubService = jasmine.createSpyObj('GithubService', ['fetchSettingsFile', 'storePhaseDetails']);
     phaseService = new PhaseService(null, githubService, null, null, null, null);
   });
 
