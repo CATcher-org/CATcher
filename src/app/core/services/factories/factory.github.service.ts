@@ -5,7 +5,7 @@ import { ErrorHandlingService } from '../error-handling.service';
 import { GithubService } from '../github.service';
 import { MockGithubService } from '../mocks/mock.github.service';
 
-export function GithubServiceFactory(apollo: Apollo, electron: ElectronService, handling: ErrorHandlingService) {
+export function GithubServiceFactory(handling: ErrorHandlingService, apollo: Apollo, electron: ElectronService) {
   if (AppConfig.test) {
       return new MockGithubService();
   }
