@@ -33,7 +33,7 @@ export class LoggingService {
    */
   getTrimmedLogCache(currentLog: string, sessionCount: number): string {
     // Check if Trimming is Necessary
-    const numberOfSessions: number = currentLog ? 0 : currentLog.split('\n')
+    const numberOfSessions: number = currentLog == null ? 0 : currentLog.split('\n')
       .filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER))
       .length;
 
