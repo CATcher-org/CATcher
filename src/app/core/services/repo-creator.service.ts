@@ -12,7 +12,9 @@ export class RepoCreatorService {
   ) {}
 
   /**
-   * Checks if the necessary repository has been created.
+   * Checks if the specified repository has been created.
+   * @param phaseOwner the user or organization holding the specified repository.
+   * @param phaseRepo the name of the specified repository. 
    */
   public verifyRepoCreation(phaseOwner: string, phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
     return pipe(
@@ -20,7 +22,7 @@ export class RepoCreatorService {
         if (!isFixAttempted) {
           // If no fix has been attempted, there is no need to verify fix outcome.
           return of(true);
-        } else if (isFixAttempted) {
+        } else {
           // Verify that Repository has been created if a fix attempt has occurred.
           return this.githubService.isRepositoryPresent(phaseOwner, phaseRepo);
         }
