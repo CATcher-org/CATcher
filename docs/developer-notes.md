@@ -113,7 +113,7 @@ E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/)
 2. Provide Test Environment Information
    - The Test Environment (in `src/environments/environment.test.ts`) provides information such as,
      - Login Credentials (Username).
-     - User Team and Tutorial Information.
+     - User Role and Team Information.
      - "Test Mode" activation by setting `test` property to `true`.
 3. Mock Service Injections
    - Data reflected in the environment file then assists the application in replacing some existing services with those that bypass specific functions that are irrelevant to E2E Testing. This includes Authentication Bypassing, Backend API Simulation (so that tests can be carried out in isolation) and others.
