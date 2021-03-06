@@ -92,7 +92,6 @@ The following additional parameters would allow for further customisation,
 
 **TO NOTE:**
 - Relevant Browsers must be installed prior to running tests (i.e. Chrome, Firefox).
-- CATcher can be launched in the Test Build by using the command `npm run ng:serve:test` to further develop mock services and debug E2E Tests.
 
 ## Troubleshooting conflicts between the versions of the browser and browser driver
 
