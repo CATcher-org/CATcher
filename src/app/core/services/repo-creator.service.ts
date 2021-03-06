@@ -14,7 +14,7 @@ export class RepoCreatorService {
   /**
    * Checks if the specified repository has been created.
    * @param phaseOwner the user or organization holding the specified repository.
-   * @param phaseRepo the name of the specified repository. 
+   * @param phaseRepo the name of the specified repository.
    */
   public verifyRepoCreation(phaseOwner: string, phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
     return pipe(
