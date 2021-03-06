@@ -118,7 +118,7 @@ E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/)
 3. Mock Service Injections
    - Once CATcher switches to E2E test mode, it creates mocks of some services, in order to simulate behaviour that is outside the scope of E2E Testing. This includes authentication, and communication with GitHub (via its APIs).
    - These Service Injections are carried out in the respective `*-module.ts` files with the help of Factories (located in `/src/app/core/services/factories`) that check the current build environment and make the Service Replacements accordingly.
-4. Browser Action Injections using Protractor
+4. Browser Action Automation using Protractor
    - With the application ready for testing, we then utilize `Protractor` to devise test cases that are located in the `/e2e` directory.
 
 # Implementation
