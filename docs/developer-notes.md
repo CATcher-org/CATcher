@@ -80,7 +80,9 @@ One main guideline is that a `describe` block should be created for each method 
 
 ## Running E2E Tests
 
-E2E Tests can be executed by using `npm run e2e` which conducts testing  using the default `protractor.conf.js` in the Chrome Browser.   
+E2E Tests can be executed using `npm run e2e`. You should see CATcher launch in an instance of Google Chrome, with some automated actions occurring on it. Note: Google Chrome needs to be installed on the machine.
+
+Unlike the production version of CATcher, we do not use the actual GitHub API in the E2E tests. Mock data is used to simulate the GitHub API. You can run `npm run ng:serve:test` to run CATcher in this "offline" mode (to further develop or debug the E2E tests).
 The following additional parameters would allow for further customisation,
 
 | Additional Parameter | Description | Full Command Example |
