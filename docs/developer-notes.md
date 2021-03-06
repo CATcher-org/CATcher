@@ -85,20 +85,22 @@ E2E Tests can be executed using `npm run e2e`. You should see CATcher launch in 
 Unlike the production version of CATcher, we do not use the actual GitHub API in the E2E tests. Mock data is used to simulate the GitHub API. You can run `npm run ng:serve:test` to run CATcher in this "offline" mode (to further develop or debug the E2E tests).
 The following additional parameters would allow for further customisation,
 
-| Additional Parameter | Description | Full Command Example |
-| :---: | :-----: | :-------: |
-| `--protractor-config=e2e/protractor.*.conf.js` | Allows selection of the Protractor configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
-| `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
+| Additional Parameter | Default | Description | Full Command Example | Command Explanation
+| :---: | :---: | :-----: | :-------: | :------: |
+| `--protractor-config=e2e/protractor.*.conf.js` | `potractor.conf.js` | Allows selection of the Protractor configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` | Runs E2E Tests on the Firefox Browser |
+| `--suite=*` | All Suites | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting` | Run E2E Tests from Login and BugReporting Suites only |
 
-## Troubleshooting conflicts between the versions of the browser and browser driver
-
-If tests fail on your machine due to mismatches between the versions of the browser and the browser driver, you can use the [`webdriver-manager`](https://github.com/angular/webdriver-manager#readme) tool to install the right version of the driver.  By default, running `webdriver-manager update` updates all drivers to the latest version, but particular versions can be specified as options.
-  
 **TO NOTE:**
 - Relevant Browsers must be installed prior to running tests (i.e. Chrome, Firefox).
 - CATcher can be launched in the Test Build by using the command `npm run ng:serve:test` to further develop mock services and debug E2E Tests.
 
+## Troubleshooting conflicts between the versions of the browser and browser driver
+
+If tests fail on your machine due to mismatches between the versions of the browser and the browser driver, you can use the [`webdriver-manager`](https://github.com/angular/webdriver-manager#readme) tool to install the right version of the driver.  By default, running `webdriver-manager update` updates all drivers to the latest version, but particular versions can be specified as options.
+
 ## Protractor Configuration
+
+E2E Tests are run using [Protractor](http://www.protractortest.org/#/) testing framework.
 
 - Protractor primarily requires the `*.conf.js` files to define E2E Testing Environments (this includes Browser Details, Base URL, etc...)
 - The base configuration data is stored in `protractor.base.conf.js` which is then extended by separate configuration files for individual browsers as well as the CI/CD pipeline.
@@ -107,7 +109,7 @@ If tests fail on your machine due to mismatches between the versions of the brow
 
 ## How the E2E tests work
 
-E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/) testing framework with the following stages. 
+E2E Tests are run with the following stages:
 1. Build CATcher using `test` architecture
    - Using `test` build configuration located in `angular.json` under `projects.catcher.architect.configurations` we build a version of CATcher within a test environment that replaces `src/environments/environment.ts` with `src/environments/environment.test.ts` on runtime. This file provides data that allows CATcher to switch into "E2E test" mode.
 2. Provide Test Environment Information
