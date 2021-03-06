@@ -2,6 +2,7 @@ import { MatPaginator } from '@angular/material';
 import { Issue } from '../../core/models/issue.model';
 
 export function getPaginatedData(paginator: MatPaginator, data: Issue[]): Issue[] {
+    paginator.length = data.length;
     let startIndex = paginator.pageIndex * paginator.pageSize;
     const result = data.splice(startIndex, paginator.pageSize);
     if (result.length === 0) {
