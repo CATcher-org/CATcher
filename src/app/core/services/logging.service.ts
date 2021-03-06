@@ -19,7 +19,7 @@ export class LoggingService {
       this.logger = console;
     }
 
-    this.initializeLogCache();
+    this.initializeLogCache()
   }
 
   initializeLogCache() {
