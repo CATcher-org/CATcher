@@ -9,7 +9,7 @@ export class LoggingService {
   private logger: ElectronLog | Console;
   private readonly LOG_KEY = 'CATcher-Log';
   private readonly LOG_FILE_NAME = 'CATcher-log.txt';
-  private readonly LOG_START_HEADER = '====== Initializing CATcher Log ======'
+  private readonly LOG_START_HEADER = '====== Initializing CATcher Log ======';
   private readonly LOG_COUNT_LIMIT = 4;
 
   constructor(electronService: ElectronService) {
@@ -19,7 +19,7 @@ export class LoggingService {
       this.logger = console;
     }
 
-    this.initializeLogCache()
+    this.initializeLogCache();
   }
 
   initializeLogCache() {
@@ -37,25 +37,25 @@ export class LoggingService {
       .filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER))
       .length;
 
-    if(numberOfSessions < sessionCount) {
+    if (numberOfSessions < sessionCount) {
       return `${currentLog}\n${this.LOG_START_HEADER}`;
     }
 
     const seperatedSessionLogs: string[] = [''];
     currentLog.split('\n')
       .forEach((currentLogLine: string) => {
-        if(currentLogLine === this.LOG_START_HEADER) {
+        if (currentLogLine === this.LOG_START_HEADER) {
           seperatedSessionLogs.push(currentLogLine);
         } else {
           seperatedSessionLogs[seperatedSessionLogs.length - 1] += `\n${currentLogLine}`;
         }
       });
-    
+
     seperatedSessionLogs.push(this.LOG_START_HEADER);
     seperatedSessionLogs.splice(0, seperatedSessionLogs.length - sessionCount);
     return seperatedSessionLogs.reduce((mergedLog: string, currentSessionLog: string) => {
       return `${mergedLog}\n${currentSessionLog}`;
-    })
+    });
   }
 
   getCachedLog(): string {
