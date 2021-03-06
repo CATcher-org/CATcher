@@ -109,7 +109,7 @@ If tests fail on your machine due to mismatches between the versions of the brow
 
 E2E Tests are currently run using [Protractor](http://www.protractortest.org/#/) testing framework with the following stages. 
 1. Build CATcher using `test` architecture
-   - Using `test` build configuration located in `angular.json` under `projects.catcher.architect.configurations` we build a version of CATcher within a test environment that replaces `src/environments/environment.ts` with `src/environments/environment.test.ts` on runtime. This allows for the feeding of information into the application to differ its actions in comparison to the default / production environments.
+   - Using `test` build configuration located in `angular.json` under `projects.catcher.architect.configurations` we build a version of CATcher within a test environment that replaces `src/environments/environment.ts` with `src/environments/environment.test.ts` on runtime. This file provides data that allows CATcher to switch into "E2E test" mode.
 2. Provide Test Environment Information
    - The Test Environment (in `src/environments/environment.test.ts`) provides information such as,
      - Login Credentials (Username).
