@@ -87,7 +87,7 @@ The following additional parameters would allow for further customisation,
 
 | Additional Parameter | Description | Full Command Example |
 | :---: | :-----: | :-------: |
-| `--protractor-config=e2e/protractor.*.conf.js` | Allows substitution of the default configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
+| `--protractor-config=e2e/protractor.*.conf.js` | Allows selection of the Protractor configuration file | `npm run e2e -- --protractor-config=e2e/protractor.firefox.conf.js` |
 | `--suite=*` | Runs E2E Tests for specific suites | `npm run e2e -- --suite=login,bugReporting`
 
 ## Troubleshooting conflicts between the versions of the browser and browser driver
