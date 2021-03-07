@@ -27,7 +27,7 @@ export class AuthService {
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
-  state: string;
+  private state: string;
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -98,6 +98,10 @@ export class AuthService {
    */
   generateStateString() {
     this.state = uuid();
+  }
+
+  isReturnedStateSame(returnedState: string): boolean {
+    return returnedState === this.state;
   }
 
   /**
