@@ -106,7 +106,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     if (!this.authService.isReturnedStateSame(state)) {
       this.authService.changeAuthState(AuthState.NotAuthenticated);
-      this.errorHandlingService.handleError(this.errorHandlingService.stateErrorMessage);
       if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
         event.source.postMessage('close', AppConfig.origin);
       }

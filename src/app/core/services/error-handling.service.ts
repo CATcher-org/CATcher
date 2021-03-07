@@ -12,9 +12,6 @@ export const ERRORCODE_NOT_FOUND = 404;
   providedIn: 'root',
 })
 export class ErrorHandlingService {
-  stateErrorMessage: string = 'Incorrect state: Try again.\n' +
-  'To change account, please sign into the desired account from the official Github website:\n' +
-  'www.github.com';
 
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 

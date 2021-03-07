@@ -10,8 +10,6 @@ const BASE_URL = 'https://github.com';
 const ACCESS_TOKEN_URL = 'https://catcher-proxy.herokuapp.com/authenticate';
 const CALLBACK_URL = 'http://localhost:4200';
 
-const stateErrorMessage = 'Incorrect state: Try again.\n';
-
 let authWindow;
 
 /**
@@ -91,7 +89,6 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
       if (error !== undefined) {
         reject(error);
       } else if (!isReturnedStateSame(state, returnedState)) {
-        reject(new Error(stateErrorMessage));
       } else if (code) {
         resolve(code);
       }
