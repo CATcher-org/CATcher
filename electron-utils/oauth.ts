@@ -1,4 +1,5 @@
 import { BrowserWindow, shell } from 'electron';
+import { uuid } from '../src/app/shared/lib/uuid';
 
 const nodeUrl = require('url');
 const fetch = require('node-fetch');
@@ -8,6 +9,8 @@ const CLIENT_ID = '6750652c0c9001314434';
 const BASE_URL = 'https://github.com';
 const ACCESS_TOKEN_URL = 'https://catcher-proxy.herokuapp.com/authenticate';
 const CALLBACK_URL = 'http://localhost:4200';
+
+const stateErrorMessage = 'Incorrect state: Try again.\n';
 
 let authWindow;
 
@@ -36,7 +39,9 @@ export function getAccessToken(window: BrowserWindow, repoPermissionLevel: strin
  * @param repoPermissionLevel - The level of permission required to be granted by the user to use CATcher.
  */
 function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: string) {
-  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${repoPermissionLevel},read:user`);
+  let state: string;
+  state = generateStateString();
+  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${repoPermissionLevel},read:user&state=${state}`);
 
   return new Promise(function (resolve, reject) {
     const windowParams = {
@@ -81,10 +86,12 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
       const query = url_parts.query;
       const code = query.code;
       const error = query.error;
-      const state = query.state;
+      const returnedState = query.state;
 
-      if (error !== undefined && state !== undefined) {
+      if (error !== undefined) {
         reject(error);
+      } else if (!isReturnedStateSame(state, returnedState)) {
+        reject(new Error(stateErrorMessage));
       } else if (code) {
         resolve(code);
       }
@@ -96,4 +103,15 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
       });
     }
   });
+}
+
+/**
+ * Generates and assigns an unguessable random 'state' string to pass to Github for protection against cross-site request forgery attacks
+ */
+function generateStateString(): string {
+  return uuid();
+}
+
+function isReturnedStateSame(state: string, returnedState: string): boolean {
+  return state === returnedState;
 }
