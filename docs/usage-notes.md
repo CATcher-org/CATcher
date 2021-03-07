@@ -1,5 +1,5 @@
 - [Get Started](#get-started)
-  - [Format of `profiles.json`](#format-of-profiles.json)
+  - [Format of `profiles.json`](#format-of-profilesjson)
 - [Notes on Using the Desktop App](#notes-on-using-the-desktop-app)
   - [For Windows Users](#for-windows-users)
   - [For Mac Users](#for-mac-users)
