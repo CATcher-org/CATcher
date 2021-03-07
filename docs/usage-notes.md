@@ -44,7 +44,7 @@ The json supplied should only consist of **one key-pair value**, where the key i
 
 `profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your custom session. 
 
-> **Note**: You **must** have both of these fields in each `Profile` and no extra unnecessary fields! Else, the `profile.json` file that you have supplied will not be parsed successfully. 
+> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `profile.json` file that you have supplied will not be parsed successfully. 
 
 # Notes on Using the Desktop App
 ## For Windows Users
