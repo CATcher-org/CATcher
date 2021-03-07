@@ -1,5 +1,5 @@
 import { BrowserWindow, shell } from 'electron';
-import { uuid } from '../src/app/shared/lib/uuid';
+import { v4 as uuid } from 'uuid';
 
 const nodeUrl = require('url');
 const fetch = require('node-fetch');
