@@ -88,8 +88,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
 
       if (error !== undefined) {
         reject(error);
-      } else if (!isReturnedStateSame(state, returnedState)) {
-      } else if (code) {
+      } else if (isReturnedStateSame(state, returnedState) && code) {
         resolve(code);
       }
       setImmediate(function () {
