@@ -1,4 +1,5 @@
 - [Get Started](#get-started)
+  - [Format of `profiles.json`](#format-of-profiles.json)
 - [Notes on Using the Desktop App](#notes-on-using-the-desktop-app)
   - [For Windows Users](#for-windows-users)
   - [For Mac Users](#for-mac-users)
@@ -21,6 +22,28 @@ Start the desktop app by clicking on the executable file; no installation is req
 Once the app is launched (either web or desktop version), it will prompt you to enter the session you are participating in, using a dropdown.
 
 ![session_select](https://imgur.com/nBOy7zH.png)
+
+## Format of `profiles.json` 
+
+You can choose to load other repositories supplied by clicking on the file icon. 
+
+Following which, submit a json file with the name `profiles.json`, where the format is specified below.
+
+```json
+{
+    "profiles": [
+        {
+            "profileName": "CATcher", 
+            "encodedText": "CATcher-org/public_data"
+        }
+    ]
+}
+```
+
+The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles` supplied, where each `Profile` is an object containing the `profileName` and `encodedText` fields. 
+
+> **Note**: `profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your CATcher session. 
+
 
 # Notes on Using the Desktop App
 ## For Windows Users
