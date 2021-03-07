@@ -25,7 +25,7 @@ Once the app is launched (either web or desktop version), it will prompt you to 
 
 ## Format of `profiles.json` 
 
-You can choose to load other repositories supplied by clicking on the file icon. 
+You can choose to load other repositories supplied by clicking on the **file icon** beside the session dropdown. 
 
 Following which, submit a json file with the name `profiles.json`, where the format is specified below.
 
@@ -42,8 +42,9 @@ Following which, submit a json file with the name `profiles.json`, where the for
 
 The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles` supplied, where each `Profile` is an object containing the `profileName` and `encodedText` fields. 
 
-> **Note**: `profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your CATcher session. 
+`profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your CATcher session. 
 
+> **Note**: You **must** have both of these fields in each `Profile` and no extra unnecessary fields! Else, the `profile.json` file that you have supplied will not be parsed successfully. 
 
 # Notes on Using the Desktop App
 ## For Windows Users
