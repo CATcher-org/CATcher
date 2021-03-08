@@ -70,6 +70,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
+    const state = this.activatedRoute.snapshot.queryParamMap.get('state');
 
     if (this.authService.isAuthenticated()) {
       this.router.navigate([this.phaseService.currentPhase]);
@@ -77,7 +78,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     if (oauthCode) { // In the web's oauth window
-      window.opener.postMessage({ oauthCode }, AppConfig.origin);
+      window.opener.postMessage({ oauthCode, state }, AppConfig.origin);
       this.listenForCloseOAuthWindowMessage();
     } else { // In the main app window
       this.checkAppIsOutdated();
@@ -96,11 +97,17 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (event.origin !== AppConfig.origin) {
       return;
     }
-    const { oauthCode } = event.data;
+
+    const { oauthCode, state } = event.data;
 
     if (!oauthCode) {
+        return;
+    }
+
+    if (!this.authService.isReturnedStateSame(state)) {
       return;
     }
+
     const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
     fetch(accessTokenUrl).then(res => res.json())
       .then(data => {
