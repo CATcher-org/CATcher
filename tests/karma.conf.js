@@ -31,11 +31,11 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     browsers: ['HeadlessChrome'],
-    customLaunchers:{
-        HeadlessChrome:{
-            base: 'ChromeHeadless',
-            flags: ['--no-sandbox']
-        }
+    customLaunchers: {
+      HeadlessChrome: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
     },
     singleRun: true
   });
