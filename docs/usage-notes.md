@@ -25,7 +25,7 @@ Once the app is launched (either web or desktop version), it will prompt you to 
 
 ## Format of `profiles.json` 
 
-You can choose to load your custom sessions by clicking on the **file icon** beside the session dropdown. 
+If your sessions are not present in the default dropdown list on CATcher's startup page, you can load custom sessions by clicking on the **file icon** beside the session dropdown. 
 
 Following which, submit a json file with the name `profiles.json`, where the format is specified below.
 
