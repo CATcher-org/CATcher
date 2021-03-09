@@ -64,7 +64,6 @@ describe('RepoCreatorService', () => {
     });
 
     it('should throw an error if permissions, but wrong phase were given', () => {
-      userService.currentUser = USER_JUNWEI;
       of(true)
         .pipe(repoCreatorService.attemptRepoCreation(Phase.phaseModeration, PHASE_REPO))
         .subscribe({
