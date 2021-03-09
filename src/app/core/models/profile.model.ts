@@ -17,4 +17,4 @@ const profileSchema: Schema = {
   encodedText: { required: true, validate: (value) => !!value }
 };
 
-export const isValidProfile = (profile: Profile) => isValidObject(profile, profileSchema)
+export const isValidProfile = (profile: Profile) => isValidObject(profile, profileSchema);
