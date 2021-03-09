@@ -6,6 +6,12 @@ import { UserService } from './user.service';
 import { Phase } from '../models/phase.model';
 import { UserRole } from '../models/user.model';
 
+export const MISSING_REQUIRED_REPO = 'You cannot proceed without the required repository.';
+export const CURRENT_PHASE_REPO_CLOSED = 'Current Phase\'s Repository has not been opened.';
+export const BUG_REPORTING_INVALID_ROLE =
+  "'Bug-Reporting Phase\'s repository initialisation is only available to Students.'";
+
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,7 +36,7 @@ export class RepoCreatorService {
         } else if (sessionFixPermission) {
           return this.attemptSessionAvailabilityFix(currentPhase, phaseRepo);
         } else {
-          throw new Error('You cannot proceed without the required repository.');
+          throw new Error(MISSING_REQUIRED_REPO);
         }
       })
     );
@@ -66,9 +72,9 @@ export class RepoCreatorService {
   */
  private attemptSessionAvailabilityFix(currentPhase: Phase, phaseRepo: string): Observable<any> {
    if (currentPhase !== Phase.phaseBugReporting) {
-     throw new Error('Current Phase\'s Repository has not been opened.');
+     throw new Error(CURRENT_PHASE_REPO_CLOSED);
    } else if (currentPhase === Phase.phaseBugReporting && this.userService.currentUser.role !== UserRole.Student) {
-     throw new Error('Bug-Reporting Phase\'s repository initialisation is only available to Students.');
+     throw new Error(BUG_REPORTING_INVALID_ROLE);
    }
    this.githubService.createRepository(phaseRepo);
 
