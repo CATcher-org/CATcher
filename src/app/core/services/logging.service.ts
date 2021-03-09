@@ -7,7 +7,7 @@ import { ElectronLog } from 'electron-log';
 })
 export class LoggingService {
   private logger: ElectronLog | Console;
-  private isInSession: boolean = false;
+  private isInSession = false;
   private readonly LOG_KEY = 'CATcher-Log';
   private readonly LOG_FILE_NAME = 'CATcher-log.txt';
   private readonly LOG_START_HEADER = '====== New CATcher Session Log ======';
