@@ -1,4 +1,4 @@
-import { Profile } from "../app/core/models/profile.model";
+import { Profile } from '../app/core/models/profile.model';
 
 const BaseConfig = {
   githubUrl: 'https://github.com',
