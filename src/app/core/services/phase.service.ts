@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 import { Phase } from '../models/phase.model';
 import { throwIfFalse } from '../../shared/lib/custom-ops';
+import { RepoCreatorService } from './repo-creator.service';
 
 export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.';
 
@@ -43,6 +44,7 @@ export class PhaseService {
               private githubService: GithubService,
               private labelService: LabelService,
               private userService: UserService,
+              private repoCreatorService: RepoCreatorService,
               public phaseFixConfirmationDialog: MatDialog) {}
   /**
    * Stores the location of the repositories belonging to
@@ -193,15 +195,7 @@ export class PhaseService {
           throw new Error('You cannot proceed without the required repository.');
         }
       }),
-      flatMap((isFixAttempted: boolean | null) => {
-        if (isFixAttempted === null) {
-          // If no fix has been attempted, there is no need to verify fix outcome.
-          return of(true);
-        } else if (isFixAttempted === true) {
-          // Verify that Repository has been created if a fix attempt has occurred.
-          return this.verifySessionAvailability(this.sessionData);
-        }
-      }),
+      this.repoCreatorService.verifyRepoCreation(this.getPhaseOwner(this.currentPhase), this.sessionData[this.currentPhase]),
       throwIfFalse(
         (isSessionCreated: boolean) => isSessionCreated,
         () => new Error(SESSION_AVALIABILITY_FIX_FAILED)),
