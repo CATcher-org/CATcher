@@ -22,7 +22,7 @@ export class RepoCreatorService {
   ) {}
 
   /**
-   * Attempted to create the repository if permissions have been given to do so.
+   * Attempts to create the repository if permissions have been given to do so.
    * @param currentPhase the current phase of the session.
    * @param phaseRepo the name of the specified repository.
    */

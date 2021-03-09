@@ -1,8 +1,13 @@
-import { MISSING_REQUIRED_REPO, RepoCreatorService } from '../../src/app/core/services/repo-creator.service';
+import {
+  BUG_REPORTING_INVALID_ROLE,
+  CURRENT_PHASE_REPO_CLOSED,
+  MISSING_REQUIRED_REPO,
+  RepoCreatorService
+} from '../../src/app/core/services/repo-creator.service';
 import { of } from 'rxjs';
 import { UserService } from '../../src/app/core/services/user.service';
 import { Phase } from '../../src/app/core/models/phase.model';
-import { USER_JUNWEI } from '../constants/data.constants';
+import { USER_JUNWEI, USER_Q } from '../constants/data.constants';
 
 const PHASE_OWNER = 'CATcher-org';
 const PHASE_REPO = 'bugreporting';
@@ -39,7 +44,18 @@ describe('RepoCreatorService', () => {
       expect(githubService.createRepository).not.toHaveBeenCalled();
     });
 
-    it('should create the repository if permissions were given', () => {
+    it('should throw an error if no permissions were given', () => {
+      of(false)
+        .pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO))
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(MISSING_REQUIRED_REPO))
+        });
+
+      expect(githubService.createRepository).not.toHaveBeenCalled();
+    });
+
+    it('should create the repository if permissions, correct phase and correct user role were given', () => {
       userService.currentUser = USER_JUNWEI;
       githubService.createRepository.and.callFake(() => of(true));
       of(true).pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO)).subscribe();
@@ -47,12 +63,25 @@ describe('RepoCreatorService', () => {
       expect(githubService.createRepository).toHaveBeenCalledWith(PHASE_REPO);
     });
 
-    it('should throw an error if no permissions were given', () => {
-      of(false)
+    it('should throw an error if permissions, but wrong phase were given', () => {
+      userService.currentUser = USER_JUNWEI;
+      of(true)
+        .pipe(repoCreatorService.attemptRepoCreation(Phase.phaseModeration, PHASE_REPO))
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(CURRENT_PHASE_REPO_CLOSED))
+        });
+
+      expect(githubService.createRepository).not.toHaveBeenCalled();
+    });
+
+    it('should throw an error if permissions, correct phase, but wrong user role were given', () => {
+      userService.currentUser = USER_Q;
+      of(true)
         .pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO))
         .subscribe({
           next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(MISSING_REQUIRED_REPO))
+          error: (err) => expect(err).toEqual(new Error(BUG_REPORTING_INVALID_ROLE))
         });
 
       expect(githubService.createRepository).not.toHaveBeenCalled();
