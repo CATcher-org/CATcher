@@ -10,6 +10,9 @@ export interface Profile {
 
 /**
  * Schema for validating profiles.json entries
+ * 
+ * Profile must have a profileName and encodedText field,
+ * both of which cannot be empty strings.
  */
 
 const profileSchema: Schema = {

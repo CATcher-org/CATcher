@@ -9,7 +9,7 @@ import {
   transition
 } from '@angular/animations';
 import { AppConfig } from '../../../environments/environment';
-import { Profile, isValidProfile } from 'src/app/core/models/profile.model';
+import { Profile, isValidProfile } from '../../core/models/profile.model';
 
 @Component({
   selector: 'app-profiles',
