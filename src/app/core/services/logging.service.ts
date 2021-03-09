@@ -7,9 +7,10 @@ import { ElectronLog } from 'electron-log';
 })
 export class LoggingService {
   private logger: ElectronLog | Console;
+  private isInSession: boolean = false;
   private readonly LOG_KEY = 'CATcher-Log';
   private readonly LOG_FILE_NAME = 'CATcher-log.txt';
-  private readonly LOG_START_HEADER = '====== Initializing CATcher Log ======';
+  private readonly LOG_START_HEADER = '====== New CATcher Session Log ======';
   private readonly LOG_COUNT_LIMIT = 4;
 
   constructor(electronService: ElectronService) {
@@ -19,7 +20,22 @@ export class LoggingService {
       this.logger = console;
     }
 
-    this.initializeLogCache();
+    this.startSession();
+  }
+
+  reset() {
+    this.isInSession = false;
+  }
+
+  /**
+   * Configures loggging Session if Logging Service is not
+   * in session.
+   */
+  startSession() {
+    if (!this.isInSession) {
+      this.isInSession = true;
+      this.initializeLogCache();
+    }
   }
 
   initializeLogCache() {
@@ -32,30 +48,25 @@ export class LoggingService {
    * @param sessionCount The number of Session Logs to preserve in the cache
    */
   getTrimmedLogCache(currentLog: string, sessionCount: number): string {
+    const sessionLogSeparator: string = '\n'.repeat(2); // More new-lines added for clarity.
+
     // Check if Trimming is Necessary
     const numberOfSessions: number = currentLog == null ? 0 : currentLog.split('\n')
       .filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER))
       .length;
 
     if (numberOfSessions < sessionCount) {
-      return `${currentLog}\n${this.LOG_START_HEADER}`;
+      return `${numberOfSessions ? `${currentLog}${sessionLogSeparator}` : ''}${this.LOG_START_HEADER}`;
     }
 
-    const seperatedSessionLogs: string[] = [''];
-    currentLog.split('\n')
-      .forEach((currentLogLine: string) => {
-        if (currentLogLine === this.LOG_START_HEADER) {
-          seperatedSessionLogs.push(currentLogLine);
-        } else {
-          seperatedSessionLogs[seperatedSessionLogs.length - 1] += `\n${currentLogLine}`;
-        }
-      });
+    const separatedSessionLogs: string[] = currentLog.split(`${this.LOG_START_HEADER}`)
+      .filter((line: string) => !!line)
+      .map((line: string) => `${this.LOG_START_HEADER}\n${line.trim()}`);
 
-    seperatedSessionLogs.push(this.LOG_START_HEADER);
-    seperatedSessionLogs.splice(0, seperatedSessionLogs.length - sessionCount);
-    return seperatedSessionLogs.reduce((mergedLog: string, currentSessionLog: string) => {
-      return `${mergedLog}\n${currentSessionLog}`;
-    });
+    separatedSessionLogs.splice(0, separatedSessionLogs.length - sessionCount + 1);
+    separatedSessionLogs.push(this.LOG_START_HEADER);
+
+    return separatedSessionLogs.join(sessionLogSeparator);
   }
 
   getCachedLog(): string {

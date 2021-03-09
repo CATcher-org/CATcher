@@ -62,6 +62,7 @@ export class AuthService {
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
+    this.logger.reset();
     this.setLandingPageTitle();
     this.issueService.setIssueTeamFilter('All Teams');
     this.reset();
@@ -87,6 +88,7 @@ export class AuthService {
     if (newAuthState === AuthState.Authenticated) {
       const sessionId = generateSessionId();
       this.issueService.setSessionId(sessionId);
+      this.logger.startSession();
       this.logger.info(`Successfully authenticated with session: ${sessionId}`);
     }
     this.authStateSource.next(newAuthState);
