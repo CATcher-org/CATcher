@@ -1,25 +1,13 @@
 import { of } from 'rxjs';
-import { NO_ACCESSIBLE_PHASES, SessionData } from '../../src/app/core/models/session.model';
+import { NO_ACCESSIBLE_PHASES } from '../../src/app/core/models/session.model';
 import { PhaseService } from '../../src/app/core/services/phase.service';
 import { Phase } from '../../src/app/core/models/phase.model';
-
-const moderationPhaseSettingsFile: {} = {
-  openPhases: [Phase.phaseModeration],
-  [Phase.phaseBugReporting]: 'bugreporting',
-  [Phase.phaseTeamResponse]: 'pe-results',
-  [Phase.phaseTesterResponse]: 'testerresponse',
-  [Phase.phaseModeration]: 'pe-evaluation'
-};
-
-const invalidPhasesSettingsFile: {} = {
-  ...moderationPhaseSettingsFile,
-  openPhases: []
-};
-
-const multipleOpenPhasesSettingsFile: {} = {
-  ...moderationPhaseSettingsFile,
-  openPhases: [Phase.phaseBugReporting, Phase.phaseTeamResponse]
-};
+import {
+  BUG_REPORTING_PHASE_SESSION_DATA,
+  MODERATION_PHASE_SESSION_DATA,
+  MULTIPLE_OPEN_PHASES_SESSION_DATA,
+  NO_OPEN_PHASES_SESSION_DATA
+} from '../constants/session.constants';
 
 let phaseService: PhaseService;
 let githubService: any;
@@ -27,26 +15,26 @@ let githubService: any;
 describe('PhaseService', () => {
   beforeEach(() => {
     githubService = jasmine.createSpyObj('GithubService', ['fetchSettingsFile', 'storePhaseDetails']);
-    phaseService = new PhaseService(null, githubService, null, null, null);
+    phaseService = new PhaseService(null, githubService, null, null, null, null);
   });
 
   describe('.storeSessionData()', () => {
     it('should return an Observable of true if an openPhase is defined', () => {
-      githubService.fetchSettingsFile.and.returnValue(of(moderationPhaseSettingsFile));
+      githubService.fetchSettingsFile.and.returnValue(of(BUG_REPORTING_PHASE_SESSION_DATA));
       phaseService.storeSessionData().subscribe((result: boolean) => {
         expect(result).toBeTrue();
       });
     });
 
     it('should return an Observable of true if multiple openPhases are defined', () => {
-      githubService.fetchSettingsFile.and.returnValue(of(multipleOpenPhasesSettingsFile));
+      githubService.fetchSettingsFile.and.returnValue(of(MULTIPLE_OPEN_PHASES_SESSION_DATA));
       phaseService.storeSessionData().subscribe((result: boolean) => {
         expect(result).toBeTrue();
       });
     });
 
     it('should throw an error if no openPhases are defined', () => {
-      githubService.fetchSettingsFile.and.returnValue(of(invalidPhasesSettingsFile));
+      githubService.fetchSettingsFile.and.returnValue(of(NO_OPEN_PHASES_SESSION_DATA));
       phaseService.storeSessionData().subscribe({
         next: () => fail(),
         error: (err) => expect(err).toEqual(new Error(NO_ACCESSIBLE_PHASES))
@@ -56,16 +44,13 @@ describe('PhaseService', () => {
 
   describe('.githubRepoPermissionLevel()', () => {
     it('should return "repo" if phaseModeration is included in openPhases', () => {
-      phaseService.sessionData = moderationPhaseSettingsFile as SessionData;
+      phaseService.sessionData = MODERATION_PHASE_SESSION_DATA;
       expect(phaseService.sessionData.openPhases).toContain(Phase.phaseModeration);
       expect(phaseService.githubRepoPermissionLevel()).toEqual('repo');
     });
 
     it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
-      phaseService.sessionData = {
-        ...moderationPhaseSettingsFile,
-        openPhases: []
-      } as SessionData;
+      phaseService.sessionData = NO_OPEN_PHASES_SESSION_DATA;
       expect(phaseService.sessionData.openPhases).not.toContain(Phase.phaseModeration);
       expect(phaseService.githubRepoPermissionLevel()).toEqual('public_repo');
     });
