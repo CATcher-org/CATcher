@@ -19,14 +19,15 @@ import { Profile, isValidProfile } from 'src/app/core/models/profile.model';
     // animation triggers go here
     trigger('triggerFileInput', [
       state('normal', style({})),
-      state(
-        'pressed',
-        style({
-          color: 'orange'
-        })
-      ),
-      transition('normal => pressed', [animate('0.25s ease')]),
-      transition('pressed => normal', [animate('0.25s ease')])
+      state('pressed', style({
+        color: 'orange'
+      })),
+      transition('normal => pressed', [
+        animate('0.25s ease')
+      ]),
+      transition('pressed => normal', [
+        animate('0.25s ease')
+      ])
     ])
   ]
 })
@@ -34,7 +35,7 @@ export class ProfilesComponent implements OnInit {
   private readonly ANIMATION_DURATION: number = 250;
 
   profiles: Profile[] = []; // List of profiles taken from profiles.json
-  blankProfile: Profile = { profileName: '', encodedText: '' }; // A blank profile to reset values
+  blankProfile: Profile = {profileName: '', encodedText: ''}; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
@@ -46,7 +47,7 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog) {}
+  constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
     this.initProfiles();
@@ -93,7 +94,9 @@ export class ProfilesComponent implements OnInit {
    * Processes available Profiles information from application's configuration.
    */
   initProfiles(): void {
-    this.profiles = this.profiles.concat(AppConfig.profiles).filter((p) => !!p);
+    this.profiles = this.profiles
+      .concat(AppConfig.profiles)
+      .filter((p) => !!p);
   }
 
   /**
