@@ -1,15 +1,18 @@
 import { RepoCreatorService } from '../../src/app/core/services/repo-creator.service';
 import { of } from 'rxjs';
+import { UserService } from '../../src/app/core/services/user.service';
 
 const PHASE_OWNER = 'CATcher-org';
 const PHASE_REPO = 'bugreporting';
 let repoCreatorService: RepoCreatorService;
 let githubService: any;
+let userService: UserService;
 
 describe('RepoCreatorService', () => {
   beforeEach(() => {
+    userService = new UserService(null, null);
     githubService = jasmine.createSpyObj('GithubService', ['isRepositoryPresent']);
-    repoCreatorService = new RepoCreatorService(githubService);
+    repoCreatorService = new RepoCreatorService(githubService, userService);
   });
 
   describe('.verifyRepoCreation()', () => {

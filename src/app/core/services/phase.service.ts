@@ -5,7 +5,6 @@ import { Observable, of, pipe } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
-import { UserRole } from '../models/user.model';
 import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
 import { MatDialog } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
@@ -109,27 +108,6 @@ export class PhaseService {
   }
 
   /**
-   * If a Session is unavailable (because the repository is missing) attempt to create IF it is
-   * the BugReporting Phase
-   * @param sessionData - SessionData containing repository information.
-   * @return - Dummy Observable to give the API sometime to propagate the creation of the new repository since
-   *           the API Call used here does not return any response.
-   */
-  attemptSessionAvailabilityFix(sessionData: SessionData): Observable<any> {
-    if (this.currentPhase !== Phase.phaseBugReporting) {
-      throw new Error('Current Phase\'s Repository has not been opened.');
-    } else if (this.currentPhase === Phase.phaseBugReporting && this.userService.currentUser.role !== UserRole.Student) {
-      throw new Error('Bug-Reporting Phase\'s repository initialisation is only available to Students.');
-    }
-    this.githubService.createRepository(sessionData[this.currentPhase]);
-
-    return new Observable(subscriber => {
-      setTimeout(() => subscriber.next(true), 1000);
-    });
-  }
-
-
-  /**
    * Stores session data and sets current session's phase.
    * @param sessionData
    */
@@ -185,16 +163,7 @@ export class PhaseService {
         }
       }),
       cacheSessionFixPermission(),
-      flatMap((sessionFixPermission: boolean | null) => {
-        if (sessionFixPermission === null) {
-          // No Session Fix Necessary
-          return of(null);
-        } if (sessionFixPermission === true) {
-          return this.attemptSessionAvailabilityFix(this.sessionData);
-        } else {
-          throw new Error('You cannot proceed without the required repository.');
-        }
-      }),
+      this.repoCreatorService.attemptRepoCreation(this.currentPhase, this.sessionData[this.currentPhase]),
       this.repoCreatorService.verifyRepoCreation(this.getPhaseOwner(this.currentPhase), this.sessionData[this.currentPhase]),
       throwIfFalse(
         (isSessionCreated: boolean) => isSessionCreated,
