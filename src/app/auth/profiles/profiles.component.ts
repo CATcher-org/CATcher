@@ -1,26 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition
+} from '@angular/animations';
 import { AppConfig } from '../../../environments/environment';
-import { Schema, isValidObject } from '../../shared/lib/validate';
-
-/**
- * Indicates all the elements that make up a Profile.
- */
-export interface Profile {
-  profileName: string;
-  encodedText: string;
-}
-
-/**
- * Schema for validating profiles.json entries
- */
-
-const profileSchema: Schema = {
-  profileName: { required: true, validate: (value) => !!value },
-  encodedText: { required: true, validate: (value) => !!value }
-};
+import { Profile, isValidProfile } from 'src/app/core/models/profile.model';
 
 @Component({
   selector: 'app-profiles',
@@ -87,7 +76,7 @@ export class ProfilesComponent implements OnInit {
       if (!(reader.result instanceof ArrayBuffer)) {
         try {
           const { profiles } = JSON.parse(reader.result);
-          if (!profiles.every((profile) => isValidObject(profile, profileSchema))) {
+          if (!profiles.every(isValidProfile)) {
             throw new Error('profiles.json is malformed');
           }
           this.profiles = profiles.concat(AppConfig.profiles).filter((p) => !!p);
@@ -119,7 +108,7 @@ export class ProfilesComponent implements OnInit {
    * @param profile - Profile selected by user.
    */
   selectProfile(profile: Profile): void {
-    if (profile === this.blankProfile || isValidObject(profile, profileSchema)) {
+    if (profile === this.blankProfile || isValidProfile(profile)) {
       this.selectedProfileEmitter.emit(profile);
     } else {
       this.openErrorDialog();
