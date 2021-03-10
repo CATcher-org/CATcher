@@ -10,8 +10,8 @@ export class LoggingService {
   private isInSession = false;
   private readonly LOG_KEY = 'CATcher-Log';
   private readonly LOG_FILE_NAME = 'CATcher-log.txt';
-  private readonly LOG_START_HEADER = '====== New CATcher Session Log ======';
-  private readonly LOG_COUNT_LIMIT = 4;
+  public readonly LOG_START_HEADER = '====== New CATcher Session Log ======';
+  public readonly LOG_COUNT_LIMIT = 4;
 
   constructor(electronService: ElectronService) {
     if (electronService.isElectron()) {
