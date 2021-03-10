@@ -7,6 +7,7 @@ import { ElectronService } from '../../core/services/electron.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const MAX_UPLOAD_SIZE = 10000000; // 10MB
+const MAX_VIDEO_UPLOAD_SIZE = 2000000; // 2MB
 
 @Component({
   selector: 'app-comment-editor',
@@ -127,6 +128,11 @@ export class CommentEditorComponent implements OnInit {
 
     if (file.size >= MAX_UPLOAD_SIZE) {
       this.handleUploadError('Oops, file is too big. Keep it under 10MB.', insertedText);
+      return;
+    }
+
+    if (this.uploadService.isVideoFile(filename) && file.size >= MAX_VIDEO_UPLOAD_SIZE) {
+      this.handleUploadError('Oops, video is too big. Keep it under 2MB.', insertedText);
       return;
     }
 
