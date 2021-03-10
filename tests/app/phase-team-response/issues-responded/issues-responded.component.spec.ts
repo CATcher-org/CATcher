@@ -19,46 +19,46 @@ describe('IssuesRespondedComponent', () => {
     issuesRespondedComponent.ngOnInit();
 
     beforeEach(() => {
-        dummyIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, DUMMY_TEAM);
-        issueService.updateLocalStore(dummyIssue);
+      dummyIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, DUMMY_TEAM);
+      issueService.updateLocalStore(dummyIssue);
     });
 
     it('should set filter to return false for a non-duplicate issue with no team response and not marked done', () => {
-        dummyIssue.duplicateOf = undefined;
-        dummyIssue.status = undefined;
-        issueService.issues[dummyIssue.id].teamResponse = undefined;
+      dummyIssue.duplicateOf = undefined;
+      dummyIssue.status = undefined;
+      dummyIssue.teamResponse = undefined;
 
-        expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
+      expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
 
     it('should set filter to return false for a non-duplicate issue with responses and not marked done', () => {
-        dummyIssue.duplicateOf = undefined;
-        dummyIssue.status = undefined;
-        issueService.issues[dummyIssue.id].teamResponse = DUMMY_RESPONSE;
+      dummyIssue.duplicateOf = undefined;
+      dummyIssue.status = undefined;
+      dummyIssue.teamResponse = DUMMY_RESPONSE;
 
-        expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
+      expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
 
     it('should set filter to return false for a duplicate issue with no team response and not marked done', () => {
-        dummyIssue.duplicateOf = DUMMY_DUPLICATE_ISSUE_ID;
-        dummyIssue.status = undefined;
-        issueService.issues[dummyIssue.id].teamResponse = undefined;
+      dummyIssue.duplicateOf = DUMMY_DUPLICATE_ISSUE_ID;
+      dummyIssue.status = undefined;
+      dummyIssue.teamResponse = undefined;
 
-        expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
+      expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
 
-        dummyIssue.duplicateOf = DUMMY_DUPLICATE_ISSUE_ID;
-        dummyIssue.status = STATUS.Incomplete;
-        issueService.issues[dummyIssue.id].teamResponse = undefined;
+      dummyIssue.duplicateOf = DUMMY_DUPLICATE_ISSUE_ID;
+      dummyIssue.status = STATUS.Incomplete;
+      dummyIssue.teamResponse = undefined;
 
-        expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
+      expect(issuesRespondedComponent.filter(dummyIssue)).toBeFalse();
     });
 
     it('should set filter to return true for a non-duplicate issue that is marked done with a team response', () => {
-        dummyIssue.duplicateOf = undefined;
-        dummyIssue.status = STATUS.Done;
-        issueService.issues[dummyIssue.id].teamResponse = DUMMY_RESPONSE;
+      dummyIssue.duplicateOf = undefined;
+      dummyIssue.status = STATUS.Done;
+      dummyIssue.teamResponse = DUMMY_RESPONSE;
 
-        expect(issuesRespondedComponent.filter(dummyIssue)).toBeTrue();
+      expect(issuesRespondedComponent.filter(dummyIssue)).toBeTrue();
     });
   });
 });
