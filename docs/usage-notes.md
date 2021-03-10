@@ -60,7 +60,7 @@ There are 2 methods to achieve this:
 
 If your sessions are not present in the default dropdown list on CATcher's startup page, you can load custom sessions by clicking on the **file icon** beside the session dropdown. 
 
-Following which, submit a json file with the name `profiles.json`, where the format is specified below.
+Following which, submit a file with the `.json` file extension, where the format is specified below.
 
 ```json
 {
@@ -75,9 +75,9 @@ Following which, submit a json file with the name `profiles.json`, where the for
 
 The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles`, where each `Profile` is an object containing the `profileName` and `encodedText` fields. 
 
-`profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your custom session. 
+`profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your custom session. The `encodedText` will be in the format of `organisation/repository`.
 
-> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `profile.json` file that you have supplied will not be parsed successfully. 
+> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `.json` file that you have supplied will not be parsed successfully. F 
 
 # Reporting problems in using CATcher
 If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs. 
