@@ -1,24 +1,26 @@
-import { LoggingService } from "../../src/app/core/services/logging.service";
+import { LoggingService } from '../../src/app/core/services/logging.service';
 
 let loggingService: LoggingService;
-const getFilteredLogCount: (currentLog: string, predicate: (line: string) => boolean) => number = (currentLog: string, predicate: (line :string) => boolean) => loggingService
-  .getTrimmedLogCache(currentLog, loggingService.LOG_COUNT_LIMIT)
-  .split('\n')
-  .filter((line: string) => predicate(line))
-  .length;
+const getFilteredLogCount: (currentLog: string, predicate: (line: string) => boolean) => number = (
+  currentLog: string,
+  predicate: (line: string) => boolean
+) =>
+  loggingService
+    .getTrimmedLogCache(currentLog, loggingService.LOG_COUNT_LIMIT)
+    .split('\n')
+    .filter((line: string) => predicate(line)).length;
 const oldLogIdentifier = 'Old Log';
 const repeatLogStartHeader: (numberOfRepitions: number) => string = (numberofRepitions: number) => {
-  return `${loggingService.LOG_START_HEADER}\n${oldLogIdentifier}\n`.repeat(numberofRepitions)
+  return `${loggingService.LOG_START_HEADER}\n${oldLogIdentifier}\n`.repeat(numberofRepitions);
 };
 const logHeaderFilter: (line: string) => boolean = (line: string) => line === loggingService.LOG_START_HEADER;
 const oldLogFilter: (line: string) => boolean = (line: string) => line === oldLogIdentifier;
 
-
 describe('LoggingService', () => {
   beforeAll(() => {
-      const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
-      electronService.isElectron = jasmine.createSpy('isElectron', () => false);
-      loggingService = new LoggingService(electronService);
+    const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
+    electronService.isElectron = jasmine.createSpy('isElectron', () => false);
+    loggingService = new LoggingService(electronService);
   });
 
   describe('.getTrimmedLogCache()', () => {
@@ -31,7 +33,7 @@ describe('LoggingService', () => {
     it('should return additional logs if cache contains existing log', () => {
       let logCounter = 1;
 
-      while(logCounter < loggingService.LOG_COUNT_LIMIT) {
+      while (logCounter < loggingService.LOG_COUNT_LIMIT) {
         expect(getFilteredLogCount(repeatLogStartHeader(logCounter), logHeaderFilter)).toEqual(logCounter + 1);
         logCounter += 1;
       }
@@ -39,24 +41,24 @@ describe('LoggingService', () => {
 
     it('should return updated log if log in cache contains max number of sessions', () => {
       // Number of logs must stay the same
-      expect(getFilteredLogCount(repeatLogStartHeader(loggingService.LOG_COUNT_LIMIT), logHeaderFilter))
-        .toEqual(loggingService.LOG_COUNT_LIMIT);
+      expect(getFilteredLogCount(repeatLogStartHeader(loggingService.LOG_COUNT_LIMIT), logHeaderFilter)).toEqual(
+        loggingService.LOG_COUNT_LIMIT
+      );
 
       // Number of Old Logs must be reduced by 1 (To make way for the new session log)
-      expect(getFilteredLogCount(repeatLogStartHeader(loggingService.LOG_COUNT_LIMIT), oldLogFilter))
-        .toEqual(loggingService.LOG_COUNT_LIMIT - 1);
+      expect(getFilteredLogCount(repeatLogStartHeader(loggingService.LOG_COUNT_LIMIT), oldLogFilter)).toEqual(
+        loggingService.LOG_COUNT_LIMIT - 1
+      );
     });
 
     it('should return trimmed and updated log if log in cache exceeds max number of sessions', () => {
       const exceededSessionCount = loggingService.LOG_COUNT_LIMIT + 10; // Arbitrary Exceed Count
 
       // Number of logs must be at max number
-      expect(getFilteredLogCount(repeatLogStartHeader(exceededSessionCount), logHeaderFilter))
-        .toEqual(loggingService.LOG_COUNT_LIMIT);
+      expect(getFilteredLogCount(repeatLogStartHeader(exceededSessionCount), logHeaderFilter)).toEqual(loggingService.LOG_COUNT_LIMIT);
 
       // Number of Old Logs must be Max - 1 (To make way for the new session log)
-      expect(getFilteredLogCount(repeatLogStartHeader(exceededSessionCount), oldLogFilter))
-        .toEqual(loggingService.LOG_COUNT_LIMIT - 1);
+      expect(getFilteredLogCount(repeatLogStartHeader(exceededSessionCount), oldLogFilter)).toEqual(loggingService.LOG_COUNT_LIMIT - 1);
     });
   });
 });
