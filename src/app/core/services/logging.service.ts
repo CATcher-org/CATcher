@@ -49,14 +49,19 @@ export class LoggingService {
    */
   getTrimmedLogCache(currentLog: string, sessionCount: number): string {
     const sessionLogSeparator: string = '\n'.repeat(2); // More new-lines added for clarity.
+    const currentDateTime = new Date().toLocaleString();
 
     // Check if Trimming is Necessary
     const numberOfSessions: number = currentLog == null ? 0 : currentLog.split('\n')
       .filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER))
       .length;
 
+    if (!numberOfSessions) {
+      return `${this.LOG_START_HEADER}\n${currentDateTime}`;
+    }
+
     if (numberOfSessions < sessionCount) {
-      return `${numberOfSessions ? `${currentLog}${sessionLogSeparator}` : ''}${this.LOG_START_HEADER}`;
+      return `${currentLog}${sessionLogSeparator}${this.LOG_START_HEADER}\n${currentDateTime}`;
     }
 
     const separatedSessionLogs: string[] = currentLog.split(`${this.LOG_START_HEADER}`)
@@ -64,7 +69,7 @@ export class LoggingService {
       .map((line: string) => `${this.LOG_START_HEADER}\n${line.trim()}`);
 
     separatedSessionLogs.splice(0, separatedSessionLogs.length - sessionCount + 1);
-    separatedSessionLogs.push(this.LOG_START_HEADER);
+    separatedSessionLogs.push(`${this.LOG_START_HEADER}\n${currentDateTime}`);
 
     return separatedSessionLogs.join(sessionLogSeparator);
   }
