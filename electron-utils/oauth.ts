@@ -19,6 +19,7 @@ let authWindow;
  */
 export function getAccessToken(window: BrowserWindow, repoPermissionLevel: string): Promise<any> {
   return getAuthorizationCode(window, repoPermissionLevel).then((code) => {
+    Logger.info('Obtained authorization code from Github');
     const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
     return fetch(accessTokenUrl).then(res => res.json()).then(data => {
       if (data.error) {
@@ -54,6 +55,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
     authWindow = new BrowserWindow(windowParams);
     authWindow.loadURL(oauthUrl);
     authWindow.show();
+    Logger.info('Opening authentication window');
 
     authWindow.on('closed', (event) => {
       reject(new Error('WINDOW_CLOSED'));
@@ -74,6 +76,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
     });
 
     authWindow.webContents.on('will-redirect', (event, newUrl) => {
+      Logger.info('Redirecting to Github for authentication');
       if (newUrl.startsWith(CALLBACK_URL)) {
         onCallback(newUrl);
       }
@@ -89,11 +92,13 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
       if (error !== undefined) {
         reject(error);
       } else if (isReturnedStateSame(state, returnedState) && code) {
+        Logger.info('Resolving authorization code from Github');
         resolve(code);
       }
       setImmediate(function () {
         authWindow.close();
         authWindow.on('closed', () => {
+          Logger.info('Closing authentication window');
           authWindow = null;
         });
       });
