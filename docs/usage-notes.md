@@ -73,7 +73,7 @@ Following which, submit a json file with the name `profiles.json`, where the for
 }
 ```
 
-The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles` supplied, where each `Profile` is an object containing the `profileName` and `encodedText` fields. 
+The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles`, where each `Profile` is an object containing the `profileName` and `encodedText` fields. 
 
 `profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your custom session. 
 
