@@ -11,6 +11,11 @@ describe('isValidProfile', () => {
     expect(isValidProfile(profile as Profile)).toBe(false);
   });
 
+  it('returns false for a profile with a malformed encodedText field', () => {
+    const profile = { profileName: 'CATcher-org', encodedText: 'somestring' };
+    expect(isValidProfile(profile as Profile)).toBe(false);
+  });
+
   it('returns false for a profile with no profileName field', () => {
     const profile = { encodedText: 'public' };
     expect(isValidProfile(profile as Profile)).toBe(false);
@@ -22,7 +27,7 @@ describe('isValidProfile', () => {
   });
 
   it('returns true for a valid profile with profileName and encodedText fields', () => {
-    const profile = { profileName: 'CATcher-org', encodedText: 'public' };
+    const profile = { profileName: 'CATcher-org', encodedText: 'CATcher/public' };
     expect(isValidProfile(profile as Profile)).toBe(true);
   });
 });

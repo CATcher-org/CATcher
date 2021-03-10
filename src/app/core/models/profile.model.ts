@@ -16,8 +16,8 @@ export interface Profile {
  */
 
 const profileSchema: Schema = {
-  profileName: { required: true, validate: (value) => !!value },
-  encodedText: { required: true, validate: (value) => !!value }
+  profileName: { required: true, validate: (value: string) => !!value },
+  encodedText: { required: true, validate: (value: string) => !!value.match(/\w+\/\w+/g) }
 };
 
 export const isValidProfile = (profile: Profile) => isValidObject(profile, profileSchema);

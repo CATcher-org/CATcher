@@ -9,8 +9,7 @@ export interface Schema {
 
 export const isValidObject = (object: object, schema: Schema): boolean =>
   Object.entries(schema)
-    .map(([key, rule]) => [
-      !rule.required || key in object, // if key is present
-      rule.validate(object[key]) // if value abides by schema
-    ])
-    .every((pair) => pair.every(Boolean));
+    .every(([key, rule]) =>
+      !rule.required || (key in object && // if key is present
+      rule.validate(object[key])) // if value abides by schema
+    );
