@@ -3,7 +3,7 @@ import { GithubService } from './github.service';
 import { uuid } from '../../shared/lib/uuid';
 import { throwError } from 'rxjs';
 
-export const SUPPORTED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png', 'docx', 'gz', 'log', 'pdf', 'pptx', 'txt', 'xlsx', 'zip'];
+export const SUPPORTED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png', 'docx', 'gz', 'log', 'pdf', 'pptx', 'txt', 'xlsx', 'zip', 'mp4', 'mov'];
 export const FILE_TYPE_SUPPORT_ERROR = 'We don\'t support that file type.' +
   ' Try again with ' + SUPPORTED_FILE_TYPES.join(', ') + '.';
 
