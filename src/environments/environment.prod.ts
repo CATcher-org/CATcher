@@ -31,6 +31,18 @@ export const AppConfig = {
     <Profile>{
       profileName: 'CS2113/T PE',
       encodedText: 'nus-cs2113-AY2021S2/PE'
+    },
+    <Profile>{
+      profileName: 'TIC4002 Alpha Test',
+      encodedText: 'nus-tic4002-AY2021S2/alpha'
+    },
+    <Profile>{
+      profileName: 'TIC4002 PE Dry run',
+      encodedText: 'nus-tic4002-AY2021S2/PED'
+    },
+    <Profile>{
+      profileName: 'TIC4002 PE',
+      encodedText: 'nus-tic4002-AY2021S2/PE'
     }
   ]
 };
