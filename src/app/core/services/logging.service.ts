@@ -62,7 +62,7 @@ export class LoggingService {
       .filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER))
       .length;
 
-    if (!numberOfSessions) {
+    if (numberOfSessions === 0) {
       return logHeaderWithDateTime;
     }
 
