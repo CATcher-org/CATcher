@@ -32,6 +32,11 @@ export class LoggingService {
    * in session.
    */
   startSession() {
+    // Prevents the OAuth Pop-up window from being able to
+    // start a session.
+    if (window.opener && window.opener !== window) {
+      return;
+    }
     if (!this.isInSession) {
       this.isInSession = true;
       this.initializeLogCache();
