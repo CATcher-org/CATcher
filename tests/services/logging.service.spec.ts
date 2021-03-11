@@ -27,7 +27,7 @@ describe('LoggingService', () => {
     it('should return 1 new log if cache does not contain existing log', () => {
       expect(getFilteredLogCount(undefined, logHeaderFilter)).toEqual(1);
       expect(getFilteredLogCount('', logHeaderFilter)).toEqual(1);
-      expect(expect(getFilteredLogCount('gibberish', logHeaderFilter)).toEqual(1));
+      expect(getFilteredLogCount('gibberish', logHeaderFilter)).toEqual(1);
     });
 
     it('should return additional logs if cache contains existing log', () => {
