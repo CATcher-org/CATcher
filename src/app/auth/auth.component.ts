@@ -127,7 +127,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         }
       )
       .catch(err => {
-        this.logger.info('Error in data fetched from access token URL');
+        this.logger.info(`Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
       })
@@ -188,7 +188,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     }, (error) => {
       this.authService.changeAuthState(AuthState.NotAuthenticated);
       this.errorHandlingService.handleError(error);
-      this.logger.info('Completion of login process failed with an error');
+      this.logger.info(`Completion of login process failed with an error: ${error}`);
     });
   }
 
