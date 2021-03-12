@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
-import { Profile } from './profiles/profiles.component';
+import { Profile } from '../core/models/profile.model';
 import { filter, flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';

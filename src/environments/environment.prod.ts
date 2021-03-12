@@ -1,4 +1,4 @@
-import { Profile } from '../app/auth/profiles/profiles.component';
+import { Profile } from '../app/core/models/profile.model';
 
 export const AppConfig = {
   production: true,
