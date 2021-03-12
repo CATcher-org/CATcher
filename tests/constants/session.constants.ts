@@ -25,6 +25,6 @@ export const MULTIPLE_OPEN_PHASES_SESSION_DATA: SessionData = {
     Phase.phaseBugReporting,
     Phase.phaseTeamResponse,
     Phase.phaseTesterResponse,
-    Phase.phaseModeration,
+    Phase.phaseModeration
   ]
 };
