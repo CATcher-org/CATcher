@@ -10,7 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ElectronService } from '../../core/services/electron.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
-const BYTES_PER_MB = 100000;
+const BYTES_PER_MB = 1000000;
 const MAX_UPLOAD_SIZE = 10 * BYTES_PER_MB; // 10MB
 const MAX_VIDEO_UPLOAD_SIZE = 2 * BYTES_PER_MB; // 2MB
 
