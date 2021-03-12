@@ -16,6 +16,7 @@ import { ApplicationService } from '../core/services/application.service';
 import { throwIfFalse } from '../shared/lib/custom-ops';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
+import { LoggingService } from '../core/services/logging.service';
 
 @Component({
   selector: 'app-auth',
@@ -48,6 +49,7 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
+              private loggingService: LoggingService,
               private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute
@@ -68,6 +70,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loggingService.startSession();
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
