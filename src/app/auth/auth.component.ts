@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
-import { Profile } from './profiles/profiles.component';
+import { Profile } from '../core/models/profile.model';
 import { filter, flatMap } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
@@ -16,6 +16,7 @@ import { ApplicationService } from '../core/services/application.service';
 import { throwIfFalse } from '../shared/lib/custom-ops';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
+import { LoggingService } from '../core/services/logging.service';
 
 @Component({
   selector: 'app-auth',
@@ -48,6 +49,7 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
+              private loggingService: LoggingService,
               private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute
@@ -68,6 +70,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loggingService.startSession();
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
