@@ -82,11 +82,7 @@ The json supplied should only consist of **one key-pair value**, where the key i
 # Reporting problems in using CATcher
 If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs. 
 
-For the web app, logs appear on the browser's console, and are tagged as either 'Error' or 'Info'.
-The pages below explain how to access the console, on different browsers:
-- [Firefox](https://developer.mozilla.org/en-US/docs/Tools/Web_Console)
-- [Chrome](https://developers.google.com/web/tools/chrome-devtools/open#console)
-- [Edge](https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide-chromium/open/?tabs=cmd-Windows#open-the-console-panel)
+For the web app, logs are saved in your browser and can be retrieved by clicking the "`Download Log`"button.
 
 For the desktop app, logs can be retrieved from the following directory:
 - Linux: ~/.config/CATcher/logs/*.log
