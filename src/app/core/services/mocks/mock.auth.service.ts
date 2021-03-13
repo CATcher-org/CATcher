@@ -73,7 +73,6 @@ export class MockAuthService {
     if (newAuthState === AuthState.Authenticated) {
       const sessionId = `${Date.now()}-${uuid()}`;
       this.issueService.setSessionId(sessionId);
-      this.logger.startSession();
       this.logger.info(`Successfully authenticated with session: ${sessionId}`);
     }
     this.authStateSource.next(newAuthState);
