@@ -184,7 +184,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       flatMap(() => this.githubEventService.setLatestChangeEvent()),
     ).subscribe(() => {
       this.handleAuthSuccess();
-      this.logger.info('Successfully completed login process');
     }, (error) => {
       this.authService.changeAuthState(AuthState.NotAuthenticated);
       this.errorHandlingService.handleError(error);
