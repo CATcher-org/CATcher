@@ -8,16 +8,8 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { ElectronService } from '../../core/services/electron.service';
 import { AppConfig } from '../../../environments/environment';
-
-/**
- * Indicates all the elements that make up a Profile.
- */
-export interface Profile {
-  profileName: string;
-  encodedText: string;
-}
+import { Profile, isValidProfile } from '../../core/models/profile.model';
 
 @Component({
   selector: 'app-profiles',
@@ -40,7 +32,6 @@ export interface Profile {
   ]
 })
 export class ProfilesComponent implements OnInit {
-
   private readonly ANIMATION_DURATION: number = 250;
 
   profiles: Profile[] = []; // List of profiles taken from profiles.json
@@ -85,9 +76,11 @@ export class ProfilesComponent implements OnInit {
     reader.onload = () => {
       if (!(reader.result instanceof ArrayBuffer)) {
         try {
-          this.profiles = JSON.parse(reader.result).profiles
-            .concat(AppConfig.profiles)
-            .filter(p => !!p);
+          const { profiles } = JSON.parse(reader.result);
+          if (!profiles.every(isValidProfile)) {
+            throw new Error('profiles.json is malformed');
+          }
+          this.profiles = profiles.concat(AppConfig.profiles).filter((p) => !!p);
           target.value = '';
         } catch (e) {
           this.openErrorDialog();
@@ -103,7 +96,7 @@ export class ProfilesComponent implements OnInit {
   initProfiles(): void {
     this.profiles = this.profiles
       .concat(AppConfig.profiles)
-      .filter(p => !!p);
+      .filter((p) => !!p);
   }
 
   /**
@@ -118,6 +111,10 @@ export class ProfilesComponent implements OnInit {
    * @param profile - Profile selected by user.
    */
   selectProfile(profile: Profile): void {
-    this.selectedProfileEmitter.emit(profile);
+    if (profile === this.blankProfile || isValidProfile(profile)) {
+      this.selectedProfileEmitter.emit(profile);
+    } else {
+      this.openErrorDialog();
+    }
   }
 }

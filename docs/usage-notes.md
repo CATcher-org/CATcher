@@ -3,6 +3,7 @@
   - [For Windows Users](#for-windows-users)
   - [For Mac Users](#for-mac-users)
   - [For Linux Users](#for-linux-users)
+- [Customising the available sessions](#customising-the-available-sessions)
 - [Reporting Problems in using CATcher](#reporting-problems-in-using-catcher)
 
 
@@ -54,14 +55,34 @@ There are 2 methods to achieve this:
   - Note: the GUI menus may differ slightly on different Linux distributions.
 - From the command line: Use `chmod +x CATcher-x.y.z.AppImage`
 
+
+# Customising the available sessions 
+
+If your sessions are not present in the default dropdown list on CATcher's startup page, you can load custom sessions by clicking on the **file icon** beside the session dropdown. 
+
+Following which, submit a file with the `.json` file extension, where the format is specified below.
+
+```json
+{
+    "profiles": [
+        {
+            "profileName": "CATcher", 
+            "encodedText": "CATcher-org/public_data"
+        }
+    ]
+}
+```
+
+The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles`, where each `Profile` is an object containing the `profileName` and `encodedText` fields. 
+
+`profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your custom session. The `encodedText` will be in the format of `organisation/repository`.
+
+> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `.json` file that you have supplied will not be parsed successfully. F 
+
 # Reporting problems in using CATcher
 If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs. 
 
-For the web app, logs appear on the browser's console, and are tagged as either 'Error' or 'Info'.
-The pages below explain how to access the console, on different browsers:
-- [Firefox](https://developer.mozilla.org/en-US/docs/Tools/Web_Console)
-- [Chrome](https://developers.google.com/web/tools/chrome-devtools/open#console)
-- [Edge](https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide-chromium/open/?tabs=cmd-Windows#open-the-console-panel)
+For the web app, logs are saved in your browser and can be retrieved by clicking the "`Download Log`"button.
 
 For the desktop app, logs can be retrieved from the following directory:
 - Linux: ~/.config/CATcher/logs/*.log
