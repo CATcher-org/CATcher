@@ -49,6 +49,7 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
+              private loggingService: LoggingService,
               private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute,
@@ -70,6 +71,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loggingService.startSession();
     this.logger.info('Initialising authentication window');
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
