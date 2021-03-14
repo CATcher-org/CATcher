@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import '../polyfills';
 import { BrowserModule, Title } from '@angular/platform-browser';
-import { NgModule, NgZone } from '@angular/core';
+import { ErrorHandler, NgModule, NgZone } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { AppComponent } from './app.component';
@@ -93,6 +93,10 @@ import { PermissionService } from './core/services/permission.service';
       useFactory: IssueServiceFactory,
       deps: [GithubService, UserService, PhaseService,
       PermissionService, ErrorHandlingService, DataService]
+    },
+    {
+      provide: ErrorHandler,
+      useClass: ErrorHandlingService
     }
   ],
   bootstrap: [AppComponent],

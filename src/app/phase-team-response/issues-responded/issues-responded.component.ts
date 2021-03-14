@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IssueService } from '../../core/services/issue.service';
-import { IssuesDataTable } from '../../shared/issue-tables/IssuesDataTable';
-import { Issue } from '../../core/models/issue.model';
+import { Issue, STATUS } from '../../core/models/issue.model';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';
 import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
@@ -61,8 +60,10 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.filter = (issue: Issue) => {
-      return this.issueService.hasTeamResponse(issue.id) && !issue.duplicateOf &&
-        (issue.status === 'Done');
+      const isDuplicateIssue = (issue) => !!issue.duplicateOf;
+      const issueIsDone = (issue: Issue) => issue.status === STATUS.Done;
+      const hasTeamResponse = (issue: Issue) => this.issueService.hasTeamResponse(issue.id);
+      return hasTeamResponse(issue) && !isDuplicateIssue(issue) && issueIsDone(issue);
     };
   }
 
