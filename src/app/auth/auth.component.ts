@@ -209,6 +209,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   logIntoAnotherAccount() {
+    this.electronService.clearCookies();
     this.authService.startOAuthProcess();
   }
 
