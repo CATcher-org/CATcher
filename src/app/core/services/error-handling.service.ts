@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ErrorHandler, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { GeneralMessageErrorComponent } from '../../shared/error-toasters/general-message-error/general-message-error.component';
 import { FormErrorComponent } from '../../shared/error-toasters/form-error/form-error.component';
@@ -11,7 +11,7 @@ export const ERRORCODE_NOT_FOUND = 404;
 @Injectable({
   providedIn: 'root',
 })
-export class ErrorHandlingService {
+export class ErrorHandlingService implements ErrorHandler {
 
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 

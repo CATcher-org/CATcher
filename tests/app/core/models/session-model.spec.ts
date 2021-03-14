@@ -73,7 +73,7 @@ describe('Session Model', () => {
         .pipe(assertSessionDataIntegrity())
         .subscribe({
           next: (el) => expect(el).toEqual(BUG_REPORTING_PHASE_SESSION_DATA),
-          error: () => fail(),
+          error: () => fail()
         });
     });
 
