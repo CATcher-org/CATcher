@@ -76,7 +76,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
     });
 
     authWindow.webContents.on('will-redirect', (event, newUrl) => {
-      Logger.info('Redirecting to Github for authentication');
+      Logger.info('Received redirect in auth window');
       if (newUrl.startsWith(CALLBACK_URL)) {
         onCallback(newUrl);
       }
@@ -92,7 +92,6 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
       if (error !== undefined) {
         reject(error);
       } else if (isReturnedStateSame(state, returnedState) && code) {
-        Logger.info('Resolving authorization code from Github');
         resolve(code);
       }
       setImmediate(function () {
