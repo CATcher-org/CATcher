@@ -196,7 +196,12 @@ export class AuthComponent implements OnInit, OnDestroy {
       throwIfFalse(isValidSession => isValidSession,
                    () => new Error('Invalid Session'))
     ).subscribe(() => {
-      this.authService.startOAuthProcess();
+      try {
+        this.authService.startOAuthProcess();
+      } catch (error) {
+        this.errorHandlingService.handleError(error);
+        this.authService.changeAuthState(AuthState.NotAuthenticated);
+      }
     }, (error) => {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
@@ -205,7 +210,12 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   logIntoAnotherAccount() {
     this.electronService.clearCookies();
-    this.authService.startOAuthProcess();
+    try {
+      this.authService.startOAuthProcess();
+    } catch (error) {
+      this.errorHandlingService.handleError(error);
+      this.authService.changeAuthState(AuthState.NotAuthenticated);
+    }
   }
 
   onGithubWebsiteClicked() {

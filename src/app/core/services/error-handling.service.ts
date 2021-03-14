@@ -7,6 +7,7 @@ import { RequestError } from '@octokit/request-error';
 import { LoggingService } from './logging.service';
 
 export const ERRORCODE_NOT_FOUND = 404;
+export const ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
 
 @Injectable({
   providedIn: 'root',

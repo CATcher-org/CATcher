@@ -6,7 +6,7 @@ import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
 import { PhaseService } from './phase.service';
-import { ErrorHandlingService } from './error-handling.service';
+import { ENABLE_POPUP_MESSAGE, ErrorHandlingService } from './error-handling.service';
 import { GithubService } from './github.service';
 import { IssueService } from './issue.service';
 import { DataService } from './data.service';
@@ -154,6 +154,11 @@ export class AuthService {
     const options = `width=${width},height=${height},left=${left},top=${top}`;
     const oauthWindow = window.open(`${url}`, 'Authorization', options);
     const authService = this;
+
+    if (oauthWindow == null) {
+      throw ENABLE_POPUP_MESSAGE;
+    }
+
     oauthWindow.addEventListener('unload', () => {
       if (!oauthWindow.closed) {
         // unload event could be triggered when there is a redirection, hence, a confirmation needed.
