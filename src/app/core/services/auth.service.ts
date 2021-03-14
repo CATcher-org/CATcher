@@ -109,6 +109,7 @@ export class AuthService {
    * Will start the Github OAuth web flow process.
    */
   startOAuthProcess() {
+    this.logger.info('Starting authentication');
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
@@ -119,6 +120,7 @@ export class AuthService {
       this.createOauthWindow(encodeURI(
         `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
       ));
+      this.logger.info('Opening window for Github authentication');
     }
   }
 
