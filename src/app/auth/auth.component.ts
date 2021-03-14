@@ -49,10 +49,10 @@ export class AuthComponent implements OnInit, OnDestroy {
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-              private loggingService: LoggingService,
               private titleService: Title,
               private ngZone: NgZone,
-              private activatedRoute: ActivatedRoute
+              private activatedRoute: ActivatedRoute,
+              private logger: LoggingService
   ) {
     this.electronService.registerIpcListener('github-oauth-reply',
       (event, {token, error, isWindowClosed}) => {
@@ -70,7 +70,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loggingService.startSession();
+    this.logger.startSession();
     this.isReady = false;
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
@@ -81,7 +81,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     if (oauthCode) { // In the web's oauth window
+      this.logger.info('Obtained authorisation code from Github');
       window.opener.postMessage({ oauthCode, state }, AppConfig.origin);
+      this.logger.info('Sent authorisation code and state to main application window, waiting to close');
       this.listenForCloseOAuthWindowMessage();
     } else { // In the main app window
       this.checkAppIsOutdated();
@@ -108,8 +110,11 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     if (!this.authService.isReturnedStateSame(state)) {
+      this.logger.info(`Received incorrect state ${state}, continue waiting for correct state`);
       return;
     }
+
+    this.logger.info('Retrieving access token from Github');
 
     const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
     fetch(accessTokenUrl).then(res => res.json())
@@ -118,15 +123,18 @@ export class AuthComponent implements OnInit, OnDestroy {
             throw(new Error(data.error));
           }
           this.authService.storeOAuthAccessToken(data.token);
+          this.logger.info('Sucessfully obtained access token');
         }
       )
       .catch(err => {
+        this.logger.info(`Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
       })
       .finally(() => {
         if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
           event.source.postMessage('close', AppConfig.origin);
+          this.logger.info('Closing authentication window');
         }
       });
   }
@@ -179,6 +187,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     }, (error) => {
       this.authService.changeAuthState(AuthState.NotAuthenticated);
       this.errorHandlingService.handleError(error);
+      this.logger.info(`Completion of login process failed with an error: ${error}`);
     });
   }
 
@@ -209,6 +218,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   logIntoAnotherAccount() {
+    this.logger.info('Logging into another account');
     this.electronService.clearCookies();
     this.authService.startOAuthProcess();
   }
@@ -259,6 +269,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       if (event.data === 'close') {
         window.opener.focus();
         window.close();
+        this.logger.info('Closed authentication window');
       }
     });
   }

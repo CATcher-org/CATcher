@@ -13,7 +13,7 @@ You can either use CATcher through your web browser, or download CATcher's deskt
 
 The CATcher web app is recommended, and can be
 accessed at
-https://catcher-org.github.io/CATcher
+https://catcher-org.github.io/CATcher. Please ensure your browser does not block pop-up windows from our web app.
 
 The latest release of the CATcher desktop app can be downloaded from https://github.com/CATcher-org/CATcher/releases
 

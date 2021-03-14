@@ -1,12 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { FILE_TYPE_SUPPORT_ERROR, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
+import {
+  FILE_TYPE_SUPPORT_ERROR,
+  SUPPORTED_FILE_TYPES,
+  UploadService,
+  getSizeExceedErrorMsg } from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ElectronService } from '../../core/services/electron.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
-const MAX_UPLOAD_SIZE = 10000000; // 10MB
+const BYTES_PER_MB = 1000000;
+const MAX_UPLOAD_SIZE = 10 * BYTES_PER_MB; // 10MB
+const MAX_VIDEO_UPLOAD_SIZE = 5 * BYTES_PER_MB; // 5MB
 
 @Component({
   selector: 'app-comment-editor',
@@ -126,7 +132,14 @@ export class CommentEditorComponent implements OnInit {
     const insertedText = this.insertUploadingText(filename);
 
     if (file.size >= MAX_UPLOAD_SIZE) {
-      this.handleUploadError('Oops, file is too big. Keep it under 10MB.', insertedText);
+      const uploadSizeLimitMb = MAX_UPLOAD_SIZE / BYTES_PER_MB;
+      this.handleUploadError(getSizeExceedErrorMsg('file', uploadSizeLimitMb), insertedText);
+      return;
+    }
+
+    if (this.uploadService.isVideoFile(filename) && file.size >= MAX_VIDEO_UPLOAD_SIZE) {
+      const videoUploadSizeLimitMb = MAX_VIDEO_UPLOAD_SIZE / BYTES_PER_MB;
+      this.handleUploadError(getSizeExceedErrorMsg('video', videoUploadSizeLimitMb), insertedText);
       return;
     }
 
