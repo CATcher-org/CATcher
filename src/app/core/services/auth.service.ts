@@ -6,7 +6,7 @@ import { NgZone } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { UserService } from './user.service';
 import { PhaseService } from './phase.service';
-import { ENABLE_POPUP_MESSAGE, ErrorHandlingService } from './error-handling.service';
+import { ErrorHandlingService } from './error-handling.service';
 import { GithubService } from './github.service';
 import { IssueService } from './issue.service';
 import { DataService } from './data.service';
@@ -28,6 +28,8 @@ export class AuthService {
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
   private state: string;
+
+  ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -156,7 +158,7 @@ export class AuthService {
     const authService = this;
 
     if (oauthWindow == null) {
-      throw ENABLE_POPUP_MESSAGE;
+      throw this.ENABLE_POPUP_MESSAGE;
     }
 
     oauthWindow.addEventListener('unload', () => {
