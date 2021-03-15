@@ -29,6 +29,8 @@ export class AuthService {
   accessToken = new BehaviorSubject(undefined);
   private state: string;
 
+  ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
+
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
@@ -156,6 +158,11 @@ export class AuthService {
     const options = `width=${width},height=${height},left=${left},top=${top}`;
     const oauthWindow = window.open(`${url}`, 'Authorization', options);
     const authService = this;
+
+    if (oauthWindow == null) {
+      throw this.ENABLE_POPUP_MESSAGE;
+    }
+
     oauthWindow.addEventListener('unload', () => {
       if (!oauthWindow.closed) {
         // unload event could be triggered when there is a redirection, hence, a confirmation needed.
