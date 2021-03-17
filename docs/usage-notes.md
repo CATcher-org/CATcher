@@ -15,7 +15,7 @@ Once the app is launched (either web or desktop version), it will prompt you to 
 
 ![session_select](https://imgur.com/nBOy7zH.png)
 
-# Notes on Using the Desktop App
+# Notes on Using the Web App
 
 The CATcher web app is recommended, and can be
 accessed at
