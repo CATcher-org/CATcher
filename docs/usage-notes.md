@@ -27,7 +27,7 @@ Pop-up windows are blocked by default on Safari. Before launching CATcher, pleas
 
 1. Go to Preferences > Websites > Pop-up Windows
 2. For website `catcher-org.github.io`, choose option `Allow`
-![[enable-popup](https://i.imgur.com/dP52jzu.png)
+![enable-popup](https://i.imgur.com/dP52jzu.png)
 
 # Notes on Using the Desktop App
 
