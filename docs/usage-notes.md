@@ -11,21 +11,32 @@
 
 You can either use CATcher through your web browser, or download CATcher's desktop application.
 
-The CATcher web app is recommended, and can be
-accessed at
-https://catcher-org.github.io/CATcher. Please ensure your browser does not block pop-up windows from our web app.
-
-The latest release of the CATcher desktop app can be downloaded from https://github.com/CATcher-org/CATcher/releases
-
-Start the desktop app by clicking on the executable file; no installation is required.
-
 Once the app is launched (either web or desktop version), it will prompt you to enter the session you are participating in, using a dropdown.
 
 ![session_select](https://imgur.com/nBOy7zH.png)
 
 # Notes on Using the Desktop App
+
+The CATcher web app is recommended, and can be
+accessed at
+https://catcher-org.github.io/CATcher. Please ensure your browser does not block pop-up windows from our web app.
+
+## For Safari Users
+
+Pop-up windows are blocked by default on Safari. Before launching CATcher, please enable pop-ups by following the steps below:
+
+1. Go to Preferences > Websites > Pop-up Windows
+2. For website `catcher-org.github.io`, choose option `Allow`
+![enable-popups](https://imgur.com/a/uCcf6Ey.png)
+
+# Notes on Using the Desktop App
+
+The latest release of the CATcher desktop app can be downloaded from https://github.com/CATcher-org/CATcher/releases
+
+Start the desktop app by clicking on the executable file; no installation is required.
+
 ## For Windows Users
-For normal usage, you can run the `CATcher.exe` and the following dialog would appear. Simply click on the "More Info" button and then click the "Run Anyway" button which would have appeared on the bottom right corner of the dialog. 
+For normal usage, you can run the `CATcher.exe` and the following dialog would appear. Simply click on the "More Info" button and then click the "Run Anyway" button which would have appeared on the bottom right corner of the dialog.
 
 ![windows_warning](https://imgur.com/4p0Yn7s.png)
 
@@ -51,14 +62,14 @@ There are 2 methods to achieve this:
 - From the GUI:
   - Right click on the file icon
   - Select `Properties`, then select `Permissions`
-  - Enable the `Allow executing file as program` option. 
+  - Enable the `Allow executing file as program` option.
   - Note: the GUI menus may differ slightly on different Linux distributions.
 - From the command line: Use `chmod +x CATcher-x.y.z.AppImage`
 
 
-# Customising the available sessions 
+# Customising the available sessions
 
-If your sessions are not present in the default dropdown list on CATcher's startup page, you can load custom sessions by clicking on the **file icon** beside the session dropdown. 
+If your sessions are not present in the default dropdown list on CATcher's startup page, you can load custom sessions by clicking on the **file icon** beside the session dropdown.
 
 Following which, submit a file with the `.json` file extension, where the format is specified below.
 
@@ -66,21 +77,21 @@ Following which, submit a file with the `.json` file extension, where the format
 {
     "profiles": [
         {
-            "profileName": "CATcher", 
+            "profileName": "CATcher",
             "encodedText": "CATcher-org/public_data"
         }
     ]
 }
 ```
 
-The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles`, where each `Profile` is an object containing the `profileName` and `encodedText` fields. 
+The json supplied should only consist of **one key-pair value**, where the key is `"profiles"` and the value is an array of `Profiles`, where each `Profile` is an object containing the `profileName` and `encodedText` fields.
 
 `profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your custom session. The `encodedText` will be in the format of `organisation/repository`.
 
-> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `.json` file that you have supplied will not be parsed successfully. F 
+> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `.json` file that you have supplied will not be parsed successfully. F
 
 # Reporting problems in using CATcher
-If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs. 
+If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs.
 
 For the web app, logs are saved in your browser and can be retrieved by clicking the "`Download Log`"button.
 
