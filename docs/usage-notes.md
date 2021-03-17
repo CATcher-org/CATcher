@@ -88,7 +88,7 @@ The json supplied should only consist of **one key-pair value**, where the key i
 
 `profileName` refers to the profile name displayed in the session select page. `encodedText` refers to the repository which stores the required settings for your custom session. The `encodedText` will be in the format of `organisation/repository`.
 
-> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `.json` file that you have supplied will not be parsed successfully. F
+> **Note**: You **must** have both of these fields in each `Profile` and the values for these fields **should not be empty**! Else, the `.json` file that you have supplied will not be parsed successfully.
 
 # Reporting problems in using CATcher
 If you face any issue in using CATcher, you can create a new issue in CATcher's repository. If necessary, it would also be helpful if you can provide us with your logs.
