@@ -2,7 +2,7 @@
   <button *ngIf="isBackButtonShown()" mat-icon-button class="mat-toolbar mat-primary" style="transform: scale(0.9)" (click)="goBack()">
     <mat-icon>arrow_back_ios</mat-icon>
   </button>
-  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher</a>
+  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher v{{this.getVersionNumber()}}</a>
   <span id="phase-descriptor" *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
     ({{this.getPhaseDescription(phaseService.currentPhase)}})
   </span>
