@@ -18,7 +18,7 @@ export class ApplicationService {
     this.currentVersion = appSetting.version;
   }
 
-  static getCurrentVersion() {
+  static getCurrentVersion(): string {
     return appSetting.version; 
   }
 
