@@ -18,6 +18,10 @@ export class ApplicationService {
     this.currentVersion = appSetting.version;
   }
 
+  static getCurrentVersion() {
+    return appSetting.version; 
+  }
+
   /**
    * Determines whether the application is outdated.
    */
