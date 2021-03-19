@@ -9,7 +9,7 @@ describe("CATcher's Login Page", () => {
   });
 
   it('displays "CATcher" in header bar', async () => {
-    expect(await page.getTitle()).toEqual('CATcher');
+    expect(await page.getTitle()).toContain('CATcher');
   });
 
   it('allows users to authenticate themselves', async () => {
