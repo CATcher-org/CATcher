@@ -1,3 +1,4 @@
+import { ElectronService } from '../../src/app/core/services/electron.service';
 import { LoggingService } from '../../src/app/core/services/logging.service';
 
 let loggingService: LoggingService;
@@ -10,17 +11,16 @@ const getFilteredLogCount: (currentLog: string, predicate: (line: string) => boo
     .split('\n')
     .filter((line: string) => predicate(line)).length;
 const oldLogIdentifier = 'Old Log';
-const repeatOldLogStartHeader: (numberOfRepitions: number) => string = (numberofRepitions: number) => {
-  return `${loggingService.LOG_START_HEADER}\n${oldLogIdentifier}\n`.repeat(numberofRepitions);
+const repeatOldLogStartHeader: (number) => string = (numberOfRepetitions: number) => {
+  return `${loggingService.LOG_START_HEADER}\n${oldLogIdentifier}\n`.repeat(numberOfRepetitions);
 };
 const logHeaderFilter: (line: string) => boolean = (line: string) => line === loggingService.LOG_START_HEADER;
 const oldLogFilter: (line: string) => boolean = (line: string) => line === oldLogIdentifier;
 
 describe('LoggingService', () => {
   beforeAll(() => {
-    const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
-    electronService.isElectron = jasmine.createSpy('isElectron', () => false);
-    loggingService = new LoggingService(electronService);
+    spyOn(ElectronService, 'isElectron').and.returnValue(false);
+    loggingService = new LoggingService();
   });
 
   describe('.getTrimmedLogCache()', () => {
