@@ -19,7 +19,7 @@ export class ApplicationService {
   }
 
   static getCurrentVersion(): string {
-    return appSetting.version; 
+    return appSetting.version;
   }
 
   /**
