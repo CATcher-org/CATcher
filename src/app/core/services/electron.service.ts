@@ -25,7 +25,7 @@ export class ElectronService {
   fs: typeof fs;
 
   constructor() {
-    if (this.isElectron()) {
+    if (ElectronService.isElectron()) {
       this.ipcRenderer = window.require('electron').ipcRenderer;
       this.remote = window.require('electron').remote;
       this.clipboard = window.require('electron').clipboard;
@@ -46,7 +46,7 @@ export class ElectronService {
     }
   }
 
-  isElectron(): boolean {
+  static isElectron(): boolean {
     return window && window.process && window.process.type;
   }
 
@@ -59,31 +59,31 @@ export class ElectronService {
   }
 
   clearCookies() {
-    if (this.isElectron()) {
+    if (ElectronService.isElectron()) {
       this.remote.getCurrentWebContents().session.clearStorageData();
     }
   }
 
   registerIpcListener(channel: string, callback: (...params) => void) {
-    if (this.isElectron()) {
+    if (ElectronService.isElectron()) {
       this.ipcRenderer.on(channel, callback);
     }
   }
 
   sendIpcMessage(channel: string, ...messages: any) {
-    if (this.isElectron()) {
+    if (ElectronService.isElectron()) {
       this.ipcRenderer.send(channel, messages);
     }
   }
 
   removeIpcListeners(channel: string) {
-    if (this.isElectron()) {
+    if (ElectronService.isElectron()) {
       this.ipcRenderer.removeAllListeners(channel);
     }
   }
 
   openLink(address: string) {
-    if (this.isElectron()) {
+    if (ElectronService.isElectron()) {
       this.remote.shell.openExternal(address);
     } else {
       window.open(address);

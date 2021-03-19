@@ -253,6 +253,10 @@ export class AuthComponent implements OnInit, OnDestroy {
     return this.authState === AuthState.ConfirmOAuthUser;
   }
 
+  isElectron(): boolean {
+    return ElectronService.isElectron();
+  }
+
   get currentSessionOrg(): string {
     const sessionInformation: string = this.profileForm.get('session').value;
     return this.getOrgDetails(sessionInformation);

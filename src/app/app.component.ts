@@ -17,7 +17,7 @@ export class AppComponent implements AfterViewInit {
 
     logger.info('AppConfig', AppConfig);
 
-    if (electronService.isElectron()) {
+    if (ElectronService.isElectron()) {
       logger.info('Mode electron');
     } else {
       logger.info('Mode web');

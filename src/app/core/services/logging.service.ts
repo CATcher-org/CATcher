@@ -13,8 +13,8 @@ export class LoggingService {
   public readonly LOG_START_HEADER = '====== New CATcher Session Log ======';
   public readonly LOG_COUNT_LIMIT = 4;
 
-  constructor(electronService: ElectronService) {
-    if (electronService.isElectron()) {
+  constructor() {
+    if (ElectronService.isElectron()) {
       this.logger = window.require('electron-log');
     } else {
       this.logger = console;
