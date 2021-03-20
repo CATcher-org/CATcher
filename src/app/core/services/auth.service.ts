@@ -16,6 +16,7 @@ import { GithubEventService } from './githubevent.service';
 import { generateSessionId } from '../../shared/lib/session';
 import { AppConfig } from '../../../environments/environment';
 import { LoggingService } from './logging.service';
+import { uuid } from '../../shared/lib/uuid';
 
 export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
 
@@ -26,6 +27,9 @@ export class AuthService {
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
+  private state: string;
+
+  ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
 
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
@@ -60,6 +64,7 @@ export class AuthService {
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
+    this.logger.reset();
     this.setLandingPageTitle();
     this.issueService.setIssueTeamFilter('All Teams');
     this.reset();
@@ -90,19 +95,34 @@ export class AuthService {
     this.authStateSource.next(newAuthState);
   }
 
+
+  /**
+   * Generates and assigns an unguessable random 'state' string to pass to Github for protection against cross-site request forgery attacks
+   */
+  generateStateString() {
+    this.state = uuid();
+  }
+
+  isReturnedStateSame(returnedState: string): boolean {
+    return returnedState === this.state;
+  }
+
   /**
    * Will start the Github OAuth web flow process.
    */
   startOAuthProcess() {
+    this.logger.info('Starting authentication');
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
     if (this.electronService.isElectron()) {
       this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
     } else {
+      this.generateStateString();
       this.createOauthWindow(encodeURI(
-        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user`
+        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
       ));
+      this.logger.info('Opening window for Github authentication');
     }
   }
 
@@ -138,6 +158,11 @@ export class AuthService {
     const options = `width=${width},height=${height},left=${left},top=${top}`;
     const oauthWindow = window.open(`${url}`, 'Authorization', options);
     const authService = this;
+
+    if (oauthWindow == null) {
+      throw this.ENABLE_POPUP_MESSAGE;
+    }
+
     oauthWindow.addEventListener('unload', () => {
       if (!oauthWindow.closed) {
         // unload event could be triggered when there is a redirection, hence, a confirmation needed.
