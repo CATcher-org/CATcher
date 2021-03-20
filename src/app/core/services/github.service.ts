@@ -279,7 +279,7 @@ export class GithubService {
     );
   }
 
-  fetchProfilesJson(): Observable<{}> {
+  fetchProfilesJson(): Observable<any> {
     return from(octokit.repos.getContents({owner: 'seanlowjk', repo: 'client-data', path: 'profiles.json',
       headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
         map(rawData => {

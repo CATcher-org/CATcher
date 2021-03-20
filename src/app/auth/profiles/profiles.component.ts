@@ -98,11 +98,10 @@ export class ProfilesComponent implements OnInit {
    */
   initProfiles(): void {
     this.githubService.fetchProfilesJson().subscribe(jsonData => {
-      console.log(jsonData);
-    });
-    this.profiles = this.profiles
-      .concat(AppConfig.profiles)
+      this.profiles = this.profiles
+      .concat(jsonData.profiles)
       .filter((p) => !!p);
+    });
   }
 
   /**
