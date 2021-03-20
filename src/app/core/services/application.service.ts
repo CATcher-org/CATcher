@@ -5,6 +5,7 @@ import { GithubRelease } from '../models/github/github.release';
 import { map } from 'rxjs/operators';
 
 const appSetting = require('../../../../package.json');
+export const currentVersion = appSetting.currentVersion;
 
 @Injectable({
   providedIn: 'root'
@@ -16,10 +17,6 @@ export class ApplicationService {
 
   constructor(private githubService: GithubService) {
     this.currentVersion = appSetting.version;
-  }
-
-  static getCurrentVersion(): string {
-    return appSetting.version;
   }
 
   /**
