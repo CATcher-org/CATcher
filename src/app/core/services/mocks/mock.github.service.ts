@@ -105,13 +105,13 @@ export class MockGithubService {
 
   /**
    * Creates a fabricated object that matches the structure of that
-   * returned by the Github API which gets the external profiles 
-   * from the client_data repository. 
+   * returned by the Github API which gets the external profiles
+   * from the client_data repository.
    */
   fetchProfilesJson(): Observable<any> {
     return of({
       profiles: AppConfig.profiles
-    })
+    });
   }
 
   /**
