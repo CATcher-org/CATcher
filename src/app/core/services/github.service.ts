@@ -279,6 +279,16 @@ export class GithubService {
     );
   }
 
+  fetchProfilesJson(): Observable<{}> {
+    return from(octokit.repos.getContents({owner: 'seanlowjk', repo: 'client-data', path: 'profiles.json',
+      headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
+        map(rawData => {
+          return JSON.parse(atob(rawData['data']['content']));
+        }),
+        catchError(err => throwError('Failed to fetch profiles.json.'))
+    );
+  }
+
   fetchDataFile(): Observable<{}> {
     return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv',
       headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
