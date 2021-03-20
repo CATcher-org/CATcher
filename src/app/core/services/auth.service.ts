@@ -29,6 +29,8 @@ export class AuthService {
   accessToken = new BehaviorSubject(undefined);
   private state: string;
 
+  ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
+
   constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
               private http: HttpClient,  private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
@@ -62,6 +64,7 @@ export class AuthService {
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
+    this.logger.reset();
     this.setLandingPageTitle();
     this.issueService.setIssueTeamFilter('All Teams');
     this.reset();
@@ -108,6 +111,7 @@ export class AuthService {
    * Will start the Github OAuth web flow process.
    */
   startOAuthProcess() {
+    this.logger.info('Starting authentication');
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
@@ -118,6 +122,7 @@ export class AuthService {
       this.createOauthWindow(encodeURI(
         `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
       ));
+      this.logger.info('Opening window for Github authentication');
     }
   }
 
@@ -153,6 +158,11 @@ export class AuthService {
     const options = `width=${width},height=${height},left=${left},top=${top}`;
     const oauthWindow = window.open(`${url}`, 'Authorization', options);
     const authService = this;
+
+    if (oauthWindow == null) {
+      throw this.ENABLE_POPUP_MESSAGE;
+    }
+
     oauthWindow.addEventListener('unload', () => {
       if (!oauthWindow.closed) {
         // unload event could be triggered when there is a redirection, hence, a confirmation needed.

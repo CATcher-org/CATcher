@@ -15,7 +15,9 @@ const isDevMode = isDeveloperMode();
  * Will start the OAuth Web Flow and obtain the access token from Github.
  */
 ipcMain.on('github-oauth', (event, repoPermissionLevel) => {
+  Logger.info('Starting authentication');
   getAccessToken(win, repoPermissionLevel).then((data) => {
+    Logger.info('Obtained access token from Github');
     event.sender.send('github-oauth-reply', {token: data.token});
   }).catch(error => {
     event.sender.send('github-oauth-reply', {

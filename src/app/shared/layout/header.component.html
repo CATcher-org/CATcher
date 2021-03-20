@@ -22,6 +22,10 @@
   </div>
 
   <span style="flex: 1 1 auto"></span>
+  <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Download CATcher Log" (click)="this.loggingService.exportLogFile()">
+    Download Log
+    <mat-icon>receipt</mat-icon>
+  </button>
   <button *ngIf="auth.isAuthenticated() && isOpenUrlButtonShown()" mat-button matTooltip="View current page on GitHub" (click)="viewBrowser()">
     View on GitHub
     <mat-icon>link</mat-icon>
