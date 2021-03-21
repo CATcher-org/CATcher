@@ -93,7 +93,7 @@
     "electron-builder": "22.2.0",
     "electron-reload": "1.5.0",
     "graphql-codegen-fragment-matcher": "^0.18.2",
-    "husky": "^4.2.5",
+    "husky": "^5.1.1",
     "jasmine": "^3.5.0",
     "jasmine-core": "3.5.0",
     "jasmine-spec-reporter": "4.2.1",

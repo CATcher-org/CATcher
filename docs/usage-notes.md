@@ -1,4 +1,6 @@
 - [Get Started](#get-started)
+- [Notes on Using the Desktop App](#notes-on-using-the-web-app)
+  - [For Windows Users](#for-safari-users)
 - [Notes on Using the Desktop App](#notes-on-using-the-desktop-app)
   - [For Windows Users](#for-windows-users)
   - [For Mac Users](#for-mac-users)
