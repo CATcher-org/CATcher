@@ -2,7 +2,8 @@ import { Profile } from '../app/core/models/profile.model';
 
 const BaseConfig = {
   githubUrl: 'https://github.com',
-  accessTokenUrl: 'https://catcher-proxy.herokuapp.com/authenticate'
+  accessTokenUrl: 'https://catcher-proxy.herokuapp.com/authenticate',
+  clientDataUrl: 'https://raw.githubusercontent.com/CATcher-org/client_data/master/profiles.json'
 };
 
 export function generateDefaultEnv() {

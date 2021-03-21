@@ -10,7 +10,6 @@ import {
 } from '@angular/animations';
 import { AppConfig } from '../../../environments/environment';
 import { Profile, isValidProfile } from '../../core/models/profile.model';
-import { GithubService } from '../../core/services/github.service';
 
 @Component({
   selector: 'app-profiles',
@@ -48,9 +47,7 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog,
-              public githubService: GithubService
-    ) { }
+  constructor(public errorDialog: MatDialog) { }
 
   ngOnInit() {
     this.initProfiles();
@@ -94,10 +91,17 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
+   * Gets the required profiles.json file from the external repository
+   */
+   private fetchProfilesJson(): Promise<any> {
+    return fetch(AppConfig.clientDataUrl).then(res => res.json());
+   }
+
+  /**
    * Processes available Profiles information from application's configuration.
    */
   initProfiles(): void {
-    this.githubService.fetchProfilesJson().subscribe(jsonData => {
+    this.fetchProfilesJson().then(jsonData => {
       this.profiles = this.profiles
       .concat(jsonData.profiles)
       .filter((p) => !!p);
