@@ -12,24 +12,22 @@ describe("CATcher's Bug Reporting Phase", () => {
   let headerComponent: Header;
   let viewIssuePage: ViewIssuePage;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     loginPage = new LoginPage();
     headerComponent = new Header();
     bugReportingPage = new BugReportingPage();
     viewIssuePage = new ViewIssuePage();
-    loginPage.navigateToRoot();
+    await loginPage.navigateToRoot();
+    await loginPage.bypassAuthentication();
   });
 
   it(`displays "${PhaseDescription[Phase.phaseBugReporting]}" in header bar`, async () => {
-    await loginPage.bypassAuthentication();
     expect(await bugReportingPage.getPhaseDescription()).toContain(PhaseDescription[Phase.phaseBugReporting]);
   });
 
   it('creates new bug report', async () => {
     const testIssueCreationTitle = 'Test Issue Creation Title';
     const testIssueCreationDescription = 'Test Issue Creation Text';
-
-    await loginPage.bypassAuthentication();
 
     await bugReportingPage
       .accessNewBugReportingPage()
