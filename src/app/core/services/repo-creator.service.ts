@@ -23,28 +23,32 @@ export class RepoCreatorService {
 
  /**
   * Checks if the current phase and current user role match the given permissions
-  * for the user to create the phase repository if deemed necessary 
+  * for the user to create the phase repository if deemed necessary
   * @param currentPhase the current phase of the session.
   */
-  public verifyPhaseDetails(currentPhase: Phase): 
+  public verifyRepoCreationPermissions(currentPhase: Phase):
     UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
       flatMap((repoCreationPermission: boolean | null) => {
-        if (currentPhase !== Phase.phaseBugReporting) {
-          throw new Error(CURRENT_PHASE_REPO_CLOSED)
+        if (repoCreationPermission === null) {
+          return of(null);
+        } else if (!repoCreationPermission) {
+          throw new Error(MISSING_REQUIRED_REPO);
+        } else if (currentPhase !== Phase.phaseBugReporting) {
+          throw new Error(CURRENT_PHASE_REPO_CLOSED);
         } else if (this.userService.currentUser.role !== UserRole.Student) {
-          throw new Error(BUG_REPORTING_INVALID_ROLE)
+          throw new Error(BUG_REPORTING_INVALID_ROLE);
         } else {
-          return of(repoCreationPermission)
+          return of(repoCreationPermission);
         }
       })
-    )
+    );
   }
 
   /**
    * Attempts to create the repository if permissions have been given to do so.
    * @param phaseRepo the name of the specified repository.
-   * @return - Dummy Observable to give the API sometime to propagate if the creation of the new 
+   * @return - Dummy Observable to give the API sometime to propagate if the creation of the new
    *           repository is needed since the API Call used here does not return any response.
    */
   public attemptRepoCreation(phaseRepo: string):
@@ -54,14 +58,11 @@ export class RepoCreatorService {
         if (repoCreationPermission === null) {
           // No Session Fix Necessary
           return of(null);
-        } else if (repoCreationPermission) {
+        } else {
           this.githubService.createRepository(phaseRepo);
-
           return new Observable(subscriber => {
             setTimeout(() => subscriber.next(true), 1000);
           });
-        } else {
-          throw new Error(MISSING_REQUIRED_REPO);
         }
       })
     );

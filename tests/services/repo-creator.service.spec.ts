@@ -37,20 +37,53 @@ describe('RepoCreatorService', () => {
     });
   });
 
-  describe('.attemptRepoCreation()', () => {
-    it('should not create the repository if repo creation is not needed', () => {
-      of(null).pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO)).subscribe();
+  describe('verifyRepoCreationPermissions()', () => {
+    it('should return the original permissions if a session fix was not needed', () => {
+      userService.currentUser = USER_JUNWEI;
+      of(null)
+        .pipe(repoCreatorService.verifyRepoCreationPermissions(Phase.phaseBugReporting))
+        .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
+    });
 
-      expect(githubService.createRepository).not.toHaveBeenCalled();
+    it('should return the original permissions if permissions', () => {
+      userService.currentUser = USER_JUNWEI;
+      of(true)
+        .pipe(repoCreatorService.verifyRepoCreationPermissions(Phase.phaseBugReporting))
+        .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(true));
     });
 
     it('should throw an error if no permissions were given', () => {
       of(false)
-        .pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO))
+        .pipe(repoCreatorService.verifyRepoCreationPermissions(Phase.phaseBugReporting))
         .subscribe({
           next: () => fail(),
           error: (err) => expect(err).toEqual(new Error(MISSING_REQUIRED_REPO))
         });
+    });
+
+    it('should throw an error if the wrong phase were given', () => {
+      of(true)
+        .pipe(repoCreatorService.verifyRepoCreationPermissions(Phase.phaseModeration))
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(CURRENT_PHASE_REPO_CLOSED))
+        });
+    });
+
+    it('should throw an error if permissions, correct phase, but wrong user role were given', () => {
+      userService.currentUser = USER_Q;
+      of(true)
+        .pipe(repoCreatorService.verifyRepoCreationPermissions(Phase.phaseBugReporting))
+        .subscribe({
+          next: () => fail(),
+          error: (err) => expect(err).toEqual(new Error(BUG_REPORTING_INVALID_ROLE))
+        });
+    });
+  });
+
+  describe('.attemptRepoCreation()', () => {
+    it('should not create the repository if repo creation is not needed', () => {
+      of(null).pipe(repoCreatorService.attemptRepoCreation(PHASE_REPO)).subscribe();
 
       expect(githubService.createRepository).not.toHaveBeenCalled();
     });
@@ -58,32 +91,9 @@ describe('RepoCreatorService', () => {
     it('should create the repository if permissions, correct phase and correct user role were given', () => {
       userService.currentUser = USER_JUNWEI;
       githubService.createRepository.and.callFake(() => of(true));
-      of(true).pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO)).subscribe();
+      of(true).pipe(repoCreatorService.attemptRepoCreation(PHASE_REPO)).subscribe();
 
       expect(githubService.createRepository).toHaveBeenCalledWith(PHASE_REPO);
-    });
-
-    it('should throw an error if permissions, but wrong phase were given', () => {
-      of(true)
-        .pipe(repoCreatorService.attemptRepoCreation(Phase.phaseModeration, PHASE_REPO))
-        .subscribe({
-          next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(CURRENT_PHASE_REPO_CLOSED))
-        });
-
-      expect(githubService.createRepository).not.toHaveBeenCalled();
-    });
-
-    it('should throw an error if permissions, correct phase, but wrong user role were given', () => {
-      userService.currentUser = USER_Q;
-      of(true)
-        .pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO))
-        .subscribe({
-          next: () => fail(),
-          error: (err) => expect(err).toEqual(new Error(BUG_REPORTING_INVALID_ROLE))
-        });
-
-      expect(githubService.createRepository).not.toHaveBeenCalled();
     });
   });
 });
