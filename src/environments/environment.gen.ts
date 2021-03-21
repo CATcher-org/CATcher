@@ -3,7 +3,7 @@ import { Profile } from '../app/core/models/profile.model';
 const BaseConfig = {
   githubUrl: 'https://github.com',
   accessTokenUrl: 'https://catcher-proxy.herokuapp.com/authenticate',
-  clientDataUrl: 'https://raw.githubusercontent.com/CATcher-org/client_data/master/profiles.json'
+  clientDataUrl: 'https://raw.githubusercontent.com/CATcher-org/client_data/master/profiles-dev.json'
 };
 
 export function generateDefaultEnv() {
@@ -13,12 +13,7 @@ export function generateDefaultEnv() {
     test: false,
     clientId: '0cbc5e651d8b01e36687',
     origin: 'http://localhost:4200',
-    profiles: [
-      <Profile>{
-        profileName: 'CATcher',
-        encodedText: 'CATcher-org/public_data'
-      }
-    ]
+    profiles: []
   };
 }
 
