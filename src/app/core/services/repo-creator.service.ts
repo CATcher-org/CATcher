@@ -30,11 +30,11 @@ export class RepoCreatorService {
     UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
       flatMap((repoCreationPermission: boolean | null) => {
-        if (sessionFixPermission === null) {
+        if (repoCreationPermission === null) {
           // No Session Fix Necessary
           return of(null);
-        } else if (sessionFixPermission) {
-          return this.attemptSessionAvailabilityFix(currentPhase, phaseRepo);
+        } else if (repoCreationPermission) {
+          return this.triggerRepoCreation(currentPhase, phaseRepo);
         } else {
           throw new Error(MISSING_REQUIRED_REPO);
         }
