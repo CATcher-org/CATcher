@@ -1,5 +1,3 @@
-import { Profile } from '../app/core/models/profile.model';
-
 export const AppConfig = {
   production: true,
   test: false,

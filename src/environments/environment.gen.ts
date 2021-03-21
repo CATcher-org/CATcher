@@ -1,5 +1,3 @@
-import { Profile } from '../app/core/models/profile.model';
-
 const BaseConfig = {
   githubUrl: 'https://github.com',
   accessTokenUrl: 'https://catcher-proxy.herokuapp.com/authenticate',
