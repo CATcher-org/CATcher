@@ -141,7 +141,10 @@ The authentication process is kicked off in the `AuthComponent`, but the code th
 
 ## Logging
 
-CATcher caches log data in `localStorage` within the browser which houses information as key, value pairs.
+CATcher caches log data in `localStorage` within the browser which houses information as key, value pairs. This is carried out using the following processes.
+
+- The `ErrorHandlingService` replaces `ErrorHandler` as Angular's default Error service. This is done in the `app.module.ts` where we use a custom provider to make the replacement.
+- Next, the `LoggingService` in the `ErrorHandlingService` stores all `error`, `info`, `warn` and other logging data in `localStorage` before displaying it on the `console`.
 
 
 # Future Developments
