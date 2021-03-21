@@ -115,7 +115,7 @@ export class AuthService {
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
-    if (ElectronService.isElectron()) {
+    if (this.electronService.isElectron()) {
       this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
     } else {
       this.generateStateString();
