@@ -139,6 +139,10 @@ CATcher uses the OAuth 2.0 protocol to authenticate users. Below is a summary of
 
 The authentication process is kicked off in the `AuthComponent`, but the code that co-ordinates steps 1 and 2 can be found in [`oauth.ts`](../oauth.ts)(For Electron) or `AuthService`(For Web). Step 2 requires a client secret granted to CATcher. To protect this, we run a web service, [gatekeeper](https://github.com/CATcher-org/gatekeeper) that executes step 2 on behalf of the client CATcher app.
 
+## Logging
+
+CATcher caches log data in `localStorage` within the browser which houses information as key, value pairs.
+
 
 # Future Developments
 Here are a few suggestions that future developers can work on to improve this application!
