@@ -163,7 +163,8 @@ export class PhaseService {
         }
       }),
       cacheSessionFixPermission(),
-      this.repoCreatorService.attemptRepoCreation(this.currentPhase, this.sessionData[this.currentPhase]),
+      this.repoCreatorService.verifyPhaseDetails(this.currentPhase), 
+      this.repoCreatorService.attemptRepoCreation(this.sessionData[this.currentPhase]),
       this.repoCreatorService.verifyRepoCreation(this.getPhaseOwner(this.currentPhase), this.sessionData[this.currentPhase]),
       throwIfFalse(
         (isSessionCreated: boolean) => isSessionCreated,

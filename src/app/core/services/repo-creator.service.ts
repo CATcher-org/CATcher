@@ -21,12 +21,33 @@ export class RepoCreatorService {
     private userService: UserService
   ) {}
 
+ /**
+  * Checks if the current phase and current user role match the given permissions
+  * for the user to create the phase repository if deemed necessary 
+  * @param currentPhase the current phase of the session.
+  */
+  public verifyPhaseDetails(currentPhase: Phase): 
+    UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
+    return pipe(
+      flatMap((repoCreationPermission: boolean | null) => {
+        if (currentPhase !== Phase.phaseBugReporting) {
+          throw new Error(CURRENT_PHASE_REPO_CLOSED)
+        } else if (this.userService.currentUser.role !== UserRole.Student) {
+          throw new Error(BUG_REPORTING_INVALID_ROLE)
+        } else {
+          return of(repoCreationPermission)
+        }
+      })
+    )
+  }
+
   /**
    * Attempts to create the repository if permissions have been given to do so.
-   * @param currentPhase the current phase of the session.
    * @param phaseRepo the name of the specified repository.
+   * @return - Dummy Observable to give the API sometime to propagate if the creation of the new 
+   *           repository is needed since the API Call used here does not return any response.
    */
-  public attemptRepoCreation(currentPhase: Phase, phaseRepo: string):
+  public attemptRepoCreation(phaseRepo: string):
     UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
       flatMap((repoCreationPermission: boolean | null) => {
@@ -34,7 +55,11 @@ export class RepoCreatorService {
           // No Session Fix Necessary
           return of(null);
         } else if (repoCreationPermission) {
-          return this.triggerRepoCreation(currentPhase, phaseRepo);
+          this.githubService.createRepository(phaseRepo);
+
+          return new Observable(subscriber => {
+            setTimeout(() => subscriber.next(true), 1000);
+          });
         } else {
           throw new Error(MISSING_REQUIRED_REPO);
         }
@@ -61,25 +86,4 @@ export class RepoCreatorService {
       })
     );
   }
-
- /**
-  * If a Session is unavailable (because the repository is missing) attempt to create IF it is
-  * the BugReporting Phase
-  * @param currentPhase the current phase of the session.
-  * @param phaseRepo the name of the specified repository.
-  * @return - Dummy Observable to give the API sometime to propagate the creation of the new repository since
-  *           the API Call used here does not return any response.
-  */
- private triggerRepoCreation(currentPhase: Phase, phaseRepo: string): Observable<any> {
-   if (currentPhase !== Phase.phaseBugReporting) {
-     throw new Error(CURRENT_PHASE_REPO_CLOSED);
-   } else if (this.userService.currentUser.role !== UserRole.Student) {
-     throw new Error(BUG_REPORTING_INVALID_ROLE);
-   }
-   this.githubService.createRepository(phaseRepo);
-
-   return new Observable(subscriber => {
-     setTimeout(() => subscriber.next(true), 1000);
-   });
- }
 }
