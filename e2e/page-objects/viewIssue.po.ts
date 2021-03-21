@@ -1,7 +1,6 @@
 import { browser, by, element, ExpectedConditions } from 'protractor';
 
 export class ViewIssuePage {
-
   async enterNewIssueTitle(title: string) {
     return element(by.id('title')).sendKeys(title);
   }
@@ -20,7 +19,6 @@ export class ViewIssuePage {
     return element(by.className('bug-dropdown')).click();
   }
 
-
   /**
    * Selects dropdown option from Severity or Bug Type.
    * NOTE: There is an issue where the page data isn't updated in
@@ -37,7 +35,7 @@ export class ViewIssuePage {
    * @param optionNumber Position of Dropdown Option
    * @param dropdownText Text within Dropdown Option
    */
-  async selectDropDownOption({optionNumber, dropdownText}: {optionNumber?: number, dropdownText?: string}) {
+  async selectDropDownOption({ optionNumber, dropdownText }: { optionNumber?: number; dropdownText?: string }) {
     if (optionNumber != null && dropdownText != null) {
       throw new Error('Supply either Dropdown option number or text, not both.');
     } else if (optionNumber == null && dropdownText == null) {
@@ -54,10 +52,10 @@ export class ViewIssuePage {
   }
 
   private selectDropdownByText(dropdownText: string) {
-    return element.all(by.className('mat-option')).filter((async (element, index) => {
+    return element.all(by.className('mat-option')).filter(async (element, index) => {
       const labelName: string = await element.getText();
       return labelName.includes(dropdownText);
-    }));
+    });
   }
 
   async submitBugReport() {
