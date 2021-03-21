@@ -27,7 +27,6 @@ import { SessionData } from '../models/session.model';
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
-const CLIENT_REPO = 'client_data';
 
 let ORG_NAME = '';
 let MOD_ORG = '';
@@ -287,16 +286,6 @@ export class GithubService {
           return {data: atob(rawData['data']['content'])};
         }),
       catchError(err => throwError('Failed to fetch data file.'))
-    );
-  }
-
-  fetchProfilesJson(): Observable<any> {
-    return from(octokit.repos.getContents({owner: CATCHER_ORG, repo: CLIENT_REPO, path: 'profiles.json',
-      headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
-        map(rawData => {
-          return JSON.parse(atob(rawData['data']['content']));
-        }),
-        catchError(err => throwError('Failed to fetch profiles.json.'))
     );
   }
 
