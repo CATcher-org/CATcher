@@ -38,7 +38,7 @@ describe('RepoCreatorService', () => {
   });
 
   describe('.attemptRepoCreation()', () => {
-    it('should not need to create the repository if no permissions were needed', () => {
+    it('should not create the repository if repo creation is not needed', () => {
       of(null).pipe(repoCreatorService.attemptRepoCreation(Phase.phaseBugReporting, PHASE_REPO)).subscribe();
 
       expect(githubService.createRepository).not.toHaveBeenCalled();

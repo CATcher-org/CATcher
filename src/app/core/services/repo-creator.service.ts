@@ -29,7 +29,7 @@ export class RepoCreatorService {
   public attemptRepoCreation(currentPhase: Phase, phaseRepo: string):
     UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
-      flatMap((sessionFixPermission: boolean | null) => {
+      flatMap((repoCreationPermission: boolean | null) => {
         if (sessionFixPermission === null) {
           // No Session Fix Necessary
           return of(null);
@@ -70,10 +70,10 @@ export class RepoCreatorService {
   * @return - Dummy Observable to give the API sometime to propagate the creation of the new repository since
   *           the API Call used here does not return any response.
   */
- private attemptSessionAvailabilityFix(currentPhase: Phase, phaseRepo: string): Observable<any> {
+ private triggerRepoCreation(currentPhase: Phase, phaseRepo: string): Observable<any> {
    if (currentPhase !== Phase.phaseBugReporting) {
      throw new Error(CURRENT_PHASE_REPO_CLOSED);
-   } else if (currentPhase === Phase.phaseBugReporting && this.userService.currentUser.role !== UserRole.Student) {
+   } else if (this.userService.currentUser.role !== UserRole.Student) {
      throw new Error(BUG_REPORTING_INVALID_ROLE);
    }
    this.githubService.createRepository(phaseRepo);
