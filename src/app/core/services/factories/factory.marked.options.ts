@@ -5,7 +5,7 @@ export function markedOptionsFactory(): MarkedOptions {
   const linkRenderer = renderer.link;
 
   function checkRegex(href): boolean {
-    var regex = /^(?:http:\/\/|https:\/\/)|(?!-)([A-Za-z0-9-]+(\.|-))+([A-Za-z]+)(?!-)$/g;
+    const regex = /^(?:http:\/\/|https:\/\/)|(?!-)([A-Za-z0-9-]+(\.|-))+([A-Za-z]+)(?!-)$/g;
     return regex.test(href);
   }
 
