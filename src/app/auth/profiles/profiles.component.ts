@@ -91,19 +91,22 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Gets the required profiles.json file from the external repository
+   * Gets the required profiles file from the external repository
    */
-   private fetchProfilesJson(): Promise<any> {
-    return fetch(AppConfig.clientDataUrl).then(res => res.json());
+   private fetchExternalProfiles(): Promise<Profile[]> {
+    return fetch(AppConfig.clientDataUrl)
+      .then(res => res.json())
+      .then(json => json.profiles || [])
+      .catch(e => this.openErrorDialog());
    }
 
   /**
    * Processes available Profiles information from application's configuration.
    */
   initProfiles(): void {
-    this.fetchProfilesJson().then(jsonData => {
+    this.fetchExternalProfiles().then(externalProfiles => {
       this.profiles = this.profiles
-      .concat(jsonData.profiles)
+      .concat(externalProfiles)
       .filter((p) => !!p);
     });
   }
