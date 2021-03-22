@@ -12,6 +12,7 @@ import { IssueService } from '../../core/services/issue.service';
 import { GithubService } from '../../core/services/github.service';
 import { UserRole } from '../../core/models/user.model';
 import { ElectronService } from '../../core/services/electron.service';
+import { LoggingService } from '../../core/services/logging.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit {
               public auth: AuthService,
               public phaseService: PhaseService,
               public userService: UserService,
+              private loggingService: LoggingService,
               private location: Location,
               private githubEventService: GithubEventService,
               private issueService: IssueService,

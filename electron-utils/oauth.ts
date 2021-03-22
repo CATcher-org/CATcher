@@ -1,4 +1,5 @@
 import { BrowserWindow, shell } from 'electron';
+import { v4 as uuid } from 'uuid';
 
 const nodeUrl = require('url');
 const fetch = require('node-fetch');
@@ -18,6 +19,7 @@ let authWindow;
  */
 export function getAccessToken(window: BrowserWindow, repoPermissionLevel: string): Promise<any> {
   return getAuthorizationCode(window, repoPermissionLevel).then((code) => {
+    Logger.info('Obtained authorization code from Github');
     const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
     return fetch(accessTokenUrl).then(res => res.json()).then(data => {
       if (data.error) {
@@ -36,7 +38,9 @@ export function getAccessToken(window: BrowserWindow, repoPermissionLevel: strin
  * @param repoPermissionLevel - The level of permission required to be granted by the user to use CATcher.
  */
 function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: string) {
-  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${repoPermissionLevel},read:user`);
+  let state: string;
+  state = generateStateString();
+  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${repoPermissionLevel},read:user&state=${state}`);
 
   return new Promise(function (resolve, reject) {
     const windowParams = {
@@ -51,6 +55,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
     authWindow = new BrowserWindow(windowParams);
     authWindow.loadURL(oauthUrl);
     authWindow.show();
+    Logger.info('Opening authentication window');
 
     authWindow.on('closed', (event) => {
       reject(new Error('WINDOW_CLOSED'));
@@ -71,6 +76,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
     });
 
     authWindow.webContents.on('will-redirect', (event, newUrl) => {
+      Logger.info('Received redirect in auth window');
       if (newUrl.startsWith(CALLBACK_URL)) {
         onCallback(newUrl);
       }
@@ -81,19 +87,31 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
       const query = url_parts.query;
       const code = query.code;
       const error = query.error;
-      const state = query.state;
+      const returnedState = query.state;
 
-      if (error !== undefined && state !== undefined) {
+      if (error !== undefined) {
         reject(error);
-      } else if (code) {
+      } else if (isReturnedStateSame(state, returnedState) && code) {
         resolve(code);
       }
       setImmediate(function () {
         authWindow.close();
         authWindow.on('closed', () => {
+          Logger.info('Closing authentication window');
           authWindow = null;
         });
       });
     }
   });
+}
+
+/**
+ * Generates and assigns an unguessable random 'state' string to pass to Github for protection against cross-site request forgery attacks
+ */
+function generateStateString(): string {
+  return uuid();
+}
+
+function isReturnedStateSame(state: string, returnedState: string): boolean {
+  return state === returnedState;
 }

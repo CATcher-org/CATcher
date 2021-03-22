@@ -11,17 +11,14 @@ describe('IssueRespondedComponent', () => {
     const DUMMY_TEAM = USER_JUNWEI.team;
     const DUMMY_COMMENT: IssueComment = {
       id: 1,
-      description: 'This is some description of an issue comment',
+      description: 'This is some description of an issue comment'
     };
     let dummyIssue: Issue;
 
     beforeEach(() => {
       // generate a well-formed dummy-issue
       // dummy issues does not have status and comment attributes
-      dummyIssue = Issue.createPhaseTeamResponseIssue(
-        ISSUE_WITH_EMPTY_DESCRIPTION,
-        DUMMY_TEAM
-      );
+      dummyIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, DUMMY_TEAM);
     });
 
     it('should set filter to return true for an issue that has a comment and is marked done', () => {
