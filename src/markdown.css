@@ -389,6 +389,13 @@ markdown a:not([href]) {
   text-decoration: none;
 }
 
+markdown .invalid-link {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
+
 markdown .anchor {
   float: left;
   padding-right: 4px;
