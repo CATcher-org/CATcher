@@ -38,14 +38,14 @@ describe('RepoCreatorService', () => {
   });
 
   describe('verifyRepoCreationPermissions()', () => {
-    it('should return the original permissions if a session fix was not needed', () => {
+    it('should return the original permissions if repo creation was not needed', () => {
       userService.currentUser = USER_JUNWEI;
       of(null)
         .pipe(repoCreatorService.verifyRepoCreationPermissions(Phase.phaseBugReporting))
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
     });
 
-    it('should return the original permissions if permissions', () => {
+    it('should return the original permissions if permissions were given', () => {
       userService.currentUser = USER_JUNWEI;
       of(true)
         .pipe(repoCreatorService.verifyRepoCreationPermissions(Phase.phaseBugReporting))
