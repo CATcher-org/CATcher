@@ -194,15 +194,11 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     }
 
     const updatedIssue = this.issue.clone(this.phaseService.currentPhase);
-    const values: {} = this.testerResponseForm.getRawValue();
 
     updatedIssue.testerResponses.map((response: TesterResponse, index: number) => {
       // Filter Keys based on Response Index
-      const responseDataKeys = Object.keys(values).filter((key: string) => key.includes(`${index}`));
-      const disagreeKey = responseDataKeys.find((key: string) => key.startsWith(this.responseRadioIdentifier));
-      const reasonKey = responseDataKeys.find((key: string) => key.startsWith(this.responseTextIdentifier));
-      const isDisagree = values[disagreeKey];
-      const reason = isDisagree ? (values[reasonKey] || response.reasonForDisagreement) : response.INITIAL_RESPONSE;
+      const isDisagree = this.isResponseDisagreed(index);
+      const reason = isDisagree ? (this.getTesterResponseText(index) || response.reasonForDisagreement) : response.INITIAL_RESPONSE;
 
       response.setDisagree(isDisagree);
       response.setReasonForDisagreement(reason);
@@ -220,10 +216,27 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Gets the Tester's Response text.
+   * @param index Tester Response Index.
+   */
+  getTesterResponseText(index: number): string {
+    return this.testerResponseForm.get(this.getTesterResponseFormId(index)).value
+  }
+
+  /**
    * @param index - index of action which the tester disagree.
    */
   getDisagreeRadioFormId(index: number): string {
     return `${this.responseRadioIdentifier}-${index}`;
+  }
+
+  /**
+   * Checks if Tester Response was agreed to or disagreed with.
+   * @param index Tester Response Index,
+   * @returns true if response was disagreed with, false if response was agreed with.
+   */
+  isResponseDisagreed(index: number): boolean {
+    return this.testerResponseForm.get(this.getDisagreeRadioFormId(index)).value;
   }
 
   get conflict(): boolean {
