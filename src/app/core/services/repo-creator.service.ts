@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { flatMap } from 'rxjs/operators';
+import { flatMap, tap } from 'rxjs/operators';
 import { Observable, of, pipe, UnaryFunction } from 'rxjs';
 import { GithubService } from './github.service';
 import { UserService } from './user.service';
@@ -29,17 +29,13 @@ export class RepoCreatorService {
   public verifyRepoCreationPermissions(currentPhase: Phase):
     UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
-      flatMap((repoCreationPermission: boolean | null) => {
-        if (repoCreationPermission === null) {
-          return of(null);
-        } else if (!repoCreationPermission) {
+      tap((repoCreationPermission: boolean | null) => {
+        if (repoCreationPermission === false) {
           throw new Error(MISSING_REQUIRED_REPO);
         } else if (currentPhase !== Phase.phaseBugReporting) {
           throw new Error(CURRENT_PHASE_REPO_CLOSED);
         } else if (this.userService.currentUser.role !== UserRole.Student) {
           throw new Error(BUG_REPORTING_INVALID_ROLE);
-        } else {
-          return of(repoCreationPermission);
         }
       })
     );
