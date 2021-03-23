@@ -220,7 +220,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
    * @param index Tester Response Index.
    */
   getTesterResponseText(index: number): string {
-    return this.testerResponseForm.get(this.getTesterResponseFormId(index)).value
+    return this.testerResponseForm.get(this.getTesterResponseFormId(index)).value;
   }
 
   /**
