@@ -20,6 +20,8 @@ import { GithubLabel } from '../models/github/github-label.model';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import { HiddenData } from '../models/hidden-data.model';
+import { ElectronService } from './electron.service';
+import { appVersion } from './application.service';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +43,7 @@ export class IssueService {
               private phaseService: PhaseService,
               private permissionService: PermissionService,
               private errorHandlingService: ErrorHandlingService,
+              private electronService: ElectronService,
               private dataService: DataService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
@@ -119,7 +122,8 @@ export class IssueService {
 
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
-    const hiddenData = new Map([['session', this.sessionId]]);
+    const clientType = this.electronService.isElectron() ? 'Desktop' : 'Web';
+    const hiddenData = new Map([['session', this.sessionId], ['Version', `${clientType} v${appVersion}`]]);
     const issueDescription = HiddenData.embedDataIntoString(description, hiddenData);
     return this.githubService.createIssue(title, issueDescription, labelsArray).pipe(
       map((response: GithubIssue) => this.createIssueModel(response))
