@@ -1,9 +1,9 @@
 import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
 import { DataSource } from '@angular/cdk/table';
 import { IssueService } from '../../core/services/issue.service';
-import { Issue } from '../../core/models/issue.model';
+import { Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER } from '../../core/models/issue.model';
 import { MatPaginator, MatSort } from '@angular/material';
-import { flatMap, map } from 'rxjs/operators';
+import { delay, flatMap, map, startWith, tap } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { getSortedData } from './issue-sorter';
 import { setAndGetPaginatedData } from './issue-tables-paginated-data';

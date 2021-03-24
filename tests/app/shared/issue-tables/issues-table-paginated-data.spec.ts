@@ -11,7 +11,7 @@ import { setAndGetPaginatedData } from '../../../../src/app/shared/issue-tables/
 
 describe('isses-table-paginated-data', () => {
     describe('getPaginatedData()', () => {
-        const cdRefMock = {
+        const changeDetectorRefMock = {
             detectChanges: () => null,
             markForCheck: () => null,
             detach: () => null,
@@ -28,7 +28,6 @@ describe('isses-table-paginated-data', () => {
         const highSeverityDocumentationBugIssue: Issue =
             Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION_HIGH_SEVERITY, dummyTeam);
 
-
         beforeEach(() => {
             dataSet_3 = [
                 mediumSeverityIssueWithResponse,
@@ -44,7 +43,7 @@ describe('isses-table-paginated-data', () => {
                 lowSeverityFeatureFlawIssue,
                 highSeverityDocumentationBugIssue
             ];
-            paginator = new MatPaginator(new MatPaginatorIntl(), cdRefMock);
+            paginator = new MatPaginator(new MatPaginatorIntl(), changeDetectorRefMock);
             paginator.pageSize = 3;
         });
 
