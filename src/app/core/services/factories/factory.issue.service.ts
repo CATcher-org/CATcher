@@ -7,14 +7,15 @@ import { PhaseService } from '../phase.service';
 import { PermissionService } from '../permission.service';
 import { ErrorHandlingService } from '../error-handling.service';
 import { DataService } from '../data.service';
+import { ElectronService } from '../electron.service';
 
 export function IssueServiceFactory(githubService: GithubService, userService: UserService, phaseService: PhaseService,
                                     permissionService: PermissionService, errorHandlingService: ErrorHandlingService,
-                                    dataService: DataService) {
+                                    electronService: ElectronService, dataService: DataService) {
   if (AppConfig.test) {
       return new MockIssueService(githubService, userService, phaseService,
         permissionService, errorHandlingService, dataService);
   }
   return new IssueService(githubService, userService, phaseService,
-    permissionService, errorHandlingService, dataService);
+    permissionService, errorHandlingService, electronService, dataService);
 }
