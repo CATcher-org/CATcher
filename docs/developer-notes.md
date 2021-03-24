@@ -141,9 +141,9 @@ The authentication process is kicked off in the `AuthComponent`, but the code th
 
 # Handling Releases
 
-Releases are primarily crafted using Github Actions that handle deployments and the building of executables for multiple operating systems. A release can be created with the following steps:
+Releases are primarily crafted using Github Actions that handles deployments and the building of executables for multiple operating systems. A release can be created with the following steps:
 
-  - Create and Merge and Pull Request that updates the version of the application in the `package.json` file.
+  - Create and Merge a Pull Request that updates the version of the application in the `package.json` file.
   - Navigate to the 'Actions' Tab of the `CATcher` repository and start the `Draft Deployment` Workflow. This deploys the application and creates a Draft Release containing the compiled executables.
   - Edit the Draft Release and update the description with a changelog of recently merged Pull Requests.
   - Save the Draft and create the Full Release.
