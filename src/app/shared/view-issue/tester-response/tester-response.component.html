@@ -23,7 +23,7 @@
                            [disableControl]="!isEditing"
                            [id]="getDisagreeRadioFormId(i)"
                            [formControlName]="getDisagreeRadioFormId(i)"
-                           (change)="handleChangeOfDisagreeCheckbox($event, i)">
+                           (change)="handleChangeOfDisagreeRadioButton($event, i)">
             <mat-radio-button [value]="false">
               I Agree
             </mat-radio-button>

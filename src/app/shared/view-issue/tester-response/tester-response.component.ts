@@ -142,10 +142,9 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     this.resetForm();
   }
 
-  handleChangeOfDisagreeCheckbox(event, index: number) {
-    const checkboxFormControl = this.testerResponseForm.get(this.getDisagreeRadioFormId(index));
+  handleChangeOfDisagreeRadioButton(event, index: number) {
     const responseFormControl = this.testerResponseForm.get(this.getTesterResponseFormId(index));
-    const isDisagreeChecked = checkboxFormControl.value;
+    const isDisagreeChecked = this.isResponseDisagreed(index);
     if (isDisagreeChecked) {
       responseFormControl.enable();
     } else {
