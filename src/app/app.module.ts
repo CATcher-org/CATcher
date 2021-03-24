@@ -85,7 +85,7 @@ import { markedOptionsFactory } from './shared/lib/marked';
       provide: IssueService,
       useFactory: IssueServiceFactory,
       deps: [GithubService, UserService, PhaseService,
-      PermissionService, ErrorHandlingService, DataService]
+      PermissionService, ErrorHandlingService, ElectronService, DataService]
     },
     {
       provide: ErrorHandler,
