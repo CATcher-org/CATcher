@@ -3,10 +3,10 @@ import { DataSource } from '@angular/cdk/table';
 import { IssueService } from '../../core/services/issue.service';
 import { Issue } from '../../core/models/issue.model';
 import { MatPaginator, MatSort } from '@angular/material';
-import { flatMap, map} from 'rxjs/operators';
+import { flatMap, map } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { getSortedData } from './issue-sorter';
-import { getPaginatedData } from './issue-tables-paginated-data';
+import { setAndGetPaginatedData } from './issue-tables-paginated-data';
 import { applySearchFilter } from './search-filter';
 
 export class IssuesDataTable extends DataSource<Issue> {
@@ -56,7 +56,7 @@ export class IssuesDataTable extends DataSource<Issue> {
             data = getSortedData(this.sort, data);
             data = this.getFilteredTeamData(data);
             data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
-            data = getPaginatedData(this.paginator, data);
+            data = setAndGetPaginatedData(this.paginator, data);
 
             return data;
           })
