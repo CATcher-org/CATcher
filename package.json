@@ -35,8 +35,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick",
-      "pre-push": "npm run lint && npm run test"
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "npx prettier --check && npm run lint && npm run test"
     }
   },
   "dependencies": {
