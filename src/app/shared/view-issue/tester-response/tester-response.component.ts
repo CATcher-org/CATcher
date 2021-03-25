@@ -165,7 +165,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
    */
   createFormGroup() {
     const group: any = {};
-    // initialize fields for tester response and the checkboxes for tester to mark "Disagree"
+    // initialize fields for tester response and the radio buttons for tester to choose "Agree" / "Disagree"
     for (let i = 0; i < this.issue.testerResponses.length; i++) {
       const response = this.issue.testerResponses[i];
       group[this.getTesterResponseFormId(i)] = new FormControl({
