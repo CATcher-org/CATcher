@@ -46,7 +46,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: npm run lint
-    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js" || npm test -- "--karma-config=./tests/karma.ci.conf.js"
 
   windows-setup-and-tests:
     runs-on: windows-latest
