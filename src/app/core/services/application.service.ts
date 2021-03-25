@@ -7,6 +7,8 @@ import { map } from 'rxjs/operators';
 const appSetting = require('../../../../package.json');
 export const currentVersion = appSetting.currentVersion;
 
+export const appVersion = appSetting.version;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +18,7 @@ export class ApplicationService {
   latestReleaseUrl: string;
 
   constructor(private githubService: GithubService) {
-    this.currentVersion = appSetting.version;
+    this.currentVersion = appVersion;
   }
 
   /**
