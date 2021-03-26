@@ -24,6 +24,13 @@ export class RepoCreatorService {
     private phaseFixConfirmationDialog: MatDialog
   ) {}
 
+  /**
+   * Checks if the current repository has been created and if not, checks
+   * if the current phase match the requirements to make a request for 
+   * repo creation permissions. 
+   * @param currentPhase the current phase of the session.
+   * @param phaseRepo the name of the specified repository.
+   */
   public requestRepoCreationPermissions(currentPhase: Phase, phaseRepo: string):
     UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
     return pipe(
@@ -39,6 +46,7 @@ export class RepoCreatorService {
 
   /**
    * Launches the SessionFixConfirmation Dialog.
+   * @param phaseRepo the name of the specified repository.
    * @return Observable<boolean> - Representing user's permission grant.
    */
   private openSessionFixConfirmation(phaseRepo: string): Observable<boolean> {
