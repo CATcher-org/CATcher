@@ -26,8 +26,8 @@ export class RepoCreatorService {
 
   /**
    * Checks if the current repository has been created and if not, checks
-   * if the current phase match the requirements to make a request for 
-   * repo creation permissions. 
+   * if the current phase match the requirements to make a request for
+   * repo creation permissions.
    * @param currentPhase the current phase of the session.
    * @param phaseRepo the name of the specified repository.
    */
