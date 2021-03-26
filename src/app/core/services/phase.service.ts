@@ -139,7 +139,7 @@ export class PhaseService {
         this.updateSessionParameters(sessionData);
         return this.verifySessionAvailability(sessionData);
       }),
-      this.repoCreatorService.requestRepoCreationPermissions(this.currentPhase, this.sessionData[this.currentPhase]), 
+      this.repoCreatorService.requestRepoCreationPermissions(this.currentPhase, this.sessionData[this.currentPhase]),
       cacheSessionFixPermission(),
       this.repoCreatorService.verifyRepoCreationPermissions(this.currentPhase),
       this.repoCreatorService.attemptRepoCreation(this.sessionData[this.currentPhase]),
