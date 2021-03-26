@@ -4,7 +4,7 @@ import { Observable, of, pipe, UnaryFunction } from 'rxjs';
 import { GithubService } from './github.service';
 import { UserService } from './user.service';
 import { Phase } from '../models/phase.model';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 import { UserRole } from '../models/user.model';
 
@@ -28,7 +28,7 @@ export class RepoCreatorService {
     UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
     return pipe(
       flatMap((isSessionAvailable: boolean) => {
-        if (!isSessionAvailable && currentPhase === Phase.phaseBugReporting) {
+        if (!isSessionAvailable && currentPhase == Phase.phaseBugReporting) {
           return this.openSessionFixConfirmation(phaseRepo);
         } else {
           return of(null);
@@ -42,7 +42,8 @@ export class RepoCreatorService {
    * @return Observable<boolean> - Representing user's permission grant.
    */
   private openSessionFixConfirmation(phaseRepo: string): Observable<boolean> {
-    const dialogRef = this.phaseFixConfirmationDialog.open(SessionFixConfirmationComponent, {
+    const dialogRef: MatDialogRef<SessionFixConfirmationComponent> = 
+    this.phaseFixConfirmationDialog.open(SessionFixConfirmationComponent, {
       data: {user: this.userService.currentUser.loginId, repoName: phaseRepo}
     });
     return dialogRef.afterClosed();

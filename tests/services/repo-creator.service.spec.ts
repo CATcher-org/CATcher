@@ -12,6 +12,8 @@ import { USER_JUNWEI, USER_Q } from '../constants/data.constants';
 const PHASE_OWNER = 'CATcher-org';
 const PHASE_REPO = 'bugreporting';
 let repoCreatorService: RepoCreatorService;
+let matDialogRef: any; 
+let matDialog: any; 
 let githubService: any;
 let userService: UserService;
 
@@ -19,6 +21,8 @@ describe('RepoCreatorService', () => {
   beforeEach(() => {
     userService = new UserService(null, null);
     githubService = jasmine.createSpyObj('GithubService', ['isRepositoryPresent', 'createRepository']);
+    matDialog = jasmine.createSpyObj('MatDialog', ['open']);
+    matDialogRef = jasmine.createSpyObj('MatDialogRef<SessionFixConfirmationComponent>', ['afterClosed']);
     repoCreatorService = new RepoCreatorService(githubService, userService, null);
   });
 
@@ -35,6 +39,28 @@ describe('RepoCreatorService', () => {
 
       expect(githubService.isRepositoryPresent).toHaveBeenCalledWith(PHASE_OWNER, PHASE_REPO);
     });
+  });
+
+  describe(".requestRepoCreationPermissions()", () => {
+    it('should not need to return any permissions if the repo was already created', () => {
+      of(true)
+      .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseBugReporting, PHASE_REPO))
+      .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
+    })
+
+    it('should not need to return any permissions if repo not created but current phase is not bugReporting', () => {
+      of(false)
+      .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseModeration, PHASE_REPO))
+      .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
+    })
+
+    it('should return permissions from matDialog if repo not created and current phase is bugReportin g', () => {
+      matDialog.open.and.callFake(() => matDialogRef);
+      matDialogRef.afterClosed.and.callFake(() => false);
+      of(false)
+      .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseBugReporting, PHASE_REPO))
+      .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(false));
+    })
   });
 
   describe('verifyRepoCreationPermissions()', () => {
