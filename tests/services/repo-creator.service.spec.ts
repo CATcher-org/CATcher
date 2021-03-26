@@ -55,8 +55,9 @@ describe('RepoCreatorService', () => {
     });
 
     it('should return permissions from matDialog if repo not created and current phase is bugReportin g', () => {
+      userService.currentUser = USER_JUNWEI;
       matDialog.open.and.callFake(() => matDialogRef);
-      matDialogRef.afterClosed.and.callFake(() => false);
+      matDialogRef.afterClosed.and.callFake(() => of(false));
       of(false)
         .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseBugReporting, PHASE_REPO))
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(false));
