@@ -19,7 +19,7 @@ describe('RepoCreatorService', () => {
   beforeEach(() => {
     userService = new UserService(null, null);
     githubService = jasmine.createSpyObj('GithubService', ['isRepositoryPresent', 'createRepository']);
-    repoCreatorService = new RepoCreatorService(githubService, userService);
+    repoCreatorService = new RepoCreatorService(githubService, userService, null);
   });
 
   describe('.verifyRepoCreation()', () => {

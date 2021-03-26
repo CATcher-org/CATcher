@@ -119,19 +119,6 @@ export class PhaseService {
   }
 
   /**
-   * Launches the SessionFixConfirmation Dialog.
-   * @return Observable<boolean> - Representing user's permission grant.
-   */
-  openSessionFixConfirmation(): Observable<boolean> {
-    const dialogRef = this.phaseFixConfirmationDialog.open(SessionFixConfirmationComponent, {
-      data: {user: this.userService.currentUser.loginId, repoName: this.sessionData[this.currentPhase]}
-    });
-
-    return dialogRef.afterClosed();
-  }
-
-
-  /**
    * Ensures that the necessary data for the current session is available
    * and synchronized with the remote server.
    */
@@ -152,16 +139,7 @@ export class PhaseService {
         this.updateSessionParameters(sessionData);
         return this.verifySessionAvailability(sessionData);
       }),
-      flatMap((isSessionAvailable: boolean) => {
-        if (!isSessionAvailable && this.currentPhase === Phase.phaseBugReporting) {
-          if (isSessionFixPermissionGranted) {
-            return of(true);
-          }
-          return this.openSessionFixConfirmation();
-        } else {
-          return of(null);
-        }
-      }),
+      this.repoCreatorService.requestRepoCreationPermissions(this.currentPhase, this.sessionData[this.currentPhase]), 
       cacheSessionFixPermission(),
       this.repoCreatorService.verifyRepoCreationPermissions(this.currentPhase),
       this.repoCreatorService.attemptRepoCreation(this.sessionData[this.currentPhase]),
