@@ -48,13 +48,13 @@ describe('RepoCreatorService', () => {
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
     });
 
-    it('should not need to return any permissions if repo not created but current phase is not bugReporting', () => {
+    it('should not need to return any permissions if the repo was not created but current phase is not bugReporting', () => {
       of(false)
         .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseModeration, PHASE_REPO))
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
     });
 
-    it('should return permissions from matDialog if repo not created and current phase is bugReportin g', () => {
+    it('should return permissions from matDialog if the repo was not created and current phase is bugReporting', () => {
       userService.currentUser = USER_JUNWEI;
       matDialog.open.and.callFake(() => matDialogRef);
       matDialogRef.afterClosed.and.callFake(() => of(false));
