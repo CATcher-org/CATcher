@@ -2,3 +2,7 @@
     padding: 10px 20px 0 20px;
     display: grid;
 }
+
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 16px;
+}
