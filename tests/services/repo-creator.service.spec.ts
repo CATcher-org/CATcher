@@ -23,7 +23,7 @@ describe('RepoCreatorService', () => {
     githubService = jasmine.createSpyObj('GithubService', ['isRepositoryPresent', 'createRepository']);
     matDialog = jasmine.createSpyObj('MatDialog', ['open']);
     matDialogRef = jasmine.createSpyObj('MatDialogRef<SessionFixConfirmationComponent>', ['afterClosed']);
-    repoCreatorService = new RepoCreatorService(githubService, userService, null);
+    repoCreatorService = new RepoCreatorService(githubService, userService, matDialog);
   });
 
   describe('.verifyRepoCreation()', () => {
