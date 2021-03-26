@@ -61,6 +61,9 @@ describe('RepoCreatorService', () => {
       of(false)
         .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseBugReporting, PHASE_REPO))
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(false));
+
+      expect(matDialog.open).toHaveBeenCalledTimes(1);
+      expect(matDialogRef.afterClosed).toHaveBeenCalledTimes(1);
     });
   });
 
