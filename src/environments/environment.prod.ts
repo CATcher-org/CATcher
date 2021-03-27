@@ -1,8 +1,11 @@
 import { Profile } from '../app/core/models/profile.model';
 
+const appSetting = require('../../package.json');
+
 export const AppConfig = {
   production: true,
   test: false,
+  version: appSetting.version, 
   clientId: '5e1ed08cff7f0de1d68d',
   githubUrl: 'https://github.com',
   accessTokenUrl: 'https://catcher-proxy.herokuapp.com/authenticate',
