@@ -13,7 +13,7 @@ import { GithubService } from '../../core/services/github.service';
 import { UserRole } from '../../core/models/user.model';
 import { ElectronService } from '../../core/services/electron.service';
 import { LoggingService } from '../../core/services/logging.service';
-import { appVersion } from '../../core/services/application.service';
+import { AppConfig } from '../../../environments/environment';
 
 @Component({
   selector: 'app-layout-header',
@@ -87,7 +87,7 @@ export class HeaderComponent implements OnInit {
   }
 
   getVersion(): string {
-    return appVersion;
+    return AppConfig.version;
   }
 
   getPhaseDescription(openPhase: string): string {
