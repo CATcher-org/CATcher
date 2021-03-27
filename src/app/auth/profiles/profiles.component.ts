@@ -91,7 +91,7 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Gets the required profiles file from the external repository
+   * Gets the required profiles from the external repository file.
    */
    private fetchExternalProfiles(): Promise<Profile[]> {
     return fetch(AppConfig.clientDataUrl)
@@ -101,7 +101,7 @@ export class ProfilesComponent implements OnInit {
    }
 
   /**
-   * Processes available Profiles information from application's configuration.
+   * Processes available Profiles information from the extenral repository.
    */
   initProfiles(): void {
     this.fetchExternalProfiles().then(externalProfiles => {
