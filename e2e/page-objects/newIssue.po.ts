@@ -1,6 +1,6 @@
 import { browser, by, element, ExpectedConditions } from 'protractor';
 
-export class ViewIssuePage {
+export class NewIssuePage {
   async enterNewIssueTitle(title: string) {
     return element(by.id('title')).sendKeys(title);
   }
