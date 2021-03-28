@@ -18,15 +18,21 @@
         <markdown [data]="response.description"></markdown>
         <br>
         <div>
-          <mat-checkbox style="display: inline-block; width: 20%" [id]="getDisagreeBoxFormId(i)"
-                        [formControlName]="getDisagreeBoxFormId(i)"
-                        [disableControl]="!isEditing"
-                        (change)="handleChangeOfDisagreeCheckbox($event, i)"
-          >
-            I disagree
-          </mat-checkbox>
+          <mat-radio-group style="display: inline-block; width: 20%"
+                           aria-label="Select Agree or Disagree to Team's Response"
+                           [disableControl]="!isEditing"
+                           [id]="getDisagreeRadioFormId(i)"
+                           [formControlName]="getDisagreeRadioFormId(i)"
+                           (change)="handleChangeOfDisagreeRadioButton($event, i)">
+            <mat-radio-button [value]="false">
+              I Agree
+            </mat-radio-button>
+            <mat-radio-button [value]="true">
+              I Disagree
+            </mat-radio-button>
+          </mat-radio-group>
         </div>
-        <div *ngIf="testerResponseForm.get(getDisagreeBoxFormId(i)).value">
+        <div *ngIf="testerResponseForm.get(getDisagreeRadioFormId(i)).value">
           <div>
             <p style="font-weight: 500;"> Reason for Disagreement: </p>
             <markdown [data]="response.reasonForDisagreement" *ngIf="!isEditing"></markdown>
