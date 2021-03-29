@@ -13,6 +13,7 @@ import { Observable, throwError } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { ConflictDialogComponent, TesterResponseConflictData } from './conflict-dialog/conflict-dialog.component';
 import { PhaseService } from '../../../core/services/phase.service';
+import { TesterResponse } from '../../../core/models/tester-response.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -30,6 +31,9 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
+
+  private readonly responseRadioIdentifier = 'response-radio';
+  private readonly responseTextIdentifier = 'tester-response';
 
   constructor(private formBuilder: FormBuilder,
               private issueService: IssueService,
@@ -138,10 +142,9 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     this.resetForm();
   }
 
-  handleChangeOfDisagreeCheckbox(event, index: number) {
-    const checkboxFormControl = this.testerResponseForm.get(this.getDisagreeBoxFormId(index));
+  handleChangeOfDisagreeRadioButton(event, index: number) {
     const responseFormControl = this.testerResponseForm.get(this.getTesterResponseFormId(index));
-    const isDisagreeChecked = checkboxFormControl.value;
+    const isDisagreeChecked = this.isResponseDisagreed(index);
     if (isDisagreeChecked) {
       responseFormControl.enable();
     } else {
@@ -162,14 +165,14 @@ export class TesterResponseComponent implements OnInit, OnChanges {
    */
   createFormGroup() {
     const group: any = {};
-    // initialize fields for tester response and the checkboxes for tester to mark "Disagree"
+    // initialize fields for tester response and the radio buttons for tester to choose "Agree" / "Disagree"
     for (let i = 0; i < this.issue.testerResponses.length; i++) {
       const response = this.issue.testerResponses[i];
       group[this.getTesterResponseFormId(i)] = new FormControl({
         value: response.reasonForDisagreement,
         disabled: !response.isDisagree()
       }, Validators.required);
-      group[this.getDisagreeBoxFormId(i)] = new FormControl({
+      group[this.getDisagreeRadioFormId(i)] = new FormControl({
         value: response.isDisagree(),
         disabled: !this.isEditing
       }, Validators.required);
@@ -190,28 +193,16 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     }
 
     const updatedIssue = this.issue.clone(this.phaseService.currentPhase);
-    const values = this.testerResponseForm.getRawValue();
-    const disagrees = [];
-    const reasons = [];
 
-    let index = 0;
-    for (const [key, value] of Object.entries(values)) {
-      if (key.startsWith('disagree-box')) {
-        disagrees.push(value);
-      } else if (key.startsWith('tester-response')) {
-        reasons.push(value);
-      }
-      index++;
-    }
+    updatedIssue.testerResponses.map((response: TesterResponse, index: number) => {
+      // Filter Keys based on Response Index
+      const isDisagree = this.isResponseDisagreed(index);
+      const reason = isDisagree ? (this.getTesterResponseText(index) || response.reasonForDisagreement) : response.INITIAL_RESPONSE;
 
-    index = 0;
-    for (const response of updatedIssue.testerResponses) {
-      const isDisagree = disagrees[index] === undefined ? response.isDisagree() : disagrees[index];
-      const reason = isDisagree ? reasons[index] || response.reasonForDisagreement : response.INITIAL_RESPONSE;
       response.setDisagree(isDisagree);
       response.setReasonForDisagreement(reason);
-      index++;
-    }
+      return response;
+    });
 
     return updatedIssue.createGithubTesterResponse();
   }
@@ -220,14 +211,31 @@ export class TesterResponseComponent implements OnInit, OnChanges {
    * @param index - index of action which the tester disagree.
    */
   getTesterResponseFormId(index: number): string {
-    return `tester-response-${index}`;
+    return `${this.responseTextIdentifier}-${index}`;
+  }
+
+  /**
+   * Gets the Tester's Response text.
+   * @param index Tester Response Index.
+   */
+  getTesterResponseText(index: number): string {
+    return this.testerResponseForm.get(this.getTesterResponseFormId(index)).value;
   }
 
   /**
    * @param index - index of action which the tester disagree.
    */
-  getDisagreeBoxFormId(index: number): string {
-    return `disagree-box-${index}`;
+  getDisagreeRadioFormId(index: number): string {
+    return `${this.responseRadioIdentifier}-${index}`;
+  }
+
+  /**
+   * Checks if Tester Response was agreed to or disagreed with.
+   * @param index Tester Response Index,
+   * @returns true if response was disagreed with, false if response was agreed with.
+   */
+  isResponseDisagreed(index: number): boolean {
+    return this.testerResponseForm.get(this.getDisagreeRadioFormId(index)).value;
   }
 
   get conflict(): boolean {
