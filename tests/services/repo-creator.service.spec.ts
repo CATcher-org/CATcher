@@ -42,13 +42,13 @@ describe('RepoCreatorService', () => {
   });
 
   describe('.requestRepoCreationPermissions()', () => {
-    it('should not need to return any permissions if the repo was already created', () => {
+    it('should not return any permissions if the repo was already created', () => {
       of(true)
         .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseBugReporting, PHASE_REPO))
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
     });
 
-    it('should not need to return any permissions if the repo was not created but current phase is not bugReporting', () => {
+    it('should not return any permissions if the repo was not created and the current phase is not bugReporting', () => {
       of(false)
         .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseModeration, PHASE_REPO))
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(null));
