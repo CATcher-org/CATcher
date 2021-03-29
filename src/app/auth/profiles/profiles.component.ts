@@ -80,7 +80,7 @@ export class ProfilesComponent implements OnInit {
           if (!profiles.every(isValidProfile)) {
             throw new Error('profiles.json is malformed');
           }
-          this.profiles = profiles.concat(AppConfig.profiles).filter((p) => !!p);
+          this.profiles = profiles.concat(this.profiles).filter((p) => !!p);
           target.value = '';
         } catch (e) {
           this.openErrorDialog();

@@ -10,8 +10,7 @@ export function generateDefaultEnv() {
     production: false,
     test: false,
     clientId: '0cbc5e651d8b01e36687',
-    origin: 'http://localhost:4200',
-    profiles: []
+    origin: 'http://localhost:4200'
   };
 }
 

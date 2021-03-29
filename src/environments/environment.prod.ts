@@ -5,6 +5,5 @@ export const AppConfig = {
   githubUrl: 'https://github.com',
   accessTokenUrl: 'https://catcher-proxy.herokuapp.com/authenticate',
   clientDataUrl: 'https://raw.githubusercontent.com/CATcher-org/client_data/master/profiles.json',
-  origin: 'https://catcher-org.github.io',
-  profiles: []
+  origin: 'https://catcher-org.github.io'
 };
