@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { ElectronLog } from 'electron-log';
+import { AppConfig } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class LoggingService {
   private isInSession = false;
   private readonly LOG_KEY = 'CATcher-Log';
   private readonly LOG_FILE_NAME = 'CATcher-log.txt';
-  public readonly LOG_START_HEADER = '====== New CATcher Session Log ======';
+  public readonly LOG_START_HEADER = `====== New CATcher v${AppConfig.version} Session Log ======`;
   public readonly LOG_COUNT_LIMIT = 4;
 
   constructor(electronService: ElectronService) {
