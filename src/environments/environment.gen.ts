@@ -4,9 +4,12 @@ const BaseConfig = {
   clientDataUrl: 'https://raw.githubusercontent.com/CATcher-org/client_data/master/profiles-dev.json'
 };
 
+const appSetting = require('../../package.json');
+
 export function generateDefaultEnv() {
   return {
     ...BaseConfig,
+    version: appSetting.version,
     production: false,
     test: false,
     clientId: '0cbc5e651d8b01e36687',
