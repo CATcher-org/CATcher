@@ -13,6 +13,7 @@ import { GithubService } from '../../core/services/github.service';
 import { UserRole } from '../../core/models/user.model';
 import { ElectronService } from '../../core/services/electron.service';
 import { LoggingService } from '../../core/services/logging.service';
+import { AppConfig } from '../../../environments/environment';
 
 @Component({
   selector: 'app-layout-header',
@@ -83,6 +84,10 @@ export class HeaderComponent implements OnInit {
     return this.phaseService.currentPhase === Phase.phaseBugReporting ||
     this.userService.currentUser.role === UserRole.Student ||
     (this.issueService.getIssueTeamFilter() !== 'All Teams' || this.router.url.includes('/issues'));
+  }
+
+  getVersion(): string {
+    return AppConfig.version;
   }
 
   getPhaseDescription(openPhase: string): string {
