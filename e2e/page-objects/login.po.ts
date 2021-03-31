@@ -37,6 +37,5 @@ export class LoginPage {
   async bypassAuthentication() {
     await this.login();
     await this.confirmUser();
-    console.log('\nAuthentication Bypass Complete.\n');
   }
 }
