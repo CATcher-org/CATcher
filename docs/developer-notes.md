@@ -147,6 +147,22 @@ CATcher caches log data in `localStorage` within the browser. `localStorage` sto
 - Once the `ErrorHandler` class has been implemented and the `handleError` method is overriden in the `ErrorHandlingService`, we will replace the original `ErrorHandler` with our custom service in `app.module.ts` using a custom provider.
 - Since `LoggingService` is used to log all information passing through the `ErrorHandlingService` in the `handleError` method, we modify `LoggingService` such that all data is cached in `localStorage` and grouped with its respective `session`. (**Note**: A `session` signifies a new running instance of the application)
 
+# Releasing a new version of CATcher
+
+Releasing a new version of CATcher involves the following steps:
+  - Update CATcher's version number in `package.json`
+  - Build the CATcher desktop application's executables for Linux, MacOS and Windows
+  - Build the CATcher web app, and then deploy it onto our GitHub Pages site (https://catcher-org.github.io/CATcher/)
+  - Create a release on GitHub, upload the desktop app's executables and write a changelog that describes any new features or bug fixes.
+
+We have a GitHub Actions' workflow that can perform many of the tasks above in a single-click.
+
+Follow these steps to create a release using this workflow:
+  - Create and Merge a Pull Request that updates the version of the application in the `package.json` file.
+  - Navigate to the 'Actions' Tab of the `CATcher` repository and start the `Draft Deployment` Workflow. This workflow deploys the web app and creates a Draft Release containing the desktop app's executables
+  - Edit the Draft Release and update the description with a changelog of recently merged Pull Requests.
+  - Publish the release.
+
 
 # Future Developments
 Here are a few suggestions that future developers can work on to improve this application!

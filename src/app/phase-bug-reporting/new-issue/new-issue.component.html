@@ -23,15 +23,15 @@
           </app-comment-editor>
         </div>
 
-        <button style="float: right" type="submit" mat-stroked-button color="primary"
+        <button style="float: right" class="submit-new-bug-report" type="submit" mat-stroked-button color="primary"
           [disabled]="!newIssueForm.valid || isFormPending">
           {{ this.submitButtonText }}
         </button>
       </div>
 
       <div class="column right">
-        <app-label-dropdown initialValue="" attributeName="severity" [dropdownForm]="newIssueForm"></app-label-dropdown>
-        <app-label-dropdown initialValue="" attributeName="type" [dropdownForm]="newIssueForm"></app-label-dropdown>
+        <div class="severity-dropdown"><app-label-dropdown initialValue="" attributeName="severity" [dropdownForm]="newIssueForm"></app-label-dropdown></div>
+        <div class="bug-dropdown"><app-label-dropdown initialValue="" attributeName="type" [dropdownForm]="newIssueForm"></app-label-dropdown></div>
       </div>
 
     </div>
