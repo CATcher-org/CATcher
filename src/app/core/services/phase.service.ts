@@ -6,8 +6,6 @@ import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
 import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
-import { MatDialog } from '@angular/material';
-import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 import { Phase } from '../models/phase.model';
 import { throwIfFalse } from '../../shared/lib/custom-ops';
 import { RepoCreatorService } from './repo-creator.service';
@@ -43,8 +41,7 @@ export class PhaseService {
               private githubService: GithubService,
               private labelService: LabelService,
               private userService: UserService,
-              private repoCreatorService: RepoCreatorService,
-              public phaseFixConfirmationDialog: MatDialog) {}
+              private repoCreatorService: RepoCreatorService) {}
   /**
    * Stores the location of the repositories belonging to
    * each phase of the application.
