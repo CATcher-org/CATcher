@@ -21,7 +21,7 @@ export class RepoCreatorService {
   constructor(
     private githubService: GithubService,
     private userService: UserService,
-    private phaseFixConfirmationDialog: MatDialog
+    private repoCreationConfirmationDialog: MatDialog
   ) {}
 
   /**
@@ -34,7 +34,7 @@ export class RepoCreatorService {
   public requestRepoCreationPermissions(currentPhase: Phase, phaseRepo: string):
     UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
     return pipe(
-      flatMap((isSessionAvailable: boolean) => {
+      flatMap((isRepoPresent: boolean) => {
         if (!isSessionAvailable && currentPhase === Phase.phaseBugReporting) {
           return this.openSessionFixConfirmation(phaseRepo);
         } else {
@@ -49,7 +49,7 @@ export class RepoCreatorService {
    * @param phaseRepo the name of the specified repository.
    * @return Observable<boolean> - Representing user's permission grant.
    */
-  private openSessionFixConfirmation(phaseRepo: string): Observable<boolean> {
+  private openRepoCreationConfirmation(phaseRepo: string): Observable<boolean> {
     const dialogRef: MatDialogRef<SessionFixConfirmationComponent> =
     this.phaseFixConfirmationDialog.open(SessionFixConfirmationComponent, {
       data: {user: this.userService.currentUser.loginId, repoName: phaseRepo}
