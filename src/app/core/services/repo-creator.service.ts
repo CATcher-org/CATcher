@@ -35,8 +35,8 @@ export class RepoCreatorService {
     UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
     return pipe(
       flatMap((isRepoPresent: boolean) => {
-        if (!isSessionAvailable && currentPhase === Phase.phaseBugReporting) {
-          return this.openSessionFixConfirmation(phaseRepo);
+        if (!isRepoPresent && currentPhase === Phase.phaseBugReporting) {
+          return this.openRepoCreationConfirmation(phaseRepo);
         } else {
           return of(null);
         }
@@ -51,7 +51,7 @@ export class RepoCreatorService {
    */
   private openRepoCreationConfirmation(phaseRepo: string): Observable<boolean> {
     const dialogRef: MatDialogRef<SessionFixConfirmationComponent> =
-    this.phaseFixConfirmationDialog.open(SessionFixConfirmationComponent, {
+    this.repoCreationConfirmationDialog.open(SessionFixConfirmationComponent, {
       data: {user: this.userService.currentUser.loginId, repoName: phaseRepo}
     });
     return dialogRef.afterClosed();
