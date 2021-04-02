@@ -25,9 +25,8 @@ export class RepoCreatorService {
   ) {}
 
   /**
-   * Checks if the current repository has been created and if not, checks
-   * if the current phase match the requirements to make a request for
-   * repo creation permissions.
+   * Prompts user to allow CATcher to create a repo, if repo does not
+   * exist and current phase is the bug reporting phase.
    * @param currentPhase the current phase of the session.
    * @param phaseRepo the name of the specified repository.
    */
