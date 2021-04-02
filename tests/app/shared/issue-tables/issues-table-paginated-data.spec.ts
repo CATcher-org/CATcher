@@ -48,47 +48,45 @@ describe('isses-table-paginated-data', () => {
         });
 
         it('should set the length of paginator to the length of data', () => {
+            let issuesLength = dataSet_3.length;
             setAndGetPaginatedData(paginator, dataSet_3);
-            expect(paginator.length).toEqual(3);
+            expect(paginator.length).toEqual(issuesLength);
 
+            issuesLength = dataSet_7.length;
             setAndGetPaginatedData(paginator, dataSet_7);
-            expect(paginator.length).toEqual(7);
+            expect(paginator.length).toEqual(issuesLength);
         });
 
         it('should return list of issues according to page index', () => {
             paginator.pageIndex = 0;
 
             // Returns issues index 0 to 2
+            let dataSetCopy = [...dataSet_3];
+            let listToBeReturned = dataSetCopy.splice(0, paginator.pageSize);
             let returnedList = setAndGetPaginatedData(paginator, dataSet_3);
-            expect(returnedList).toEqual([
-                mediumSeverityIssueWithResponse,
-                mediumSeverityIssueWithAssigneee,
-                lowSeverityFeatureFlawIssue
-            ]);
+            expect(returnedList).toEqual(listToBeReturned);
 
             // Returns issues index 0 to 2
+            dataSetCopy = [...dataSet_7];
+            listToBeReturned = dataSetCopy.splice(0, paginator.pageSize);
             returnedList = setAndGetPaginatedData(paginator, dataSet_7);
-            expect(returnedList).toEqual([
-                mediumSeverityIssueWithResponse,
-                mediumSeverityIssueWithAssigneee,
-                lowSeverityFeatureFlawIssue
-            ]);
+            expect(returnedList).toEqual(listToBeReturned);
         });
 
         it('should return list of issues in the previous page if there are no issues on the current page', () => {
             paginator.pageIndex = 1;
 
             // Returns issues index 0 to 2 on page 0
+            let dataSetCopy = [...dataSet_3];
+            let listToBeReturned = dataSetCopy.splice(0, paginator.pageSize);
             let returnedList = setAndGetPaginatedData(paginator, dataSet_3);
-            expect(returnedList).toEqual([
-                mediumSeverityIssueWithResponse,
-                mediumSeverityIssueWithAssigneee,
-                lowSeverityFeatureFlawIssue
-            ]);
+            expect(returnedList).toEqual(listToBeReturned);
 
             paginator.pageIndex = 3;
 
             // Returns issues index 6 on page 2
+            dataSetCopy = [...dataSet_7];
+            listToBeReturned = dataSetCopy.splice(paginator.pageSize * 2, paginator.pageSize);
             returnedList = setAndGetPaginatedData(paginator, dataSet_7);
             expect(returnedList).toEqual([highSeverityDocumentationBugIssue]);
         });
