@@ -3,10 +3,9 @@ import { Observable, of } from 'rxjs';
 import { GithubService } from './github.service';
 import { GithubRelease } from '../models/github/github.release';
 import { map } from 'rxjs/operators';
+import { AppConfig } from '../../../environments/environment';
 
-const appSetting = require('../../../../package.json');
-
-export const appVersion = appSetting.version;
+export const appVersion = AppConfig.version;
 
 @Injectable({
   providedIn: 'root'
