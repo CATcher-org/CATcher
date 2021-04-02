@@ -90,6 +90,7 @@ describe('DuplicatedIssuesComponent', () => {
         // Team/tutor response is not editable
         permissionService.isTeamResponseEditable.and.callFake(() => false);
         permissionService.isTutorResponseEditable.and.callFake(() => false);
+        fixture.detectChanges();
         const cancelIconQuery = debugElement.query(By.css('.mat-icon'));
         expect(cancelIconQuery).toBeNull();
 
