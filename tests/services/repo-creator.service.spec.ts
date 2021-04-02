@@ -59,7 +59,7 @@ describe('RepoCreatorService', () => {
       matDialog.open.and.callFake(() => matDialogRef);
       const permissionFromDialog = false;
       matDialogRef.afterClosed.and.callFake(() => of(permissionFromDialog));
-      of(permissionFromDialog)
+      of(false)
         .pipe(repoCreatorService.requestRepoCreationPermissions(Phase.phaseBugReporting, PHASE_REPO))
         .subscribe((repoCreationPermission: boolean | null) => expect(repoCreationPermission).toBe(permissionFromDialog));
 
