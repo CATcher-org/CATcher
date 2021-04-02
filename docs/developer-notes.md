@@ -139,6 +139,21 @@ CATcher uses the OAuth 2.0 protocol to authenticate users. Below is a summary of
 
 The authentication process is kicked off in the `AuthComponent`, but the code that co-ordinates steps 1 and 2 can be found in [`oauth.ts`](../oauth.ts)(For Electron) or `AuthService`(For Web). Step 2 requires a client secret granted to CATcher. To protect this, we run a web service, [gatekeeper](https://github.com/CATcher-org/gatekeeper) that executes step 2 on behalf of the client CATcher app.
 
+# Releasing a new version of CATcher
+
+Releasing a new version of CATcher involves the following steps:
+  - Update CATcher's version number in `package.json`
+  - Build the CATcher desktop application's executables for Linux, MacOS and Windows
+  - Build the CATcher web app, and then deploy it onto our GitHub Pages site (https://catcher-org.github.io/CATcher/)
+  - Create a release on GitHub, upload the desktop app's executables and write a changelog that describes any new features or bug fixes.
+
+We have a GitHub Actions' workflow that can perform many of the tasks above in a single-click.
+
+Follow these steps to create a release using this workflow:
+  - Create and Merge a Pull Request that updates the version of the application in the `package.json` file.
+  - Navigate to the 'Actions' Tab of the `CATcher` repository and start the `Draft Deployment` Workflow. This workflow deploys the web app and creates a Draft Release containing the desktop app's executables
+  - Edit the Draft Release and update the description with a changelog of recently merged Pull Requests.
+  - Publish the release.
 
 # Future Developments
 Here are a few suggestions that future developers can work on to improve this application!

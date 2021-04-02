@@ -1,8 +1,9 @@
 <mat-toolbar color="primary" style="position: sticky; position: -webkit-sticky; top: 0; z-index: 1000;">
-  <button *ngIf="isBackButtonShown()" mat-icon-button class="mat-toolbar mat-primary" style="transform: scale(0.9)" (click)="goBack()">
+  <button *ngIf="isBackButtonShown()" mat-icon-button class="mat-toolbar mat-primary back-button" style="transform: scale(0.9)" (click)="goBack()">
     <mat-icon>arrow_back_ios</mat-icon>
   </button>
-  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher</a>
+  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher 
+    v{{this.getVersion()}}</a>
   <span id="phase-descriptor" *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
     ({{this.getPhaseDescription(phaseService.currentPhase)}})
   </span>

@@ -1,6 +1,9 @@
 import { Profile } from '../app/core/models/profile.model';
 
+const appSetting = require('../../package.json');
+
 export const AppConfig = {
+  version: appSetting.version,
   production: true,
   test: false,
   clientId: '5e1ed08cff7f0de1d68d',
