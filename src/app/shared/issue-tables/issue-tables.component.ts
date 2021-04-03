@@ -84,7 +84,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsResponded(issue: Issue) {
-    this.loggingService.info(`Marking Issue ${issue.id} as Responded`)
+    this.loggingService.info(`Marking Issue ${issue.id} as Responded`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Done;
     this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
@@ -100,7 +100,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsPending(issue: Issue) {
-    this.loggingService.info(`Marking Issue ${issue.id} as Pending`)
+    this.loggingService.info(`Marking Issue ${issue.id} as Pending`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Incomplete;
     this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
@@ -134,12 +134,12 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   viewIssueInBrowser(id: number) {
-    this.loggingService.info(`Opening Issue ${id} on Github`)
+    this.loggingService.info(`Opening Issue ${id} on Github`);
     this.githubService.viewIssueInBrowser(id);
   }
 
   deleteIssue(id: number) {
-    this.loggingService.info(`Deleting Issue ${id}`)
+    this.loggingService.info(`Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
       [id]: true,
