@@ -96,7 +96,7 @@ import { ProfileService } from './core/services/profile.service';
       PermissionService, ErrorHandlingService, ElectronService, DataService]
     },
     {
-      provide: ProfileService, 
+      provide: ProfileService,
       useClass: ProfileService
     },
     {

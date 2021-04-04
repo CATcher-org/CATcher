@@ -18,10 +18,10 @@ export class ProfileService {
         return profiles;
       });
   }
-  
+
   /**
-   * Checks if the profiles supplied are valid. If not, 
-   * throw an error. 
+   * Checks if the profiles supplied are valid. If not,
+   * throw an error.
    * @param profiles the profiles supplied.
    */
   public validateProfiles(profiles: any): void {

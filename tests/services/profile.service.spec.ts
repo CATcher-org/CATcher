@@ -17,7 +17,8 @@ const INVALID_PROFILES = [
 ];
 
 /**
- * Stub to mock the fetch API Call.
+ * Stub to mock the fetch API Call which retrieves the profiles
+ * from the external repository.
  */
 class PromiseStub extends Promise<Response> {
   readonly profiles: Object[];
@@ -29,7 +30,7 @@ class PromiseStub extends Promise<Response> {
   /**
    * Overridden function to pass on the profiles as a Promise for the next step
    * in fetchExternalProfiles
-   * @returns
+   * @returns the json object with the given profiles.
    */
   then(onfulfilled?: (value: Response) => any, onrejected?: (reason: any) => PromiseLike<never>): Promise<any> {
     return Promise.resolve({
