@@ -80,9 +80,7 @@ export class ProfilesComponent implements OnInit {
       if (!(reader.result instanceof ArrayBuffer)) {
         try {
           const { profiles } = JSON.parse(reader.result);
-          if (!profiles.every(isValidProfile)) {
-            throw new Error('profiles.json is malformed');
-          }
+          this.profileService.validateProfiles(profiles);
           this.profiles = profiles.concat(this.profiles).filter((p) => !!p);
           target.value = '';
         } catch (e) {
