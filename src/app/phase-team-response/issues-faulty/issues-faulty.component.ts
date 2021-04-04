@@ -62,10 +62,11 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.filter = (issue: Issue): boolean => {
-      return this.issueService.hasTeamResponse(issue.id) &&
-        (!!issue.duplicateOf && this.issueService.issues$.getValue().filter(childIssue => {
-          return childIssue.duplicateOf === issue.id;
-        }).length !== 0);
+      const hasTeamResponse = (issue: Issue) => this.issueService.hasTeamResponse(issue.id);
+      const isDuplicateIssue = (issue: Issue) => !!issue.duplicateOf;
+      const isDuplicatedBy = (issue: Issue) =>
+            !!this.issueService.issues$.getValue().filter(childIssue => childIssue.duplicateOf === issue.id).length;
+      return hasTeamResponse(issue) && isDuplicateIssue(issue) && isDuplicatedBy(issue);
     };
   }
 
