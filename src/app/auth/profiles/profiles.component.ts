@@ -8,8 +8,8 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { AppConfig } from '../../../environments/environment';
 import { Profile, isValidProfile } from '../../core/models/profile.model';
+import { ProfileService } from '../../core/services/profile.service';
 
 @Component({
   selector: 'app-profiles',
@@ -47,7 +47,10 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog) { }
+  constructor(
+    public errorDialog: MatDialog,
+    public profileService: ProfileService
+  ) { }
 
   ngOnInit() {
     this.initProfiles();
@@ -91,24 +94,15 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Gets the required profiles from the external repository file.
-   */
-   private fetchExternalProfiles(): Promise<Profile[]> {
-    return fetch(AppConfig.clientDataUrl)
-      .then(res => res.json())
-      .then(json => json.profiles || [])
-      .catch(e => this.openErrorDialog());
-   }
-
-  /**
    * Processes available Profiles information from the extenral repository.
    */
   initProfiles(): void {
-    this.fetchExternalProfiles().then(externalProfiles => {
+    this.profileService.fetchExternalProfiles().then(externalProfiles => {
       this.profiles = this.profiles
       .concat(externalProfiles)
       .filter((p) => !!p);
-    });
+    })
+    .catch(e => this.openErrorDialog());
   }
 
   /**

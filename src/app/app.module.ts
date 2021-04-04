@@ -38,6 +38,7 @@ import { GithubEventService } from './core/services/githubevent.service';
 import { LoggingService } from './core/services/logging.service';
 import { IssueServiceFactory } from './core/services/factories/factory.issue.service';
 import { PermissionService } from './core/services/permission.service';
+import { ProfileService } from './core/services/profile.service';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,10 @@ import { PermissionService } from './core/services/permission.service';
       useFactory: IssueServiceFactory,
       deps: [GithubService, UserService, PhaseService,
       PermissionService, ErrorHandlingService, ElectronService, DataService]
+    },
+    {
+      provide: ProfileService, 
+      useClass: ProfileService
     },
     {
       provide: ErrorHandler,
