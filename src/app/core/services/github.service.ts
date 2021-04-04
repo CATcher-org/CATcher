@@ -27,6 +27,7 @@ import { SessionData } from '../models/session.model';
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
+const UNABLE_TO_OPEN_IN_BROWSER = 'Unable to open this issue in Browser';
 
 let ORG_NAME = '';
 let MOD_ORG = '';
@@ -325,7 +326,7 @@ export class GithubService {
     if (id) {
       this.electronService.openLink('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
     } else {
-      this.errorHandlingService.handleError('Unable to open this issue in Browser');
+      this.errorHandlingService.handleError(new Error(UNABLE_TO_OPEN_IN_BROWSER));
     }
     event.stopPropagation();
   }

@@ -15,12 +15,15 @@ export class ErrorHandlingService implements ErrorHandler {
 
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 
-  handleError(error: HttpErrorResponse | string | RequestError, actionCallback?: () => void) {
+  handleError(error: HttpErrorResponse | Error | RequestError, actionCallback?: () => void) {
     this.logger.error(error);
+    if (error instanceof Error) {
+      this.logger.error(error.stack);
+    }
     if (error instanceof HttpErrorResponse || error instanceof RequestError) {
       this.handleHttpError(error, actionCallback);
     } else {
-      this.handleGeneralError(error);
+      this.handleGeneralError(error.message);
     }
   }
 
