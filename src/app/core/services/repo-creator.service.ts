@@ -4,6 +4,8 @@ import { Observable, of, pipe, UnaryFunction } from 'rxjs';
 import { GithubService } from './github.service';
 import { UserService } from './user.service';
 import { Phase } from '../models/phase.model';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { SessionFixConfirmationComponent } from './session-fix-confirmation/session-fix-confirmation.component';
 import { UserRole } from '../models/user.model';
 
 export const MISSING_REQUIRED_REPO = 'You cannot proceed without the required repository.';
@@ -18,8 +20,41 @@ export const BUG_REPORTING_INVALID_ROLE =
 export class RepoCreatorService {
   constructor(
     private githubService: GithubService,
-    private userService: UserService
+    private userService: UserService,
+    private repoCreationConfirmationDialog: MatDialog
   ) {}
+
+  /**
+   * Prompts user to allow CATcher to create a repo, if repo does not
+   * exist and current phase is the bug reporting phase.
+   * @param currentPhase the current phase of the session.
+   * @param phaseRepo the name of the specified repository.
+   */
+  public requestRepoCreationPermissions(currentPhase: Phase, phaseRepo: string):
+    UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
+    return pipe(
+      flatMap((isRepoPresent: boolean) => {
+        if (!isRepoPresent && currentPhase === Phase.phaseBugReporting) {
+          return this.openRepoCreationConfirmation(phaseRepo);
+        } else {
+          return of(null);
+        }
+      })
+    );
+  }
+
+  /**
+   * Launches the SessionFixConfirmation Dialog.
+   * @param phaseRepo the name of the specified repository.
+   * @return Observable<boolean> - Representing user's permission grant.
+   */
+  private openRepoCreationConfirmation(phaseRepo: string): Observable<boolean> {
+    const dialogRef: MatDialogRef<SessionFixConfirmationComponent> =
+    this.repoCreationConfirmationDialog.open(SessionFixConfirmationComponent, {
+      data: {user: this.userService.currentUser.loginId, repoName: phaseRepo}
+    });
+    return dialogRef.afterClosed();
+  }
 
  /**
   * Checks if the current phase and current user role match the given permissions
