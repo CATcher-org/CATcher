@@ -17,7 +17,7 @@ describe('DescriptionComponent', () => {
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
-    phaseService = new PhaseService(null, null, null, null, null, null);
+    phaseService = new PhaseService(null, null, null, null, null);
     phaseService.currentPhase = Phase.phaseTeamResponse;
 
     dialog = jasmine.createSpyObj('MatDialog', ['open']);
