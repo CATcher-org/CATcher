@@ -88,22 +88,22 @@ describe('DuplicatedIssuesComponent', () => {
 
     it('should only allow cancellation of duplicate status if team/tutor response is editable', () => {
         // Team/tutor response is not editable
-        permissionService.isTeamResponseEditable.and.callFake(() => false);
-        permissionService.isTutorResponseEditable.and.callFake(() => false);
+        mockTeamResponseNotEditable(permissionService);
+        mockTutorResponseNotEditable(permissionService);
         fixture.detectChanges();
         const cancelIconQuery = debugElement.query(By.css('.mat-icon'));
         expect(cancelIconQuery).toBeNull();
 
         // Team response is editable
-        permissionService.isTeamResponseEditable.and.callFake(() => true);
-        permissionService.isTutorResponseEditable.and.callFake(() => false);
+        mockTeamResponseEditable(permissionService);
+        mockTutorResponseNotEditable(permissionService);
         fixture.detectChanges();
         let cancelIcon: HTMLElement = debugElement.query(By.css('.mat-icon')).nativeElement;
         expect(cancelIcon).toBeDefined();
 
         // Tutor response is editable
-        permissionService.isTeamResponseEditable.and.callFake(() => false);
-        permissionService.isTutorResponseEditable.and.callFake(() => true);
+        mockTeamResponseNotEditable(permissionService);
+        mockTutorResponseEditable(permissionService);
         fixture.detectChanges();
         cancelIcon = debugElement.query(By.css('.mat-icon')).nativeElement;
         expect(cancelIcon).toBeDefined();
@@ -116,7 +116,7 @@ describe('DuplicatedIssuesComponent', () => {
             return of(duplicatedIssue);
         });
         spyOn(component, 'removeDuplicateStatus').and.callThrough();
-        permissionService.isTeamResponseEditable.and.callFake(() => true);
+        mockTeamResponseEditable(permissionService);
         fixture.detectChanges();
 
         expect(firstDummyIssue.duplicateOf).toEqual(component.issue.id);
@@ -144,4 +144,21 @@ describe('DuplicatedIssuesComponent', () => {
         cancelIcon.click();
         fixture.detectChanges();
     }
+
+    function mockTeamResponseEditable(permissionService: any): void {
+        permissionService.isTeamResponseEditable.and.callFake(() => true);
+    }
+
+    function mockTeamResponseNotEditable(permissionService: any): void {
+        permissionService.isTeamResponseEditable.and.callFake(() => false);
+    }
+
+    function mockTutorResponseEditable(permissionService: any): void {
+        permissionService.isTutorResponseEditable.and.callFake(() => true);
+    }
+
+    function mockTutorResponseNotEditable(permissionService: any): void {
+        permissionService.isTutorResponseEditable.and.callFake(() => false);
+    }
+
 });
