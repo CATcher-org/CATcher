@@ -275,9 +275,12 @@ export class IssueService {
     }));
   }
 
-  reset() {
+  reset(resetSessionId: boolean) {
+    if (resetSessionId) {
+      this.sessionId = undefined;
+    }
+
     this.issues = undefined;
-    this.sessionId = undefined;
     this.issues$.next(new Array<Issue>());
 
     this.stopPollIssues();
