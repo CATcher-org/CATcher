@@ -27,17 +27,17 @@ describe('ProfileService', () => {
   describe('.fetchExternalProfiles()', () => {
     it('should return the set of profiles if no profiles are given', () => {
       spyOn(window, 'fetch').and.returnValue(generateProfilesPromise(EMPTY_PROFILES));
-      profileService.fetchExternalProfiles().then((profiles) => expect(profiles).toEqual(EMPTY_PROFILES));
+      return profileService.fetchExternalProfiles().then((profiles) => expect(profiles).toEqual(EMPTY_PROFILES));
     });
 
     it('should return the set of profiles if a set of valid profiles are given', () => {
       spyOn(window, 'fetch').and.returnValue(generateProfilesPromise(VALID_PROFILES));
-      profileService.fetchExternalProfiles().then((profiles) => expect(profiles).toEqual(VALID_PROFILES));
+      return profileService.fetchExternalProfiles().then((profiles) => expect(profiles).toEqual(VALID_PROFILES));
     });
 
     it('should return the set of profiles if a set of valid profiles are given', () => {
       spyOn(window, 'fetch').and.returnValue(generateProfilesPromise(INVALID_PROFILES));
-      profileService.fetchExternalProfiles().catch((error: Error) => expect(error.message).toEqual('profiles.json is malformed'));
+      return profileService.fetchExternalProfiles().catch((error: Error) => expect(error.message).toEqual('profiles.json is malformed'));
     });
   });
 });
