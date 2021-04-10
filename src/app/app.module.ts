@@ -97,7 +97,8 @@ import { ProfileService } from './core/services/profile.service';
     },
     {
       provide: ProfileService,
-      useClass: ProfileService
+      useClass: ProfileService, 
+      deps: [GithubService]
     },
     {
       provide: ErrorHandler,
