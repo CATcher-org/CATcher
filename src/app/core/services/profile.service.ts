@@ -1,16 +1,18 @@
-import { AppConfig } from '../../../environments/environment';
 import { isValidProfile, Profile } from '../models/profile.model';
+import { GithubService } from './github.service';
 
 export const MALFORMED_PROFILES_ERROR: Error = new Error('profiles.json is malformed');
 
 export class ProfileService {
-  constructor() { }
+  constructor(
+    private githubService: GithubService
+  ) { }
 
   /**
    * Gets the required profiles from the external repository file.
    */
   public fetchExternalProfiles(): Promise<Profile[]> {
-    return fetch(AppConfig.clientDataUrl)
+    return this.githubService.getProfilesData()
       .then(res => res.json())
       .then(json => json.profiles || [])
       .then(profiles => {

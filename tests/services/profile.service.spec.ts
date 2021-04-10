@@ -1,7 +1,9 @@
 import { Profile } from '../../src/app/core/models/profile.model';
+import { GithubService } from '../../src/app/core/services/github.service';
 import { ProfileService } from '../../src/app/core/services/profile.service';
 
-let profileService: any;
+let githubService: GithubService;
+let profileService: ProfileService;
 
 const EMPTY_PROFILES = [];
 const VALID_PROFILES = [
@@ -18,7 +20,8 @@ const INVALID_PROFILES = [
 
 describe('ProfileService', () => {
   beforeEach(() => {
-    profileService = new ProfileService();
+    githubService = new GithubService(null, null, null);
+    profileService = new ProfileService(githubService);
   });
 
   describe('.fetchExternalProfiles()', () => {
