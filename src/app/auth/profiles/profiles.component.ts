@@ -50,7 +50,7 @@ export class ProfilesComponent implements OnInit {
 
   constructor(
     public errorDialog: MatDialog,
-    public profileService: ProfileService, 
+    public profileService: ProfileService,
     public errorHandlingService: ErrorHandlingService
   ) { }
 
