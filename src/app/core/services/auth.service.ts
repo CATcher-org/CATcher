@@ -60,7 +60,7 @@ export class AuthService {
   logOut(): void {
     this.githubService.reset();
     this.userService.reset();
-    this.issueService.reset();
+    this.issueService.reset(true);
     this.phaseService.reset();
     this.dataService.reset();
     this.githubEventService.reset();
