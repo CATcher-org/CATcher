@@ -9,7 +9,8 @@ import {
   transition
 } from '@angular/animations';
 import { Profile, isValidProfile } from '../../core/models/profile.model';
-import { ProfileService } from '../../core/services/profile.service';
+import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
 
 @Component({
   selector: 'app-profiles',
@@ -49,7 +50,8 @@ export class ProfilesComponent implements OnInit {
 
   constructor(
     public errorDialog: MatDialog,
-    public profileService: ProfileService
+    public profileService: ProfileService, 
+    public errorHandlingService: ErrorHandlingService
   ) { }
 
   ngOnInit() {
@@ -100,7 +102,13 @@ export class ProfilesComponent implements OnInit {
       .concat(externalProfiles)
       .filter((p) => !!p);
     })
-    .catch(e => this.openErrorDialog());
+    .catch(e => {
+      if (e === MALFORMED_PROFILES_ERROR) {
+        this.openErrorDialog();
+      } else {
+        this.errorHandlingService.handleError(e);
+      }
+    });
   }
 
   /**
