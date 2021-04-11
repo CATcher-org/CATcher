@@ -50,6 +50,7 @@ describe('isses-table-paginated-data', () => {
                 lowSeverityFeatureFlawIssue
             ]);
         });
+
         it('should return list of issues in the previous page if there are no issues on the current page', () => {
             paginator.pageIndex = 3;
 
