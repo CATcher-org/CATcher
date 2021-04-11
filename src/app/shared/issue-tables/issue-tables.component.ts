@@ -84,7 +84,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsResponded(issue: Issue) {
-    this.loggingService.info(`Marking Issue ${issue.id} as Responded`);
+    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Done;
     this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
@@ -100,7 +100,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsPending(issue: Issue) {
-    this.loggingService.info(`Marking Issue ${issue.id} as Pending`);
+    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Incomplete;
     this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
@@ -112,11 +112,11 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   logIssueRespondRouting(id: number) {
-    this.loggingService.info(`Proceeding to Respond to Issue ${id}`);
+    this.loggingService.info(`IssueTablesComponent: Proceeding to Respond to Issue ${id}`);
   }
 
   logIssueEditRouting(id: number) {
-    this.loggingService.info(`Proceeding to Edit Issue ${id}`);
+    this.loggingService.info(`IssueTablesComponent: Proceeding to Edit Issue ${id}`);
   }
 
   /**
@@ -134,12 +134,12 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   viewIssueInBrowser(id: number) {
-    this.loggingService.info(`Opening Issue ${id} on Github`);
+    this.loggingService.info(`IssueTablesComponent: Opening Issue ${id} on Github`);
     this.githubService.viewIssueInBrowser(id);
   }
 
   deleteIssue(id: number) {
-    this.loggingService.info(`Deleting Issue ${id}`);
+    this.loggingService.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
       [id]: true,
