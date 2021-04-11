@@ -6,7 +6,7 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { delay, flatMap, map, startWith, tap } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { getSortedData } from './issue-sorter';
-import { setAndGetPaginatedData } from './issue-tables-paginated-data';
+import { paginateData } from './issue-paginator';
 import { applySearchFilter } from './search-filter';
 
 export class IssuesDataTable extends DataSource<Issue> {
@@ -56,7 +56,7 @@ export class IssuesDataTable extends DataSource<Issue> {
             data = getSortedData(this.sort, data);
             data = this.getFilteredTeamData(data);
             data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
-            data = setAndGetPaginatedData(this.paginator, data);
+            data = paginateData(this.paginator, data);
 
             return data;
           })
