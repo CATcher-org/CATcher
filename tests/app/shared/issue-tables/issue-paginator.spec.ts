@@ -9,8 +9,8 @@ import {
 } from "../../../constants/githubissue.constants";
 import { paginateData } from '../../../../src/app/shared/issue-tables/issue-paginator';
 
-describe('isses-table-paginated-data', () => {
-    describe('getPaginatedData()', () => {
+describe('issue-paginator', () => {
+    describe('paginateData()', () => {
         let dataSet_7: Issue[];
         let paginator: MatPaginator;
         const dummyTeam = TEAM_4;
@@ -31,7 +31,6 @@ describe('isses-table-paginated-data', () => {
                 highSeverityDocumentationBugIssue
             ];
             paginator = { pageSize: 3 } as MatPaginator;
-            paginator.pageSize = 3;
         });
 
         it('should set the length of paginator to the length of data', () => {
