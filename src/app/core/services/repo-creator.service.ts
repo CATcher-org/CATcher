@@ -65,6 +65,10 @@ export class RepoCreatorService {
     UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
       tap((repoCreationPermission: boolean | null) => {
+        if(repoCreationPermission === null) {
+          return;
+        }
+        
         if (repoCreationPermission === false) {
           throw new Error(MISSING_REQUIRED_REPO);
         } else if (currentPhase !== Phase.phaseBugReporting) {
