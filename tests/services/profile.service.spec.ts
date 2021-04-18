@@ -25,17 +25,17 @@ describe('ProfileService', () => {
   });
 
   describe('.fetchExternalProfiles()', () => {
-    it('should return the set of profiles if no profiles are given', () => {
+    it('should return an empty array if no profiles are given', () => {
       spyOn(window, 'fetch').and.returnValue(generateProfilesPromise(EMPTY_PROFILES));
       return profileService.fetchExternalProfiles().then((profiles) => expect(profiles).toEqual(EMPTY_PROFILES));
     });
 
-    it('should return the set of profiles if a set of valid profiles are given', () => {
+    it('should return the set of profiles if a set of valid profiles is given', () => {
       spyOn(window, 'fetch').and.returnValue(generateProfilesPromise(VALID_PROFILES));
       return profileService.fetchExternalProfiles().then((profiles) => expect(profiles).toEqual(VALID_PROFILES));
     });
 
-    it('should return the set of profiles if a set of valid profiles are given', () => {
+    it('should throw an error if a set of invalid profiles is given', () => {
       spyOn(window, 'fetch').and.returnValue(generateProfilesPromise(INVALID_PROFILES));
       return profileService
         .fetchExternalProfiles()
