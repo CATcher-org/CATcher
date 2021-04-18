@@ -37,7 +37,10 @@ describe('ProfileService', () => {
 
     it('should return the set of profiles if a set of valid profiles are given', () => {
       spyOn(window, 'fetch').and.returnValue(generateProfilesPromise(INVALID_PROFILES));
-      return profileService.fetchExternalProfiles().catch((error: Error) => expect(error.message).toEqual('profiles.json is malformed'));
+      return profileService
+        .fetchExternalProfiles()
+        .then(() => fail())
+        .catch((error: Error) => expect(error.message).toEqual('profiles.json is malformed'));
     });
   });
 });
