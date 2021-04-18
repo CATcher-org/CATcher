@@ -1,8 +1,12 @@
+import { Injectable } from '@angular/core';
 import { isValidProfile, Profile } from '../models/profile.model';
 import { GithubService } from './github.service';
 
 export const MALFORMED_PROFILES_ERROR: Error = new Error('profiles.json is malformed');
 
+@Injectable({
+  providedIn: 'root'
+})
 export class ProfileService {
   constructor(
     private githubService: GithubService

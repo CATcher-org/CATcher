@@ -96,11 +96,6 @@ import { ProfileService } from './core/services/profile.service';
       PermissionService, ErrorHandlingService, ElectronService, DataService]
     },
     {
-      provide: ProfileService,
-      useClass: ProfileService,
-      deps: [GithubService]
-    },
-    {
       provide: ErrorHandler,
       useClass: ErrorHandlingService
     }
