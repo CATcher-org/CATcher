@@ -94,7 +94,7 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Processes available Profiles information from the extenral repository.
+   * Processes available Profiles information from the external repository.
    */
   initProfiles(): void {
     this.profileService.fetchExternalProfiles().then(externalProfiles => {
