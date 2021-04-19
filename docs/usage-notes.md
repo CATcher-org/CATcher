@@ -21,7 +21,7 @@ Once the app is launched (either web or desktop version), it will prompt you to 
 
 The CATcher web app is recommended, and can be
 accessed at
-https://catcher-org.github.io/CATcher. Please ensure your browser does not block pop-up windows from our web app.
+https://catcher-org.github.io/CATcher. Please ensure your browser does not block pop-up windows from our web app. Ad-blockers may need to be disabled if they block pop-ups.
 
 ## For Safari Users
 

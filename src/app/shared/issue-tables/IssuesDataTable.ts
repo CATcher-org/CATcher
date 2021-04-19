@@ -6,6 +6,7 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { delay, flatMap, map, startWith, tap } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { getSortedData } from './issue-sorter';
+import { paginateData } from './issue-paginator';
 import { applySearchFilter } from './search-filter';
 
 export class IssuesDataTable extends DataSource<Issue> {
@@ -55,7 +56,7 @@ export class IssuesDataTable extends DataSource<Issue> {
             data = getSortedData(this.sort, data);
             data = this.getFilteredTeamData(data);
             data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
-            data = this.getPaginatedData(data);
+            data = paginateData(this.paginator, data);
 
             return data;
           })
@@ -91,17 +92,5 @@ export class IssuesDataTable extends DataSource<Issue> {
       }
       return issue.teamAssigned.id === this.teamFilter;
     });
-  }
-
-  private getPaginatedData(data: Issue[]): Issue[] {
-    this.paginator.length = data.length;
-    let startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-    const result = data.splice(startIndex, this.paginator.pageSize);
-    if (result.length === 0) {
-      this.paginator.pageIndex -= 1;
-      startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-      return data.splice(startIndex, this.paginator.pageSize);
-    }
-    return result;
   }
 }
