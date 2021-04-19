@@ -67,13 +67,10 @@ For each of the teams, follow the steps below to assign the right access level t
 2. Click on `Repositories` navigation tab.
 3. Add the following repositories with the respective access right level as desribed below.
     1. For `admins` team.
-        1. Bug Reporting Phase / Tester's Response Phase Repository: `Read`
-        2. Team's Response Phase Repository: `Admin`
-        3. Moderation Phase Repository: `Admin`
+        1. Team's Response Phase Repository: `Admin`
+        2. Moderation Phase Repository: `Admin`
     2. For `students` team.
-        1. Bug Reporting Phase / Tester's Response Phase Repository: `Write`
-        2. Team's Response Phase Repository: `Write`
+        1. Team's Response Phase Repository: `Write`
     3. For `tutors` team.
-        1. Bug Reporting Phase / Tester's Response Phase Repository: `Read`
-        2. Team's Response Phase Repository: `Read`
-        3. Moderation Phase Repository: `Write`
+        1. Team's Response Phase Repository: `Read`
+        2. Moderation Phase Repository: `Write`
