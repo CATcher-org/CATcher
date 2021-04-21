@@ -17,10 +17,6 @@ export class SessionFixConfirmationComponent implements OnInit {
     public dialogRef: MatDialogRef<SessionFixConfirmationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: RepositoryData) {}
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
   ngOnInit() {
   }
 
