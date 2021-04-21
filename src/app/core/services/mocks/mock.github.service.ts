@@ -9,6 +9,7 @@ import { LabelService } from '../label.service';
 import { Label } from '../../models/label.model';
 import { GithubIssue } from '../../models/github/github-issue.model';
 import { GithubLabel } from '../../models/github/github-label.model';
+import { Profile } from '../../models/profile.model';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -138,6 +139,18 @@ export class MockGithubService {
       login: AppConfig.username,
       name: AppConfig.username
     } as GithubUser);
+  }
+
+  getProfilesData(): Promise<Response> {
+    const profiles = [
+      <Profile>{
+        profileName: 'CATcher',
+        encodedText: 'CATcher-org/public_data'
+      }
+    ];
+
+    const mockResponse: Response = { json: () => Promise.resolve({ profiles: profiles }) } as Response;
+    return Promise.resolve(mockResponse);
   }
 
   reset(): void {
