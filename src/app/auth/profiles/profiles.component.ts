@@ -8,8 +8,9 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { AppConfig } from '../../../environments/environment';
 import { Profile, isValidProfile } from '../../core/models/profile.model';
+import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
 
 @Component({
   selector: 'app-profiles',
@@ -47,7 +48,11 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog) { }
+  constructor(
+    public errorDialog: MatDialog,
+    public profileService: ProfileService,
+    public errorHandlingService: ErrorHandlingService
+  ) { }
 
   ngOnInit() {
     this.initProfiles();
@@ -77,10 +82,8 @@ export class ProfilesComponent implements OnInit {
       if (!(reader.result instanceof ArrayBuffer)) {
         try {
           const { profiles } = JSON.parse(reader.result);
-          if (!profiles.every(isValidProfile)) {
-            throw new Error('profiles.json is malformed');
-          }
-          this.profiles = profiles.concat(AppConfig.profiles).filter((p) => !!p);
+          this.profileService.validateProfiles(profiles);
+          this.profiles = profiles.concat(this.profiles).filter((p) => !!p);
           target.value = '';
         } catch (e) {
           this.openErrorDialog();
@@ -91,12 +94,21 @@ export class ProfilesComponent implements OnInit {
   }
 
   /**
-   * Processes available Profiles information from application's configuration.
+   * Processes available Profiles information from the external repository.
    */
   initProfiles(): void {
-    this.profiles = this.profiles
-      .concat(AppConfig.profiles)
+    this.profileService.fetchExternalProfiles().then(externalProfiles => {
+      this.profiles = this.profiles
+      .concat(externalProfiles)
       .filter((p) => !!p);
+    })
+    .catch(e => {
+      if (e === MALFORMED_PROFILES_ERROR) {
+        this.openErrorDialog();
+      } else {
+        this.errorHandlingService.handleError(e);
+      }
+    });
   }
 
   /**
