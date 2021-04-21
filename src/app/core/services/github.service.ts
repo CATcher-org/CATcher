@@ -23,6 +23,7 @@ import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { DocumentNode } from 'graphql';
 import { ElectronService } from './electron.service';
 import { SessionData } from '../models/session.model';
+import { AppConfig } from '../../../environments/environment';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -334,6 +335,10 @@ export class GithubService {
     this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
     this.issueQueryRefs.clear();
+  }
+
+  getProfilesData(): Promise<Response> {
+    return fetch(AppConfig.clientDataUrl);
   }
 
   private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {

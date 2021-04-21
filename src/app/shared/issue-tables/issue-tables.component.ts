@@ -10,6 +10,7 @@ import { finalize } from 'rxjs/operators';
 import { IssuesDataTable } from './IssuesDataTable';
 import { MatPaginator, MatSort } from '@angular/material';
 import { PhaseService } from '../../core/services/phase.service';
+import { LoggingService } from '../../core/services/logging.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -44,7 +45,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
               private githubService: GithubService,
               private issueService: IssueService,
               private phaseService: PhaseService,
-              private errorHandlingService: ErrorHandlingService) { }
+              private errorHandlingService: ErrorHandlingService,
+              private loggingService: LoggingService) { }
 
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
@@ -82,6 +84,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsResponded(issue: Issue) {
+    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Done;
     this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
@@ -97,6 +100,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsPending(issue: Issue) {
+    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Incomplete;
     this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
@@ -105,6 +109,14 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
+  }
+
+  logIssueRespondRouting(id: number) {
+    this.loggingService.info(`IssueTablesComponent: Proceeding to Respond to Issue ${id}`);
+  }
+
+  logIssueEditRouting(id: number) {
+    this.loggingService.info(`IssueTablesComponent: Proceeding to Edit Issue ${id}`);
   }
 
   /**
@@ -121,7 +133,13 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     return issue.issueDisputes && issue.numOfUnresolvedDisputes() === 0;
   }
 
+  viewIssueInBrowser(id: number) {
+    this.loggingService.info(`IssueTablesComponent: Opening Issue ${id} on Github`);
+    this.githubService.viewIssueInBrowser(id);
+  }
+
   deleteIssue(id: number) {
+    this.loggingService.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
       [id]: true,
