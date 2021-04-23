@@ -139,6 +139,12 @@ CATcher uses the OAuth 2.0 protocol to authenticate users. Below is a summary of
 
 The authentication process is kicked off in the `AuthComponent`, but the code that co-ordinates steps 1 and 2 can be found in [`oauth.ts`](../oauth.ts)(For Electron) or `AuthService`(For Web). Step 2 requires a client secret granted to CATcher. To protect this, we run a web service, [gatekeeper](https://github.com/CATcher-org/gatekeeper) that executes step 2 on behalf of the client CATcher app.
 
+## Logging
+
+CATcher caches log data in `localStorage` within the browser, and these logs can be downloaded as a text file. The app's `LoggingService` exposes methods for logging error, warning or informational messages, and uses the `localStorage` API  under-the-hood. `LoggingService` can be used in any component / service, as needed for the app's logging purposes. `LoggingService` stores the logs for each session together, in sequence.
+
+To ensure that all runtime errors are logged, CATcher's `ErrorHandlingService` implements the [ErrorHandler class](https://angular.io/api/core/ErrorHandler) and then invokes `LoggingService` in its `handleError` method.
+
 # Releasing a new version of CATcher
 
 Releasing a new version of CATcher involves the following steps:
@@ -154,6 +160,7 @@ Follow these steps to create a release using this workflow:
   - Navigate to the 'Actions' Tab of the `CATcher` repository and start the `Draft Deployment` Workflow. This workflow deploys the web app and creates a Draft Release containing the desktop app's executables
   - Edit the Draft Release and update the description with a changelog of recently merged Pull Requests.
   - Publish the release.
+
 
 # Future Developments
 Here are a few suggestions that future developers can work on to improve this application!
