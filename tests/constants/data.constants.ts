@@ -57,7 +57,7 @@ export const jsonData = {
 };
 
 // These are objects representing some users and teams in jsonData
-const TEAM_3 = new Team({
+export const TEAM_3 = new Team({
   id: 'CS2103T-W12-3',
   teamMembers: [
     { loginId: 'junwei96', role: UserRole.Student },
