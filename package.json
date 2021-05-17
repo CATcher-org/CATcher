@@ -62,7 +62,7 @@
     "diff-match-patch": "^1.0.4",
     "electron-log": "^4.2.4",
     "graphql": "^14.6.0",
-    "graphql-tag": "^2.10.0",
+    "graphql-tag": "2.11.0",
     "karma-spec-reporter": "0.0.32",
     "moment": "^2.24.0",
     "ngx-markdown": "^8.2.1",
