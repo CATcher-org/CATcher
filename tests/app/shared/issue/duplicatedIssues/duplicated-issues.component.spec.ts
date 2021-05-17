@@ -16,9 +16,6 @@ import {
 import { By, HAMMER_LOADER } from '@angular/platform-browser';
 import { MaterialModule } from '../../../../../src/app/shared/material.module';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApolloTestingModule } from 'apollo-angular/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
 
 describe('DuplicatedIssuesComponent', () => {
@@ -49,7 +46,7 @@ describe('DuplicatedIssuesComponent', () => {
                   }
             ],
             imports: [
-                MaterialModule, RouterTestingModule, BrowserDynamicTestingModule, ApolloTestingModule, HttpClientTestingModule
+                MaterialModule, RouterTestingModule
             ]
         })
         .overrideProvider(PermissionService, { useValue: permissionService })
@@ -88,22 +85,22 @@ describe('DuplicatedIssuesComponent', () => {
 
     it('should only allow cancellation of duplicate status if team/tutor response is editable', () => {
         // Team/tutor response is not editable
-        mockTeamResponseNotEditable(permissionService);
-        mockTutorResponseNotEditable(permissionService);
+        mockTeamResponseEditPermission(permissionService, false);
+        mockTutorResponseEditPermission(permissionService, false);
         fixture.detectChanges();
         const cancelIconQuery = debugElement.query(By.css('.mat-icon'));
         expect(cancelIconQuery).toBeNull();
 
         // Team response is editable
-        mockTeamResponseEditable(permissionService);
-        mockTutorResponseNotEditable(permissionService);
+        mockTeamResponseEditPermission(permissionService, true);
+        mockTutorResponseEditPermission(permissionService, false);
         fixture.detectChanges();
         let cancelIcon: HTMLElement = debugElement.query(By.css('.mat-icon')).nativeElement;
         expect(cancelIcon).toBeDefined();
 
         // Tutor response is editable
-        mockTeamResponseNotEditable(permissionService);
-        mockTutorResponseEditable(permissionService);
+        mockTeamResponseEditPermission(permissionService, false);
+        mockTutorResponseEditPermission(permissionService, true);
         fixture.detectChanges();
         cancelIcon = debugElement.query(By.css('.mat-icon')).nativeElement;
         expect(cancelIcon).toBeDefined();
@@ -115,22 +112,13 @@ describe('DuplicatedIssuesComponent', () => {
             updatedFirstDummyIssue = duplicatedIssue;
             return of(duplicatedIssue);
         });
-        spyOn(component, 'removeDuplicateStatus').and.callThrough();
-        mockTeamResponseEditable(permissionService);
+        mockTeamResponseEditPermission(permissionService, true);
         fixture.detectChanges();
 
         expect(firstDummyIssue.duplicateOf).toEqual(component.issue.id);
         cancelDuplicateStatus();
-        expect(component.removeDuplicateStatus).toHaveBeenCalledWith(firstDummyIssue);
         expect(updatedFirstDummyIssue.duplicateOf).toBeNull();
         expect(issueService.updateLocalStore).toHaveBeenCalledWith(updatedFirstDummyIssue);
-
-        // duplicate status of first dummy issue is removed
-        component.duplicatedIssues = of([secondDummyIssue]);
-        fixture.detectChanges();
-
-        const matChipAnchor: HTMLElement = nativeElement.querySelector('a');
-        expect(matChipAnchor.innerText).toEqual(`#${secondDummyIssue.id}`);
     });
 
     function getDuplicateIssuesLength(): number {
@@ -145,20 +133,12 @@ describe('DuplicatedIssuesComponent', () => {
         fixture.detectChanges();
     }
 
-    function mockTeamResponseEditable(permissionService: any): void {
-        permissionService.isTeamResponseEditable.and.callFake(() => true);
+    function mockTeamResponseEditPermission(permissionService: any, editable: boolean): void {
+        permissionService.isTeamResponseEditable.and.callFake(() => editable);
     }
 
-    function mockTeamResponseNotEditable(permissionService: any): void {
-        permissionService.isTeamResponseEditable.and.callFake(() => false);
-    }
-
-    function mockTutorResponseEditable(permissionService: any): void {
-        permissionService.isTutorResponseEditable.and.callFake(() => true);
-    }
-
-    function mockTutorResponseNotEditable(permissionService: any): void {
-        permissionService.isTutorResponseEditable.and.callFake(() => false);
+    function mockTutorResponseEditPermission(permissionService: any, editable: boolean): void {
+        permissionService.isTutorResponseEditable.and.callFake(() => editable);
     }
 
 });
