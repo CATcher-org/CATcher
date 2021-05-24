@@ -8,6 +8,8 @@ import { LoggingService } from './logging.service';
 
 export const ERRORCODE_NOT_FOUND = 404;
 
+const FILTERABLE = ['node_modules'];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,13 +17,23 @@ export class ErrorHandlingService implements ErrorHandler {
 
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 
-  handleError(error: HttpErrorResponse | string | RequestError, actionCallback?: () => void) {
+  handleError(error: HttpErrorResponse | Error | RequestError, actionCallback?: () => void) {
     this.logger.error(error);
+    if (error instanceof Error) {
+      this.logger.error(this.cleanStack(error.stack));
+    }
     if (error instanceof HttpErrorResponse || error instanceof RequestError) {
       this.handleHttpError(error, actionCallback);
     } else {
-      this.handleGeneralError(error);
+      this.handleGeneralError(error.message || JSON.stringify(error));
     }
+  }
+
+  private cleanStack(stacktrace: string): string {
+    return stacktrace
+            .split('\n')
+            .filter(line => !FILTERABLE.some(word => line.includes(word))) // exclude lines that contain words in FILTERABLE
+            .join('\n');
   }
 
   // Ref: https://developer.github.com/v3/#client-errors
