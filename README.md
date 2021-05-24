@@ -2,7 +2,7 @@
 
 <img src="./src/assets/images/CATcher_logo.png" alt="CATcher" width="420" height="120"/>
 
-**CAT**cher is an software application to be used for **C**rowd-sourced **A**nonymous **T**esting of software, for educational use in particular. 
+**CAT**cher is a software application to be used for **C**rowd-sourced **A**nonymous **T**esting of software, for educational use in particular. 
 
 * [**CATcher Documentation Home**](https://catcher-org.github.io/)
   * [Direct link to the **User Guide**](https://catcher-org.github.io/ug/)
