@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain, MenuItem } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions } from './electron-utils/menu-bar';
@@ -51,6 +51,23 @@ function createWindow() {
   win.setTitle(appTitle);
 
   nativeTheme.themeSource = 'light';
+
+
+
+   const INSPECT_MENU_ITEM = new MenuItem({
+    label: 'Inspect Element',
+    click:  (menuItem, window, e) => {
+      const point = screen.getCursorScreenPoint();
+      window.webContents.inspectElement(point.x, point.y);
+    }
+  });
+
+  const rightClickMenu = new Menu();
+  rightClickMenu.append(INSPECT_MENU_ITEM);
+
+  win.webContents.on('context-menu',  (e, click) => {
+    rightClickMenu.popup({window: win});
+  });
 
   if (isDevMode) {
     require('electron-reload')(__dirname, {
@@ -109,6 +126,7 @@ try {
       createWindow();
     }
   });
+
 
 } catch (e) {
   Logger.error('Something went wrong in Electron.', e);

@@ -15,10 +15,6 @@ declare global {
   providedIn: 'root',
 })
 export class ElectronService {
-  readonly INSPECT_MENU_ITEM: MenuItem;
-  rightClickPosition = null;
-  rightClickMenu: Menu;
-
   ipcRenderer: typeof ipcRenderer;
   remote: typeof remote;
   clipboard: typeof clipboard;
@@ -31,18 +27,6 @@ export class ElectronService {
       this.clipboard = window.require('electron').clipboard;
       this.fs = window.require('fs');
 
-      this.INSPECT_MENU_ITEM = new this.remote.MenuItem({
-        label: 'Inspect Element',
-        click: () => {
-          this.remote.getCurrentWindow().webContents.inspectElement(this.rightClickPosition.x, this.rightClickPosition.y);
-        }
-      });
-      this.rightClickMenu = new this.remote.Menu();
-      this.rightClickMenu.append(this.INSPECT_MENU_ITEM);
-
-      if (!AppConfig.production) {
-        this.enableRightClickInspectElement();
-      }
     }
   }
 
@@ -50,13 +34,6 @@ export class ElectronService {
     return window && window.process && window.process.type;
   }
 
-  enableRightClickInspectElement(): void {
-    window.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      this.rightClickPosition = {x: e.x, y: e.y};
-      this.rightClickMenu.popup({window: this.remote.getCurrentWindow()});
-    }, false);
-  }
 
   clearCookies() {
     if (this.isElectron()) {
