@@ -1,4 +1,4 @@
-import { app, MenuItemConstructorOptions } from 'electron';
+import { app, MenuItemConstructorOptions, MenuItem, Menu } from 'electron';
 
 // Edited version of a template menu-bar provided by the electron API,
 // refer to https://electronjs.org/docs/api/menu for more information.
@@ -48,4 +48,17 @@ export function createMenuOptions(isDevMode: boolean): MenuItemConstructorOption
     );
   }
   return mainMenuTemplate;
+}
+
+export function createContextMenu(point) {
+  const INSPECT_MENU_ITEM = new MenuItem({
+    label: 'Inspect Element',
+    click:  (menuItem, window, e) => {
+      window.webContents.inspectElement(point.x, point.y);
+    }
+  });
+
+  const contextMenu = new Menu();
+  contextMenu.append(INSPECT_MENU_ITEM);
+  return contextMenu;
 }

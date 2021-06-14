@@ -1,7 +1,7 @@
 import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain, MenuItem } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { createMenuOptions } from './electron-utils/menu-bar';
+import { createMenuOptions, createContextMenu } from './electron-utils/menu-bar';
 import { isDeveloperMode, isLinuxOs, isMacOs, appTitle } from './electron-utils/supporting-logic';
 import { getAccessToken } from './electron-utils/oauth';
 
@@ -52,21 +52,13 @@ function createWindow() {
 
   nativeTheme.themeSource = 'light';
 
-
-
-   const INSPECT_MENU_ITEM = new MenuItem({
-    label: 'Inspect Element',
-    click:  (menuItem, window, e) => {
-      const point = screen.getCursorScreenPoint();
-      window.webContents.inspectElement(point.x, point.y);
-    }
-  });
-
-  const rightClickMenu = new Menu();
-  rightClickMenu.append(INSPECT_MENU_ITEM);
+  const point = {x:null, y:null};
+  const contextMenu = createContextMenu(point);
 
   win.webContents.on('context-menu',  (e, click) => {
-    rightClickMenu.popup({window: win});
+    point.x = click.x;
+    point.y = click.y;
+    contextMenu.popup({window: win});
   });
 
   if (isDevMode) {
