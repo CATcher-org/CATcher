@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain, MenuItem } from 'electron';
+import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain, MenuItem, shell } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions, createContextMenu } from './electron-utils/menu-bar';
@@ -24,6 +24,14 @@ ipcMain.on('github-oauth', (event, repoPermissionLevel) => {
       error: error.message,
       isWindowClosed: error.message === 'WINDOW_CLOSED'});
   });
+});
+
+ipcMain.handle('clear-cookies', () => {
+    return win.webContents.session.clearStorageData();
+});
+
+ipcMain.handle('open-link', (e, address) => {
+    shell.openExternal(address);
 });
 
 
@@ -52,19 +60,12 @@ function createWindow() {
 
   nativeTheme.themeSource = 'light';
 
-  const point = {x:null, y:null};
-  const contextMenu = createContextMenu(point);
-
-  win.webContents.on('context-menu',  (e, click) => {
-    point.x = click.x;
-    point.y = click.y;
-    contextMenu.popup({window: win});
-  });
-
   if (isDevMode) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
     });
+
+    createContextMenu(win);
     win.loadURL('http://localhost:4200');
     win.webContents.openDevTools();
   } else {

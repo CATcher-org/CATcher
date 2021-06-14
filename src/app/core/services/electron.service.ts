@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ipcRenderer, remote, clipboard, Menu, MenuItem } from 'electron';
-import * as fs from 'fs';
-import { AppConfig } from '../../../environments/environment';
+import { ipcRenderer } from 'electron';
 
 declare var window: Window;
 declare global {
@@ -16,17 +14,10 @@ declare global {
 })
 export class ElectronService {
   ipcRenderer: typeof ipcRenderer;
-  remote: typeof remote;
-  clipboard: typeof clipboard;
-  fs: typeof fs;
 
   constructor() {
     if (this.isElectron()) {
       this.ipcRenderer = window.require('electron').ipcRenderer;
-      this.remote = window.require('electron').remote;
-      this.clipboard = window.require('electron').clipboard;
-      this.fs = window.require('fs');
-
     }
   }
 
@@ -37,7 +28,7 @@ export class ElectronService {
 
   clearCookies() {
     if (this.isElectron()) {
-      this.remote.getCurrentWebContents().session.clearStorageData();
+      this.ipcRenderer.invoke('clear-cookies');
     }
   }
 
@@ -61,7 +52,7 @@ export class ElectronService {
 
   openLink(address: string) {
     if (this.isElectron()) {
-      this.remote.shell.openExternal(address);
+      this.ipcRenderer.invoke('open-link', address);
     } else {
       window.open(address);
     }
