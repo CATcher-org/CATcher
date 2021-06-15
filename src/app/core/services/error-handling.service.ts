@@ -67,6 +67,9 @@ export class ErrorHandlingService implements ErrorHandler {
   }
 
   private handleGeneralError(error: string): void {
-    this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: {message: error}});
+    this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+      data: {message: error},
+      duration: 3000
+    });
   }
 }
