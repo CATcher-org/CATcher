@@ -5,6 +5,8 @@ import { FormErrorComponent } from '../../shared/error-toasters/form-error/form-
 import { HttpErrorResponse } from '@angular/common/http';
 import { RequestError } from '@octokit/request-error';
 import { LoggingService } from './logging.service';
+import internal = require('events');
+import { ComponentType } from '@angular/core/src/render3';
 
 export const ERRORCODE_NOT_FOUND = 404;
 
@@ -50,18 +52,30 @@ export class ErrorHandlingService implements ErrorHandler {
 
     switch (error.status) {
       case 500: // Internal Server Error.
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+          data: error,
+          duration: 3000
+        });
         break;
       case 422: // Form errors
-        this.snackBar.openFromComponent(FormErrorComponent, {data: error});
+        this.snackBar.openFromComponent(FormErrorComponent, {
+          data: error,
+          duration: 3000
+        });
         break;
       case 400: // Bad request
       case 401: // Unauthorized
       case 404: // Not found
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+          data: error,
+          duration: 3000
+        });
         break;
       default:
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+          data: error,
+          duration: 3000
+        });
         return;
     }
   }
