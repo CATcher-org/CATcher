@@ -11,7 +11,6 @@
                     id="{{ this.id }}" formControlName="{{ this.id }}" matInput placeholder="Description"
                     cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
                     cdkAutosizeMaxRows="20" class="text-input-area" 
-                    (focus)="checkMyPlaceHolder()"
                     ></textarea>
           <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">
             Description required.
