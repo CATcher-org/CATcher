@@ -16,6 +16,7 @@ const FILTERABLE = ['node_modules'];
   providedIn: 'root',
 })
 export class ErrorHandlingService implements ErrorHandler {
+  static DURATION = 5000;
 
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 
@@ -54,13 +55,13 @@ export class ErrorHandlingService implements ErrorHandler {
       case 500: // Internal Server Error.
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
           data: error,
-          duration: 3000
+          duration: ErrorHandlingService.DURATION
         });
         break;
       case 422: // Form errors
         this.snackBar.openFromComponent(FormErrorComponent, {
           data: error,
-          duration: 3000
+          duration: ErrorHandlingService.DURATION
         });
         break;
       case 400: // Bad request
@@ -68,13 +69,13 @@ export class ErrorHandlingService implements ErrorHandler {
       case 404: // Not found
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
           data: error,
-          duration: 3000
+          duration: ErrorHandlingService.DURATION
         });
         break;
       default:
         this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
           data: error,
-          duration: 3000
+          duration: ErrorHandlingService.DURATION
         });
         return;
     }
@@ -83,7 +84,7 @@ export class ErrorHandlingService implements ErrorHandler {
   private handleGeneralError(error: string): void {
     this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
       data: {message: error},
-      duration: 3000
+      duration: ErrorHandlingService.DURATION
     });
   }
 }
