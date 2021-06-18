@@ -33,6 +33,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   isAppOutdated: boolean;
   versionCheckingError: boolean;
 
+  sessionSelected: string;
   authState: AuthState;
   accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
@@ -170,6 +171,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   onProfileSelect(profile: Profile): void {
     this.profileForm.get('session').setValue(profile.encodedText);
+    this.sessionSelected = profile.profileName
   }
 
   /**
@@ -200,6 +202,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     const org: string = this.getOrgDetails(sessionInformation);
     const dataRepo: string = this.getDataRepoDetails(sessionInformation);
     this.githubService.storeOrganizationDetails(org, dataRepo);
+
+    this.logger.info("Selected Session: " + (this.sessionSelected || "No session selected")) 
+    this.logger.info("Selected Settings Location: " + sessionInformation)
 
     this.phaseService.storeSessionData().pipe(
       throwIfFalse(isValidSession => isValidSession,
