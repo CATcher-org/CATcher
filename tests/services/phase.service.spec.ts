@@ -19,17 +19,17 @@ describe('PhaseService', () => {
   });
 
   describe('.storeSessionData()', () => {
-    it('should return an Observable of true if an openPhase is defined', () => {
+    it('should return an Observable of void if an openPhase is defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(BUG_REPORTING_PHASE_SESSION_DATA));
-      phaseService.storeSessionData().subscribe((result: boolean) => {
-        expect(result).toBeTrue();
+      phaseService.storeSessionData().subscribe((result: void) => {
+        expect().nothing();
       });
     });
 
-    it('should return an Observable of true if multiple openPhases are defined', () => {
+    it('should return an Observable of void if multiple openPhases are defined', () => {
       githubService.fetchSettingsFile.and.returnValue(of(MULTIPLE_OPEN_PHASES_SESSION_DATA));
-      phaseService.storeSessionData().subscribe((result: boolean) => {
-        expect(result).toBeTrue();
+      phaseService.storeSessionData().subscribe((result: void) => {
+        expect().nothing();
       });
     });
 

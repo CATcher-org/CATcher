@@ -72,7 +72,6 @@ export class PhaseService {
 
   /**
    * Will fetch session data and update phase service with it.
-   * @returns - If the session is valid return true, else false
    */
   storeSessionData(): Observable<void> {
     return this.fetchSessionData().pipe(
