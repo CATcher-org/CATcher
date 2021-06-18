@@ -33,11 +33,13 @@ export class AuthComponent implements OnInit, OnDestroy {
   isAppOutdated: boolean;
   versionCheckingError: boolean;
 
+  sessionSelected: string;
   authState: AuthState;
   accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
   profileForm: FormGroup;
   currentUserName: string;
+  noSessionSelected = "No session selected";
 
   constructor(public appService: ApplicationService,
               public electronService: ElectronService,
@@ -170,6 +172,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   onProfileSelect(profile: Profile): void {
     this.profileForm.get('session').setValue(profile.encodedText);
+    this.sessionSelected = profile.profileName;
   }
 
   /**
@@ -201,10 +204,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     const dataRepo: string = this.getDataRepoDetails(sessionInformation);
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
-    this.phaseService.storeSessionData().pipe(
-      throwIfFalse(isValidSession => isValidSession,
-                   () => new Error('Invalid Session'))
-    ).subscribe(() => {
+    this.phaseService.storeSessionData().subscribe(() => {
       try {
         this.authService.startOAuthProcess();
       } catch (error) {
