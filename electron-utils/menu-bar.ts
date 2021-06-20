@@ -51,7 +51,7 @@ export function createMenuOptions(isDevMode: boolean): MenuItemConstructorOption
 }
 
 export function createContextMenu(window: BrowserWindow) {
-  const point = {x:null, y:null};
+  const point = {x: null, y: null};
   const INSPECT_MENU_ITEM = new MenuItem({
     label: 'Inspect Element',
     click:  (menuItem, window, e) => {
@@ -61,7 +61,7 @@ export function createContextMenu(window: BrowserWindow) {
 
   const contextMenu = new Menu();
   contextMenu.append(INSPECT_MENU_ITEM);
-  
+
   window.webContents.on('context-menu',  (e, click) => {
     point.x = click.x;
     point.y = click.y;
