@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain, MenuItem, shell } from 'electron';
+import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain, shell } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { createMenuOptions, createContextMenu } from './electron-utils/menu-bar';
@@ -119,7 +119,6 @@ try {
       createWindow();
     }
   });
-
 
 } catch (e) {
   Logger.error('Something went wrong in Electron.', e);
