@@ -50,21 +50,29 @@ export function createMenuOptions(isDevMode: boolean): MenuItemConstructorOption
   return mainMenuTemplate;
 }
 
-export function createContextMenu(window: BrowserWindow) {
-  const point = {x: null, y: null};
-  const INSPECT_MENU_ITEM = new MenuItem({
+function createInspectElementMenuItem(contextMenuCoords: {x, y}): MenuItem {
+   return new MenuItem({
     label: 'Inspect Element',
-    click:  (menuItem, window, e) => {
-      window.webContents.inspectElement(point.x, point.y);
+    click:  (menuItem, window, event) => {
+      window.webContents.inspectElement(contextMenuCoords.x, contextMenuCoords.y);
     }
   });
+}
 
+/**
+ * Creates a menu that is displayed when the context-menu event fires on the
+ * given BrowserWindow (i.e. usually when user right-clicks on the window).
+ * This menu will contain an 'Inspect Element' MenuItem.
+ */
+export function createContextMenu(win: BrowserWindow): void {
+  const contextMenuCoords = {x: null, y: null};
   const contextMenu = new Menu();
-  contextMenu.append(INSPECT_MENU_ITEM);
+  contextMenu.append(createInspectElementMenuItem(contextMenuCoords));
 
-  window.webContents.on('context-menu',  (e, click) => {
-    point.x = click.x;
-    point.y = click.y;
-    contextMenu.popup({window: window});
+  win.webContents.on('context-menu',  (event, contextMenuParams) => {
+    // record the mouse position, when context-menu event is fired
+    contextMenuCoords.x = contextMenuParams.x;
+    contextMenuCoords.y = contextMenuParams.y;
+    contextMenu.popup({window: win});
   });
 }
