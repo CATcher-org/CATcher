@@ -1,3 +1,7 @@
+# The purpose of this workflow file is to 
+# automatically deploy the app for the corresponding
+# system and run the linter and the tests
+
 name: Setup Builds and Tests
 
 on:
