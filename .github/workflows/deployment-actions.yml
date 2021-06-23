@@ -1,3 +1,8 @@
+# The purpose of this workflow file is to 
+# builds CATcher application and uploads the
+# release asset for the four platforms 
+# (browser, Linux, Windows, MacOS) automatically
+
 name: Draft Deployment
 
 on:
