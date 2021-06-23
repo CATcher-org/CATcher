@@ -161,6 +161,20 @@ export class LabelService {
     }
   }
 
+  getLabelDefinition(labelValue: string): string {
+    if (labelValue === '') {
+      return ''; // consider change this
+    }
+
+    const existingLabel = LabelService.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
+
+    if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
+      return ''; // consider change this
+    } else {
+      return existingLabel.labelDefinition;
+    }
+  }
+  
   /**
    * Ensures that the repo has the required labels.
    * Compares the actual labels in the repo with the required labels. If an required label is missing,
