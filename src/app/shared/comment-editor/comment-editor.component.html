@@ -8,9 +8,9 @@
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
           <textarea (paste)="onPaste($event)" #commentTextArea (dragover)="disableCaretMovement($event)"
-                    id="{{ this.id }}" formControlName="{{ this.id }}" matInput placeholder="Description"
+                    id="{{ this.id }}" formControlName="{{ this.id }}" matInput
                     cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
-                    cdkAutosizeMaxRows="20" class="text-input-area"></textarea>
+                    cdkAutosizeMaxRows="20" class="text-input-area" placeholder="{{ this.placeholderText }}"></textarea>
           <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">
             Description required.
           </mat-error>
@@ -23,7 +23,7 @@
                    type="file" class="file" (change)="onFileInputUpload($event, fileInput)">
           </div>
         </mat-form-field>
-        </div>
+      </div>
     </mat-tab>
     <mat-tab label="Preview">
       <div class="tab-content" style="min-height: 228px">
