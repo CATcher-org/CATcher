@@ -174,7 +174,7 @@ export class LabelService {
       return existingLabel.labelDefinition;
     }
   }
-  
+
   /**
    * Ensures that the repo has the required labels.
    * Compares the actual labels in the repo with the required labels. If an required label is missing,

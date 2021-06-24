@@ -7,7 +7,7 @@ import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
 import { LabelService } from '../../../core/services/label.service';
 import { PhaseService } from '../../../core/services/phase.service';
-// look at here 
+
 @Component({
   selector: 'app-issue-label',
   templateUrl: './label.component.html',
