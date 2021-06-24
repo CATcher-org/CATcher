@@ -5,7 +5,8 @@
       <mat-select-trigger>
         {{dropdownControl.value}}
       </mat-select-trigger>
-      <mat-option *ngFor="let value of labelList" [value]="value.labelValue" matTooltip="{{setSelectedLabalTooltipMsg(value.labelDefinition)}}">
+      <mat-option *ngFor="let value of labelList" [value]="value.labelValue" 
+        matTooltip="{{setSelectedLabalTooltipMsg(value.labelDefinition)}}" matTooltipClass="tooltip">
         <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
         <span> {{value.labelValue}}</span>
       </mat-option>
