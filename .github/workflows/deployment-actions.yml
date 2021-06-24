@@ -1,6 +1,6 @@
 # The purpose of this workflow file is to 
 # deploy the app and upload the
-# release asset for the four platforms 
+# release assets for the four platforms 
 # (browser, Linux, Windows, MacOS) automatically
 
 name: Draft Deployment
