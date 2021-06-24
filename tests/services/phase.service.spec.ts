@@ -22,7 +22,6 @@ describe('PhaseService', () => {
     it('should not throw any errors if there is a defined openPhase', () => {
       githubService.fetchSettingsFile.and.returnValue(of(BUG_REPORTING_PHASE_SESSION_DATA));
       phaseService.storeSessionData().subscribe({
-        next: (e) => expect(e).toEqual(BUG_REPORTING_PHASE_SESSION_DATA),
         error: () => fail()
       });
     });
@@ -30,7 +29,6 @@ describe('PhaseService', () => {
     it('should not throw any errors if there is are multiple defined openPhase', () => {
       githubService.fetchSettingsFile.and.returnValue(of(MULTIPLE_OPEN_PHASES_SESSION_DATA));
       phaseService.storeSessionData().subscribe({
-        next: (e) => expect(e).toEqual(MULTIPLE_OPEN_PHASES_SESSION_DATA),
         error: () => fail()
       });
     });
