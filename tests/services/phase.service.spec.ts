@@ -26,7 +26,7 @@ describe('PhaseService', () => {
       });
     });
 
-    it('should not throw any errors if there is are multiple defined openPhases', () => {
+    it('should not throw any errors if there are multiple defined openPhases', () => {
       githubService.fetchSettingsFile.and.returnValue(of(MULTIPLE_OPEN_PHASES_SESSION_DATA));
       phaseService.storeSessionData().subscribe({
         error: () => fail()
