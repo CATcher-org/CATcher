@@ -1,5 +1,5 @@
 # The purpose of this workflow file is to make sure the app
-# build successfully as well as to check whether it passes
+# builds successfully as well as to check whether it passes
 # the linter and the testing files
 
 name: Setup Builds and Tests
