@@ -130,6 +130,31 @@ describe('LabelService: getColorOfLabel()', () => {
   });
 });
 
+describe('LabelService: getLabelDefinition()', () => {
+  beforeEach(() => {
+    labelService = new LabelService(null);
+  });
+
+  afterEach(() => {
+    labelService = null;
+  });
+
+  it('should be correct label definition for type.FunctionalityBug', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.TYPE_FUNCTIONALITY_BUG)).toEqual(LabelConstant.DEFINITION_FUNCTIONALITY_BUG);
+  });
+
+  it('should be correct label definition for severity.Medium', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM)).toEqual(LabelConstant.DEFINITION_SEVERITY_MEDIUM);
+  });
+
+  it('should be an empty string for label with no definition', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM)).toEqual(LabelConstant.DEFINITION_EMPTY);
+  });
+
+  it('should be an empty string for invalid inputs', () => {
+    expect(labelService.getLabelDefinition(null)).toEqual(LabelConstant.DEFINITION_EMPTY);
+  });
+});
 function assertLabelCreated(githubService: any, label: Label) {
   expect(githubService.createLabel).toHaveBeenCalledWith(label.getFormattedName(), label.labelColor);
 }
@@ -137,3 +162,5 @@ function assertLabelCreated(githubService: any, label: Label) {
 function assertLabelNotCreated(githubService: any, label: Label) {
   expect(githubService.createLabel).not.toHaveBeenCalledWith(label.getFormattedName(), label.labelColor);
 }
+
+// add the test here
