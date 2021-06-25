@@ -140,19 +140,25 @@ describe('LabelService: getLabelDefinition()', () => {
   });
 
   it('should be correct label definition for type.FunctionalityBug', () => {
-    expect(labelService.getLabelDefinition(LabelConstant.TYPE_FUNCTIONALITY_BUG)).toEqual(LabelConstant.DEFINITION_FUNCTIONALITY_BUG);
+    expect(labelService.getLabelDefinition(LabelConstant.TYPE_FUNCTIONALITY_BUG, LabelConstant.TYPE)).toEqual(
+      LabelConstant.DEFINITION_FUNCTIONALITY_BUG
+    );
   });
 
   it('should be correct label definition for severity.Medium', () => {
-    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM)).toEqual(LabelConstant.DEFINITION_SEVERITY_MEDIUM);
+    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, LabelConstant.SEVERITY)).toEqual(
+      LabelConstant.DEFINITION_SEVERITY_MEDIUM
+    );
   });
 
   it('should be an empty string for label with no definition', () => {
-    expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE)).toEqual(LabelConstant.DEFINITION_EMPTY);
+    expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE, LabelConstant.STATUS)).toEqual(LabelConstant.DEFINITION_EMPTY);
   });
 
   it('should be an empty string for invalid inputs', () => {
-    expect(labelService.getLabelDefinition(null)).toEqual(LabelConstant.DEFINITION_EMPTY);
+    expect(labelService.getLabelDefinition(null, null)).toEqual(LabelConstant.DEFINITION_EMPTY);
+    expect(labelService.getLabelDefinition(null, LabelConstant.SEVERITY)).toEqual(LabelConstant.DEFINITION_EMPTY);
+    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, null)).toEqual(LabelConstant.DEFINITION_EMPTY);
   });
 });
 

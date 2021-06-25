@@ -161,12 +161,18 @@ export class LabelService {
     }
   }
 
-  getLabelDefinition(labelValue: string): string {
+  /**
+   * Returns the definition of the label by searching a list of 
+   * all available labels.
+   */
+  
+  getLabelDefinition(labelValue: string, labelCategory: string): string {
     if (labelValue === '') {
       return ''; // consider change this
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
+    const existingLabel = LabelService.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue
+                                                                        && label.labelCategory === labelCategory);
 
     if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
       return ''; // consider change this
