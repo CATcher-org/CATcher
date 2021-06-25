@@ -7,6 +7,7 @@ export const SEVERITY_MEDIUM = 'Medium';
 export const SEVERITY_HIGH = 'High';
 export const TYPE_DOCUMENTATION_BUG = 'DocumentationBug';
 export const TYPE_FUNCTIONALITY_BUG = 'FunctionalityBug';
+export const TYPE_FEATURE_FLAW = 'FeatureFlaw';
 export const RESPONSE_ACCEPTED = 'Accepted';
 export const RESPONSE_REJECTED = 'Rejected';
 export const RESPONSE_ISSUE_UNCLEAR = 'IssueUnclear';
@@ -19,6 +20,26 @@ export const SEVERITY = 'severity';
 export const TYPE = 'type';
 export const RESPONSE = 'response';
 export const STATUS = 'status';
+
+// Label definition
+export const DEFINITION_EMPTY = '';
+export const DEFINITION_SEVERITY_VERY_LOW =
+  'A flaw that is purely cosmetic and does not affect usage e.g., ' +
+  "a typo/spacing/layout/color/font issues in the docs or the UI that doesn't affect usage.";
+export const DEFINITION_SEVERITY_LOW =
+  'A flaw that is unlikely to affect normal operations of the product. ' +
+  'Appears only in very rare situations and causes a minor inconvenience only.';
+export const DEFINITION_SEVERITY_MEDIUM =
+  'A flaw that causes occasional inconvenience to some users but they can ' + 'continue to use the product.';
+export const DEFINITION_SEVERITY_HIGH =
+  'A flaw that affects most users and causes major problems for users. ' + 'i.e., makes the product almost unusable for most users.';
+export const DEFINITION_FUNCTIONALITY_BUG = 'A functionality does not work as specified/expected.';
+export const DEFINITION_FEATURE_FLAW =
+  'Some functionality missing from a feature delivered in the current version ' +
+  'in a way that the feature becomes less useful to the intended target user for normal usage. i.e., ' +
+  "the feature is not 'complete'. In other words, an acceptance-testing bug that falls within the scope of " +
+  'the current version features. These issues are counted against the product design aspect of the project.';
+export const DEFINITION_DOCUMENTATION_BUG = 'A flaw in the documentation e.g., a missing step, ' + 'a wrong instruction, typos';
 
 // Label color constants
 export const COLOR_BLACK = '000000';

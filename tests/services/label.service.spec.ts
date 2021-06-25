@@ -148,13 +148,14 @@ describe('LabelService: getLabelDefinition()', () => {
   });
 
   it('should be an empty string for label with no definition', () => {
-    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM)).toEqual(LabelConstant.DEFINITION_EMPTY);
+    expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE)).toEqual(LabelConstant.DEFINITION_EMPTY);
   });
 
   it('should be an empty string for invalid inputs', () => {
     expect(labelService.getLabelDefinition(null)).toEqual(LabelConstant.DEFINITION_EMPTY);
   });
 });
+
 function assertLabelCreated(githubService: any, label: Label) {
   expect(githubService.createLabel).toHaveBeenCalledWith(label.getFormattedName(), label.labelColor);
 }
@@ -162,5 +163,3 @@ function assertLabelCreated(githubService: any, label: Label) {
 function assertLabelNotCreated(githubService: any, label: Label) {
   expect(githubService.createLabel).not.toHaveBeenCalledWith(label.getFormattedName(), label.labelColor);
 }
-
-// add the test here
