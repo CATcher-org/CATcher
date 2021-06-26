@@ -38,6 +38,7 @@ import { GithubEventService } from './core/services/githubevent.service';
 import { LoggingService } from './core/services/logging.service';
 import { IssueServiceFactory } from './core/services/factories/factory.issue.service';
 import { PermissionService } from './core/services/permission.service';
+import { markedOptionsFactory } from './shared/lib/marked';
 
 @NgModule({
   declarations: [
@@ -59,15 +60,7 @@ import { PermissionService } from './core/services/permission.service';
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,
-        useValue: {
-          gfm: true,
-          tables: true,
-          breaks: true,
-          pedantic: false,
-          sanitize: false,
-          smartLists: true,
-          smartypants: true,
-        },
+        useFactory: markedOptionsFactory
       },
     }),
     AppRoutingModule,

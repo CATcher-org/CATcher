@@ -160,7 +160,7 @@ export class AuthService {
     const authService = this;
 
     if (oauthWindow == null) {
-      throw this.ENABLE_POPUP_MESSAGE;
+      throw new Error(this.ENABLE_POPUP_MESSAGE);
     }
 
     oauthWindow.addEventListener('unload', () => {
