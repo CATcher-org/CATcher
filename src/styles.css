@@ -168,4 +168,5 @@ table {
 .mat-tooltip.tooltip {
   font-size: 14px;
   padding: 8px;
+  white-space: pre-line;
 }
