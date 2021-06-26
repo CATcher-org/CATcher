@@ -25,8 +25,8 @@ export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOA
 })
 
 /**
- * Responsible for initiating the authentication process and querying or 
- * updating the application state with regards to authentication. 
+ * Responsible for initiating the authentication process and querying or
+ * updating the application state with regards to authentication.
  */
 export class AuthService {
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);

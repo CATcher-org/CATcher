@@ -28,8 +28,8 @@ import { appVersion } from './application.service';
 })
 
 /**
- * Responsible for creating and updating issues, and periodically fetching issues 
- * using GitHub. 
+ * Responsible for creating and updating issues, and periodically fetching issues
+ * using GitHub.
  */
 export class IssueService {
   static readonly POLL_INTERVAL = 5000; // 5 seconds
