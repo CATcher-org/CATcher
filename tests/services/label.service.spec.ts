@@ -67,12 +67,14 @@ describe('LabelService: parseLabelData()', () => {
     expect(labelList[1].labelCategory).toBe(LabelConstant.SEVERITY);
     expect(labelList[1].labelValue).toBe(LabelConstant.SEVERITY_LOW);
     expect(labelList[1].labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
+    expect(labelList[1].labelDefinition).toBe(LabelConstant.DEFINITION_SEVERITY_LOW);
   });
 
   it('should be type.FunctionalityBug', () => {
     expect(labelList[2].labelCategory).toBe(LabelConstant.TYPE);
     expect(labelList[2].labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
     expect(labelList[2].labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
+    expect(labelList[2].labelDefinition).toBe(LabelConstant.DEFINITION_FUNCTIONALITY_BUG);
   });
 });
 

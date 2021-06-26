@@ -171,7 +171,7 @@ export class LabelService {
   }
 
   /**
-   * Returns the definition of the label by searching a list of 
+   * Returns the definition of the label by searching a list of
    * all available labels.
    * @param labelValue: the label's value (e.g Low/ Medium/ High / ...).
    * @param labelCategory: the label's category (e.g Type/ Severity / ...).
@@ -252,7 +252,9 @@ export class LabelService {
 
       const labelColor: string = String(label['color']);
 
-      labelData.push(new Label(labelCategory, labelValue, labelColor));
+      const labelDefinition: string = String(label['definition']);
+
+      labelData.push(new Label(labelCategory, labelValue, labelColor, labelDefinition));
     }
     return labelData;
   }

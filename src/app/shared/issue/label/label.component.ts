@@ -54,7 +54,6 @@ export class LabelComponent implements OnInit, OnChanges {
 
   displayLabelDefinition(value: Label) {
     this.labelDefinition = this.labelService.getLabelDefinition(value.labelValue, value.labelCategory);
-    //console.log("definition: " + value.labelDefinition);
     return this.labelDefinition;
   }
 }
