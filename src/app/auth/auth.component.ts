@@ -201,7 +201,10 @@ export class AuthComponent implements OnInit, OnDestroy {
     const dataRepo: string = this.getDataRepoDetails(sessionInformation);
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
+    this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
+
     this.phaseService.storeSessionData().subscribe(() => {
+
       try {
         this.authService.startOAuthProcess();
       } catch (error) {
