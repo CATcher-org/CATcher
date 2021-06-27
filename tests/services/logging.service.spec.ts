@@ -63,8 +63,17 @@ const oldLogFilter: (line: string) => boolean = (line: string) => line === oldLo
 //   });
 // });
 
+const checkHeader = (lines: string[]) => {
+  const startHeader = lines[0];
+  const creationDate = new Date(lines[1]);
+  expect(startHeader).toEqual(loggingService.LOG_START_HEADER);
+  // Expect creation date to be close to current date
+  expect(Date.now() - creationDate.getTime()).toBeLessThanOrEqual(2000);
+};
+
 describe('LoggingService', () => {
   beforeEach(() => {
+    // Initialize mock local storage
     let mockLocalStorage = {};
     const mockLocalStorageFunctions = {
       getItem: (key: string): string => {
@@ -81,16 +90,60 @@ describe('LoggingService', () => {
       }
     };
 
+    // Mock function calls
     spyOn(localStorage, 'getItem').and.callFake(mockLocalStorageFunctions.getItem);
     spyOn(localStorage, 'setItem').and.callFake(mockLocalStorageFunctions.setItem);
     spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorageFunctions.removeItem);
     spyOn(localStorage, 'clear').and.callFake(mockLocalStorageFunctions.clear);
+
+    // Initialize logging service
+    const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
+    electronService.isElectron = jasmine.createSpy('isElectron', () => false);
+    loggingService = new LoggingService(electronService);
+    loggingService.reset();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    console.log('Reset all');
+    loggingService.reset();
+    localStorage.clear();
   });
 
   describe('.startSession()', () => {
-    it('test local storage', () => {
-      localStorage.setItem('test', 'value');
-      expect(localStorage.getItem('test')).toEqual('value');
+    it('should successfully initialize logging session', () => {
+      loggingService.startSession();
+      const cachedLog = loggingService.getCachedLog();
+      const lines = cachedLog.split('\n');
+      expect(lines.length).toEqual(2);
+      checkHeader(lines);
+    });
+
+    it('should successfully reinitialize logging session', () => {
+      loggingService.startSession();
+      loggingService.reset();
+      loggingService.startSession();
+      const cachedLog = loggingService.getCachedLog();
+      const sessions = cachedLog.split('\n\n');
+      expect(sessions.length).toEqual(2);
+      const firstSessionLines = sessions[0].split('\n');
+      const secondSessionLines = sessions[1].split('\n');
+      checkHeader(firstSessionLines);
+      checkHeader(secondSessionLines);
+    });
+
+    it('should successfully reinitialize logging session when limit reached', () => {
+      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT; i += 1) {
+        loggingService.startSession();
+        loggingService.reset();
+      }
+      loggingService.startSession();
+      const cachedLog = loggingService.getCachedLog();
+      const sessions = cachedLog.split('\n\n');
+      expect(sessions.length).toEqual(loggingService.LOG_COUNT_LIMIT);
+      for (const session of sessions) {
+        checkHeader(session.split('\n'));
+      }
     });
   });
 });
