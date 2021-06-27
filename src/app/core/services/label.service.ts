@@ -177,8 +177,8 @@ export class LabelService {
    * @param labelCategory: the label's category (e.g Type/ Severity / ...).
    */
   getLabelDefinition(labelValue: string, labelCategory: string): string {
-    if (labelValue === '') {
-      return ''; // not sure of returning empty string here, might have better alternatives
+    if (labelValue === '' || labelCategory === '') {
+      return ''; // not sure of returning empty string as definition here, might have better alternatives
     }
 
     const existingLabel = LabelService.getRequiredLabelsAsArray().find(
@@ -186,7 +186,7 @@ export class LabelService {
     );
 
     if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
-      return ''; // not sure of returning empty string here, might have better alternatives
+      return ''; // not sure of returning empty string as definition here, might have better alternatives
     } else {
       return existingLabel.labelDefinition;
     }
