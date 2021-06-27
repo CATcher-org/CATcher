@@ -1,67 +1,10 @@
 import { LoggingService } from '../../src/app/core/services/logging.service';
 
 let loggingService: LoggingService;
-// const getFilteredLogCount: (currentLog: string, predicate: (line: string) => boolean) => number = (
-//   currentLog: string,
-//   predicate: (line: string) => boolean
-// ) =>
-//   loggingService
-//     .getTrimmedLogCache(currentLog, loggingService.LOG_COUNT_LIMIT)
-//     .split('\n')
-//     .filter((line: string) => predicate(line)).length;
-const oldLogIdentifier = 'Old Log';
-const repeatOldLogStartHeader: (numberOfRepitions: number) => string = (numberofRepitions: number) => {
-  return `${loggingService.LOG_START_HEADER}\n${oldLogIdentifier}\n`.repeat(numberofRepitions);
-};
-const logHeaderFilter: (line: string) => boolean = (line: string) => line === loggingService.LOG_START_HEADER;
-const oldLogFilter: (line: string) => boolean = (line: string) => line === oldLogIdentifier;
-
-// describe('LoggingService', () => {
-//   beforeAll(() => {
-//     const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
-//     electronService.isElectron = jasmine.createSpy('isElectron', () => false);
-//     loggingService = new LoggingService(electronService);
-//   });
-
-//   describe('.getTrimmedLogCache()', () => {
-//     it('should return 1 new log if cache does not contain existing log', () => {
-//       expect(getFilteredLogCount(undefined, logHeaderFilter)).toEqual(1);
-//       expect(getFilteredLogCount('', logHeaderFilter)).toEqual(1);
-//       expect(getFilteredLogCount('gibberish', logHeaderFilter)).toEqual(1);
-//     });
-
-//     it('should return additional logs if cache contains existing log', () => {
-//       let logCounter = 1;
-
-//       while (logCounter < loggingService.LOG_COUNT_LIMIT) {
-//         expect(getFilteredLogCount(repeatOldLogStartHeader(logCounter), logHeaderFilter)).toEqual(logCounter + 1);
-//         logCounter += 1;
-//       }
-//     });
-
-//     it('should return updated log if log in cache contains max number of sessions', () => {
-//       // Number of logs must stay the same
-//       expect(getFilteredLogCount(repeatOldLogStartHeader(loggingService.LOG_COUNT_LIMIT), logHeaderFilter)).toEqual(
-//         loggingService.LOG_COUNT_LIMIT
-//       );
-
-//       // Number of Old Logs must be reduced by 1 (To make way for the new session log)
-//       expect(getFilteredLogCount(repeatOldLogStartHeader(loggingService.LOG_COUNT_LIMIT), oldLogFilter)).toEqual(
-//         loggingService.LOG_COUNT_LIMIT - 1
-//       );
-//     });
-
-//     it('should return trimmed and updated log if log in cache exceeds max number of sessions', () => {
-//       const exceededSessionCount = loggingService.LOG_COUNT_LIMIT + 10; // Arbitrary Exceed Count
-
-//       // Number of logs must be at max number
-//       expect(getFilteredLogCount(repeatOldLogStartHeader(exceededSessionCount), logHeaderFilter)).toEqual(loggingService.LOG_COUNT_LIMIT);
-
-//       // Number of Old Logs must be Max - 1 (To make way for the new session log)
-//       expect(getFilteredLogCount(repeatOldLogStartHeader(exceededSessionCount), oldLogFilter)).toEqual(loggingService.LOG_COUNT_LIMIT - 1);
-//     });
-//   });
-// });
+const infoLogMessage = 'Info log message';
+const errorLogMessage = 'Error log message';
+const warnLogMessage = 'Warn log message';
+const debugLogMessage = 'Debug log Message';
 
 const checkHeader = (lines: string[]) => {
   const startHeader = lines[0];
@@ -69,6 +12,15 @@ const checkHeader = (lines: string[]) => {
   expect(startHeader).toEqual(loggingService.LOG_START_HEADER);
   // Expect creation date to be close to current date
   expect(Date.now() - creationDate.getTime()).toBeLessThanOrEqual(2000);
+};
+
+const testAddLog = (message: string) => {
+  loggingService.startSession();
+  const initialLog = loggingService.getCachedLog();
+  loggingService.info(message);
+  const actualLog = loggingService.getCachedLog();
+  const expectedLog = `${initialLog}\n${message}`;
+  expect(actualLog).toEqual(expectedLog);
 };
 
 describe('LoggingService', () => {
@@ -105,7 +57,6 @@ describe('LoggingService', () => {
   });
 
   afterEach(() => {
-    console.log('Reset all');
     loggingService.reset();
     localStorage.clear();
   });
@@ -152,6 +103,24 @@ describe('LoggingService', () => {
       loggingService.reset();
       const cachedLog = loggingService.getCachedLog();
       expect(cachedLog).toBeNull();
+    });
+  });
+
+  describe('adding logs', () => {
+    it('should successfully add info logs', () => {
+      testAddLog(infoLogMessage);
+    });
+
+    it('should successfully add error logs', () => {
+      testAddLog(errorLogMessage);
+    });
+
+    it('should successfully add info logs', () => {
+      testAddLog(warnLogMessage);
+    });
+
+    it('should successfully add info logs', () => {
+      testAddLog(debugLogMessage);
     });
   });
 });
