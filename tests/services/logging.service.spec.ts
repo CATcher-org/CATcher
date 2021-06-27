@@ -146,4 +146,12 @@ describe('LoggingService', () => {
       }
     });
   });
+
+  describe('.reset()', () => {
+    it('should do nothing if no session is ongoing', () => {
+      loggingService.reset();
+      const cachedLog = loggingService.getCachedLog();
+      expect(cachedLog).toBeNull();
+    });
+  });
 });
