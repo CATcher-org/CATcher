@@ -129,6 +129,7 @@ export class PhaseService {
         })
       );
     };
+    //console.log(this.currentPhase)
 
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
@@ -144,7 +145,7 @@ export class PhaseService {
       throwIfFalse(
         (isSessionCreated: boolean) => isSessionCreated,
         () => new Error(SESSION_AVALIABILITY_FIX_FAILED)),
-      this.labelService.syncLabels(),
+      this.labelService.syncLabels(this.currentPhase !== Phase.phaseBugReporting),
       retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }
