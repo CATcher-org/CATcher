@@ -1,3 +1,7 @@
+# The purpose of this workflow file is to make sure the app
+# builds successfully as well as to check whether it passes
+# the linter and the tests
+
 name: Setup Builds and Tests
 
 on:
