@@ -44,7 +44,7 @@ export class LoggingService {
     }
   }
 
-  initializeLogCache() {
+  private initializeLogCache() {
     this.setCachedLog(this.getTrimmedLogCache(this.getCachedLog(), this.LOG_COUNT_LIMIT));
   }
 
@@ -85,11 +85,11 @@ export class LoggingService {
     return localStorage.getItem(this.LOG_KEY);
   }
 
-  setCachedLog(updatedLog: string): void {
+  private setCachedLog(updatedLog: string): void {
     localStorage.setItem(this.LOG_KEY, updatedLog);
   }
 
-  updateLog(... updatedLog: any[]): void {
+  private updateLog(... updatedLog: any[]): void {
     this.setCachedLog(`${this.getCachedLog()}\n${updatedLog.toString()}`);
   }
 

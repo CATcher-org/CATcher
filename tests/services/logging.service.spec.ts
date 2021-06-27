@@ -1,6 +1,8 @@
 import { LoggingService } from '../../src/app/core/services/logging.service';
 
 let loggingService: LoggingService;
+let headerLog: string;
+const mockDate = new Date(2021, 6, 27);
 const infoLogMessage = 'Info log message';
 const errorLogMessage = 'Error log message';
 const warnLogMessage = 'Warn log message';
@@ -48,10 +50,15 @@ describe('LoggingService', () => {
     spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorageFunctions.removeItem);
     spyOn(localStorage, 'clear').and.callFake(mockLocalStorageFunctions.clear);
 
+    // Mock dates
+    jasmine.clock().install();
+    jasmine.clock().mockDate(mockDate);
+
     // Initialize logging service
     const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
     electronService.isElectron = jasmine.createSpy('isElectron', () => false);
     loggingService = new LoggingService(electronService);
+    headerLog = `${loggingService.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
     loggingService.reset();
     localStorage.clear();
   });
@@ -59,28 +66,24 @@ describe('LoggingService', () => {
   afterEach(() => {
     loggingService.reset();
     localStorage.clear();
+    jasmine.clock().uninstall();
   });
 
   describe('.startSession()', () => {
     it('should successfully initialize logging session', () => {
       loggingService.startSession();
-      const cachedLog = loggingService.getCachedLog();
-      const lines = cachedLog.split('\n');
-      expect(lines.length).toEqual(2);
-      checkHeader(lines);
+      const actualLog = loggingService.getCachedLog();
+      const expectedLog = headerLog;
+      expect(actualLog).toEqual(expectedLog);
     });
 
     it('should successfully reinitialize logging session', () => {
       loggingService.startSession();
       loggingService.reset();
       loggingService.startSession();
-      const cachedLog = loggingService.getCachedLog();
-      const sessions = cachedLog.split('\n\n');
-      expect(sessions.length).toEqual(2);
-      const firstSessionLines = sessions[0].split('\n');
-      const secondSessionLines = sessions[1].split('\n');
-      checkHeader(firstSessionLines);
-      checkHeader(secondSessionLines);
+      const actualLog = loggingService.getCachedLog();
+      const expectedLog = `${headerLog}\n\n${headerLog}`;
+      expect(actualLog).toEqual(expectedLog);
     });
 
     it('should successfully reinitialize logging session when limit reached', () => {
@@ -89,20 +92,24 @@ describe('LoggingService', () => {
         loggingService.reset();
       }
       loggingService.startSession();
-      const cachedLog = loggingService.getCachedLog();
-      const sessions = cachedLog.split('\n\n');
-      expect(sessions.length).toEqual(loggingService.LOG_COUNT_LIMIT);
-      for (const session of sessions) {
-        checkHeader(session.split('\n'));
+      const actualLog = loggingService.getCachedLog();
+      let expectedLog = '';
+      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT; i += 1) {
+        if (i == loggingService.LOG_COUNT_LIMIT - 1) {
+          expectedLog += headerLog;
+        } else {
+          expectedLog += `${headerLog}\n\n`;
+        }
       }
+      expect(actualLog).toEqual(expectedLog);
     });
   });
 
   describe('.reset()', () => {
     it('should do nothing if no session is ongoing', () => {
       loggingService.reset();
-      const cachedLog = loggingService.getCachedLog();
-      expect(cachedLog).toBeNull();
+      const actualLog = loggingService.getCachedLog();
+      expect(actualLog).toBeNull();
     });
   });
 
