@@ -165,7 +165,7 @@ table {
   min-width: 180px;
 }
 
-.mat-tooltip.tooltip {
+.mat-tooltip.labelTooltip {
   font-size: 14px;
   padding: 8px;
   white-space: pre-line;

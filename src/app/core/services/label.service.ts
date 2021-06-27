@@ -19,20 +19,20 @@ const DISPLAY_NAME_RESPONSE = 'Response';
 
 // The definition of selected labels are hard-coded here
 const VERY_LOW_DEFINITION = 'A flaw that is purely cosmetic and does not affect usage \n'
-    + 'e.g., a typo/spacing /layout/color/font issues in the docs or the UI that doesn\'t affect usage.';
+  + 'e.g., a typo/spacing /layout/color/font issues in the docs or the UI that doesn\'t affect usage.';
 const LOW_DEFINITION = 'A flaw that is unlikely to affect normal operations of the product.\n'
-    + 'Appears only in very rare situations and causes a minor inconvenience only.';
+  + 'Appears only in very rare situations and causes a minor inconvenience only.';
 const MEDIUM_DEFINITION = 'A flaw that causes occasional inconvenience to some users but they can '
-    + 'continue to use the product.';
+  + 'continue to use the product.';
 const HIGH_DEFINITION = 'A flaw that affects most users and causes major problems for users.\n'
-    + 'i.e., makes the product almost unusable for most users.';
+  + 'i.e., makes the product almost unusable for most users.';
 
 const FUNCTIONALITY_BUG_DEFINITION = 'A functionality does not work as specified/expected.';
 const FEATURE_FLAW_DEFINITION = 'Some functionality missing from a feature delivered in the current version in '
-    + 'a way that the feature becomes less useful to the intended target user for normal usage. '
-    + 'i.e., the feature is not \'complete\'.\nIn other words, an acceptance-testing bug that falls within '
-    + 'the scope of the current version features. These issues are counted against the product design aspect '
-    + 'of the project.';
+  + 'a way that the feature becomes less useful to the intended target user for normal usage. '
+  + 'i.e., the feature is not \'complete\'.\nIn other words, an acceptance-testing bug that falls within '
+  + 'the scope of the current version features. These issues are counted against the product design aspect '
+  + 'of the project.';
 const DOCUMENTATION_BUG_DEFINITION = 'A flaw in the documentation e.g., a missing step, a wrong instruction, typos';
 
 const REQUIRED_LABELS = {
@@ -178,14 +178,15 @@ export class LabelService {
    */
   getLabelDefinition(labelValue: string, labelCategory: string): string {
     if (labelValue === '') {
-      return ''; // might have better alternatives
+      return ''; // not sure of returning empty string here, might have better alternatives
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue
-                                                                        && label.labelCategory === labelCategory);
+    const existingLabel = LabelService.getRequiredLabelsAsArray().find(
+      label => label.labelValue === labelValue && label.labelCategory === labelCategory
+    );
 
     if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
-      return ''; // might have better alternatives
+      return ''; // not sure of returning empty string here, might have better alternatives
     } else {
       return existingLabel.labelDefinition;
     }
