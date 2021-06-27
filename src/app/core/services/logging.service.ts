@@ -53,7 +53,7 @@ export class LoggingService {
    * of Sessions if necessary.
    * @param sessionCount The number of Session Logs to preserve in the cache
    */
-  getTrimmedLogCache(currentLog: string, sessionCount: number): string {
+  private getTrimmedLogCache(currentLog: string, sessionCount: number): string {
     const sessionLogSeparator: string = '\n'.repeat(2); // More new-lines added for clarity.
     const currentDateTime = new Date().toLocaleString();
     const logHeaderWithDateTime = `${this.LOG_START_HEADER}\n${currentDateTime}`;
