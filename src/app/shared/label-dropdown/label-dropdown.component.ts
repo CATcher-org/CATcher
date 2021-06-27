@@ -19,7 +19,6 @@ export class LabelDropdownComponent implements OnInit {
 
   selectedColor: string;
   labelList: Label[];
-  toolTipMsg: string;
 
   constructor(public labelService: LabelService) { }
 
@@ -33,11 +32,11 @@ export class LabelDropdownComponent implements OnInit {
     this.selectedColor = this.labelService.getColorOfLabel(labelValue);
   }
 
-  get dropdownTextColor(): string {
-    return this.labelService.isDarkColor(this.selectedColor) ? WHITE_TEXT_CLASS : BLACK_TEXT_CLASS;
-  }
-
   setSelectedLabelTooltipMsg(label: Label) {
     return this.labelService.getLabelDefinition(label.labelValue, label.labelCategory);
+  }
+
+  get dropdownTextColor(): string {
+    return this.labelService.isDarkColor(this.selectedColor) ? WHITE_TEXT_CLASS : BLACK_TEXT_CLASS;
   }
 }
