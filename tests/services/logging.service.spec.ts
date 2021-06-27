@@ -2,19 +2,12 @@ import { LoggingService } from '../../src/app/core/services/logging.service';
 
 let loggingService: LoggingService;
 let headerLog: string;
+const sessionSeparator = '\n\n';
 const mockDate = new Date(2021, 6, 27);
 const infoLogMessage = 'Info log message';
 const errorLogMessage = 'Error log message';
 const warnLogMessage = 'Warn log message';
 const debugLogMessage = 'Debug log Message';
-
-const checkHeader = (lines: string[]) => {
-  const startHeader = lines[0];
-  const creationDate = new Date(lines[1]);
-  expect(startHeader).toEqual(loggingService.LOG_START_HEADER);
-  // Expect creation date to be close to current date
-  expect(Date.now() - creationDate.getTime()).toBeLessThanOrEqual(2000);
-};
 
 const testAddLog = (message: string) => {
   loggingService.startSession();
@@ -82,7 +75,7 @@ describe('LoggingService', () => {
       loggingService.reset();
       loggingService.startSession();
       const actualLog = loggingService.getCachedLog();
-      const expectedLog = `${headerLog}\n\n${headerLog}`;
+      const expectedLog = `${headerLog}${sessionSeparator}${headerLog}`;
       expect(actualLog).toEqual(expectedLog);
     });
 
@@ -95,10 +88,10 @@ describe('LoggingService', () => {
       const actualLog = loggingService.getCachedLog();
       let expectedLog = '';
       for (let i = 0; i < loggingService.LOG_COUNT_LIMIT; i += 1) {
-        if (i == loggingService.LOG_COUNT_LIMIT - 1) {
+        if (i === loggingService.LOG_COUNT_LIMIT - 1) {
           expectedLog += headerLog;
         } else {
-          expectedLog += `${headerLog}\n\n`;
+          expectedLog += `${headerLog}${sessionSeparator}`;
         }
       }
       expect(actualLog).toEqual(expectedLog);
@@ -111,6 +104,19 @@ describe('LoggingService', () => {
       const actualLog = loggingService.getCachedLog();
       expect(actualLog).toBeNull();
     });
+
+    it('should not tamper with existing log histories', () => {
+      let expectedLog = headerLog;
+      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT + 1; i += 1) {
+        loggingService.startSession();
+        loggingService.reset();
+        const actualLog = loggingService.getCachedLog();
+        expect(actualLog).toEqual(expectedLog);
+        if (i < loggingService.LOG_COUNT_LIMIT - 1) {
+          expectedLog += `${sessionSeparator}${headerLog}`;
+        }
+      }
+    });
   });
 
   describe('adding logs', () => {
@@ -122,12 +128,33 @@ describe('LoggingService', () => {
       testAddLog(errorLogMessage);
     });
 
-    it('should successfully add info logs', () => {
+    it('should successfully add warn logs', () => {
       testAddLog(warnLogMessage);
     });
 
-    it('should successfully add info logs', () => {
+    it('should successfully add debug logs', () => {
       testAddLog(debugLogMessage);
+    });
+  });
+
+  describe('updating and trimming logs from sessions', () => {
+    it('should trim oldest log if number of sessions exceed session limit', () => {
+      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT + 1; i += 1) {
+        loggingService.startSession();
+        loggingService.info(infoLogMessage);
+        loggingService.reset();
+      }
+      loggingService.startSession();
+      const actualLog = loggingService.getCachedLog();
+      let expectedLog = '';
+      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT; i += 1) {
+        if (i === loggingService.LOG_COUNT_LIMIT - 1) {
+          expectedLog += headerLog;
+        } else {
+          expectedLog += `${headerLog}\n${infoLogMessage}${sessionSeparator}`;
+        }
+      }
+      expect(actualLog).toEqual(expectedLog);
     });
   });
 });
