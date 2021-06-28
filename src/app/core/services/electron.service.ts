@@ -28,7 +28,7 @@ export class ElectronService {
 
   clearCookies() {
     if (this.isElectron()) {
-      this.ipcRenderer.invoke('clear-cookies');
+      this.ipcRenderer.invoke('clear-storage');
     }
   }
 

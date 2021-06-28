@@ -26,7 +26,7 @@ ipcMain.on('github-oauth', (event, repoPermissionLevel) => {
   });
 });
 
-ipcMain.handle('clear-cookies', () => {
+ipcMain.handle('clear-storage', () => {
     return win.webContents.session.clearStorageData();
 });
 
