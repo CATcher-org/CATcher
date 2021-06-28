@@ -1,4 +1,4 @@
-import { app, MenuItemConstructorOptions } from 'electron';
+import { app, MenuItemConstructorOptions, MenuItem, Menu, BrowserWindow } from 'electron';
 
 // Edited version of a template menu-bar provided by the electron API,
 // refer to https://electronjs.org/docs/api/menu for more information.
@@ -48,4 +48,31 @@ export function createMenuOptions(isDevMode: boolean): MenuItemConstructorOption
     );
   }
   return mainMenuTemplate;
+}
+
+function createInspectElementMenuItem(contextMenuCoords: {x, y}): MenuItem {
+   return new MenuItem({
+    label: 'Inspect Element',
+    click:  (menuItem, window, event) => {
+      window.webContents.inspectElement(contextMenuCoords.x, contextMenuCoords.y);
+    }
+  });
+}
+
+/**
+ * Creates a menu that is displayed when the context-menu event fires on the
+ * given BrowserWindow (i.e. usually when user right-clicks on the window).
+ * This menu will contain an 'Inspect Element' MenuItem.
+ */
+export function createContextMenu(win: BrowserWindow): void {
+  const contextMenuCoords = {x: null, y: null};
+  const contextMenu = new Menu();
+  contextMenu.append(createInspectElementMenuItem(contextMenuCoords));
+
+  win.webContents.on('context-menu',  (event, contextMenuParams) => {
+    // record the mouse position, when context-menu event is fired
+    contextMenuCoords.x = contextMenuParams.x;
+    contextMenuCoords.y = contextMenuParams.y;
+    contextMenu.popup({window: win});
+  });
 }
