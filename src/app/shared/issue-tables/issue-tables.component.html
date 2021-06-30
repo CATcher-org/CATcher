@@ -32,7 +32,6 @@
           <span *ngIf="issue.teamResponseType && issue.teamResponseType != issue.type" (click)="$event.stopPropagation()" style="display: inline; vertical-align:middle;">
             <mat-icon>arrow_right_alt</mat-icon>
           </span>
-          <br/>
           <span *ngIf="issue.teamResponseType && issue.teamResponseType != issue.type" (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.teamResponseType))">
             {{issue.teamResponseType}}
           </span>
