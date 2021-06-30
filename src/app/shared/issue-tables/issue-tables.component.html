@@ -26,9 +26,6 @@
   <ng-container matColumnDef="type">
     <th mat-header-cell [style.width]="permissions.isTeamResponseEditable() ? '10%' : '15%'" *matHeaderCellDef mat-sort-header> Type </th>
     <td mat-cell *matCellDef="let issue">
-      <span *ngIf="issue.originalType && issue.originalType != issue.type" (click)="$event.stopPropagation()" style="display: inline; vertical-align:middle;">
-        <mat-icon>arrow_right_alt</mat-icon>
-      </span>
           <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
               {{issue.type || '-'}}
           </span>
