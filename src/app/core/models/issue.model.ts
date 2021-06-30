@@ -128,7 +128,7 @@ export class Issue {
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
-    issue.duplicated = !!issue.duplicateOf;
+    issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
     return issue;
   }
