@@ -200,10 +200,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
 
-    this.phaseService.storeSessionData().pipe(
-      throwIfFalse(isValidSession => isValidSession,
-                   () => new Error('Invalid Session'))
-    ).subscribe(() => {
+    this.phaseService.storeSessionData().subscribe(() => {
+
       try {
         this.authService.startOAuthProcess();
       } catch (error) {
