@@ -80,16 +80,15 @@ export class AuthComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (oauthCode) { // In the web's oauth window
+    this.checkAppIsOutdated();
+    this.initAccessTokenSubscription();
+    this.initAuthStateSubscription();
+    this.initProfileForm();
+    if (oauthCode) { // In the web's oauth page
+      this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.logger.info('Obtained authorisation code from Github');
-      window.opener.postMessage({ oauthCode, state }, AppConfig.origin);
-      this.logger.info('Sent authorisation code and state to main application window, waiting to close');
-      this.listenForCloseOAuthWindowMessage();
-    } else { // In the main app window
-      this.checkAppIsOutdated();
-      this.initAccessTokenSubscription();
-      this.initAuthStateSubscription();
-      this.initProfileForm();
+      window.postMessage({ oauthCode, state }, AppConfig.origin);
+      this.logger.info('Sent authorisation code and state back to CATcher, waiting to redirect to homepage');
     }
   }
 
@@ -105,12 +104,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     const { oauthCode, state } = event.data;
 
-    if (!oauthCode) {
-        return;
-    }
-
-    if (!this.authService.isReturnedStateSame(state)) {
-      this.logger.info(`Received incorrect state ${state}, continue waiting for correct state`);
+    if (!oauthCode || !state) {
       return;
     }
 
@@ -124,6 +118,8 @@ export class AuthComponent implements OnInit, OnDestroy {
           }
           this.authService.storeOAuthAccessToken(data.token);
           this.logger.info('Sucessfully obtained access token');
+          this.router.navigate(['/']);
+          this.isReady = true;
         }
       )
       .catch(err => {
@@ -134,7 +130,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       .finally(() => {
         if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
           event.source.postMessage('close', AppConfig.origin);
-          this.logger.info('Closing authentication window');
+          this.logger.info('Closing authentication window, redirecting to homepage');
         }
       });
   }
@@ -177,17 +173,25 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param username - The user to log in.
    */
   completeLoginProcess(username: string): void {
-    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-    this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
-    this.userService.createUserModel(username).pipe(
-      flatMap(() => this.phaseService.sessionSetup()),
-      flatMap(() => this.githubEventService.setLatestChangeEvent()),
+    const org = window.localStorage.getItem('org');
+    const dataRepo = window.localStorage.getItem('dataRepo');
+    this.githubService.storeOrganizationDetails(org, dataRepo);
+    this.phaseService.storeSessionData().pipe(
+      throwIfFalse(isValidSession => isValidSession,
+                   () => new Error('Invalid Session'))
     ).subscribe(() => {
-      this.handleAuthSuccess();
-    }, (error) => {
-      this.authService.changeAuthState(AuthState.NotAuthenticated);
-      this.errorHandlingService.handleError(error);
-      this.logger.info(`Completion of login process failed with an error: ${error}`);
+      this.authService.changeAuthState(AuthState.AwaitingAuthentication);
+      this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
+      this.userService.createUserModel(username).pipe(
+        flatMap(() => this.phaseService.sessionSetup()),
+        flatMap(() => this.githubEventService.setLatestChangeEvent()),
+      ).subscribe(() => {
+        this.handleAuthSuccess();
+      }, (error) => {
+        this.authService.changeAuthState(AuthState.NotAuthenticated);
+        this.errorHandlingService.handleError(error);
+        this.logger.info(`Completion of login process failed with an error: ${error}`);
+      });
     });
   }
 
@@ -199,6 +203,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     const sessionInformation: string = this.profileForm.get('session').value;
     const org: string = this.getOrgDetails(sessionInformation);
     const dataRepo: string = this.getDataRepoDetails(sessionInformation);
+    // Persist session information in local storage
+    window.localStorage.setItem('org', org);
+    window.localStorage.setItem('dataRepo', dataRepo);
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
     this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
@@ -257,23 +264,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   get currentSessionOrg(): string {
     const sessionInformation: string = this.profileForm.get('session').value;
+    if (!sessionInformation) {
+      // Retrieve org details of session information from local storage
+      return window.localStorage.getItem('org');
+    }
     return this.getOrgDetails(sessionInformation);
-  }
-
-  /**
-   * Will wait for the message from parent window to close the window.
-   */
-  private listenForCloseOAuthWindowMessage() {
-    window.addEventListener('message', (event) => {
-      if (event.origin !== AppConfig.origin) {
-        return;
-      }
-      if (event.data === 'close') {
-        window.opener.focus();
-        window.close();
-        this.logger.info('Closed authentication window');
-      }
-    });
   }
 
   /**
