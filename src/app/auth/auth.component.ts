@@ -176,10 +176,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     const org = window.localStorage.getItem('org');
     const dataRepo = window.localStorage.getItem('dataRepo');
     this.githubService.storeOrganizationDetails(org, dataRepo);
-    this.phaseService.storeSessionData().pipe(
-      throwIfFalse(isValidSession => isValidSession,
-                   () => new Error('Invalid Session'))
-    ).subscribe(() => {
+    this.phaseService.storeSessionData().subscribe(() => {
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
       this.userService.createUserModel(username).pipe(
@@ -211,7 +208,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
 
     this.phaseService.storeSessionData().subscribe(() => {
-
       try {
         this.authService.startOAuthProcess();
       } catch (error) {
