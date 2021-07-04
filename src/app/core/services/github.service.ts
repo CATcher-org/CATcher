@@ -43,7 +43,7 @@ let octokit = new Octokit();
 /**
  * Responsible for communicating with GitHub to create, update, read and delete
  * features related to Github using GitHub API Requests.
- * For example, issues, issue labels and repositories. 
+ * For example, issues, issue labels and repositories.
  */
 export class GithubService {
   private static readonly IF_NONE_MATCH_EMPTY = { 'If-None-Match': '' };
