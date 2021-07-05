@@ -69,12 +69,12 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.logger.startSession();
-    
-    // Initialize State 
+
+    // Initialize State
     this.isSettingUpSession = false;
     this.isAppOutdated = false;
-    this.versionCheckingError = false; 
-    
+    this.versionCheckingError = false;
+
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
 
