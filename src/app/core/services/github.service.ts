@@ -34,7 +34,7 @@ let ORG_NAME = '';
 let MOD_ORG = '';
 let REPO = '';
 let DATA_REPO = '';
-const MAX_SIZE_PER_PAGE = 100;
+const MAX_ITEMS_PER_PAGE = 100;
 
 let octokit = new Octokit();
 
@@ -198,7 +198,7 @@ export class GithubService {
     return from(octokit.issues.listLabelsForRepo({
       owner: ORG_NAME,
       repo: REPO,
-      per_page: MAX_SIZE_PER_PAGE,
+      per_page: MAX_ITEMS_PER_PAGE,
       headers: GithubService.IF_NONE_MATCH_EMPTY
     }))
     .pipe(
