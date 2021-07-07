@@ -28,9 +28,13 @@ describe('UserService', () => {
       await createAndVerifyUser(USER_WITH_TWO_ROLES.loginId, USER_WITH_TWO_ROLES);
     });
 
-    it('User should should despite valid loginId not cast to lowercasing', () => {
+    it('User should should authorized despite loginId being of different casing', () => {
       const userService = new UserService(null, dataService);
       userService.createUserModel(USER_JUNWEI.loginId).subscribe((user) => {
+        expect(user).toBeDefined();
+      });
+
+      userService.createUserModel('JUNWEi96').subscribe((user) => {
         expect(user).toBeDefined();
       });
     });
