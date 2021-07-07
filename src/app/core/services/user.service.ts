@@ -29,7 +29,7 @@ export class UserService {
   createUserModel(userLoginId: string): Observable<User> {
     return this.dataService.getDataFile().pipe(
       map((jsonData: {}) => {
-        this.currentUser = this.createUser(jsonData, userLoginId.toLowerCase());
+        this.currentUser = this.createUser(jsonData, userLoginId);
         return this.currentUser;
       }),
       filter(user => user !== null),
@@ -42,23 +42,25 @@ export class UserService {
   }
 
   private createUser(data: {}, userLoginId: string): User {
-    const userRole = this.parseUserRole(data, userLoginId);
+    const lowerCaseUserLoginId = userLoginId.toLowerCase();
+
+    const userRole = this.parseUserRole(data, lowerCaseUserLoginId);
     switch (userRole) {
       case UserRole.Student:
-        const teamId = data['students-allocation'][userLoginId]['teamId'];
+        const teamId = data['students-allocation'][lowerCaseUserLoginId]['teamId'];
         const studentTeam = this.createTeamModel(data['team-structure'], teamId);
         return <User>{loginId: userLoginId, role: userRole, team: studentTeam};
 
       case UserRole.Tutor:
         const tutorTeams = new Array<Team>();
-        for (const allocatedTeamId of Object.keys(data['tutors-allocation'][userLoginId])) {
+        for (const allocatedTeamId of Object.keys(data['tutors-allocation'][lowerCaseUserLoginId])) {
           tutorTeams.push(this.createTeamModel(data['team-structure'], allocatedTeamId));
         }
         return <User>{loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams};
 
       case UserRole.Admin:
         const studentTeams = new Array<Team>();
-        for (const allocatedTeamId of Object.keys(data['admins-allocation'][userLoginId])) {
+        for (const allocatedTeamId of Object.keys(data['admins-allocation'][lowerCaseUserLoginId])) {
           studentTeams.push(this.createTeamModel(data['team-structure'], allocatedTeamId));
         }
         return <User>{loginId: userLoginId, role: userRole, allocatedTeams: studentTeams};
@@ -69,7 +71,7 @@ export class UserService {
 
   private createTeamModel(teamData: {}, teamId: string): Team {
     const teammates = new Array<User>();
-    for (const teammate of Object.keys(teamData[teamId])) {
+    for (const teammate of Object.values(teamData[teamId])) {
       teammates.push(<User>{loginId: teammate, role: UserRole.Student});
     }
     return new Team({id: teamId, teamMembers: teammates});

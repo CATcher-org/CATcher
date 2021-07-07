@@ -158,7 +158,7 @@ export class DataService {
         return;
       }
       const team = entry[TEAM] in teams ? teams[entry[TEAM]] : {};
-      team[entry[NAME].toLowerCase()] = 'true';
+      team[entry[NAME].toLowerCase()] = entry[NAME];
       teams[entry[TEAM]] = team;
     });
 
@@ -246,7 +246,7 @@ export class DataService {
     const teamIds = Object.keys(jsonTeamStructure);
     for (const teamId of teamIds) {
       const teamMembers = new Array<User>();
-      const teamMemberIds = Object.keys(jsonTeamStructure[teamId]);
+      const teamMemberIds = Object.values(jsonTeamStructure[teamId]);
       for (const teamMemberId of teamMemberIds) {
         teamMembers.push(<User>{loginId: teamMemberId, role: UserRole.Student});
       }

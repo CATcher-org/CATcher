@@ -24,12 +24,15 @@ describe('UserService', () => {
       await createAndVerifyUser(USER_SHUMING.loginId, USER_SHUMING);
     });
 
-    it('treats the loginId in a case insensitive manner', async () => {
-      await createAndVerifyUser('JUNWEi96', USER_JUNWEI);
-    });
-
     it('assigns highest possible role to a user who has multiple roles in data.csv', async () => {
       await createAndVerifyUser(USER_WITH_TWO_ROLES.loginId, USER_WITH_TWO_ROLES);
+    });
+
+    it('User should should despite valid loginId not cast to lowercasing', () => {
+      const userService = new UserService(null, dataService);
+      userService.createUserModel(USER_JUNWEI.loginId).subscribe((user) => {
+        expect(user).toBeDefined();
+      });
     });
 
     it('throws an error if the user is unauthorized', (done) => {
