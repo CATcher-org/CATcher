@@ -88,7 +88,7 @@ export class DataService {
    * Parses the input string containing tutor allocation information
    * into application readable Object.
    * @param csvInput - string containing csv data.
-   * @return turos- object that represents parsed csv data.
+   * @return tutors- object that represents parsed csv data.
    */
   private parseTutorAllocation(csvInput: string): Tutors {
     // CSV Headers
@@ -148,7 +148,7 @@ export class DataService {
    * Parses the input string containing team structure information
    * into application readable Object.
    * @param csvInput - string containing csv data.
-   * @return admins - object that represents parsed csv data.
+   * @return teams - object that represents parsed csv data.
    */
   private parseTeamStructureData(csvInput: string): Teams {
     // CSV Headers
@@ -177,7 +177,7 @@ export class DataService {
    * Parses the input string containing roles information
    * into application readable Object.
    * @param csvInput - string containing csv data.
-   * @return admins - object that represents parsed csv data.
+   * @return roles - object that represents parsed csv data.
    */
   private parseRolesData(csvInput: string): Roles {
     // CSV Headers
