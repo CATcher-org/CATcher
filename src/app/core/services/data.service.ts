@@ -5,6 +5,14 @@ import { DataFile } from '../models/data-file.model';
 import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
 import { Observable } from 'rxjs';
+import { Admins } from '../models/parser/admins.model';
+import { Tutors } from '../models/parser/tutors.model';
+import { Students } from '../models/parser/students.model';
+import { Teams } from '../models/parser/teams.model';
+import { Roles } from '../models/parser/roles.model';
+import { ParsedUserData } from '../models/parser/parsedUserData.model';
+import { CSVData } from '../models/parser/csvData.model';
+
 
 @Injectable({
   providedIn: 'root',
@@ -38,8 +46,8 @@ export class DataService {
    * @param allCsvDataWrapper - Object containing strings of csv data.
    * @return jsonData - Object representing merged data file.
    */
-  private constructData(allCsvDataWrapper: {}): {} {
-    const jsonData: {} = {};
+  private constructData(allCsvDataWrapper: {}): CSVData {
+    const jsonData: CSVData = {};
     const allCsvData: string = allCsvDataWrapper['data'];
 
     jsonData['roles'] = this.parseRolesData(allCsvData);
@@ -57,12 +65,12 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  private parseAdminAllocation(csvInput: string): {} {
+  private parseAdminAllocation(csvInput: string): Admins {
     // CSV Headers
     const NAME = 'name';
     const ROLE = 'role';
 
-    const admins = {};
+    const admins: Admins = {};
     let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
@@ -80,15 +88,15 @@ export class DataService {
    * Parses the input string containing tutor allocation information
    * into application readable Object.
    * @param csvInput - string containing csv data.
-   * @return admins - object that represents parsed csv data.
+   * @return turos- object that represents parsed csv data.
    */
-  private parseTutorAllocation(csvInput: string): {} {
+  private parseTutorAllocation(csvInput: string): Tutors {
     // CSV Headers
     const NAME = 'name';
     const TEAM = 'team';
     const ROLE = 'role';
 
-    const tutors = {};
+    const tutors: Tutors = {};
     let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
@@ -111,7 +119,7 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  private parseStudentAllocation(csvInput: string): {} {
+  private parseStudentAllocation(csvInput: string): Students {
     // CSV Headers
     const TEAM = 'team';
     const NAME = 'name';
@@ -119,7 +127,7 @@ export class DataService {
     // Team Notation
     const TEAM_ID = 'teamId';
 
-    const students = {};
+    const students: Students = {};
     let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
@@ -142,13 +150,13 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  private parseTeamStructureData(csvInput: string): {} {
+  private parseTeamStructureData(csvInput: string): Teams {
     // CSV Headers
     const TEAM = 'team';
     const NAME = 'name';
     const ROLE = 'role';
 
-    const teams = {};
+    const teams: Teams = {};
     let parsedCSV: {}[];
     parsedCSV = this.csvParser(csvInput);
 
@@ -171,12 +179,12 @@ export class DataService {
    * @param csvInput - string containing csv data.
    * @return admins - object that represents parsed csv data.
    */
-  private parseRolesData(csvInput: string): {} {
+  private parseRolesData(csvInput: string): Roles {
     // CSV Headers
     const ROLE = 'role';
     const NAME = 'name';
 
-    const roles = {};
+    const roles: Roles = {};
     const students = {};
     const tutors = {};
     const admins = {};
@@ -208,17 +216,17 @@ export class DataService {
    * @param csvText - csv information.
    * @return - Subjects that tracks the parsed data.
    */
-  private csvParser(csvText: string): {}[] {
+  private csvParser(csvText: string): Array<ParsedUserData> {
     const lines = csvText.split('\n').filter(v => v.trim());
     const headers = lines[0].split(',').map(h => h.trim());
-    const result = [];
+    const result: Array<ParsedUserData> = [];
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) {
         continue;
       }
       const lineValues = line.split(',').map(v => v.trim());
-      const lineObj = {};
+      const lineObj: ParsedUserData = {};
       for (let j = 0; j < headers.length; j++) {
         if (!lineValues[j]) {
           lineObj[headers[j]] = null;
@@ -228,6 +236,7 @@ export class DataService {
       }
       result.push(lineObj);
     }
+
     return result;
   }
 
