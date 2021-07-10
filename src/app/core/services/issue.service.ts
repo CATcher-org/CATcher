@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, flatMap, map, reduce } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY, forkJoin, timer, Observable, of, Subscription } from 'rxjs';
 import {
   Issue,
@@ -290,59 +290,118 @@ export class IssueService {
 
   private initializeData(): Observable<Issue[]> {
     const issuesAPICallsByFilter: Array<Observable<Array<GithubIssue>>> = [];
+    let filter: RestGithubIssueFilter;
 
     switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
       case 'FILTER_BY_CREATOR':
+        filter = new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId });
+
         issuesAPICallsByFilter.push(
-          this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
+          this.githubService.fetchIssuesGraphql(filter)
         );
+
         break;
       case 'FILTER_BY_TEAM': // Only student has this filter
+        filter = new RestGithubIssueFilter({})
+
         issuesAPICallsByFilter.push(
           this.githubService.fetchIssuesGraphqlByTeam(
             this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
             this.createLabel('team', this.userService.currentUser.team.teamId),
-            new RestGithubIssueFilter({}))
+            filter)
         );
         break;
       case 'FILTER_BY_TEAM_ASSIGNED': // Only for Tutors and Admins
+        filter = new RestGithubIssueFilter({})
+
         const allocatedTeams = this.userService.currentUser.allocatedTeams;
         allocatedTeams.forEach(team => {
           issuesAPICallsByFilter.push(
             this.githubService.fetchIssuesGraphqlByTeam(
               this.createLabel('tutorial', team.tutorialClassId),
               this.createLabel('team', team.teamId),
-              new RestGithubIssueFilter({}))
+              filter)
           );
         });
         break;
       case 'NO_FILTER':
+        filter = new RestGithubIssueFilter({})
         issuesAPICallsByFilter.push(
-          this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({}))
+          this.githubService.fetchIssuesGraphql(filter)
         );
         break;
       case 'NO_ACCESS':
       default:
         return of([]);
     }
-
+      
     // const issuesAPICallsByFilter = filters.map(filter => this.githubService.fetchIssuesGraphql(filter));
     return forkJoin(issuesAPICallsByFilter).pipe(
       map((issuesByFilter: [][]) => {
+        const fetchedIssueIds: Array<Number> = [];
+
         for (const issues of issuesByFilter) {
           for (const issue of issues) {
+            fetchedIssueIds.push(this.createIssueModel(issue).id);
             this.createAndSaveIssueModel(issue);
           }
         }
+
+        return fetchedIssueIds;
+      }),
+      reduce((acc, ids) => acc.concat(ids), []),
+      map((ids: Array<Number>) => {
+        
+        /* Used to check whether a fetch has been performed. If there are no changes, fetch may 
+        not be called by checking against the cache (How GitHub API works) */
+        this.githubService.issuesAreFetched(filter).subscribe(
+          (fetched: boolean) => {
+            if (fetched) {
+              this.deleteOutdatedIssuesFromLocalStore(ids);
+            }
+          }
+        )
         return Object.values(this.issues);
       })
     );
   }
+  
 
   private createAndSaveIssueModel(githubIssue: GithubIssue): boolean {
     const issue = this.createIssueModel(githubIssue);
     this.updateLocalStore(issue);
     return true;
+  }
+
+  private deleteOutdatedIssuesFromLocalStore(issueIds: Array<Number>): void{
+    this.getOutdatedIssueIDs(issueIds).forEach((id: number) => {
+      this.getIssue(id).subscribe(issue => this.deleteFromLocalStore(issue));
+    })
+  }
+
+  /**
+   * Returns an array of outdated issues ids by comparing the ids of the recently 
+   * fetched issues with the current issue ids in the local store
+   */
+  private getOutdatedIssueIDs(fetchedIssueIds: Array<Number>): Array<Number> {
+    const result = [];
+    
+    // Ignore for first fetch
+    if (this.issues === undefined) {
+      return result;
+    }
+
+    const fetchedIssueIdsSet = new Set<Number>(fetchedIssueIds);
+
+    const originalIssueIds = Object.keys(this.issues)
+    
+    originalIssueIds.forEach((issueId: string) => {
+      if (!fetchedIssueIdsSet.has(+issueId)) {
+        result.push(+issueId);
+      }
+    })
+
+    return result;
   }
 
   /**
