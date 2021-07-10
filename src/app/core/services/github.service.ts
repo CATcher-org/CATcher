@@ -103,10 +103,6 @@ export class GithubService {
     );
   }
 
-  issuesAreFetched(filter: RestGithubIssueFilter): Observable<boolean> {
-    return this.toFetchIssues(filter);
-  }
-
   /**
    * Will make multiple request to Github as per necessary and determine whether a graphql fetch is required.
    */
