@@ -17,7 +17,7 @@ const testAddLog = (message: string) => {
 };
 
 describe('LoggingService', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     // Initialize mock local storage
     const mockLocalStorage = new MockLocalStorage();
 
@@ -37,13 +37,14 @@ describe('LoggingService', () => {
     loggingService = new LoggingService(electronService);
     headerLog = `${loggingService.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
     sessionSeparator = loggingService.SESSION_LOG_SEPARATOR;
+  });
+
+  beforeEach(() => {
     loggingService.reset();
     localStorage.clear();
   });
 
-  afterEach(() => {
-    loggingService.reset();
-    localStorage.clear();
+  afterAll(() => {
     jasmine.clock().uninstall();
   });
 
