@@ -126,8 +126,8 @@ export class Issue {
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
     issue.issueComment = template.comment;
-    issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
-    issue.duplicateOf = template.duplicateOf !== undefined ? template.duplicateOf.issueNumber : undefined;
+    issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
+    issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
     return issue;
@@ -139,8 +139,8 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.issueComment = template.comment;
-    issue.teamResponse = template.teamResponse !== undefined ? Issue.updateTeamResponse(template.teamResponse.content) : undefined;
-    issue.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
+    issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
+    issue.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
     return issue;
   }
 
@@ -152,9 +152,7 @@ export class Issue {
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
     issue.description = issueTemplate.description.content;
-    issue.teamResponse = issueTemplate.teamResponse !== undefined
-      ? Issue.updateTeamResponse(issueTemplate.teamResponse.content)
-      : undefined;
+    issue.teamResponse = issueTemplate.teamResponse && Issue.updateTeamResponse(issueTemplate.teamResponse.content);
     issue.issueDisputes = issueTemplate.dispute.disputes;
 
     if (todoTemplate.moderation && todoTemplate.comment) {
@@ -223,8 +221,8 @@ export class Issue {
   updateTesterResponse(githubComment: GithubComment): void {
     const template = new TesterResponseTemplate([githubComment]);
     this.issueComment = template.comment;
-    this.teamResponse = template.teamResponse !== undefined ? template.teamResponse.content : undefined;
-    this.testerResponses = template.testerResponse !== undefined ? template.testerResponse.testerResponses : undefined;
+    this.teamResponse = template.teamResponse && template.teamResponse.content;
+    this.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
   }
 
   /**

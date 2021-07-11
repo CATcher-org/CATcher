@@ -64,7 +64,12 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
     authWindow.webContents.on('will-navigate', (event, newUrl) => {
       if (newUrl.startsWith(CALLBACK_URL)) {
         onCallback(newUrl);
+      } else if (newUrl.startsWith(`${BASE_URL}/session`) || (newUrl.startsWith(`${BASE_URL}/login`))) {
+        // continue navigation within the auth window
+        return;
       } else {
+        // do not navigate to external links in the auth window
+        // instead, navigate to them in the user's browser
         event.preventDefault();
         shell.openExternal(newUrl).then(() => Logger.info('External link is clicked on auth window, opening system browser...'));
       }
