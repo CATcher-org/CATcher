@@ -1,13 +1,11 @@
 import { LoggingService } from '../../src/app/core/services/logging.service';
+import { MockLocalStorage } from '../helper/mock.local.storage';
 
 let loggingService: LoggingService;
 let headerLog: string;
-const sessionSeparator = '\n\n';
+let sessionSeparator: string;
 const mockDate = new Date(2021, 6, 27);
 const infoLogMessage = 'Info log message';
-const errorLogMessage = 'Error log message';
-const warnLogMessage = 'Warn log message';
-const debugLogMessage = 'Debug log Message';
 
 const testAddLog = (message: string) => {
   loggingService.startSession();
@@ -21,27 +19,13 @@ const testAddLog = (message: string) => {
 describe('LoggingService', () => {
   beforeEach(() => {
     // Initialize mock local storage
-    let mockLocalStorage = {};
-    const mockLocalStorageFunctions = {
-      getItem: (key: string): string => {
-        return key in mockLocalStorage ? mockLocalStorage[key] : null;
-      },
-      setItem: (key: string, value: string) => {
-        mockLocalStorage[key] = value;
-      },
-      removeItem: (key: string) => {
-        delete mockLocalStorage[key];
-      },
-      clear: () => {
-        mockLocalStorage = {};
-      }
-    };
+    const mockLocalStorage = new MockLocalStorage();
 
     // Mock function calls
-    spyOn(localStorage, 'getItem').and.callFake(mockLocalStorageFunctions.getItem);
-    spyOn(localStorage, 'setItem').and.callFake(mockLocalStorageFunctions.setItem);
-    spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorageFunctions.removeItem);
-    spyOn(localStorage, 'clear').and.callFake(mockLocalStorageFunctions.clear);
+    spyOn(localStorage, 'getItem').and.callFake(mockLocalStorage.getItem.bind(mockLocalStorage));
+    spyOn(localStorage, 'setItem').and.callFake(mockLocalStorage.setItem.bind(mockLocalStorage));
+    spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorage.removeItem.bind(mockLocalStorage));
+    spyOn(localStorage, 'clear').and.callFake(mockLocalStorage.clear.bind(mockLocalStorage));
 
     // Mock dates
     jasmine.clock().install();
@@ -52,6 +36,7 @@ describe('LoggingService', () => {
     electronService.isElectron = jasmine.createSpy('isElectron', () => false);
     loggingService = new LoggingService(electronService);
     headerLog = `${loggingService.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
+    sessionSeparator = loggingService.SESSION_LOG_SEPARATOR;
     loggingService.reset();
     localStorage.clear();
   });
@@ -80,20 +65,18 @@ describe('LoggingService', () => {
     });
 
     it('should successfully reinitialize logging session when limit reached', () => {
-      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT; i += 1) {
-        loggingService.startSession();
-        loggingService.reset();
-      }
+      Array(loggingService.LOG_COUNT_LIMIT)
+        .fill(0)
+        .forEach(() => {
+          loggingService.startSession();
+          loggingService.reset();
+        });
       loggingService.startSession();
       const actualLog = loggingService.getCachedLog();
-      let expectedLog = '';
-      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT; i += 1) {
-        if (i === loggingService.LOG_COUNT_LIMIT - 1) {
-          expectedLog += headerLog;
-        } else {
-          expectedLog += `${headerLog}${sessionSeparator}`;
-        }
-      }
+      const expectedLog = Array(loggingService.LOG_COUNT_LIMIT)
+        .fill('')
+        .map((_) => headerLog)
+        .join(sessionSeparator);
       expect(actualLog).toEqual(expectedLog);
     });
   });
@@ -123,18 +106,6 @@ describe('LoggingService', () => {
     it('should successfully add info logs', () => {
       testAddLog(infoLogMessage);
     });
-
-    it('should successfully add error logs', () => {
-      testAddLog(errorLogMessage);
-    });
-
-    it('should successfully add warn logs', () => {
-      testAddLog(warnLogMessage);
-    });
-
-    it('should successfully add debug logs', () => {
-      testAddLog(debugLogMessage);
-    });
   });
 
   describe('updating and trimming logs from sessions', () => {
@@ -146,14 +117,10 @@ describe('LoggingService', () => {
       }
       loggingService.startSession();
       const actualLog = loggingService.getCachedLog();
-      let expectedLog = '';
-      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT; i += 1) {
-        if (i === loggingService.LOG_COUNT_LIMIT - 1) {
-          expectedLog += headerLog;
-        } else {
-          expectedLog += `${headerLog}\n${infoLogMessage}${sessionSeparator}`;
-        }
-      }
+      const expectedLog = Array(loggingService.LOG_COUNT_LIMIT)
+        .fill('')
+        .map((_) => headerLog)
+        .join(`\n${infoLogMessage}${sessionSeparator}`);
       expect(actualLog).toEqual(expectedLog);
     });
   });
