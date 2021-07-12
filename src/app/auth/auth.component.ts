@@ -87,24 +87,19 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (oauthCode) { // In the web's oauth page
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.logger.info('Obtained authorisation code from Github');
-      window.postMessage({ oauthCode, state }, AppConfig.origin);
-      this.logger.info('Sent authorisation code and state back to CATcher, waiting to redirect to homepage');
+      this.fetchAccessToken(oauthCode, state);
     }
   }
 
   /**
-   * A listener for receiving the oauthCode from the oauth window.
-   * With the oauth code, we can retrieve the accessToken from the proxy.
+   * Will fetch the access token from GitHub.
+   * @param oauthCode - The authorisation code obtained from GitHub.
+   * @param state - The state returned from GitHub.
    */
-  @HostListener('window:message', ['$event'])
-  onMessage(event: MessageEvent) {
-    if (event.origin !== AppConfig.origin) {
-      return;
-    }
-
-    const { oauthCode, state } = event.data;
-
-    if (!oauthCode || !state) {
+  fetchAccessToken(oauthCode: string, state: string) {
+    if (!this.authService.isReturnedStateSame(state)) {
+      this.logger.info(`Received incorrect state ${state}`);
+      this.authService.changeAuthState(AuthState.NotAuthenticated);
       return;
     }
 
@@ -118,7 +113,6 @@ export class AuthComponent implements OnInit, OnDestroy {
           }
           this.authService.storeOAuthAccessToken(data.token);
           this.logger.info('Sucessfully obtained access token');
-          this.router.navigate(['/']);
           this.isReady = true;
         }
       )
@@ -126,12 +120,6 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.logger.info(`Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
-      })
-      .finally(() => {
-        if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
-          event.source.postMessage('close', AppConfig.origin);
-          this.logger.info('Closing authentication window, redirecting to homepage');
-        }
       });
   }
 
@@ -176,19 +164,18 @@ export class AuthComponent implements OnInit, OnDestroy {
     const org = window.localStorage.getItem('org');
     const dataRepo = window.localStorage.getItem('dataRepo');
     this.githubService.storeOrganizationDetails(org, dataRepo);
-    this.phaseService.storeSessionData().subscribe(() => {
-      this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-      this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
-      this.userService.createUserModel(username).pipe(
-        flatMap(() => this.phaseService.sessionSetup()),
-        flatMap(() => this.githubEventService.setLatestChangeEvent()),
-      ).subscribe(() => {
-        this.handleAuthSuccess();
-      }, (error) => {
-        this.authService.changeAuthState(AuthState.NotAuthenticated);
-        this.errorHandlingService.handleError(error);
-        this.logger.info(`Completion of login process failed with an error: ${error}`);
-      });
+    this.phaseService.setSessionData();
+    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
+    this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
+    this.userService.createUserModel(username).pipe(
+      flatMap(() => this.phaseService.sessionSetup()),
+      flatMap(() => this.githubEventService.setLatestChangeEvent()),
+    ).subscribe(() => {
+      this.handleAuthSuccess();
+    }, (error) => {
+      this.authService.changeAuthState(AuthState.NotAuthenticated);
+      this.errorHandlingService.handleError(error);
+      this.logger.info(`Completion of login process failed with an error: ${error}`);
     });
   }
 

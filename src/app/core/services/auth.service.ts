@@ -100,10 +100,12 @@ export class AuthService {
    */
   generateStateString() {
     this.state = uuid();
+    sessionStorage.setItem('state', this.state);
   }
 
   isReturnedStateSame(returnedState: string): boolean {
-    return returnedState === this.state;
+    const state = sessionStorage.getItem('state');
+    return returnedState === state;
   }
 
   /**
