@@ -47,21 +47,21 @@ export class UserService {
     const userRole = this.parseUserRole(data, lowerCaseUserLoginId);
     switch (userRole) {
       case UserRole.Student:
-        const teamId = data['students-allocation'][lowerCaseUserLoginId]['teamId'];
-        const studentTeam = this.createTeamModel(data['team-structure'], teamId);
+        const teamId = data[DataService.STUDENTS_ALLOCATION][lowerCaseUserLoginId][DataService.TEAM_ID];
+        const studentTeam = this.createTeamModel(data[DataService.TEAM_STRUCTURE], teamId);
         return <User>{loginId: userLoginId, role: userRole, team: studentTeam};
 
       case UserRole.Tutor:
         const tutorTeams = new Array<Team>();
-        for (const allocatedTeamId of Object.keys(data['tutors-allocation'][lowerCaseUserLoginId])) {
-          tutorTeams.push(this.createTeamModel(data['team-structure'], allocatedTeamId));
+        for (const allocatedTeamId of Object.keys(data[DataService.TUTORS_ALLOCATION][lowerCaseUserLoginId])) {
+          tutorTeams.push(this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
         }
         return <User>{loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams};
 
       case UserRole.Admin:
         const studentTeams = new Array<Team>();
-        for (const allocatedTeamId of Object.keys(data['admins-allocation'][lowerCaseUserLoginId])) {
-          studentTeams.push(this.createTeamModel(data['team-structure'], allocatedTeamId));
+        for (const allocatedTeamId of Object.keys(data[DataService.ADMINS_ALLOCATION][lowerCaseUserLoginId])) {
+          studentTeams.push(this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
         }
         return <User>{loginId: userLoginId, role: userRole, allocatedTeams: studentTeams};
       default:
@@ -85,13 +85,13 @@ export class UserService {
    */
   private parseUserRole(data: {}, userLoginId: string): UserRole {
     let userRole: UserRole;
-    if (data['roles']['students'] && data['roles']['students'][[userLoginId]]) {
+    if (data[DataService.ROLES][DataService.STUDENTS] && data[DataService.ROLES][DataService.STUDENTS][[userLoginId]]) {
       userRole = UserRole.Student;
     }
-    if (data['roles']['tutors'] && data['roles']['tutors'][[userLoginId]]) {
+    if (data[DataService.ROLES][DataService.TUTORS] && data[DataService.ROLES][DataService.TUTORS][[userLoginId]]) {
       userRole = UserRole.Tutor;
     }
-    if (data['roles']['admins'] && data['roles']['admins'][[userLoginId]]) {
+    if (data[DataService.ROLES][DataService.ADMINS] && data[DataService.ROLES][DataService.ADMINS][[userLoginId]]) {
       userRole = UserRole.Admin;
     }
     return userRole;

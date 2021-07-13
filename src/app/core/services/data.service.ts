@@ -12,6 +12,24 @@ import { Observable } from 'rxjs';
 export class DataService {
   public dataFile: DataFile;
 
+  public static ROLES: string = 'roles';
+  public static TEAM_STRUCTURE: string = 'team-structure';
+  public static STUDENTS_ALLOCATION: string = 'students-allocation';
+  public static TUTORS_ALLOCATION: string = 'tutors-allocation';
+  public static ADMINS_ALLOCATION: string = 'admins-allocation';
+
+  // CSV Headers
+  public static NAME = 'name';
+  public static TEAM = 'team';
+  public static ROLE = 'role';
+
+  // Team Notation
+  public static TEAM_ID = 'teamId';
+
+  public static STUDENTS =  'students';
+  public static TUTORS = 'tutors';
+  public static ADMINS = 'admins';
+
   constructor(private githubService: GithubService) {}
 
   /**
@@ -42,11 +60,11 @@ export class DataService {
     const jsonData: {} = {};
     const allCsvData: string = allCsvDataWrapper['data'];
 
-    jsonData['roles'] = this.parseRolesData(allCsvData);
-    jsonData['team-structure'] = this.parseTeamStructureData(allCsvData);
-    jsonData['students-allocation'] = this.parseStudentAllocation(allCsvData);
-    jsonData['tutors-allocation'] = this.parseTutorAllocation(allCsvData);
-    jsonData['admins-allocation'] = this.parseAdminAllocation(allCsvData);
+    jsonData[DataService.ROLES] = this.parseRolesData(allCsvData);
+    jsonData[DataService.TEAM_STRUCTURE] = this.parseTeamStructureData(allCsvData);
+    jsonData[DataService.STUDENTS_ALLOCATION] = this.parseStudentAllocation(allCsvData);
+    jsonData[DataService.TUTORS_ALLOCATION] = this.parseTutorAllocation(allCsvData);
+    jsonData[DataService.ADMINS_ALLOCATION] = this.parseAdminAllocation(allCsvData);
 
     return jsonData;
   }
@@ -58,9 +76,6 @@ export class DataService {
    * @return admins - object that represents parsed csv data.
    */
   private parseAdminAllocation(csvInput: string): {} {
-    // CSV Headers
-    const NAME = 'name';
-    const ROLE = 'role';
 
     const admins = {};
     let parsedCSV: {}[];
@@ -68,8 +83,8 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (entry[ROLE] === UserRole.Admin.toLowerCase()) {
-        admins[entry[NAME].toLowerCase()] = {};
+      if (entry[DataService.ROLE] === UserRole.Admin.toLowerCase()) {
+        admins[entry[DataService.NAME].toLowerCase()] = {};
       }
     });
 
@@ -83,10 +98,6 @@ export class DataService {
    * @return admins - object that represents parsed csv data.
    */
   private parseTutorAllocation(csvInput: string): {} {
-    // CSV Headers
-    const NAME = 'name';
-    const TEAM = 'team';
-    const ROLE = 'role';
 
     const tutors = {};
     let parsedCSV: {}[];
@@ -94,12 +105,12 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (!(entry[ROLE] === UserRole.Tutor.toLowerCase())) {
+      if (!(entry[DataService.ROLE] === UserRole.Tutor.toLowerCase())) {
         return;
       }
-      const tutor = entry[NAME].toLowerCase() in tutors ? tutors[entry[NAME].toLowerCase()] : {};
-      tutor[entry[TEAM]] = 'true';
-      tutors[entry[NAME].toLowerCase()] = tutor;
+      const tutor = entry[DataService.NAME].toLowerCase() in tutors ? tutors[entry[DataService.NAME].toLowerCase()] : {};
+      tutor[entry[DataService.TEAM]] = 'true';
+      tutors[entry[DataService.NAME].toLowerCase()] = tutor;
     });
 
     return tutors;
@@ -112,12 +123,6 @@ export class DataService {
    * @return admins - object that represents parsed csv data.
    */
   private parseStudentAllocation(csvInput: string): {} {
-    // CSV Headers
-    const TEAM = 'team';
-    const NAME = 'name';
-    const ROLE = 'role';
-    // Team Notation
-    const TEAM_ID = 'teamId';
 
     const students = {};
     let parsedCSV: {}[];
@@ -125,12 +130,12 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (!(entry[ROLE] === UserRole.Student.toLowerCase())) {
+      if (!(entry[DataService.ROLE] === UserRole.Student.toLowerCase())) {
         return;
       }
       const newStudent = {};
-      newStudent[TEAM_ID] = entry[TEAM];
-      students[entry[NAME].toLowerCase()] = newStudent;
+      newStudent[DataService.TEAM_ID] = entry[DataService.TEAM];
+      students[entry[DataService.NAME].toLowerCase()] = newStudent;
     });
 
     return students;
@@ -143,10 +148,6 @@ export class DataService {
    * @return admins - object that represents parsed csv data.
    */
   private parseTeamStructureData(csvInput: string): {} {
-    // CSV Headers
-    const TEAM = 'team';
-    const NAME = 'name';
-    const ROLE = 'role';
 
     const teams = {};
     let parsedCSV: {}[];
@@ -154,12 +155,12 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (!(entry[ROLE] === UserRole.Student.toLowerCase())) {
+      if (!(entry[DataService.ROLE] === UserRole.Student.toLowerCase())) {
         return;
       }
-      const team = entry[TEAM] in teams ? teams[entry[TEAM]] : {};
-      team[entry[NAME].toLowerCase()] = entry[NAME];
-      teams[entry[TEAM]] = team;
+      const team = entry[DataService.TEAM] in teams ? teams[entry[DataService.TEAM]] : {};
+      team[entry[DataService.NAME].toLowerCase()] = entry[DataService.NAME];
+      teams[entry[DataService.TEAM]] = team;
     });
 
     return teams;
@@ -172,9 +173,6 @@ export class DataService {
    * @return admins - object that represents parsed csv data.
    */
   private parseRolesData(csvInput: string): {} {
-    // CSV Headers
-    const ROLE = 'role';
-    const NAME = 'name';
 
     const roles = {};
     const students = {};
@@ -185,18 +183,18 @@ export class DataService {
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
-      if (entry[ROLE] === UserRole.Student.toLowerCase()) {
-        students[entry[NAME].toLowerCase()] = 'true';
-      } else if (entry[ROLE] === UserRole.Tutor.toLowerCase()) {
-        tutors[entry[NAME].toLowerCase()] = 'true';
-      } else if (entry[ROLE] === UserRole.Admin.toLowerCase()) {
-        admins[entry[NAME].toLowerCase()] = 'true';
+      if (entry[DataService.ROLE] === UserRole.Student.toLowerCase()) {
+        students[entry[DataService.NAME].toLowerCase()] = 'true';
+      } else if (entry[DataService.ROLE] === UserRole.Tutor.toLowerCase()) {
+        tutors[entry[DataService.NAME].toLowerCase()] = 'true';
+      } else if (entry[DataService.ROLE] === UserRole.Admin.toLowerCase()) {
+        admins[entry[DataService.NAME].toLowerCase()] = 'true';
       }
     });
 
-    roles['students'] = students;
-    roles['tutors'] = tutors;
-    roles['admins'] = admins;
+    roles[DataService.STUDENTS] = students;
+    roles[DataService.TUTORS] = tutors;
+    roles[DataService.ADMINS] = admins;
 
     return roles;
   }
@@ -242,7 +240,7 @@ export class DataService {
   // returns a mapping from teamId to their respective team structure.
   private extractTeamStructure(jsonData: {}): Map<string, Team> {
     const teamStructure = new Map<string, Team>();
-    const jsonTeamStructure = jsonData['team-structure'];
+    const jsonTeamStructure = jsonData[DataService.TEAM_STRUCTURE];
     const teamIds = Object.keys(jsonTeamStructure);
     for (const teamId of teamIds) {
       const teamMembers = new Array<User>();
