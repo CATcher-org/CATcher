@@ -8,7 +8,7 @@ import { DataService } from './data.service';
 import { GithubUser } from '../models/github-user.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class UserService {
   public currentUser: User;
@@ -32,7 +32,7 @@ export class UserService {
         this.currentUser = this.createUser(jsonData, userLoginId);
         return this.currentUser;
       }),
-      filter(user => user !== null),
+      filter((user) => user !== null),
       throwIfEmpty(() => new Error('Unauthorized user.'))
     );
   }
@@ -49,32 +49,32 @@ export class UserService {
       case UserRole.Student:
         const teamId = data[DataService.STUDENTS_ALLOCATION][lowerCaseUserLoginId][DataService.TEAM_ID];
         const studentTeam = this.createTeamModel(data[DataService.TEAM_STRUCTURE], teamId);
-        return <User>{loginId: userLoginId, role: userRole, team: studentTeam};
+        return <User>{ loginId: userLoginId, role: userRole, team: studentTeam };
 
       case UserRole.Tutor:
-        const tutorTeams = new Array<Team>();
-        for (const allocatedTeamId of Object.keys(data[DataService.TUTORS_ALLOCATION][lowerCaseUserLoginId])) {
-          tutorTeams.push(this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
-        }
-        return <User>{loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams};
+        const tutorTeams: Array<Team> = Object.keys(
+          data[DataService.TUTORS_ALLOCATION][lowerCaseUserLoginId]
+        ).map((allocatedTeamId: string) => this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
+
+        return <User>{ loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams };
 
       case UserRole.Admin:
-        const studentTeams = new Array<Team>();
-        for (const allocatedTeamId of Object.keys(data[DataService.ADMINS_ALLOCATION][lowerCaseUserLoginId])) {
-          studentTeams.push(this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
-        }
-        return <User>{loginId: userLoginId, role: userRole, allocatedTeams: studentTeams};
+        const studentTeams: Array<Team> = Object.keys(
+          data[DataService.ADMINS_ALLOCATION][lowerCaseUserLoginId]
+        ).map((allocatedTeamId: string) => this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
+
+        return <User>{ loginId: userLoginId, role: userRole, allocatedTeams: studentTeams };
       default:
         return null;
     }
   }
 
   private createTeamModel(teamData: {}, teamId: string): Team {
-    const teammates = new Array<User>();
-    for (const teammate of Object.values(teamData[teamId])) {
-      teammates.push(<User>{loginId: teammate, role: UserRole.Student});
-    }
-    return new Team({id: teamId, teamMembers: teammates});
+    const teammates: Array<User> = Object.values(teamData[teamId]).map(
+      (teammate: string) => <User>{ loginId: teammate, role: UserRole.Student }
+    );
+
+    return new Team({ id: teamId, teamMembers: teammates });
   }
 
   /**
