@@ -55,14 +55,14 @@ export class LabelService {
   private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
   private static statusLabels: Label[] = Object.values(REQUIRED_LABELS.status);
   private static otherLabels: Label[] = Object.values(REQUIRED_LABELS.others);
-  private static labelArrays = {
+  private static teamLabelArrays = {
     severity: LabelService.severityLabels,
     type: LabelService.typeLabels,
     response: LabelService.responseLabels,
     status: LabelService.statusLabels,
     others: LabelService.otherLabels
   };
-  private static labelBugReportingArrays = {
+  private static testerLabelArrays = {
     severity: LabelService.severityLabels,
     type: LabelService.typeLabels,
   };
@@ -72,13 +72,14 @@ export class LabelService {
 
   public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
+    
     if (needAllLabels) {
-      for (const category of Object.keys(this.labelArrays)) {
-        requiredLabels = requiredLabels.concat(this.labelArrays[category]);
+      for (const category of Object.keys(this.teamLabelArrays)) {
+        requiredLabels = requiredLabels.concat(this.teamLabelArrays[category]);
       }
     } else {
-      for (const category of Object.keys(this.labelBugReportingArrays)) {
-        requiredLabels = requiredLabels.concat(this.labelBugReportingArrays[category]);
+      for (const category of Object.keys(this.testerLabelArrays)) {
+        requiredLabels = requiredLabels.concat(this.testerLabelArrays[category]);
       }
     }
 

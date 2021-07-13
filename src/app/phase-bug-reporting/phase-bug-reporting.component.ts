@@ -3,6 +3,7 @@ import { PermissionService } from '../core/services/permission.service';
 import { UserService } from '../core/services/user.service';
 import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/issue-tables.component';
 import { TABLE_COLUMNS } from '../shared/issue-tables/issue-tables-columns';
+import { CATEGORY } from '../shared/issue/label/label-category';
 
 @Component({
   selector: 'app-phase-bug-reporting',
@@ -10,6 +11,10 @@ import { TABLE_COLUMNS } from '../shared/issue-tables/issue-tables-columns';
   styleUrls: ['./phase-bug-reporting.component.css']
 })
 export class PhaseBugReportingComponent implements OnInit {
+  readonly requiredLabelCategory = [
+    CATEGORY.TYPE,
+    CATEGORY.SEVERITY
+  ];
 
   readonly displayedColumns = [
     TABLE_COLUMNS.ID,
@@ -18,6 +23,7 @@ export class PhaseBugReportingComponent implements OnInit {
     TABLE_COLUMNS.SEVERITY,
     TABLE_COLUMNS.ACTIONS
   ];
+
   readonly actionButtons: ACTION_BUTTONS[] = [
     ACTION_BUTTONS.VIEW_IN_WEB,
     ACTION_BUTTONS.DELETE_ISSUE,
