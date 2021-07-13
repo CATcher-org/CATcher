@@ -111,11 +111,13 @@ describe('LoggingService', () => {
 
   describe('updating and trimming logs from sessions', () => {
     it('should trim oldest log if number of sessions exceed session limit', () => {
-      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT + 1; i += 1) {
-        loggingService.startSession();
-        loggingService.info(infoLogMessage);
-        loggingService.reset();
-      }
+      Array(loggingService.LOG_COUNT_LIMIT + 1)
+        .fill(0)
+        .forEach(() => {
+          loggingService.startSession();
+          loggingService.info(infoLogMessage);
+          loggingService.reset();
+        });
       loggingService.startSession();
       const actualLog = loggingService.getCachedLog();
       const expectedLog = Array(loggingService.LOG_COUNT_LIMIT)
