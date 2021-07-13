@@ -5,11 +5,18 @@
       <mat-select-trigger>
         {{dropdownControl.value}}
       </mat-select-trigger>
-      <mat-option *ngFor="let value of labelList" [value]="value.labelValue" 
-        matTooltip="{{setSelectedLabelTooltipMsg(value)}}" matTooltipClass="labelTooltip">
-        <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
-        <span> {{value.labelValue}}</span>
-      </mat-option>
+      <div mat-menu-item *ngFor="let value of labelList">
+        <!--matTooltip="{{setSelectedLabelTooltipMsg(value)}}" matTooltipClass="labelTooltip"-->
+        <mat-option  [value]="value.labelValue" [ngStyle]="{'background': 'transparent'}">
+          <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
+          <span> {{value.labelValue}}</span>
+        </mat-option>
+
+        <button class="infoPopup" (click)="openModalPopup(value)">
+          <mat-icon style="font-size: 20px">info</mat-icon>
+        </button>
+        
+      </div>
     </mat-select>
     <mat-error *ngIf="dropdownControl.errors && dropdownControl.errors['required'] && dropdownControl.touched">
       {{this.labelService.getLabelTitle(attributeName)}} required.

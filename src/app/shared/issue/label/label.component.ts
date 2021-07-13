@@ -7,6 +7,7 @@ import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
 import { LabelService } from '../../../core/services/label.service';
 import { PhaseService } from '../../../core/services/phase.service';
+import { DialogService } from '../../..//core/services/dialog.service';
 
 @Component({
   selector: 'app-issue-label',
@@ -28,7 +29,8 @@ export class LabelComponent implements OnInit, OnChanges {
               private errorHandlingService: ErrorHandlingService,
               private phaseService: PhaseService,
               public labelService: LabelService,
-              public permissions: PermissionService) {
+              public permissions: PermissionService,
+              public dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -55,5 +57,14 @@ export class LabelComponent implements OnInit, OnChanges {
   displayLabelDefinition(value: Label) {
     this.labelDefinition = this.labelService.getLabelDefinition(value.labelValue, value.labelCategory);
     return this.labelDefinition;
+  }
+
+  openModalPopup(value: Label) {
+    this.labelDefinition = this.labelService.getLabelDefinition(value.labelValue, value.labelCategory);
+    this.dialogService.openDefinitionDialog(value.getFormattedName(), this.labelDefinition);    
+  }
+
+  hasDefinition(value: Label) {
+    return this.labelService.getLabelDefinition(value.labelValue, value.labelCategory) !== "";
   }
 }

@@ -18,8 +18,8 @@ const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
 
 // The definition of selected labels are hard-coded here
-const VERY_LOW_DEFINITION = 'A flaw that is purely cosmetic and does not affect usage \n'
-  + 'e.g., a typo/spacing /layout/color/font issues in the docs or the UI that doesn\'t affect usage.';
+const VERY_LOW_DEFINITION = '<p><b>A flaw that</b> is <mark>purely cosmetic</mark> and does not affect usage \n'
+  + 'e.g., a typo/spacing /layout/color/font issues <ul><li>in <li>the <li>docs or the UI</ul> that doesn\'t affect usage.</p>';
 const LOW_DEFINITION = 'A flaw that is unlikely to affect normal operations of the product.\n'
   + 'Appears only in very rare situations and causes a minor inconvenience only.';
 const MEDIUM_DEFINITION = 'A flaw that causes occasional inconvenience to some users but they can '
