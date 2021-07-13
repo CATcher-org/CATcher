@@ -28,7 +28,7 @@ describe('UserService', () => {
       await createAndVerifyUser(USER_WITH_TWO_ROLES.loginId, USER_WITH_TWO_ROLES);
     });
 
-    it('User should should authorized despite loginId being of different casing', () => {
+    it('should authorize User despite loginId being of different casing', () => {
       const userService = new UserService(null, dataService);
       userService.createUserModel(USER_JUNWEI.loginId).subscribe((user) => {
         expect(user).toBeDefined();
