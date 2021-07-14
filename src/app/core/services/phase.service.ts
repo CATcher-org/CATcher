@@ -144,7 +144,6 @@ export class PhaseService {
       throwIfFalse(
         (isSessionCreated: boolean) => isSessionCreated,
         () => new Error(SESSION_AVALIABILITY_FIX_FAILED)),
-      
       this.labelService.syncLabels(this.isTeamOrModerationPhase()),
       retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
@@ -153,7 +152,7 @@ export class PhaseService {
   private isTeamOrModerationPhase(): boolean {
     return this.currentPhase === Phase.phaseTeamResponse || this.currentPhase === Phase.phaseModeration;
   }
-  
+
   public getPhaseDetail() {
     return this.orgName.concat('/').concat(this.repoName);
   }
