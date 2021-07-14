@@ -1,7 +1,7 @@
-import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, Menu, nativeTheme, MenuItemConstructorOptions, ipcMain, shell } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { createMenuOptions } from './electron-utils/menu-bar';
+import { createMenuOptions, createContextMenu } from './electron-utils/menu-bar';
 import { isDeveloperMode, isLinuxOs, isMacOs, appTitle } from './electron-utils/supporting-logic';
 import { getAccessToken } from './electron-utils/oauth';
 
@@ -24,6 +24,14 @@ ipcMain.on('github-oauth', (event, repoPermissionLevel) => {
       error: error.message,
       isWindowClosed: error.message === 'WINDOW_CLOSED'});
   });
+});
+
+ipcMain.handle('clear-storage', () => {
+    return win.webContents.session.clearStorageData();
+});
+
+ipcMain.handle('open-link', (e, address) => {
+    shell.openExternal(address);
 });
 
 
@@ -56,6 +64,8 @@ function createWindow() {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
     });
+
+    createContextMenu(win);
     win.loadURL('http://localhost:4200');
     win.webContents.openDevTools();
   } else {
