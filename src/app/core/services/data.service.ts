@@ -71,7 +71,7 @@ export class DataService {
     const ROLE = 'role';
 
     const admins: Admins = {};
-    let parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
+    const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
@@ -96,7 +96,7 @@ export class DataService {
     const ROLE = 'role';
 
     const tutors: Tutors = {};
-    let parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
+    const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
@@ -126,7 +126,7 @@ export class DataService {
     const TEAM_ID = 'teamId';
 
     const students: Students = {};
-    let parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
+    const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
@@ -154,7 +154,7 @@ export class DataService {
     const ROLE = 'role';
 
     const teams: Teams = {};
-    let parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
+    const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
@@ -184,7 +184,7 @@ export class DataService {
     const students = {};
     const tutors = {};
     const admins = {};
-    let parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
+    const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
     // Formats the parsed information for easier app reading
     parsedCSV.forEach(entry => {
