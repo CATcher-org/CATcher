@@ -10,8 +10,8 @@ import { Tutors } from '../models/parser/tutors.model';
 import { Students } from '../models/parser/students.model';
 import { Teams } from '../models/parser/teams.model';
 import { Roles } from '../models/parser/roles.model';
-import { ParsedUserData } from '../models/parser/parsedUserData.model';
-import { CSVData } from '../models/parser/csvData.model';
+import { ParsedUserData } from '../models/parser/parsed-user-data.model';
+import { TabulatedUserData } from '../models/parser/tabulated-user-data.model';
 
 
 @Injectable({
@@ -46,8 +46,8 @@ export class DataService {
    * @param allCsvDataWrapper - Object containing strings of csv data.
    * @return jsonData - CSV Data Object the tabulated information of the different users
    */
-  private constructData(allCsvDataWrapper: {}): CSVData {
-    const jsonData: CSVData = {};
+  private constructData(allCsvDataWrapper: {}): TabulatedUserData {
+    const jsonData: TabulatedUserData = {};
     const allCsvData: string = allCsvDataWrapper['data'];
 
     jsonData['roles'] = this.parseRolesData(allCsvData);

@@ -4,7 +4,7 @@ import { Students } from "./students.model";
 import { Teams } from "./teams.model";
 import { Tutors } from "./tutors.model";
 
-export interface CSVData {
+export interface TabulatedUserData {
   "admins-allocation"?: Admins;
   roles?: Roles;
   "students-allocation"?: Students;
