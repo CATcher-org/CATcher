@@ -129,7 +129,6 @@ export class PhaseService {
         })
       );
     };
-    console.log(this.currentPhase)
 
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
@@ -146,14 +145,15 @@ export class PhaseService {
         (isSessionCreated: boolean) => isSessionCreated,
         () => new Error(SESSION_AVALIABILITY_FIX_FAILED)),
       
-      this.labelService.syncLabels(this.isTeamPhase()),
+      this.labelService.syncLabels(this.isTeamOrModerationPhase()),
       retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }
 
-  private isTeamPhase(): boolean {
+  private isTeamOrModerationPhase(): boolean {
     return this.currentPhase === Phase.phaseTeamResponse || this.currentPhase === Phase.phaseModeration;
   }
+  
   public getPhaseDetail() {
     return this.orgName.concat('/').concat(this.repoName);
   }
