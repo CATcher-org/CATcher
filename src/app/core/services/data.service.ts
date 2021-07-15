@@ -107,7 +107,10 @@ export class DataService {
       if (!(entry[DataService.ROLE] === UserRole.Tutor.toLowerCase())) {
         return;
       }
-      const tutor = entry[DataService.NAME].toLowerCase() in tutors ? tutors[entry[DataService.NAME].toLowerCase()] : {};
+      const tutor = entry[DataService.NAME].toLowerCase() in tutors 
+        ? tutors[entry[DataService.NAME].toLowerCase()] 
+        : {};
+
       tutor[entry[DataService.TEAM]] = 'true';
       tutors[entry[DataService.NAME].toLowerCase()] = tutor;
     });
@@ -155,7 +158,10 @@ export class DataService {
       if (!(entry[DataService.ROLE] === UserRole.Student.toLowerCase())) {
         return;
       }
-      const team = entry[DataService.TEAM] in teams ? teams[entry[DataService.TEAM]] : {};
+      const team = entry[DataService.TEAM] in teams 
+        ? teams[entry[DataService.TEAM]] 
+        : {};
+        
       team[entry[DataService.NAME].toLowerCase()] = entry[DataService.NAME];
       teams[entry[DataService.TEAM]] = team;
     });
