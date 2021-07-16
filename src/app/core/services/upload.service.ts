@@ -21,7 +21,7 @@ export const getSizeExceedErrorMsg = (fileType: string, size: number): string =>
 })
 
 /**
- * Responsible for upload of media files to the current phase's repository. 
+ * Responsible for upload of media files to the current phase's repository.
  */
 export class UploadService {
 

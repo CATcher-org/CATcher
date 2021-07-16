@@ -8,8 +8,8 @@ import { AppConfig } from '../../../environments/environment';
 })
 
 /**
- * Responsible for logging events and errors while the application is 
- * running to ease debugging for CATcher developers and maintainers. 
+ * Responsible for logging events and errors while the application is
+ * running to ease debugging for CATcher developers and maintainers.
  */
 export class LoggingService {
   private logger: ElectronLog | Console;

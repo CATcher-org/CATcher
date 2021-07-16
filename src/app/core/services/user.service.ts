@@ -12,7 +12,7 @@ import { GithubUser } from '../models/github-user.model';
 })
 
 /**
- * Responsible for creation of users and teams within the CATcher application. 
+ * Responsible for creation of users and teams within the CATcher application.
  */
 export class UserService {
   public currentUser: User;

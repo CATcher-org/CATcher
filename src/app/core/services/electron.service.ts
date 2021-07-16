@@ -15,7 +15,7 @@ declare global {
 
 /**
  * Responsible for setting up the electron application environment and the
- * respective event listeners and handlers. 
+ * respective event listeners and handlers.
  */
 export class ElectronService {
   ipcRenderer: typeof ipcRenderer;
