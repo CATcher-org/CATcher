@@ -77,14 +77,12 @@ export class PhaseService {
 
   /**
    * Will fetch session data and update phase service with it.
-   * @returns - If the session is valid return true, else false
    */
-  storeSessionData(): Observable<boolean> {
+  storeSessionData(): Observable<void> {
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
       map((sessionData: SessionData) => {
         this.updateSessionParameters(sessionData);
-        return this.currentPhase !== undefined;
       })
     );
   }
