@@ -31,7 +31,7 @@ export class DataService {
       map((allCsvDataWrapper: {}) => {
         return this.constructData(allCsvDataWrapper);
       }),
-      map((jsonData: {}) => {
+      map((jsonData: TabulatedUserData) => {
         this.dataFile = <DataFile>{
           teamStructure: this.extractTeamStructure(jsonData)
         };
@@ -244,7 +244,7 @@ export class DataService {
   }
 
   // returns a mapping from teamId to their respective team structure.
-  private extractTeamStructure(jsonData: {}): Map<string, Team> {
+  private extractTeamStructure(jsonData: TabulatedUserData): Map<string, Team> {
     const teamStructure = new Map<string, Team>();
     const jsonTeamStructure = jsonData['team-structure'];
     const teamIds = Object.keys(jsonTeamStructure);
