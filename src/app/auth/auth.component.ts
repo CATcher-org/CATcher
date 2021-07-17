@@ -98,8 +98,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   fetchAccessToken(oauthCode: string, state: string) {
     if (!this.authService.isReturnedStateSame(state)) {
-      this.logger.info(`Received incorrect state ${state}`);
-      this.authService.changeAuthState(AuthState.NotAuthenticated);
+      this.logger.info(`Received incorrect state ${state}, continue waiting for correct state`);
       return;
     }
 
