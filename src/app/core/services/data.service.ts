@@ -217,9 +217,6 @@ export class DataService {
     const result: ParsedUserData[] = [];
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
-      if (!line) {
-        continue;
-      }
       const lineValues = line.split(',').map(v => v.trim());
       const lineObj: ParsedUserData = {};
       for (let j = 0; j < headers.length; j++) {
