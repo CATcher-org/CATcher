@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { flatMap, map, retry, tap } from 'rxjs/operators';
-import { Observable, of, pipe } from 'rxjs';
+import { Observable, pipe } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
-import { UserService } from './user.service';
 import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
 import { Phase } from '../models/phase.model';
 import { throwIfFalse } from '../../shared/lib/custom-ops';
@@ -37,10 +35,8 @@ export class PhaseService {
     phaseModeration: ''
   };
 
-  constructor(private http: HttpClient,
-              private githubService: GithubService,
+  constructor(private githubService: GithubService,
               private labelService: LabelService,
-              private userService: UserService,
               private repoCreatorService: RepoCreatorService) {}
   /**
    * Stores the location of the repositories belonging to

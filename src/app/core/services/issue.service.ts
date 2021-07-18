@@ -10,9 +10,7 @@ import {
 import { UserService } from './user.service';
 import { PhaseService } from './phase.service';
 import { Phase } from '../models/phase.model';
-import { PermissionService } from './permission.service';
 import { DataService } from './data.service';
-import { ErrorHandlingService } from './error-handling.service';
 import { IssueDispute } from '../models/issue-dispute.model';
 import { GithubIssue } from '../models/github/github-issue.model';
 import { IssueComment } from '../models/comment.model';
@@ -41,8 +39,6 @@ export class IssueService {
   constructor(private githubService: GithubService,
               private userService: UserService,
               private phaseService: PhaseService,
-              private permissionService: PermissionService,
-              private errorHandlingService: ErrorHandlingService,
               private electronService: ElectronService,
               private dataService: DataService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());

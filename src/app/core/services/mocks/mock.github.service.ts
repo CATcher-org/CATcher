@@ -12,8 +12,6 @@ import { GithubLabel } from '../../models/github/github-label.model';
 import { Profile } from '../../models/profile.model';
 
 const Octokit = require('@octokit/rest');
-const CATCHER_ORG = 'CATcher-org';
-const CATCHER_REPO = 'CATcher';
 
 let ORG_NAME = '';
 let MOD_ORG = '';

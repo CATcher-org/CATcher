@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { GithubService } from './github.service';
 import { UserService } from './user.service';
 import { PhaseService } from './phase.service';
 import { Phase } from '../models/phase.model';
@@ -146,7 +145,7 @@ const PERMISSIONS = {
   providedIn: 'root',
 })
 export class PermissionService {
-  constructor(private githubService: GithubService, private userService: UserService, private phaseService: PhaseService) {}
+  constructor(private userService: UserService, private phaseService: PhaseService) {}
 
   isIssueCreatable(): boolean {
     return this.askForPermission(PermissionLevel.User, 'isIssueCreatable');

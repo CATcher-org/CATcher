@@ -23,7 +23,7 @@ export class ConflictDialogComponent {
     public labelService: LabelService,
     public issueService: IssueService) {
 
-    this.updatedHtml = sanitizer.bypassSecurityTrustHtml(replaceNewlinesWithBreakLines(escapeHTML(data.teamResponse)));
+    this.updatedHtml = this.sanitizer.bypassSecurityTrustHtml(replaceNewlinesWithBreakLines(escapeHTML(data.teamResponse)));
     this.isReady = true;
   }
 

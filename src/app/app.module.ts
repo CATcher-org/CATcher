@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HeaderComponent } from './shared/layout';
 import { AuthModule } from './auth/auth.module';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
 import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
 import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporting.module';
@@ -32,12 +32,10 @@ import { Router } from '@angular/router';
 import { UserService } from './core/services/user.service';
 import { IssueService } from './core/services/issue.service';
 import { PhaseService } from './core/services/phase.service';
-import { LabelService } from './core/services/label.service';
 import { DataService } from './core/services/data.service';
 import { GithubEventService } from './core/services/githubevent.service';
 import { LoggingService } from './core/services/logging.service';
 import { IssueServiceFactory } from './core/services/factories/factory.issue.service';
-import { PermissionService } from './core/services/permission.service';
 import { markedOptionsFactory } from './shared/lib/marked';
 
 @NgModule({
@@ -76,16 +74,16 @@ import { markedOptionsFactory } from './shared/lib/marked';
     {
       provide: AuthService,
       useFactory: AuthServiceFactory,
-      deps: [ElectronService, Router, NgZone, HttpClient,
-      ErrorHandlingService, GithubService, UserService,
-      IssueService, PhaseService, LabelService, DataService,
-      GithubEventService, Title, LoggingService]
+      deps: [ElectronService, Router, NgZone,
+      GithubService, UserService, IssueService,
+      PhaseService, DataService, GithubEventService,
+      Title, LoggingService]
     },
     {
       provide: IssueService,
       useFactory: IssueServiceFactory,
       deps: [GithubService, UserService, PhaseService,
-      PermissionService, ErrorHandlingService, ElectronService, DataService]
+      ElectronService, DataService]
     },
     {
       provide: ErrorHandler,
@@ -114,7 +112,7 @@ export class AppModule {
       introspectionQueryResultData: graphqlTypes
     });
     const cache = new InMemoryCache({ fragmentMatcher });
-    apollo.create({
+    this.apollo.create({
       link: link,
       cache: cache,
     });

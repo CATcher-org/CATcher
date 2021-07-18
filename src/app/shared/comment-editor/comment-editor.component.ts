@@ -7,7 +7,6 @@ import {
   getSizeExceedErrorMsg } from '../../core/services/upload.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ElectronService } from '../../core/services/electron.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1000000;
@@ -23,8 +22,7 @@ export class CommentEditorComponent implements OnInit {
   readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
 
   constructor(private uploadService: UploadService,
-              private errorHandlingService: ErrorHandlingService,
-              private electronService: ElectronService) {}
+              private errorHandlingService: ErrorHandlingService) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input

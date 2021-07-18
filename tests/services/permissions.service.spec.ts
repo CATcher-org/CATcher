@@ -20,8 +20,8 @@ const testAdmin = {
 };
 
 const mockUserService = new UserService(null, null);
-const mockPhaseService = new PhaseService(null, null, null, null, null);
-const permissionService = new PermissionService(null, mockUserService, mockPhaseService);
+const mockPhaseService = new PhaseService(null, null, null);
+const permissionService = new PermissionService(mockUserService, mockPhaseService);
 
 describe('Test a few permissions for each role in each phase', () => {
   it('Test a few permissions for UserRole.Student', () => {

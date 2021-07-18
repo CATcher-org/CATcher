@@ -1,6 +1,5 @@
 import { LabelComponent } from '../../../../../src/app/shared/issue/label/label.component';
 import { LabelService } from '../../../../../src/app/core/services/label.service';
-import { PermissionService } from '../../../../../src/app/core/services/permission.service';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { SEVERITY_LABELS, COLOR_SEVERITY_LOW, SEVERITY, COLOR_SEVERITY_HIGH, SEVERITY_HIGH } from '../../../../constants/label.constants';
@@ -21,7 +20,7 @@ describe('LabelComponent', () => {
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
     phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
 
-    labelComponent = new LabelComponent(issueService, null, null, phaseService, labelService, null);
+    labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;

@@ -15,7 +15,7 @@ let githubService: any;
 describe('PhaseService', () => {
   beforeEach(() => {
     githubService = jasmine.createSpyObj('GithubService', ['fetchSettingsFile', 'storePhaseDetails']);
-    phaseService = new PhaseService(null, githubService, null, null, null);
+    phaseService = new PhaseService(githubService, null, null);
   });
 
   describe('.storeSessionData()', () => {

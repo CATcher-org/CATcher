@@ -1,6 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IssueService } from '../../core/services/issue.service';
-import { IssuesDataTable } from '../../shared/issue-tables/IssuesDataTable';
 import { Issue } from '../../core/models/issue.model';
 import { UserService } from '../../core/services/user.service';
 import { UserRole } from '../../core/models/user.model';

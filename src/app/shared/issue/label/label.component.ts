@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output, OnChanges } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { Issue } from '../../../core/models/issue.model';
 import { IssueService } from '../../../core/services/issue.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
@@ -23,7 +22,6 @@ export class LabelComponent implements OnInit, OnChanges {
   @Output() issueUpdated = new EventEmitter<Issue>();
 
   constructor(private issueService: IssueService,
-              private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private phaseService: PhaseService,
               public labelService: LabelService,

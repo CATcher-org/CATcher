@@ -37,19 +37,19 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   issues: IssuesDataTable;
   issuesPendingDeletion: {[id: number]: boolean};
-  private readonly action_buttons = ACTION_BUTTONS;
+  public readonly action_buttons = ACTION_BUTTONS;
 
   constructor(public userService: UserService,
-              private permissions: PermissionService,
-              private labelService: LabelService,
+              public permissions: PermissionService,
+              public labelService: LabelService,
               private githubService: GithubService,
-              private issueService: IssueService,
+              public issueService: IssueService,
               private phaseService: PhaseService,
               private errorHandlingService: ErrorHandlingService,
               private loggingService: LoggingService) { }
 
   ngOnInit() {
-    this.issues = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
+    this.issues = new IssuesDataTable(this.issueService, this.sort,
       this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
   }

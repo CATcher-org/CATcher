@@ -29,8 +29,8 @@ export class ConflictDialogComponent {
     public labelService: LabelService,
     public issueService: IssueService) {
 
-    this.diffHtml = sanitizer.bypassSecurityTrustHtml(data.getHtmlDiffString());
-    this.updatedHtml = sanitizer.bypassSecurityTrustHtml(data.getHtmlUpdatedString());
+    this.diffHtml = this.sanitizer.bypassSecurityTrustHtml(data.getHtmlDiffString());
+    this.updatedHtml = this.sanitizer.bypassSecurityTrustHtml(data.getHtmlUpdatedString());
     this.isReady = true;
   }
 

@@ -15,7 +15,7 @@ describe('TitleComponent', () => {
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
-    phaseService = new PhaseService(null, null, null, null, null);
+    phaseService = new PhaseService(null, null, null);
     phaseService.currentPhase = Phase.phaseTeamResponse;
 
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);

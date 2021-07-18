@@ -16,7 +16,6 @@ import { IssueService } from '../../../../../src/app/core/services/issue.service
 import { MaterialModule } from '../../../../../src/app/shared/material.module';
 import { PermissionService } from '../../../../../src/app/core/services/permission.service';
 import { Team } from '../../../../../src/app/core/models/team.model';
-import { UserService } from '../../../../../src/app/core/services/user.service';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
 
 describe('AssigneeComponent', () => {
