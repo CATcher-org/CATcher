@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { flatMap, map, retry, tap } from 'rxjs/operators';
 import { Observable, pipe } from 'rxjs';
+import { flatMap, map, retry, tap } from 'rxjs/operators';
+import { throwIfFalse } from '../../shared/lib/custom-ops';
+import { Phase } from '../models/phase.model';
+import { assertSessionDataIntegrity, SessionData } from '../models/session.model';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
-import { SessionData, assertSessionDataIntegrity } from '../models/session.model';
-import { Phase } from '../models/phase.model';
-import { throwIfFalse } from '../../shared/lib/custom-ops';
 import { RepoCreatorService } from './repo-creator.service';
 
 export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.';

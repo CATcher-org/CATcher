@@ -1,8 +1,8 @@
+import { Phase } from '../../src/app/core/models/phase.model';
+import { UserRole } from '../../src/app/core/models/user.model';
 import { PermissionService } from '../../src/app/core/services/permission.service';
 import { PhaseService } from '../../src/app/core/services/phase.service';
-import { Phase } from '../../src/app/core/models/phase.model';
 import { UserService } from '../../src/app/core/services/user.service';
-import { UserRole } from '../../src/app/core/models/user.model';
 
 const testStudent = {
   loginId: 'testStudent',

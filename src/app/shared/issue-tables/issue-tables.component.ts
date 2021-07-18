@@ -1,16 +1,16 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, MatSort } from '@angular/material';
+import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
-import { PermissionService } from '../../core/services/permission.service';
-import { LabelService } from '../../core/services/label.service';
-import { UserService } from '../../core/services/user.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
 import { IssueService } from '../../core/services/issue.service';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { finalize } from 'rxjs/operators';
-import { IssuesDataTable } from './IssuesDataTable';
-import { MatPaginator, MatSort } from '@angular/material';
-import { PhaseService } from '../../core/services/phase.service';
+import { LabelService } from '../../core/services/label.service';
 import { LoggingService } from '../../core/services/logging.service';
+import { PermissionService } from '../../core/services/permission.service';
+import { PhaseService } from '../../core/services/phase.service';
+import { UserService } from '../../core/services/user.service';
+import { IssuesDataTable } from './IssuesDataTable';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,

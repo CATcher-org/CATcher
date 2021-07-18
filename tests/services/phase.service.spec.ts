@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
+import { Phase } from '../../src/app/core/models/phase.model';
 import { NO_ACCESSIBLE_PHASES } from '../../src/app/core/models/session.model';
 import { PhaseService } from '../../src/app/core/services/phase.service';
-import { Phase } from '../../src/app/core/models/phase.model';
 import {
   BUG_REPORTING_PHASE_SESSION_DATA,
   MODERATION_PHASE_SESSION_DATA,

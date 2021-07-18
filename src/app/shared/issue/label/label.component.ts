@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { Issue } from '../../../core/models/issue.model';
-import { IssueService } from '../../../core/services/issue.service';
-import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { IssueService } from '../../../core/services/issue.service';
 import { LabelService } from '../../../core/services/label.service';
+import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 
 @Component({

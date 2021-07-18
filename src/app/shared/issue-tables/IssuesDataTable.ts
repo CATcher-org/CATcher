@@ -1,11 +1,11 @@
-import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
 import { DataSource } from '@angular/cdk/table';
-import { IssueService } from '../../core/services/issue.service';
-import { Issue } from '../../core/models/issue.model';
 import { MatPaginator, MatSort } from '@angular/material';
+import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
-import { getSortedData } from './issue-sorter';
+import { Issue } from '../../core/models/issue.model';
+import { IssueService } from '../../core/services/issue.service';
 import { paginateData } from './issue-paginator';
+import { getSortedData } from './issue-sorter';
 import { applySearchFilter } from './search-filter';
 
 export class IssuesDataTable extends DataSource<Issue> {

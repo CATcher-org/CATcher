@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IssueService } from '../../core/services/issue.service';
 import { PermissionService } from '../../core/services/permission.service';
-import { ViewIssueComponent, ISSUE_COMPONENTS } from '../../shared/view-issue/view-issue.component';
+import { ISSUE_COMPONENTS, ViewIssueComponent } from '../../shared/view-issue/view-issue.component';
 
 @Component({
   selector: 'app-issue',

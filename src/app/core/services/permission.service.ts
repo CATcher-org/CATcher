@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { UserService } from './user.service';
-import { PhaseService } from './phase.service';
 import { Phase } from '../models/phase.model';
 import { UserRole } from '../models/user.model';
+import { PhaseService } from './phase.service';
+import { UserService } from './user.service';
 
 const enum PermissionLevel { Phase = 'Phase', User = 'User' }
 

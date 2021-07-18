@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy, OnChanges, Input, SimpleChanges } from '@angular/core';
-import { Issue } from '../../core/models/issue.model';
-import { IssueService } from '../../core/services/issue.service';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { UserService } from '../../core/services/user.service';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { PermissionService } from '../../core/services/permission.service';
+import { Issue } from '../../core/models/issue.model';
 import { UserRole } from '../../core/models/user.model';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { IssueService } from '../../core/services/issue.service';
+import { PermissionService } from '../../core/services/permission.service';
 import { PhaseService } from '../../core/services/phase.service';
+import { UserService } from '../../core/services/user.service';
 
 export enum ISSUE_COMPONENTS {
   TESTER_POST,

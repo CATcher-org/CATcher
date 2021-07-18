@@ -1,9 +1,9 @@
-import { IssuesRespondedComponent } from '../../../../src/app/phase-team-response/issues-responded/issues-responded.component';
 import { Issue, STATUS } from '../../../../src/app/core/models/issue.model';
-import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../constants/githubissue.constants';
 import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { UserService } from '../../../../src/app/core/services/user.service';
-import { USER_Q, TEAM_4 } from '../../../constants/data.constants';
+import { IssuesRespondedComponent } from '../../../../src/app/phase-team-response/issues-responded/issues-responded.component';
+import { TEAM_4, USER_Q } from '../../../constants/data.constants';
+import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../constants/githubissue.constants';
 
 describe('IssuesRespondedComponent', () => {
   describe('.ngOnInit()', () => {

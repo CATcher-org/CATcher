@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatTabChangeEvent } from '@angular/material';
-import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { LabelService } from '../../../core/services/label.service';
+import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { IssueService } from '../../../core/services/issue.service';
+import { LabelService } from '../../../core/services/label.service';
 
 /**
  * A Component that is in a form of a dialog modal and its purpose is to
