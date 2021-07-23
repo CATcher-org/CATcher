@@ -296,7 +296,6 @@ export class IssueService {
         issuesAPICallsByFilter.push(
           this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
         );
-
         break;
       case 'FILTER_BY_TEAM': // Only student has this filter
         issuesAPICallsByFilter.push(
@@ -340,11 +339,7 @@ export class IssueService {
           }
         }
 
-        return fetchedIssueIds;
-      }),
-      reduce((acc, ids) => acc.concat(ids), []),
-      map((ids: Array<Number>) => {
-        const outdatedIssueIds: Array<Number> = this.getOutdatedIssueIds(ids);
+        const outdatedIssueIds: Array<Number> = this.getOutdatedIssueIds(fetchedIssueIds);
         this.deleteIssuesFromLocalStore(outdatedIssueIds);
 
         return Object.values(this.issues);
