@@ -20,6 +20,15 @@ export class ProfileService {
       .then(res => res.json())
       .then(json => json.profiles || [])
       .then(profiles => {
+
+        // Will remove once profiles.json is updated
+        profiles.map(profile => {
+          if (profile['encodedText']) {
+            profile['repoName'] = profile['encodedText'];
+            delete profile['encodedText'];
+          }
+        });
+
         this.validateProfiles(profiles);
         return profiles;
       });
