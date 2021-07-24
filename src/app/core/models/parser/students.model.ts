@@ -1,5 +1,5 @@
 export interface Students {
   [studentname: string]: {
-    [teamId: string]: string
+    teamId?: string
   };
 }
