@@ -1,5 +1,11 @@
 export interface Roles {
-  [role: string]: {
+  'students'?: {
+    [loginId: string]: string
+  };
+  'tutors'?: {
+    [loginId: string]: string
+  };
+  'admins'?: {
     [loginId: string]: string
   };
 }

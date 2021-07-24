@@ -113,9 +113,9 @@ export class DataService {
 
   /**
    * Parses the input string containing student allocation information
-   * into a Studens Object
+   * into a Student Object
    * @param csvInput - string containing csv data.
-   * @return admins - object that represents parsed csv data about the students' team allocation
+   * @return students - object that represents parsed csv data about the students' team allocation
    */
   private parseStudentAllocation(csvInput: string): Students {
     // CSV Headers
