@@ -7,36 +7,32 @@ let sessionSeparator: string;
 const mockDate = new Date(2021, 6, 27);
 const infoLogMessage = 'Info log message';
 
-const testAddLog = (message: string) => {
-  loggingService.startSession();
-  const initialLog = loggingService.getCachedLog();
-  loggingService.info(message);
-  const actualLog = loggingService.getCachedLog();
-  const expectedLog = `${initialLog}\n${message}`;
-  expect(actualLog).toEqual(expectedLog);
+const mockLocalStorageFunctionCalls = (mockLocalStorage: MockLocalStorage) => {
+  spyOn(localStorage, 'getItem').and.callFake(mockLocalStorage.getItem.bind(mockLocalStorage));
+  spyOn(localStorage, 'setItem').and.callFake(mockLocalStorage.setItem.bind(mockLocalStorage));
+  spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorage.removeItem.bind(mockLocalStorage));
+  spyOn(localStorage, 'clear').and.callFake(mockLocalStorage.clear.bind(mockLocalStorage));
+};
+
+const mockDates = () => {
+  jasmine.clock().install();
+  jasmine.clock().mockDate(mockDate);
+};
+
+const initializeLoggingService = () => {
+  const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
+  electronService.isElectron = jasmine.createSpy('isElectron', () => false);
+  loggingService = new LoggingService(electronService);
+  headerLog = `${loggingService.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
+  sessionSeparator = loggingService.SESSION_LOG_SEPARATOR;
 };
 
 describe('LoggingService', () => {
   beforeAll(() => {
-    // Initialize mock local storage
     const mockLocalStorage = new MockLocalStorage();
-
-    // Mock function calls
-    spyOn(localStorage, 'getItem').and.callFake(mockLocalStorage.getItem.bind(mockLocalStorage));
-    spyOn(localStorage, 'setItem').and.callFake(mockLocalStorage.setItem.bind(mockLocalStorage));
-    spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorage.removeItem.bind(mockLocalStorage));
-    spyOn(localStorage, 'clear').and.callFake(mockLocalStorage.clear.bind(mockLocalStorage));
-
-    // Mock dates
-    jasmine.clock().install();
-    jasmine.clock().mockDate(mockDate);
-
-    // Initialize logging service
-    const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
-    electronService.isElectron = jasmine.createSpy('isElectron', () => false);
-    loggingService = new LoggingService(electronService);
-    headerLog = `${loggingService.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
-    sessionSeparator = loggingService.SESSION_LOG_SEPARATOR;
+    mockLocalStorageFunctionCalls(mockLocalStorage);
+    mockDates();
+    initializeLoggingService();
   });
 
   beforeEach(() => {
@@ -105,7 +101,12 @@ describe('LoggingService', () => {
 
   describe('adding logs', () => {
     it('should successfully add info logs', () => {
-      testAddLog(infoLogMessage);
+      loggingService.startSession();
+      const initialLog = loggingService.getCachedLog();
+      loggingService.info(infoLogMessage);
+      const actualLog = loggingService.getCachedLog();
+      const expectedLog = `${initialLog}\n${infoLogMessage}`;
+      expect(actualLog).toEqual(expectedLog);
     });
   });
 
