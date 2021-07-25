@@ -1,4 +1,4 @@
-import { ModalPopupComponent } from "../../shared/model-popup/modal-popup.component";
+import { ModalPopupComponent } from "../../shared/modal-popup/modal-popup.component";
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
