@@ -84,8 +84,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.initAccessTokenSubscription();
     this.initAuthStateSubscription();
     this.initProfileForm();
-    if (oauthCode) { // In the web's oauth page
+    if (oauthCode) { // runs upon receiving oauthCode from the redirect
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
+      this.restoreOrgDetailsFromLocalStorage();
       this.logger.info('Obtained authorisation code from Github');
       this.fetchAccessToken(oauthCode, state);
     }
@@ -112,7 +113,6 @@ export class AuthComponent implements OnInit, OnDestroy {
           }
           this.authService.storeOAuthAccessToken(data.token);
           this.logger.info('Sucessfully obtained access token');
-          this.isReady = true;
         }
       )
       .catch(err => {
@@ -160,10 +160,6 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param username - The user to log in.
    */
   completeLoginProcess(username: string): void {
-    const org = window.localStorage.getItem('org');
-    const dataRepo = window.localStorage.getItem('dataRepo');
-    this.githubService.storeOrganizationDetails(org, dataRepo);
-    this.phaseService.setSessionData();
     this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
     this.userService.createUserModel(username).pipe(
@@ -249,6 +245,17 @@ export class AuthComponent implements OnInit, OnDestroy {
       return window.localStorage.getItem('org');
     }
     return this.getOrgDetails(sessionInformation);
+  }
+
+  /**
+   * Extracts organization and data repository details from local storage
+   * and restores them to CATcher.
+   */
+  private restoreOrgDetailsFromLocalStorage() {
+    const org = window.localStorage.getItem('org');
+    const dataRepo = window.localStorage.getItem('dataRepo');
+    this.githubService.storeOrganizationDetails(org, dataRepo);
+    this.phaseService.setSessionData();
   }
 
   /**
