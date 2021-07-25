@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
-import { catchError, exhaustMap, finalize, flatMap, map, reduce } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY, forkJoin, timer, Observable, of, Subscription } from 'rxjs';
 import {
   Issue,
