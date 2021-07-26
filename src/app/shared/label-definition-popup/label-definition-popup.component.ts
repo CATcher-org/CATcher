@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject} from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DomSanitizer} from '@angular/platform-browser'
+import { DomSanitizer } from '@angular/platform-browser';
 
 /**
  * The LabelDefinitionPopupComponent is responsible for rendering the UserDialog
@@ -18,7 +18,7 @@ export class LabelDefinitionPopupComponent implements OnInit {
   // Injection of a reference to Dialog from the Service that it is to be
   // displayed in.
   constructor(public dialogRef: MatDialogRef<LabelDefinitionPopupComponent>, @Inject(MAT_DIALOG_DATA) public data,
-    private sanitizer: DomSanitizer) { 
+    private sanitizer: DomSanitizer) {
     this.labelName = data.header;
     // since we only display HTML fetched from our own source, we can safely bypass the sanitization of HTML
     this.labelDefinitionHtmlTemplate = sanitizer.bypassSecurityTrustHtml(data.body);
