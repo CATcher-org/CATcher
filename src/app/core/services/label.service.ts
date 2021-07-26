@@ -17,11 +17,11 @@ const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
 
-// The definition of selected labels are hard-coded here
+// The definition of selected labels are hard-coded here, move to a config file in the future
 const VERY_LOW_DEFINITION = '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not affect usage</mark>. For example, '
   + '<ul>'
   + '<li>a typo issues</li>'
-  + '<li>spacing issues</li>' 
+  + '<li>spacing issues</li>'
   + '<li>layout issues</li>'
   + '<li>color issues</li>'
   + '<li>font issues</li>'

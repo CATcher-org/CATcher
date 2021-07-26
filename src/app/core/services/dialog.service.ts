@@ -10,7 +10,7 @@ export class DialogService {
 
     constructor(private dialog: MatDialog) { }
 
-    openDefinitionDialog(header:String, msg: String) {
+    openDefinitionDialog(header: String, msg: String) {
         return this.dialog.open(ModalPopupComponent, {
             data: {
                 header: header,

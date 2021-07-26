@@ -34,13 +34,13 @@ export class LabelDropdownComponent implements OnInit {
     this.selectedColor = this.labelService.getColorOfLabel(labelValue);
   }
 
-  setSelectedLabelTooltipMsg(label: Label) {
-    return this.labelService.getLabelDefinition(label.labelValue, label.labelCategory);
-  }
-
-  openModalPopup(label: Label) {
+  openModalPopup(label: Label): void {
     this.dialogService.openDefinitionDialog(label.getFormattedName(),
     this.labelService.getLabelDefinition(label.labelValue, label.labelCategory));
+  }
+
+  hasLabelDefinition(label: Label): boolean {
+    return this.labelService.getLabelDefinition(label.labelValue, label.labelCategory) !== "";
   }
 
   get dropdownTextColor(): string {

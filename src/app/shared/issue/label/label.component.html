@@ -7,18 +7,15 @@
   <div mat-menu-item *ngFor="let value of labelValues;" [ngStyle]="{'padding-left': '15px', 'padding-right': '15px'}">
     <button class="option"
             (click)="updateLabel(value.labelValue)"
-            
             [disabled]="value.labelValue === this.issue[attributeName]">
           <mat-icon [ngStyle]="{'color': '#' + value.labelColor, 'font-size' : '1.8em'}">stop</mat-icon>
           <span> {{value.labelValue}}</span>
           
     </button>
-<!-- matTooltip="{{displayLabelDefinition(value)}}"
-            matTooltipClass="labelTooltip" -->
 
-    <button *ngIf="value.labelDefinition !== undefined"
+    <button *ngIf="hasLabelDefinition(value)"
             class="infoPopup"
-            (click)="openModalPopup(value); $event.stopPropagation();">
+            (click)="openDefinitionPage(value); $event.stopPropagation();">
       <mat-icon style="font-size: 20px">info</mat-icon>
     </button>
 

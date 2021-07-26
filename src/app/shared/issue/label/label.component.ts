@@ -54,17 +54,12 @@ export class LabelComponent implements OnInit, OnChanges {
     });
   }
 
-  displayLabelDefinition(value: Label) {
+  openDefinitionPage(value: Label): void {
     this.labelDefinition = this.labelService.getLabelDefinition(value.labelValue, value.labelCategory);
-    return this.labelDefinition;
+    this.dialogService.openDefinitionDialog(value.getFormattedName(), this.labelDefinition);
   }
 
-  openModalPopup(value: Label) {
-    this.labelDefinition = this.labelService.getLabelDefinition(value.labelValue, value.labelCategory);
-    this.dialogService.openDefinitionDialog(value.getFormattedName(), this.labelDefinition);    
-  }
-
-  hasDefinition(value: Label) {
+  hasLabelDefinition(value: Label): boolean {
     return this.labelService.getLabelDefinition(value.labelValue, value.labelCategory) !== "";
   }
 }
