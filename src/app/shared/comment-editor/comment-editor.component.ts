@@ -31,6 +31,7 @@ export class CommentEditorComponent implements OnInit {
   @Input() id: string; // Compulsory Input
 
   @Input() initialDescription?: string;
+  placeholderText = 'No details provided.';
 
   // Allows the comment editor to control the overall form's completeness.
   @Input() isFormPending?: boolean;
