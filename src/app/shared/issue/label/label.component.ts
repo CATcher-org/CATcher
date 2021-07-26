@@ -56,7 +56,7 @@ export class LabelComponent implements OnInit, OnChanges {
 
   openDefinitionPage(value: Label): void {
     this.labelDefinition = this.labelService.getLabelDefinition(value.labelValue, value.labelCategory);
-    this.dialogService.openDefinitionDialog(value.getFormattedName(), this.labelDefinition);
+    this.dialogService.openLabelDefinitionDialog(value.getFormattedName(), this.labelDefinition);
   }
 
   hasLabelDefinition(value: Label): boolean {

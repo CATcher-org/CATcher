@@ -14,7 +14,7 @@ import { PhaseModerationModule } from './phase-moderation/phase-moderation.modul
 import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporting.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
-import { ModalPopupComponent } from './shared/modal-popup/modal-popup.component';
+import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/label-definition-popup.component';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
 import { SessionFixConfirmationComponent } from './core/services/session-fix-confirmation/session-fix-confirmation.component';
 import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
@@ -46,7 +46,7 @@ import { markedOptionsFactory } from './shared/lib/marked';
     AppComponent,
     HeaderComponent,
     UserConfirmationComponent,
-    ModalPopupComponent,
+    LabelDefinitionPopupComponent,
     SessionFixConfirmationComponent
   ],
   imports: [
@@ -98,7 +98,7 @@ import { markedOptionsFactory } from './shared/lib/marked';
   entryComponents: [
     UserConfirmationComponent,
     SessionFixConfirmationComponent,
-    ModalPopupComponent
+    LabelDefinitionPopupComponent
   ]
 })
 

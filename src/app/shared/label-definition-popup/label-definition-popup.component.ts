@@ -2,20 +2,20 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 /**
- * The ModalPopupComponent is responsible for rendering the UserDialog
+ * The LabelDefinitionPopupComponent is responsible for rendering the UserDialog
  * to show the definition of the corresponding label.
  */
 
 @Component({
-  selector: 'app-modal-popup',
-  templateUrl: './modal-popup.component.html',
-  styleUrls: ['./modal-popup.component.css']
+  selector: 'app-label-definition-popup',
+  templateUrl: './label-definition-popup.component.html',
+  styleUrls: ['./label-definition-popup.component.css']
 })
-export class ModalPopupComponent implements OnInit {
+export class LabelDefinitionPopupComponent implements OnInit {
 
   // Injection of a reference to Dialog from the Service that it is to be
   // displayed in.
-  constructor(public dialogRef: MatDialogRef<ModalPopupComponent>,
+  constructor(public dialogRef: MatDialogRef<LabelDefinitionPopupComponent>,
             @Inject(MAT_DIALOG_DATA) public data
     ) { }
 

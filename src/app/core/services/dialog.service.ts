@@ -1,4 +1,4 @@
-import { ModalPopupComponent } from "../../shared/modal-popup/modal-popup.component";
+import { LabelDefinitionPopupComponent } from "../../shared/label-definition-popup/label-definition-popup.component";
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
@@ -10,11 +10,11 @@ export class DialogService {
 
     constructor(private dialog: MatDialog) { }
 
-    openDefinitionDialog(header: String, msg: String) {
-        return this.dialog.open(ModalPopupComponent, {
+    openLabelDefinitionDialog(labelName: String, labelDefinition: String) {
+        return this.dialog.open(LabelDefinitionPopupComponent, {
             data: {
-                header: header,
-                message: msg,
+                header: labelName,
+                body: labelDefinition
             }
         });
     }

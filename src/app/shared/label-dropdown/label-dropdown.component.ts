@@ -35,7 +35,7 @@ export class LabelDropdownComponent implements OnInit {
   }
 
   openModalPopup(label: Label): void {
-    this.dialogService.openDefinitionDialog(label.getFormattedName(),
+    this.dialogService.openLabelDefinitionDialog(label.getFormattedName(),
     this.labelService.getLabelDefinition(label.labelValue, label.labelCategory));
   }
 
