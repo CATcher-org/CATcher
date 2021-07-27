@@ -16,13 +16,11 @@ export class TesterResponseSection extends Section {
     super(sectionalDependency, unprocessedContent);
     if (!this.parseError) {
       let matches;
-      const regex: RegExp = new RegExp(
-        '#{2} *:question: *([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]* *Originally.*' +
-          '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)' +
-          '[\\n\\r]-{19}',
-        'gi'
-      );
-      while ((matches = regex.exec(this.content))) {
+      const regex: RegExp = new RegExp('#{2} *:question: *([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]* *Originally.*'
+        + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)'
+        + '[\\n\\r]-{19}',
+        'gi');
+      while (matches = regex.exec(this.content)) {
         if (matches) {
           const [regexString, title, description, disagreeCheckbox, reasonForDisagreement] = matches;
 
