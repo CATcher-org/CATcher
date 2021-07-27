@@ -80,35 +80,24 @@ export class AuthComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (oauthCode) { // In the web's oauth window
+    this.checkAppIsOutdated();
+    this.initAccessTokenSubscription();
+    this.initAuthStateSubscription();
+    this.initProfileForm();
+    if (oauthCode) { // runs upon receiving oauthCode from the redirect
+      this.authService.changeAuthState(AuthState.AwaitingAuthentication);
+      this.restoreOrgDetailsFromLocalStorage();
       this.logger.info('Obtained authorisation code from Github');
-      window.opener.postMessage({ oauthCode, state }, AppConfig.origin);
-      this.logger.info('Sent authorisation code and state to main application window, waiting to close');
-      this.listenForCloseOAuthWindowMessage();
-    } else { // In the main app window
-      this.checkAppIsOutdated();
-      this.initAccessTokenSubscription();
-      this.initAuthStateSubscription();
-      this.initProfileForm();
+      this.fetchAccessToken(oauthCode, state);
     }
   }
 
   /**
-   * A listener for receiving the oauthCode from the oauth window.
-   * With the oauth code, we can retrieve the accessToken from the proxy.
+   * Will fetch the access token from GitHub.
+   * @param oauthCode - The authorisation code obtained from GitHub.
+   * @param state - The state returned from GitHub.
    */
-  @HostListener('window:message', ['$event'])
-  onMessage(event: MessageEvent) {
-    if (event.origin !== AppConfig.origin) {
-      return;
-    }
-
-    const { oauthCode, state } = event.data;
-
-    if (!oauthCode) {
-        return;
-    }
-
+  fetchAccessToken(oauthCode: string, state: string) {
     if (!this.authService.isReturnedStateSame(state)) {
       this.logger.info(`Received incorrect state ${state}, continue waiting for correct state`);
       return;
@@ -130,12 +119,6 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.logger.info(`Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
-      })
-      .finally(() => {
-        if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
-          event.source.postMessage('close', AppConfig.origin);
-          this.logger.info('Closing authentication window');
-        }
       });
   }
 
@@ -199,14 +182,14 @@ export class AuthComponent implements OnInit, OnDestroy {
     const sessionInformation: string = this.profileForm.get('session').value;
     const org: string = this.getOrgDetails(sessionInformation);
     const dataRepo: string = this.getDataRepoDetails(sessionInformation);
+    // Persist session information in local storage
+    window.localStorage.setItem('org', org);
+    window.localStorage.setItem('dataRepo', dataRepo);
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
     this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
 
-    this.phaseService.storeSessionData().pipe(
-      throwIfFalse(isValidSession => isValidSession,
-                   () => new Error('Invalid Session'))
-    ).subscribe(() => {
+    this.phaseService.storeSessionData().subscribe(() => {
       try {
         this.authService.startOAuthProcess();
       } catch (error) {
@@ -257,23 +240,22 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   get currentSessionOrg(): string {
     const sessionInformation: string = this.profileForm.get('session').value;
+    if (!sessionInformation) {
+      // Retrieve org details of session information from local storage
+      return window.localStorage.getItem('org');
+    }
     return this.getOrgDetails(sessionInformation);
   }
 
   /**
-   * Will wait for the message from parent window to close the window.
+   * Extracts organization and data repository details from local storage
+   * and restores them to CATcher.
    */
-  private listenForCloseOAuthWindowMessage() {
-    window.addEventListener('message', (event) => {
-      if (event.origin !== AppConfig.origin) {
-        return;
-      }
-      if (event.data === 'close') {
-        window.opener.focus();
-        window.close();
-        this.logger.info('Closed authentication window');
-      }
-    });
+  private restoreOrgDetailsFromLocalStorage() {
+    const org = window.localStorage.getItem('org');
+    const dataRepo = window.localStorage.getItem('dataRepo');
+    this.githubService.storeOrganizationDetails(org, dataRepo);
+    this.phaseService.setSessionData();
   }
 
   /**

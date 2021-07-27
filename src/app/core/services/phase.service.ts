@@ -72,16 +72,23 @@ export class PhaseService {
 
   /**
    * Will fetch session data and update phase service with it.
-   * @returns - If the session is valid return true, else false
    */
-  storeSessionData(): Observable<boolean> {
+  storeSessionData(): Observable<void> {
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
       map((sessionData: SessionData) => {
+        localStorage.setItem('sessionData', JSON.stringify(sessionData));
         this.updateSessionParameters(sessionData);
-        return this.currentPhase !== undefined;
       })
     );
+  }
+
+  /**
+   * Retrieves session data from local storage and update phase service with it.
+   */
+  setSessionData() {
+    const sessionData = JSON.parse(localStorage.getItem('sessionData'));
+    this.updateSessionParameters(sessionData);
   }
 
   /**
