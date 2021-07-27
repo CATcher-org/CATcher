@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { ElectronLog } from 'electron-log';
 import { AppConfig } from '../../../environments/environment';
-import { createAndDownloadFile } from '../../shared/lib/file-create-and-download';
+import { createAndDownloadFile } from '../../shared/lib/file-download';
 
 
 @Injectable({
@@ -97,22 +97,6 @@ export class LoggingService {
 
   exportLogFile() {
     const log: string = this.getCachedLog();
-    // const blob: Blob = new Blob([log], {type: 'file/txt'});
-    // const blobUrl: string = window.URL.createObjectURL(blob);
-
-    // const hiddenElement: HTMLAnchorElement = document.createElement('a');
-    // hiddenElement.setAttribute('style', 'display: none;');
-    // hiddenElement.href = blobUrl;
-    // hiddenElement.download = this.LOG_FILE_NAME;
-
-    // // Add to DOM and Click to prompt download.
-    // document.body.appendChild(hiddenElement);
-    // hiddenElement.click();
-
-    // // Remove URL + Created Attached Element
-    // window.URL.revokeObjectURL(blobUrl);
-    // document.body.removeChild(hiddenElement);
-    // hiddenElement.remove();
     createAndDownloadFile(this.LOG_FILE_NAME, log);
   }
 
