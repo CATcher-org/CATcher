@@ -35,7 +35,7 @@ describe('LabelService', () => {
     });
 
     it('should create missing required labels for team phase if some required labels are fetched', () => {
-      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.LABEL_ARRAY_TEAM_OR_MODERATION_PHASE));
+      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.LABEL_ARRAY));
       of(true).pipe(labelService.syncLabels(true)).subscribe();
 
       assertLabelNotCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
@@ -43,18 +43,18 @@ describe('LabelService', () => {
       assertLabelCreated(githubService, LabelConstant.STATUS_DONE_LABEL);
       assertLabelCreated(githubService, LabelConstant.TYPE_DOCUMENTATION_BUG_LABEL);
       expect(githubService.createLabel).toHaveBeenCalledTimes(
-        LabelService.getRequiredLabelsAsArray(true).length - LabelConstant.LABEL_ARRAY_TEAM_OR_MODERATION_PHASE.length
+        LabelService.getRequiredLabelsAsArray(true).length - LabelConstant.LABEL_ARRAY.length
       );
     });
 
     it('should create missing required labels for tester phase if some required labels are fetched', () => {
-      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.LABEL_ARRAY_TESTER_PHASE));
+      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.TESTER_PHASE_LABEL_ARRAY));
       of(true).pipe(labelService.syncLabels(false)).subscribe();
 
       assertLabelNotCreated(githubService, LabelConstant.SEVERITY_HIGH_LABEL);
       assertLabelCreated(githubService, LabelConstant.TYPE_FUNCTIONALITY_BUG_LABEL);
       expect(githubService.createLabel).toHaveBeenCalledTimes(
-        LabelService.getRequiredLabelsAsArray(false).length - LabelConstant.LABEL_ARRAY_TESTER_PHASE.length
+        LabelService.getRequiredLabelsAsArray(false).length - LabelConstant.TESTER_PHASE_LABEL_ARRAY.length
       );
     });
 
@@ -70,7 +70,7 @@ describe('LabelService', () => {
 describe('LabelService: parseLabelData()', () => {
   beforeAll(() => {
     labelService = new LabelService(null);
-    labelList = labelService.parseLabelData(LabelConstant.LABEL_ARRAY_TEAM_OR_MODERATION_PHASE);
+    labelList = labelService.parseLabelData(LabelConstant.LABEL_ARRAY);
   });
 
   afterAll(() => {

@@ -55,7 +55,7 @@ export class LabelService {
   private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
   private static statusLabels: Label[] = Object.values(REQUIRED_LABELS.status);
   private static otherLabels: Label[] = Object.values(REQUIRED_LABELS.others);
-  private static teamOrModerationLabelArrays = {
+  private static allLabelArrays = {
     severity: LabelService.severityLabels,
     type: LabelService.typeLabels,
     response: LabelService.responseLabels,
@@ -74,8 +74,8 @@ export class LabelService {
     let requiredLabels: Label[] = [];
 
     if (needAllLabels) {
-      for (const category of Object.keys(this.teamOrModerationLabelArrays)) {
-        requiredLabels = requiredLabels.concat(this.teamOrModerationLabelArrays[category]);
+      for (const category of Object.keys(this.allLabelArrays)) {
+        requiredLabels = requiredLabels.concat(this.allLabelArrays[category]);
       }
     } else {
       for (const category of Object.keys(this.testerLabelArrays)) {
