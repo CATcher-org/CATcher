@@ -139,7 +139,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         if (isOutdated) {
           throw new Error(APPLICATION_VERSION_OUTDATED_ERROR);
         }
-      }), 
+      }),
     );
   }
 
