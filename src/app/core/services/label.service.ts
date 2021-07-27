@@ -50,8 +50,8 @@ const REQUIRED_LABELS = {
 })
 
 /**
- * Responsible for retrieval and parsing of label data from the GitHub
- * repository for the CATcher application.
+ * Responsible for retrieval and parsing and syncing of label data
+ * from the GitHub repository for the CATcher application.
  */
 export class LabelService {
 
