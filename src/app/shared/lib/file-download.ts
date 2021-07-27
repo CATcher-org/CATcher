@@ -1,4 +1,4 @@
-export function createAndDownloadFile(fileName:string, content: string) {
+export function createAndDownloadFile(fileName: string, content: string) {
     const blob: Blob = new Blob([content], {type: 'file/txt'});
     const blobUrl: string = window.URL.createObjectURL(blob);
 
