@@ -44,8 +44,8 @@ export class Issue {
   testerResponses?: TesterResponse[];
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
-  teamResponseSeverity?: string;
-  teamResponseType?: string;
+  teamChosenSeverity?: string;
+  teamChosenType?: string;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -116,8 +116,8 @@ export class Issue {
     this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
 
-    this.teamResponseSeverity = null;
-    this.teamResponseType = null;
+    this.teamChosenSeverity = null;
+    this.teamChosenType = null;
   }
 
   public static createPhaseBugReportingIssue(githubIssue: GithubIssue): Issue {
@@ -148,8 +148,8 @@ export class Issue {
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
 
-    issue.teamResponseSeverity = template.teamResponseSeverity || null;
-    issue.teamResponseType = template.teamResponseType || null;
+    issue.teamChosenSeverity = template.teamChosenSeverity || null;
+    issue.teamChosenType = template.teamChosenType || null;
 
     return issue;
   }

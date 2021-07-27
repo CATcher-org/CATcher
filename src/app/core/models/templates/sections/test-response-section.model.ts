@@ -14,7 +14,8 @@ export class TesterResponseSection extends Section {
         'gi');
       while (matches = regex.exec(this.content)) {
         if (matches) {
-          const [regexString, title, description, disagreeCheckbox, reasonForDisagreement] = matches;
+          const [regexString, title, description, disagreeCheckbox, reasonForDisagreement] = matches
+          console.log("description", description)
           this.testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDisagreement.trim()));
         }
       }

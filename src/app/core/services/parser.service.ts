@@ -26,7 +26,7 @@ export class ParserService {
   /**
    * Returns the value of the severity the team responded with by parsing the issue dispute comment.
    */
-  static parseGitHubCommentTeamResponseSeverity(input: string): string {
+  static parseGitHubCommentteamChosenSeverity(input: string): string {
       return ParserService.parseGitHubCommentIssueDisputeParser(input, ParserService.ISSUE_SEVERITY_DISPUTE_START_STRING,
         ParserService.DISPUTE_END_DELIMTER, ParserService.TEAM_RESPOND_SEVERITY_PREFIX, ParserService.TEAM_RESPOND_SEVERITY_SUFFIX);
   }
@@ -34,7 +34,7 @@ export class ParserService {
   /**
    * Returns the value of the type the team responded with by parsing the issue dispute comment.
    */
-  static parseGitHubCommentTeamResponseType(input: string): string {
+  static parseGitHubCommentteamChosenType(input: string): string {
     return ParserService.parseGitHubCommentIssueDisputeParser(input, ParserService.ISSUE_TYPE_DISPUTE_START_STRING,
       ParserService.DISPUTE_END_DELIMTER, ParserService.TEAM_RESPOND_TYPE_PREFIX, ParserService.TEAM_RESPOND_TYPE_SUFFIX);
   }
