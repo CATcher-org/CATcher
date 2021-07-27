@@ -29,10 +29,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   // isSettingUpSession is used to indicate whether CATcher is in the midst of setting up the session.
   isSettingUpSession: boolean;
 
-  // Errors
-  isAppOutdated: boolean;
-  versionCheckingError: boolean;
-
   authState: AuthState;
   accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
@@ -74,8 +70,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     // Initialize State
     this.isSettingUpSession = false;
-    this.isAppOutdated = false;
-    this.versionCheckingError = false;
 
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
