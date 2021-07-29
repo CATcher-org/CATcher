@@ -148,7 +148,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param profile - Profile selected by the user.
    */
   onProfileSelect(profile: Profile): void {
-    this.profileForm.get('session').setValue(profile.encodedText);
+    this.profileForm.get('session').setValue(profile.repoName);
   }
 
   /**
