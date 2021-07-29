@@ -73,15 +73,9 @@ export class LabelService {
   public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
 
-    if (needAllLabels) {
-      for (const category of Object.keys(this.allLabelArrays)) {
-        requiredLabels = requiredLabels.concat(this.allLabelArrays[category]);
-      }
-    } else {
-      for (const category of Object.keys(this.testerLabelArrays)) {
-        requiredLabels = requiredLabels.concat(this.testerLabelArrays[category]);
-      }
-    }
+    const labels = needAllLabels ? Object.values(this.allLabelArrays) : Object.values(this.testerLabelArrays);
+
+    labels.map(label => requiredLabels = requiredLabels.concat(label));
 
     return requiredLabels;
   }
