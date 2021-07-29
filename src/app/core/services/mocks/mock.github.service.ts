@@ -145,7 +145,7 @@ export class MockGithubService {
     const profiles = [
       <Profile>{
         profileName: 'CATcher',
-        encodedText: 'CATcher-org/public_data'
+        repoName: 'CATcher-org/public_data'
       }
     ];
 
