@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { ElectronLog } from 'electron-log';
 import { AppConfig } from '../../../environments/environment';
-import { createAndDownloadFile } from '../../shared/lib/file-download';
+import { downloadAsTextFile } from '../../shared/lib/file-download';
 
 
 @Injectable({
@@ -97,7 +97,7 @@ export class LoggingService {
 
   exportLogFile() {
     const log: string = this.getCachedLog();
-    createAndDownloadFile(this.LOG_FILE_NAME, log);
+    downloadAsTextFile(this.LOG_FILE_NAME, log);
   }
 
   info(...params: any[]) {
