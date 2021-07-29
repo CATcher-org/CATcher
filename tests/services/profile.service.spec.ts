@@ -9,7 +9,7 @@ const EMPTY_PROFILES = [];
 const VALID_PROFILES = [
   <Profile>{
     profileName: 'CATcher',
-    encodedText: 'CATcher-org/public_data'
+    repoName: 'CATcher-org/public_data'
   }
 ];
 const INVALID_PROFILES = [
