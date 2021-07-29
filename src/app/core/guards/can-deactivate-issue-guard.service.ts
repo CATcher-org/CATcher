@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRouteSnapshot, CanDeactivate, Router, RouterStateSnapshot } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { UserConfirmationComponent } from './user-confirmation/user-confirmation.component';
+import { DialogService } from '../services/dialog.service';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -10,21 +9,20 @@ import { Observable, of } from 'rxjs';
 })
 export class CanDeactivateIssueGuard implements CanDeactivate<any> {
   constructor(private location: Location, private router: Router,
-              private dialog: MatDialog) {}
+              private dialogService: DialogService) {}
 
   /**
    * Makes the dialog visible to the user.
    * @return The Promise of a User Selected boolean.
    */
   openDialog(): Observable<boolean> {
-    const dialogRef = this.dialog.open(UserConfirmationComponent);
+    const dialogRef = this.dialogService.openUserConfirmationModal();
     return dialogRef.afterClosed();
   }
 
   canDeactivate(component: any, currentRoute: ActivatedRouteSnapshot,
                 currentState: RouterStateSnapshot,
                 nextState?: RouterStateSnapshot): Observable<boolean> {
-
     if (component.canDeactivate && !component.canDeactivate()
       && nextState.url !== '/') {
       const currentUrlTree =

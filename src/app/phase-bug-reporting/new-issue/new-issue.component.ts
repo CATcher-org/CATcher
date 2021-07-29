@@ -16,7 +16,6 @@ import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component
 export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
   isFormPending = false;
-
   submitButtonText: string;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
@@ -51,6 +50,12 @@ export class NewIssueComponent implements OnInit {
           error => {
           this.errorHandlingService.handleError(error);
         });
+  }
+
+  canDeactivate() {
+    console.log(this.title.value);
+    return this.title.value === '' && this.description.value === '' && this.severity.value === ''
+      && this.type.value === '';
   }
 
   get title() {

@@ -39,6 +39,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   issue: Issue;
   isIssueLoading = true;
   isTutorResponseEditing = false;
+  isIssueTitileEditing = false;
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
   isTesterResponseEditing = false;
@@ -83,7 +84,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   isEditing(): boolean {
-    return this.isIssueDescriptionEditing || this.isTutorResponseEditing || this.isTeamResponseEditing;
+    return this.isIssueDescriptionEditing || this.isTutorResponseEditing || this.isTeamResponseEditing 
+      || this.isIssueTitileEditing;
   }
 
   updateIssue(newIssue: Issue) {
