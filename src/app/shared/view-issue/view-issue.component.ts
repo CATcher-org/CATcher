@@ -84,7 +84,7 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   isEditing(): boolean {
-    return this.isIssueDescriptionEditing || this.isTutorResponseEditing || this.isTeamResponseEditing 
+    return this.isIssueDescriptionEditing || this.isTutorResponseEditing || this.isTeamResponseEditing
       || this.isIssueTitileEditing;
   }
 
