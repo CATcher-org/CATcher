@@ -53,7 +53,6 @@ export class NewIssueComponent implements OnInit {
   }
 
   canDeactivate() {
-    console.log(this.title.value);
     return this.title.value === '' && this.description.value === '' && this.severity.value === ''
       && this.type.value === '';
   }
