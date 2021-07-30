@@ -5,7 +5,7 @@ describe('IssueTablesComponent', () => {
 
   describe('.fitTitleText()', () => {
     beforeEach(() => {
-      issueTablesComponent = new IssueTablesComponent(null, null, null, null, null, null, null, null);
+      issueTablesComponent = new IssueTablesComponent(null, null, null, null, null, null, null, null, null);
     });
 
     it('should format the title text to account for words longer than max word length', () => {
