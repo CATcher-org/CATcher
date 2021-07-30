@@ -36,7 +36,7 @@ export class ProfilesComponent implements OnInit {
   private readonly ANIMATION_DURATION: number = 250;
 
   profiles: Profile[] = []; // List of profiles taken from profiles.json
-  blankProfile: Profile = {profileName: '', encodedText: ''}; // A blank profile to reset values
+  blankProfile: Profile = {profileName: '', repoName: ''}; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
