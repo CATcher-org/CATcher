@@ -10,7 +10,14 @@ export class DialogService {
 
     constructor(private dialog: MatDialog) { }
 
-    openUserConfirmationModal() {
-        return this.dialog.open(UserConfirmationComponent);
+    openUserConfirmationModal(messages: string[], yesButtonMessage: string, noButtonMessage: string) {
+        return this.dialog.open(UserConfirmationComponent, {
+            data: {
+                messages: messages,
+                yesMessage: yesButtonMessage,
+                noMessage: noButtonMessage
+            }
+        });
     }
+
 }
