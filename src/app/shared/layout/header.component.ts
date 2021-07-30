@@ -172,6 +172,6 @@ export class HeaderComponent implements OnInit {
       if (res) {
         this.logOut();
       }
-    })
+    });
   }
 }

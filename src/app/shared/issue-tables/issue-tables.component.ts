@@ -170,6 +170,6 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
         this.loggingService.info(`Deleting issue ${id}`);
         this.deleteIssue(id);
       }
-    })
+    });
   }
 }
