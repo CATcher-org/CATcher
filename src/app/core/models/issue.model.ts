@@ -116,8 +116,6 @@ export class Issue {
     this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
 
-    this.teamChosenSeverity = null;
-    this.teamChosenType = null;
   }
 
   public static createPhaseBugReportingIssue(githubIssue: GithubIssue): Issue {
@@ -135,7 +133,6 @@ export class Issue {
     issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
-
     return issue;
   }
 
