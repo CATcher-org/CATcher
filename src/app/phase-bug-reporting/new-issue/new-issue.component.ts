@@ -53,8 +53,24 @@ export class NewIssueComponent implements OnInit {
   }
 
   canDeactivate() {
-    return this.title.value === '' && this.description.value === '' && this.severity.value === ''
-      && this.type.value === '';
+    return !this.isTitleEditing() && !this.isDescriptionEditing()
+      && !this.isSeverityEditing() && !this.isTypeEditing();
+  }
+
+  isTitleEditing() {
+    return this.title.value !== '' && this.title.value !== null;
+  }
+
+  isDescriptionEditing() {
+    return this.description.value !== '' && this.description.value !== null;
+  }
+
+  isSeverityEditing() {
+    return this.severity.value !== '' && this.severity.value !== null;
+  }
+
+  isTypeEditing() {
+    return this.type.value !== '' && this.type.value !== null;
   }
 
   get title() {
