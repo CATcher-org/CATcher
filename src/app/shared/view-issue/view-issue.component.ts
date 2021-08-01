@@ -39,7 +39,6 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   issue: Issue;
   isIssueLoading = true;
   isTutorResponseEditing = false;
-  isIssueTitileEditing = false;
   isIssueDescriptionEditing = false;
   isTeamResponseEditing = false;
   isTesterResponseEditing = false;

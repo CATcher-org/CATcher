@@ -40,6 +40,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   issuesPendingDeletion: {[id: number]: boolean};
 
   private readonly action_buttons = ACTION_BUTTONS;
+
+  // Messages for the modal popup window upon deleting an issue
   private readonly deleteIssueModalMessages = ['Do you wish to delete this issue?', 'This action is irreversible!'];
   private readonly yesButtonModalMessage = 'Yes, I wish to delete this issue';
   private readonly noButtonModalMessage = 'No, I don\'t wish to delete this issue';

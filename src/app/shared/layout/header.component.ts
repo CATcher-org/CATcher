@@ -28,9 +28,10 @@ export class HeaderComponent implements OnInit {
   TEAM_LABEL = '+label:team.';
   EXCLUDE_DUPLICATE = '+-label:duplicate'; // exclude duplicate issues
 
-  private readonly logOutDialogMessages = ['Do you wish to log out?'];
-  private readonly yesButtonDialogMessage = 'Yes, I wish to log out';
-  private readonly noButtonDialogMessage = 'No, I don\'t wish to log out';
+  // Messages for the modal popup window upon logging out
+  private readonly logOutDialogMessages = ["Do you wish to log out?"];
+  private readonly yesButtonDialogMessage = "Yes, I wish to log out";
+  private readonly noButtonDialogMessage = "No, I don\'t wish to log out";
 
   constructor(private router: Router,
               public auth: AuthService,
@@ -170,6 +171,7 @@ export class HeaderComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
+        this.loggingService.info(`Logging out from ${this.userService.currentUser.loginId}`);
         this.logOut();
       }
     });
