@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 })
 export class CanDeactivateIssueGuard implements CanDeactivate<any> {
 
-  // Messages for the modal dialog view 
+  // Messages for the modal dialog view
   private readonly modalDialogMessages = ["Do you wish to leave the page?", "You have unsaved changes that will be discarded."];
   private readonly yesButtonDialogMessage = "Yes, I wish to leave";
   private readonly noButtonDialogMessage = "No, I don't wish to leave";
