@@ -115,7 +115,6 @@ export class Issue {
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
     this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
-
   }
 
   public static createPhaseBugReportingIssue(githubIssue: GithubIssue): Issue {

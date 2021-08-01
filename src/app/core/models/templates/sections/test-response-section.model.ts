@@ -1,5 +1,7 @@
 import { TesterResponse } from '../../tester-response.model';
 import { Section, SectionalDependency } from './section.model';
+import { ParserService } from '../../../services/parser.service';
+
 
 export class TesterResponseSection extends Section {
   testerResponses: TesterResponse[] = [];
@@ -52,26 +54,14 @@ export class TesterResponseSection extends Section {
     return this.teamChosenSeverity;
   }
 
-  parseTeamChosenValue(description: string, prefix: string): string {
-    let result = description.trim();
-
-    const startIdx = result.indexOf(prefix) + prefix.length;
-
-    result = result.substring(startIdx);
-
-    const endIdx = result.indexOf(this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
-
-    result = result.substring(0, endIdx);
-
-    return result;
-  }
-
   parseTeamChosenSeverity(description: string): string {
-    return this.parseTeamChosenValue(description, this.TEAM_RESPONSE_DESCRIPTION_SEVERITY_VALUE_PREFIX);
+    return ParserService.extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_SEVERITY_VALUE_PREFIX,
+      this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
   }
 
   parseTeamChosenType(description: string): string {
-    return this.parseTeamChosenValue(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX);
+    return ParserService.extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX,
+      this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
   }
 
   toString(): string {
