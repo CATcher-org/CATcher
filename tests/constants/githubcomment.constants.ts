@@ -16,17 +16,16 @@ export const EMPTY_TEAM_RESPONSE: GithubComment = {
 };
 
 export const TEAM_RESPONSE_SEVERITY_DISAGREEMENT: GithubComment = {
-  body:
-    "# Team's Response\r\n" +
-    'This is a dummy team response comment: ' +
-    'Thanks for the feedback\r\n\r\n' +
-    '# Items for the Tester to Verify\r\n\r\n' +
-    '## :question: Issue severity\r\n\r\n' +
-    'Team chose [`severity.Low`]\r\n' +
-    'Originally [`severity.High`]\r\n\r\n' +
-    '- [ ] I disagree\r\n\r\n' +
-    '**Reason for disagreement:** [replace this with your reason]\r\n\r\n' +
-    '-------------------',
+  body: `# Team's Response\r\n
+    This is a dummy team response comment: 
+    Thanks for the feedback\r\n\r\n
+    # Items for the Tester to Verify\r\n\r\n
+    ## :question: Issue severity\r\n\r\n 
+    Team chose [\`severity.Low\`]\r\n
+    Originally [\`severity.High\`]\r\n\r\n +
+    - [ ] I disagree\r\n\r\n' +
+    **Reason for disagreement:** [replace this with your reason]\r\n\r\n
+    -------------------`,
   created_at: '2021-06-29T17:15:11Z',
   id: 870723234,
   updated_at: '2021-06-29T17:15:11Z'

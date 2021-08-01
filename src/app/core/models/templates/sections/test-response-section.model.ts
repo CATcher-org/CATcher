@@ -1,6 +1,6 @@
 import { TesterResponse } from '../../tester-response.model';
 import { Section, SectionalDependency } from './section.model';
-import { ParserService } from '../../../services/parser.service';
+import { extractStringBetween } from '../../../../shared/lib/parser'
 
 
 export class TesterResponseSection extends Section {
@@ -55,12 +55,12 @@ export class TesterResponseSection extends Section {
   }
 
   parseTeamChosenSeverity(description: string): string {
-    return ParserService.extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_SEVERITY_VALUE_PREFIX,
+    return extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_SEVERITY_VALUE_PREFIX,
       this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
   }
 
   parseTeamChosenType(description: string): string {
-    return ParserService.extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX,
+    return extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX,
       this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
   }
 

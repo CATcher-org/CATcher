@@ -136,7 +136,9 @@ export class Issue {
   }
 
   public static createPhaseTesterResponseIssue(githubIssue: GithubIssue): Issue {
+    
     const issue = new Issue(githubIssue);
+    console.log("GITHUB ISSUE comments", githubIssue.comments) 
     const template = new TesterResponseTemplate(githubIssue.comments);
 
     issue.githubComments = githubIssue.comments;
