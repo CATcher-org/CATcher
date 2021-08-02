@@ -1,6 +1,6 @@
 import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
-import { of, scheduled, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { ActivatedRoute, Router } from '@angular/router';
