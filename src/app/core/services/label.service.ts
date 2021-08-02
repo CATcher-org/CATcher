@@ -27,7 +27,7 @@ const VERY_LOW_DEFINITION = '<p>A flaw that is <mark>purely cosmetic</mark> and 
   + '<li>font issues</li>'
   + '</ul>'
   + 'in the docs or the UI that doesn\'t affect usage.</p>';
-const LOW_DEFINITION = '<p>A flaw that is unlikely to affect normal operations of the product.'
+const LOW_DEFINITION = '<p>A flaw that is unlikely to affect normal operations of the product. '
   + 'Appears only in very rare situations and causes a minor inconvenience only.</p>';
 const MEDIUM_DEFINITION = '<p>A flaw that causes occasional inconvenience to some users but they can '
   + 'continue to use the product.</p>';
@@ -190,8 +190,8 @@ export class LabelService {
    * @param labelCategory: the label's category (e.g Type/ Severity / ...).
    */
   getLabelDefinition(labelValue: string, labelCategory: string): string {
-    if (labelValue === '' || labelCategory === '') {
-      return ''; // not sure of returning empty string as definition here, might have better alternatives
+    if (labelValue === '' || labelValue === null || labelCategory === '' || labelCategory === null) {
+      return null;
     }
 
     const existingLabel = LabelService.getRequiredLabelsAsArray().find(
@@ -199,7 +199,7 @@ export class LabelService {
     );
 
     if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
-      return ''; // not sure of returning empty string as definition here, might have better alternatives
+      return null;
     } else {
       return existingLabel.labelDefinition;
     }

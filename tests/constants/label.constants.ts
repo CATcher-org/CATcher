@@ -23,7 +23,7 @@ export const RESPONSE = 'response';
 export const STATUS = 'status';
 
 // Label definition
-export const DEFINITION_EMPTY = '';
+export const DEFINITION_UNDEFINIED = null;
 export const DEFINITION_SEVERITY_VERY_LOW =
   '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not ' +
   'affect usage</mark>. For example, ' +
@@ -36,7 +36,7 @@ export const DEFINITION_SEVERITY_VERY_LOW =
   '</ul>' +
   "in the docs or the UI that doesn't affect usage.</p>";
 export const DEFINITION_SEVERITY_LOW =
-  '<p>A flaw that is unlikely to affect normal operations of the product.' +
+  '<p>A flaw that is unlikely to affect normal operations of the product. ' +
   'Appears only in very rare situations and causes a minor inconvenience only.</p>';
 export const DEFINITION_SEVERITY_MEDIUM =
   '<p>A flaw that causes occasional inconvenience to some users but they can ' + 'continue to use the product.</p>';

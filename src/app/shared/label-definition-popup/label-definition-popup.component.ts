@@ -12,7 +12,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './label-definition-popup.component.html',
   styleUrls: ['./label-definition-popup.component.css'],
 })
-export class LabelDefinitionPopupComponent implements OnInit {
+export class LabelDefinitionPopupComponent {
   labelName: string;
   labelDefinitionHtmlTemplate;
   // Injection of a reference to Dialog from the Service that it is to be
@@ -22,9 +22,6 @@ export class LabelDefinitionPopupComponent implements OnInit {
     this.labelName = data.header;
     // since we only display HTML fetched from our own source, we can safely bypass the sanitization of HTML
     this.labelDefinitionHtmlTemplate = sanitizer.bypassSecurityTrustHtml(data.body);
-  }
-
-  ngOnInit() {
   }
 
   /**

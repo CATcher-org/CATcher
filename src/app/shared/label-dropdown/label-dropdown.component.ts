@@ -40,7 +40,7 @@ export class LabelDropdownComponent implements OnInit {
   }
 
   hasLabelDefinition(label: Label): boolean {
-    return this.labelService.getLabelDefinition(label.labelValue, label.labelCategory) !== "";
+    return this.labelService.getLabelDefinition(label.labelValue, label.labelCategory) !== null;
   }
 
   get dropdownTextColor(): string {
