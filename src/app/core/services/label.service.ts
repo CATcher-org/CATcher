@@ -79,9 +79,7 @@ export class LabelService {
     let requiredLabels: Label[] = [];
 
     const labels = needAllLabels ? Object.values(this.allLabelArrays) : Object.values(this.testerLabelArrays);
-
     labels.map(label => requiredLabels = requiredLabels.concat(label));
-
     return requiredLabels;
   }
 

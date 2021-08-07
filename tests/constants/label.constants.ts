@@ -63,8 +63,8 @@ export const SEVERITY_HIGH_LABEL = new Label(SEVERITY, SEVERITY_HIGH, COLOR_SEVE
 export const SEVERITY_MEDIUM_LABEL = new Label(SEVERITY, SEVERITY_MEDIUM, COLOR_SEVERITY_MEDIUM);
 export const SEVERITY_LOW_LABEL = new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERITY_LOW);
 
-// Constant array of labels for developer and moderation phase to simulate Github response
-export const LABEL_ARRAY = [
+// Constant array of labels for team response phase and moderation phase to simulate Github response
+export const SOME_TEAM_RESPONSE_PHASE_LABELS = [
   {
     color: COLOR_RESPONSE_ACCEPTED,
     name: RESPONSE + '.' + RESPONSE_ACCEPTED
@@ -80,7 +80,7 @@ export const LABEL_ARRAY = [
 ];
 
 // Constant array of labels for tester phase to simulate Github response
-export const TESTER_PHASE_LABEL_ARRAY = [
+export const SOME_TESTER_PHASE_LABELS = [
   {
     color: COLOR_SEVERITY_HIGH,
     name: SEVERITY + '.' + SEVERITY_HIGH
