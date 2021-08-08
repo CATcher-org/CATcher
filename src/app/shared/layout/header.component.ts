@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
               public auth: AuthService,
               public phaseService: PhaseService,
               public userService: UserService,
-              public loggingService: LoggingService,
+              private loggingService: LoggingService,
               private location: Location,
               private githubEventService: GithubEventService,
               private issueService: IssueService,
@@ -155,5 +155,9 @@ export class HeaderComponent implements OnInit {
 
   logOut() {
     this.auth.logOut();
+  }
+
+  exportLogFile() {
+    this.loggingService.exportLogFile();
   }
 }
