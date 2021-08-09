@@ -156,4 +156,8 @@ export class HeaderComponent implements OnInit {
   logOut() {
     this.auth.logOut();
   }
+
+  exportLogFile() {
+    this.loggingService.exportLogFile();
+  }
 }
