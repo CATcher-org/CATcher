@@ -35,3 +35,18 @@ export const PENDING_TUTOR_MODERATION: GithubComment = {
     url: 'https://api.github.com/users/testathorTutor'
   }
 };
+
+export const DUMMY_TEAM_RESPONSE: GithubComment = {
+  body: '',
+  created_at: '2021-08-09T12:00:0Z',
+  updated_at: '2021-08-09T12:00:0Z',
+  id: 1,
+  issue_url: 'https://github.com',
+  url: 'https://github.com',
+  user: {
+    login: 'test',
+    id: 123456789,
+    avatar_url: '',
+    url: 'https://github.com'
+  }
+};
