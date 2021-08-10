@@ -86,24 +86,26 @@ export class LabelService {
   private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
   private static statusLabels: Label[] = Object.values(REQUIRED_LABELS.status);
   private static otherLabels: Label[] = Object.values(REQUIRED_LABELS.others);
-  private static labelArrays = {
+  private static allLabelArrays = {
     severity: LabelService.severityLabels,
     type: LabelService.typeLabels,
     response: LabelService.responseLabels,
     status: LabelService.statusLabels,
     others: LabelService.otherLabels
   };
+  private static testerLabelArrays = {
+    severity: LabelService.severityLabels,
+    type: LabelService.typeLabels,
+  };
 
   constructor(private githubService: GithubService) {
   }
 
-  public static getRequiredLabelsAsArray(): Label[] {
+  public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
 
-    for (const category of Object.keys(this.labelArrays)) {
-      requiredLabels = requiredLabels.concat(this.labelArrays[category]);
-    }
-
+    const labels = needAllLabels ? Object.values(this.allLabelArrays) : Object.values(this.testerLabelArrays);
+    labels.map(label => requiredLabels = requiredLabels.concat(label));
     return requiredLabels;
   }
 
@@ -112,19 +114,19 @@ export class LabelService {
    * synchronise the labels in our application
    * with the remote repository.
    */
-  syncLabels(): UnaryFunction<Observable<boolean>, Observable<any>> {
+  syncLabels(needAllLabels: boolean): UnaryFunction<Observable<boolean>, Observable<any>> {
     return pipe(
-      flatMap(() => this.synchronizeRemoteLabels())
+      flatMap(() => this.synchronizeRemoteLabels(needAllLabels))
     );
   }
 
   /**
    * Synchronizes the labels in github with those required by the application.
    */
-  synchronizeRemoteLabels(): Observable<any> {
+  synchronizeRemoteLabels(needAllLabels: boolean): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray());
+          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray(needAllLabels));
           return response;
         })
       );
@@ -174,7 +176,7 @@ export class LabelService {
       return WHITE_COLOR;
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
+    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find(label => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
       return WHITE_COLOR;
