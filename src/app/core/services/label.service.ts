@@ -196,7 +196,7 @@ export class LabelService {
       return null;
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray().find(
+    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find(
       label => label.labelValue === labelValue && label.labelCategory === labelCategory
     );
 
