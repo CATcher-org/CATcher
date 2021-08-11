@@ -1,6 +1,6 @@
 import { TesterResponse } from '../../tester-response.model';
 import { Section, SectionalDependency } from './section.model';
-import { extractStringBetween } from 'src/app/shared/lib/string-utils';
+import { extractStringBetween } from '../../../../shared/lib/string-utils';
 
 export class TesterResponseSection extends Section {
   testerResponses: TesterResponse[] = [];
