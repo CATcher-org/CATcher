@@ -8,7 +8,6 @@
  */
 export function extractStringBetween(text: string, prefix: string, suffix: string): string {
   let result = text.trim();
-
   const startIdx = result.indexOf(prefix) + prefix.length;
 
   if (startIdx === -1)  {
@@ -16,7 +15,6 @@ export function extractStringBetween(text: string, prefix: string, suffix: strin
   }
 
   result = result.substring(startIdx);
-
   const endIdx = result.indexOf(suffix);
 
   if (endIdx === -1)  {
@@ -24,6 +22,5 @@ export function extractStringBetween(text: string, prefix: string, suffix: strin
   }
 
   result = result.substring(0, endIdx);
-
   return result;
 }
