@@ -173,11 +173,11 @@ describe('LabelService: getLabelDefinition()', () => {
     );
   });
 
-  it('should return a null for label with no definition', () => {
+  it('should return null for label with no definition', () => {
     expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE, LabelConstant.STATUS)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
   });
 
-  it('should return a null string for invalid inputs', () => {
+  it('should return null for invalid inputs', () => {
     expect(labelService.getLabelDefinition(null, null)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
     expect(labelService.getLabelDefinition(null, LabelConstant.SEVERITY)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
     expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, null)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
