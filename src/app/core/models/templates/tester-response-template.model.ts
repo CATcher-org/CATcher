@@ -14,8 +14,8 @@ export class TesterResponseTemplate extends Template {
   teamResponse: Section;
   testerResponse: TesterResponseSection;
   comment: IssueComment;
-  teamChosenSeverity: string;
-  teamChosenType: string;
+  teamChosenSeverity?: string;
+  teamChosenType?: string;
 
   constructor(githubIssueComments: GithubComment[]) {
     super(Object.values(TesterResponseHeaders));
