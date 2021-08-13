@@ -21,7 +21,7 @@ describe('LabelComponent', () => {
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
     phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
 
-    labelComponent = new LabelComponent(issueService, null, null, phaseService, labelService, null);
+    labelComponent = new LabelComponent(issueService, null, null, phaseService, labelService, null, null);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;

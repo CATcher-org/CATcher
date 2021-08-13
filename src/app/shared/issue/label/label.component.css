@@ -1,3 +1,21 @@
 .no-arrow .mat-select-arrow {
   visibility: hidden;
 }
+
+.option {
+  background-color: Transparent;
+  border: none;
+  outline:none;
+  margin-right: 30px
+}
+
+.infoPopup {
+  cursor: pointer;
+  background-color: Transparent;
+  border: none;
+  outline:none;
+  text-align: center;
+  position: absolute;
+  right: 0px;
+  top: 30%;
+}
