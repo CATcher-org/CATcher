@@ -26,7 +26,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   @Input() teamFilter: string;
 
-  @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
+  @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
 
   constructor(public issueService: IssueService,
               public permissions: PermissionService, public userService: UserService) {
