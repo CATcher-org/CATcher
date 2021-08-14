@@ -7,9 +7,6 @@ import { GithubEventService } from '../../core/services/githubevent.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
-import { Observable } from 'rxjs';
-
-const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version of CATcher.";
 
 @Component({
   selector: 'app-auth-confirm-login',
@@ -42,12 +39,11 @@ export class ConfirmLoginComponent implements OnInit {
 
   /**
    * Will complete the process of logging in the given user.
-   * @param username - The user to log in.
    */
-  completeLoginProcess(username: string): void {
+  completeLoginProcess(): void {
     this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-    this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
-    this.userService.createUserModel(username).pipe(
+    this.phaseService.setPhaseOwners(this.currentSessionOrg, this.username);
+    this.userService.createUserModel(this.username).pipe(
       flatMap(() => this.phaseService.sessionSetup()),
       flatMap(() => this.githubEventService.setLatestChangeEvent()),
     ).subscribe(() => {
@@ -58,5 +54,4 @@ export class ConfirmLoginComponent implements OnInit {
       this.logger.info(`Completion of login process failed with an error: ${error}`);
     });
   }
-
 }
