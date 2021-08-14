@@ -1,4 +1,5 @@
 import { MarkedOptions, MarkedRenderer } from "ngx-markdown";
+import DOMPurify from 'dompurify';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -16,6 +17,7 @@ export function markedOptionsFactory(): MarkedOptions {
     breaks: false,
     pedantic: false,
     sanitize: true,
+    sanitizer: DOMPurify.sanitize,
     smartLists: true,
     smartypants: false,
   };
