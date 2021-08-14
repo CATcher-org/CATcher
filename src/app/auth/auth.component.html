@@ -39,11 +39,7 @@
     </div>
 
     <div *ngIf="!isUserAuthenticating()">
-      <button mat-stroked-button class="sign-in-button" color="primary" (click)="completeLoginProcess(currentUserName)"
-              [disabled]="isUserAuthenticating()">
-        <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo"> </span>
-        <span> Continue as {{this.currentUserName}} </span>
-      </button>
+      <app-auth-confirm-login [username]="currentUserName" [currentSessionOrg]="this.currentSessionOrg"></app-auth-confirm-login>
 
       <button *ngIf="electronService.isElectron()" mat-button style="margin-top: 10px; margin-bottom: 10px;" [disabled]="isUserAuthenticating()"
               (click)="logIntoAnotherAccount()"> Log in to another account </button>

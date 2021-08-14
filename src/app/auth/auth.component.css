@@ -50,18 +50,6 @@
   margin: 10px;
 }
 
-.logo {
-  align-items: center;
-  display: inline-flex;
-  margin: 0 3px 3px 3px
-}
-
-.github-logo {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-}
-
 .login-with-oauth-btn {
   width: 100%;
 }

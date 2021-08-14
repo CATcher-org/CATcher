@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
-import { AuthService, AuthState } from 'src/app/core/services/auth.service';
-import { ErrorHandlingService } from 'src/app/core/services/error-handling.service';
-import { GithubEventService } from 'src/app/core/services/githubevent.service';
-import { LoggingService } from 'src/app/core/services/logging.service';
-import { PhaseService } from 'src/app/core/services/phase.service';
-import { UserService } from 'src/app/core/services/user.service';
-import Observable from 'zen-observable-ts';
+import { AuthService, AuthState } from '../../core/services/auth.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { GithubEventService } from '../../core/services/githubevent.service';
+import { LoggingService } from '../../core/services/logging.service';
+import { PhaseService } from '../../core/services/phase.service';
+import { UserService } from '../../core/services/user.service';
+import { Observable } from 'rxjs';
 
 const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version of CATcher.";
 
@@ -19,7 +19,6 @@ const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version 
 export class ConfirmLoginComponent implements OnInit {
   @Input() username: string;
   @Input() currentSessionOrg: string;
-  @Input() checkAppIsOutdated: () => Observable<any>;
 
   constructor(private authService: AuthService,
               private phaseService: PhaseService,
@@ -51,7 +50,6 @@ export class ConfirmLoginComponent implements OnInit {
     this.userService.createUserModel(username).pipe(
       flatMap(() => this.phaseService.sessionSetup()),
       flatMap(() => this.githubEventService.setLatestChangeEvent()),
-      flatMap(() => this.checkAppIsOutdated()),
     ).subscribe(() => {
       this.handleAuthSuccess();
     }, (error) => {
