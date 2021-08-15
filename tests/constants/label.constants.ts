@@ -75,7 +75,8 @@ export const DARK_BG_LIGHT_TEXT = {
   cursor: 'default',
   padding: '3px',
   color: `#${COLOR_WHITE}`,
-  'font-weight': '410'
+  'font-weight': '410',
+  display: 'inline-flex'
 };
 
 export const LIGHT_BG_DARK_TEXT = {
@@ -84,7 +85,8 @@ export const LIGHT_BG_DARK_TEXT = {
   cursor: 'default',
   padding: '3px',
   color: `#${COLOR_BLACK}`,
-  'font-weight': '410'
+  'font-weight': '410',
+  display: 'inline-flex'
 };
 
 export const RESPONSE_REJECTED_LABEL = new Label(RESPONSE, RESPONSE_REJECTED, COLOR_RESPONSE_REJECTED);

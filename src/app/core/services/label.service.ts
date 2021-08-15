@@ -316,6 +316,7 @@ export class LabelService {
       'padding' : '3px',
       'color' : `#${textColor}`,
       'font-weight' : '410',
+      'display': 'inline-flex'
     };
 
     return styles;
