@@ -1,5 +1,5 @@
 import { MarkedOptions, MarkedRenderer } from "ngx-markdown";
-import DOMPurify from 'dompurify';
+import * as DOMPurify from 'dompurify';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
