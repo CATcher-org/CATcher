@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
 import { AuthService, AuthState } from '../../core/services/auth.service';
+import { ElectronService } from '../../core/services/electron.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubEventService } from '../../core/services/githubevent.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -17,7 +18,8 @@ export class ConfirmLoginComponent implements OnInit {
   @Input() username: string;
   @Input() currentSessionOrg: string;
 
-  constructor(private authService: AuthService,
+  constructor(public electronService: ElectronService,
+              private authService: AuthService,
               private phaseService: PhaseService,
               private userService: UserService,
               private errorHandlingService: ErrorHandlingService,
@@ -27,6 +29,17 @@ export class ConfirmLoginComponent implements OnInit {
   ) { }
 
   ngOnInit() { }
+
+  onGithubWebsiteClicked() {
+    window.open('https://github.com/', '_blank');
+    window.location.reload();
+  }
+
+  logIntoAnotherAccount() {
+    this.logger.info('Logging into another account');
+    this.electronService.clearCookies();
+    this.authService.startOAuthProcess();
+  }
 
   /**
    * Handles the clean up required after authentication and setting up of user data is completed.

@@ -179,17 +179,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     }, () => this.isSettingUpSession = false);
   }
 
-  logIntoAnotherAccount() {
-    this.logger.info('Logging into another account');
-    this.electronService.clearCookies();
-    this.authService.startOAuthProcess();
-  }
-
-  onGithubWebsiteClicked() {
-    window.open('https://github.com/', '_blank');
-    window.location.reload();
-  }
-
   goToSessionSelect() {
     this.authService.changeAuthState(AuthState.NotAuthenticated);
   }
