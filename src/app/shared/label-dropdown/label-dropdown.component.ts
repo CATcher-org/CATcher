@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { LabelService } from '../../core/services/label.service';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { Label } from '../../core/models/label.model';
+import { DialogService } from '../..//core/services/dialog.service';
 
 export const WHITE_TEXT_CLASS = 'white-text';
 export const BLACK_TEXT_CLASS = 'black-text';
@@ -20,7 +21,8 @@ export class LabelDropdownComponent implements OnInit {
   selectedColor: string;
   labelList: Label[];
 
-  constructor(public labelService: LabelService) { }
+  constructor(public labelService: LabelService,
+              public dialogService: DialogService) { }
 
   ngOnInit() {
     this.selectedColor = this.labelService.getColorOfLabel(this.initialValue);
@@ -32,8 +34,16 @@ export class LabelDropdownComponent implements OnInit {
     this.selectedColor = this.labelService.getColorOfLabel(labelValue);
   }
 
+  openModalPopup(label: Label): void {
+    this.dialogService.openLabelDefinitionDialog(label.getFormattedName(),
+    this.labelService.getLabelDefinition(label.labelValue, label.labelCategory));
+  }
+
+  hasLabelDefinition(label: Label): boolean {
+    return this.labelService.getLabelDefinition(label.labelValue, label.labelCategory) !== null;
+  }
+
   get dropdownTextColor(): string {
     return this.labelService.isDarkColor(this.selectedColor) ? WHITE_TEXT_CLASS : BLACK_TEXT_CLASS;
   }
-
 }
