@@ -1,15 +1,14 @@
 import { TeamResponseTemplate } from '../../../src/app/core/models/templates/team-response-template.model';
 
 import { DUMMY_TEAM_RESPONSE } from '../../constants/githubcomment.constants';
-
-const EXPECTED_TEAM_RESPONSE_HEADER = "# Team's Response";
-const EXPECTED_TEAM_RESPONSE_TEMPLATE_CONTENT = 'This is a simple response';
-
-const DUPLICATE_ISSUE_NUMBER = 100;
-const SIMPLE_TEAM_RESPONSE = "# Team's Response\r\n" + 'This is a simple response\r\n' + '## Duplicate status (if any): --';
-const TEAM_RESPONSE_WITH_WHITESPACE = "# Team's Response \r\n " + '  This is a simple response\r\n ' + '## Duplicate status (if any): --';
-const TEAM_RESPONSE_WITH_DUPLICATE =
-  "# Team's Response\r\n" + 'This is a simple response\r\n' + '## Duplicate status (if any): Duplicate of #100';
+import {
+  DUPLICATE_ISSUE_NUMBER,
+  EXPECTED_TEAM_RESPONSE_HEADER,
+  EXPECTED_TEAM_RESPONSE_TEMPLATE_CONTENT,
+  SIMPLE_TEAM_RESPONSE,
+  TEAM_RESPONSE_WITH_DUPLICATE,
+  TEAM_RESPONSE_WITH_WHITESPACE
+} from './team-response-template.constants';
 
 describe('TeamResponseTemplate class', () => {
   describe('teamResponse field', () => {
