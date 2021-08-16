@@ -7,6 +7,7 @@ import { PermissionService } from '../../../core/services/permission.service';
 import { Label } from '../../../core/models/label.model';
 import { LabelService } from '../../../core/services/label.service';
 import { PhaseService } from '../../../core/services/phase.service';
+import { DialogService } from '../../..//core/services/dialog.service';
 
 @Component({
   selector: 'app-issue-label',
@@ -16,6 +17,7 @@ import { PhaseService } from '../../../core/services/phase.service';
 export class LabelComponent implements OnInit, OnChanges {
   labelValues: Label[];
   labelColor: string;
+  labelDefinition?: string;
 
   @Input() issue: Issue;
   @Input() attributeName: string;
@@ -27,7 +29,8 @@ export class LabelComponent implements OnInit, OnChanges {
               private errorHandlingService: ErrorHandlingService,
               private phaseService: PhaseService,
               public labelService: LabelService,
-              public permissions: PermissionService) {
+              public permissions: PermissionService,
+              public dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -49,5 +52,14 @@ export class LabelComponent implements OnInit, OnChanges {
     }, (error) => {
       this.errorHandlingService.handleError(error);
     });
+  }
+
+  openDefinitionPage(value: Label): void {
+    this.labelDefinition = this.labelService.getLabelDefinition(value.labelValue, value.labelCategory);
+    this.dialogService.openLabelDefinitionDialog(value.getFormattedName(), this.labelDefinition);
+  }
+
+  hasLabelDefinition(value: Label): boolean {
+    return this.labelService.getLabelDefinition(value.labelValue, value.labelCategory) !== null;
   }
 }

@@ -15,6 +15,30 @@ export const EMPTY_TEAM_RESPONSE: GithubComment = {
   }
 };
 
+// Type and severity disagreeement
+export const TEAM_RESPONSE_MULTIPLE_DISAGREEMENT = {
+  body:
+    "# Team's Response\n" +
+    'This is a dummy team response comment: ' +
+    'Thanks for the feedback\n\n' +
+    '# Items for the Tester to Verify\n\n' +
+    '## :question: Issue severity\n\n' +
+    'Team chose [`severity.Low`]\n' +
+    'Originally [`severity.High`]\n\n' +
+    '- [ ] I disagree\n\n' +
+    '**Reason for disagreement:** [replace this with your reason]\n\n' +
+    '-------------------\n\n' +
+    '## :question: Issue type\n\n' +
+    'Team chose [`type.DocumentationBug`]\n' +
+    'Originally [`type.FunctionalityBug`]\n\n' +
+    '- [ ] I disagree\n\n' +
+    '**Reason for disagreement:** [replace this with your reason]\n\n' +
+    '-------------------',
+  created_at: '2021-06-29T17:15:11Z',
+  id: 870774171,
+  updated_at: '2021-06-29T17:15:11Z'
+} as GithubComment;
+
 export const PENDING_TUTOR_MODERATION: GithubComment = {
   body:
     '# Tutor Moderation\n\n' +
