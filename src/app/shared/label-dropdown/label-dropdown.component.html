@@ -5,10 +5,17 @@
       <mat-select-trigger>
         {{dropdownControl.value}}
       </mat-select-trigger>
-      <mat-option *ngFor="let value of labelList" [value]="value.labelValue">
-        <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
-        <span> {{value.labelValue}}</span>
-      </mat-option>
+      <div mat-menu-item *ngFor="let value of labelList">
+        <mat-option  [value]="value.labelValue" [ngStyle]="{'background': 'transparent'}">
+          <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
+          <span> {{value.labelValue}}</span>
+        </mat-option>
+
+        <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openModalPopup(value)">
+          <mat-icon style="font-size: 20px">info</mat-icon>
+        </button>
+        
+      </div>
     </mat-select>
     <mat-error *ngIf="dropdownControl.errors && dropdownControl.errors['required'] && dropdownControl.touched">
       {{this.labelService.getLabelTitle(attributeName)}} required.
