@@ -3,7 +3,6 @@ export const EXPECTED_TEAM_RESPONSE_TEMPLATE_CONTENT = 'This is a simple respons
 
 export const DUPLICATE_ISSUE_NUMBER = 100;
 export const SIMPLE_TEAM_RESPONSE = "# Team's Response\r\n" + 'This is a simple response\r\n' + '## Duplicate status (if any): --';
-export const TEAM_RESPONSE_WITH_WHITESPACE =
-  "# Team's Response \r\n " + '  This is a simple response\r\n ' + '## Duplicate status (if any): --';
-export const TEAM_RESPONSE_WITH_DUPLICATE =
-  "# Team's Response\r\n" + 'This is a simple response\r\n' + '## Duplicate status (if any): Duplicate of #100';
+export const TEAM_RESPONSE_WITH_WHITESPACE = "# Team's Response \r\n " + '  This is a simple response\r\n ' + '## Duplicate status (if any): --';
+export const TEAM_RESPONSE_WITH_DUPLICATE = "# Team's Response\r\n" + 'This is a simple response\r\n' + '## Duplicate status (if any): Duplicate of #100';
+
