@@ -1,7 +1,7 @@
 export class Checkbox {
-	checkboxString: string; // in the format of - [ ] or - [x]
+  checkboxString: string; // in the format of - [ ] or - [x]
 
-  constructor(checkboxString: string){
+  constructor(checkboxString: string) {
     this.checkboxString = checkboxString;
   }
 
