@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { LabelDefinitionPopupComponent } from "../../shared/label-definition-popup/label-definition-popup.component";
 import { UserConfirmationComponent } from '../guards/user-confirmation/user-confirmation.component';
 
 @Injectable({
@@ -16,6 +17,15 @@ export class DialogService {
                 messages: messages,
                 yesMessage: yesButtonMessage,
                 noMessage: noButtonMessage
+            }
+        });
+    }
+
+    openLabelDefinitionDialog(labelName: String, labelDefinition: String) {
+        return this.dialog.open(LabelDefinitionPopupComponent, {
+            data: {
+                header: labelName,
+                body: labelDefinition
             }
         });
     }
