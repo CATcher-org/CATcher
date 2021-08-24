@@ -1,6 +1,6 @@
 import { Checkbox } from './checkbox.model';
 export class IssueDispute {
-  readonly TODO_UNCHECKED = '- [ ] Done';
+  readonly TODO_DESCRIPTION = 'Done';
   readonly INITIAL_RESPONSE = '[replace this with your explanation]';
   readonly TITLE_PREFIX = '## :question: ';
   readonly LINE_BREAK = '-------------------\n';
@@ -13,11 +13,11 @@ export class IssueDispute {
     this.title = title;
     this.description = description;
     this.tutorResponse = this.INITIAL_RESPONSE;
-    this.todo = new Checkbox(this.TODO_UNCHECKED);
+    this.todo = new Checkbox(this.TODO_DESCRIPTION, false);
   }
 
   isDone(): boolean {
-    return this.todo.isChecked();
+    return this.todo.isChecked;
   }
 
   /*
@@ -27,7 +27,7 @@ export class IssueDispute {
   toTutorResponseString(): string {
     let toString = '';
     toString += this.TITLE_PREFIX + this.title + '\n\n';
-    toString += this.todo.checkboxString + '\n\n';
+    toString += this.todo.toString() + '\n\n';
     toString += this.tutorResponse + '\n\n';
     toString += this.LINE_BREAK;
     return toString;

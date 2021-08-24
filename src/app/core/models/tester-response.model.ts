@@ -10,10 +10,10 @@ export class TesterResponse {
   disagreeCheckbox: Checkbox; // e.g - [x] I disagree
   reasonForDisagreement: string;
 
-  constructor(title: string, description: string, disagreeCheckbox: string, reasonForDiagreement: string) {
+  constructor(title: string, description: string, checkboxDescription: string, isChecked: boolean, reasonForDiagreement: string) {
     this.title = title;
     this.description = description;
-    this.disagreeCheckbox = new Checkbox(disagreeCheckbox);
+    this.disagreeCheckbox = new Checkbox(checkboxDescription, isChecked);
     this.reasonForDisagreement = reasonForDiagreement;
   }
 
@@ -21,14 +21,14 @@ export class TesterResponse {
     let toString = '';
     toString += this.TITLE_PREFIX + this.title + '\n\n';
     toString += this.description + '\n\n';
-    toString += this.disagreeCheckbox.checkboxString + '\n\n';
+    toString += this.disagreeCheckbox.toString() + '\n\n';
     toString += this.DISAGREEMENT_PREFIX + this.reasonForDisagreement + '\n\n';
     toString += this.LINE_BREAK;
     return toString;
   }
 
   isDisagree(): boolean {
-    return this.disagreeCheckbox.isChecked();
+    return this.disagreeCheckbox.isChecked;
   }
 
   compareTo(anotherResponse: TesterResponse): number {

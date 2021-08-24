@@ -1,19 +1,17 @@
 export class Checkbox {
-  checkboxString: string; // in the format of - [ ] or - [x]
+  description: string; // in the format of - [ ] or - [x]
+  isChecked: boolean;
 
-  constructor(checkboxString: string) {
-    this.checkboxString = checkboxString;
-  }
-
-  isChecked(): boolean {
-    return this.checkboxString.charAt(3) === 'x';
+  constructor(description: string, isChecked: boolean) {
+    this.description = description;
+    this.isChecked = isChecked;
   }
 
   setChecked(isChecked: boolean) {
-    if (isChecked) {
-      this.checkboxString = this.checkboxString.replace('[ ]', '[x]');
-    } else {
-      this.checkboxString = this.checkboxString.replace('[x]', '[ ]');
-    }
+    this.isChecked = isChecked;
+  }
+
+  toString(): string {
+    return `- ${this.isChecked ? '[x]' : '[ ]'} ${this.description}`;
   }
 }

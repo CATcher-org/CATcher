@@ -16,7 +16,7 @@ export class ModerationSection extends Section {
           const description = `${todo}\n${tutorResponse}`;
           const newDispute = new IssueDispute(title, description);
 
-          newDispute.todo = new Checkbox(todo);
+          newDispute.todo = new Checkbox(todo, false);
           newDispute.tutorResponse = tutorResponse.trim();
           this.disputesToResolve.push(newDispute);
         }
