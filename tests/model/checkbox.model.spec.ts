@@ -4,7 +4,7 @@ const EXPECTED_CHECKED_STRING = '- [x] todo';
 const EXPECTED_UNCHECKED_STRING = '- [ ] todo';
 
 describe('Checkbox', () => {
-  it('sets the correct isChecked value', () => {
+  it('.setChecked() sets the correct isChecked value', () => {
     const checkbox = new Checkbox('todo', false);
     checkbox.setChecked(true);
     expect(checkbox.isChecked).toBe(true);
