@@ -17,8 +17,14 @@ export class TesterResponseSection extends Section {
     super(sectionalDependency, unprocessedContent);
     if (!this.parseError) {
       let matches;
-      const regex: RegExp = new RegExp('#{2} *:question: *([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]* *Originally.*'
-        + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)'
+      // first line matches the title e.g. ## :question: Issue Title \r\n
+      // second line matches the description e.g. Team Chose severity.Low \r\n Originally (or Team Chose) severity.High \r\n \r\n
+      // third matches the disagreement reason e.g. - [x] (or - [ ]) **Reason for disagreement:** disagreement explanation
+      // last line matches break consisting of 19 hyphnes
+      const regex: RegExp = new RegExp(
+        '#{2} *:question: *([\\w ]+)[\\r\\n]*'
+        + '(Team Chose.*[\\r\\n]* *Originally.*|Team Chose.*[\\r\\n]*)[\\r\\n]*'
+        + '(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)'
         + '[\\n\\r]-{19}',
         'gi');
       while (matches = regex.exec(this.content)) {
