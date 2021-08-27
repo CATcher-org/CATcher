@@ -176,4 +176,8 @@ export class HeaderComponent implements OnInit {
       }
     });
   }
+  
+  exportLogFile() {
+    this.loggingService.exportLogFile();
+  }
 }

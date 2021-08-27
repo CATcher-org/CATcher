@@ -1,22 +1,23 @@
+import { Checkbox } from './checkbox.model';
 export class IssueDispute {
-  readonly TODO_UNCHECKED = '- [ ] Done';
+  readonly TODO_DESCRIPTION = 'Done';
   readonly INITIAL_RESPONSE = '[replace this with your explanation]';
   readonly TITLE_PREFIX = '## :question: ';
   readonly LINE_BREAK = '-------------------\n';
   title: string; // e.g Issue severity
   description: string; // e.g Team says: xxx\n Tester says: xxx.
   tutorResponse: string; // e.g Not justified. I've changed it back.
-  todo: string; // e.g  - [x] Done
+  todo: Checkbox; // e.g  - [x] Done
 
   constructor(title: string, description: string) {
     this.title = title;
     this.description = description;
     this.tutorResponse = this.INITIAL_RESPONSE;
-    this.todo = this.TODO_UNCHECKED;
+    this.todo = new Checkbox(this.TODO_DESCRIPTION, false);
   }
 
   isDone(): boolean {
-    return this.todo.charAt(3) === 'x';
+    return this.todo.isChecked;
   }
 
   /*
@@ -26,7 +27,7 @@ export class IssueDispute {
   toTutorResponseString(): string {
     let toString = '';
     toString += this.TITLE_PREFIX + this.title + '\n\n';
-    toString += this.todo + '\n\n';
+    toString += this.todo.toString() + '\n\n';
     toString += this.tutorResponse + '\n\n';
     toString += this.LINE_BREAK;
     return toString;
@@ -52,10 +53,6 @@ export class IssueDispute {
   }
 
   setIsDone(isDone: boolean) {
-    if (isDone) {
-      this.todo = this.todo.replace('[ ]', '[x]');
-    } else {
-      this.todo = this.todo.replace('[x]', '[ ]');
-    }
+    this.todo.setChecked(isDone);
   }
 }
