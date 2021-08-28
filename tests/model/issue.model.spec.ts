@@ -58,7 +58,7 @@ describe('Issue', () => {
   const tutorResponseStringHeader = '# Tutor Moderation\n\n';
 
   const newIssueDispute = new IssueDispute('Cannot Work', 'Help Please');
-  const newTesterResponse = new TesterResponse('Cannot Work', 'Help Please', '- [ ] Not Done', 'Reason');
+  const newTesterResponse = new TesterResponse('Cannot Work', 'Help Please', 'Not Done', false, 'Reason');
 
   it('.clone() should intialise the cloned issue with the correct phase and team', () => {
     const phaseBugReportingIssue = dummyIssue.clone(Phase.phaseBugReporting);
