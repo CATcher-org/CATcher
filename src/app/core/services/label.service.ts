@@ -17,17 +17,43 @@ const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
 
+// The HTML template definition of selected labels are hard-coded here, move to a config file in the future
+const VERY_LOW_DEFINITION = '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not affect usage</mark>. For example, '
+  + '<ul>'
+  + '<li>typo issues</li>'
+  + '<li>spacing issues</li>'
+  + '<li>layout issues</li>'
+  + '<li>color issues</li>'
+  + '<li>font issues</li>'
+  + '</ul>'
+  + 'in the docs or the UI that doesn\'t affect usage.</p>';
+const LOW_DEFINITION = '<p>A flaw that is unlikely to affect normal operations of the product. '
+  + 'Appears only in very rare situations and causes a minor inconvenience only.</p>';
+const MEDIUM_DEFINITION = '<p>A flaw that causes occasional inconvenience to some users but they can '
+  + 'continue to use the product.</p>';
+const HIGH_DEFINITION = '<p>A flaw that affects most users and causes major problems for users.'
+  + 'i.e., makes the product almost unusable for most users.</p>';
+
+const FUNCTIONALITY_BUG_DEFINITION = '<p>A functionality does not work as specified/expected.</p>';
+const FEATURE_FLAW_DEFINITION = '<p>Some functionality missing from a feature delivered in the current version in '
+  + 'a way that the feature becomes less useful to the intended target user for <i>normal</i> usage. '
+  + 'i.e., the feature is not \'complete\'.\nIn other words, an acceptance-testing bug that falls within '
+  + 'the scope of the current version features. These issues are counted against the <i>product design</i> aspect '
+  + 'of the project.</p>';
+const DOCUMENTATION_BUG_DEFINITION = '<p>A flaw in the documentation '
+  + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
+
 const REQUIRED_LABELS = {
   severity: {
-    VeryLow: new Label('severity', 'VeryLow', 'ffe0e0'),
-    Low: new Label('severity', 'Low', 'ffcccc'),
-    Medium: new Label('severity', 'Medium', 'ff9999'),
-    High: new Label('severity', 'High', 'ff6666')
+    VeryLow: new Label('severity', 'VeryLow', 'ffe0e0', VERY_LOW_DEFINITION),
+    Low: new Label('severity', 'Low', 'ffcccc', LOW_DEFINITION),
+    Medium: new Label('severity', 'Medium', 'ff9999', MEDIUM_DEFINITION),
+    High: new Label('severity', 'High', 'ff6666', HIGH_DEFINITION)
   },
   type: {
-    DocumentationBug: new Label('type', 'DocumentationBug', 'd966ff'),
-    FeatureFlaw: new Label('type', 'FeatureFlaw', 'd966ff'),
-    FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc')
+    DocumentationBug: new Label('type', 'DocumentationBug', 'd966ff', DOCUMENTATION_BUG_DEFINITION),
+    FeatureFlaw: new Label('type', 'FeatureFlaw', 'd966ff', FEATURE_FLAW_DEFINITION),
+    FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc', FUNCTIONALITY_BUG_DEFINITION)
   },
   response: {
     Accepted: new Label('response', 'Accepted', '00802b'),
@@ -60,24 +86,26 @@ export class LabelService {
   private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
   private static statusLabels: Label[] = Object.values(REQUIRED_LABELS.status);
   private static otherLabels: Label[] = Object.values(REQUIRED_LABELS.others);
-  private static labelArrays = {
+  private static allLabelArrays = {
     severity: LabelService.severityLabels,
     type: LabelService.typeLabels,
     response: LabelService.responseLabels,
     status: LabelService.statusLabels,
     others: LabelService.otherLabels
   };
+  private static testerLabelArrays = {
+    severity: LabelService.severityLabels,
+    type: LabelService.typeLabels,
+  };
 
   constructor(private githubService: GithubService) {
   }
 
-  public static getRequiredLabelsAsArray(): Label[] {
+  public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
 
-    for (const category of Object.keys(this.labelArrays)) {
-      requiredLabels = requiredLabels.concat(this.labelArrays[category]);
-    }
-
+    const labels = needAllLabels ? Object.values(this.allLabelArrays) : Object.values(this.testerLabelArrays);
+    labels.map(label => requiredLabels = requiredLabels.concat(label));
     return requiredLabels;
   }
 
@@ -86,19 +114,19 @@ export class LabelService {
    * synchronise the labels in our application
    * with the remote repository.
    */
-  syncLabels(): UnaryFunction<Observable<boolean>, Observable<any>> {
+  syncLabels(needAllLabels: boolean): UnaryFunction<Observable<boolean>, Observable<any>> {
     return pipe(
-      flatMap(() => this.synchronizeRemoteLabels())
+      flatMap(() => this.synchronizeRemoteLabels(needAllLabels))
     );
   }
 
   /**
    * Synchronizes the labels in github with those required by the application.
    */
-  synchronizeRemoteLabels(): Observable<any> {
+  synchronizeRemoteLabels(needAllLabels: boolean): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray());
+          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray(needAllLabels));
           return response;
         })
       );
@@ -148,12 +176,34 @@ export class LabelService {
       return WHITE_COLOR;
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray().find(label => label.labelValue === labelValue);
+    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find(label => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
       return WHITE_COLOR;
     } else {
       return existingLabel.labelColor;
+    }
+  }
+
+  /**
+   * Returns the definition of the label by searching a list of
+   * all available labels.
+   * @param labelValue: the label's value (e.g Low/ Medium/ High / ...).
+   * @param labelCategory: the label's category (e.g Type/ Severity / ...).
+   */
+  getLabelDefinition(labelValue: string, labelCategory: string): string {
+    if (labelValue === '' || labelValue === null || labelCategory === '' || labelCategory === null) {
+      return null;
+    }
+
+    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find(
+      label => label.labelValue === labelValue && label.labelCategory === labelCategory
+    );
+
+    if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
+      return null;
+    } else {
+      return existingLabel.labelDefinition;
     }
   }
 
@@ -218,7 +268,9 @@ export class LabelService {
 
       const labelColor: string = String(label['color']);
 
-      labelData.push(new Label(labelCategory, labelValue, labelColor));
+      const labelDefinition: string = String(label['definition']);
+
+      labelData.push(new Label(labelCategory, labelValue, labelColor, labelDefinition));
     }
     return labelData;
   }
@@ -264,6 +316,7 @@ export class LabelService {
       'padding' : '3px',
       'color' : `#${textColor}`,
       'font-weight' : '410',
+      'display': 'inline-flex'
     };
 
     return styles;
