@@ -31,7 +31,8 @@ export class TesterResponseSection extends Section {
             this.teamChosenType = this.parseTeamChosenType(description);
           }
 
-          this.testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDisagreement.trim()));
+          this.testerResponses.push(new TesterResponse(title, description, this.parseCheckboxDescription(disagreeCheckbox),
+            this.parseCheckboxValue(disagreeCheckbox), reasonForDisagreement.trim()));
         }
       }
     }
@@ -61,6 +62,14 @@ export class TesterResponseSection extends Section {
   parseTeamChosenType(description: string): string {
     return extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX,
       this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
+  }
+
+  parseCheckboxValue(checkboxString: string): boolean {
+    return checkboxString.charAt(3) === 'x'; // checkboxString in the format of - [x] or - [ ]
+  }
+
+  parseCheckboxDescription(checkboxString: string): string {
+    return checkboxString.substring(6).trim(); // checkboxString has a fixed 5 characters at the start before the description
   }
 
   toString(): string {
