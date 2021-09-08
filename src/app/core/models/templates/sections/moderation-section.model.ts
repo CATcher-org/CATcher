@@ -1,3 +1,4 @@
+import { Checkbox } from '../../checkbox.model';
 import { IssueDispute } from '../../issue-dispute.model';
 import { Section, SectionalDependency } from './section.model';
 
@@ -15,7 +16,7 @@ export class ModerationSection extends Section {
           const description = `${todo}\n${tutorResponse}`;
           const newDispute = new IssueDispute(title, description);
 
-          newDispute.todo = todo;
+          newDispute.todo = new Checkbox(todo, false);
           newDispute.tutorResponse = tutorResponse.trim();
           this.disputesToResolve.push(newDispute);
         }
@@ -23,7 +24,7 @@ export class ModerationSection extends Section {
     }
   }
 
-  get todoList(): string[] {
+  get todoList(): Checkbox[] {
     return this.disputesToResolve.map(e => e.todo);
   }
 
