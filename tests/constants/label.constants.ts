@@ -89,6 +89,16 @@ export const LIGHT_BG_DARK_TEXT = {
   display: 'inline-flex'
 };
 
+export const INLINE_BLOCK_TEXT = {
+  'background-color': `#${COLOR_WHITE}`,
+  'border-radius': '3px',
+  cursor: 'default',
+  padding: '3px',
+  color: `#${COLOR_BLACK}`,
+  'font-weight': '410',
+  display: 'inline-block'
+};
+
 export const RESPONSE_REJECTED_LABEL = new Label(RESPONSE, RESPONSE_REJECTED, COLOR_RESPONSE_REJECTED);
 export const STATUS_DONE_LABEL = new Label(STATUS, STATUS_DONE, COLOR_STATUS_DONE);
 
