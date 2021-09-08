@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IssueService } from '../../core/services/issue.service';
 import { Issue } from '../../core/models/issue.model';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -53,24 +53,12 @@ export class NewIssueComponent implements OnInit {
   }
 
   canDeactivate() {
-    return !this.isTitleEditing() && !this.isDescriptionEditing()
-      && !this.isSeverityEditing() && !this.isTypeEditing();
+    return !this.isAttributeEditing(this.title) && !this.isAttributeEditing(this.description)
+      && !this.isAttributeEditing(this.severity) && !this.isAttributeEditing(this.type);
   }
 
-  isTitleEditing() {
-    return this.title.value !== '' && this.title.value !== null;
-  }
-
-  isDescriptionEditing() {
-    return this.description.value !== '' && this.description.value !== null;
-  }
-
-  isSeverityEditing() {
-    return this.severity.value !== '' && this.severity.value !== null;
-  }
-
-  isTypeEditing() {
-    return this.type.value !== '' && this.type.value !== null;
+  isAttributeEditing(attribute: AbstractControl) {
+    return attribute.value !== null && attribute.value !== '';
   }
 
   get title() {
