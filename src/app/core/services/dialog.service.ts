@@ -26,7 +26,6 @@ export class DialogService {
             data: {
                 header: labelName,
                 body: labelDefinition
-
             }
         });
     }
