@@ -34,6 +34,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   authStateSubscription: Subscription;
   profileForm: FormGroup;
   currentUserName: string;
+  urlEncodedProfile: Profile
 
   constructor(public appService: ApplicationService,
               public electronService: ElectronService,
@@ -78,10 +79,10 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.router.navigate([this.phaseService.currentPhase]);
       return;
     }
-
     this.initAccessTokenSubscription();
     this.initAuthStateSubscription();
     this.initProfileForm();
+    this.createProfileFromUrlQueryParams();
     if (oauthCode) { // runs upon receiving oauthCode from the redirect
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.restoreOrgDetailsFromLocalStorage();
@@ -295,5 +296,16 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
       });
     });
+  }
+
+  private createProfileFromUrlQueryParams() {
+    if (window.location.search) {
+      const urlParams = new  URLSearchParams(window.location.search);
+      if (urlParams.has('session') && urlParams.has('settings')) {
+        const session = urlParams.get('session');
+        const settingsLocation = urlParams.get('settings');
+        this.urlEncodedProfile = { profileName: session, repoName: settingsLocation }; 
+      }
+    }
   }
 }
