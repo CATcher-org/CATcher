@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
 import {
@@ -40,6 +40,7 @@ export class ProfilesComponent implements OnInit {
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
+  @Input() urlEncodedProfile: Profile;
   @Output() selectedProfileEmitter: EventEmitter<Profile> = new EventEmitter<Profile>();
 
   profilesData = {
@@ -56,6 +57,10 @@ export class ProfilesComponent implements OnInit {
 
   ngOnInit() {
     this.initProfiles();
+    if (this.urlEncodedProfile !== undefined) {
+      this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
+      this.selectProfile(this.urlEncodedProfile);
+    }
   }
 
   /**
