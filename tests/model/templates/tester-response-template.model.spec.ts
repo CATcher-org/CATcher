@@ -1,3 +1,4 @@
+import { Checkbox } from '../../../src/app/core/models/checkbox.model';
 import { TesterResponseTemplate } from '../../../src/app/core/models/templates/tester-response-template.model';
 
 import { TEAM_RESPONSE_MULTIPLE_DISAGREEMENT } from '../../constants/githubcomment.constants';
@@ -34,12 +35,12 @@ describe('TesterResponseTemplate class', () => {
 
       expect(template.testerResponse.testerResponses[0].title).toBe(ISSUE_SEVERITY_TITLE);
       expect(template.testerResponse.testerResponses[0].description).toBe(ISSUE_SEVERITY_DESCRIPTION);
-      expect(template.testerResponse.testerResponses[0].disagreeCheckbox).toBe(DISAGREE_CHECKBOX);
+      expect(template.testerResponse.testerResponses[0].disagreeCheckbox.toString()).toBe(DISAGREE_CHECKBOX);
       expect(template.testerResponse.testerResponses[0].reasonForDisagreement).toBe(DISAGREE_REASON);
 
       expect(template.testerResponse.testerResponses[1].title).toBe(ISSUE_TYPE_TITLE);
       expect(template.testerResponse.testerResponses[1].description).toBe(ISSUE_TYPE_DESCRIPTION);
-      expect(template.testerResponse.testerResponses[1].disagreeCheckbox).toBe(DISAGREE_CHECKBOX);
+      expect(template.testerResponse.testerResponses[1].disagreeCheckbox.toString()).toBe(DISAGREE_CHECKBOX);
       expect(template.testerResponse.testerResponses[1].reasonForDisagreement).toBe(DISAGREE_REASON);
     });
   });
