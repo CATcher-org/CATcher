@@ -46,8 +46,8 @@ const DOCUMENTATION_BUG_DEFINITION = '<p>A flaw in the documentation '
 const ACCEPTED_DEFINITION = '<p>You accept is as a bug.</p>';
 const NOT_IN_SCOPE_DEFINITION = '<p>It is a valid issue but not something the team should be penalized for '
   + '<span style="color:grey;">e.g., it was not related to features delivered in this version</span>.</p>';
-const REJECTED_DEFINITION = '<p>What tester treated as a bug is in fact the expected behavior, or the tester was mistaken in some other way.</p>'
-const CANNOT_REPRODUCE_DEFINITION = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>'
+const REJECTED_DEFINITION = '<p>What tester treated as a bug is in fact the expected behavior, or the tester was mistaken in some other way.</p>';
+const CANNOT_REPRODUCE_DEFINITION = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
 const ISSUE_UNCLEAR_DEFINITION = '<p>The issue description is not clear. Don\'t post comments asking the tester to give more info. '
   + 'The tester will not be able to see those comments because the bug reports are anonymous.</p>';
 
