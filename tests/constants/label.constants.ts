@@ -51,6 +51,16 @@ export const DEFINITION_FEATURE_FLAW =
   'of the project.</p>';
 export const DEFINITION_DOCUMENTATION_BUG =
   '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
+export const DEFINITION_ACCEPTED = '<p>You accept is as a bug.</p>';
+export const DEFINITION_NOT_IN_SCOPE =
+  '<p>It is a valid issue but not something the team should be penalized for ' +
+  '<span style="color:grey;">e.g., it was not related to features delivered in this version</span>.</p>';
+export const DEFINITION_REJECTED =
+  '<p>What tester treated as a bug is in fact the expected behavior, or the tester was mistaken in some other way.</p>';
+export const DEFINITION_CANNOT_REPRODUCE = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
+export const DEFINITION_ISSUE_UNCLEAR =
+  "<p>The issue description is not clear. Don't post comments asking the tester to give more info. " +
+  'The tester will not be able to see those comments because the bug reports are anonymous.</p>';
 
 // Label color constants
 export const COLOR_BLACK = '000000';
@@ -89,7 +99,7 @@ export const LIGHT_BG_DARK_TEXT = {
   display: 'inline-flex'
 };
 
-export const RESPONSE_REJECTED_LABEL = new Label(RESPONSE, RESPONSE_REJECTED, COLOR_RESPONSE_REJECTED);
+export const RESPONSE_REJECTED_LABEL = new Label(RESPONSE, RESPONSE_REJECTED, COLOR_RESPONSE_REJECTED, DEFINITION_REJECTED);
 export const STATUS_DONE_LABEL = new Label(STATUS, STATUS_DONE, COLOR_STATUS_DONE);
 
 export const TYPE_DOCUMENTATION_BUG_LABEL = new Label(
@@ -113,7 +123,8 @@ export const SEVERITY_LOW_LABEL = new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERI
 export const SOME_TEAM_RESPONSE_PHASE_LABELS = [
   {
     color: COLOR_RESPONSE_ACCEPTED,
-    name: RESPONSE + '.' + RESPONSE_ACCEPTED
+    name: RESPONSE + '.' + RESPONSE_ACCEPTED,
+    definition: DEFINITION_ACCEPTED
   },
   {
     color: COLOR_SEVERITY_LOW,

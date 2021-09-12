@@ -173,6 +173,12 @@ describe('LabelService: getLabelDefinition()', () => {
     );
   });
 
+  it('should return the correct label definition for response.Rejected', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.RESPONSE_REJECTED, LabelConstant.RESPONSE)).toEqual(
+      LabelConstant.DEFINITION_REJECTED
+    );
+  });
+
   it('should return null for label with no definition', () => {
     expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE, LabelConstant.STATUS)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
   });
