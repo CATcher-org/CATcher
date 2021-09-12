@@ -24,10 +24,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Deploy on Web
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install
-          npm run deploy:web -- --repo=https://${{secrets.GH_TOKEN}}@github.com/CATcher-org/CATcher.git
+          npm run deploy:web -- --repo=https://x-access-token:$GITHUB_TOKEN@github.com/CATcher-org/CATcher.git
 
   draft_release:
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Build
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install
           npm run electron:linux
@@ -101,7 +101,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Build
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install
           npm run electron:windows
@@ -130,7 +130,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Build
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install
           npm run electron:mac
