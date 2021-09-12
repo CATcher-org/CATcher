@@ -51,7 +51,7 @@ export const DEFINITION_FEATURE_FLAW =
   'of the project.</p>';
 export const DEFINITION_DOCUMENTATION_BUG =
   '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
-export const DEFINITION_ACCEPTED = '<p>You accept is as a bug.</p>';
+export const DEFINITION_ACCEPTED = '<p>You accept it as a bug.</p>';
 export const DEFINITION_NOT_IN_SCOPE =
   '<p>It is a valid issue but not something the team should be penalized for ' +
   '<span style="color:grey;">e.g., it was not related to features delivered in this version</span>.</p>';
