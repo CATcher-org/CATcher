@@ -59,8 +59,7 @@ export const DEFINITION_REJECTED =
   '<p>What tester treated as a bug is in fact the expected behavior (from the user\'s point of view), '
   + 'or the tester was mistaken in some other way.</p>';
 export const DEFINITION_CANNOT_REPRODUCE = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
-export const DEFINITION_ISSUE_UNCLEAR =
-  "<p>The issue description is not clear.</p>';
+export const DEFINITION_ISSUE_UNCLEAR = '<p>The issue description is not clear.</p>';
 
 // Label color constants
 export const COLOR_BLACK = '000000';
