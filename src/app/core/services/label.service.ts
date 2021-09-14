@@ -304,7 +304,7 @@ export class LabelService {
    * @return the style with background-color in rgb
    * @throws exception if input is an invalid color code
    */
-  setLabelStyle(color: string) {
+  setLabelStyle(color: string, display: string = 'inline-flex') {
     let textColor: string;
 
     textColor = this.isDarkColor(color) ? COLOR_LIGHT_TEXT : COLOR_DARK_TEXT;
@@ -316,7 +316,7 @@ export class LabelService {
       'padding' : '3px',
       'color' : `#${textColor}`,
       'font-weight' : '410',
-      'display': 'inline-flex'
+      'display': display
     };
 
     return styles;
