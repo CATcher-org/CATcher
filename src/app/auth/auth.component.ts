@@ -302,6 +302,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     const urlParams = this.activatedRoute.snapshot.queryParamMap;
     let session = '';
     let settingsLocation = '';
+
     if (urlParams.has('session')) {
       session = urlParams.get('session');
     }

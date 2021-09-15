@@ -131,6 +131,9 @@ export class ProfilesComponent implements OnInit {
     }
   }
   setUrlEncodedProfile(validProfiles: Profile[]) {
+    if (this.urlEncodedProfile.profileName.length === 0 && this.urlEncodedProfile.repoName.length === 0) {
+      return;
+    }
     const profileNameExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName);
     const repoNameExists = validProfiles.some(profile => profile.repoName === this.urlEncodedProfile.repoName);
     const profileExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName
