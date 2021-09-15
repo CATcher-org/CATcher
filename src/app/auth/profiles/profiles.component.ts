@@ -133,8 +133,8 @@ export class ProfilesComponent implements OnInit {
   setUrlEncodedProfile(validProfiles: Profile[]) {
     const profileNameExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName);
     const repoNameExists = validProfiles.some(profile => profile.repoName === this.urlEncodedProfile.repoName);
-    const profileExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName 
-      && profile.repoName === this.urlEncodedProfile.repoName)
+    const profileExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName
+      && profile.repoName === this.urlEncodedProfile.repoName);
 
     if (profileExists) {
       this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
@@ -143,9 +143,8 @@ export class ProfilesComponent implements OnInit {
       this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
       this.errorHandlingService.handleError(new Error('Please enter a valid Settings Location'));
     } else if (repoNameExists) {
-      this.selectedProfileEmitter.emit(this.urlEncodedProfile)
+      this.selectedProfileEmitter.emit(this.urlEncodedProfile);
       this.errorHandlingService.handleError(new Error('Please enter a valid Session'));
     }
   }
-  
 }

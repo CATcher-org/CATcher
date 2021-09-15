@@ -299,13 +299,15 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   private createProfileFromUrlQueryParams() {
-    if (window.location.search) {
-      const urlParams = new  URLSearchParams(window.location.search);
-      if (urlParams.has('session') && urlParams.has('settings')) {
-        const session = urlParams.get('session');
-        const settingsLocation = urlParams.get('settings');
-        this.urlEncodedProfile = { profileName: session, repoName: settingsLocation };
-      }
+    const urlParams = this.activatedRoute.snapshot.queryParamMap;
+    let session = '';
+    let settingsLocation = '';
+    if (urlParams.has('session')) {
+      session = urlParams.get('session');
     }
+    if (urlParams.has('settings')) {
+      settingsLocation = urlParams.get('settings');
+    }
+    this.urlEncodedProfile = { profileName: session, repoName: settingsLocation };
   }
 }
