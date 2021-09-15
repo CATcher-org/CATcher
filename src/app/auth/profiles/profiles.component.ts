@@ -57,10 +57,6 @@ export class ProfilesComponent implements OnInit {
 
   ngOnInit() {
     this.initProfiles();
-    if (this.urlEncodedProfile !== undefined) {
-      this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
-      this.selectProfile(this.urlEncodedProfile);
-    }
   }
 
   /**
@@ -106,7 +102,7 @@ export class ProfilesComponent implements OnInit {
       this.profiles = this.profiles
       .concat(externalProfiles)
       .filter((p) => !!p);
-    })
+    }).then(() => this.setUrlEncodedProfile(this.profiles))
     .catch(e => {
       if (e === MALFORMED_PROFILES_ERROR) {
         this.openErrorDialog();
@@ -134,4 +130,22 @@ export class ProfilesComponent implements OnInit {
       this.openErrorDialog();
     }
   }
+  setUrlEncodedProfile(validProfiles: Profile[]) {
+    const profileNameExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName);
+    const repoNameExists = validProfiles.some(profile => profile.repoName === this.urlEncodedProfile.repoName);
+    const profileExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName 
+      && profile.repoName === this.urlEncodedProfile.repoName)
+
+    if (profileExists) {
+      this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
+      this.selectProfile(this.urlEncodedProfile);
+    } else if (profileNameExists) {
+      this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
+      this.errorHandlingService.handleError(new Error('Please enter a valid Settings Location'));
+    } else if (repoNameExists) {
+      this.selectedProfileEmitter.emit(this.urlEncodedProfile)
+      this.errorHandlingService.handleError(new Error('Please enter a valid Session'));
+    }
+  }
+  
 }
