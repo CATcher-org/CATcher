@@ -132,6 +132,10 @@ describe('LabelService: setLabelStyle()', () => {
   it('should be light color background with dark color text', () => {
     expect(labelService.setLabelStyle(LabelConstant.COLOR_WHITE)).toEqual(LabelConstant.LIGHT_BG_DARK_TEXT);
   });
+
+  it('should be light color background with dark color text', () => {
+    expect(labelService.setLabelStyle(LabelConstant.COLOR_WHITE, 'inline-block')).toEqual(LabelConstant.INLINE_BLOCK_TEXT);
+  });
 });
 
 describe('LabelService: getColorOfLabel()', () => {
