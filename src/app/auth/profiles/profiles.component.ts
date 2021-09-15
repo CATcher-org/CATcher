@@ -145,6 +145,8 @@ export class ProfilesComponent implements OnInit {
     } else if (repoNameExists) {
       this.selectedProfileEmitter.emit(this.urlEncodedProfile);
       this.errorHandlingService.handleError(new Error('Please enter a valid Session'));
+    } else {
+      this.errorHandlingService.handleError(new Error('Please enter a valid Session and Settings Location'));
     }
   }
 }
