@@ -3,7 +3,7 @@
 # release assets for the four platforms 
 # (browser, Linux, Windows, MacOS) automatically
 
-name: Draft Deployment
+name: Version Deployment
 
 on:
   # Allows you to run this workflow manually from the Actions tab
@@ -24,10 +24,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Deploy on Web
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install
-          npm run deploy:web -- --repo=https://${{secrets.GH_TOKEN}}@github.com/CATcher-org/CATcher.git
+          npm run deploy:web -- --repo=https://x-access-token:$GITHUB_TOKEN@github.com/CATcher-org/CATcher.git
 
   draft_release:
     runs-on: ubuntu-latest
@@ -71,8 +71,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Build
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm install
           npm run electron:linux
@@ -100,8 +98,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Build
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm install
           npm run electron:windows
@@ -129,8 +125,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Build
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm install
           npm run electron:mac
