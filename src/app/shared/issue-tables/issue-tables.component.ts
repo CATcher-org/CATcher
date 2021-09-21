@@ -32,8 +32,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   issues: IssuesDataTable;
   issuesPendingDeletion: {[id: number]: boolean};
