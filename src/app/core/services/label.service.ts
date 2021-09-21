@@ -50,6 +50,23 @@ const REJECTED_DEFINITION = '<p>What tester treated as a bug is in fact the expe
   + 'was mistaken in some other way.</p>';
 const CANNOT_REPRODUCE_DEFINITION = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
 const ISSUE_UNCLEAR_DEFINITION = '<p>The issue description is not clear.</p>';
+const UNDEFINED_DEFINITION = null;
+
+export const LABEL_DEFINITIONS = {
+  severityVeryLow : VERY_LOW_DEFINITION,
+  severityLow: LOW_DEFINITION,
+  severityMedium: MEDIUM_DEFINITION,
+  severityHigh: HIGH_DEFINITION,
+  typeFunctionalityBug: FUNCTIONALITY_BUG_DEFINITION,
+  typeFeatureFlaw: FEATURE_FLAW_DEFINITION,
+  typeDocumentationBug: DOCUMENTATION_BUG_DEFINITION,
+  responseAccepted: ACCEPTED_DEFINITION,
+  responseNotInScope: NOT_IN_SCOPE_DEFINITION,
+  responseRejected: REJECTED_DEFINITION,
+  responseCannotProduce: CANNOT_REPRODUCE_DEFINITION,
+  responseIssueUnclear: ISSUE_UNCLEAR_DEFINITION,
+  undefined: UNDEFINED_DEFINITION
+}
 
 const REQUIRED_LABELS = {
   severity: {

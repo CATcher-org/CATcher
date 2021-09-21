@@ -1,5 +1,5 @@
 import { Label } from '../../src/app/core/models/label.model';
-import { LabelService } from '../../src/app/core/services/label.service';
+import { LabelService, LABEL_DEFINITIONS } from '../../src/app/core/services/label.service';
 
 // Label name constants
 export const SEVERITY_VERY_LOW = 'Very Low';
@@ -22,45 +22,6 @@ export const TYPE = 'type';
 export const RESPONSE = 'response';
 export const STATUS = 'status';
 
-// Label definition
-export const DEFINITION_UNDEFINIED = null;
-export const DEFINITION_SEVERITY_VERY_LOW =
-  '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not ' +
-  'affect usage</mark>. For example, ' +
-  '<ul>' +
-  '<li>a typo issues</li>' +
-  '<li>spacing issues</li>' +
-  '<li>layout issues</li>' +
-  '<li>color issues</li>' +
-  '<li>font issues</li>' +
-  '</ul>' +
-  "in the docs or the UI that doesn't affect usage.</p>";
-export const DEFINITION_SEVERITY_LOW =
-  '<p>A flaw that is unlikely to affect normal operations of the product. ' +
-  'Appears only in very rare situations and causes a minor inconvenience only.</p>';
-export const DEFINITION_SEVERITY_MEDIUM =
-  '<p>A flaw that causes occasional inconvenience to some users but they can ' + 'continue to use the product.</p>';
-export const DEFINITION_SEVERITY_HIGH =
-  '<p>A flaw that affects most users and causes major problems for users.' + 'i.e., makes the product almost unusable for most users.</p>';
-export const DEFINITION_FUNCTIONALITY_BUG = '<p>A functionality does not work as specified/expected.</p>';
-export const DEFINITION_FEATURE_FLAW =
-  '<p>Some functionality missing from a feature delivered in the current version ' +
-  'in a way that the feature becomes less useful to the intended target user for <i>normal</i> usage. ' +
-  "i.e., the feature is not 'complete'.\nIn other words, an acceptance-testing bug that falls within " +
-  'the scope of the current version features. These issues are counted against the <i>product design</i> aspect ' +
-  'of the project.</p>';
-export const DEFINITION_DOCUMENTATION_BUG =
-  '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
-export const DEFINITION_ACCEPTED = '<p>You accept it as a bug.</p>';
-export const DEFINITION_NOT_IN_SCOPE =
-  '<p>It is a valid issue but not something the team should be penalized for ' +
-  '<span style="color:grey;">e.g., it was not related to features delivered in this version</span>.</p>';
-export const DEFINITION_REJECTED =
-  '<p>What tester treated as a bug is in fact the expected behavior (from the user\'s point of view), '
-  + 'or the tester was mistaken in some other way.</p>';
-export const DEFINITION_CANNOT_REPRODUCE = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
-export const DEFINITION_ISSUE_UNCLEAR = '<p>The issue description is not clear.</p>';
-
 // Label color constants
 export const COLOR_BLACK = '000000';
 export const COLOR_WHITE = 'FFFFFF';
@@ -76,6 +37,15 @@ export const COLOR_RESPONSE_ISSUE_UNCLEAR = 'ffcc80';
 export const COLOR_RESPONSE_CANNOT_REPRODUCE = 'ffebcc';
 export const COLOR_STATUS_DONE = 'a6a6a6';
 export const COLOR_STATUS_INCOMPLETE = '000000';
+
+// Label definition constants
+const DEFINITION_SEVERITY_LOW = LABEL_DEFINITIONS.severityLow;
+const DEFINITION_SEVERITY_MEDIUM = LABEL_DEFINITIONS.severityMedium;
+const DEFINITION_SEVERITY_HIGH = LABEL_DEFINITIONS.severityHigh;
+const DEFINITION_FUNCTIONALITY_BUG = LABEL_DEFINITIONS.typeFunctionalityBug;
+const DEFINITION_DOCUMENTATION_BUG = LABEL_DEFINITIONS.typeDocumentationBug;
+const DEFINITION_ACCEPTED = LABEL_DEFINITIONS.responseAccepted;
+const DEFINITION_REJECTED = LABEL_DEFINITIONS.responseRejected;
 
 // CSS style constants
 export const DARK_BG_LIGHT_TEXT = {
@@ -160,5 +130,5 @@ export const ALL_REQUIRED_LABELS_ARRAY: {}[] = LabelService.getRequiredLabelsAsA
 export const SEVERITY_LABELS = [
   new Label(SEVERITY, SEVERITY_LOW, COLOR_SEVERITY_LOW, DEFINITION_SEVERITY_LOW),
   new Label(SEVERITY, SEVERITY_MEDIUM, COLOR_SEVERITY_MEDIUM, DEFINITION_SEVERITY_MEDIUM),
-  new Label(SEVERITY, SEVERITY_HIGH, COLOR_SEVERITY_HIGH, DEFINITION_SEVERITY_HIGH)
+  new Label(SEVERITY, SEVERITY_HIGH, COLOR_SEVERITY_HIGH, LABEL_DEFINITIONS.undefined)
 ];
