@@ -66,7 +66,7 @@ export const LABEL_DEFINITIONS = {
   responseCannotProduce: CANNOT_REPRODUCE_DEFINITION,
   responseIssueUnclear: ISSUE_UNCLEAR_DEFINITION,
   undefined: UNDEFINED_DEFINITION
-}
+};
 
 const REQUIRED_LABELS = {
   severity: {
