@@ -32,8 +32,8 @@ export class DuplicateOfComponent implements OnInit {
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  @ViewChild(MatSelect) duplicateOfSelection: MatSelect;
-  @ViewChild(MatCheckbox) duplicatedCheckbox: MatCheckbox;
+  @ViewChild(MatSelect, { static: true }) duplicateOfSelection: MatSelect;
+  @ViewChild(MatCheckbox, { static: true }) duplicatedCheckbox: MatCheckbox;
 
   // Max chars visible for a duplicate entry in duplicates dropdown list.
   readonly MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE = 17;
