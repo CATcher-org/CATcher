@@ -10,7 +10,7 @@ import { Issue, STATUS } from '../../core/models/issue.model';
 })
 export class IssueRespondedComponent implements OnInit {
 
-  @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
+  @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
   readonly displayedColumns  = [
     TABLE_COLUMNS.ID,
     TABLE_COLUMNS.TITLE,

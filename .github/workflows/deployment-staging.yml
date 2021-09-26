@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Deploy on Staging Website
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install
-          npm run deploy:staging -- --repo=https://${{secrets.GH_TOKEN}}@github.com/CATcher-org/CATcher-staging.git
+          npm run deploy:staging -- --repo=https://x-access-token:$GITHUB_TOKEN@github.com/CATcher-org/CATcher-staging.git

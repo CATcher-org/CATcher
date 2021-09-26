@@ -8,7 +8,7 @@
   min-height: 87.9vh;
 }
 
-/deep/ .mat-card-header-text {
+::ng-deep .mat-card-header-text {
   margin: 0;
   width: 100%;
   text-align: center;
