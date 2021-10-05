@@ -1,5 +1,5 @@
 import { Header, Template } from './template.model';
-import { TesterResponseSection } from './sections/test-response-section.model';
+import { TesterResponseSection } from './sections/tester-response-section.model';
 import { Section } from './sections/section.model';
 import { GithubComment } from '../github/github-comment.model';
 import { IssueComment } from '../comment.model';
