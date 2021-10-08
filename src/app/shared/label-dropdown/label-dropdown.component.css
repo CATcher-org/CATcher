@@ -7,24 +7,13 @@
 }
 
 .infoPopup {
+  background: transparent;
   border: none;
   outline: none;
   text-align: center;
 }
 
 .labelLine {
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1; 
-  flex-basis: auto; 
-}
-
-.labelInfo {
-  flex-direction: row;
-  flex-grow: 1; 
-  flex-basis: auto; 
-}
-
-.labelInfo:nth-child(2) {
-  width: 80%;
+  display: grid;
+  grid-template-columns: auto 20%;
 }
