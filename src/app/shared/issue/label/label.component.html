@@ -4,8 +4,7 @@
 </button>
 
 <mat-menu #labelList>
-  <div mat-menu-item *ngFor="let value of labelValues;" [ngStyle]="{'padding-left': '15px', 'padding-right': '15px'}">
-    <div class="labelLine">
+  <div mat-menu-item class="labelLine" *ngFor="let value of labelValues;" [ngStyle]="{'padding-left': '15px', 'padding-right': '15px'}">
       <button class="labelInfo option"
           (click)="updateLabel(value.labelValue)"
           [disabled]="value.labelValue === this.issue[attributeName]">
@@ -18,7 +17,6 @@
               (click)="openDefinitionPage(value); $event.stopPropagation();">
         <mat-icon style="font-size: 20px">info</mat-icon>
       </button>
-    </div>
 
   </div>
 </mat-menu>
