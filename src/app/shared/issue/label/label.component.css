@@ -10,12 +10,24 @@
 }
 
 .infoPopup {
-  cursor: pointer;
-  background-color: Transparent;
   border: none;
-  outline:none;
+  outline: none;
   text-align: center;
-  position: absolute;
-  right: 0px;
-  top: 30%;
+}
+
+.labelLine {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1; 
+  flex-basis: auto; 
+}
+
+.labelInfo {
+  flex-direction: row;
+  flex-grow: 1; 
+  flex-basis: auto; 
+}
+
+.labelInfo:nth-child(2) {
+  width: 80%;
 }
