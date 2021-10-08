@@ -6,14 +6,16 @@
         {{dropdownControl.value}}
       </mat-select-trigger>
       <div mat-menu-item *ngFor="let value of labelList">
-        <mat-option  [value]="value.labelValue" [ngStyle]="{'background': 'transparent'}">
-          <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
-          <span> {{value.labelValue}}</span>
-        </mat-option>
+        <div class="labelLine">
+          <mat-option class="labelInfo" [value]="value.labelValue" [ngStyle]="{'background': 'transparent'}">
+            <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
+            <span> {{value.labelValue}}</span>
+          </mat-option>
 
-        <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openModalPopup(value)">
-          <mat-icon style="font-size: 20px">info</mat-icon>
-        </button>
+          <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openModalPopup(value)">
+            <mat-icon style="font-size: 20px">info</mat-icon>
+          </button>
+        </div> 
         
       </div>
     </mat-select>
