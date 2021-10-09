@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -151,26 +151,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.profileForm.get('session').setValue(profile.repoName);
   }
 
-  /**
-   * Will complete the process of logging in the given user.
-   * @param username - The user to log in.
-   */
-  completeLoginProcess(username: string): void {
-    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-    this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
-    this.userService.createUserModel(username).pipe(
-      flatMap(() => this.phaseService.sessionSetup()),
-      flatMap(() => this.githubEventService.setLatestChangeEvent()),
-      flatMap(() => this.checkAppIsOutdated()),
-    ).subscribe(() => {
-      this.handleAuthSuccess();
-    }, (error) => {
-      this.authService.changeAuthState(AuthState.NotAuthenticated);
-      this.errorHandlingService.handleError(error);
-      this.logger.info(`Completion of login process failed with an error: ${error}`);
-    });
-  }
-
   setupSession() {
     if (this.profileForm.invalid) {
       return;
@@ -197,26 +177,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
     }, () => this.isSettingUpSession = false);
-  }
-
-  logIntoAnotherAccount() {
-    this.logger.info('Logging into another account');
-    this.electronService.clearCookies();
-    this.authService.startOAuthProcess();
-  }
-
-  onGithubWebsiteClicked() {
-    window.open('https://github.com/', '_blank');
-    window.location.reload();
-  }
-
-  /**
-   * Handles the clean up required after authentication and setting up of user data is completed.
-   */
-  handleAuthSuccess() {
-    this.authService.setTitleWithPhaseDetail();
-    this.router.navigateByUrl(this.phaseService.currentPhase);
-    this.authService.changeAuthState(AuthState.Authenticated);
   }
 
   goToSessionSelect() {
