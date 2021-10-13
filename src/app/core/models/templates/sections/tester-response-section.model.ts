@@ -2,6 +2,14 @@ import { TesterResponse } from '../../tester-response.model';
 import { Section, SectionalDependency } from './section.model';
 import { extractStringBetween } from '../../../../shared/lib/string-utils';
 
+// match format e.g. ## :question: Issue Title
+const matchTitle = '#{2} *:question: *([\\w ]+)';
+// match format e.g. Team Chose severity.Low \r\n Originally (or Team Chose) severity.High \r\n
+const matchDescription = '(Team Chose.*[\\r\\n]* *Originally.*|Team Chose.*[\\r\\n]*)';
+// match format e.g. - [x] (or - [ ]) **Reason for disagreement:** disagreement explanation
+const matchDisagreement = '(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)';
+const matchLinebreak = '[\\n\\r]-{19}';
+
 export class TesterResponseSection extends Section {
   testerResponses: TesterResponse[] = [];
   teamChosenSeverity?: string;
@@ -17,10 +25,7 @@ export class TesterResponseSection extends Section {
     super(sectionalDependency, unprocessedContent);
     if (!this.parseError) {
       let matches;
-      const regex: RegExp = new RegExp('#{2} *:question: *([\\w ]+)[\\r\\n]*(Team Chose.*[\\r\\n]* *Originally.*'
-        + '|Team Chose.*[\\r\\n]*)[\\r\\n]*(- \\[x? ?\\] I disagree)[\\r\\n]*\\*\\*Reason *for *disagreement:\\*\\* *([\\s\\S]*?)'
-        + '[\\n\\r]-{19}',
-        'gi');
+      const regex: RegExp = new RegExp([matchTitle, matchDescription, matchDisagreement].join('[\\r\\n]*') + matchLinebreak, 'gi');
       while (matches = regex.exec(this.content)) {
         if (matches) {
           const [regexString, title, description, disagreeCheckbox, reasonForDisagreement] = matches;
@@ -31,7 +36,8 @@ export class TesterResponseSection extends Section {
             this.teamChosenType = this.parseTeamChosenType(description);
           }
 
-          this.testerResponses.push(new TesterResponse(title, description, disagreeCheckbox, reasonForDisagreement.trim()));
+          this.testerResponses.push(new TesterResponse(title, description, this.parseCheckboxDescription(disagreeCheckbox),
+            this.parseCheckboxValue(disagreeCheckbox), reasonForDisagreement.trim()));
         }
       }
     }
@@ -61,6 +67,14 @@ export class TesterResponseSection extends Section {
   parseTeamChosenType(description: string): string {
     return extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX,
       this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
+  }
+
+  parseCheckboxValue(checkboxString: string): boolean {
+    return checkboxString.charAt(3) === 'x'; // checkboxString in the format of - [x] or - [ ]
+  }
+
+  parseCheckboxDescription(checkboxString: string): string {
+    return checkboxString.substring(6).trim(); // checkboxString has a fixed 5 characters at the start before the description
   }
 
   toString(): string {
