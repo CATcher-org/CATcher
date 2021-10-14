@@ -8,6 +8,7 @@ import {
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ElectronService } from '../../core/services/electron.service';
+import * as DOMPurify from 'dompurify';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1000000;
@@ -80,6 +81,11 @@ export class CommentEditorComponent implements OnInit {
   // Prevent cursor in textarea from moving when file is dragged over it.
   disableCaretMovement(event) {
     event.preventDefault();
+  }
+
+  // Sanitize markdown
+  sanitize(commentFieldValue) {
+    return DOMPurify.sanitize(commentFieldValue);
   }
 
   // To enable file drop in non-input elements, the dragOver event must be cancelled.
