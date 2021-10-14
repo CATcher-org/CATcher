@@ -8,7 +8,7 @@
   min-height: 87.9vh;
 }
 
-/deep/ .mat-card-header-text {
+::ng-deep .mat-card-header-text {
   margin: 0;
   width: 100%;
   text-align: center;
@@ -48,18 +48,6 @@
   line-height: 1.6;
   letter-spacing: 0.0075em;
   margin: 10px;
-}
-
-.logo {
-  align-items: center;
-  display: inline-flex;
-  margin: 0 3px 3px 3px
-}
-
-.github-logo {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
 }
 
 .login-with-oauth-btn {

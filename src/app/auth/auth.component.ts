@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, AuthState } from '../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -8,15 +8,17 @@ import { GithubService } from '../core/services/github.service';
 import { PhaseService } from '../core/services/phase.service';
 import { Title } from '@angular/platform-browser';
 import { Profile } from '../core/models/profile.model';
-import { filter, flatMap } from 'rxjs/operators';
+import { filter, flatMap, map } from 'rxjs/operators';
 import { UserService } from '../core/services/user.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { ElectronService } from '../core/services/electron.service';
 import { ApplicationService } from '../core/services/application.service';
-import { throwIfFalse } from '../shared/lib/custom-ops';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
 import { LoggingService } from '../core/services/logging.service';
+import { Observable } from 'rxjs';
+
+const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version of CATcher.";
 
 @Component({
   selector: 'app-auth',
@@ -24,14 +26,8 @@ import { LoggingService } from '../core/services/logging.service';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit, OnDestroy {
-  // isReady is used to indicate whether the pre-processing of application is done.
-  isReady: boolean;
   // isSettingUpSession is used to indicate whether CATcher is in the midst of setting up the session.
   isSettingUpSession: boolean;
-
-  // Errors
-  isAppOutdated: boolean;
-  versionCheckingError: boolean;
 
   authState: AuthState;
   accessTokenSubscription: Subscription;
@@ -71,7 +67,10 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.logger.startSession();
-    this.isReady = false;
+
+    // Initialize State
+    this.isSettingUpSession = false;
+
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
 
@@ -80,7 +79,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.checkAppIsOutdated();
     this.initAccessTokenSubscription();
     this.initAuthStateSubscription();
     this.initProfileForm();
@@ -135,16 +133,14 @@ export class AuthComponent implements OnInit, OnDestroy {
   /**
    * Checks whether the current version of CATcher is outdated.
    */
-  checkAppIsOutdated(): void {
-    this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
-      this.isAppOutdated = isOutdated;
-      this.isReady = true;
-      this.versionCheckingError = false;
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-      this.isReady = true;
-      this.versionCheckingError = true;
-    });
+  checkAppIsOutdated(): Observable<any> {
+    return this.appService.isApplicationOutdated().pipe(
+      map((isOutdated: boolean) => {
+        if (isOutdated) {
+          throw new Error(APPLICATION_VERSION_OUTDATED_ERROR);
+        }
+      }),
+    );
   }
 
   /**
@@ -153,25 +149,6 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   onProfileSelect(profile: Profile): void {
     this.profileForm.get('session').setValue(profile.repoName);
-  }
-
-  /**
-   * Will complete the process of logging in the given user.
-   * @param username - The user to log in.
-   */
-  completeLoginProcess(username: string): void {
-    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-    this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
-    this.userService.createUserModel(username).pipe(
-      flatMap(() => this.phaseService.sessionSetup()),
-      flatMap(() => this.githubEventService.setLatestChangeEvent()),
-    ).subscribe(() => {
-      this.handleAuthSuccess();
-    }, (error) => {
-      this.authService.changeAuthState(AuthState.NotAuthenticated);
-      this.errorHandlingService.handleError(error);
-      this.logger.info(`Completion of login process failed with an error: ${error}`);
-    });
   }
 
   setupSession() {
@@ -200,26 +177,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
     }, () => this.isSettingUpSession = false);
-  }
-
-  logIntoAnotherAccount() {
-    this.logger.info('Logging into another account');
-    this.electronService.clearCookies();
-    this.authService.startOAuthProcess();
-  }
-
-  onGithubWebsiteClicked() {
-    window.open('https://github.com/', '_blank');
-    window.location.reload();
-  }
-
-  /**
-   * Handles the clean up required after authentication and setting up of user data is completed.
-   */
-  handleAuthSuccess() {
-    this.authService.setTitleWithPhaseDetail();
-    this.router.navigateByUrl(this.phaseService.currentPhase);
-    this.authService.changeAuthState(AuthState.Authenticated);
   }
 
   goToSessionSelect() {

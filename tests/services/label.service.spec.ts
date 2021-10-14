@@ -14,33 +14,53 @@ describe('LabelService', () => {
   });
 
   describe('.syncLabels()', () => {
-    it('should create all required labels if no required labels are fetched', () => {
+    it('should create all required labels for team response phase if no required labels are fetched', () => {
       githubService.fetchAllLabels.and.callFake(() => of([]));
-      of(true).pipe(labelService.syncLabels()).subscribe();
+      of(true).pipe(labelService.syncLabels(true)).subscribe();
 
       assertLabelCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
       assertLabelCreated(githubService, LabelConstant.RESPONSE_REJECTED_LABEL);
       assertLabelCreated(githubService, LabelConstant.STATUS_DONE_LABEL);
       assertLabelCreated(githubService, LabelConstant.TYPE_DOCUMENTATION_BUG_LABEL);
-      expect(githubService.createLabel).toHaveBeenCalledTimes(LabelService.getRequiredLabelsAsArray().length);
+      expect(githubService.createLabel).toHaveBeenCalledTimes(LabelService.getRequiredLabelsAsArray(true).length);
     });
 
-    it('should create missing required labels if some required labels are fetched', () => {
-      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.LABEL_ARRAY));
-      of(true).pipe(labelService.syncLabels()).subscribe();
+    it('should create all required labels for tester phase if no required labels are fetched', () => {
+      githubService.fetchAllLabels.and.callFake(() => of([]));
+      of(true).pipe(labelService.syncLabels(false)).subscribe();
+
+      assertLabelCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
+      assertLabelCreated(githubService, LabelConstant.TYPE_DOCUMENTATION_BUG_LABEL);
+      expect(githubService.createLabel).toHaveBeenCalledTimes(LabelService.getRequiredLabelsAsArray(false).length);
+    });
+
+    it('should create missing required labels for team response phase if some required labels are fetched', () => {
+      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.SOME_TEAM_RESPONSE_PHASE_LABELS));
+      of(true).pipe(labelService.syncLabels(true)).subscribe();
 
       assertLabelNotCreated(githubService, LabelConstant.SEVERITY_LOW_LABEL);
       assertLabelCreated(githubService, LabelConstant.RESPONSE_REJECTED_LABEL);
       assertLabelCreated(githubService, LabelConstant.STATUS_DONE_LABEL);
       assertLabelCreated(githubService, LabelConstant.TYPE_DOCUMENTATION_BUG_LABEL);
       expect(githubService.createLabel).toHaveBeenCalledTimes(
-        LabelService.getRequiredLabelsAsArray().length - LabelConstant.LABEL_ARRAY.length
+        LabelService.getRequiredLabelsAsArray(true).length - LabelConstant.SOME_TEAM_RESPONSE_PHASE_LABELS.length
+      );
+    });
+
+    it('should create missing required labels for tester phase if some required labels are fetched', () => {
+      githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.SOME_TESTER_PHASE_LABELS));
+      of(true).pipe(labelService.syncLabels(false)).subscribe();
+
+      assertLabelNotCreated(githubService, LabelConstant.SEVERITY_HIGH_LABEL);
+      assertLabelCreated(githubService, LabelConstant.TYPE_FUNCTIONALITY_BUG_LABEL);
+      expect(githubService.createLabel).toHaveBeenCalledTimes(
+        LabelService.getRequiredLabelsAsArray(false).length - LabelConstant.SOME_TESTER_PHASE_LABELS.length
       );
     });
 
     it('should not need to create any required labels if all required labels are fetched', () => {
       githubService.fetchAllLabels.and.callFake(() => of(LabelConstant.ALL_REQUIRED_LABELS_ARRAY));
-      of(true).pipe(labelService.syncLabels()).subscribe();
+      of(true).pipe(labelService.syncLabels(true)).subscribe();
 
       expect(githubService.createLabel).toHaveBeenCalledTimes(0);
     });
@@ -50,7 +70,7 @@ describe('LabelService', () => {
 describe('LabelService: parseLabelData()', () => {
   beforeAll(() => {
     labelService = new LabelService(null);
-    labelList = labelService.parseLabelData(LabelConstant.LABEL_ARRAY);
+    labelList = labelService.parseLabelData(LabelConstant.SOME_TEAM_RESPONSE_PHASE_LABELS);
   });
 
   afterAll(() => {
@@ -67,12 +87,14 @@ describe('LabelService: parseLabelData()', () => {
     expect(labelList[1].labelCategory).toBe(LabelConstant.SEVERITY);
     expect(labelList[1].labelValue).toBe(LabelConstant.SEVERITY_LOW);
     expect(labelList[1].labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
+    expect(labelList[1].labelDefinition).toBe(LabelConstant.DEFINITION_SEVERITY_LOW);
   });
 
   it('should be type.FunctionalityBug', () => {
     expect(labelList[2].labelCategory).toBe(LabelConstant.TYPE);
     expect(labelList[2].labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
     expect(labelList[2].labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
+    expect(labelList[2].labelDefinition).toBe(LabelConstant.DEFINITION_FUNCTIONALITY_BUG);
   });
 });
 
@@ -110,6 +132,10 @@ describe('LabelService: setLabelStyle()', () => {
   it('should be light color background with dark color text', () => {
     expect(labelService.setLabelStyle(LabelConstant.COLOR_WHITE)).toEqual(LabelConstant.LIGHT_BG_DARK_TEXT);
   });
+
+  it('should be light color background with dark color text', () => {
+    expect(labelService.setLabelStyle(LabelConstant.COLOR_WHITE, 'inline-block')).toEqual(LabelConstant.INLINE_BLOCK_TEXT);
+  });
 });
 
 describe('LabelService: getColorOfLabel()', () => {
@@ -127,6 +153,38 @@ describe('LabelService: getColorOfLabel()', () => {
 
   it('should be white color for invalid inputs', () => {
     expect(labelService.getColorOfLabel(null)).toEqual(LabelConstant.COLOR_WHITE.toLowerCase());
+  });
+});
+
+describe('LabelService: getLabelDefinition()', () => {
+  beforeEach(() => {
+    labelService = new LabelService(null);
+  });
+
+  afterEach(() => {
+    labelService = null;
+  });
+
+  it('should return the correct label definition for type.FunctionalityBug', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.TYPE_FUNCTIONALITY_BUG, LabelConstant.TYPE)).toEqual(
+      LabelConstant.DEFINITION_FUNCTIONALITY_BUG
+    );
+  });
+
+  it('should return the correct label definition for severity.Medium', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, LabelConstant.SEVERITY)).toEqual(
+      LabelConstant.DEFINITION_SEVERITY_MEDIUM
+    );
+  });
+
+  it('should return null for label with no definition', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE, LabelConstant.STATUS)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
+  });
+
+  it('should return null for invalid inputs', () => {
+    expect(labelService.getLabelDefinition(null, null)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
+    expect(labelService.getLabelDefinition(null, LabelConstant.SEVERITY)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
+    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, null)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
   });
 });
 
