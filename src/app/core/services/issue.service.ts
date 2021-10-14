@@ -384,9 +384,7 @@ export class IssueService {
 
     const fetchedIssueIdsSet = new Set<Number>(fetchedIssueIds);
 
-    const originalIssueIds = Object.keys(this.issues);
-
-    const result = Object.keys(this.issues).map(x => parseInt(x)).filter(issueId => !fetchedIssueIdsSet.has(issueId));
+    const result = Object.keys(this.issues).map(x => +x).filter(issueId => !fetchedIssueIdsSet.has(issueId));
     
     return result;
   }
