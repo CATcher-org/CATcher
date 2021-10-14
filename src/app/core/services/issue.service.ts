@@ -370,7 +370,6 @@ export class IssueService {
    * fetched issues with the current issue ids in the local store
    */
   private getOutdatedIssueIds(fetchedIssueIds: Array<Number>): Array<Number> {
-    const result = [];
 
     /*
       Ignore for first fetch or ignore if there is no fetch result
@@ -380,19 +379,15 @@ export class IssueService {
       to be empty
     */
     if (this.issues === undefined || !fetchedIssueIds.length) {
-      return result;
+      return [];
     }
 
     const fetchedIssueIdsSet = new Set<Number>(fetchedIssueIds);
 
     const originalIssueIds = Object.keys(this.issues);
 
-    originalIssueIds.forEach((issueId: string) => {
-      if (!fetchedIssueIdsSet.has(+issueId)) {
-        result.push(+issueId);
-      }
-    });
-
+    const result = Object.keys(this.issues).map(x => parseInt(x)).filter(issueId => !fetchedIssueIdsSet.has(issueId));
+    
     return result;
   }
 
