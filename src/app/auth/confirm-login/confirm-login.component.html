@@ -1,0 +1,12 @@
+<button mat-stroked-button class="sign-in-button" color="primary" (click)="this.completeLoginProcess()">
+  <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo"> </span>
+  <span> Continue as {{this.username}} </span>
+</button>
+
+<button *ngIf="electronService.isElectron()" mat-button style="margin-top: 10px; margin-bottom: 10px;" (click)="logIntoAnotherAccount()">
+  Log in to another account 
+</button>
+<div *ngIf="!electronService.isElectron()" class="mat-body-1" style="margin-top: 20px;">
+  To change account, please sign into the desired account from the
+  <a href="https://github.com/" (click)="onGithubWebsiteClicked()">official Github website</a>.
+</div>

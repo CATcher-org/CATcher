@@ -1,0 +1,18 @@
+.sign-in-button {
+  background: #f7fcfe;
+  line-height: 45px;
+  border: 1px solid currentColor;
+  width: 100%;
+}
+
+.logo {
+  align-items: center;
+  display: inline-flex;
+  margin: 0 3px 3px 3px
+}
+
+.github-logo {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
