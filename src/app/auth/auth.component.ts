@@ -34,7 +34,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   authStateSubscription: Subscription;
   profileForm: FormGroup;
   currentUserName: string;
-  urlEncodedProfile: Profile;
+  urlEncodedSessionName: string;
 
   constructor(public appService: ApplicationService,
               public electronService: ElectronService,
@@ -260,15 +260,10 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   private createProfileFromUrlQueryParams() {
     const urlParams = this.activatedRoute.snapshot.queryParamMap;
-    let session = '';
-    let settingsLocation = '';
-
+    let sessionName = '';
     if (urlParams.has('session')) {
-      session = urlParams.get('session');
+      sessionName = urlParams.get('session');
     }
-    if (urlParams.has('settings')) {
-      settingsLocation = urlParams.get('settings');
-    }
-    this.urlEncodedProfile = { profileName: session, repoName: settingsLocation };
+    this.urlEncodedSessionName = sessionName;
   }
 }

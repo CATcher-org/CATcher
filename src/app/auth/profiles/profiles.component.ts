@@ -40,7 +40,7 @@ export class ProfilesComponent implements OnInit {
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
-  @Input() urlEncodedProfile: Profile;
+  @Input() urlEncodedSessionName: string;
   @Output() selectedProfileEmitter: EventEmitter<Profile> = new EventEmitter<Profile>();
 
   profilesData = {
@@ -131,25 +131,16 @@ export class ProfilesComponent implements OnInit {
     }
   }
   setUrlEncodedProfile(validProfiles: Profile[]) {
-    if (this.urlEncodedProfile.profileName.length === 0 && this.urlEncodedProfile.repoName.length === 0) {
+    if (!this.urlEncodedSessionName) {
       return;
     }
-    const profileNameExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName);
-    const repoNameExists = validProfiles.some(profile => profile.repoName === this.urlEncodedProfile.repoName);
-    const profileExists = validProfiles.some(profile => profile.profileName === this.urlEncodedProfile.profileName
-      && profile.repoName === this.urlEncodedProfile.repoName);
 
-    if (profileExists) {
-      this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
-      this.selectProfile(this.urlEncodedProfile);
-    } else if (profileNameExists) {
-      this.selectedProfile.profileName = this.urlEncodedProfile.profileName;
-      this.errorHandlingService.handleError(new Error('Please enter a valid Settings Location'));
-    } else if (repoNameExists) {
-      this.selectedProfileEmitter.emit(this.urlEncodedProfile);
-      this.errorHandlingService.handleError(new Error('Please enter a valid Session'));
+    const profile = validProfiles.find(profile => profile.profileName === this.urlEncodedSessionName);
+    if (profile) {
+      this.selectedProfile.profileName = this.urlEncodedSessionName;
+      this.selectProfile(profile);
     } else {
-      this.errorHandlingService.handleError(new Error('Please enter a valid Session and Settings Location'));
+      this.errorHandlingService.handleError(new Error('Invalid URL provided session'));
     }
   }
 }
