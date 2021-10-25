@@ -24,7 +24,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   @Input() teamFilter: string;
 
-  @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
+  @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
 
   constructor(public issueService: IssueService, public userService: UserService,
       public permissions: PermissionService) {
