@@ -320,8 +320,11 @@ export class GithubService {
     const github_api_link = `https://api.github.com/repos/${MOD_ORG}/${DATA_REPO}/contents/settings.json`;
 
     return from(fetch(github_api_link)
-    .then(rawData => rawData.json())
-    .then(jsonData => JSON.parse(atob(jsonData["content"]))));
+    .then(rawData => rawData.json(),
+      (err) => throwError("Failed to retrieve settings file.")
+    ).then(jsonData => JSON.parse(atob(jsonData["content"])),
+      (err) => throwError("Failed to parse settings file.")
+    ));
   }
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
