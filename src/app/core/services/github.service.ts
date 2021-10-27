@@ -314,14 +314,14 @@ export class GithubService {
 
   /**
    * Fetches the data file that is regulates session information.
-   * @return Observable<SessionData> representing session information.
+   * @return Promise<SessionData> representing session information.
    */
   fetchSettingsFile(): Observable<SessionData> {
-    return from(octokit.repos.getContents({owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json',
-      headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
-        map(rawData => JSON.parse(atob(rawData['data']['content']))),
-      catchError(err => throwError('Failed to fetch settings file.'))
-    );
+    const github_api_link = `https://api.github.com/repos/${MOD_ORG}/${DATA_REPO}/contents/settings.json`
+
+    return from(fetch(github_api_link)
+    .then(rawData => rawData.json())
+    .then(jsonData => JSON.parse(atob(jsonData["content"]))));
   }
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
