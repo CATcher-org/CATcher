@@ -314,7 +314,7 @@ export class GithubService {
 
   /**
    * Fetches the data file that is regulates session information.
-   * @return Promise<SessionData> representing session information.
+   * @return Observable<SessionData> representing session information.
    */
   fetchSettingsFile(): Observable<SessionData> {
     const github_api_link = `https://api.github.com/repos/${MOD_ORG}/${DATA_REPO}/contents/settings.json`;
