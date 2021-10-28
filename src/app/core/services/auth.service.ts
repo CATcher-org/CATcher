@@ -118,15 +118,14 @@ export class AuthService {
    */
   startOAuthProcess() {
     this.logger.info('Starting authentication');
-    const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
     if (this.electronService.isElectron()) {
-      this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
+      this.electronService.sendIpcMessage('github-oauth', 'public_repo');
     } else {
       this.generateStateString();
       this.redirectToOAuthPage(encodeURI(
-        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
+        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=public_repo,read:user&state=${this.state}`
       ));
       this.logger.info('Redirecting for Github authentication');
     }

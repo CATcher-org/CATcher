@@ -159,6 +159,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
     this.userService.createUserModel(username).pipe(
+      flatMap(() => this.phaseService.storeSessionData()),
       flatMap(() => this.phaseService.sessionSetup()),
       flatMap(() => this.githubEventService.setLatestChangeEvent()),
       flatMap(() => this.checkAppIsOutdated()),
@@ -186,17 +187,13 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
 
-    this.phaseService.storeSessionData().subscribe(() => {
-      try {
-        this.authService.startOAuthProcess();
-      } catch (error) {
-        this.errorHandlingService.handleError(error);
-        this.authService.changeAuthState(AuthState.NotAuthenticated);
-      }
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
+    try {
+      this.authService.startOAuthProcess();
       this.isSettingUpSession = false;
-    }, () => this.isSettingUpSession = false);
+    } catch (error) {
+      this.errorHandlingService.handleError(error);
+      this.authService.changeAuthState(AuthState.NotAuthenticated);
+    }
   }
 
   logIntoAnotherAccount() {
