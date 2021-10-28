@@ -42,20 +42,6 @@ describe('PhaseService', () => {
     });
   });
 
-  describe('.githubRepoPermissionLevel()', () => {
-    it('should return "repo" if phaseModeration is included in openPhases', () => {
-      phaseService.sessionData = MODERATION_PHASE_SESSION_DATA;
-      expect(phaseService.sessionData.openPhases).toContain(Phase.phaseModeration);
-      expect(phaseService.githubRepoPermissionLevel()).toEqual('repo');
-    });
-
-    it('should return "public_repo" if phaseModeration is not included in openPhases', () => {
-      phaseService.sessionData = NO_OPEN_PHASES_SESSION_DATA;
-      expect(phaseService.sessionData.openPhases).not.toContain(Phase.phaseModeration);
-      expect(phaseService.githubRepoPermissionLevel()).toEqual('public_repo');
-    });
-  });
-
   describe('.reset()', () => {
     it('should reset the currentPhase of the PhaseService', () => {
       phaseService.currentPhase = Phase.phaseBugReporting;
