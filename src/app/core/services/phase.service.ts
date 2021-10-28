@@ -97,13 +97,13 @@ export class PhaseService {
   }
 
   /**
-   * Gets the session data from local storage and returns it. 
+   * Gets the session data from local storage and returns it.
    */
   getSessionData(): Observable<SessionData> {
     if (localStorage.getItem('sessionData') === null) {
       return from(localStorage.getItem('sessionData')).pipe(
         map(data => JSON.parse(data) as SessionData)
-      )
+      );
     } else {
       return this.fetchSessionData();
     }
