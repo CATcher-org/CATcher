@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { flatMap, map, retry, tap } from 'rxjs/operators';
-import { Observable, of, pipe } from 'rxjs';
+import { from, Observable, of, pipe } from 'rxjs';
 import { GithubService } from './github.service';
 import { LabelService } from './label.service';
 import { UserService } from './user.service';
@@ -97,6 +97,19 @@ export class PhaseService {
   }
 
   /**
+   * Gets the session data from local storage and returns it. 
+   */
+  getSessionData(): Observable<SessionData> {
+    if (localStorage.getItem('sessionData') === null) {
+      return from(localStorage.getItem('sessionData')).pipe(
+        map(data => JSON.parse(data) as SessionData)
+      )
+    } else {
+      return this.fetchSessionData();
+    }
+  }
+
+  /**
    * Checks if the necessary repository is available and creates it if the permissions are available.
    * @param sessionData
    */
@@ -130,7 +143,7 @@ export class PhaseService {
       );
     };
 
-    return this.fetchSessionData().pipe(
+    return this.getSessionData().pipe(
       assertSessionDataIntegrity(),
       flatMap((sessionData: SessionData) => {
         this.updateSessionParameters(sessionData);
