@@ -144,9 +144,7 @@ export class PhaseService {
     };
 
     return this.getSessionData().pipe(
-      assertSessionDataIntegrity(),
       flatMap((sessionData: SessionData) => {
-        this.updateSessionParameters(sessionData);
         return this.verifySessionAvailability(sessionData);
       }),
       this.repoCreatorService.requestRepoCreationPermissions(this.currentPhase, this.sessionData[this.currentPhase]),
