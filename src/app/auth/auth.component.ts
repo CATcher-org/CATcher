@@ -260,10 +260,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   private createProfileFromUrlQueryParams() {
     const urlParams = this.activatedRoute.snapshot.queryParamMap;
-    let sessionName = '';
     if (urlParams.has('session')) {
-      sessionName = urlParams.get('session');
+      this.urlEncodedSessionName = urlParams.get('session');
     }
-    this.urlEncodedSessionName = sessionName;
   }
 }
