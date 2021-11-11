@@ -43,6 +43,31 @@ const FEATURE_FLAW_DEFINITION = '<p>Some functionality missing from a feature de
 const DOCUMENTATION_BUG_DEFINITION = '<p>A flaw in the documentation '
   + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
 
+const ACCEPTED_DEFINITION = '<p>You accept it as a bug.</p>';
+const NOT_IN_SCOPE_DEFINITION = '<p>It is a valid issue but not something the team should be penalized for '
+  + '<span style="color:grey;">e.g., it was not related to features delivered in this version</span>.</p>';
+const REJECTED_DEFINITION = '<p>What tester treated as a bug is in fact the expected behavior (from the user\'s point of view), or the tester '
+  + 'was mistaken in some other way.</p>';
+const CANNOT_REPRODUCE_DEFINITION = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
+const ISSUE_UNCLEAR_DEFINITION = '<p>The issue description is not clear.</p>';
+const UNDEFINED_DEFINITION = null;
+
+export const LABEL_DEFINITIONS = {
+  severityVeryLow : VERY_LOW_DEFINITION,
+  severityLow: LOW_DEFINITION,
+  severityMedium: MEDIUM_DEFINITION,
+  severityHigh: HIGH_DEFINITION,
+  typeFunctionalityBug: FUNCTIONALITY_BUG_DEFINITION,
+  typeFeatureFlaw: FEATURE_FLAW_DEFINITION,
+  typeDocumentationBug: DOCUMENTATION_BUG_DEFINITION,
+  responseAccepted: ACCEPTED_DEFINITION,
+  responseNotInScope: NOT_IN_SCOPE_DEFINITION,
+  responseRejected: REJECTED_DEFINITION,
+  responseCannotProduce: CANNOT_REPRODUCE_DEFINITION,
+  responseIssueUnclear: ISSUE_UNCLEAR_DEFINITION,
+  undefined: UNDEFINED_DEFINITION
+};
+
 const REQUIRED_LABELS = {
   severity: {
     VeryLow: new Label('severity', 'VeryLow', 'ffe0e0', VERY_LOW_DEFINITION),
@@ -56,11 +81,11 @@ const REQUIRED_LABELS = {
     FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc', FUNCTIONALITY_BUG_DEFINITION)
   },
   response: {
-    Accepted: new Label('response', 'Accepted', '00802b'),
-    CannotReproduce: new Label('response', 'CannotReproduce', 'ffebcc'),
-    IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80'),
-    NotInScope: new Label('response', 'NotInScope', 'ffcc80'),
-    Rejected: new Label('response', 'Rejected', 'ff9900')
+    Accepted: new Label('response', 'Accepted', '00802b', ACCEPTED_DEFINITION),
+    CannotReproduce: new Label('response', 'CannotReproduce', 'ffebcc', CANNOT_REPRODUCE_DEFINITION),
+    IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80', ISSUE_UNCLEAR_DEFINITION),
+    NotInScope: new Label('response', 'NotInScope', 'ffcc80', NOT_IN_SCOPE_DEFINITION),
+    Rejected: new Label('response', 'Rejected', 'ff9900', REJECTED_DEFINITION)
   },
   status: {
     Done: new Label('status', 'Done', 'a6a6a6'),
