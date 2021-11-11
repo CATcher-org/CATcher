@@ -1,7 +1,7 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { filter, flatMap, map } from 'rxjs/operators';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
@@ -11,7 +11,6 @@ import { AuthService, AuthState } from '../core/services/auth.service';
 import { ElectronService } from '../core/services/electron.service';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { GithubService } from '../core/services/github.service';
-import { GithubEventService } from '../core/services/githubevent.service';
 import { LoggingService } from '../core/services/logging.service';
 import { PhaseService } from '../core/services/phase.service';
 import { UserService } from '../core/services/user.service';
@@ -38,7 +37,6 @@ export class AuthComponent implements OnInit, OnDestroy {
               public electronService: ElectronService,
               private githubService: GithubService,
               private authService: AuthService,
-              private githubEventService: GithubEventService,
               private userService: UserService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,

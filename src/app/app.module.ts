@@ -16,7 +16,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
-import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/label-definition-popup.component';
 import { AuthService } from './core/services/auth.service';
 import { DataService } from './core/services/data.service';
 import { ElectronService } from './core/services/electron.service';
@@ -35,6 +34,7 @@ import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporti
 import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
 import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
+import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/label-definition-popup.component';
 import { HeaderComponent } from './shared/layout';
 import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';

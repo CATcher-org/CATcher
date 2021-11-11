@@ -1,6 +1,6 @@
+import { extractStringBetween } from '../../../../shared/lib/string-utils';
 import { TesterResponse } from '../../tester-response.model';
 import { Section, SectionalDependency } from './section.model';
-import { extractStringBetween } from '../../../../shared/lib/string-utils';
 
 // match format e.g. ## :question: Issue Title
 const matchTitle = '#{2} *:question: *([\\w ]+)';
@@ -28,7 +28,7 @@ export class TesterResponseSection extends Section {
       const regex: RegExp = new RegExp([matchTitle, matchDescription, matchDisagreement].join('[\\r\\n]*') + matchLinebreak, 'gi');
       while (matches = regex.exec(this.content)) {
         if (matches) {
-          const [regexString, title, description, disagreeCheckbox, reasonForDisagreement] = matches;
+          const [_, title, description, disagreeCheckbox, reasonForDisagreement] = matches;
 
           if (this.isSeverityDispute(title)) {
             this.teamChosenSeverity = this.parseTeamChosenSeverity(description);

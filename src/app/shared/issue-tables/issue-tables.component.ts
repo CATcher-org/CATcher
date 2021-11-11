@@ -2,6 +2,7 @@ import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/cor
 import { MatPaginator, MatSort } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
+import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
 import { IssueService } from '../../core/services/issue.service';
@@ -11,7 +12,6 @@ import { PermissionService } from '../../core/services/permission.service';
 import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { IssuesDataTable } from './IssuesDataTable';
-import { DialogService } from '../../core/services/dialog.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -39,7 +39,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   issues: IssuesDataTable;
   issuesPendingDeletion: {[id: number]: boolean};
 
-  private readonly action_buttons = ACTION_BUTTONS;
+  public readonly action_buttons = ACTION_BUTTONS;
 
   // Messages for the modal popup window upon deleting an issue
   private readonly deleteIssueModalMessages = ['Do you wish to delete this issue?', 'This action is irreversible!'];
