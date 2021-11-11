@@ -1,4 +1,4 @@
-import { LabelService } from '../../src/app/core/services/label.service';
+import { LabelService, LABEL_DEFINITIONS } from '../../src/app/core/services/label.service';
 import { Label } from '../../src/app/core/models/label.model';
 import * as LabelConstant from '../constants/label.constants';
 import { of } from 'rxjs';
@@ -87,14 +87,14 @@ describe('LabelService: parseLabelData()', () => {
     expect(labelList[1].labelCategory).toBe(LabelConstant.SEVERITY);
     expect(labelList[1].labelValue).toBe(LabelConstant.SEVERITY_LOW);
     expect(labelList[1].labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
-    expect(labelList[1].labelDefinition).toBe(LabelConstant.DEFINITION_SEVERITY_LOW);
+    expect(labelList[1].labelDefinition).toBe(LABEL_DEFINITIONS.severityLow);
   });
 
   it('should be type.FunctionalityBug', () => {
     expect(labelList[2].labelCategory).toBe(LabelConstant.TYPE);
     expect(labelList[2].labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
     expect(labelList[2].labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
-    expect(labelList[2].labelDefinition).toBe(LabelConstant.DEFINITION_FUNCTIONALITY_BUG);
+    expect(labelList[2].labelDefinition).toBe(LABEL_DEFINITIONS.typeFunctionalityBug);
   });
 });
 
@@ -167,24 +167,30 @@ describe('LabelService: getLabelDefinition()', () => {
 
   it('should return the correct label definition for type.FunctionalityBug', () => {
     expect(labelService.getLabelDefinition(LabelConstant.TYPE_FUNCTIONALITY_BUG, LabelConstant.TYPE)).toEqual(
-      LabelConstant.DEFINITION_FUNCTIONALITY_BUG
+      LABEL_DEFINITIONS.typeFunctionalityBug
     );
   });
 
   it('should return the correct label definition for severity.Medium', () => {
     expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, LabelConstant.SEVERITY)).toEqual(
-      LabelConstant.DEFINITION_SEVERITY_MEDIUM
+      LABEL_DEFINITIONS.severityMedium
+    );
+  });
+
+  it('should return the correct label definition for response.Rejected', () => {
+    expect(labelService.getLabelDefinition(LabelConstant.RESPONSE_REJECTED, LabelConstant.RESPONSE)).toEqual(
+      LABEL_DEFINITIONS.responseRejected
     );
   });
 
   it('should return null for label with no definition', () => {
-    expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE, LabelConstant.STATUS)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
+    expect(labelService.getLabelDefinition(LabelConstant.STATUS_DONE, LabelConstant.STATUS)).toEqual(LABEL_DEFINITIONS.undefined);
   });
 
   it('should return null for invalid inputs', () => {
-    expect(labelService.getLabelDefinition(null, null)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
-    expect(labelService.getLabelDefinition(null, LabelConstant.SEVERITY)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
-    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, null)).toEqual(LabelConstant.DEFINITION_UNDEFINIED);
+    expect(labelService.getLabelDefinition(null, null)).toEqual(LABEL_DEFINITIONS.undefined);
+    expect(labelService.getLabelDefinition(null, LabelConstant.SEVERITY)).toEqual(LABEL_DEFINITIONS.undefined);
+    expect(labelService.getLabelDefinition(LabelConstant.SEVERITY_MEDIUM, null)).toEqual(LABEL_DEFINITIONS.undefined);
   });
 });
 
