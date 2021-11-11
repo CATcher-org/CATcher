@@ -16,7 +16,7 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.TYPE_LABEL
   ];
 
-  @ViewChild(ViewIssueComponent) viewIssue: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
 
   constructor(private route: ActivatedRoute) { }
 

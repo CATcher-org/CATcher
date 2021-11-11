@@ -22,7 +22,7 @@ export class AssigneeComponent implements OnInit {
   @Input() team: Team;
   @Input() isEditable = true;
 
-  @ViewChild(MatSelect) assigneeSelection: MatSelect;
+  @ViewChild(MatSelect, { static: true }) assigneeSelection: MatSelect;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 

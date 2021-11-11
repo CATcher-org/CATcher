@@ -21,7 +21,7 @@ describe('LabelDropdownComponent', () => {
       type: ['', Validators.required]
     });
 
-    labelDropdownComponent = new LabelDropdownComponent(labelService);
+    labelDropdownComponent = new LabelDropdownComponent(labelService, null);
     labelDropdownComponent.dropdownForm = formGroup;
   });
 

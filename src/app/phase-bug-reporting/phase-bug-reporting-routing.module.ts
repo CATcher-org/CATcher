@@ -8,7 +8,8 @@ import { PhaseBugReportingComponent } from './phase-bug-reporting.component';
 
 const routes: Routes = [
   { path: 'phaseBugReporting', component: PhaseBugReportingComponent, canActivate: [AuthGuard] },
-  { path: 'phaseBugReporting/issues/new', component: NewIssueComponent, canActivate: [AuthGuard]},
+  { path: 'phaseBugReporting/issues/new', component: NewIssueComponent, canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateIssueGuard] },
   { path: 'phaseBugReporting/issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard],
     canDeactivate: [CanDeactivateIssueGuard] },
 ];

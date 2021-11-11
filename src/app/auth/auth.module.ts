@@ -5,6 +5,7 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { AuthComponent } from './auth.component';
 import { JsonParseErrorDialogComponent } from './profiles/json-parse-error-dialog/json-parse-error-dialog.component';
 import { ProfilesComponent } from './profiles/profiles.component';
+import { ConfirmLoginComponent } from './confirm-login/confirm-login.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { ProfilesComponent } from './profiles/profiles.component';
   declarations: [
     AuthComponent,
     ProfilesComponent,
-    JsonParseErrorDialogComponent
+    JsonParseErrorDialogComponent,
+    ConfirmLoginComponent
   ],
   entryComponents: [
     JsonParseErrorDialogComponent

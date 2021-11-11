@@ -5,7 +5,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { isValidProfile, Profile } from '../../core/models/profile.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
@@ -36,10 +36,11 @@ export class ProfilesComponent implements OnInit {
   private readonly ANIMATION_DURATION: number = 250;
 
   profiles: Profile[] = []; // List of profiles taken from profiles.json
-  blankProfile: Profile = {profileName: '', encodedText: ''}; // A blank profile to reset values
+  blankProfile: Profile = {profileName: '', repoName: ''}; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
+  @Input() urlEncodedSessionName: string;
   @Output() selectedProfileEmitter: EventEmitter<Profile> = new EventEmitter<Profile>();
 
   profilesData = {
@@ -101,7 +102,7 @@ export class ProfilesComponent implements OnInit {
       this.profiles = this.profiles
       .concat(externalProfiles)
       .filter((p) => !!p);
-    })
+    }).then(() => this.setUrlEncodedProfile(this.profiles))
     .catch(e => {
       if (e === MALFORMED_PROFILES_ERROR) {
         this.openErrorDialog();
@@ -127,6 +128,19 @@ export class ProfilesComponent implements OnInit {
       this.selectedProfileEmitter.emit(profile);
     } else {
       this.openErrorDialog();
+    }
+  }
+  setUrlEncodedProfile(validProfiles: Profile[]) {
+    if (!this.urlEncodedSessionName) {
+      return;
+    }
+
+    const profile = validProfiles.find(profile => profile.profileName === this.urlEncodedSessionName);
+    if (profile) {
+      this.selectedProfile.profileName = this.urlEncodedSessionName;
+      this.selectProfile(profile);
+    } else {
+      this.errorHandlingService.handleError(new Error('Invalid URL provided session'));
     }
   }
 }

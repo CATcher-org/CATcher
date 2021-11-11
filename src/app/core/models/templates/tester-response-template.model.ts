@@ -1,7 +1,7 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { Section } from './sections/section.model';
-import { TesterResponseSection } from './sections/test-response-section.model';
+import { TesterResponseSection } from './sections/tester-response-section.model';
 import { Header, Template } from './template.model';
 
 
@@ -14,6 +14,8 @@ export class TesterResponseTemplate extends Template {
   teamResponse: Section;
   testerResponse: TesterResponseSection;
   comment: IssueComment;
+  teamChosenSeverity?: string;
+  teamChosenType?: string;
 
   constructor(githubIssueComments: GithubComment[]) {
     super(Object.values(TesterResponseHeaders));
@@ -26,6 +28,9 @@ export class TesterResponseTemplate extends Template {
       };
       this.teamResponse = this.parseTeamResponse(this.comment.description);
       this.testerResponse = this.parseTesterResponse(this.comment.description);
+      this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
+      this.teamChosenType = this.testerResponse.getTeamChosenType();
+
     }
   }
 

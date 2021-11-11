@@ -11,6 +11,7 @@ import { PermissionService } from '../../core/services/permission.service';
 import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { IssuesDataTable } from './IssuesDataTable';
+import { DialogService } from '../../core/services/dialog.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -32,12 +33,18 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   issues: IssuesDataTable;
   issuesPendingDeletion: {[id: number]: boolean};
-  public readonly action_buttons = ACTION_BUTTONS;
+
+  private readonly action_buttons = ACTION_BUTTONS;
+
+  // Messages for the modal popup window upon deleting an issue
+  private readonly deleteIssueModalMessages = ['Do you wish to delete this issue?', 'This action is irreversible!'];
+  private readonly yesButtonModalMessage = 'Yes, I wish to delete this issue';
+  private readonly noButtonModalMessage = 'No, I don\'t wish to delete this issue';
 
   constructor(public userService: UserService,
               public permissions: PermissionService,
@@ -46,7 +53,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
               public issueService: IssueService,
               private phaseService: PhaseService,
               private errorHandlingService: ErrorHandlingService,
-              private loggingService: LoggingService) { }
+              private loggingService: LoggingService,
+              private dialogService: DialogService) { }
 
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort,
@@ -152,5 +160,18 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
+  }
+
+  openDeleteDialog(id: number) {
+    const dialogRef = this.dialogService.openUserConfirmationModal(
+      this.deleteIssueModalMessages, this.yesButtonModalMessage, this.noButtonModalMessage
+    );
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loggingService.info(`Deleting issue ${id}`);
+        this.deleteIssue(id);
+      }
+    });
   }
 }

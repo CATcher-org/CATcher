@@ -1,0 +1,10 @@
+<div class="modalPopup">
+  <h1 mat-dialog-title> {{labelName}} </h1>
+  <div mat-dialog-content>
+    <div [innerHTML]="labelDefinitionHtmlTemplate"></div>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="onNoClick()">Close</button>
+  </div>
+</div>

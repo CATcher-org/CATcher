@@ -23,7 +23,7 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.DUPLICATE
   ];
 
-  @ViewChild(ViewIssueComponent) viewIssue: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
 
   constructor(public issueService: IssueService,
               private route: ActivatedRoute,

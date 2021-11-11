@@ -44,6 +44,8 @@ export class Issue {
   testerResponses?: TesterResponse[];
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
+  teamChosenSeverity?: string;
+  teamChosenType?: string;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -141,6 +143,10 @@ export class Issue {
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
+
+    issue.teamChosenSeverity = template.teamChosenSeverity || null;
+    issue.teamChosenType = template.teamChosenType || null;
+
     return issue;
   }
 

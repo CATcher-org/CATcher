@@ -34,11 +34,19 @@ let ORG_NAME = '';
 let MOD_ORG = '';
 let REPO = '';
 let DATA_REPO = '';
+const MAX_ITEMS_PER_PAGE = 100;
+
 let octokit = new Octokit();
 
 @Injectable({
   providedIn: 'root',
 })
+
+/**
+ * Responsible for communicating with GitHub to create, update, read and delete
+ * features related to Github using GitHub API Requests.
+ * For example, issues, issue labels and repositories.
+ */
 export class GithubService {
   private static readonly IF_NONE_MATCH_EMPTY = { 'If-None-Match': '' };
 
@@ -193,7 +201,13 @@ export class GithubService {
   }
 
   fetchAllLabels(): Observable<Array<{}>> {
-    return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
+    return from(octokit.issues.listLabelsForRepo({
+      owner: ORG_NAME,
+      repo: REPO,
+      per_page: MAX_ITEMS_PER_PAGE,
+      headers: GithubService.IF_NONE_MATCH_EMPTY
+    }))
+    .pipe(
       map(response => {
         return response['data'];
       }),

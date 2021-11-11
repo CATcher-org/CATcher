@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { Issue } from '../../core/models/issue.model';
@@ -16,7 +16,6 @@ import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component
 export class NewIssueComponent implements OnInit {
   newIssueForm: FormGroup;
   isFormPending = false;
-
   submitButtonText: string;
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
@@ -51,6 +50,15 @@ export class NewIssueComponent implements OnInit {
           error => {
           this.errorHandlingService.handleError(error);
         });
+  }
+
+  canDeactivate() {
+    return !this.isAttributeEditing(this.title) && !this.isAttributeEditing(this.description)
+      && !this.isAttributeEditing(this.severity) && !this.isAttributeEditing(this.type);
+  }
+
+  isAttributeEditing(attribute: AbstractControl) {
+    return attribute.value !== null && attribute.value !== '';
   }
 
   get title() {

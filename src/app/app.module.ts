@@ -16,6 +16,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
+import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/label-definition-popup.component';
 import { AuthService } from './core/services/auth.service';
 import { DataService } from './core/services/data.service';
 import { ElectronService } from './core/services/electron.service';
@@ -43,6 +44,7 @@ import { SharedModule } from './shared/shared.module';
     AppComponent,
     HeaderComponent,
     UserConfirmationComponent,
+    LabelDefinitionPopupComponent,
     SessionFixConfirmationComponent
   ],
   imports: [
@@ -93,7 +95,8 @@ import { SharedModule } from './shared/shared.module';
   bootstrap: [AppComponent],
   entryComponents: [
     UserConfirmationComponent,
-    SessionFixConfirmationComponent
+    SessionFixConfirmationComponent,
+    LabelDefinitionPopupComponent
   ]
 })
 

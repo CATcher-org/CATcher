@@ -30,7 +30,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
-  @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
+  @ViewChild(CommentEditorComponent, { static: false }) commentEditor: CommentEditorComponent;
 
   private readonly responseRadioIdentifier = 'response-radio';
   private readonly responseTextIdentifier = 'tester-response';

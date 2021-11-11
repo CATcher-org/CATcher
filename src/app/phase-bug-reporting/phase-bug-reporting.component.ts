@@ -24,7 +24,7 @@ export class PhaseBugReportingComponent implements OnInit {
     ACTION_BUTTONS.FIX_ISSUE
   ];
 
-  @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
+  @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
 
   constructor(public permissions: PermissionService,
               public userService: UserService) {

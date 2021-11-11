@@ -20,6 +20,11 @@ export const PhaseDescription = {
 @Injectable({
   providedIn: 'root',
 })
+
+/**
+ * Responsible for managing the current phase of CATcher as well as the
+ * current session data and repository details related to the session.
+ */
 export class PhaseService {
 
   public currentPhase: Phase;
@@ -73,9 +78,18 @@ export class PhaseService {
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
       map((sessionData: SessionData) => {
+        localStorage.setItem('sessionData', JSON.stringify(sessionData));
         this.updateSessionParameters(sessionData);
       })
     );
+  }
+
+  /**
+   * Retrieves session data from local storage and update phase service with it.
+   */
+  setSessionData() {
+    const sessionData = JSON.parse(localStorage.getItem('sessionData'));
+    this.updateSessionParameters(sessionData);
   }
 
   /**
@@ -138,9 +152,13 @@ export class PhaseService {
       throwIfFalse(
         (isSessionCreated: boolean) => isSessionCreated,
         () => new Error(SESSION_AVALIABILITY_FIX_FAILED)),
-      this.labelService.syncLabels(),
+      this.labelService.syncLabels(this.isTeamOrModerationPhase()),
       retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
+  }
+
+  private isTeamOrModerationPhase(): boolean {
+    return this.currentPhase === Phase.phaseTeamResponse || this.currentPhase === Phase.phaseModeration;
   }
 
   public getPhaseDetail() {

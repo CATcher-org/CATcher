@@ -24,6 +24,11 @@ import { UserService } from './user.service';
 @Injectable({
   providedIn: 'root',
 })
+
+/**
+ * Responsible for creating and updating issues, and periodically fetching issues
+ * using GitHub.
+ */
 export class IssueService {
   static readonly POLL_INTERVAL = 5000; // 5 seconds
 
@@ -308,7 +313,8 @@ export class IssueService {
             this.githubService.fetchIssuesGraphqlByTeam(
               this.createLabel('tutorial', team.tutorialClassId),
               this.createLabel('team', team.teamId),
-              new RestGithubIssueFilter({}))
+              new RestGithubIssueFilter({})
+            )
           );
         });
         break;
@@ -325,20 +331,58 @@ export class IssueService {
     // const issuesAPICallsByFilter = filters.map(filter => this.githubService.fetchIssuesGraphql(filter));
     return forkJoin(issuesAPICallsByFilter).pipe(
       map((issuesByFilter: [][]) => {
+        const fetchedIssueIds: Array<Number> = [];
+
         for (const issues of issuesByFilter) {
           for (const issue of issues) {
+            fetchedIssueIds.push(this.createIssueModel(issue).id);
             this.createAndSaveIssueModel(issue);
           }
         }
+
+        const outdatedIssueIds: Array<Number> = this.getOutdatedIssueIds(fetchedIssueIds);
+        this.deleteIssuesFromLocalStore(outdatedIssueIds);
+
         return Object.values(this.issues);
       })
     );
   }
 
+
   private createAndSaveIssueModel(githubIssue: GithubIssue): boolean {
     const issue = this.createIssueModel(githubIssue);
     this.updateLocalStore(issue);
     return true;
+  }
+
+  private deleteIssuesFromLocalStore(ids: Array<Number>): void {
+    ids.forEach((id: number) => {
+      this.getIssue(id).subscribe(issue => this.deleteFromLocalStore(issue));
+    });
+  }
+
+  /**
+   * Returns an array of outdated issue ids by comparing the ids of the recently
+   * fetched issues with the current issue ids in the local store
+   */
+  private getOutdatedIssueIds(fetchedIssueIds: Array<Number>): Array<Number> {
+
+    /*
+      Ignore for first fetch or ignore if there is no fetch result
+
+      We also have to ignore for no fetch result as the cache might return a
+      304 reponse with no differences in issues, resulting in the fetchIssueIds
+      to be empty
+    */
+    if (this.issues === undefined || !fetchedIssueIds.length) {
+      return [];
+    }
+
+    const fetchedIssueIdsSet = new Set<Number>(fetchedIssueIds);
+
+    const result = Object.keys(this.issues).map(x => +x).filter(issueId => !fetchedIssueIdsSet.has(issueId));
+
+    return result;
   }
 
   /**

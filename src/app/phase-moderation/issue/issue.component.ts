@@ -24,7 +24,7 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.UNSURE_CHECKBOX
   ];
 
-  @ViewChild(ViewIssueComponent) viewIssue: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
 
   constructor(private route: ActivatedRoute,
               public userService: UserService,

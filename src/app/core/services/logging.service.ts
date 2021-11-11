@@ -2,10 +2,17 @@ import { Injectable } from '@angular/core';
 import { ElectronLog } from 'electron-log';
 import { AppConfig } from '../../../environments/environment';
 import { ElectronService } from './electron.service';
+import { downloadAsTextFile } from '../../shared/lib/file-download';
+
 
 @Injectable({
   providedIn: 'root'
 })
+
+/**
+ * Responsible for logging events and errors while the application is
+ * running to ease debugging for CATcher developers and maintainers.
+ */
 export class LoggingService {
   private logger: ElectronLog | Console;
   private isInSession = false;
@@ -13,6 +20,7 @@ export class LoggingService {
   private readonly LOG_FILE_NAME = 'CATcher-log.txt';
   public readonly LOG_START_HEADER = `====== New CATcher v${AppConfig.version} Session Log ======`;
   public readonly LOG_COUNT_LIMIT = 4;
+  public readonly SESSION_LOG_SEPARATOR = '\n'.repeat(2); // More new-lines added for clarity.
 
   constructor(electronService: ElectronService) {
     if (electronService.isElectron()) {
@@ -44,7 +52,7 @@ export class LoggingService {
     }
   }
 
-  initializeLogCache() {
+  private initializeLogCache() {
     this.setCachedLog(this.getTrimmedLogCache(this.getCachedLog(), this.LOG_COUNT_LIMIT));
   }
 
@@ -53,8 +61,7 @@ export class LoggingService {
    * of Sessions if necessary.
    * @param sessionCount The number of Session Logs to preserve in the cache
    */
-  getTrimmedLogCache(currentLog: string, sessionCount: number): string {
-    const sessionLogSeparator: string = '\n'.repeat(2); // More new-lines added for clarity.
+  private getTrimmedLogCache(currentLog: string, sessionCount: number): string {
     const currentDateTime = new Date().toLocaleString();
     const logHeaderWithDateTime = `${this.LOG_START_HEADER}\n${currentDateTime}`;
 
@@ -68,7 +75,7 @@ export class LoggingService {
     }
 
     if (numberOfSessions < sessionCount) {
-      return `${currentLog}${sessionLogSeparator}${logHeaderWithDateTime}`;
+      return `${currentLog}${this.SESSION_LOG_SEPARATOR}${logHeaderWithDateTime}`;
     }
 
     const separatedSessionLogs: string[] = currentLog.split(`${this.LOG_START_HEADER}`)
@@ -78,39 +85,24 @@ export class LoggingService {
     separatedSessionLogs.splice(0, separatedSessionLogs.length - sessionCount + 1);
     separatedSessionLogs.push(`${logHeaderWithDateTime}`);
 
-    return separatedSessionLogs.join(sessionLogSeparator);
+    return separatedSessionLogs.join(this.SESSION_LOG_SEPARATOR);
   }
 
   getCachedLog(): string {
     return localStorage.getItem(this.LOG_KEY);
   }
 
-  setCachedLog(updatedLog: string): void {
+  private setCachedLog(updatedLog: string): void {
     localStorage.setItem(this.LOG_KEY, updatedLog);
   }
 
-  updateLog(... updatedLog: any[]): void {
+  private updateLog(... updatedLog: any[]): void {
     this.setCachedLog(`${this.getCachedLog()}\n${updatedLog.toString()}`);
   }
 
   exportLogFile() {
     const log: string = this.getCachedLog();
-    const blob: Blob = new Blob([log], {type: 'file/txt'});
-    const blobUrl: string = window.URL.createObjectURL(blob);
-
-    const hiddenElement: HTMLAnchorElement = document.createElement('a');
-    hiddenElement.setAttribute('style', 'display: none;');
-    hiddenElement.href = blobUrl;
-    hiddenElement.download = this.LOG_FILE_NAME;
-
-    // Add to DOM and Click to prompt download.
-    document.body.appendChild(hiddenElement);
-    hiddenElement.click();
-
-    // Remove URL + Created Attached Element
-    window.URL.revokeObjectURL(blobUrl);
-    document.body.removeChild(hiddenElement);
-    hiddenElement.remove();
+    downloadAsTextFile(this.LOG_FILE_NAME, log);
   }
 
   info(...params: any[]) {

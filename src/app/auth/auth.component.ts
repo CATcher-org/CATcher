@@ -1,8 +1,8 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { filter, flatMap } from 'rxjs/operators';
+import { Subscription, Observable } from 'rxjs';
+import { filter, flatMap, map } from 'rxjs/operators';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
 import { Profile } from '../core/models/profile.model';
@@ -16,26 +16,23 @@ import { LoggingService } from '../core/services/logging.service';
 import { PhaseService } from '../core/services/phase.service';
 import { UserService } from '../core/services/user.service';
 
+const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version of CATcher.";
+
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit, OnDestroy {
-  // isReady is used to indicate whether the pre-processing of application is done.
-  isReady: boolean;
   // isSettingUpSession is used to indicate whether CATcher is in the midst of setting up the session.
   isSettingUpSession: boolean;
-
-  // Errors
-  isAppOutdated: boolean;
-  versionCheckingError: boolean;
 
   authState: AuthState;
   accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
   profileForm: FormGroup;
   currentUserName: string;
+  urlEncodedSessionName: string;
 
   constructor(public appService: ApplicationService,
               public electronService: ElectronService,
@@ -68,7 +65,10 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.logger.startSession();
-    this.isReady = false;
+
+    // Initialize State
+    this.isSettingUpSession = false;
+
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
 
@@ -76,36 +76,24 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.router.navigate([this.phaseService.currentPhase]);
       return;
     }
-
-    if (oauthCode) { // In the web's oauth window
+    this.initAccessTokenSubscription();
+    this.initAuthStateSubscription();
+    this.initProfileForm();
+    this.createProfileFromUrlQueryParams();
+    if (oauthCode) { // runs upon receiving oauthCode from the redirect
+      this.authService.changeAuthState(AuthState.AwaitingAuthentication);
+      this.restoreOrgDetailsFromLocalStorage();
       this.logger.info('Obtained authorisation code from Github');
-      window.opener.postMessage({ oauthCode, state }, AppConfig.origin);
-      this.logger.info('Sent authorisation code and state to main application window, waiting to close');
-      this.listenForCloseOAuthWindowMessage();
-    } else { // In the main app window
-      this.checkAppIsOutdated();
-      this.initAccessTokenSubscription();
-      this.initAuthStateSubscription();
-      this.initProfileForm();
+      this.fetchAccessToken(oauthCode, state);
     }
   }
 
   /**
-   * A listener for receiving the oauthCode from the oauth window.
-   * With the oauth code, we can retrieve the accessToken from the proxy.
+   * Will fetch the access token from GitHub.
+   * @param oauthCode - The authorisation code obtained from GitHub.
+   * @param state - The state returned from GitHub.
    */
-  @HostListener('window:message', ['$event'])
-  onMessage(event: MessageEvent) {
-    if (event.origin !== AppConfig.origin) {
-      return;
-    }
-
-    const { oauthCode, state } = event.data;
-
-    if (!oauthCode) {
-        return;
-    }
-
+  fetchAccessToken(oauthCode: string, state: string) {
     if (!this.authService.isReturnedStateSame(state)) {
       this.logger.info(`Received incorrect state ${state}, continue waiting for correct state`);
       return;
@@ -127,12 +115,6 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.logger.info(`Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
-      })
-      .finally(() => {
-        if (!(event.source instanceof MessagePort) && !(event.source instanceof ServiceWorker)) {
-          event.source.postMessage('close', AppConfig.origin);
-          this.logger.info('Closing authentication window');
-        }
       });
   }
 
@@ -149,16 +131,14 @@ export class AuthComponent implements OnInit, OnDestroy {
   /**
    * Checks whether the current version of CATcher is outdated.
    */
-  checkAppIsOutdated(): void {
-    this.appService.isApplicationOutdated().subscribe((isOutdated: boolean) => {
-      this.isAppOutdated = isOutdated;
-      this.isReady = true;
-      this.versionCheckingError = false;
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-      this.isReady = true;
-      this.versionCheckingError = true;
-    });
+  checkAppIsOutdated(): Observable<any> {
+    return this.appService.isApplicationOutdated().pipe(
+      map((isOutdated: boolean) => {
+        if (isOutdated) {
+          throw new Error(APPLICATION_VERSION_OUTDATED_ERROR);
+        }
+      }),
+    );
   }
 
   /**
@@ -166,26 +146,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param profile - Profile selected by the user.
    */
   onProfileSelect(profile: Profile): void {
-    this.profileForm.get('session').setValue(profile.encodedText);
-  }
-
-  /**
-   * Will complete the process of logging in the given user.
-   * @param username - The user to log in.
-   */
-  completeLoginProcess(username: string): void {
-    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-    this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
-    this.userService.createUserModel(username).pipe(
-      flatMap(() => this.phaseService.sessionSetup()),
-      flatMap(() => this.githubEventService.setLatestChangeEvent()),
-    ).subscribe(() => {
-      this.handleAuthSuccess();
-    }, (error) => {
-      this.authService.changeAuthState(AuthState.NotAuthenticated);
-      this.errorHandlingService.handleError(error);
-      this.logger.info(`Completion of login process failed with an error: ${error}`);
-    });
+    this.profileForm.get('session').setValue(profile.repoName);
   }
 
   setupSession() {
@@ -196,12 +157,14 @@ export class AuthComponent implements OnInit, OnDestroy {
     const sessionInformation: string = this.profileForm.get('session').value;
     const org: string = this.getOrgDetails(sessionInformation);
     const dataRepo: string = this.getDataRepoDetails(sessionInformation);
+    // Persist session information in local storage
+    window.localStorage.setItem('org', org);
+    window.localStorage.setItem('dataRepo', dataRepo);
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
     this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
 
     this.phaseService.storeSessionData().subscribe(() => {
-
       try {
         this.authService.startOAuthProcess();
       } catch (error) {
@@ -212,26 +175,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
     }, () => this.isSettingUpSession = false);
-  }
-
-  logIntoAnotherAccount() {
-    this.logger.info('Logging into another account');
-    this.electronService.clearCookies();
-    this.authService.startOAuthProcess();
-  }
-
-  onGithubWebsiteClicked() {
-    window.open('https://github.com/', '_blank');
-    window.location.reload();
-  }
-
-  /**
-   * Handles the clean up required after authentication and setting up of user data is completed.
-   */
-  handleAuthSuccess() {
-    this.authService.setTitleWithPhaseDetail();
-    this.router.navigateByUrl(this.phaseService.currentPhase);
-    this.authService.changeAuthState(AuthState.Authenticated);
   }
 
   goToSessionSelect() {
@@ -252,23 +195,22 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   get currentSessionOrg(): string {
     const sessionInformation: string = this.profileForm.get('session').value;
+    if (!sessionInformation) {
+      // Retrieve org details of session information from local storage
+      return window.localStorage.getItem('org');
+    }
     return this.getOrgDetails(sessionInformation);
   }
 
   /**
-   * Will wait for the message from parent window to close the window.
+   * Extracts organization and data repository details from local storage
+   * and restores them to CATcher.
    */
-  private listenForCloseOAuthWindowMessage() {
-    window.addEventListener('message', (event) => {
-      if (event.origin !== AppConfig.origin) {
-        return;
-      }
-      if (event.data === 'close') {
-        window.opener.focus();
-        window.close();
-        this.logger.info('Closed authentication window');
-      }
-    });
+  private restoreOrgDetailsFromLocalStorage() {
+    const org = window.localStorage.getItem('org');
+    const dataRepo = window.localStorage.getItem('dataRepo');
+    this.githubService.storeOrganizationDetails(org, dataRepo);
+    this.phaseService.setSessionData();
   }
 
   /**
@@ -311,5 +253,12 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
       });
     });
+  }
+
+  private createProfileFromUrlQueryParams() {
+    const urlParams = this.activatedRoute.snapshot.queryParamMap;
+    if (urlParams.has('session')) {
+      this.urlEncodedSessionName = urlParams.get('session');
+    }
   }
 }
