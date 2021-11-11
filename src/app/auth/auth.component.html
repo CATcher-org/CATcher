@@ -5,7 +5,7 @@
     </mat-card-header>
 
     <form [formGroup]="profileForm" (ngSubmit)="setupSession()">
-      <app-profiles class="login-field" (selectedProfileEmitter)="onProfileSelect($event)"></app-profiles>
+      <app-profiles class="login-field" [urlEncodedSessionName]="this.urlEncodedSessionName" (selectedProfileEmitter)="onProfileSelect($event)"></app-profiles>
       <mat-card-content>
         <mat-form-field class="login-field">
           <input matInput placeholder="Settings Location (Org/Repo)" formControlName="session" required>
