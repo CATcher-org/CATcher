@@ -143,7 +143,8 @@
       </button>
       <button mat-button color="warn" *ngIf="permissions.isIssueDeletable() && !issuesPendingDeletion[issue.id]
           && this.isActionVisible(action_buttons.DELETE_ISSUE)"
-              (click)="deleteIssue(issue.id)" matTooltip="Delete this issue" style="transform: scale(0.8)">
+              (click)="openDeleteDialog(issue.id); $event.stopPropagation()" 
+              matTooltip="Delete this issue" style="transform: scale(0.8)">
         <mat-icon>delete_outline</mat-icon>
       </button>
       <mat-spinner color="warn" [diameter]="25" style="display: inline; padding-right: 30px; margin-left: 5px"

@@ -11,6 +11,7 @@ import { IssuesDataTable } from './IssuesDataTable';
 import { MatPaginator, MatSort } from '@angular/material';
 import { PhaseService } from '../../core/services/phase.service';
 import { LoggingService } from '../../core/services/logging.service';
+import { DialogService } from '../../core/services/dialog.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -37,7 +38,13 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   issues: IssuesDataTable;
   issuesPendingDeletion: {[id: number]: boolean};
+
   private readonly action_buttons = ACTION_BUTTONS;
+
+  // Messages for the modal popup window upon deleting an issue
+  private readonly deleteIssueModalMessages = ['Do you wish to delete this issue?', 'This action is irreversible!'];
+  private readonly yesButtonModalMessage = 'Yes, I wish to delete this issue';
+  private readonly noButtonModalMessage = 'No, I don\'t wish to delete this issue';
 
   constructor(public userService: UserService,
               private permissions: PermissionService,
@@ -46,7 +53,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
               private issueService: IssueService,
               private phaseService: PhaseService,
               private errorHandlingService: ErrorHandlingService,
-              private loggingService: LoggingService) { }
+              private loggingService: LoggingService,
+              private dialogService: DialogService) { }
 
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.errorHandlingService, this.sort,
@@ -152,5 +160,18 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       this.errorHandlingService.handleError(error);
     });
     event.stopPropagation();
+  }
+
+  openDeleteDialog(id: number) {
+    const dialogRef = this.dialogService.openUserConfirmationModal(
+      this.deleteIssueModalMessages, this.yesButtonModalMessage, this.noButtonModalMessage
+    );
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loggingService.info(`Deleting issue ${id}`);
+        this.deleteIssue(id);
+      }
+    });
   }
 }
