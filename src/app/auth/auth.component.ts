@@ -1,22 +1,19 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { AuthService, AuthState } from '../core/services/auth.service';
-import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GithubService } from '../core/services/github.service';
-import { PhaseService } from '../core/services/phase.service';
-import { Title } from '@angular/platform-browser';
-import { Profile } from '../core/models/profile.model';
+import { Observable, Subscription } from 'rxjs';
 import { filter, flatMap, map } from 'rxjs/operators';
-import { UserService } from '../core/services/user.service';
-import { GithubEventService } from '../core/services/githubevent.service';
-import { ElectronService } from '../core/services/electron.service';
-import { ApplicationService } from '../core/services/application.service';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
+import { Profile } from '../core/models/profile.model';
+import { ApplicationService } from '../core/services/application.service';
+import { AuthService, AuthState } from '../core/services/auth.service';
+import { ElectronService } from '../core/services/electron.service';
+import { ErrorHandlingService } from '../core/services/error-handling.service';
+import { GithubService } from '../core/services/github.service';
 import { LoggingService } from '../core/services/logging.service';
-import { Observable } from 'rxjs';
+import { PhaseService } from '../core/services/phase.service';
+import { UserService } from '../core/services/user.service';
 
 const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version of CATcher.";
 
@@ -40,13 +37,11 @@ export class AuthComponent implements OnInit, OnDestroy {
               public electronService: ElectronService,
               private githubService: GithubService,
               private authService: AuthService,
-              private githubEventService: GithubEventService,
               private userService: UserService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-              private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute,
               private logger: LoggingService

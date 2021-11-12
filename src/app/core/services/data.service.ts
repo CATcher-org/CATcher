@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { GithubService } from './github.service';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DataFile } from '../models/data-file.model';
+import { Admins } from '../models/parser/admins.model';
+import { ParsedUserData } from '../models/parser/parsed-user-data.model';
+import { Roles } from '../models/parser/roles.model';
+import { Students } from '../models/parser/students.model';
+import { TabulatedUserData } from '../models/parser/tabulated-user-data.model';
+import { Teams } from '../models/parser/teams.model';
+import { Tutors } from '../models/parser/tutors.model';
 import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
-import { Observable } from 'rxjs';
-import { Admins } from '../models/parser/admins.model';
-import { Tutors } from '../models/parser/tutors.model';
-import { Students } from '../models/parser/students.model';
-import { Teams } from '../models/parser/teams.model';
-import { Roles } from '../models/parser/roles.model';
-import { ParsedUserData } from '../models/parser/parsed-user-data.model';
-import { TabulatedUserData } from '../models/parser/tabulated-user-data.model';
+import { GithubService } from './github.service';
 
 
 @Injectable({
@@ -90,10 +90,6 @@ export class DataService {
    * @return admins - object that represents parsed csv data.
    */
   private parseAdminAllocation(csvInput: string): Admins {
-    // CSV Headers
-    const NAME = 'name';
-    const ROLE = 'role';
-
     const admins: Admins = {};
     const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
@@ -114,11 +110,6 @@ export class DataService {
    * @return tutors- object that represents parsed csv data.
    */
   private parseTutorAllocation(csvInput: string): Tutors {
-    // CSV Headers
-    const NAME = 'name';
-    const TEAM = 'team';
-    const ROLE = 'role';
-
     const tutors: Tutors = {};
     const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
@@ -143,13 +134,6 @@ export class DataService {
    * @return students - object that represents parsed csv data about the students' team allocation
    */
   private parseStudentAllocation(csvInput: string): Students {
-    // CSV Headers
-    const TEAM = 'team';
-    const NAME = 'name';
-    const ROLE = 'role';
-    // Team Notation
-    const TEAM_ID = 'teamId';
-
     const students: Students = {};
     const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
@@ -173,11 +157,6 @@ export class DataService {
    * @return teams - object that represents parsed csv data containing the team structures.
    */
   private parseTeamStructureData(csvInput: string): Teams {
-    // CSV Headers
-    const TEAM = 'team';
-    const NAME = 'name';
-    const ROLE = 'role';
-
     const teams: Teams = {};
     const parsedCSV: ParsedUserData[] = this.parseUsersData(csvInput);
 
@@ -202,10 +181,6 @@ export class DataService {
    * @return roles - object that represents parsed csv data regarding the allocated user roles.
    */
   private parseRolesData(csvInput: string): Roles {
-    // CSV Headers
-    const ROLE = 'role';
-    const NAME = 'name';
-
     const roles: Roles = {};
     const students = {};
     const tutors = {};

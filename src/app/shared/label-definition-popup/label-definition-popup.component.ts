@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 /**
@@ -17,11 +17,14 @@ export class LabelDefinitionPopupComponent {
   labelDefinitionHtmlTemplate;
   // Injection of a reference to Dialog from the Service that it is to be
   // displayed in.
-  constructor(public dialogRef: MatDialogRef<LabelDefinitionPopupComponent>, @Inject(MAT_DIALOG_DATA) public data,
-    private sanitizer: DomSanitizer) {
+  constructor(
+    public dialogRef: MatDialogRef<LabelDefinitionPopupComponent>,
+    @Inject(MAT_DIALOG_DATA) public data,
+    private _sanitizer: DomSanitizer
+  ) {
     this.labelName = data.header;
     // since we only display HTML fetched from our own source, we can safely bypass the sanitization of HTML
-    this.labelDefinitionHtmlTemplate = sanitizer.bypassSecurityTrustHtml(data.body);
+    this.labelDefinitionHtmlTemplate = _sanitizer.bypassSecurityTrustHtml(data.body);
   }
 
   /**

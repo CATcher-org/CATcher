@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
+import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanDeactivate, Router, RouterStateSnapshot } from '@angular/router';
-import { DialogService } from '../services/dialog.service';
 import { Observable, of } from 'rxjs';
+import { DialogService } from '../services/dialog.service';
 
 @Injectable({
   providedIn: 'root'

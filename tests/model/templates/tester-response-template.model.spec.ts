@@ -1,4 +1,3 @@
-import { Checkbox } from '../../../src/app/core/models/checkbox.model';
 import { TesterResponseTemplate } from '../../../src/app/core/models/templates/tester-response-template.model';
 
 import { TEAM_RESPONSE_MULTIPLE_DISAGREEMENT } from '../../constants/githubcomment.constants';
