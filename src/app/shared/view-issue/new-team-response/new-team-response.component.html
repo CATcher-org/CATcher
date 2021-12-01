@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
+      <div class="container">
         <mat-form-field class="left-half">
           <mat-select placeholder="Assignees" formControlName="assignees" multiple>
             <mat-option *ngFor="let member of teamMembers" [value]="member">{{member}}</mat-option>
