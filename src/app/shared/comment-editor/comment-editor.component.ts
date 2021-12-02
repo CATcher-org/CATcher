@@ -10,10 +10,11 @@ import {
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
-const MAX_UPLOAD_SIZE = 11 * BYTES_PER_MB; // 11MB to allow 10.x MB
 const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
-const MAX_VIDEO_UPLOAD_SIZE = 6 * BYTES_PER_MB; // 6MB to allow 5.x MB
 const SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB = 5;
+
+const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
+const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
 
 @Component({
   selector: 'app-comment-editor',
