@@ -14,6 +14,7 @@ describe('DescriptionComponent', () => {
   let thisIssue: Issue;
   let dialog: any;
   let errorHandlingService: any;
+  let dialogService: any;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -23,8 +24,17 @@ describe('DescriptionComponent', () => {
     dialog = jasmine.createSpyObj('MatDialog', ['open']);
     errorHandlingService = jasmine.createSpyObj('ErrorHandlingService', ['handleError']);
     issueService = jasmine.createSpyObj('IssueService', ['getLatestIssue', 'updateIssue']);
+    dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
 
-    descriptionComponent = new DescriptionComponent(issueService, formBuilder, errorHandlingService, dialog, phaseService, null);
+    descriptionComponent = new DescriptionComponent(
+      issueService,
+      formBuilder,
+      errorHandlingService,
+      dialog,
+      phaseService,
+      null,
+      dialogService
+    );
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     descriptionComponent.issue = thisIssue;
   });

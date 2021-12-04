@@ -31,7 +31,7 @@
                 mat-stroked-button color="primary">
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
+        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="openCancelDialog()">Cancel</button>
       </div>
     </div>
   </div>
