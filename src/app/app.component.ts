@@ -12,7 +12,6 @@ import { LoggingService } from './core/services/logging.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit {
-  isNetworkOnline$: Observable<boolean>;
   NOT_CONNECTED_ERROR: Error = {name: 'Not connected to internet', message: 'You are not connected to the internet.'};
 
   constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
@@ -24,11 +23,6 @@ export class AppComponent implements AfterViewInit {
     } else {
       logger.info('Mode web');
     }
-    this.isNetworkOnline$ = merge(
-      of(navigator.onLine),
-      fromEvent(window, 'online').pipe(mapTo(true)),
-      fromEvent(window, 'offline').pipe(mapTo(false))
-    );
    }
 
   ngAfterViewInit() {
