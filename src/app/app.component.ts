@@ -1,6 +1,4 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { fromEvent, merge, Observable, of } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
 import { AppConfig } from '../environments/environment';
 import { ElectronService } from './core/services/electron.service';
 import { ErrorHandlingService } from './core/services/error-handling.service';
