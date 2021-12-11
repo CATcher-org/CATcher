@@ -13,7 +13,7 @@ import { LoggingService } from './core/services/logging.service';
 })
 export class AppComponent implements AfterViewInit {
   isNetworkOnline$: Observable<boolean>;
-  NOT_CONNECTED_ERROR:Error = {name: 'Not connected to internet', message:'You are not connected to the internet.'};
+  NOT_CONNECTED_ERROR: Error = {name: 'Not connected to internet', message: 'You are not connected to the internet.'};
 
   constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
 
