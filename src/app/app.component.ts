@@ -3,6 +3,7 @@ import { fromEvent, merge, Observable, of } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 import { AppConfig } from '../environments/environment';
 import { ElectronService } from './core/services/electron.service';
+import { ErrorHandlingService } from './core/services/error-handling.service';
 import { LoggingService } from './core/services/logging.service';
 
 @Component({
@@ -12,8 +13,9 @@ import { LoggingService } from './core/services/logging.service';
 })
 export class AppComponent implements AfterViewInit {
   isNetworkOnline$: Observable<boolean>;
+  NOT_CONNECTED_ERROR:Error = {name: 'Not connected to internet', message:'You are not connected to the internet.'};
 
-  constructor(public electronService: ElectronService, logger: LoggingService) {
+  constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
 
     logger.info('AppConfig', AppConfig);
 
@@ -31,6 +33,7 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.addListenerForHttpLinks();
+    this.addListenerForNetworkOffline();
   }
 
   /**
@@ -45,6 +48,15 @@ export class AppComponent implements AfterViewInit {
         event.stopPropagation();
         this.electronService.openLink(elem.href);
       }
+    }, false);
+  }
+
+  /**
+   * This listener checks if CATcher has a connection to a network, and will show an error snackbar if it does not.
+   */
+  addListenerForNetworkOffline() {
+    window.addEventListener('offline', (event) => {
+      this.errorHandlingService.handleError(this.NOT_CONNECTED_ERROR);
     }, false);
   }
 }
