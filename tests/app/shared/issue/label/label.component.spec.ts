@@ -17,7 +17,7 @@ describe('LabelComponent', () => {
 
   beforeEach(() => {
     labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel']);
-    issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
+    issueService = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'updateIssue']);
     phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
 
     labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null, null);
@@ -47,6 +47,7 @@ describe('LabelComponent', () => {
     labelService.getColorOfLabel.and.returnValue(COLOR_SEVERITY_HIGH);
     phaseService.currentPhase.and.returnValue(Phase.phaseBugReporting);
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    issueService.getDuplicateIssuesFor.and.returnValue(of([]));
     labelComponent.updateLabel(SEVERITY_HIGH);
 
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);

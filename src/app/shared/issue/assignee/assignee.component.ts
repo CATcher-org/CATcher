@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSelect } from '@angular/material';
+import { first } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { Team } from '../../../core/models/team.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
@@ -55,6 +56,14 @@ export class AssigneeComponent implements OnInit {
       this.issueUpdated.emit(updatedIssue);
     }, (error) => {
       this.errorHandlingService.handleError(error);
+    });
+    // Update labels of duplicate issues
+    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues) => {
+      issues.forEach((issue) => {
+        const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
+        newDuplicateIssue.assignees = this.assignees;
+        this.issueService.updateIssue(newDuplicateIssue);
+      });
     });
   }
 }

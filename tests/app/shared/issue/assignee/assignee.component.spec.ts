@@ -51,7 +51,7 @@ describe('AssigneeComponent', () => {
   });
 
   const phaseService: any = jasmine.createSpyObj('PhaseService', [], { currentPhase: Phase.phaseTeamResponse });
-  const issueService: any = jasmine.createSpyObj('IssueService', ['getLatestIssue', 'updateIssue']);
+  const issueService: any = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'getLatestIssue', 'updateIssue']);
   const permissionsService: any = jasmine.createSpyObj('PermissionService', ['isIssueLabelsEditable']);
 
   beforeEach(async(() => {
