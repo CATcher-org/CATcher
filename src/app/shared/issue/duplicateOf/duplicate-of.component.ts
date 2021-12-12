@@ -124,6 +124,13 @@ export class DuplicateOfComponent implements OnInit {
     const clone = this.issue.clone(this.phaseService.currentPhase);
     clone.duplicated = !!duplicateCheckboxEvent;
     clone.duplicateOf = duplicateCheckboxEvent ? duplicateCheckboxEvent.value : null;
+    if (duplicateCheckboxEvent) {
+      const duplicatedIssue = this.issueService.issues[clone.duplicateOf];
+      clone.severity = duplicatedIssue.severity;
+      clone.type = duplicatedIssue.type;
+      clone.assignees = duplicatedIssue.assignees;
+      clone.responseTag = duplicatedIssue.responseTag;
+    }
     clone.issueComment.description = clone.createGithubTeamResponse();
     return clone;
   }

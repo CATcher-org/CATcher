@@ -1,6 +1,6 @@
 <div>
   <span class="mat-title"> Assignees </span>
-  <button *ngIf="permissions.isIssueLabelsEditable() && isEditable" style="float: right" (click)="openSelector()" mat-icon-button>
+  <button *ngIf="permissions.isIssueLabelsEditable() && isEditable && !issue.duplicateOf" style="float: right" (click)="openSelector()" mat-icon-button>
     <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
   </button>
 

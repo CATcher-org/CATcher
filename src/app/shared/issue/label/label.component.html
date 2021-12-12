@@ -1,5 +1,5 @@
 <span class="mat-title"> {{this.labelService.getLabelTitle(attributeName)}} </span>
-<button *ngIf="permissions.isIssueLabelsEditable()" style="float: right" [matMenuTriggerFor]="labelList" mat-icon-button>
+<button *ngIf="permissions.isIssueLabelsEditable() && !issue.duplicateOf" style="float: right" [matMenuTriggerFor]="labelList" mat-icon-button>
   <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
 </button>
 
