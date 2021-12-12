@@ -68,6 +68,7 @@ describe('AssigneeComponent', () => {
 
   beforeEach(() => {
     permissionsService.isIssueLabelsEditable.and.callFake(() => true);
+    issueService.getDuplicateIssuesFor.and.returnValue(of([]));
     fixture = TestBed.createComponent(AssigneeComponent);
     component = fixture.componentInstance;
 
