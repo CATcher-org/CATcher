@@ -52,8 +52,8 @@ export class LabelComponent implements OnInit, OnChanges {
       this.errorHandlingService.handleError(error);
     });
     // Update labels of duplicate issues
-    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues) => {
-      issues.forEach((issue) => {
+    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues: Issue[]) => {
+      issues.forEach((issue: Issue) => {
         const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
         newDuplicateIssue[this.attributeName] = value;
         this.issueService.updateIssue(newDuplicateIssue);

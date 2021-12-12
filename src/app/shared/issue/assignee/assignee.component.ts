@@ -57,9 +57,9 @@ export class AssigneeComponent implements OnInit {
     }, (error) => {
       this.errorHandlingService.handleError(error);
     });
-    // Update labels of duplicate issues
-    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues) => {
-      issues.forEach((issue) => {
+    // Update assignees of duplicate issues
+    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues: Issue[]) => {
+      issues.forEach((issue: Issue) => {
         const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
         newDuplicateIssue.assignees = this.assignees;
         this.issueService.updateIssue(newDuplicateIssue);
