@@ -25,6 +25,20 @@
         </div>
       </div>
 
+      <div *ngIf="(issueService.getDuplicateIssuesFor(this.issue) | async).length !== 0" class="container">
+        <span>
+          <mat-chip-list style="display: inline-block; margin-left: 5px;">
+            Duplicated by:
+            <mat-chip *ngFor="let duplicateIssue of (issueService.getDuplicateIssuesFor(this.issue) | async)"
+                      [routerLink]="['../' + duplicateIssue.id]"
+                      [matTooltip]="duplicateIssue.title" matTooltipPosition="above"
+                      style="font-size: 12px; cursor: pointer">
+              #{{duplicateIssue.id}}
+            </mat-chip>
+          </mat-chip-list>
+        </span>
+      </div>
+
       <div class="container">
         <div class="left-half">
           <app-label-dropdown [initialValue]="this.issue.severity" attributeName="severity" [dropdownForm]="newTeamResponseForm"></app-label-dropdown>
