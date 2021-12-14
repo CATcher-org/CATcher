@@ -28,7 +28,7 @@
   </button>
   <button *ngIf="auth.isAuthenticated() && isOpenUrlButtonShown()" mat-button matTooltip="View current page on GitHub" (click)="viewBrowser()">
     View on GitHub
-    <mat-icon>link</mat-icon>
+    <mat-icon>open_in_new</mat-icon>
   </button>
   <button *ngIf="auth.isAuthenticated() && isReloadButtonShown() && !this.isReloadButtonDisabled"
     mat-button matTooltip="Synchronize with Github data" (click)="reload()">
