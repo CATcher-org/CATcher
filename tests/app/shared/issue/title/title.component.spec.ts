@@ -12,6 +12,7 @@ describe('TitleComponent', () => {
   let thisIssue: Issue;
   let formBuilder: any;
   let phaseService: PhaseService;
+  let dialogService: any;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -19,7 +20,8 @@ describe('TitleComponent', () => {
     phaseService.currentPhase = Phase.phaseTeamResponse;
 
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
-    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService);
+    dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
+    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService, dialogService);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     titleComponent.issue = thisIssue;
   });
