@@ -14,7 +14,7 @@ export const FILE_TYPE_SUPPORT_ERROR = 'We don\'t support that file type.' +
  * @param size Number of MBs
  */
 export const getSizeExceedErrorMsg = (fileType: string, size: number): string =>
-  `Oops, ${fileType} is too big. Keep it under ${size}MB.`;
+  `Oops, ${fileType} is too big. Keep it under ${size}MiB.`;
 
 @Injectable({
   providedIn: 'root',

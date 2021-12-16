@@ -9,9 +9,12 @@ import {
   UploadService } from '../../core/services/upload.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
-const BYTES_PER_MB = 1000000;
-const MAX_UPLOAD_SIZE = 10 * BYTES_PER_MB; // 10MB
-const MAX_VIDEO_UPLOAD_SIZE = 5 * BYTES_PER_MB; // 5MB
+const BYTES_PER_MB = 1024 * 1024;
+const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
+const SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB = 5;
+
+const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
+const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
 
 @Component({
   selector: 'app-comment-editor',
@@ -131,14 +134,12 @@ export class CommentEditorComponent implements OnInit {
     const insertedText = this.insertUploadingText(filename);
 
     if (file.size >= MAX_UPLOAD_SIZE) {
-      const uploadSizeLimitMb = MAX_UPLOAD_SIZE / BYTES_PER_MB;
-      this.handleUploadError(getSizeExceedErrorMsg('file', uploadSizeLimitMb), insertedText);
+      this.handleUploadError(getSizeExceedErrorMsg('file', SHOWN_MAX_UPLOAD_SIZE_MB), insertedText);
       return;
     }
 
     if (this.uploadService.isVideoFile(filename) && file.size >= MAX_VIDEO_UPLOAD_SIZE) {
-      const videoUploadSizeLimitMb = MAX_VIDEO_UPLOAD_SIZE / BYTES_PER_MB;
-      this.handleUploadError(getSizeExceedErrorMsg('video', videoUploadSizeLimitMb), insertedText);
+      this.handleUploadError(getSizeExceedErrorMsg('video', SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB), insertedText);
       return;
     }
 
