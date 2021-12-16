@@ -100,7 +100,11 @@ describe('AssigneeComponent', () => {
     addAssignee();
     dispatchClosedEvent();
 
-    expect(component.issueUpdated.emit).toHaveBeenCalledWith(jasmine.objectContaining({ assignees: [testStudent.loginId] }));
+    expect(component.issueUpdated.emit).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        assignees: [testStudent.loginId.toLowerCase()]
+      })
+    );
   });
 
   it('should show the updated assignees upon receiving an updated issue', () => {

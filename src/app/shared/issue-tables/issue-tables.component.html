@@ -29,8 +29,8 @@
           <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
               {{issue.type || '-'}}
           </span>
-          <span *ngIf="issue.teamChosenType && issue.teamChosenType != issue.type" (click)="$event.stopPropagation()" style="display: inline; vertical-align:middle; padding: 1px 2px">
-            <mat-icon>arrow_right_alt</mat-icon>
+          <span *ngIf="issue.teamChosenType && issue.teamChosenType != issue.type" (click)="$event.stopPropagation()" style="display: inline; padding: 1px 2px">
+            <mat-icon style="vertical-align: middle;">arrow_right_alt</mat-icon>
           </span>
           <span *ngIf="issue.teamChosenType && issue.teamChosenType != issue.type" (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.teamChosenType))">
             {{issue.teamChosenType}}
@@ -45,8 +45,8 @@
       <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.severity))">
         {{issue.severity || '-'}}
       </span>
-      <span *ngIf="issue.teamChosenSeverity && issue.teamChosenSeverity != issue.severity" (click)="$event.stopPropagation()" style="display: inline; vertical-align:middle; margin: 3px;">
-        <mat-icon>arrow_right_alt</mat-icon>
+      <span *ngIf="issue.teamChosenSeverity && issue.teamChosenSeverity != issue.severity" (click)="$event.stopPropagation()" style="display: inline; margin: 3px;">
+        <mat-icon style="vertical-align: middle;">arrow_right_alt</mat-icon>
       </span>
       <span *ngIf="issue.teamChosenSeverity && issue.teamChosenSeverity != issue.severity" (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.teamChosenSeverity))">
         {{issue.teamChosenSeverity}}
