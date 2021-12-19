@@ -238,15 +238,18 @@ export class CommentEditorComponent implements OnInit {
     const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
     const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
     const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
+    const differenceInLength = endOfInsertedString - endIndexOfString;
+    const newCursorPosition =
+      cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString // within the range of uploading text
+        ? endOfInsertedString
+        : cursorPosition < startIndexOfString // before the uploading text
+        ? cursorPosition
+        : cursorPosition + differenceInLength; // after the uploading text
 
     this.commentField.setValue(
       this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
 
-    if (cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString) { // within the range of uploading text
-      this.commentTextArea.nativeElement.setSelectionRange(endOfInsertedString, endOfInsertedString);
-    } else {
-      this.commentTextArea.nativeElement.setSelectionRange(cursorPosition, cursorPosition);
-    }
+    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 
   private removeHighlightBorderStyle() {
