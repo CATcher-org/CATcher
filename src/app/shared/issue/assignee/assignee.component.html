@@ -10,7 +10,7 @@
               [(ngModel)]="this.assignees">
     <mat-select-trigger>
     </mat-select-trigger>
-    <mat-option *ngFor="let assignee of teamMembers" [value]="assignee">{{assignee}}</mat-option>
+    <mat-option *ngFor="let assignee of teamMembers" [value]="assignee.toLowerCase()">{{assignee}}</mat-option>
   </mat-select>
 
   <p *ngIf="issue.assignees.length === 0" style="margin-top: 5px"> - </p>
