@@ -10,7 +10,7 @@ import { LoggingService } from './core/services/logging.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit {
-  NOT_CONNECTED_ERROR: Error = {name: 'Not connected to internet', message: 'You are not connected to the internet.'};
+  NOT_CONNECTED_ERROR: Error = new Error("You are not connected to the internet.");
 
   constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
 
