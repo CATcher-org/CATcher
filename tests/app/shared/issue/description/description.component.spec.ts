@@ -23,7 +23,7 @@ describe('DescriptionComponent', () => {
 
     dialog = jasmine.createSpyObj('MatDialog', ['open']);
     errorHandlingService = jasmine.createSpyObj('ErrorHandlingService', ['handleError']);
-    issueService = jasmine.createSpyObj('IssueService', ['getLatestIssue', 'updateIssue']);
+    issueService = jasmine.createSpyObj('IssueService', ['getIssue', 'getLatestIssue', 'updateIssue']);
     dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
 
     descriptionComponent = new DescriptionComponent(
@@ -100,5 +100,35 @@ describe('DescriptionComponent', () => {
     expect(formResetForm).toHaveBeenCalledTimes(1);
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
     expect(resetCall).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reset updates if description edit is cancelled', () => {
+    const issueUpdatedEmit = spyOn(descriptionComponent.issueUpdated, 'emit');
+    const resetCall = spyOn(descriptionComponent, 'resetToDefault');
+
+    descriptionComponent.ngOnInit();
+    descriptionComponent.changeToEditMode();
+
+    issueService.getIssue.and.callFake((x: number) => of(thisIssue));
+    issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    descriptionComponent.cancelEditMode();
+
+    expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
+    expect(resetCall).toHaveBeenCalledTimes(1);
+  });
+
+  it('should cancel editing only if confirmed on confirmation dialog', () => {
+    const cancelEditCall = spyOn(descriptionComponent, 'cancelEditMode');
+
+    descriptionComponent.ngOnInit();
+    descriptionComponent.changeToEditMode();
+
+    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(false) });
+    descriptionComponent.openCancelDialog();
+    expect(cancelEditCall).toHaveBeenCalledTimes(0);
+
+    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(true) });
+    descriptionComponent.openCancelDialog();
+    expect(cancelEditCall).toHaveBeenCalledTimes(1);
   });
 });

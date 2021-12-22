@@ -62,4 +62,17 @@ describe('TitleComponent', () => {
     expect(titleComponentEmitter).toHaveBeenCalledTimes(1);
     expect(titleComponent.isEditing).toEqual(false);
   });
+
+  it('should cancel editing only if confirmed on confirmation dialog', () => {
+    titleComponent.ngOnInit();
+    titleComponent.changeToEditMode();
+
+    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(false) });
+    titleComponent.openCancelDialog();
+    expect(titleComponent.isEditing).toEqual(true);
+
+    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(true) });
+    titleComponent.openCancelDialog();
+    expect(titleComponent.isEditing).toEqual(false);
+  });
 });
