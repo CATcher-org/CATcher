@@ -102,7 +102,7 @@ describe('DescriptionComponent', () => {
     expect(resetCall).toHaveBeenCalledTimes(1);
   });
 
-  it('should reset updates if description edit is cancelled', () => {
+  it('should revert edits if edit mode is cancelled', () => {
     const issueUpdatedEmit = spyOn(descriptionComponent.issueUpdated, 'emit');
     const resetCall = spyOn(descriptionComponent, 'resetToDefault');
 

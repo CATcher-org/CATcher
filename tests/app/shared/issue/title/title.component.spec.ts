@@ -63,7 +63,7 @@ describe('TitleComponent', () => {
     expect(titleComponent.isEditing).toEqual(false);
   });
 
-  it('should cancel editing only if confirmed on confirmation dialog', () => {
+  it('should cancel edit mode only if confirmed in confirmation dialog', () => {
     titleComponent.ngOnInit();
     titleComponent.changeToEditMode();
 
