@@ -112,10 +112,10 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef> Actions </th>
     <td mat-cell *matCellDef="let issue">
-      <button mat-button matTooltip="View this issue in web-browser" *ngIf="this.isActionVisible(action_buttons.VIEW_IN_WEB)"
+      <button mat-button matTooltip="View this issue on GitHub" *ngIf="this.isActionVisible(action_buttons.VIEW_IN_WEB)"
               (click)="this.viewIssueInBrowser(issue.id)" style="
               transform: scale(0.8)">
-        <mat-icon>link</mat-icon>
+        <mat-icon>open_in_new</mat-icon>
       </button>
       <button *ngIf="this.isResponseEditable() && !issue.status
        && this.isActionVisible(action_buttons.RESPOND_TO_ISSUE); else tryEditIssue"
