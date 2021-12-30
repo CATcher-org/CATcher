@@ -1,7 +1,10 @@
 import { FormBuilder, NgForm } from '@angular/forms';
+import { MatDialogRef } from '@angular/material';
 import { of } from 'rxjs';
+import { UserConfirmationComponent } from '../../../../../src/app/core/guards/user-confirmation/user-confirmation.component';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
+import { DialogService } from '../../../../../src/app/core/services/dialog.service';
 import { PhaseService } from '../../../../../src/app/core/services/phase.service';
 import { DescriptionComponent } from '../../../../../src/app/shared/issue/description/description.component';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
@@ -14,7 +17,7 @@ describe('DescriptionComponent', () => {
   let thisIssue: Issue;
   let dialog: any;
   let errorHandlingService: any;
-  let dialogService: any;
+  let dialogService: jasmine.SpyObj<DialogService>;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -123,11 +126,11 @@ describe('DescriptionComponent', () => {
     descriptionComponent.ngOnInit();
     descriptionComponent.changeToEditMode();
 
-    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(false) });
+    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(false) } as MatDialogRef<UserConfirmationComponent>);
     descriptionComponent.openCancelDialog();
     expect(cancelEditCall).toHaveBeenCalledTimes(0);
 
-    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(true) });
+    dialogService.openUserConfirmationModal.and.returnValue({ afterClosed: () => of(true) } as MatDialogRef<UserConfirmationComponent>);
     descriptionComponent.openCancelDialog();
     expect(cancelEditCall).toHaveBeenCalledTimes(1);
   });
