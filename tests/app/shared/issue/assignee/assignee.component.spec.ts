@@ -116,6 +116,24 @@ describe('AssigneeComponent', () => {
     expect(matListText.innerText).toEqual(testStudent.loginId);
   });
 
+  it('should update assignees of duplicate issues', () => {
+    const duplicateIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
+    issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    issueService.getDuplicateIssuesFor.and.returnValue(of([duplicateIssue]));
+
+    openMatSelect();
+    addAssignee();
+    dispatchClosedEvent();
+
+    const updatedIssue = dummyIssue.clone(phaseService.currentPhase);
+    updatedIssue.assignees = [testStudent.loginId.toLowerCase()];
+    const updatedDuplicateIssue = duplicateIssue.clone(phaseService.currentPhase);
+    updatedDuplicateIssue.assignees = [testStudent.loginId.toLowerCase()];
+
+    expect(issueService.updateIssue).toHaveBeenCalledWith(updatedIssue);
+    expect(issueService.updateIssue).toHaveBeenCalledWith(updatedDuplicateIssue);
+  });
+
   function openMatSelect(): void {
     const matSelectButton: HTMLElement = nativeElement.querySelector('button');
     matSelectButton.click();
