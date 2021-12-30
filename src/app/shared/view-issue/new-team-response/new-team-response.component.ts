@@ -32,7 +32,7 @@ export class NewTeamResponseComponent implements OnInit {
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService,
+  constructor(public issueService: IssueService,
               private formBuilder: FormBuilder,
               public labelService: LabelService,
               private errorHandlingService: ErrorHandlingService,
