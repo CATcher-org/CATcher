@@ -120,7 +120,7 @@ describe('DescriptionComponent', () => {
     expect(resetCall).toHaveBeenCalledTimes(1);
   });
 
-  it('should cancel editing only if confirmed on confirmation dialog', () => {
+  it('should cancel edit mode only if confirmed in confirmation dialog', () => {
     const cancelEditCall = spyOn(descriptionComponent, 'cancelEditMode');
 
     descriptionComponent.ngOnInit();
