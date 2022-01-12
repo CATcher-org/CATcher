@@ -5,8 +5,8 @@
       <mat-select-trigger>
         {{dropdownControl.value}}
       </mat-select-trigger>
-      <div mat-menu-item *ngFor="let value of labelList">
-        <mat-option  [value]="value.labelValue" [ngStyle]="{'background': 'transparent'}">
+      <div mat-menu-item class="labelLine" *ngFor="let value of labelList">
+        <mat-option [value]="value.labelValue" [ngStyle]="{'background': 'transparent'}">
           <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
           <span> {{value.labelValue}}</span>
         </mat-option>
