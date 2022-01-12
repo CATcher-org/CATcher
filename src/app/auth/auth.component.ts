@@ -1,22 +1,19 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { AuthService, AuthState } from '../core/services/auth.service';
-import { Subscription } from 'rxjs';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GithubService } from '../core/services/github.service';
-import { PhaseService } from '../core/services/phase.service';
-import { Title } from '@angular/platform-browser';
-import { Profile } from '../core/models/profile.model';
+import { Observable, Subscription } from 'rxjs';
 import { filter, flatMap, map } from 'rxjs/operators';
-import { UserService } from '../core/services/user.service';
-import { GithubEventService } from '../core/services/githubevent.service';
-import { ElectronService } from '../core/services/electron.service';
-import { ApplicationService } from '../core/services/application.service';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
+import { Profile } from '../core/models/profile.model';
+import { ApplicationService } from '../core/services/application.service';
+import { AuthService, AuthState } from '../core/services/auth.service';
+import { ElectronService } from '../core/services/electron.service';
+import { ErrorHandlingService } from '../core/services/error-handling.service';
+import { GithubService } from '../core/services/github.service';
 import { LoggingService } from '../core/services/logging.service';
-import { Observable } from 'rxjs';
+import { PhaseService } from '../core/services/phase.service';
+import { UserService } from '../core/services/user.service';
 
 const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version of CATcher.";
 
@@ -34,18 +31,17 @@ export class AuthComponent implements OnInit, OnDestroy {
   authStateSubscription: Subscription;
   profileForm: FormGroup;
   currentUserName: string;
+  urlEncodedSessionName: string;
 
   constructor(public appService: ApplicationService,
               public electronService: ElectronService,
               private githubService: GithubService,
               private authService: AuthService,
-              private githubEventService: GithubEventService,
               private userService: UserService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private router: Router,
               private phaseService: PhaseService,
-              private titleService: Title,
               private ngZone: NgZone,
               private activatedRoute: ActivatedRoute,
               private logger: LoggingService
@@ -78,10 +74,10 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.router.navigate([this.phaseService.currentPhase]);
       return;
     }
-
     this.initAccessTokenSubscription();
     this.initAuthStateSubscription();
     this.initProfileForm();
+    this.createProfileFromUrlQueryParams();
     if (oauthCode) { // runs upon receiving oauthCode from the redirect
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.restoreOrgDetailsFromLocalStorage();
@@ -151,26 +147,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.profileForm.get('session').setValue(profile.repoName);
   }
 
-  /**
-   * Will complete the process of logging in the given user.
-   * @param username - The user to log in.
-   */
-  completeLoginProcess(username: string): void {
-    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
-    this.phaseService.setPhaseOwners(this.currentSessionOrg, username);
-    this.userService.createUserModel(username).pipe(
-      flatMap(() => this.phaseService.sessionSetup()),
-      flatMap(() => this.githubEventService.setLatestChangeEvent()),
-      flatMap(() => this.checkAppIsOutdated()),
-    ).subscribe(() => {
-      this.handleAuthSuccess();
-    }, (error) => {
-      this.authService.changeAuthState(AuthState.NotAuthenticated);
-      this.errorHandlingService.handleError(error);
-      this.logger.info(`Completion of login process failed with an error: ${error}`);
-    });
-  }
-
   setupSession() {
     if (this.profileForm.invalid) {
       return;
@@ -197,26 +173,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.errorHandlingService.handleError(error);
       this.isSettingUpSession = false;
     }, () => this.isSettingUpSession = false);
-  }
-
-  logIntoAnotherAccount() {
-    this.logger.info('Logging into another account');
-    this.electronService.clearCookies();
-    this.authService.startOAuthProcess();
-  }
-
-  onGithubWebsiteClicked() {
-    window.open('https://github.com/', '_blank');
-    window.location.reload();
-  }
-
-  /**
-   * Handles the clean up required after authentication and setting up of user data is completed.
-   */
-  handleAuthSuccess() {
-    this.authService.setTitleWithPhaseDetail();
-    this.router.navigateByUrl(this.phaseService.currentPhase);
-    this.authService.changeAuthState(AuthState.Authenticated);
   }
 
   goToSessionSelect() {
@@ -295,5 +251,12 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
       });
     });
+  }
+
+  private createProfileFromUrlQueryParams() {
+    const urlParams = this.activatedRoute.snapshot.queryParamMap;
+    if (urlParams.has('session')) {
+      this.urlEncodedSessionName = urlParams.get('session');
+    }
   }
 }

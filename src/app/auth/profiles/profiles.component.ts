@@ -1,16 +1,16 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
 import {
-  trigger,
+  animate,
   state,
   style,
-  animate,
-  transition
+  transition,
+  trigger
 } from '@angular/animations';
-import { Profile, isValidProfile } from '../../core/models/profile.model';
-import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { isValidProfile, Profile } from '../../core/models/profile.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
+import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
 
 @Component({
   selector: 'app-profiles',
@@ -40,6 +40,7 @@ export class ProfilesComponent implements OnInit {
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
+  @Input() urlEncodedSessionName: string;
   @Output() selectedProfileEmitter: EventEmitter<Profile> = new EventEmitter<Profile>();
 
   profilesData = {
@@ -101,7 +102,7 @@ export class ProfilesComponent implements OnInit {
       this.profiles = this.profiles
       .concat(externalProfiles)
       .filter((p) => !!p);
-    })
+    }).then(() => this.setUrlEncodedProfile(this.profiles))
     .catch(e => {
       if (e === MALFORMED_PROFILES_ERROR) {
         this.openErrorDialog();
@@ -127,6 +128,19 @@ export class ProfilesComponent implements OnInit {
       this.selectedProfileEmitter.emit(profile);
     } else {
       this.openErrorDialog();
+    }
+  }
+  setUrlEncodedProfile(validProfiles: Profile[]) {
+    if (!this.urlEncodedSessionName) {
+      return;
+    }
+
+    const profile = validProfiles.find(profile => profile.profileName === this.urlEncodedSessionName);
+    if (profile) {
+      this.selectedProfile.profileName = this.urlEncodedSessionName;
+      this.selectProfile(profile);
+    } else {
+      this.errorHandlingService.handleError(new Error('Invalid URL provided session'));
     }
   }
 }

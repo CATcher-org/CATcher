@@ -1,19 +1,21 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import {
   FILE_TYPE_SUPPORT_ERROR,
+  getSizeExceedErrorMsg,
   SUPPORTED_FILE_TYPES,
-  UploadService,
-  getSizeExceedErrorMsg } from '../../core/services/upload.service';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ElectronService } from '../../core/services/electron.service';
+  UploadService } from '../../core/services/upload.service';
 import * as DOMPurify from 'dompurify';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
-const BYTES_PER_MB = 1000000;
-const MAX_UPLOAD_SIZE = 10 * BYTES_PER_MB; // 10MB
-const MAX_VIDEO_UPLOAD_SIZE = 5 * BYTES_PER_MB; // 5MB
+const BYTES_PER_MB = 1024 * 1024;
+const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
+const SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB = 5;
+
+const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
+const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
 
 @Component({
   selector: 'app-comment-editor',
@@ -24,8 +26,7 @@ export class CommentEditorComponent implements OnInit {
   readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
 
   constructor(private uploadService: UploadService,
-              private errorHandlingService: ErrorHandlingService,
-              private electronService: ElectronService) {}
+              private errorHandlingService: ErrorHandlingService) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
@@ -139,14 +140,12 @@ export class CommentEditorComponent implements OnInit {
     const insertedText = this.insertUploadingText(filename);
 
     if (file.size >= MAX_UPLOAD_SIZE) {
-      const uploadSizeLimitMb = MAX_UPLOAD_SIZE / BYTES_PER_MB;
-      this.handleUploadError(getSizeExceedErrorMsg('file', uploadSizeLimitMb), insertedText);
+      this.handleUploadError(getSizeExceedErrorMsg('file', SHOWN_MAX_UPLOAD_SIZE_MB), insertedText);
       return;
     }
 
     if (this.uploadService.isVideoFile(filename) && file.size >= MAX_VIDEO_UPLOAD_SIZE) {
-      const videoUploadSizeLimitMb = MAX_VIDEO_UPLOAD_SIZE / BYTES_PER_MB;
-      this.handleUploadError(getSizeExceedErrorMsg('video', videoUploadSizeLimitMb), insertedText);
+      this.handleUploadError(getSizeExceedErrorMsg('video', SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB), insertedText);
       return;
     }
 
@@ -245,15 +244,18 @@ export class CommentEditorComponent implements OnInit {
     const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
     const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
     const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
+    const differenceInLength = endOfInsertedString - endIndexOfString;
+    const newCursorPosition =
+      cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString // within the range of uploading text
+        ? endOfInsertedString
+        : cursorPosition < startIndexOfString // before the uploading text
+        ? cursorPosition
+        : cursorPosition + differenceInLength; // after the uploading text
 
     this.commentField.setValue(
       this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
 
-    if (cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString) { // within the range of uploading text
-      this.commentTextArea.nativeElement.setSelectionRange(endOfInsertedString, endOfInsertedString);
-    } else {
-      this.commentTextArea.nativeElement.setSelectionRange(cursorPosition, cursorPosition);
-    }
+    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 
   private removeHighlightBorderStyle() {

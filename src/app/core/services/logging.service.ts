@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ElectronService } from './electron.service';
 import { ElectronLog } from 'electron-log';
 import { AppConfig } from '../../../environments/environment';
 import { downloadAsTextFile } from '../../shared/lib/file-download';
+import { ElectronService } from './electron.service';
 
 
 @Injectable({

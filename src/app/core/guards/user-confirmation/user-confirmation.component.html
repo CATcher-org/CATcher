@@ -1,9 +1,12 @@
 <h1 mat-dialog-title>Warning</h1>
+
 <div mat-dialog-content>
-  <p>Do you wish to leave the page?</p>
-  <p>You have unsaved changes that will be discarded.</p>
+  <p *ngFor="let message of data.messages">
+    {{ message }}
+  </p>
 </div>
+
 <div mat-dialog-actions>
-  <button mat-raised-button color="primary" (click)="onNoClick()">No, I don't wish to leave</button>
-  <button mat-raised-button color="warn" [mat-dialog-close]="true">Yes, I wish to leave</button>
+  <button mat-raised-button color="primary" (click)="onNoClick()">{{ data.noMessage }}</button>
+  <button mat-raised-button color="warn" [mat-dialog-close]="true">{{ data.yesMessage }}</button>
 </div>

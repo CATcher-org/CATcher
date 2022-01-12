@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { LabelService } from '../../core/services/label.service';
-import { FormGroup, AbstractControl } from '@angular/forms';
-import { Label } from '../../core/models/label.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { DialogService } from '../..//core/services/dialog.service';
+import { Label } from '../../core/models/label.model';
+import { LabelService } from '../../core/services/label.service';
 
 export const WHITE_TEXT_CLASS = 'white-text';
 export const BLACK_TEXT_CLASS = 'black-text';

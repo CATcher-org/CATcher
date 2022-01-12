@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { AuthService } from '../../core/services/auth.service';
-import { PhaseService, PhaseDescription } from '../../core/services/phase.service';
-import { Phase } from '../../core/models/phase.model';
-import { UserService } from '../../core/services/user.service';
+import { Component, OnInit } from '@angular/core';
 import { Router, RoutesRecognized } from '@angular/router';
 import { filter, pairwise } from 'rxjs/operators';
-import { GithubEventService } from '../../core/services/githubevent.service';
-import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { IssueService } from '../../core/services/issue.service';
-import { GithubService } from '../../core/services/github.service';
-import { UserRole } from '../../core/models/user.model';
-import { ElectronService } from '../../core/services/electron.service';
-import { LoggingService } from '../../core/services/logging.service';
 import { AppConfig } from '../../../environments/environment';
+import { Phase } from '../../core/models/phase.model';
+import { UserRole } from '../../core/models/user.model';
+import { AuthService } from '../../core/services/auth.service';
+import { DialogService } from '../../core/services/dialog.service';
+import { ElectronService } from '../../core/services/electron.service';
+import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { GithubService } from '../../core/services/github.service';
+import { GithubEventService } from '../../core/services/githubevent.service';
+import { IssueService } from '../../core/services/issue.service';
+import { LoggingService } from '../../core/services/logging.service';
+import { PhaseDescription, PhaseService } from '../../core/services/phase.service';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-layout-header',
@@ -27,17 +28,23 @@ export class HeaderComponent implements OnInit {
   TEAM_LABEL = '+label:team.';
   EXCLUDE_DUPLICATE = '+-label:duplicate'; // exclude duplicate issues
 
+  // Messages for the modal popup window upon logging out
+  private readonly logOutDialogMessages = ["Do you wish to log out?"];
+  private readonly yesButtonDialogMessage = "Yes, I wish to log out";
+  private readonly noButtonDialogMessage = "No, I don\'t wish to log out";
+
   constructor(private router: Router,
               public auth: AuthService,
               public phaseService: PhaseService,
               public userService: UserService,
-              private loggingService: LoggingService,
+              public loggingService: LoggingService,
               private location: Location,
               private githubEventService: GithubEventService,
               private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
-              private electronService: ElectronService) {
+              private electronService: ElectronService,
+              private dialogService: DialogService) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()
@@ -155,6 +162,19 @@ export class HeaderComponent implements OnInit {
 
   logOut() {
     this.auth.logOut();
+  }
+
+  openLogOutDialog() {
+    const dialogRef = this.dialogService.openUserConfirmationModal(
+      this.logOutDialogMessages, this.yesButtonDialogMessage, this.noButtonDialogMessage
+    );
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loggingService.info(`Logging out from ${this.userService.currentUser.loginId}`);
+        this.logOut();
+      }
+    });
   }
 
   exportLogFile() {

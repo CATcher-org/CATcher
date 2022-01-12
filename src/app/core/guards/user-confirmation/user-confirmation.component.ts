@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { CanDeactivateIssueGuard } from '../can-deactivate-issue-guard.service';
 
 /**
@@ -16,7 +16,9 @@ export class UserConfirmationComponent implements OnInit {
 
   // Injection of a reference to Dialog from the Service that it is to be
   // displayed in.
-  constructor(public dialogRef: MatDialogRef<CanDeactivateIssueGuard>) { }
+  constructor(public dialogRef: MatDialogRef<CanDeactivateIssueGuard>,
+    @Inject(MAT_DIALOG_DATA) public data,
+  ) { }
 
   ngOnInit() {
   }
