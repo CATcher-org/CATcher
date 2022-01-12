@@ -15,8 +15,8 @@
       </mat-error>
     </mat-form-field>
 
-    <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" class="title-button" (click)="cancelEditMode()">Cancel</button>
     <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary"
             class="title-button">Save</button>
+    <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" class="title-button" (click)="openCancelDialog()">Cancel</button>
   </form>
 </div>
