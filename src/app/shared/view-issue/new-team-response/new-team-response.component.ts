@@ -118,12 +118,20 @@ export class NewTeamResponseComponent implements OnInit {
    */
   getUpdatedIssue(): Issue {
     const clone = this.issue.clone(this.phaseService.currentPhase);
-    clone.severity = this.severity.value;
-    clone.type = this.type.value;
-    clone.assignees = this.assignees.value;
-    clone.responseTag = this.responseTag.value;
     clone.duplicated = this.duplicated.value;
     clone.duplicateOf = this.duplicateOf.value;
+    if (clone.duplicated) {
+      const duplicatedIssue = this.issueService.issues[clone.duplicateOf];
+      clone.severity = duplicatedIssue.severity;
+      clone.type = duplicatedIssue.type;
+      clone.assignees = duplicatedIssue.assignees;
+      clone.responseTag = duplicatedIssue.responseTag;
+    } else {
+      clone.severity = this.severity.value;
+      clone.type = this.type.value;
+      clone.assignees = this.assignees.value;
+      clone.responseTag = this.responseTag.value;
+    }
     clone.status = STATUS.Done;
     clone.teamResponse = Issue.updateTeamResponse(this.description.value);
     return clone;

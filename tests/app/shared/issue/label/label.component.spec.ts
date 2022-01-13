@@ -17,7 +17,7 @@ describe('LabelComponent', () => {
 
   beforeEach(() => {
     labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel']);
-    issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
+    issueService = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'updateIssue']);
     phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
 
     labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null, null);
@@ -47,10 +47,33 @@ describe('LabelComponent', () => {
     labelService.getColorOfLabel.and.returnValue(COLOR_SEVERITY_HIGH);
     phaseService.currentPhase.and.returnValue(Phase.phaseBugReporting);
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    issueService.getDuplicateIssuesFor.and.returnValue(of([]));
     labelComponent.updateLabel(SEVERITY_HIGH);
 
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
     expect(labelComponent.labelValues).toEqual(SEVERITY_LABELS);
     expect(labelComponent.labelColor).toEqual(COLOR_SEVERITY_HIGH);
+  });
+
+  it('should update labels of duplicate issues', () => {
+    labelService.getLabelList.and.returnValue(SEVERITY_LABELS);
+    labelService.getColorOfLabel.and.returnValue(COLOR_SEVERITY_LOW);
+    labelComponent.ngOnInit();
+    labelComponent.ngOnChanges();
+
+    phaseService.currentPhase.and.returnValue(Phase.phaseTeamResponse);
+    issueService.updateIssue.and.callFake((x: Issue) => of(x));
+
+    const duplicateIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
+    issueService.getDuplicateIssuesFor.and.returnValue(of([duplicateIssue]));
+    labelComponent.updateLabel(SEVERITY_HIGH);
+
+    const updatedIssue = thisIssue.clone(phaseService.currentPhase);
+    updatedIssue.severity = SEVERITY_HIGH;
+    const updatedDuplicateIssue = duplicateIssue.clone(phaseService.currentPhase);
+    updatedDuplicateIssue.severity = SEVERITY_HIGH;
+
+    expect(issueService.updateIssue).toHaveBeenCalledWith(updatedIssue);
+    expect(issueService.updateIssue).toHaveBeenCalledWith(updatedDuplicateIssue);
   });
 });
