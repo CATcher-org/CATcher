@@ -56,7 +56,7 @@
 
   <!--Response Tag Column-->
   <ng-container matColumnDef="responseTag">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Response </th>
+    <th [style.width]="'12%'" mat-header-cell *matHeaderCellDef mat-sort-header> Response </th>
     <td mat-cell *matCellDef="let issue">
         <span (click)="$event.stopPropagation()" *ngIf="issue.responseTag"
               [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.responseTag))">
