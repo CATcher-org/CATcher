@@ -23,6 +23,7 @@
                 mat-raised-button color="primary" (click)="viewChanges()">
           View Updated Description
         </button>
+        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="openCancelDialog()">Cancel</button>
         <button class="editor-action" *ngIf="conflict" type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending"
                 mat-raised-button color="warn">
           {{ submitButtonText }}
@@ -31,7 +32,6 @@
                 mat-stroked-button color="primary">
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="cancelEditMode()">Cancel</button>
       </div>
     </div>
   </div>

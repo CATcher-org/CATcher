@@ -5,6 +5,7 @@ import { throwError } from 'rxjs';
 import { finalize, flatMap, map } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue } from '../../../core/models/issue.model';
+import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
@@ -29,12 +30,18 @@ export class DescriptionComponent implements OnInit {
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() changeEditState = new EventEmitter<boolean>();
 
+  // Messages for the modal popup window upon cancelling edit
+  private readonly cancelEditModalMessages = ['Do you wish to cancel?', 'Your changes will be discarded.'];
+  private readonly yesButtonModalMessage = 'Cancel';
+  private readonly noButtonModalMessage = 'Continue editing';
+
   constructor(private issueService: IssueService,
               private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               private dialog: MatDialog,
               private phaseService: PhaseService,
-              public permissions: PermissionService) {
+              public permissions: PermissionService,
+              private dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -101,6 +108,18 @@ export class DescriptionComponent implements OnInit {
     this.issueService.getIssue(this.issue.id).subscribe((issue: Issue) => {
       this.issueUpdated.emit(issue);
       this.resetToDefault();
+    });
+  }
+
+  openCancelDialog(): void {
+    const dialogRef = this.dialogService.openUserConfirmationModal(
+      this.cancelEditModalMessages, this.yesButtonModalMessage, this.noButtonModalMessage
+    );
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.cancelEditMode();
+      }
     });
   }
 

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { first } from 'rxjs/operators';
 import { DialogService } from '../../..//core/services/dialog.service';
 import { Issue } from '../../../core/models/issue.model';
 import { Label } from '../../../core/models/label.model';
@@ -49,6 +50,14 @@ export class LabelComponent implements OnInit, OnChanges {
       this.labelColor = this.labelService.getColorOfLabel(updatedIssue[this.attributeName]);
     }, (error) => {
       this.errorHandlingService.handleError(error);
+    });
+    // Update labels of duplicate issues
+    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues: Issue[]) => {
+      issues.forEach((issue: Issue) => {
+        const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
+        newDuplicateIssue[this.attributeName] = value;
+        this.issueService.updateIssue(newDuplicateIssue);
+      });
     });
   }
 
