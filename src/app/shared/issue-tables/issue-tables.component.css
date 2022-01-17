@@ -1,4 +1,6 @@
 .mat-table {
+  display: flex;
+  flex-wrap: wrap;
   min-width: 1000px;
 }
 
@@ -44,13 +46,11 @@
 }
 
 .mat-header-row {
-  display: inline-flex;
   column-gap: 10px;
   min-width: 100%;
 }
 
 .mat-row {
-  display: inline-flex;
   column-gap: 10px;
   min-width: 100%;
 }
