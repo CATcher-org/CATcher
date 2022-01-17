@@ -28,7 +28,7 @@
 }
 
 .mat-column-duplicatedIssues {
-  overflow-x: normal;
+  overflow-x: auto;
 }
 
 .mat-column-assignees {
