@@ -24,7 +24,7 @@
 
   <!-- Type Column -->
   <ng-container matColumnDef="type">
-    <mat-header-cell [style.width]="permissions.isTeamResponseEditable() ? '10%' : '15%'" *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
     <mat-cell *matCellDef="let issue">
           <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
               {{issue.type || '-'}}
@@ -40,7 +40,7 @@
 
   <!-- Severity Column -->
   <ng-container matColumnDef="severity">
-    <mat-header-cell [style.width]="permissions.isTeamResponseEditable() ? '9%' : '12%'" *matHeaderCellDef mat-sort-header> Severity </mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Severity </mat-header-cell>
     <mat-cell *matCellDef="let issue">
       <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.severity))">
         {{issue.severity || '-'}}
@@ -70,7 +70,7 @@
 
   <!--Assignee Column-->
   <ng-container matColumnDef="assignees">
-    <mat-header-cell [style.width]="userService.currentUser.role === 'Student' ? '15%' : '10%'" mat-header-cell *matHeaderCellDef mat-sort-header> Assignees </mat-header-cell>
+    <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header> Assignees </mat-header-cell>
     <mat-cell *matCellDef="let issue">
         <span (click)="$event.stopPropagation()" style="cursor: default;" *ngIf="issue.assignees.length !== 0">
           {{issue.assignees.join(', ')}}
