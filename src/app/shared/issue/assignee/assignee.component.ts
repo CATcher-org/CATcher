@@ -67,6 +67,5 @@ export class AssigneeComponent implements OnInit {
       this.errorHandlingService.handleError(error);
       this.assignees = oldAssignees;
     });
-    
   }
 }

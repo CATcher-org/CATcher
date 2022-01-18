@@ -4,7 +4,7 @@ import { Apollo, QueryRef } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import { DocumentNode } from 'graphql';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
+import { catchError, every, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
 import {
   FetchIssue,
   FetchIssueQuery, FetchIssues, FetchIssuesByTeam, FetchIssuesByTeamQuery, FetchIssuesQuery,
@@ -231,6 +231,22 @@ export class GithubService {
    */
   updateLabel(labelName: string, labelColor: string): void {
     octokit.issues.updateLabel({owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor});
+  }
+
+  /**
+   * Checks if the given list of users are allowed to be assigned to an issue.
+   * @param assignees - GitHub usernames to be checked
+   */
+  areUsersAssignable(assignees: string[]): Observable<boolean> {
+    return from(assignees).pipe(
+      flatMap(assignee => octokit.issues.checkAssignee({
+          owner: ORG_NAME,
+          repo: REPO,
+          assignee: assignee
+        })),
+      every((response: any) => response.status === 204),
+      catchError(err => of(false))
+    );
   }
 
   closeIssue(id: number): Observable<GithubIssue> {
