@@ -11,8 +11,13 @@
 </div>
 
 <ng-template #generalMessage>
-  <div style="max-width: 300px; display: inline-block;"> {{"Error code " + data.status + ": " + data.message}} </div>
-  <button style="float: right; margin-top: 8px;" mat-button
-          color="accent"
-          (click)="snackBarRef.dismiss()"> Close </button>
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="vertical-align: middle; flex-basis: 80%; overflow-wrap: anywhere;"> 
+      <p style="margin: auto 5px; text-align: center;">
+        {{"Error code " + data.status + ": " + data.message}}
+      </p>
+    </div>
+    <button style="vertical-align: middle; flex-basis: 20%; margin: auto 5px; text-align: center;"
+      mat-button color="accent" (click)="snackBarRef.dismiss()"> Close </button>
+  </div>
 </ng-template>
