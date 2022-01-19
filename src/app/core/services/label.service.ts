@@ -50,7 +50,7 @@ const HIGH_DEFINITION = '<p>A flaw that affects most users and causes major prob
   + '<li>Application crashes</li>'
   + '<li>Data wipe</li>'
   + '<li>User becomes unable to use the product</li>'
-  + '<li>Documentation is largely incorrect or missing/li>'
+  + '<li>Documentation is largely incorrect or missing</li>'
   + '</ul>'
   + '</p>';
 
