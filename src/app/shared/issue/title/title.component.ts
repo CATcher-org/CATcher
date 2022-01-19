@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, NgForm, Validators } from '@angular/forms';
+import { FormControl, NgForm, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
@@ -27,7 +27,6 @@ export class TitleComponent implements OnInit {
   private readonly noButtonModalMessage = 'Continue editing';
 
   constructor(private issueService: IssueService,
-              private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,
               public phaseService: PhaseService,

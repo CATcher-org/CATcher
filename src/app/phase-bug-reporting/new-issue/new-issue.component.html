@@ -8,10 +8,10 @@
       <div class="column left">
         <mat-form-field>
           <input id="title" formControlName="title" matInput placeholder="Title" required>
-          <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
+          <mat-error *ngIf="title.errors && title.errors['required'] && (title.touched || title.dirty)">
             Title required.
           </mat-error>
-          <mat-error *ngIf="title.errors && title.errors['maxlength'] && title.touched">
+          <mat-error *ngIf="title.errors && title.errors['maxlength'] && (title.touched || title.dirty)">
             Title cannot exceed 256 characters.
           </mat-error>
         </mat-form-field>

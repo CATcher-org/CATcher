@@ -10,10 +10,10 @@
   <form #myForm="ngForm" (ngSubmit)="updateTitle(myForm)">
     <mat-form-field style="width: 80%">
       <input id="title" [formControl]="issueTitleForm" matInput placeholder="Title" required>
-      <mat-error *ngIf="issueTitleForm != null && issueTitleForm.errors && issueTitleForm.errors['required'] && issueTitleForm.touched">
+      <mat-error *ngIf="issueTitleForm != null && issueTitleForm.errors && issueTitleForm.errors['required'] && (issueTitleForm.touched || issueTitleForm.dirty)">
         Title required.
       </mat-error>
-      <mat-error *ngIf="issueTitleForm != null && issueTitleForm.errors && issueTitleForm.errors['maxlength'] && issueTitleForm.touched">
+      <mat-error *ngIf="issueTitleForm != null && issueTitleForm.errors && issueTitleForm.errors['maxlength'] && (issueTitleForm.touched || issueTitleForm.dirty)">
         Title cannot exceed 256 characters.
       </mat-error>
     </mat-form-field>
