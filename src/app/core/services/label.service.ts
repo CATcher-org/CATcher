@@ -28,11 +28,25 @@ const VERY_LOW_DEFINITION = '<p>A flaw that is <mark>purely cosmetic</mark> and 
   + '</ul>'
   + 'in the docs or the UI that doesn\'t affect usage.</p>';
 const LOW_DEFINITION = '<p>A flaw that is unlikely to affect normal operations of the product. '
-  + 'Appears only in very rare situations and causes a minor inconvenience only.</p>';
+  + 'Appears only in very rare situations and causes a minor inconvenience only. For example, '
+  + '<ul>'
+  + '<li>Inaccurate error messages</li>'
+  + '<li>Problems caused by very long input values such that only the first few characters of the name is shown</li>'
+  + '</ul>'
+  + '</p>';
 const MEDIUM_DEFINITION = '<p>A flaw that causes occasional inconvenience to some users but they can '
-  + 'continue to use the product.</p>';
+  + 'continue to use the product. For example, '
+  + '<ul>'
+  + '<li>Adding an entry may cause duplicate entries</li>'
+  + '</ul>'
+  + '</p>';
 const HIGH_DEFINITION = '<p>A flaw that affects most users and causes major problems for users.'
-  + 'i.e., makes the product almost unusable for most users.</p>';
+  + 'i.e., makes the product almost unusable for most users. For example, '
+  + '<ul>'
+  + '<li>Application crashes</li>'
+  + '<li>Data wipe</li>'
+  + '</ul>'
+  + '</p>';
 
 const FUNCTIONALITY_BUG_DEFINITION = '<p>A functionality does not work as specified/expected.</p>';
 const FEATURE_FLAW_DEFINITION = '<p>Some functionality missing from a feature delivered in the current version in '
