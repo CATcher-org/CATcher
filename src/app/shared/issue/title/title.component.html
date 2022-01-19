@@ -9,7 +9,7 @@
 <div *ngIf="isEditing">
   <form [formGroup]="issueTitleForm" #myForm="ngForm" (ngSubmit)="updateTitle(myForm)">
     <mat-form-field style="width: 80%">
-      <input id="title" formControlName="title" matInput placeholder="Title" required>
+      <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256">
       <mat-error *ngIf="title != null && title.errors && title.errors['required'] && title.touched">
         Title is required.
       </mat-error>
