@@ -36,7 +36,7 @@ export class TitleComponent implements OnInit {
 
   ngOnInit() {
     this.issueTitleForm = this.formBuilder.group({
-      title: ['', Validators.required],
+      title: ['', [Validators.required, Validators.maxLength(256)]],
     });
   }
 

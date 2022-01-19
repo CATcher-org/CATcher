@@ -11,6 +11,9 @@
           <mat-error *ngIf="title.errors && title.errors['required'] && title.touched">
             Title required.
           </mat-error>
+          <mat-error *ngIf="title.errors && title.errors['maxlength'] && title.touched">
+            Title cannot exceed 256 characters.
+          </mat-error>
         </mat-form-field>
 
         <div style="margin: 10px 0 10px 0;">
