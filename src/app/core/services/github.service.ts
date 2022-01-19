@@ -337,7 +337,7 @@ export class GithubService {
     return ORG_NAME.concat('/').concat(REPO);
   }
 
-  viewIssueInBrowser(id: number) {
+  viewIssueInBrowser(id: number, event: Event) {
     if (id) {
       this.electronService.openLink('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
     } else {

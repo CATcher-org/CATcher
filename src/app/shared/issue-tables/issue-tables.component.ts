@@ -91,7 +91,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     return this.actions.includes(action);
   }
 
-  markAsResponded(issue: Issue) {
+  markAsResponded(issue: Issue, event: Event) {
     this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Done;
@@ -107,7 +107,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     return this.permissions.isTeamResponseEditable() || this.permissions.isTesterResponseEditable();
   }
 
-  markAsPending(issue: Issue) {
+  markAsPending(issue: Issue, event: Event) {
     this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Incomplete;
@@ -141,12 +141,12 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     return issue.issueDisputes && issue.numOfUnresolvedDisputes() === 0;
   }
 
-  viewIssueInBrowser(id: number) {
+  viewIssueInBrowser(id: number, event: Event) {
     this.loggingService.info(`IssueTablesComponent: Opening Issue ${id} on Github`);
-    this.githubService.viewIssueInBrowser(id);
+    this.githubService.viewIssueInBrowser(id, event);
   }
 
-  deleteIssue(id: number) {
+  deleteIssue(id: number, event: Event) {
     this.loggingService.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
@@ -162,7 +162,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     event.stopPropagation();
   }
 
-  openDeleteDialog(id: number) {
+  openDeleteDialog(id: number, event: Event) {
     const dialogRef = this.dialogService.openUserConfirmationModal(
       this.deleteIssueModalMessages, this.yesButtonModalMessage, this.noButtonModalMessage
     );
@@ -170,7 +170,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
         this.loggingService.info(`Deleting issue ${id}`);
-        this.deleteIssue(id);
+        this.deleteIssue(id, event);
       }
     });
   }
