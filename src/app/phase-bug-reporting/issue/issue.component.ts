@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ISSUE_COMPONENTS, ViewIssueComponent } from '../../shared/view-issue/view-issue.component';
 
@@ -7,7 +7,7 @@ import { ISSUE_COMPONENTS, ViewIssueComponent } from '../../shared/view-issue/vi
   templateUrl: './issue.component.html',
   styleUrls: ['./issue.component.css']
 })
-export class IssueComponent implements OnInit {
+export class IssueComponent implements AfterViewInit, AfterViewChecked {
   issueId: number;
 
   readonly issueComponents: ISSUE_COMPONENTS[] = [
@@ -16,11 +16,19 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.TYPE_LABEL
   ];
 
-  @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent, { static: false }) viewIssue: ViewIssueComponent;
 
   constructor(private route: ActivatedRoute) { }
 
-  ngOnInit() {
+  ngAfterViewInit(): void {
+    this.route.params.subscribe(
+      params => {
+        this.issueId = + params['issue_id'];
+      }
+      );
+  }
+
+  ngAfterViewChecked() {
     this.route.params.subscribe(
       params => {
         this.issueId = + params['issue_id'];
