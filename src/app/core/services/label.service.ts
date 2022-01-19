@@ -31,13 +31,17 @@ const LOW_DEFINITION = '<p>A flaw that is unlikely to affect normal operations o
   + 'Appears only in very rare situations and causes a minor inconvenience only. For example, '
   + '<ul>'
   + '<li>Inaccurate error messages</li>'
-  + '<li>Problems caused by very long input values such that only the first few characters of the name is shown</li>'
+  + '<li>Cosmetic errors that majorly hinder viewing of data</li>'
+  + '<li>Some incorrect or missing details in User Guide documentation</li>'
+  + '<li>Some incorrect or missing details in Developer Guide documentation</li>'
   + '</ul>'
   + '</p>';
 const MEDIUM_DEFINITION = '<p>A flaw that causes occasional inconvenience to some users but they can '
   + 'continue to use the product. For example, '
   + '<ul>'
   + '<li>Adding an entry may cause duplicate entries</li>'
+  + '<li>Able to add duplicate entries</li>'
+  + '<li>User needs to remove an entry from a list manually after deleting it</li>'
   + '</ul>'
   + '</p>';
 const HIGH_DEFINITION = '<p>A flaw that affects most users and causes major problems for users.'
@@ -45,6 +49,8 @@ const HIGH_DEFINITION = '<p>A flaw that affects most users and causes major prob
   + '<ul>'
   + '<li>Application crashes</li>'
   + '<li>Data wipe</li>'
+  + '<li>User becomes unable to use the product</li>'
+  + '<li>Documentation is largely incorrect or missing/li>'
   + '</ul>'
   + '</p>';
 
