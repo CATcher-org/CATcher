@@ -101,11 +101,7 @@ describe('AssigneeComponent', () => {
     addAssignee();
     dispatchClosedEvent();
 
-    expect(component.issueUpdated.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        assignees: [testStudent.loginId.toLowerCase()]
-      })
-    );
+    expect(component.issueUpdated.emit).toHaveBeenCalledWith(jasmine.objectContaining({ assignees: [testStudent.loginId] }));
   });
 
   it('should show the updated assignees upon receiving an updated issue', () => {
@@ -126,9 +122,9 @@ describe('AssigneeComponent', () => {
     dispatchClosedEvent();
 
     const updatedIssue = dummyIssue.clone(phaseService.currentPhase);
-    updatedIssue.assignees = [testStudent.loginId.toLowerCase()];
+    updatedIssue.assignees = [testStudent.loginId];
     const updatedDuplicateIssue = duplicateIssue.clone(phaseService.currentPhase);
-    updatedDuplicateIssue.assignees = [testStudent.loginId.toLowerCase()];
+    updatedDuplicateIssue.assignees = [testStudent.loginId];
 
     expect(issueService.updateIssue).toHaveBeenCalledWith(updatedIssue);
     expect(issueService.updateIssue).toHaveBeenCalledWith(updatedDuplicateIssue);

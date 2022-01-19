@@ -235,17 +235,21 @@ export class GithubService {
 
   /**
    * Checks if the given list of users are allowed to be assigned to an issue.
+   * Throws an error if at least one of them is not allowed.
    * @param assignees - GitHub usernames to be checked
    */
-  areUsersAssignable(assignees: string[]): Observable<boolean> {
-    return from(assignees).pipe(
-      flatMap(assignee => octokit.issues.checkAssignee({
-          owner: ORG_NAME,
-          repo: REPO,
-          assignee: assignee
-        })),
+  areUsersAssignable(assignees: string[]): Observable<void> {
+    return forkJoin(assignees.map(a => this.isUserAssignable(a))).pipe(map(x => void 0));
+  }
+
+  isUserAssignable(assignee: string): Observable<boolean> {
+    return from(octokit.issues.checkAssignee({
+      owner: ORG_NAME,
+      repo: REPO,
+      assignee: assignee
+    })).pipe(
       every((response: any) => response.status === 204),
-      catchError(err => of(false))
+      catchError(_ => throwError(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`))
     );
   }
 
@@ -276,15 +280,17 @@ export class GithubService {
   }
 
   updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
-    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description, labels: labels,
-      assignees: assignees})).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
-        this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubIssue(response.data);
-      }),
-      catchError(err => {
-        return throwError(err);
-      })
+    return from(this.areUsersAssignable(assignees || [])).pipe(
+      flatMap(() => from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, title: title, body: description,
+        labels: labels, assignees: assignees})).pipe(
+          map((response: GithubResponse<GithubIssue>) => {
+            this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
+            return new GithubIssue(response.data);
+          }),
+          catchError(err => throwError(err))
+        )
+      ),
+      catchError(err => throwError(err))
     );
   }
 

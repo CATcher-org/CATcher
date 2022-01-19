@@ -184,21 +184,17 @@ export class IssueService {
   createTeamResponse(issue: Issue): Observable<Issue> {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.areUsersAssignable(issue.assignees || []).pipe(
-      flatMap((bool: boolean) => {
-        if (!bool) {
-          return throwError("Cannot assign users to the issue. Please check if users are authorized.");
-        } else {
-          return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
-            flatMap((githubComment: GithubComment) => {
-              issue.githubComments = [
-                githubComment,
-                ...issue.githubComments.filter(c => c.id !== githubComment.id),
-              ];
-              return this.updateIssue(issue);
-            })
-          );
-        }
-      })
+      flatMap(() => this.githubService.createIssueComment(issue.id, teamResponse).pipe(
+          flatMap((githubComment: GithubComment) => {
+            issue.githubComments = [
+              githubComment,
+              ...issue.githubComments.filter(c => c.id !== githubComment.id),
+            ];
+            return this.updateIssue(issue);
+          })
+        )
+      ),
+      catchError(err => throwError(err))
     );
   }
 
