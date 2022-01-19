@@ -7,13 +7,13 @@
 
 
 <div *ngIf="isEditing">
-  <form [formGroup]="issueTitleForm" #myForm="ngForm" (ngSubmit)="updateTitle(myForm)">
+  <form #myForm="ngForm" (ngSubmit)="updateTitle(myForm)">
     <mat-form-field style="width: 80%">
-      <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256">
-      <mat-error *ngIf="title != null && title.errors && title.errors['required'] && title.touched">
-        Title is required.
+      <input id="title" [formControl]="issueTitleForm" matInput placeholder="Title" required>
+      <mat-error *ngIf="issueTitleForm != null && issueTitleForm.errors && issueTitleForm.errors['required'] && issueTitleForm.touched">
+        Title required.
       </mat-error>
-      <mat-error *ngIf="title != null && title.errors && title.errors['maxlength'] && title.touched">
+      <mat-error *ngIf="issueTitleForm != null && issueTitleForm.errors && issueTitleForm.errors['maxlength'] && issueTitleForm.touched">
         Title cannot exceed 256 characters.
       </mat-error>
     </mat-form-field>

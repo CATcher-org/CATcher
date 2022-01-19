@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, NgForm, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
@@ -16,7 +16,7 @@ import { PhaseService } from '../../../core/services/phase.service';
 export class TitleComponent implements OnInit {
   isEditing = false;
   isSavePending = false;
-  issueTitleForm: FormGroup;
+  issueTitleForm: FormControl;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -35,16 +35,12 @@ export class TitleComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.issueTitleForm = this.formBuilder.group({
-      title: ['', [Validators.required, Validators.maxLength(256)]],
-    });
+    this.issueTitleForm = new FormControl('', [Validators.required, Validators.maxLength(256)]);
   }
 
   changeToEditMode() {
     this.isEditing = true;
-    this.issueTitleForm.setValue({
-      title: this.issue.title || ''
-    });
+    this.issueTitleForm.setValue(this.issue.title);
   }
 
   cancelEditMode() {
@@ -58,7 +54,7 @@ export class TitleComponent implements OnInit {
 
     this.isSavePending = true;
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
-    newIssue.title = this.issueTitleForm.get('title').value;
+    newIssue.title = this.issueTitleForm.value;
     this.issueService.updateIssue(newIssue).pipe(finalize(() => {
       this.isEditing = false;
       this.isSavePending = false;
