@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
@@ -16,7 +16,7 @@ import { PhaseService } from '../../../core/services/phase.service';
 export class TitleComponent implements OnInit {
   isEditing = false;
   isSavePending = false;
-  issueTitleForm: FormControl;
+  issueTitleForm: FormGroup;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -27,6 +27,7 @@ export class TitleComponent implements OnInit {
   private readonly noButtonModalMessage = 'Continue editing';
 
   constructor(private issueService: IssueService,
+              private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService,
               public permissions: PermissionService,
               public phaseService: PhaseService,
@@ -34,12 +35,16 @@ export class TitleComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.issueTitleForm = new FormControl('', [Validators.required, Validators.maxLength(256)]);
+    this.issueTitleForm = this.formBuilder.group({
+      title: new FormControl('', [Validators.required, Validators.maxLength(256)]),
+    });
   }
 
   changeToEditMode() {
     this.isEditing = true;
-    this.issueTitleForm.setValue(this.issue.title);
+    this.issueTitleForm.setValue({
+      title: this.issue.title || ''
+    });
   }
 
   cancelEditMode() {
@@ -53,7 +58,7 @@ export class TitleComponent implements OnInit {
 
     this.isSavePending = true;
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
-    newIssue.title = this.issueTitleForm.value;
+    newIssue.title = this.issueTitleForm.get('title').value;
     this.issueService.updateIssue(newIssue).pipe(finalize(() => {
       this.isEditing = false;
       this.isSavePending = false;
