@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
@@ -36,7 +36,7 @@ export class TitleComponent implements OnInit {
 
   ngOnInit() {
     this.issueTitleForm = this.formBuilder.group({
-      title: ['', Validators.required],
+      title: new FormControl('', [Validators.required, Validators.maxLength(256)]),
     });
   }
 
