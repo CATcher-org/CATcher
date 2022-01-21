@@ -1,14 +1,13 @@
 <div>
   <div style="text-align: center; margin-bottom: 20px">
-    <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id}} </span>
+    <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id }} </span>
     <button *ngIf="teamList" [matMenuTriggerFor]="teamMenu" mat-icon-button>
       <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> settings </mat-icon>
     </button>
 
     <mat-menu #teamMenu>
-      <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList"
-              (click)="updateDisplayedTeam(team)">
-        <span> {{team}} </span>
+      <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList" (click)="updateDisplayedTeam(team)">
+        <span> {{ team }} </span>
       </button>
     </mat-menu>
   </div>

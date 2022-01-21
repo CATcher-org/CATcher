@@ -8,19 +8,8 @@ import { SharedModule } from '../../shared.module';
 import { IssueDisputeComponent } from './issue-dispute.component';
 
 @NgModule({
-  exports: [
-    IssueDisputeComponent
-  ],
-  declarations: [
-    IssueDisputeComponent,
-  ],
-  imports: [
-    CommonModule,
-    CommentEditorModule,
-    SharedModule,
-    IssueComponentsModule,
-    LabelDropdownModule,
-    MarkdownModule.forChild(),
-  ]
+  exports: [IssueDisputeComponent],
+  declarations: [IssueDisputeComponent],
+  imports: [CommonModule, CommentEditorModule, SharedModule, IssueComponentsModule, LabelDropdownModule, MarkdownModule.forChild()]
 })
-export class IssueDisputeModule { }
+export class IssueDisputeModule {}

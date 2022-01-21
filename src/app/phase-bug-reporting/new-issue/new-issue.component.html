@@ -2,45 +2,46 @@
 
 <form [formGroup]="newIssueForm" #myForm="ngForm" (ngSubmit)="submitNewIssue(myForm)">
   <div class="form">
-
     <div class="row">
-
       <div class="column left">
         <mat-form-field>
-          <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256">
-          <mat-error *ngIf="title.errors && title.errors['required'] && (title.touched || title.dirty)">
-            Title required.
-          </mat-error>
-          <mat-error *ngIf="title.errors && title.errors['maxlength']">
-            Title cannot exceed 256 characters.
-          </mat-error>
-          <mat-hint *ngIf="title.value?.length >= 206">
-            {{256 - title.value?.length}} characters remaining.
-          </mat-hint>
+          <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256" />
+          <mat-error *ngIf="title.errors && title.errors['required'] && (title.touched || title.dirty)"> Title required. </mat-error>
+          <mat-error *ngIf="title.errors && title.errors['maxlength']"> Title cannot exceed 256 characters. </mat-error>
+          <mat-hint *ngIf="title.value?.length >= 206"> {{ 256 - title.value?.length }} characters remaining. </mat-hint>
         </mat-form-field>
 
-        <div style="margin: 10px 0 10px 0;">
+        <div style="margin: 10px 0 10px 0">
           <app-comment-editor
             [id]="'description'"
             [commentField]="description"
             [commentForm]="this.newIssueForm"
             [(isFormPending)]="this.isFormPending"
-            [(submitButtonText)]="this.submitButtonText">
+            [(submitButtonText)]="this.submitButtonText"
+          >
           </app-comment-editor>
         </div>
 
-        <button style="float: right" class="submit-new-bug-report" type="submit" mat-stroked-button color="primary"
-          [disabled]="!newIssueForm.valid || isFormPending">
+        <button
+          style="float: right"
+          class="submit-new-bug-report"
+          type="submit"
+          mat-stroked-button
+          color="primary"
+          [disabled]="!newIssueForm.valid || isFormPending"
+        >
           {{ this.submitButtonText }}
         </button>
       </div>
 
       <div class="column right">
-        <div class="severity-dropdown"><app-label-dropdown initialValue="" attributeName="severity" [dropdownForm]="newIssueForm"></app-label-dropdown></div>
-        <div class="bug-dropdown"><app-label-dropdown initialValue="" attributeName="type" [dropdownForm]="newIssueForm"></app-label-dropdown></div>
+        <div class="severity-dropdown">
+          <app-label-dropdown initialValue="" attributeName="severity" [dropdownForm]="newIssueForm"></app-label-dropdown>
+        </div>
+        <div class="bug-dropdown">
+          <app-label-dropdown initialValue="" attributeName="type" [dropdownForm]="newIssueForm"></app-label-dropdown>
+        </div>
       </div>
-
     </div>
-
   </div>
 </form>

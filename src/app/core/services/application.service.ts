@@ -62,7 +62,7 @@ export class ApplicationService {
 
     const v1IntArr: number[] = [];
     const v2IntArr: number[] = [];
-    for (let i = 0; i < k; ++ i) {
+    for (let i = 0; i < k; ++i) {
       v1IntArr[i] = parseInt(v1Arr[i], 10);
       v2IntArr[i] = parseInt(v2Arr[i], 10);
       if (v1IntArr[i] > v2IntArr[i]) {
@@ -72,6 +72,6 @@ export class ApplicationService {
         return -1;
       }
     }
-    return v1.length === v2.length ? 0 : (v1.length < v2.length ? -1 : 1);
+    return v1.length === v2.length ? 0 : v1.length < v2.length ? -1 : 1;
   }
 }

@@ -25,20 +25,15 @@ export class IssueComponent implements OnInit {
 
   @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
 
-  constructor(public issueService: IssueService,
-              private route: ActivatedRoute,
-              public permissions: PermissionService) { }
+  constructor(public issueService: IssueService, private route: ActivatedRoute, public permissions: PermissionService) {}
 
   ngOnInit() {
-    this.route.params.subscribe(
-      params => {
-        this.issueId = + params['issue_id'];
-      }
-    );
+    this.route.params.subscribe((params) => {
+      this.issueId = +params['issue_id'];
+    });
   }
 
   canDeactivate(): boolean {
     return !this.viewIssue.isEditing();
   }
-
 }

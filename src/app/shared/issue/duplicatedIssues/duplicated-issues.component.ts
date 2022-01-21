@@ -10,18 +10,19 @@ import { PhaseService } from '../../../core/services/phase.service';
   selector: 'app-duplicated-issues-component',
   templateUrl: './duplicated-issues.component.html',
   styleUrls: ['./duplicated-issues.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None
 })
 export class DuplicatedIssuesComponent implements OnInit {
   duplicatedIssues: Observable<Issue[]>;
 
   @Input() issue: Issue;
 
-  constructor(public issueService: IssueService,
-              public errorHandlingService: ErrorHandlingService,
-              public phaseService: PhaseService,
-              public permissions: PermissionService) {
-  }
+  constructor(
+    public issueService: IssueService,
+    public errorHandlingService: ErrorHandlingService,
+    public phaseService: PhaseService,
+    public permissions: PermissionService
+  ) {}
 
   ngOnInit() {
     this.duplicatedIssues = this.issueService.getDuplicateIssuesFor(this.issue);

@@ -15,7 +15,12 @@ import { LoggingService } from './logging.service';
 import { PhaseService } from './phase.service';
 import { UserService } from './user.service';
 
-export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
+export enum AuthState {
+  'NotAuthenticated',
+  'AwaitingAuthentication',
+  'ConfirmOAuthUser',
+  'Authenticated'
+}
 
 @Injectable({
   providedIn: 'root'
@@ -33,15 +38,19 @@ export class AuthService {
 
   ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
 
-  constructor(private electronService: ElectronService, private router: Router, private ngZone: NgZone,
-              private githubService: GithubService,
-              private userService: UserService,
-              private issueService: IssueService,
-              private phaseService: PhaseService,
-              private dataService: DataService,
-              private githubEventService: GithubEventService,
-              private titleService: Title,
-              private logger: LoggingService) {}
+  constructor(
+    private electronService: ElectronService,
+    private router: Router,
+    private ngZone: NgZone,
+    private githubService: GithubService,
+    private userService: UserService,
+    private issueService: IssueService,
+    private phaseService: PhaseService,
+    private dataService: DataService,
+    private githubEventService: GithubEventService,
+    private titleService: Title,
+    private logger: LoggingService
+  ) {}
 
   /**
    * Will store the OAuth token.
@@ -120,9 +129,11 @@ export class AuthService {
       this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
     } else {
       this.generateStateString();
-      this.redirectToOAuthPage(encodeURI(
-        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
-      ));
+      this.redirectToOAuthPage(
+        encodeURI(
+          `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
+        )
+      );
       this.logger.info('Redirecting for Github authentication');
     }
   }

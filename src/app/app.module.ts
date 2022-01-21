@@ -40,13 +40,7 @@ import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    UserConfirmationComponent,
-    LabelDefinitionPopupComponent,
-    SessionFixConfirmationComponent
-  ],
+  declarations: [AppComponent, HeaderComponent, UserConfirmationComponent, LabelDefinitionPopupComponent, SessionFixConfirmationComponent],
   imports: [
     BrowserModule,
     PhaseTesterResponseModule,
@@ -61,11 +55,11 @@ import { SharedModule } from './shared/shared.module';
       markedOptions: {
         provide: MarkedOptions,
         useFactory: markedOptionsFactory
-      },
+      }
     }),
     AppRoutingModule,
     ApolloModule,
-    HttpLinkModule,
+    HttpLinkModule
   ],
   providers: [
     {
@@ -76,16 +70,24 @@ import { SharedModule } from './shared/shared.module';
     {
       provide: AuthService,
       useFactory: AuthServiceFactory,
-      deps: [ElectronService, Router, NgZone,
-      GithubService, UserService, IssueService,
-      PhaseService, DataService, GithubEventService,
-      Title, LoggingService]
+      deps: [
+        ElectronService,
+        Router,
+        NgZone,
+        GithubService,
+        UserService,
+        IssueService,
+        PhaseService,
+        DataService,
+        GithubEventService,
+        Title,
+        LoggingService
+      ]
     },
     {
       provide: IssueService,
       useFactory: IssueServiceFactory,
-      deps: [GithubService, UserService, PhaseService,
-      ElectronService, DataService]
+      deps: [GithubService, UserService, PhaseService, ElectronService, DataService]
     },
     {
       provide: ErrorHandler,
@@ -93,19 +95,13 @@ import { SharedModule } from './shared/shared.module';
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [
-    UserConfirmationComponent,
-    SessionFixConfirmationComponent,
-    LabelDefinitionPopupComponent
-  ]
+  entryComponents: [UserConfirmationComponent, SessionFixConfirmationComponent, LabelDefinitionPopupComponent]
 })
-
 export class AppModule {
   constructor(private apollo: Apollo, private httpLink: HttpLink, private authService: AuthService) {
-
     const URI = 'https://api.github.com/graphql';
     const basic = setContext(() => {
-      return { headers: {Accept: 'charset=utf-8' }};
+      return { headers: { Accept: 'charset=utf-8' } };
     });
     const auth = setContext(() => {
       return { headers: { Authorization: `Token ${this.authService.accessToken.getValue()}` } };
@@ -117,7 +113,7 @@ export class AppModule {
     const cache = new InMemoryCache({ fragmentMatcher });
     this.apollo.create({
       link: link,
-      cache: cache,
+      cache: cache
     });
   }
 }

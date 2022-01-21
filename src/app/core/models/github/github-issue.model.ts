@@ -6,9 +6,9 @@ export class GithubIssue {
   id: string; // Github's backend's id
   number: number; // Issue's display id
   assignees: Array<{
-    id: number,
-    login: string,
-    url: string,
+    id: number;
+    login: string;
+    url: string;
   }>;
   body: string;
   created_at: string;
@@ -17,10 +17,11 @@ export class GithubIssue {
   title: string;
   updated_at: string;
   url: string;
-  user: { // Author of the issue
-    login: string,
-    avatar_url: string,
-    url: string,
+  user: {
+    // Author of the issue
+    login: string;
+    avatar_url: string;
+    url: string;
   };
   comments: Array<GithubComment>;
 
@@ -39,12 +40,12 @@ export class GithubIssue {
    */
   findLabel(name: string, isCategorical: boolean = true): string {
     if (!isCategorical) {
-      const label = this.labels.find(l => (!l.isCategorical() && l.name === name));
+      const label = this.labels.find((l) => !l.isCategorical() && l.name === name);
       return label ? label.getValue() : undefined;
     }
 
     // Find labels with the same category name as what is specified in the parameter.
-    const labels = this.labels.filter(l => (l.isCategorical() && l.getCategory() === name));
+    const labels = this.labels.filter((l) => l.isCategorical() && l.getCategory() === name);
     if (labels.length === 0) {
       return undefined;
     } else if (labels.length === 1) {
@@ -56,9 +57,11 @@ export class GithubIssue {
         return labels[0].getValue();
       } else {
         const order = GithubLabel.LABEL_ORDER[name];
-        return labels.reduce((result, currLabel) => {
-          return order[currLabel.getValue()] > order[result.getValue()] ? currLabel : result;
-        }).getValue();
+        return labels
+          .reduce((result, currLabel) => {
+            return order[currLabel.getValue()] > order[result.getValue()] ? currLabel : result;
+          })
+          .getValue();
       }
     }
   }

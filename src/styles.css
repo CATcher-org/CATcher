@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 
@@ -7,8 +8,14 @@ html, body {
   height: 100%;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
 
 /* Timeline comment style */
 .timeline-header {
@@ -96,7 +103,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .no-underline {
-  text-decoration: none!important;
+  text-decoration: none !important;
 }
 
 .grid-flush-left {
@@ -110,7 +117,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .mat-table tbody tr:hover td {
-  background-color: #E8E8EE;
+  background-color: #e8e8ee;
 }
 
 table {
@@ -133,7 +140,6 @@ table {
   margin-left: 10px !important;
 }
 
-
 .bold-name {
   font-weight: 500;
   font-size: 17px;
@@ -144,7 +150,7 @@ table {
 }
 
 .white-spinner circle {
-  stroke:white !important;
+  stroke: white !important;
 }
 
 .sync-spinner {

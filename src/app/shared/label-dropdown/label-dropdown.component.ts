@@ -21,8 +21,7 @@ export class LabelDropdownComponent implements OnInit {
   selectedColor: string;
   labelList: Label[];
 
-  constructor(public labelService: LabelService,
-              public dialogService: DialogService) { }
+  constructor(public labelService: LabelService, public dialogService: DialogService) {}
 
   ngOnInit() {
     this.selectedColor = this.labelService.getColorOfLabel(this.initialValue);
@@ -35,8 +34,10 @@ export class LabelDropdownComponent implements OnInit {
   }
 
   openModalPopup(label: Label): void {
-    this.dialogService.openLabelDefinitionDialog(label.getFormattedName(),
-    this.labelService.getLabelDefinition(label.labelValue, label.labelCategory));
+    this.dialogService.openLabelDefinitionDialog(
+      label.getFormattedName(),
+      this.labelService.getLabelDefinition(label.labelValue, label.labelCategory)
+    );
   }
 
   hasLabelDefinition(label: Label): boolean {

@@ -4,15 +4,8 @@ import { SharedModule } from '../shared.module';
 import { CommentEditorComponent } from './comment-editor.component';
 
 @NgModule({
-  imports: [
-    SharedModule,
-    MarkdownModule.forChild(),
-  ],
-  declarations: [
-    CommentEditorComponent,
-  ],
-  exports: [
-    CommentEditorComponent
-  ]
+  imports: [SharedModule, MarkdownModule.forChild()],
+  declarations: [CommentEditorComponent],
+  exports: [CommentEditorComponent]
 })
-export class CommentEditorModule { }
+export class CommentEditorModule {}
