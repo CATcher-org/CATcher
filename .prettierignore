@@ -1,6 +1,7 @@
 # Ignore everything
 /*
 
-# Except tests and e2e
+# Except src, tests and e2e
+!src
 !tests
 !e2e
