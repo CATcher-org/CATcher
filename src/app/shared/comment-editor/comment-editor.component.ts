@@ -48,9 +48,9 @@ export class CommentEditorComponent implements OnInit {
   dragActiveCounter = 0;
   uploadErrorMessage: string;
 
-  formatFileUploadingButtonText: (string) => string = (currentButtonText: string) => {
+  formatFileUploadingButtonText(currentButtonText: string) {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
-  };
+  }
 
   ngOnInit() {
     if (this.initialDescription !== undefined) {
