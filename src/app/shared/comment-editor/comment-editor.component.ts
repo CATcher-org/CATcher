@@ -37,9 +37,7 @@ export class CommentEditorComponent implements OnInit {
   // Allow the comment editor to control the text of the submit button to prompt the user.
   @Input() submitButtonText?: string;
   @Output() submitButtonTextChange: EventEmitter<string> = new EventEmitter<string>();
-  formatFileUploadingButtonText: (string) => string = (currentButtonText: string) => {
-    return currentButtonText + ' (Waiting for File Upload to finish...)';
-  };
+
   initialSubmitButtonText: string;
   lastUploadingTime: string;
 
@@ -49,6 +47,10 @@ export class CommentEditorComponent implements OnInit {
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
+
+  formatFileUploadingButtonText: (string) => string = (currentButtonText: string) => {
+    return currentButtonText + ' (Waiting for File Upload to finish...)';
+  };
 
   ngOnInit() {
     if (this.initialDescription !== undefined) {
