@@ -29,7 +29,7 @@
 
       <!-- Team Response Parsing Error -->
       <app-team-response-parse-error *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
-        permissions.isTeamResponseEditable()  && issue.teamResponseError" [issue]="issue">
+        permissions.isTeamResponseEditable()  && issue.teamResponseError && issue.status" [issue]="issue">
       </app-team-response-parse-error>
 
       <!-- Tester's Response -->
