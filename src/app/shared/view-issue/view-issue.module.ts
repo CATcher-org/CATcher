@@ -8,9 +8,9 @@ import { SharedModule } from '../shared.module';
 import { IssueDisputeModule } from './issue-dispute/issue-dispute.module';
 import { NewTeamResponseModule } from './new-team-response/new-team-response.module';
 import { TeamResponseModule } from './team-response/team-response.module';
+import { TeamResponseParseErrorComponent } from './team-response-parse-error/team-response-parse-error.component';
 import { TesterResponseModule } from './tester-response/tester-response.module';
 import { ViewIssueComponent } from './view-issue.component';
-import { TeamResponseParseErrorComponent } from './team-response-parse-error/team-response-parse-error.component';
 
 @NgModule({
   exports: [
