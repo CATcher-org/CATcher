@@ -113,7 +113,7 @@
     <th mat-header-cell *matHeaderCellDef> Actions </th>
     <td mat-cell *matCellDef="let issue">
       <button mat-button matTooltip="View this issue on GitHub" *ngIf="this.isActionVisible(action_buttons.VIEW_IN_WEB)"
-              (click)="this.viewIssueInBrowser(issue.id)" style="
+              (click)="this.viewIssueInBrowser(issue.id, $event)" style="
               transform: scale(0.8)">
         <mat-icon>open_in_new</mat-icon>
       </button>
@@ -132,18 +132,18 @@
       </ng-template>
       <button *ngIf="this.isResponseEditable() && issue.status
       && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
-              mat-button color="primary" (click)="markAsResponded(issue)"
+              mat-button color="primary" (click)="markAsResponded(issue, $event)"
               style="transform: scale(0.8)" matTooltip="Mark this issue as Responded">
         <mat-icon>check_circle</mat-icon>
       </button>
-      <button color="primary" matTooltip="Mark this issue as Pending" mat-button (click)="markAsPending(issue)"
+      <button color="primary" matTooltip="Mark this issue as Pending" mat-button (click)="markAsPending(issue, $event)"
               style="transform: scale(0.8)" *ngIf="(userService.currentUser.role === 'Student' || userService.currentUser.role === 'Admin')
               && this.isActionVisible(action_buttons.MARK_AS_PENDING)">
         <mat-icon>cancel</mat-icon>
       </button>
       <button mat-button color="warn" *ngIf="permissions.isIssueDeletable() && !issuesPendingDeletion[issue.id]
           && this.isActionVisible(action_buttons.DELETE_ISSUE)"
-              (click)="openDeleteDialog(issue.id); $event.stopPropagation()" 
+              (click)="openDeleteDialog(issue.id, $event); $event.stopPropagation()" 
               matTooltip="Delete this issue" style="transform: scale(0.8)">
         <mat-icon>delete_outline</mat-icon>
       </button>
