@@ -23,9 +23,14 @@
 
       <!-- New Team's Response -->
       <app-new-team-response *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
-        permissions.isTeamResponseEditable()  && !issue.teamResponse" [issue]="issue"
+        permissions.isTeamResponseEditable()  && !issue.teamResponse && !issue.status" [issue]="issue"
         (issueUpdated)="updateIssue($event)">
       </app-new-team-response>
+
+      <!-- Team Response Parsing Error -->
+      <app-team-response-parse-error *ngIf="this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
+        permissions.isTeamResponseEditable()  && issue.teamResponseError" [issue]="issue">
+      </app-team-response-parse-error>
 
       <!-- Tester's Response -->
       <app-tester-response *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && issue.testerResponses
