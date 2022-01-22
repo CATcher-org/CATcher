@@ -47,6 +47,9 @@ export class Issue {
   teamChosenSeverity?: string;
   teamChosenType?: string;
 
+  /** Fields for error messages during parsing of Github's issue description */
+  teamResponseError?: string;
+
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
    * the markdown interpretation.
