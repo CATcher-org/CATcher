@@ -132,11 +132,7 @@ export class Issue {
     issue.teamAssigned = teamData;
     issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
 
-    if (template.parseError) {
-      issue.teamResponseError = template.parseError;
-      return issue;
-    }
-
+    issue.teamResponseError = template.parseError;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
