@@ -33,7 +33,8 @@ export abstract class Template {
 
   parseErrorMessage(headers: Header[]): string {
     const headerNames = headers.map((header) => " " + header.name);
-    const message = "Unable to find a Github comment with these headers:" + headerNames;
+    const message = "Unable to find a Github comment with these headers:" + headerNames + '\n' +
+        "Please edit the comment manually on GitHub."
     return message;
   }
 }
