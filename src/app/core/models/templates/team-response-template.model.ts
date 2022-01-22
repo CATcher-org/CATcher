@@ -13,6 +13,7 @@ export class TeamResponseTemplate extends Template {
   teamResponse: Section;
   duplicateOf: DuplicateOfSection;
   comment: IssueComment;
+  parseError: string;
 
   constructor(githubComments: GithubComment[]) {
     super(Object.values(TeamResponseHeaders));
@@ -20,6 +21,7 @@ export class TeamResponseTemplate extends Template {
     const comment = githubComments.find(
       (githubComment: GithubComment) => this.test(githubComment.body));
     if (comment === undefined) {
+      this.parseError = this.parseErrorMessage(Object.values(TeamResponseHeaders));
       return;
     }
     this.comment = <IssueComment>{
