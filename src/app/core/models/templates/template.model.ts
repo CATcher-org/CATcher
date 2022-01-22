@@ -30,6 +30,12 @@ export abstract class Template {
     this.regex.lastIndex = 0;
     return numOfMatch >= this.headers.length;
   }
+
+  parseErrorMessage(headers: Header[]): string {
+    const headerNames = headers.map((header) => " " + header.name);
+    const message = "Unable to find a Github comment with these headers:" + headerNames;
+    return message;
+  }
 }
 
 export class Header {
