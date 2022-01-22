@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSelect } from '@angular/material';
-import { forkJoin } from 'rxjs';
-import { first, switchMap } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { Team } from '../../../core/models/team.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
@@ -55,30 +54,25 @@ export class AssigneeComponent implements OnInit {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     const oldAssignees = newIssue.assignees;
     newIssue.assignees = this.assignees;
-    this.issueService
-      .updateIssueWithAssigneeCheck(newIssue)
-      .pipe(
-        switchMap((updatedIssue: Issue) => {
-          this.issueUpdated.emit(updatedIssue);
-          // Update assignees of duplicate issues
-          return this.issueService.getDuplicateIssuesFor(this.issue);
-        }),
-        first(),
-        switchMap((issues: Issue[]) =>
-          forkJoin(
-            issues.map((issue: Issue) => {
+    this.issueService.updateIssue(newIssue).subscribe(
+      (updatedIssue: Issue) => {
+        this.issueUpdated.emit(updatedIssue);
+        // Update assignees of duplicate issues
+        this.issueService
+          .getDuplicateIssuesFor(this.issue)
+          .pipe(first())
+          .subscribe((issues: Issue[]) => {
+            issues.forEach((issue: Issue) => {
               const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
               newDuplicateIssue.assignees = this.assignees;
-              return this.issueService.updateIssue(newDuplicateIssue);
-            })
-          )
-        )
-      )
-      .subscribe({
-        error: (error) => {
-          this.errorHandlingService.handleError(error);
-          this.assignees = oldAssignees;
-        }
-      });
+              this.issueService.updateIssue(newDuplicateIssue).subscribe((updatedIssue: Issue) => this.issueUpdated.emit(updatedIssue));
+            });
+          });
+      },
+      (error) => {
+        this.errorHandlingService.handleError(error);
+        this.assignees = oldAssignees;
+      }
+    );
   }
 }

@@ -134,11 +134,6 @@ export class IssueService {
       .pipe(map((response: GithubIssue) => this.createIssueModel(response)));
   }
 
-  updateIssueWithAssigneeCheck(issue: Issue): Observable<Issue> {
-    const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
-    return this.githubService.areUsersAssignable(assignees).pipe(flatMap(() => this.updateIssue(issue)));
-  }
-
   updateIssue(issue: Issue): Observable<Issue> {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService
