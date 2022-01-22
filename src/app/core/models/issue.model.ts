@@ -130,11 +130,17 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
+    issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
+
+    if (template.parseError) {
+      issue.teamResponseError = template.parseError;
+      return issue;
+    }
+
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
-    issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
     return issue;
   }
 
