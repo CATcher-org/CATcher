@@ -12,7 +12,7 @@ import { PhaseService } from '../../../core/services/phase.service';
 @Component({
   selector: 'app-issue-label',
   templateUrl: './label.component.html',
-  styleUrls: ['./label.component.css'],
+  styleUrls: ['./label.component.css']
 })
 export class LabelComponent implements OnInit, OnChanges {
   labelValues: Label[];
@@ -24,13 +24,14 @@ export class LabelComponent implements OnInit, OnChanges {
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService,
-              private phaseService: PhaseService,
-              public labelService: LabelService,
-              public permissions: PermissionService,
-              public dialogService: DialogService) {
-  }
+  constructor(
+    private issueService: IssueService,
+    private errorHandlingService: ErrorHandlingService,
+    private phaseService: PhaseService,
+    public labelService: LabelService,
+    public permissions: PermissionService,
+    public dialogService: DialogService
+  ) {}
 
   ngOnInit() {
     // Get the list of labels based on their type (severity, type, response)
@@ -45,20 +46,26 @@ export class LabelComponent implements OnInit, OnChanges {
   updateLabel(value: string) {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     newIssue[this.attributeName] = value;
-    this.issueService.updateIssue(newIssue).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(updatedIssue);
-      this.labelColor = this.labelService.getColorOfLabel(updatedIssue[this.attributeName]);
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+    this.issueService.updateIssue(newIssue).subscribe(
+      (updatedIssue: Issue) => {
+        this.issueUpdated.emit(updatedIssue);
+        this.labelColor = this.labelService.getColorOfLabel(updatedIssue[this.attributeName]);
+      },
+      (error) => {
+        this.errorHandlingService.handleError(error);
+      }
+    );
     // Update labels of duplicate issues
-    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues: Issue[]) => {
-      issues.forEach((issue: Issue) => {
-        const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
-        newDuplicateIssue[this.attributeName] = value;
-        this.issueService.updateIssue(newDuplicateIssue);
+    this.issueService
+      .getDuplicateIssuesFor(this.issue)
+      .pipe(first())
+      .subscribe((issues: Issue[]) => {
+        issues.forEach((issue: Issue) => {
+          const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
+          newDuplicateIssue[this.attributeName] = value;
+          this.issueService.updateIssue(newDuplicateIssue);
+        });
       });
-    });
   }
 
   openDefinitionPage(value: Label): void {

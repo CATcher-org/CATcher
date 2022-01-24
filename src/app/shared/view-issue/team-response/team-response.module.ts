@@ -8,19 +8,8 @@ import { SharedModule } from '../../shared.module';
 import { TeamResponseComponent } from './team-response.component';
 
 @NgModule({
-  exports: [
-    TeamResponseComponent
-  ],
-  declarations: [
-    TeamResponseComponent,
-  ],
-  imports: [
-    CommonModule,
-    CommentEditorModule,
-    SharedModule,
-    IssueComponentsModule,
-    LabelDropdownModule,
-    MarkdownModule.forChild(),
-  ]
+  exports: [TeamResponseComponent],
+  declarations: [TeamResponseComponent],
+  imports: [CommonModule, CommentEditorModule, SharedModule, IssueComponentsModule, LabelDropdownModule, MarkdownModule.forChild()]
 })
-export class TeamResponseModule { }
+export class TeamResponseModule {}

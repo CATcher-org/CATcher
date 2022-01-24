@@ -8,15 +8,7 @@ import { ErrorToasterModule } from './error-toasters/error-toaster.module';
 import { MaterialModule } from './material.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    RouterModule,
-    MaterialModule,
-    ErrorToasterModule,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, RouterModule, MaterialModule, ErrorToasterModule],
   declarations: [FormDisableControlDirective],
   exports: [
     FormDisableControlDirective,
@@ -26,7 +18,7 @@ import { MaterialModule } from './material.module';
     HttpClientModule,
     RouterModule,
     MaterialModule,
-    ErrorToasterModule,
+    ErrorToasterModule
   ]
 })
 export class SharedModule {}

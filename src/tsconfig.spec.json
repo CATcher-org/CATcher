@@ -2,27 +2,14 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
-    "types": [
-      "jasmine",
-      "node"
-    ],
+    "types": ["jasmine", "node"],
     "baseUrl": ".",
     "paths": {
       "core-js/es7/reflect": ["../node_modules/core-js/proposals/reflect-metadata"],
       "core-js/es6/": ["../node_modules/core-js/es/"]
     }
   },
-  "files": [
-    "test.ts",
-    "polyfills-test.ts"
-  ],
-  "include": [
-    "../tests/**/*.spec.ts",
-    "**/*.d.ts"
-  ],
-  "exclude": [
-    "dist",
-    "release",
-    "node_modules"
-  ]
+  "files": ["test.ts", "polyfills-test.ts"],
+  "include": ["../tests/**/*.spec.ts", "**/*.d.ts"],
+  "exclude": ["dist", "release", "node_modules"]
 }

@@ -1,9 +1,9 @@
-<h3 class="mat-title">{{title}}</h3>
+<h3 class="mat-title">{{ title }}</h3>
 <form [formGroup]="issueDescriptionForm" #myForm="ngForm" (ngSubmit)="updateDescription(myForm)">
   <div class="timeline-comment">
     <div class="timeline-header">
-      <span> <strong> Tester </strong> posted on {{issue.created_at}}. </span>
-      <button style="float: right;" mat-button *ngIf="permissions.isIssueDescriptionEditable() && !isEditing" (click)="changeToEditMode()">
+      <span> <strong> Tester </strong> posted on {{ issue.created_at }}. </span>
+      <button style="float: right" mat-button *ngIf="permissions.isIssueDescriptionEditable() && !isEditing" (click)="changeToEditMode()">
         Edit
       </button>
     </div>
@@ -16,20 +16,42 @@
         [commentField]="this.issueDescriptionForm.get('description')"
         [commentForm]="this.issueDescriptionForm"
         [(isFormPending)]="this.isSavePending"
-        [(submitButtonText)]="this.submitButtonText">
+        [(submitButtonText)]="this.submitButtonText"
+      >
       </app-comment-editor>
       <div class="editor-actions">
-        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isSavePending"
-                mat-raised-button color="primary" (click)="viewChanges()">
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="button"
+          [disabled]="isSavePending"
+          mat-raised-button
+          color="primary"
+          (click)="viewChanges()"
+        >
           View Updated Description
         </button>
-        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="openCancelDialog()">Cancel</button>
-        <button class="editor-action" *ngIf="conflict" type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending"
-                mat-raised-button color="warn">
+        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="openCancelDialog()">
+          Cancel
+        </button>
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="submit"
+          [disabled]="issueDescriptionForm.invalid || isSavePending"
+          mat-raised-button
+          color="warn"
+        >
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" *ngIf="!conflict" type="submit" [disabled]="issueDescriptionForm.invalid || isSavePending"
-                mat-stroked-button color="primary">
+        <button
+          class="editor-action"
+          *ngIf="!conflict"
+          type="submit"
+          [disabled]="issueDescriptionForm.invalid || isSavePending"
+          mat-stroked-button
+          color="primary"
+        >
           {{ submitButtonText }}
         </button>
       </div>

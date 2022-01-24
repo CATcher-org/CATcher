@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-label-definition-popup',
   templateUrl: './label-definition-popup.component.html',
-  styleUrls: ['./label-definition-popup.component.css'],
+  styleUrls: ['./label-definition-popup.component.css']
 })
 export class LabelDefinitionPopupComponent {
   labelName: string;
@@ -33,5 +33,4 @@ export class LabelDefinitionPopupComponent {
   onNoClick(): void {
     this.dialogRef.close(false);
   }
-
 }

@@ -16,14 +16,14 @@ export class GithubGraphqlIssue extends GithubIssue {
       user: {
         login: issue.author.login,
         url: issue.author.url,
-        avatar_url: issue.author.avatarUrl,
+        avatar_url: issue.author.avatarUrl
       },
       assignees: flattenEdges(issue.assignees.edges),
       labels: flattenEdges(issue.labels.edges),
-      comments: flattenEdges(issue.comments.edges, node => ({
+      comments: flattenEdges(issue.comments.edges, (node) => ({
         ...node,
-        id: node.databaseId,
-      })),
+        id: node.databaseId
+      }))
     });
   }
 }

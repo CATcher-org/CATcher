@@ -13,7 +13,6 @@ import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
 import { GithubService } from './github.service';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -23,9 +22,8 @@ import { GithubService } from './github.service';
  * and student information for the current session in CATcher.
  */
 export class DataService {
-
   public static ROLES = 'roles';
-  public static TEAM_STRUCTURE  = 'team-structure';
+  public static TEAM_STRUCTURE = 'team-structure';
   public static STUDENTS_ALLOCATION = 'students-allocation';
   public static TUTORS_ALLOCATION = 'tutors-allocation';
   public static ADMINS_ALLOCATION = 'admins-allocation';
@@ -213,12 +211,12 @@ export class DataService {
    * @return - Subjects that tracks the parsed data.
    */
   private parseUsersData(csvText: string): ParsedUserData[] {
-    const lines = csvText.split('\n').filter(v => v.trim());
-    const headers = lines[0].split(',').map(h => h.trim());
+    const lines = csvText.split('\n').filter((v) => v.trim());
+    const headers = lines[0].split(',').map((h) => h.trim());
     const result: ParsedUserData[] = [];
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
-      const lineValues = line.split(',').map(v => v.trim());
+      const lineValues = line.split(',').map((v) => v.trim());
       const lineObj: ParsedUserData = {};
       for (let j = 0; j < headers.length; j++) {
         if (!lineValues[j]) {

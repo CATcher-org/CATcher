@@ -9,20 +9,14 @@ import { SessionFixConfirmationComponent } from './session-fix-confirmation/sess
 import { UserService } from './user.service';
 
 export const MISSING_REQUIRED_REPO = 'You cannot proceed without the required repository.';
-export const CURRENT_PHASE_REPO_CLOSED = 'Current Phase\'s Repository has not been opened.';
-export const BUG_REPORTING_INVALID_ROLE =
-  "'Bug-Reporting Phase\'s repository initialisation is only available to Students.'";
-
+export const CURRENT_PHASE_REPO_CLOSED = "Current Phase's Repository has not been opened.";
+export const BUG_REPORTING_INVALID_ROLE = "'Bug-Reporting Phase's repository initialisation is only available to Students.'";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class RepoCreatorService {
-  constructor(
-    private githubService: GithubService,
-    private userService: UserService,
-    private repoCreationConfirmationDialog: MatDialog
-  ) {}
+  constructor(private githubService: GithubService, private userService: UserService, private repoCreationConfirmationDialog: MatDialog) {}
 
   /**
    * Prompts user to allow CATcher to create a repo, if repo does not
@@ -30,8 +24,10 @@ export class RepoCreatorService {
    * @param currentPhase the current phase of the session.
    * @param phaseRepo the name of the specified repository.
    */
-  public requestRepoCreationPermissions(currentPhase: Phase, phaseRepo: string):
-    UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
+  public requestRepoCreationPermissions(
+    currentPhase: Phase,
+    phaseRepo: string
+  ): UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
     return pipe(
       flatMap((isRepoPresent: boolean) => {
         if (!isRepoPresent && currentPhase === Phase.phaseBugReporting) {
@@ -49,20 +45,21 @@ export class RepoCreatorService {
    * @return Observable<boolean> - Representing user's permission grant.
    */
   private openRepoCreationConfirmation(phaseRepo: string): Observable<boolean> {
-    const dialogRef: MatDialogRef<SessionFixConfirmationComponent> =
-    this.repoCreationConfirmationDialog.open(SessionFixConfirmationComponent, {
-      data: {user: this.userService.currentUser.loginId, repoName: phaseRepo}
-    });
+    const dialogRef: MatDialogRef<SessionFixConfirmationComponent> = this.repoCreationConfirmationDialog.open(
+      SessionFixConfirmationComponent,
+      {
+        data: { user: this.userService.currentUser.loginId, repoName: phaseRepo }
+      }
+    );
     return dialogRef.afterClosed();
   }
 
- /**
-  * Checks if the current phase and current user role match the given permissions
-  * for the user to create the phase repository if deemed necessary
-  * @param currentPhase the current phase of the session.
-  */
-  public verifyRepoCreationPermissions(currentPhase: Phase):
-    UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
+  /**
+   * Checks if the current phase and current user role match the given permissions
+   * for the user to create the phase repository if deemed necessary
+   * @param currentPhase the current phase of the session.
+   */
+  public verifyRepoCreationPermissions(currentPhase: Phase): UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
       tap((repoCreationPermission: boolean | null) => {
         if (repoCreationPermission === null) {
@@ -86,8 +83,7 @@ export class RepoCreatorService {
    * @return - Dummy Observable to give the API sometime to propagate if the creation of the new
    *           repository is needed since the API Call used here does not return any response.
    */
-  public attemptRepoCreation(phaseRepo: string):
-    UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
+  public attemptRepoCreation(phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
       flatMap((repoCreationPermission: boolean | null) => {
         if (repoCreationPermission === null) {
@@ -95,7 +91,7 @@ export class RepoCreatorService {
           return of(null);
         } else {
           this.githubService.createRepository(phaseRepo);
-          return new Observable(subscriber => {
+          return new Observable((subscriber) => {
             setTimeout(() => subscriber.next(true), 1000);
           });
         }
@@ -108,8 +104,7 @@ export class RepoCreatorService {
    * @param phaseOwner the user or organization holding the specified repository.
    * @param phaseRepo the name of the specified repository.
    */
-  public verifyRepoCreation(phaseOwner: string, phaseRepo: string):
-    UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
+  public verifyRepoCreation(phaseOwner: string, phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
     return pipe(
       flatMap((isFixAttempted: boolean | null) => {
         if (!isFixAttempted) {

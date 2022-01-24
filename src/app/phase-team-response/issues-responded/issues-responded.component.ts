@@ -9,17 +9,13 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
 @Component({
   selector: 'app-issues-responded',
   templateUrl: './issues-responded.component.html',
-  styleUrls: ['./issues-responded.component.css'],
+  styleUrls: ['./issues-responded.component.css']
 })
 export class IssuesRespondedComponent implements OnInit, OnChanges {
   displayedColumns: string[];
   filter: (issue: Issue) => boolean;
 
-  readonly actionButtons: ACTION_BUTTONS[] = [
-    ACTION_BUTTONS.VIEW_IN_WEB,
-    ACTION_BUTTONS.MARK_AS_PENDING,
-    ACTION_BUTTONS.FIX_ISSUE
-  ];
+  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.MARK_AS_PENDING, ACTION_BUTTONS.FIX_ISSUE];
 
   @Input() teamFilter: string;
 

@@ -12,13 +12,13 @@ export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.
 
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',
-  [Phase.phaseTeamResponse]: 'Team\'s Response Phase',
-  [Phase.phaseTesterResponse]: 'Tester\'s Response Phase',
+  [Phase.phaseTeamResponse]: "Team's Response Phase",
+  [Phase.phaseTesterResponse]: "Tester's Response Phase",
   [Phase.phaseModeration]: 'Moderation Phase'
 };
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 
 /**
@@ -26,7 +26,6 @@ export const PhaseDescription = {
  * current session data and repository details related to the session.
  */
 export class PhaseService {
-
   public currentPhase: Phase;
   private repoName: string;
   private orgName: string;
@@ -40,9 +39,7 @@ export class PhaseService {
     phaseModeration: ''
   };
 
-  constructor(private githubService: GithubService,
-              private labelService: LabelService,
-              private repoCreatorService: RepoCreatorService) {}
+  constructor(private githubService: GithubService, private labelService: LabelService, private repoCreatorService: RepoCreatorService) {}
   /**
    * Stores the location of the repositories belonging to
    * each phase of the application.
@@ -66,9 +63,7 @@ export class PhaseService {
   }
 
   fetchSessionData(): Observable<SessionData> {
-    return this.githubService.fetchSettingsFile().pipe(
-      map(data => data as SessionData)
-    );
+    return this.githubService.fetchSettingsFile().pipe(map((data) => data as SessionData));
   }
 
   /**
@@ -151,9 +146,10 @@ export class PhaseService {
       this.repoCreatorService.verifyRepoCreation(this.getPhaseOwner(this.currentPhase), this.sessionData[this.currentPhase]),
       throwIfFalse(
         (isSessionCreated: boolean) => isSessionCreated,
-        () => new Error(SESSION_AVALIABILITY_FIX_FAILED)),
+        () => new Error(SESSION_AVALIABILITY_FIX_FAILED)
+      ),
       this.labelService.syncLabels(this.isTeamOrModerationPhase()),
-      retry(1)  // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
+      retry(1) // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.
     );
   }
 
@@ -168,5 +164,4 @@ export class PhaseService {
   reset() {
     this.currentPhase = null;
   }
-
 }

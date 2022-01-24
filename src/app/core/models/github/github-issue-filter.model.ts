@@ -42,7 +42,7 @@ export default class RestGithubIssueFilter implements RestGithubIssueFilterData 
       mentioned: this.mentioned,
       milestone: this.milestone,
       since: this.since,
-      states: [this.state === 'close' ? IssueState.Closed : IssueState.Open],
+      states: [this.state === 'close' ? IssueState.Closed : IssueState.Open]
     };
   }
 }

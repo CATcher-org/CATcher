@@ -1,4 +1,4 @@
-import { Checkbox } from "./checkbox.model";
+import { Checkbox } from './checkbox.model';
 
 export class TesterResponse {
   readonly TITLE_PREFIX = '## :question: ';

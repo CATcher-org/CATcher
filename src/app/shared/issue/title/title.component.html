@@ -1,28 +1,37 @@
 <div *ngIf="!isEditing">
-  <h1 class="mat-display-1 title">{{issue.title}} <span style="color:#a3aab1">#{{issue.id}}</span></h1>
-  <button *ngIf="permissions.isIssueCreatable()" mat-stroked-button color="primary" class="title-button"
-          [routerLink]="'/' + phaseService.currentPhase + '/issues/new'">New Issue</button>
-  <button *ngIf="permissions.isIssueTitleEditable()" mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">Edit</button>
+  <h1 class="mat-display-1 title">
+    {{ issue.title }} <span style="color: #a3aab1">#{{ issue.id }}</span>
+  </h1>
+  <button
+    *ngIf="permissions.isIssueCreatable()"
+    mat-stroked-button
+    color="primary"
+    class="title-button"
+    [routerLink]="'/' + phaseService.currentPhase + '/issues/new'"
+  >
+    New Issue
+  </button>
+  <button *ngIf="permissions.isIssueTitleEditable()" mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">
+    Edit
+  </button>
 </div>
-
 
 <div *ngIf="isEditing">
   <form [formGroup]="issueTitleForm" #myForm="ngForm" (ngSubmit)="updateTitle(myForm)">
     <mat-form-field style="width: 80%">
-      <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256">
-      <mat-error *ngIf="issueTitleForm.get('title').hasError('required')">
-        Title is required.
-      </mat-error>
-      <mat-error *ngIf="issueTitleForm.get('title').hasError('maxlength')">
-        Title cannot exceed 256 characters.
-      </mat-error>
+      <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256" />
+      <mat-error *ngIf="issueTitleForm.get('title').hasError('required')"> Title is required. </mat-error>
+      <mat-error *ngIf="issueTitleForm.get('title').hasError('maxlength')"> Title cannot exceed 256 characters. </mat-error>
       <mat-hint *ngIf="issueTitleForm.get('title').value?.length >= 206">
-        {{256 - issueTitleForm.get('title').value?.length}} characters remaining.
+        {{ 256 - issueTitleForm.get('title').value?.length }} characters remaining.
       </mat-hint>
     </mat-form-field>
 
-    <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary"
-            class="title-button">Save</button>
-    <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" class="title-button" (click)="openCancelDialog()">Cancel</button>
+    <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary" class="title-button">
+      Save
+    </button>
+    <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" class="title-button" (click)="openCancelDialog()">
+      Cancel
+    </button>
   </form>
 </div>

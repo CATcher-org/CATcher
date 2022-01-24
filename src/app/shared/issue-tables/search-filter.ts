@@ -8,30 +8,30 @@ import { TABLE_COLUMNS } from './issue-tables-columns';
  * This module exports a single function applySearchFilter which is called by IssuesDataTable.
  */
 export function applySearchFilter(filter: string, displayedColumn: string[], issueService: IssueService, data: Issue[]): Issue[] {
-    const searchKey = filter.toLowerCase();
-    const result = data.slice().filter((issue: Issue) => {
-      for (const column of displayedColumn) {
-        switch (column) {
-          case TABLE_COLUMNS.ASSIGNEE:
-            if (matchesAssignee(issue.assignees, searchKey)) {
-              return true;
-            }
-            break;
-          case TABLE_COLUMNS.DUPLICATED_ISSUES:
-            if (matchesDuplicatedIssue(issueService, issue.id, searchKey)) {
-              return true;
-            }
-            break;
-          default:
-            if (matchesOtherColumns(issue, column, searchKey)) {
-              return true;
-            }
-            break;
-        }
+  const searchKey = filter.toLowerCase();
+  const result = data.slice().filter((issue: Issue) => {
+    for (const column of displayedColumn) {
+      switch (column) {
+        case TABLE_COLUMNS.ASSIGNEE:
+          if (matchesAssignee(issue.assignees, searchKey)) {
+            return true;
+          }
+          break;
+        case TABLE_COLUMNS.DUPLICATED_ISSUES:
+          if (matchesDuplicatedIssue(issueService, issue.id, searchKey)) {
+            return true;
+          }
+          break;
+        default:
+          if (matchesOtherColumns(issue, column, searchKey)) {
+            return true;
+          }
+          break;
       }
-      return false;
-    });
-    return result;
+    }
+    return false;
+  });
+  return result;
 }
 
 function containsSearchKey(item: string, searchKey: string): boolean {
@@ -39,7 +39,7 @@ function containsSearchKey(item: string, searchKey: string): boolean {
 }
 
 function duplicatedIssuesContainsSearchKey(duplicatedIssues: Issue[], searchKey: string): boolean {
-  return duplicatedIssues.filter(el => `#${String(el.id)}`.includes(searchKey)).length !== 0;
+  return duplicatedIssues.filter((el) => `#${String(el.id)}`.includes(searchKey)).length !== 0;
 }
 
 function matchesAssignee(assignees: string[], searchKey: string): boolean {
@@ -50,7 +50,7 @@ function matchesAssignee(assignees: string[], searchKey: string): boolean {
 }
 
 function matchesDuplicatedIssue(issueService: IssueService, id: number, searchKey: string): boolean {
-  const duplicatedIssues = issueService.issues$.getValue().filter(el => el.duplicateOf === id);
+  const duplicatedIssues = issueService.issues$.getValue().filter((el) => el.duplicateOf === id);
   return duplicatedIssuesContainsSearchKey(duplicatedIssues, searchKey);
 }
 

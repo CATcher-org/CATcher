@@ -1,19 +1,29 @@
 <div *ngIf="isUserNotAuthenticated()" class="login-page">
   <mat-card class="login-card">
-    <mat-card-header style="margin-bottom: 20px;">
+    <mat-card-header style="margin-bottom: 20px">
       <mat-card-title class="login-title"> Select Your Session </mat-card-title>
     </mat-card-header>
 
     <form [formGroup]="profileForm" (ngSubmit)="setupSession()">
-      <app-profiles class="login-field" [urlEncodedSessionName]="this.urlEncodedSessionName" (selectedProfileEmitter)="onProfileSelect($event)"></app-profiles>
+      <app-profiles
+        class="login-field"
+        [urlEncodedSessionName]="this.urlEncodedSessionName"
+        (selectedProfileEmitter)="onProfileSelect($event)"
+      ></app-profiles>
       <mat-card-content>
         <mat-form-field class="login-field">
-          <input matInput placeholder="Settings Location (Org/Repo)" formControlName="session" required>
+          <input matInput placeholder="Settings Location (Org/Repo)" formControlName="session" required />
         </mat-form-field>
 
         <mat-card-actions>
-          <button *ngIf="!isSettingUpSession" class="sign-in-button" type="submit"
-                  [disabled]="profileForm.invalid || isSettingUpSession" mat-stroked-button color="primary">
+          <button
+            *ngIf="!isSettingUpSession"
+            class="sign-in-button"
+            type="submit"
+            [disabled]="profileForm.invalid || isSettingUpSession"
+            mat-stroked-button
+            color="primary"
+          >
             <div>Submit</div>
           </button>
           <div *ngIf="isSettingUpSession" class="spinner-centralize">
@@ -27,9 +37,9 @@
 
 <div *ngIf="isUserAuthenticating() || isAwaitingOAuthUserConfirm()" class="login-page">
   <mat-card class="login-card">
-    <mat-card-header style="margin-bottom: 20px;">
+    <mat-card-header style="margin-bottom: 20px">
       <mat-card-title class="login-title"> Confirm Login Account </mat-card-title>
-      <mat-card-subtitle> Session on {{currentSessionOrg}} </mat-card-subtitle>
+      <mat-card-subtitle> Session on {{ currentSessionOrg }} </mat-card-subtitle>
     </mat-card-header>
 
     <div style="position: absolute; top: 15px; left: 15px">

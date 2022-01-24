@@ -15,23 +15,20 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.SEVERITY_LABEL,
     ISSUE_COMPONENTS.TYPE_LABEL,
     ISSUE_COMPONENTS.TEAM_RESPONSE,
-    ISSUE_COMPONENTS.TESTER_RESPONSE,
+    ISSUE_COMPONENTS.TESTER_RESPONSE
   ];
 
   @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.route.params.subscribe(
-      params => {
-        this.issueId = + params['issue_id'];
-      }
-    );
+    this.route.params.subscribe((params) => {
+      this.issueId = +params['issue_id'];
+    });
   }
 
   canDeactivate(): boolean {
     return !this.viewIssue.isEditing();
   }
-
 }
