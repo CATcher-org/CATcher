@@ -28,15 +28,16 @@ export class AssigneeComponent implements OnInit {
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService,
-              private phaseService: PhaseService,
-              public permissions: PermissionService) {
-  }
+  constructor(
+    private issueService: IssueService,
+    private errorHandlingService: ErrorHandlingService,
+    private phaseService: PhaseService,
+    public permissions: PermissionService
+  ) {}
 
   ngOnInit(): void {
     this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
-    this.assignees = this.issue.assignees.map(a => a);
+    this.assignees = this.issue.assignees.map((a) => a);
   }
 
   openSelector() {
@@ -54,23 +55,30 @@ export class AssigneeComponent implements OnInit {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     const oldAssignees = newIssue.assignees;
     newIssue.assignees = this.assignees;
-    this.issueService.updateIssueWithAssigneeCheck(newIssue).pipe(
-      switchMap((updatedIssue: Issue) => {
-        this.issueUpdated.emit(updatedIssue);
-        // Update assignees of duplicate issues
-        return this.issueService.getDuplicateIssuesFor(this.issue);
-      }),
-      first(),
-      switchMap((issues: Issue[]) => forkJoin(issues.map((issue: Issue) => {
-          const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
-          newDuplicateIssue.assignees = this.assignees;
-          return this.issueService.updateIssue(newDuplicateIssue);
-        })))
-    ).subscribe({
-      error: error => {
-        this.errorHandlingService.handleError(error);
-        this.assignees = oldAssignees;
-      }
-    });
+    this.issueService
+      .updateIssueWithAssigneeCheck(newIssue)
+      .pipe(
+        switchMap((updatedIssue: Issue) => {
+          this.issueUpdated.emit(updatedIssue);
+          // Update assignees of duplicate issues
+          return this.issueService.getDuplicateIssuesFor(this.issue);
+        }),
+        first(),
+        switchMap((issues: Issue[]) =>
+          forkJoin(
+            issues.map((issue: Issue) => {
+              const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
+              newDuplicateIssue.assignees = this.assignees;
+              return this.issueService.updateIssue(newDuplicateIssue);
+            })
+          )
+        )
+      )
+      .subscribe({
+        error: (error) => {
+          this.errorHandlingService.handleError(error);
+          this.assignees = oldAssignees;
+        }
+      });
   }
 }

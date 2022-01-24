@@ -1,29 +1,27 @@
 <div>
   <div style="text-align: center; margin-bottom: 20px">
-    <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id}} </span>
+    <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id }} </span>
     <button *ngIf="teamList" [matMenuTriggerFor]="teamMenu" mat-icon-button>
       <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> settings </mat-icon>
     </button>
 
     <mat-menu #teamMenu>
-      <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList"
-              (click)="updateDisplayedTeam(team)">
-        <span> {{team}} </span>
+      <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList" (click)="updateDisplayedTeam(team)">
+        <span> {{ team }} </span>
       </button>
     </mat-menu>
   </div>
   <mat-grid-list cols="3" rowHeight="80px">
     <mat-grid-tile>
-      <div class="grid-flush-left"> <h1 class="mat-headline" style="margin: 0px"> Issues Submitted by Students </h1> </div>
+      <div class="grid-flush-left"><h1 class="mat-headline" style="margin: 0px">Issues Submitted by Students</h1></div>
     </mat-grid-tile>
-    <br/>
+    <br />
     <mat-grid-tile>
       <mat-form-field class="full-grid-width">
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search" />
       </mat-form-field>
     </mat-grid-tile>
   </mat-grid-list>
 
   <app-issue-tables [headers]="this.displayedColumns" [actions]="this.actionButtons"></app-issue-tables>
-
 </div>

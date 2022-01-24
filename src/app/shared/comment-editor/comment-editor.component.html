@@ -1,26 +1,45 @@
 <form [formGroup]="commentForm" style="min-height: 350px">
   <mat-tab-group class="mat-elevation-z1" animationDuration="0ms">
     <mat-tab label="Write">
-      <div #dropArea class="tab-content"
-           (dragleave)="onDragExit($event)" (dragenter)="onDragEnter($event)" (drop)="onDrop($event)"
-           (dragover)="enableFileDrop($event)">
-
+      <div
+        #dropArea
+        class="tab-content"
+        (dragleave)="onDragExit($event)"
+        (dragenter)="onDragEnter($event)"
+        (drop)="onDrop($event)"
+        (dragover)="enableFileDrop($event)"
+      >
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
-          <textarea (paste)="onPaste($event)" #commentTextArea (dragover)="disableCaretMovement($event)"
-                    id="{{ this.id }}" formControlName="{{ this.id }}" matInput
-                    cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10"
-                    cdkAutosizeMaxRows="20" class="text-input-area" placeholder="{{ this.placeholderText }}"></textarea>
+          <textarea
+            (paste)="onPaste($event)"
+            #commentTextArea
+            (dragover)="disableCaretMovement($event)"
+            id="{{ this.id }}"
+            formControlName="{{ this.id }}"
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="10"
+            cdkAutosizeMaxRows="20"
+            class="text-input-area"
+            placeholder="{{ this.placeholderText }}"
+          ></textarea>
           <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">
             Description required.
           </mat-error>
 
           <div class="drag-and-drop">
             <span *ngIf="!isInErrorState"> Attach files by dragging & dropping or select them by clicking here. </span>
-            <span *ngIf="isInErrorState" class="error"> {{uploadErrorMessage}} </span>
-            <input #fileInput [disabled]="this.commentField.disabled"
-                   [accept]="SUPPORTED_FILE_TYPES"
-                   type="file" class="file" (change)="onFileInputUpload($event, fileInput)">
+            <span *ngIf="isInErrorState" class="error"> {{ uploadErrorMessage }} </span>
+            <input
+              #fileInput
+              [disabled]="this.commentField.disabled"
+              [accept]="SUPPORTED_FILE_TYPES"
+              type="file"
+              class="file"
+              (change)="onFileInputUpload($event, fileInput)"
+            />
           </div>
         </mat-form-field>
       </div>
@@ -28,7 +47,7 @@
     <mat-tab label="Preview">
       <div class="tab-content" style="min-height: 228px">
         <markdown #markdownArea *ngIf="commentField.value !== ''" [data]="sanitize(commentField.value)"></markdown>
-        <div *ngIf="commentField.value ===''"> Nothing to preview. </div>
+        <div *ngIf="commentField.value === ''">Nothing to preview.</div>
       </div>
     </mat-tab>
   </mat-tab-group>

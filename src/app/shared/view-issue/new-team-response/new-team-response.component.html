@@ -7,15 +7,21 @@
     <div>
       <div *ngIf="(issueService.getDuplicateIssuesFor(this.issue) | async).length === 0; else displayDuplicates" class="container">
         <div>
-          <mat-checkbox style="display: inline-block; width: 20%" formControlName="duplicated" (change)="handleChangeOfDuplicateCheckbox($event)">
+          <mat-checkbox
+            style="display: inline-block; width: 20%"
+            formControlName="duplicated"
+            (change)="handleChangeOfDuplicateCheckbox($event)"
+          >
             A Duplicate Of:
           </mat-checkbox>
 
           <mat-form-field [style.visibility]="!duplicated.value ? 'hidden' : 'visible'" style="display: inline-block; width: 50%">
             <mat-select formControlName="duplicateOf" placeholder="Duplicate of">
               <mat-option *ngFor="let issue of duplicatedIssueList | async" [disabled]="dupIssueOptionIsDisabled(issue)" [value]="issue.id">
-                <span class="mat-body-strong"> #{{issue.id}}: </span>  <span class="mat-body">{{issue.title}}</span>
-                <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="color: #f44336"> ({{getDisabledDupOptionErrorText(issue)}}) </span>
+                <span class="mat-body-strong"> #{{ issue.id }}: </span> <span class="mat-body">{{ issue.title }}</span>
+                <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="color: #f44336">
+                  ({{ getDisabledDupOptionErrorText(issue) }})
+                </span>
               </mat-option>
             </mat-select>
             <mat-error *ngIf="duplicateOf.errors && duplicateOf.errors['required'] && duplicateOf.touched">
@@ -33,26 +39,36 @@
 
       <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
         <div class="left-half">
-          <app-label-dropdown [initialValue]="this.issue.severity" attributeName="severity" [dropdownForm]="newTeamResponseForm"></app-label-dropdown>
+          <app-label-dropdown
+            [initialValue]="this.issue.severity"
+            attributeName="severity"
+            [dropdownForm]="newTeamResponseForm"
+          ></app-label-dropdown>
         </div>
 
         <div class="right-half">
-          <app-label-dropdown [initialValue]="this.issue.type" attributeName="type" [dropdownForm]="newTeamResponseForm"></app-label-dropdown>
+          <app-label-dropdown
+            [initialValue]="this.issue.type"
+            attributeName="type"
+            [dropdownForm]="newTeamResponseForm"
+          ></app-label-dropdown>
         </div>
       </div>
 
       <div class="container" [style.display]="duplicated.value ? 'none' : 'grid'">
         <mat-form-field class="left-half">
           <mat-select placeholder="Assignees" formControlName="assignees" multiple>
-            <mat-option *ngFor="let member of teamMembers" [value]="member">{{member}}</mat-option>
+            <mat-option *ngFor="let member of teamMembers" [value]="member">{{ member }}</mat-option>
           </mat-select>
-          <mat-error *ngIf="assignees.errors && assignees.errors['required'] && assignees.touched">
-            Assignee(s) required.
-          </mat-error>
+          <mat-error *ngIf="assignees.errors && assignees.errors['required'] && assignees.touched"> Assignee(s) required. </mat-error>
         </mat-form-field>
 
         <div class="right-half">
-          <app-label-dropdown [initialValue]="this.issue.responseTag" attributeName="responseTag" [dropdownForm]="newTeamResponseForm"></app-label-dropdown>
+          <app-label-dropdown
+            [initialValue]="this.issue.responseTag"
+            attributeName="responseTag"
+            [dropdownForm]="newTeamResponseForm"
+          ></app-label-dropdown>
         </div>
       </div>
 
@@ -61,28 +77,55 @@
         [commentField]="this.newTeamResponseForm.get('description')"
         [commentForm]="this.newTeamResponseForm"
         [(isFormPending)]="this.isFormPending"
-        [(submitButtonText)]="this.submitButtonText">
+        [(submitButtonText)]="this.submitButtonText"
+      >
       </app-comment-editor>
 
       <div class="editor-actions">
-        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
-                mat-raised-button color="primary" (click)="viewUpdatedResponse()">
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="button"
+          [disabled]="isFormPending"
+          mat-raised-button
+          color="primary"
+          (click)="viewUpdatedResponse()"
+        >
           View Updated Response
         </button>
-        <button class="editor-action" *ngIf="conflict" type="submit"
-                [disabled]="newTeamResponseForm.invalid || isFormPending" mat-raised-button color="warn">
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="submit"
+          [disabled]="newTeamResponseForm.invalid || isFormPending"
+          mat-raised-button
+          color="warn"
+        >
           {{ submitButtonText }}
         </button>
-        <button type="submit" class="editor-action" *ngIf="!conflict"
-                [disabled]="newTeamResponseForm.invalid || isFormPending" mat-stroked-button color="primary">
+        <button
+          type="submit"
+          class="editor-action"
+          *ngIf="!conflict"
+          [disabled]="newTeamResponseForm.invalid || isFormPending"
+          mat-stroked-button
+          color="primary"
+        >
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending" mat-stroked-button
-                color="warn" (click)="refresh()" matTooltip="Updated response will overwrite your changes">
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="button"
+          [disabled]="isFormPending"
+          mat-stroked-button
+          color="warn"
+          (click)="refresh()"
+          matTooltip="Updated response will overwrite your changes"
+        >
           Cancel
         </button>
       </div>
     </div>
-
   </div>
 </form>

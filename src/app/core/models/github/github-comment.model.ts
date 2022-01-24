@@ -6,9 +6,9 @@ export class GithubComment {
   updated_at: string;
   url: string; // api url
   user: {
-    login: string,
-    id: number,
-    avatar_url: string,
-    url: string,
+    login: string;
+    id: number;
+    avatar_url: string;
+    url: string;
   };
 }

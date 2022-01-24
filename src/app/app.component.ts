@@ -10,10 +10,9 @@ import { LoggingService } from './core/services/logging.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit {
-  NOT_CONNECTED_ERROR: Error = new Error("You are not connected to the internet.");
+  NOT_CONNECTED_ERROR: Error = new Error('You are not connected to the internet.');
 
   constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
-
     logger.info('AppConfig', AppConfig);
 
     if (electronService.isElectron()) {
@@ -21,7 +20,7 @@ export class AppComponent implements AfterViewInit {
     } else {
       logger.info('Mode web');
     }
-   }
+  }
 
   ngAfterViewInit() {
     this.addListenerForHttpLinks();
@@ -33,22 +32,30 @@ export class AppComponent implements AfterViewInit {
    * Will use the client's default OS browser to open the link.
    */
   addListenerForHttpLinks() {
-    document.addEventListener('click', (event) => {
-      const elem = (<HTMLLinkElement>(<HTMLElement>event.target).closest('a[href^="http"]'));
-      if (elem) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.electronService.openLink(elem.href);
-      }
-    }, false);
+    document.addEventListener(
+      'click',
+      (event) => {
+        const elem = <HTMLLinkElement>(<HTMLElement>event.target).closest('a[href^="http"]');
+        if (elem) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.electronService.openLink(elem.href);
+        }
+      },
+      false
+    );
   }
 
   /**
    * This listener checks if CATcher has a connection to a network, and will show an error snackbar if it does not.
    */
   addListenerForNetworkOffline() {
-    window.addEventListener('offline', (event) => {
-      this.errorHandlingService.handleError(this.NOT_CONNECTED_ERROR);
-    }, false);
+    window.addEventListener(
+      'offline',
+      (event) => {
+        this.errorHandlingService.handleError(this.NOT_CONNECTED_ERROR);
+      },
+      false
+    );
   }
 }

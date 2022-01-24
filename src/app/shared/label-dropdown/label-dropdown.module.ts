@@ -4,15 +4,8 @@ import { SharedModule } from '../shared.module';
 import { LabelDropdownComponent } from './label-dropdown.component';
 
 @NgModule({
-  declarations: [
-    LabelDropdownComponent
-  ],
-  imports: [
-    CommonModule,
-    SharedModule
-  ],
-  exports: [
-    LabelDropdownComponent
-  ]
+  declarations: [LabelDropdownComponent],
+  imports: [CommonModule, SharedModule],
+  exports: [LabelDropdownComponent]
 })
-export class LabelDropdownModule { }
+export class LabelDropdownModule {}

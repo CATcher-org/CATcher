@@ -1,11 +1,15 @@
 <div>
   <span class="mat-title"> Duplicated Issues </span>
-    <mat-chip-list>
-      <mat-chip *ngFor="let duplicatedIssue of (duplicatedIssues | async)"
-                style="cursor: pointer" [matTooltip]="duplicatedIssue.title"
-                matTooltipPosition="above" (removed)="removeDuplicateStatus(duplicatedIssue)">
-        <a class="no-underline link-grey-dark" [routerLink]="['../' + duplicatedIssue.id]"> #{{duplicatedIssue.id}} </a>
-        <mat-icon *ngIf="permissions.isTeamResponseEditable() || permissions.isTutorResponseEditable()" matChipRemove>cancel</mat-icon>
-      </mat-chip>
-    </mat-chip-list>
+  <mat-chip-list>
+    <mat-chip
+      *ngFor="let duplicatedIssue of duplicatedIssues | async"
+      style="cursor: pointer"
+      [matTooltip]="duplicatedIssue.title"
+      matTooltipPosition="above"
+      (removed)="removeDuplicateStatus(duplicatedIssue)"
+    >
+      <a class="no-underline link-grey-dark" [routerLink]="['../' + duplicatedIssue.id]"> #{{ duplicatedIssue.id }} </a>
+      <mat-icon *ngIf="permissions.isTeamResponseEditable() || permissions.isTutorResponseEditable()" matChipRemove>cancel</mat-icon>
+    </mat-chip>
+  </mat-chip-list>
 </div>

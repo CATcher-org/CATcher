@@ -30,13 +30,15 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
   @Output() updateEditState = new EventEmitter<boolean>();
   @ViewChild(CommentEditorComponent, { static: false }) commentEditor: CommentEditorComponent;
 
-  constructor(private formBuilder: FormBuilder,
-              private issueService: IssueService,
-              public userService: UserService,
-              private errorHandlingService: ErrorHandlingService,
-              private githubService: GithubService,
-              private phaseService: PhaseService,
-              private electronService: ElectronService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private issueService: IssueService,
+    public userService: UserService,
+    private errorHandlingService: ErrorHandlingService,
+    private githubService: GithubService,
+    private phaseService: PhaseService,
+    private electronService: ElectronService
+  ) {}
 
   ngOnInit() {
     this.resetForm();
@@ -53,7 +55,6 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
     }
   }
 
-
   submitTutorResponseForm(form: NgForm) {
     if (this.tutorResponseForm.invalid) {
       return;
@@ -62,26 +63,31 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
 
     this.issue.pending = '' + this.getNumOfPending();
 
-    this.isSafeToSubmitTutorResponse().pipe(
-      flatMap((isSave: boolean) => {
-        if (isSave || this.isUpdatingDeletedResponse()) {
-          if (this.issue.issueComment && !this.isUpdatingDeletedResponse()) {
-            return this.updateTutorResponse();
+    this.isSafeToSubmitTutorResponse()
+      .pipe(
+        flatMap((isSave: boolean) => {
+          if (isSave || this.isUpdatingDeletedResponse()) {
+            if (this.issue.issueComment && !this.isUpdatingDeletedResponse()) {
+              return this.updateTutorResponse();
+            } else {
+              return this.createTutorResponse();
+            }
           } else {
-            return this.createTutorResponse();
+            this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+            return throwError('The content you are editing has changed. Please verify the changes and try again.');
           }
-        } else {
-          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
-          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+        }),
+        finalize(() => (this.isFormPending = false))
+      )
+      .subscribe(
+        (issue: Issue) => {
+          this.issueUpdated.emit(issue);
+          this.resetToDefault();
+        },
+        (error) => {
+          this.errorHandlingService.handleError(error);
         }
-      }),
-      finalize(() => this.isFormPending = false)
-    ).subscribe((issue: Issue) => {
-      this.issueUpdated.emit(issue);
-      this.resetToDefault();
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+      );
   }
 
   updateTutorResponse(): Observable<Issue> {
@@ -133,8 +139,9 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
   }
 
   viewInGithub(): void {
-    this.electronService.openLink(`https://github.com/${this.githubService.getRepoURL()}/issues/` +
-      `${this.issue.id}#issuecomment-${this.issue.issueComment.id}`);
+    this.electronService.openLink(
+      `https://github.com/${this.githubService.getRepoURL()}/issues/` + `${this.issue.id}#issuecomment-${this.issue.issueComment.id}`
+    );
   }
 
   changeToEditMode() {
@@ -187,7 +194,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
     for (let i = 0; i < this.issue.issueDisputes.length; i++) {
       const dispute = this.issue.issueDisputes[i];
       group[this.getTutorResponseFormId(i)] = new FormControl(dispute.tutorResponse, Validators.required);
-      group[this.getTodoFormId(i)] = new FormControl({value: dispute.isDone(), disabled: !this.isEditing}, Validators.required);
+      group[this.getTodoFormId(i)] = new FormControl({ value: dispute.isDone(), disabled: !this.isEditing }, Validators.required);
     }
     return group;
   }

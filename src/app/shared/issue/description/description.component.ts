@@ -16,7 +16,7 @@ import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.comp
 @Component({
   selector: 'app-issue-description',
   templateUrl: './description.component.html',
-  styleUrls: ['./description.component.css'],
+  styleUrls: ['./description.component.css']
 })
 export class DescriptionComponent implements OnInit {
   isSavePending = false;
@@ -35,18 +35,19 @@ export class DescriptionComponent implements OnInit {
   private readonly yesButtonModalMessage = 'Cancel';
   private readonly noButtonModalMessage = 'Continue editing';
 
-  constructor(private issueService: IssueService,
-              private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              private dialog: MatDialog,
-              private phaseService: PhaseService,
-              public permissions: PermissionService,
-              private dialogService: DialogService) {
-  }
+  constructor(
+    private issueService: IssueService,
+    private formBuilder: FormBuilder,
+    private errorHandlingService: ErrorHandlingService,
+    private dialog: MatDialog,
+    private phaseService: PhaseService,
+    public permissions: PermissionService,
+    private dialogService: DialogService
+  ) {}
 
   ngOnInit() {
     this.issueDescriptionForm = this.formBuilder.group({
-      description: [''],
+      description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
@@ -64,28 +65,34 @@ export class DescriptionComponent implements OnInit {
     }
 
     this.isSavePending = true;
-    this.issueService.getLatestIssue(this.issue.id).pipe(
-      map((issue: Issue) => {
-        return issue.description === this.issue.description;
-      }),
-      flatMap((isSaveToUpdate: boolean) => {
-        if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
-          return this.issueService.updateIssue(this.getUpdatedIssue());
-        } else {
-          this.conflict = new Conflict(this.issue.description, this.issueService.issues[this.issue.id].description);
-          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
-          this.viewChanges();
-          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+    this.issueService
+      .getLatestIssue(this.issue.id)
+      .pipe(
+        map((issue: Issue) => {
+          return issue.description === this.issue.description;
+        }),
+        flatMap((isSaveToUpdate: boolean) => {
+          if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+            return this.issueService.updateIssue(this.getUpdatedIssue());
+          } else {
+            this.conflict = new Conflict(this.issue.description, this.issueService.issues[this.issue.id].description);
+            this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+            this.viewChanges();
+            return throwError('The content you are editing has changed. Please verify the changes and try again.');
+          }
+        }),
+        finalize(() => (this.isSavePending = false))
+      )
+      .subscribe(
+        (editedIssue: Issue) => {
+          this.issueUpdated.emit(editedIssue);
+          this.resetToDefault();
+          form.resetForm();
+        },
+        (error) => {
+          this.errorHandlingService.handleError(error);
         }
-      }),
-      finalize(() => this.isSavePending = false)
-    ).subscribe((editedIssue: Issue) => {
-      this.issueUpdated.emit(editedIssue);
-      this.resetToDefault();
-      form.resetForm();
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+      );
   }
 
   viewChanges(): void {
@@ -113,10 +120,12 @@ export class DescriptionComponent implements OnInit {
 
   openCancelDialog(): void {
     const dialogRef = this.dialogService.openUserConfirmationModal(
-      this.cancelEditModalMessages, this.yesButtonModalMessage, this.noButtonModalMessage
+      this.cancelEditModalMessages,
+      this.yesButtonModalMessage,
+      this.noButtonModalMessage
     );
 
-    dialogRef.afterClosed().subscribe(res => {
+    dialogRef.afterClosed().subscribe((res) => {
       if (res) {
         this.cancelEditMode();
       }

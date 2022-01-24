@@ -35,12 +35,14 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   private readonly responseRadioIdentifier = 'response-radio';
   private readonly responseTextIdentifier = 'tester-response';
 
-  constructor(private formBuilder: FormBuilder,
-              private issueService: IssueService,
-              public userService: UserService,
-              private errorHandlingService: ErrorHandlingService,
-              private dialog: MatDialog,
-              private phaseService: PhaseService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private issueService: IssueService,
+    public userService: UserService,
+    private errorHandlingService: ErrorHandlingService,
+    private dialog: MatDialog,
+    private phaseService: PhaseService
+  ) {}
 
   ngOnInit() {
     this.resetForm();
@@ -63,27 +65,31 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     }
     this.isFormPending = true;
 
-    this.isSafeToSubmit().pipe(
-      flatMap((isSaveToSubmit: boolean) => {
-        if (isSaveToSubmit || this.isUpdatingDeletedResponse() ||
-            this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
-          return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
-            ...this.issue.issueComment,
-            description: this.getTesterResponseFromForm(),
-          });
-        } else {
-          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
-          this.viewChanges();
-          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+    this.isSafeToSubmit()
+      .pipe(
+        flatMap((isSaveToSubmit: boolean) => {
+          if (isSaveToSubmit || this.isUpdatingDeletedResponse() || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+            return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
+              ...this.issue.issueComment,
+              description: this.getTesterResponseFromForm()
+            });
+          } else {
+            this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+            this.viewChanges();
+            return throwError('The content you are editing has changed. Please verify the changes and try again.');
+          }
+        }),
+        finalize(() => (this.isFormPending = false))
+      )
+      .subscribe(
+        (updatedIssue: Issue) => {
+          this.issueUpdated.emit(updatedIssue);
+          this.resetToDefault();
+        },
+        (error) => {
+          this.errorHandlingService.handleError(error);
         }
-      }),
-      finalize(() => this.isFormPending = false)
-    ).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(updatedIssue);
-      this.resetToDefault();
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+      );
   }
 
   /**
@@ -116,7 +122,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     this.dialog.open(ConflictDialogComponent, {
       data: <TesterResponseConflictData>{
         outdatedResponses: this.issue.testerResponses,
-        updatedResponses: this.issueService.issues[this.issue.id].testerResponses,
+        updatedResponses: this.issueService.issues[this.issue.id].testerResponses
       },
       autoFocus: false
     });
@@ -168,14 +174,20 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     // initialize fields for tester response and the radio buttons for tester to choose "Agree" / "Disagree"
     for (let i = 0; i < this.issue.testerResponses.length; i++) {
       const response = this.issue.testerResponses[i];
-      group[this.getTesterResponseFormId(i)] = new FormControl({
-        value: response.reasonForDisagreement,
-        disabled: !response.isDisagree()
-      }, Validators.required);
-      group[this.getDisagreeRadioFormId(i)] = new FormControl({
-        value: response.isDisagree(),
-        disabled: !this.isEditing
-      }, Validators.required);
+      group[this.getTesterResponseFormId(i)] = new FormControl(
+        {
+          value: response.reasonForDisagreement,
+          disabled: !response.isDisagree()
+        },
+        Validators.required
+      );
+      group[this.getDisagreeRadioFormId(i)] = new FormControl(
+        {
+          value: response.isDisagree(),
+          disabled: !this.isEditing
+        },
+        Validators.required
+      );
     }
     return group;
   }
@@ -197,7 +209,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     updatedIssue.testerResponses.map((response: TesterResponse, index: number) => {
       // Filter Keys based on Response Index
       const isDisagree = this.isResponseDisagreed(index);
-      const reason = isDisagree ? (this.getTesterResponseText(index) || response.reasonForDisagreement) : response.INITIAL_RESPONSE;
+      const reason = isDisagree ? this.getTesterResponseText(index) || response.reasonForDisagreement : response.INITIAL_RESPONSE;
 
       response.setDisagree(isDisagree);
       response.setReasonForDisagreement(reason);

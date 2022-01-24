@@ -5,8 +5,8 @@ import { Section } from './sections/section.model';
 import { Header, Template } from './template.model';
 
 export const TeamResponseHeaders = {
-  teamResponse: new Header('Team\'s Response', 1),
-  duplicateOf: new Header('Duplicate status \\(if any\\):', 2),
+  teamResponse: new Header("Team's Response", 1),
+  duplicateOf: new Header('Duplicate status \\(if any\\):', 2)
 };
 
 export class TeamResponseTemplate extends Template {
@@ -17,8 +17,7 @@ export class TeamResponseTemplate extends Template {
   constructor(githubComments: GithubComment[]) {
     super(Object.values(TeamResponseHeaders));
 
-    const comment = githubComments.find(
-      (githubComment: GithubComment) => this.test(githubComment.body));
+    const comment = githubComments.find((githubComment: GithubComment) => this.test(githubComment.body));
     if (comment === undefined) {
       return;
     }

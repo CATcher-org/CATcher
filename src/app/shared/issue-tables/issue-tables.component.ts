@@ -28,7 +28,6 @@ export enum ACTION_BUTTONS {
   styleUrls: ['./issue-tables.component.css']
 })
 export class IssueTablesComponent implements OnInit, AfterViewInit {
-
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
@@ -37,28 +36,29 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   issues: IssuesDataTable;
-  issuesPendingDeletion: {[id: number]: boolean};
+  issuesPendingDeletion: { [id: number]: boolean };
 
   public readonly action_buttons = ACTION_BUTTONS;
 
   // Messages for the modal popup window upon deleting an issue
   private readonly deleteIssueModalMessages = ['Do you wish to delete this issue?', 'This action is irreversible!'];
   private readonly yesButtonModalMessage = 'Yes, I wish to delete this issue';
-  private readonly noButtonModalMessage = 'No, I don\'t wish to delete this issue';
+  private readonly noButtonModalMessage = "No, I don't wish to delete this issue";
 
-  constructor(public userService: UserService,
-              public permissions: PermissionService,
-              public labelService: LabelService,
-              private githubService: GithubService,
-              public issueService: IssueService,
-              private phaseService: PhaseService,
-              private errorHandlingService: ErrorHandlingService,
-              private loggingService: LoggingService,
-              private dialogService: DialogService) { }
+  constructor(
+    public userService: UserService,
+    public permissions: PermissionService,
+    public labelService: LabelService,
+    private githubService: GithubService,
+    public issueService: IssueService,
+    private phaseService: PhaseService,
+    private errorHandlingService: ErrorHandlingService,
+    private loggingService: LoggingService,
+    private dialogService: DialogService
+  ) {}
 
   ngOnInit() {
-    this.issues = new IssuesDataTable(this.issueService, this.sort,
-      this.paginator, this.headers, this.filters);
+    this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
   }
 
@@ -73,18 +73,20 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
    * @param title - Title of Issue that is to be displayed in the Table Row.
    */
   fitTitleText(title: string): string {
-
     // Arbitrary Length of Characters beyond which an overflow occurs.
     const MAX_WORD_LENGTH = 43;
     const SPLITTER_TEXT = ' ';
     const ELLIPSES = '...';
 
-    return title.split(SPLITTER_TEXT).map(word => {
-      if (word.length > MAX_WORD_LENGTH) {
-        return word.substring(0, MAX_WORD_LENGTH - 5).concat(ELLIPSES);
-      }
-      return word;
-    }).join(SPLITTER_TEXT);
+    return title
+      .split(SPLITTER_TEXT)
+      .map((word) => {
+        if (word.length > MAX_WORD_LENGTH) {
+          return word.substring(0, MAX_WORD_LENGTH - 5).concat(ELLIPSES);
+        }
+        return word;
+      })
+      .join(SPLITTER_TEXT);
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {
@@ -95,11 +97,14 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Done;
-    this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
-      this.issueService.updateLocalStore(updatedIssue);
-    }, error => {
-      this.errorHandlingService.handleError(error);
-    });
+    this.issueService.updateIssue(newIssue).subscribe(
+      (updatedIssue) => {
+        this.issueService.updateLocalStore(updatedIssue);
+      },
+      (error) => {
+        this.errorHandlingService.handleError(error);
+      }
+    );
     event.stopPropagation();
   }
 
@@ -111,11 +116,14 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Incomplete;
-    this.issueService.updateIssue(newIssue).subscribe((updatedIssue) => {
-      this.issueService.updateLocalStore(updatedIssue);
-    }, error => {
-      this.errorHandlingService.handleError(error);
-    });
+    this.issueService.updateIssue(newIssue).subscribe(
+      (updatedIssue) => {
+        this.issueService.updateLocalStore(updatedIssue);
+      },
+      (error) => {
+        this.errorHandlingService.handleError(error);
+      }
+    );
     event.stopPropagation();
   }
 
@@ -150,24 +158,33 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.loggingService.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
-      [id]: true,
+      [id]: true
     };
-    this.issueService.deleteIssue(id).pipe(finalize(() => {
-      const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
-      this.issuesPendingDeletion = theRest;
-    })).subscribe((removedIssue) => {
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+    this.issueService
+      .deleteIssue(id)
+      .pipe(
+        finalize(() => {
+          const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
+          this.issuesPendingDeletion = theRest;
+        })
+      )
+      .subscribe(
+        (removedIssue) => {},
+        (error) => {
+          this.errorHandlingService.handleError(error);
+        }
+      );
     event.stopPropagation();
   }
 
   openDeleteDialog(id: number, event: Event) {
     const dialogRef = this.dialogService.openUserConfirmationModal(
-      this.deleteIssueModalMessages, this.yesButtonModalMessage, this.noButtonModalMessage
+      this.deleteIssueModalMessages,
+      this.yesButtonModalMessage,
+      this.noButtonModalMessage
     );
 
-    dialogRef.afterClosed().subscribe(res => {
+    dialogRef.afterClosed().subscribe((res) => {
       if (res) {
         this.loggingService.info(`Deleting issue ${id}`);
         this.deleteIssue(id, event);

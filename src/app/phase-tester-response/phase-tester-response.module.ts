@@ -12,19 +12,7 @@ import { PhaseTesterResponseComponent } from './phase-tester-response.component'
 
 @NgModule({
   exports: [PhaseTesterResponseComponent],
-  declarations: [
-    PhaseTesterResponseComponent,
-    IssueComponent,
-    IssuePendingComponent,
-    IssueRespondedComponent
-  ],
-  imports: [
-    CommonModule,
-    PhaseTesterResponseRoutingModule,
-    SharedModule,
-    ViewIssueModule,
-    IssueTablesModule,
-    MarkdownModule.forChild()
-  ]
+  declarations: [PhaseTesterResponseComponent, IssueComponent, IssuePendingComponent, IssueRespondedComponent],
+  imports: [CommonModule, PhaseTesterResponseRoutingModule, SharedModule, ViewIssueModule, IssueTablesModule, MarkdownModule.forChild()]
 })
-export class PhaseTesterResponseModule { }
+export class PhaseTesterResponseModule {}

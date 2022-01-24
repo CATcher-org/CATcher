@@ -9,24 +9,9 @@ import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.compo
 import { NewTeamResponseComponent } from './new-team-response.component';
 
 @NgModule({
-  exports: [
-    NewTeamResponseComponent,
-    ConflictDialogComponent,
-  ],
-  declarations: [
-    NewTeamResponseComponent,
-    ConflictDialogComponent,
-  ],
-  imports: [
-    CommonModule,
-    CommentEditorModule,
-    SharedModule,
-    IssueComponentsModule,
-    LabelDropdownModule,
-    MarkdownModule.forChild(),
-  ],
-  entryComponents: [
-    ConflictDialogComponent,
-  ]
+  exports: [NewTeamResponseComponent, ConflictDialogComponent],
+  declarations: [NewTeamResponseComponent, ConflictDialogComponent],
+  imports: [CommonModule, CommentEditorModule, SharedModule, IssueComponentsModule, LabelDropdownModule, MarkdownModule.forChild()],
+  entryComponents: [ConflictDialogComponent]
 })
-export class NewTeamResponseModule { }
+export class NewTeamResponseModule {}

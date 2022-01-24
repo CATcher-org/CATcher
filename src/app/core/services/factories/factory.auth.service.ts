@@ -13,22 +13,45 @@ import { MockAuthService } from '../mocks/mock.auth.service';
 import { PhaseService } from '../phase.service';
 import { UserService } from '../user.service';
 
-export function AuthServiceFactory(electronService: ElectronService, router: Router, ngZone: NgZone,
-                                   githubService: GithubService,
-                                   userService: UserService,
-                                   issueService: IssueService,
-                                   phaseService: PhaseService,
-                                   dataService: DataService,
-                                   githubEventService: GithubEventService,
-                                   titleService: Title,
-                                   logger: LoggingService) {
+export function AuthServiceFactory(
+  electronService: ElectronService,
+  router: Router,
+  ngZone: NgZone,
+  githubService: GithubService,
+  userService: UserService,
+  issueService: IssueService,
+  phaseService: PhaseService,
+  dataService: DataService,
+  githubEventService: GithubEventService,
+  titleService: Title,
+  logger: LoggingService
+) {
   if (AppConfig.test) {
-      return new MockAuthService(router, ngZone, githubService,
-        userService, issueService, phaseService, dataService,
-        githubEventService, titleService, logger);
+    return new MockAuthService(
+      router,
+      ngZone,
+      githubService,
+      userService,
+      issueService,
+      phaseService,
+      dataService,
+      githubEventService,
+      titleService,
+      logger
+    );
   }
   console.log(logger);
-  return new AuthService(electronService, router, ngZone,
-    githubService, userService, issueService, phaseService,
-    dataService, githubEventService, titleService, logger);
+  return new AuthService(
+    electronService,
+    router,
+    ngZone,
+    githubService,
+    userService,
+    issueService,
+    phaseService,
+    dataService,
+    githubEventService,
+    titleService,
+    logger
+  );
 }

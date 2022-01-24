@@ -1,23 +1,34 @@
-<div *ngIf="data.errors; else generalMessage" style="display: inline-block;">
+<div *ngIf="data.errors; else generalMessage" style="display: inline-block">
   <div *ngFor="let error of data.errors">
     Validation Error:
     <ul>
-      <li> {{ error.code + ' in ' + error.field }} </li>
+      <li>{{ error.code + ' in ' + error.field }}</li>
     </ul>
   </div>
-  <button style="position: absolute; top: 30%; bottom: 30%; left: 75%; height: 40%" mat-button
-          color="accent"
-          (click)="snackBarRef.dismiss()"> Close </button>
+  <button
+    style="position: absolute; top: 30%; bottom: 30%; left: 75%; height: 40%"
+    mat-button
+    color="accent"
+    (click)="snackBarRef.dismiss()"
+  >
+    Close
+  </button>
 </div>
 
 <ng-template #generalMessage>
-  <div style="display: flex; align-items: center; justify-content: space-between;">
-    <div style="vertical-align: middle; flex-basis: 80%; overflow-wrap: anywhere;"> 
-      <p style="margin: auto 5px; text-align: center;">
-        {{"Error code " + data.status + ": " + data.message}}
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <div style="vertical-align: middle; flex-basis: 80%; overflow-wrap: anywhere">
+      <p style="margin: auto 5px; text-align: center">
+        {{ 'Error code ' + data.status + ': ' + data.message }}
       </p>
     </div>
-    <button style="vertical-align: middle; flex-basis: 20%; margin: auto 5px; text-align: center;"
-      mat-button color="accent" (click)="snackBarRef.dismiss()"> Close </button>
+    <button
+      style="vertical-align: middle; flex-basis: 20%; margin: auto 5px; text-align: center"
+      mat-button
+      color="accent"
+      (click)="snackBarRef.dismiss()"
+    >
+      Close
+    </button>
   </div>
 </ng-template>

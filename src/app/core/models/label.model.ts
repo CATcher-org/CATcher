@@ -1,5 +1,4 @@
 export class Label {
-
   labelCategory: string;
   labelValue: string;
   labelColor: string;
@@ -18,13 +17,12 @@ export class Label {
    * 'value' if the category does not exist.
    */
   public getFormattedName(): string {
-    return (this.labelCategory === undefined || this.labelCategory === '')
+    return this.labelCategory === undefined || this.labelCategory === ''
       ? this.labelValue
-      : (this.labelCategory.concat('.', this.labelValue));
+      : this.labelCategory.concat('.', this.labelValue);
   }
 
   public equals(label: Label) {
-    return this.labelValue === label.labelValue
-        && this.labelColor === label.labelColor && this.labelCategory === label.labelCategory;
+    return this.labelValue === label.labelValue && this.labelColor === label.labelColor && this.labelCategory === label.labelCategory;
   }
 }

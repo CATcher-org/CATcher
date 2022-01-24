@@ -10,15 +10,15 @@ export function extractStringBetween(text: string, prefix: string, suffix: strin
   let result = text.trim();
   const startIdx = result.indexOf(prefix) + prefix.length;
 
-  if (startIdx === -1)  {
-    return "";
+  if (startIdx === -1) {
+    return '';
   }
 
   result = result.substring(startIdx);
   const endIdx = result.indexOf(suffix);
 
-  if (endIdx === -1)  {
-    return "";
+  if (endIdx === -1) {
+    return '';
   }
 
   result = result.substring(0, endIdx);

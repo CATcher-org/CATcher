@@ -11,10 +11,9 @@ export const ERRORCODE_NOT_FOUND = 404;
 const FILTERABLE = ['node_modules'];
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ErrorHandlingService implements ErrorHandler {
-
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 
   handleError(error: HttpErrorResponse | Error | RequestError, actionCallback?: () => void) {
@@ -24,7 +23,7 @@ export class ErrorHandlingService implements ErrorHandler {
     }
     if (error instanceof HttpErrorResponse) {
       this.handleHttpError(error, actionCallback);
-    } else if (error.constructor.name === "RequestError") {
+    } else if (error.constructor.name === 'RequestError') {
       this.handleHttpError(error as RequestError, actionCallback);
     } else {
       this.handleGeneralError(error.message || JSON.stringify(error));
@@ -33,9 +32,9 @@ export class ErrorHandlingService implements ErrorHandler {
 
   private cleanStack(stacktrace: string): string {
     return stacktrace
-            .split('\n')
-            .filter(line => !FILTERABLE.some(word => line.includes(word))) // exclude lines that contain words in FILTERABLE
-            .join('\n');
+      .split('\n')
+      .filter((line) => !FILTERABLE.some((word) => line.includes(word))) // exclude lines that contain words in FILTERABLE
+      .join('\n');
   }
 
   // Ref: https://developer.github.com/v3/#client-errors
@@ -52,23 +51,23 @@ export class ErrorHandlingService implements ErrorHandler {
 
     switch (error.status) {
       case 500: // Internal Server Error.
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, { data: error });
         break;
       case 422: // Form errors
-        this.snackBar.openFromComponent(FormErrorComponent, {data: error});
+        this.snackBar.openFromComponent(FormErrorComponent, { data: error });
         break;
       case 400: // Bad request
       case 401: // Unauthorized
       case 404: // Not found
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, { data: error });
         break;
       default:
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, { data: error });
         return;
     }
   }
 
   private handleGeneralError(error: string): void {
-    this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: {message: error}});
+    this.snackBar.openFromComponent(GeneralMessageErrorComponent, { data: { message: error } });
   }
 }

@@ -1,24 +1,24 @@
 .mat-column-id {
-    width: 10%;
-  }
-  
-  .mat-column-title {
-    width: 20%;
-  }
-  
-  .mat-column-type {
-    width: 15%
-  }
-  
-  .mat-column-severity {
-    width: 10%;
-  }
+  width: 10%;
+}
 
-  .mat-column-Todo-Remaining {
-    width: 20%;
-  }
+.mat-column-title {
+  width: 20%;
+}
 
-  .mat-column-actions {
-    width: 10%;
-    text-align: center;
-  }
+.mat-column-type {
+  width: 15%;
+}
+
+.mat-column-severity {
+  width: 10%;
+}
+
+.mat-column-Todo-Remaining {
+  width: 20%;
+}
+
+.mat-column-actions {
+  width: 10%;
+  text-align: center;
+}

@@ -3,26 +3,28 @@
   <div class="timeline-comment">
     <div class="timeline-header">
       <span style="vertical-align: middle; margin-left: 5px"> Post your response here. </span>
-      <button mat-button style="float: right;" *ngIf="!isEditing" (click)="changeToEditMode()">
-          Edit
-      </button>
+      <button mat-button style="float: right" *ngIf="!isEditing" (click)="changeToEditMode()">Edit</button>
     </div>
     <div>
       <div class="container" *ngFor="let dispute of issue.issueDisputes; index as i; trackBy: trackDisputeList">
         <div style="display: flex; align-items: center">
-          <div class="question-mark"> ? </div>
+          <div class="question-mark">?</div>
           <markdown [data]="this.getItemTitleText(dispute.title)"></markdown>
         </div>
-        <br>
+        <br />
         <markdown [data]="dispute.description"></markdown>
-        <br>
+        <br />
         <div>
-          <mat-checkbox style="display: inline-block; width: 20%" [id]="getTodoFormId(i)" [formControlName]="getTodoFormId(i)"
-          [disableControl]="!isEditing">
+          <mat-checkbox
+            style="display: inline-block; width: 20%"
+            [id]="getTodoFormId(i)"
+            [formControlName]="getTodoFormId(i)"
+            [disableControl]="!isEditing"
+          >
             Done
           </mat-checkbox>
         </div>
-        <br>
+        <br />
         <div>
           <markdown data="### Tutor's Response: "></markdown>
           <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing"></markdown>
@@ -33,27 +35,56 @@
             [commentForm]="tutorResponseForm"
             [id]="getTutorResponseFormId(i)"
             [(isFormPending)]="isFormPending"
-            [(submitButtonText)]="submitButtonText">
+            [(submitButtonText)]="submitButtonText"
+          >
           </app-comment-editor>
         </div>
-        <br> <markdown data="-------------------"></markdown> <br>
+        <br />
+        <markdown data="-------------------"></markdown> <br />
       </div>
       <mat-divider></mat-divider>
       <div class="editor-actions" *ngIf="isEditing">
-        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isFormPending"
-                mat-raised-button color="primary" (click)="viewInGithub()">
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="button"
+          [disabled]="isFormPending"
+          mat-raised-button
+          color="primary"
+          (click)="viewInGithub()"
+        >
           View Updated Response On Github
         </button>
-        <button class="editor-action" type="submit" *ngIf="!conflict" [disabled]="tutorResponseForm.invalid || isFormPending"
-          mat-stroked-button color="primary">
+        <button
+          class="editor-action"
+          type="submit"
+          *ngIf="!conflict"
+          [disabled]="tutorResponseForm.invalid || isFormPending"
+          mat-stroked-button
+          color="primary"
+        >
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" type="submit" [disabled]="tutorResponseForm.invalid || isFormPending"
-                mat-raised-button color="warn" *ngIf="conflict">
+        <button
+          class="editor-action"
+          type="submit"
+          [disabled]="tutorResponseForm.invalid || isFormPending"
+          mat-raised-button
+          color="warn"
+          *ngIf="conflict"
+        >
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" type="button" [disabled]="isFormPending" style="margin-left: 10px;" *ngIf="!this.isNewResponse()"
-          mat-stroked-button color="warn" (click)="cancelEditMode()">
+        <button
+          class="editor-action"
+          type="button"
+          [disabled]="isFormPending"
+          style="margin-left: 10px"
+          *ngIf="!this.isNewResponse()"
+          mat-stroked-button
+          color="warn"
+          (click)="cancelEditMode()"
+        >
           Cancel
         </button>
       </div>

@@ -3,11 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { AbstractControl, FormGroup } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import {
-  FILE_TYPE_SUPPORT_ERROR,
-  getSizeExceedErrorMsg,
-  SUPPORTED_FILE_TYPES,
-  UploadService } from '../../core/services/upload.service';
+import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
@@ -20,13 +16,12 @@ const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_M
 @Component({
   selector: 'app-comment-editor',
   templateUrl: './comment-editor.component.html',
-  styleUrls: ['./comment-editor.component.css'],
+  styleUrls: ['./comment-editor.component.css']
 })
 export class CommentEditorComponent implements OnInit {
   readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
 
-  constructor(private uploadService: UploadService,
-              private errorHandlingService: ErrorHandlingService) {}
+  constructor(private uploadService: UploadService, private errorHandlingService: ErrorHandlingService) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
@@ -42,9 +37,7 @@ export class CommentEditorComponent implements OnInit {
   // Allow the comment editor to control the text of the submit button to prompt the user.
   @Input() submitButtonText?: string;
   @Output() submitButtonTextChange: EventEmitter<string> = new EventEmitter<string>();
-  formatFileUploadingButtonText: (string) => string = ((currentButtonText: string) => {
-    return currentButtonText + ' (Waiting for File Upload to finish...)';
-  });
+
   initialSubmitButtonText: string;
   lastUploadingTime: string;
 
@@ -55,13 +48,17 @@ export class CommentEditorComponent implements OnInit {
   dragActiveCounter = 0;
   uploadErrorMessage: string;
 
+  formatFileUploadingButtonText(currentButtonText: string) {
+    return currentButtonText + ' (Waiting for File Upload to finish...)';
+  }
+
   ngOnInit() {
     if (this.initialDescription !== undefined) {
       this.commentField.setValue(this.initialDescription);
     }
 
     if (this.commentField === undefined || this.commentForm === undefined || this.id === undefined) {
-      throw new Error('Comment Editor\'s compulsory properties are not defined.');
+      throw new Error("Comment Editor's compulsory properties are not defined.");
     }
 
     this.initialSubmitButtonText = this.submitButtonText;
@@ -129,8 +126,8 @@ export class CommentEditorComponent implements OnInit {
   }
 
   updateParentFormsSubmittability(isFormPending: boolean, submitButtonText: string) {
-      this.isFormPendingChange.emit(isFormPending);
-      this.submitButtonTextChange.emit(submitButtonText);
+    this.isFormPendingChange.emit(isFormPending);
+    this.submitButtonTextChange.emit(submitButtonText);
   }
 
   readAndUploadFile(file: File): void {
@@ -162,20 +159,24 @@ export class CommentEditorComponent implements OnInit {
     this.updateParentFormsSubmittability(true, this.formatFileUploadingButtonText(this.initialSubmitButtonText));
 
     reader.onload = () => {
-      this.uploadService.uploadFile(reader.result, filename).subscribe((response) => {
-        this.insertUploadUrl(filename, response.data.content.download_url);
-      }, (error) => {
-        this.handleUploadError(error, insertedText);
-        // Allow button enabling if this is the last file that was uploaded.
-        if (currentFileUploadTime === this.lastUploadingTime) {
-          this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+      this.uploadService.uploadFile(reader.result, filename).subscribe(
+        (response) => {
+          this.insertUploadUrl(filename, response.data.content.download_url);
+        },
+        (error) => {
+          this.handleUploadError(error, insertedText);
+          // Allow button enabling if this is the last file that was uploaded.
+          if (currentFileUploadTime === this.lastUploadingTime) {
+            this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+          }
+        },
+        () => {
+          // Allow button enabling if this is the last file that was uploaded.
+          if (currentFileUploadTime === this.lastUploadingTime) {
+            this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
+          }
         }
-      }, () => {
-        // Allow button enabling if this is the last file that was uploaded.
-        if (currentFileUploadTime === this.lastUploadingTime) {
-          this.updateParentFormsSubmittability(false, this.initialSubmitButtonText);
-        }
-      });
+      );
     };
     reader.readAsDataURL(file);
   }
@@ -252,15 +253,15 @@ export class CommentEditorComponent implements OnInit {
         ? cursorPosition
         : cursorPosition + differenceInLength; // after the uploading text
 
-    this.commentField.setValue(
-      this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
+    this.commentField.setValue(this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
 
     this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 
   private removeHighlightBorderStyle() {
     this.dragActiveCounter--;
-    if (this.dragActiveCounter === 0) { // To make sure when dragging over a child element, drop area is still highlight.
+    if (this.dragActiveCounter === 0) {
+      // To make sure when dragging over a child element, drop area is still highlight.
       this.dropArea.nativeElement.classList.remove('highlight-drag-box');
       this.dropArea.nativeElement.classList.remove('highlight-drag-box-disabled');
     }

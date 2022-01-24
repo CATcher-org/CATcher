@@ -1,9 +1,15 @@
-<div style="display: flex; align-items: center; justify-content: space-between;">
-  <div style="vertical-align: middle; flex-basis: 80%; overflow-wrap: anywhere;">
-    <p style="margin: auto 5px; text-align: center;">
-      {{data.message}}
+<div style="display: flex; align-items: center; justify-content: space-between">
+  <div style="vertical-align: middle; flex-basis: 80%; overflow-wrap: anywhere">
+    <p style="margin: auto 5px; text-align: center">
+      {{ data.message }}
     </p>
   </div>
-  <button style="vertical-align: middle; flex-basis: 20%; margin: auto 5px; text-align: center;" mat-button
-    color="accent" (click)="snackBarRef.dismiss()"> Close </button>
+  <button
+    style="vertical-align: middle; flex-basis: 20%; margin: auto 5px; text-align: center"
+    mat-button
+    color="accent"
+    (click)="snackBarRef.dismiss()"
+  >
+    Close
+  </button>
 </div>
