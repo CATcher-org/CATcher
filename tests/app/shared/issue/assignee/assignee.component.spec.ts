@@ -55,7 +55,8 @@ describe('AssigneeComponent', () => {
     'getDuplicateIssuesFor',
     'getLatestIssue',
     'updateIssue',
-    'updateIssueWithAssigneeCheck'
+    'updateIssueWithAssigneeCheck',
+    'updateLocalStore'
   ]);
   const permissionsService: any = jasmine.createSpyObj('PermissionService', ['isIssueLabelsEditable']);
 
