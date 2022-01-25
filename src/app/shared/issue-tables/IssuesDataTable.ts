@@ -16,9 +16,13 @@ export class IssuesDataTable extends DataSource<Issue> {
 
   public isLoading$ = this.issueService.isLoading.asObservable();
 
-  constructor(private issueService: IssueService, private sort: MatSort,
-              private paginator: MatPaginator, private displayedColumn: string[],
-              private defaultFilter?: (issue: Issue) => boolean) {
+  constructor(
+    private issueService: IssueService,
+    private sort: MatSort,
+    private paginator: MatPaginator,
+    private displayedColumn: string[],
+    private defaultFilter?: (issue: Issue) => boolean
+  ) {
     super();
   }
 
@@ -40,31 +44,32 @@ export class IssuesDataTable extends DataSource<Issue> {
       this.paginator.page,
       this.sort.sortChange,
       this.filterChange,
-      this.teamFilterChange,
+      this.teamFilterChange
     ];
 
     this.issueService.startPollIssues();
-    this.issueSubscription = this.issueService.issues$.pipe(
-      flatMap(() => {
-        return merge(...displayDataChanges).pipe(
-          map(() => {
-            let data = <Issue[]>Object.values(this.issueService.issues$.getValue()).reverse();
-            if (this.defaultFilter) {
-              data = data.filter(this.defaultFilter);
-            }
-            data = getSortedData(this.sort, data);
-            data = this.getFilteredTeamData(data);
-            data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
-            data = paginateData(this.paginator, data);
+    this.issueSubscription = this.issueService.issues$
+      .pipe(
+        flatMap(() => {
+          return merge(...displayDataChanges).pipe(
+            map(() => {
+              let data = <Issue[]>Object.values(this.issueService.issues$.getValue()).reverse();
+              if (this.defaultFilter) {
+                data = data.filter(this.defaultFilter);
+              }
+              data = getSortedData(this.sort, data);
+              data = this.getFilteredTeamData(data);
+              data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
+              data = paginateData(this.paginator, data);
 
-            return data;
-          })
-        );
-      })
-    ).subscribe((issues) => {
-      this.issuesSubject.next(issues);
-    }
-    );
+              return data;
+            })
+          );
+        })
+      )
+      .subscribe((issues) => {
+        this.issuesSubject.next(issues);
+      });
   }
 
   get filter(): string {

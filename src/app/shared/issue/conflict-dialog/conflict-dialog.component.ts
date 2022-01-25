@@ -27,8 +27,8 @@ export class ConflictDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: Conflict,
     private sanitizer: DomSanitizer,
     public labelService: LabelService,
-    public issueService: IssueService) {
-
+    public issueService: IssueService
+  ) {
     this.diffHtml = this.sanitizer.bypassSecurityTrustHtml(data.getHtmlDiffString());
     this.updatedHtml = this.sanitizer.bypassSecurityTrustHtml(data.getHtmlUpdatedString());
     this.isReady = true;
@@ -43,6 +43,6 @@ export class ConflictDialogComponent {
   }
 
   handleTabChange(event: MatTabChangeEvent): void {
-    this.isOnPreview = (event.index === 1);
+    this.isOnPreview = event.index === 1;
   }
 }

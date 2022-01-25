@@ -1,20 +1,29 @@
 <div>
   <span class="mat-title"> Assignees </span>
-  <button *ngIf="permissions.isIssueLabelsEditable() && isEditable && !issue.duplicateOf" style="float: right" (click)="openSelector()" mat-icon-button>
+  <button
+    *ngIf="permissions.isIssueLabelsEditable() && isEditable && !issue.duplicateOf"
+    style="float: right"
+    (click)="openSelector()"
+    mat-icon-button
+  >
     <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
   </button>
 
-  <mat-select class="no-arrow" [style.display]="isInEditMode ? 'block' : 'none'" placeholder="-" multiple
-              (openedChange)="handleEditMode($event)"
-              (closed)="updateAssignee()"
-              [(ngModel)]="this.assignees">
-    <mat-select-trigger>
-    </mat-select-trigger>
-    <mat-option *ngFor="let assignee of teamMembers" [value]="assignee.toLowerCase()">{{assignee}}</mat-option>
+  <mat-select
+    class="no-arrow"
+    [style.display]="isInEditMode ? 'block' : 'none'"
+    placeholder="-"
+    multiple
+    (openedChange)="handleEditMode($event)"
+    (closed)="updateAssignee()"
+    [(ngModel)]="this.assignees"
+  >
+    <mat-select-trigger> </mat-select-trigger>
+    <mat-option *ngFor="let assignee of teamMembers" [value]="assignee.toLowerCase()">{{ assignee }}</mat-option>
   </mat-select>
 
-  <p *ngIf="issue.assignees.length === 0" style="margin-top: 5px"> - </p>
+  <p *ngIf="issue.assignees.length === 0" style="margin-top: 5px">-</p>
   <mat-list style="padding-top: 0" dense *ngIf="issue.assignees.length > 0">
-    <mat-list-item style="font-size: 1em;" *ngFor="let assignee of issue.assignees">{{assignee}}</mat-list-item>
+    <mat-list-item style="font-size: 1em" *ngFor="let assignee of issue.assignees">{{ assignee }}</mat-list-item>
   </mat-list>
 </div>

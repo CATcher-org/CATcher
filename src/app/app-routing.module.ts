@@ -8,15 +8,15 @@ import { PhaseTeamResponseModule } from './phase-team-response/phase-team-respon
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
 
 const routes: Routes = [
-  { path: '', loadChildren: () => AuthModule},
-  { path: 'phaseBugReporting', loadChildren: () => PhaseBugReportingModule, canLoad: [AuthGuard]},
-  { path: 'phaseTeamResponse', loadChildren: () => PhaseTeamResponseModule, canLoad: [AuthGuard]},
-  { path: 'phaseTesterResponse', loadChildren: () => PhaseTesterResponseModule, canLoad: [AuthGuard]},
-  { path: 'phaseModeration', loadChildren: () => PhaseModerationModule, canLoad: [AuthGuard]},
+  { path: '', loadChildren: () => AuthModule },
+  { path: 'phaseBugReporting', loadChildren: () => PhaseBugReportingModule, canLoad: [AuthGuard] },
+  { path: 'phaseTeamResponse', loadChildren: () => PhaseTeamResponseModule, canLoad: [AuthGuard] },
+  { path: 'phaseTesterResponse', loadChildren: () => PhaseTesterResponseModule, canLoad: [AuthGuard] },
+  { path: 'phaseModeration', loadChildren: () => PhaseModerationModule, canLoad: [AuthGuard] }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -29,28 +29,32 @@ export class HeaderComponent implements OnInit {
   EXCLUDE_DUPLICATE = '+-label:duplicate'; // exclude duplicate issues
 
   // Messages for the modal popup window upon logging out
-  private readonly logOutDialogMessages = ["Do you wish to log out?"];
-  private readonly yesButtonDialogMessage = "Yes, I wish to log out";
-  private readonly noButtonDialogMessage = "No, I don\'t wish to log out";
+  private readonly logOutDialogMessages = ['Do you wish to log out?'];
+  private readonly yesButtonDialogMessage = 'Yes, I wish to log out';
+  private readonly noButtonDialogMessage = "No, I don't wish to log out";
 
-  constructor(private router: Router,
-              public auth: AuthService,
-              public phaseService: PhaseService,
-              public userService: UserService,
-              public loggingService: LoggingService,
-              private location: Location,
-              private githubEventService: GithubEventService,
-              private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService,
-              private githubService: GithubService,
-              private electronService: ElectronService,
-              private dialogService: DialogService) {
-    router.events.pipe(
-      filter((e: any) => e instanceof RoutesRecognized),
-      pairwise()
-    ).subscribe(e => {
-      this.prevUrl = e[0].urlAfterRedirects;
-    });
+  constructor(
+    private router: Router,
+    public auth: AuthService,
+    public phaseService: PhaseService,
+    public userService: UserService,
+    public loggingService: LoggingService,
+    private location: Location,
+    private githubEventService: GithubEventService,
+    private issueService: IssueService,
+    private errorHandlingService: ErrorHandlingService,
+    private githubService: GithubService,
+    private electronService: ElectronService,
+    private dialogService: DialogService
+  ) {
+    router.events
+      .pipe(
+        filter((e: any) => e instanceof RoutesRecognized),
+        pairwise()
+      )
+      .subscribe((e) => {
+        this.prevUrl = e[0].urlAfterRedirects;
+      });
   }
 
   ngOnInit() {}
@@ -67,8 +71,10 @@ export class HeaderComponent implements OnInit {
     }
     // Replace Current Phase Data.
     this.phaseService.currentPhase = Phase[openPhase];
-    this.githubService.storePhaseDetails(this.phaseService.getPhaseOwner(this.phaseService.currentPhase),
-        this.phaseService.sessionData[openPhase]);
+    this.githubService.storePhaseDetails(
+      this.phaseService.getPhaseOwner(this.phaseService.currentPhase),
+      this.phaseService.sessionData[openPhase]
+    );
 
     // Remove current phase issues and load selected phase issues.
     this.githubService.reset();
@@ -88,9 +94,12 @@ export class HeaderComponent implements OnInit {
   }
 
   isOpenUrlButtonShown(): boolean {
-    return this.phaseService.currentPhase === Phase.phaseBugReporting ||
-    this.userService.currentUser.role === UserRole.Student ||
-    (this.issueService.getIssueTeamFilter() !== 'All Teams' || this.router.url.includes('/issues'));
+    return (
+      this.phaseService.currentPhase === Phase.phaseBugReporting ||
+      this.userService.currentUser.role === UserRole.Student ||
+      this.issueService.getIssueTeamFilter() !== 'All Teams' ||
+      this.router.url.includes('/issues')
+    );
   }
 
   getVersion(): string {
@@ -141,7 +150,7 @@ export class HeaderComponent implements OnInit {
     // The team filter string E.g "+label:tutorial.W12+label:team.3"
     const teamFilterString = this.TUTORIAL_LABEL.concat(`${teamFilter[0]}-${teamFilter[1]}`).concat(this.TEAM_LABEL).concat(teamFilter[2]);
     // Only include duplicate Issues in last Phase
-    return (this.phaseService.currentPhase === Phase.phaseModeration) ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
+    return this.phaseService.currentPhase === Phase.phaseModeration ? teamFilterString : this.EXCLUDE_DUPLICATE.concat(teamFilterString);
   }
 
   reload() {
@@ -151,13 +160,13 @@ export class HeaderComponent implements OnInit {
       (success) => success,
       (error) => {
         this.errorHandlingService.handleError(error, () => this.githubEventService.reloadPage());
-      });
+      }
+    );
 
     // Prevent user from spamming the reload button
     setTimeout(() => {
       this.isReloadButtonDisabled = false;
-    },
-    3000);
+    }, 3000);
   }
 
   logOut() {
@@ -166,10 +175,12 @@ export class HeaderComponent implements OnInit {
 
   openLogOutDialog() {
     const dialogRef = this.dialogService.openUserConfirmationModal(
-      this.logOutDialogMessages, this.yesButtonDialogMessage, this.noButtonDialogMessage
+      this.logOutDialogMessages,
+      this.yesButtonDialogMessage,
+      this.noButtonDialogMessage
     );
 
-    dialogRef.afterClosed().subscribe(res => {
+    dialogRef.afterClosed().subscribe((res) => {
       if (res) {
         this.loggingService.info(`Logging out from ${this.userService.currentUser.loginId}`);
         this.logOut();

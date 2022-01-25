@@ -1,11 +1,11 @@
 <div style="display: flex; margin-bottom: 20px; align-items: center">
-  <h1 mat-dialog-title style="margin: 0">{{ 'A new response was submitted by another user'}}</h1>
+  <h1 mat-dialog-title style="margin: 0">{{ 'A new response was submitted by another user' }}</h1>
   <button mat-icon-button color="default" style="margin: 0 0 0 auto" (click)="close()">
     <mat-icon>close</mat-icon>
   </button>
 </div>
 
-<div mat-dialog-content style="display: flex;">
+<div mat-dialog-content style="display: flex">
   <div class="column left">
     <mat-tab-group class="mat-elevation-z1" animationDuration="0ms" (selectedTabChange)="handleTabChange($event)">
       <mat-tab label="Updated Markdown Text">
@@ -15,19 +15,18 @@
       </mat-tab>
       <mat-tab label="Preview">
         <div class="tab-content">
-          <markdown>{{data.teamResponse}}</markdown>
+          <markdown>{{ data.teamResponse }}</markdown>
         </div>
       </mat-tab>
     </mat-tab-group>
   </div>
 
   <div class="column right">
-
     <div *ngIf="data.type">
       <mat-divider></mat-divider>
       <span class="mat-title"> Type </span>
       <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.type))">
-        {{data.type || '-'}}
+        {{ data.type || '-' }}
       </p>
     </div>
 
@@ -35,7 +34,7 @@
       <mat-divider></mat-divider>
       <span class="mat-title"> Severity </span>
       <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.severity))">
-        {{data.severity || '-'}}
+        {{ data.severity || '-' }}
       </p>
     </div>
 
@@ -43,15 +42,13 @@
       <mat-divider></mat-divider>
       <span class="mat-title"> Response </span>
       <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.responseTag))">
-        {{data.responseTag || '-'}}
+        {{ data.responseTag || '-' }}
       </p>
     </div>
 
     <div *ngIf="data.assignees">
       <mat-divider></mat-divider>
-      <app-assignee-component  [issue]="data" [team]="data.teamAssigned"
-                               [isEditable]="false">
-      </app-assignee-component>
+      <app-assignee-component [issue]="data" [team]="data.teamAssigned" [isEditable]="false"> </app-assignee-component>
     </div>
 
     <div *ngIf="data.duplicateOf">
@@ -59,10 +56,9 @@
       <div>
         <span class="mat-title">A Duplicate Of:</span>
         <p style="margin-top: 5px">
-          {{ ('#' + data.duplicateOf + ': ' + (issueService.getIssue(data.duplicateOf) | async).title) }}
+          {{ '#' + data.duplicateOf + ': ' + (issueService.getIssue(data.duplicateOf) | async).title }}
         </p>
       </div>
     </div>
-
   </div>
 </div>

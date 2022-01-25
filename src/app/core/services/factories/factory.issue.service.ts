@@ -7,11 +7,15 @@ import { MockIssueService } from '../mocks/mock.issue.service';
 import { PhaseService } from '../phase.service';
 import { UserService } from '../user.service';
 
-export function IssueServiceFactory(githubService: GithubService, userService: UserService, phaseService: PhaseService,
-                                    electronService: ElectronService, dataService: DataService) {
+export function IssueServiceFactory(
+  githubService: GithubService,
+  userService: UserService,
+  phaseService: PhaseService,
+  electronService: ElectronService,
+  dataService: DataService
+) {
   if (AppConfig.test) {
-      return new MockIssueService(githubService, phaseService, dataService);
+    return new MockIssueService(githubService, phaseService, dataService);
   }
-  return new IssueService(githubService, userService, phaseService,
-    electronService, dataService);
+  return new IssueService(githubService, userService, phaseService, electronService, dataService);
 }

@@ -1,18 +1,28 @@
 <div>
   <mat-grid-list cols="3" rowHeight="80px">
     <mat-grid-tile>
-      <div class="grid-flush-left"> <h1 class="mat-headline" style="margin: 0px"> {{userService.currentUser.role === 'Student' ? 'Issues you posted' : 'All Issues' }}</h1> </div>
+      <div class="grid-flush-left">
+        <h1 class="mat-headline" style="margin: 0px">
+          {{ userService.currentUser.role === 'Student' ? 'Issues you posted' : 'All Issues' }}
+        </h1>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile>
       <mat-form-field class="full-grid-width">
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search" />
       </mat-form-field>
     </mat-grid-tile>
 
     <mat-grid-tile>
       <div class="grid-flush-right">
-        <button *ngIf="permissions.isIssueCreatable()" mat-stroked-button class="create-new-bug-report-button" color="primary" routerLink="issues/new">
+        <button
+          *ngIf="permissions.isIssueCreatable()"
+          mat-stroked-button
+          class="create-new-bug-report-button"
+          color="primary"
+          routerLink="issues/new"
+        >
           New Issue
         </button>
       </div>

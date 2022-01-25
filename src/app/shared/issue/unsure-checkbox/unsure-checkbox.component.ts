@@ -10,17 +10,13 @@ import { PhaseService } from '../../../core/services/phase.service';
   styleUrls: ['./unsure-checkbox.component.css']
 })
 export class UnsureCheckboxComponent implements OnInit {
-
   @Input() issue: Issue;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService,
-              private phaseService: PhaseService) { }
+  constructor(private issueService: IssueService, private errorHandlingService: ErrorHandlingService, private phaseService: PhaseService) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   handleChangeOfUnsureCheckbox(event) {
     let UNSURE = false;
@@ -31,11 +27,13 @@ export class UnsureCheckboxComponent implements OnInit {
 
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     newIssue.unsure = UNSURE;
-    this.issueService.updateIssue(newIssue).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(updatedIssue);
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+    this.issueService.updateIssue(newIssue).subscribe(
+      (updatedIssue: Issue) => {
+        this.issueUpdated.emit(updatedIssue);
+      },
+      (error) => {
+        this.errorHandlingService.handleError(error);
+      }
+    );
   }
-
 }

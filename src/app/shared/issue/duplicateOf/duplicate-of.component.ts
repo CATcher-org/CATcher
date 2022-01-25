@@ -1,19 +1,9 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-  ViewEncapsulation
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Issue, SEVERITY_ORDER } from '../../../core/models/issue.model';
-import {
-  ErrorHandlingService
-} from '../../../core/services/error-handling.service';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
@@ -22,7 +12,7 @@ import { PhaseService } from '../../../core/services/phase.service';
   selector: 'app-duplicate-of-component',
   templateUrl: './duplicate-of.component.html',
   styleUrls: ['./duplicate-of.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None
 })
 export class DuplicateOfComponent implements OnInit {
   isEditing = false;
@@ -40,11 +30,12 @@ export class DuplicateOfComponent implements OnInit {
   // Max chars visible for a non-duplicate entry in duplicates dropdown list.
   readonly MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE = 37;
 
-  constructor(public issueService: IssueService,
-              public permissions: PermissionService,
-              private errorHandlingService: ErrorHandlingService,
-              private phaseService: PhaseService) {
-  }
+  constructor(
+    public issueService: IssueService,
+    public permissions: PermissionService,
+    private errorHandlingService: ErrorHandlingService,
+    private phaseService: PhaseService
+  ) {}
 
   /**
    * Checks if the supplied issue requires a tooltip
@@ -56,9 +47,7 @@ export class DuplicateOfComponent implements OnInit {
     // Maximum Possible Title length varies based on whether the issue
     // is a duplicate. (Whether the Duplicate Issue Tag is visible)
     let maxTitleLength: number;
-    maxTitleLength = issue.duplicated
-      ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE
-      : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
+    maxTitleLength = issue.duplicated ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
 
     return issue.title.length > maxTitleLength;
   }
@@ -76,22 +65,16 @@ export class DuplicateOfComponent implements OnInit {
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
-    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]
-      || (issue.duplicated || !!issue.duplicateOf);
+    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity] || issue.duplicated || !!issue.duplicateOf;
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
     const reason = new Array<string>();
     if (this.dupIssueOptionIsDisabled(issue)) {
-      if (SEVERITY_ORDER[this.issue.severity]
-        > SEVERITY_ORDER[issue.severity]) {
-
+      if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
         reason.push('Issue of lower priority');
-
       } else if (issue.duplicated || !!issue.duplicateOf) {
-
         reason.push('A duplicated issue');
-
       }
     }
     return reason.join(', ');
@@ -136,11 +119,12 @@ export class DuplicateOfComponent implements OnInit {
   }
 
   private getDupIssueList(): Observable<Issue[]> {
-    return this.issueService.issues$.pipe(map((issues) => {
-      return issues.filter((issue) => {
-        return this.issue.id !== issue.id
-          && this.issue.teamAssigned.id === issue.teamAssigned.id;
-      });
-    }));
+    return this.issueService.issues$.pipe(
+      map((issues) => {
+        return issues.filter((issue) => {
+          return this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id;
+        });
+      })
+    );
   }
 }

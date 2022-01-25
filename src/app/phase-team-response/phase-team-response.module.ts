@@ -20,14 +20,8 @@ import { PhaseTeamResponseComponent } from './phase-team-response.component';
     CommentEditorModule,
     ViewIssueModule,
     MarkdownModule.forChild(),
-    IssueTablesModule,
+    IssueTablesModule
   ],
-  declarations: [
-    PhaseTeamResponseComponent,
-    IssueComponent,
-    IssuesPendingComponent,
-    IssuesRespondedComponent,
-    IssuesFaultyComponent,
-  ],
+  declarations: [PhaseTeamResponseComponent, IssueComponent, IssuesPendingComponent, IssuesRespondedComponent, IssuesFaultyComponent]
 })
 export class PhaseTeamResponseModule {}

@@ -10,7 +10,7 @@ declare global {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 
 /**
@@ -29,7 +29,6 @@ export class ElectronService {
   isElectron(): boolean {
     return window && window.process && window.process.type;
   }
-
 
   clearCookies() {
     if (this.isElectron()) {

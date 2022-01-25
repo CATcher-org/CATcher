@@ -18,26 +18,21 @@ export class IssueComponent implements AfterViewInit, AfterViewChecked {
 
   @ViewChild(ViewIssueComponent, { static: false }) viewIssue: ViewIssueComponent;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
   ngAfterViewInit(): void {
-    this.route.params.subscribe(
-      params => {
-        this.issueId = + params['issue_id'];
-      }
-      );
+    this.route.params.subscribe((params) => {
+      this.issueId = +params['issue_id'];
+    });
   }
 
   ngAfterViewChecked() {
-    this.route.params.subscribe(
-      params => {
-        this.issueId = + params['issue_id'];
-      }
-    );
+    this.route.params.subscribe((params) => {
+      this.issueId = +params['issue_id'];
+    });
   }
 
   canDeactivate(): boolean {
     return !this.viewIssue.isEditing();
   }
-
 }

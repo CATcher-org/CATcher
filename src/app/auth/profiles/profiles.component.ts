@@ -1,10 +1,4 @@
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { isValidProfile, Profile } from '../../core/models/profile.model';
@@ -20,15 +14,14 @@ import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-pa
     // animation triggers go here
     trigger('triggerFileInput', [
       state('normal', style({})),
-      state('pressed', style({
-        color: 'orange'
-      })),
-      transition('normal => pressed', [
-        animate('0.25s ease')
-      ]),
-      transition('pressed => normal', [
-        animate('0.25s ease')
-      ])
+      state(
+        'pressed',
+        style({
+          color: 'orange'
+        })
+      ),
+      transition('normal => pressed', [animate('0.25s ease')]),
+      transition('pressed => normal', [animate('0.25s ease')])
     ])
   ]
 })
@@ -36,7 +29,7 @@ export class ProfilesComponent implements OnInit {
   private readonly ANIMATION_DURATION: number = 250;
 
   profiles: Profile[] = []; // List of profiles taken from profiles.json
-  blankProfile: Profile = {profileName: '', repoName: ''}; // A blank profile to reset values
+  blankProfile: Profile = { profileName: '', repoName: '' }; // A blank profile to reset values
   animationActivated = false; // Assists color change animations.
 
   selectedProfile: Profile = this.blankProfile;
@@ -49,11 +42,7 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(
-    public errorDialog: MatDialog,
-    public profileService: ProfileService,
-    public errorHandlingService: ErrorHandlingService
-  ) { }
+  constructor(public errorDialog: MatDialog, public profileService: ProfileService, public errorHandlingService: ErrorHandlingService) {}
 
   ngOnInit() {
     this.initProfiles();
@@ -98,18 +87,19 @@ export class ProfilesComponent implements OnInit {
    * Processes available Profiles information from the external repository.
    */
   initProfiles(): void {
-    this.profileService.fetchExternalProfiles().then(externalProfiles => {
-      this.profiles = this.profiles
-      .concat(externalProfiles)
-      .filter((p) => !!p);
-    }).then(() => this.setUrlEncodedProfile(this.profiles))
-    .catch(e => {
-      if (e === MALFORMED_PROFILES_ERROR) {
-        this.openErrorDialog();
-      } else {
-        this.errorHandlingService.handleError(e);
-      }
-    });
+    this.profileService
+      .fetchExternalProfiles()
+      .then((externalProfiles) => {
+        this.profiles = this.profiles.concat(externalProfiles).filter((p) => !!p);
+      })
+      .then(() => this.setUrlEncodedProfile(this.profiles))
+      .catch((e) => {
+        if (e === MALFORMED_PROFILES_ERROR) {
+          this.openErrorDialog();
+        } else {
+          this.errorHandlingService.handleError(e);
+        }
+      });
   }
 
   /**
@@ -135,7 +125,7 @@ export class ProfilesComponent implements OnInit {
       return;
     }
 
-    const profile = validProfiles.find(profile => profile.profileName === this.urlEncodedSessionName);
+    const profile = validProfiles.find((profile) => profile.profileName === this.urlEncodedSessionName);
     if (profile) {
       this.selectedProfile.profileName = this.urlEncodedSessionName;
       this.selectProfile(profile);

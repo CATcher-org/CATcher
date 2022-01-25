@@ -23,7 +23,7 @@ export class PhaseTeamResponseComponent implements OnInit {
     const teams = this.dataService.getTeams();
     switch (IssuesFilter[Phase.phaseTeamResponse][this.userService.currentUser.role]) {
       case 'FILTER_BY_TEAM_ASSIGNED':
-        return ['All Teams', ...this.userService.currentUser.allocatedTeams.map(team => team.id)];
+        return ['All Teams', ...this.userService.currentUser.allocatedTeams.map((team) => team.id)];
       case 'NO_FILTER':
         return ['All Teams', ...teams];
       default:
