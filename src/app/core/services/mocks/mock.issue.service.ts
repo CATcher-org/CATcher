@@ -8,18 +8,14 @@ import { GithubIssue } from '../../models/github/github-issue.model';
 import { GithubLabel } from '../../models/github/github-label.model';
 import { HiddenData } from '../../models/hidden-data.model';
 import { IssueDispute } from '../../models/issue-dispute.model';
-import {
-  Issue,
-  Issues,
-  STATUS,
-} from '../../models/issue.model';
+import { Issue, Issues, STATUS } from '../../models/issue.model';
 import { Phase } from '../../models/phase.model';
 import { DataService } from '../data.service';
 import { GithubService } from '../github.service';
 import { PhaseService } from '../phase.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class MockIssueService {
   static readonly POLL_INTERVAL = 5000; // 5 seconds
@@ -33,9 +29,7 @@ export class MockIssueService {
   /** Whether the IssueService is downloading the data from Github*/
   public isLoading = new BehaviorSubject<boolean>(false);
 
-  constructor(private githubService: GithubService,
-              private phaseService: PhaseService,
-              private dataService: DataService) {
+  constructor(private githubService: GithubService, private phaseService: PhaseService, private dataService: DataService) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
 
@@ -48,8 +42,7 @@ export class MockIssueService {
         this.isLoading.next(true);
       }
 
-      this.issuesPollSubscription = of(this.reloadAllIssues())
-        .subscribe(result => this.isLoading.next(false));
+      this.issuesPollSubscription = of(this.reloadAllIssues()).subscribe((result) => this.isLoading.next(false));
     }
   }
 
@@ -95,29 +88,27 @@ export class MockIssueService {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
     const hiddenData = new Map([['session', this.sessionId]]);
     const issueDescription = HiddenData.embedDataIntoString(description, hiddenData);
-    return this.githubService.createIssue(title, issueDescription, labelsArray).pipe(
-      map((response: GithubIssue) => this.createIssueModel(response))
-    );
+    return this.githubService
+      .createIssue(title, issueDescription, labelsArray)
+      .pipe(map((response: GithubIssue) => this.createIssueModel(response)));
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
-    return this.githubService.updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue),
-      this.createLabelsForIssue(issue), assignees).pipe(
+    return this.githubService
+      .updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue), this.createLabelsForIssue(issue), assignees)
+      .pipe(
         map((response: GithubIssue) => {
           response.comments = issue.githubComments;
           return this.createIssueModel(response);
         })
-    );
+      );
   }
 
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
       flatMap((updatedComment: GithubComment) => {
-        issue.githubComments = [
-          updatedComment,
-          ...issue.githubComments.filter(c => c.id !== updatedComment.id),
-        ];
+        issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
         return this.updateIssue(issue);
       })
     );
@@ -125,7 +116,8 @@ export class MockIssueService {
 
   updateTesterResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     const isTesterResponseExist = this.issues[issue.id].testerResponses;
-    const commentApiToCall = isTesterResponseExist ? this.githubService.updateIssueComment(issueComment)
+    const commentApiToCall = isTesterResponseExist
+      ? this.githubService.updateIssueComment(issueComment)
       : this.githubService.createIssueComment(issue.id, issueComment.description);
 
     const issueClone = issue.clone(this.phaseService.currentPhase);
@@ -142,7 +134,7 @@ export class MockIssueService {
 
   updateTutorResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return forkJoin([this.githubService.updateIssueComment(issueComment), this.updateIssue(issue)]).pipe(
-      map(responses => {
+      map((responses) => {
         const [githubComment, issue] = responses;
         issue.updateDispute(githubComment);
         return issue;
@@ -154,10 +146,7 @@ export class MockIssueService {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
       flatMap((githubComment: GithubComment) => {
-        issue.githubComments = [
-          githubComment,
-          ...issue.githubComments.filter(c => c.id !== githubComment.id),
-        ];
+        issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
         return this.updateIssue(issue);
       })
     );
@@ -165,7 +154,7 @@ export class MockIssueService {
 
   createTutorResponse(issue: Issue, response: string): Observable<Issue> {
     return forkJoin([this.githubService.createIssueComment(issue.id, response), this.updateIssue(issue)]).pipe(
-      map(responses => {
+      map((responses) => {
         const [githubComment, issue] = responses;
         issue.updateDispute(githubComment);
         return issue;
@@ -181,9 +170,11 @@ export class MockIssueService {
   private createGithubIssueDescription(issue: Issue): string {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseModeration:
-        return `# Issue Description\n${issue.createGithubIssueDescription()}\n# Team\'s Response\n${issue.teamResponse}\n ` +
-         // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
-          `# Disputes\n\n${this.getIssueDisputeString(issue.issueDisputes)}\n`;
+        return (
+          `# Issue Description\n${issue.createGithubIssueDescription()}\n# Team\'s Response\n${issue.teamResponse}\n ` +
+          // `## State the duplicated issue here, if any\n${issue.duplicateOf ? `Duplicate of #${issue.duplicateOf}` : `--`}\n` +
+          `# Disputes\n\n${this.getIssueDisputeString(issue.issueDisputes)}\n`
+        );
       default:
         return issue.createGithubIssueDescription();
     }
@@ -222,7 +213,7 @@ export class MockIssueService {
   updateLocalStore(issueToUpdate: Issue) {
     this.issues = {
       ...this.issues,
-      [issueToUpdate.id]: issueToUpdate,
+      [issueToUpdate.id]: issueToUpdate
     };
     this.issues$.next(Object.values(this.issues));
   }
@@ -238,11 +229,13 @@ export class MockIssueService {
    * Obtain an observable containing an array of issues that are duplicates of the parentIssue.
    */
   getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
-    return this.issues$.pipe(map((issues) => {
-      return issues.filter(issue => {
-        return issue.duplicateOf === parentIssue.id;
-      });
-    }));
+    return this.issues$.pipe(
+      map((issues) => {
+        return issues.filter((issue) => {
+          return issue.duplicateOf === parentIssue.id;
+        });
+      })
+    );
   }
 
   reset() {
@@ -275,7 +268,7 @@ export class MockIssueService {
     }
 
     for (const issue of generatedIssues) {
-      this.createAndSaveIssueModel((issue));
+      this.createAndSaveIssueModel(issue);
     }
 
     return of(Object.values(this.issues));
@@ -293,11 +286,9 @@ export class MockIssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phaseBugReporting &&
-        this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
+    if (this.phaseService.currentPhase !== Phase.phaseBugReporting && this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
       const studentTeam = issue.teamAssigned.id.split('-');
-      result.push(this.createLabel('tutorial', `${studentTeam[0]}-${studentTeam[1]}`),
-        this.createLabel('team', studentTeam[2]));
+      result.push(this.createLabel('tutorial', `${studentTeam[0]}-${studentTeam[1]}`), this.createLabel('team', studentTeam[2]));
     }
 
     if (issue.severity) {
@@ -346,13 +337,11 @@ export class MockIssueService {
       case Phase.phaseBugReporting:
         return Issue.createPhaseBugReportingIssue(githubIssue);
       case Phase.phaseTeamResponse:
-        return Issue.createPhaseTeamResponseIssue(githubIssue,
-          this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        return Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
       case Phase.phaseTesterResponse:
         return Issue.createPhaseTesterResponseIssue(githubIssue);
       case Phase.phaseModeration:
-        return Issue.createPhaseModerationIssue(githubIssue,
-          this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        return Issue.createPhaseModerationIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
       default:
         return;
     }

@@ -10,23 +10,19 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
 @Component({
   selector: 'app-issues-faulty',
   templateUrl: './issues-faulty.component.html',
-  styleUrls: ['./issues-faulty.component.css'],
+  styleUrls: ['./issues-faulty.component.css']
 })
 export class IssuesFaultyComponent implements OnInit, OnChanges {
   displayedColumns: string[];
   filter: (issue: Issue) => boolean;
 
-  readonly actionButtons: ACTION_BUTTONS[] = [
-    ACTION_BUTTONS.VIEW_IN_WEB,
-    ACTION_BUTTONS.FIX_ISSUE
-  ];
+  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.FIX_ISSUE];
 
   @Input() teamFilter: string;
 
   @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
 
-  constructor(public issueService: IssueService, public userService: UserService,
-      public permissions: PermissionService) {
+  constructor(public issueService: IssueService, public userService: UserService, public permissions: PermissionService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = [
         TABLE_COLUMNS.ID,
@@ -64,7 +60,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
       const hasTeamResponse = (issue: Issue) => this.issueService.hasTeamResponse(issue.id);
       const isDuplicateIssue = (issue: Issue) => !!issue.duplicateOf;
       const isDuplicatedBy = (issue: Issue) =>
-            !!this.issueService.issues$.getValue().filter(childIssue => childIssue.duplicateOf === issue.id).length;
+        !!this.issueService.issues$.getValue().filter((childIssue) => childIssue.duplicateOf === issue.id).length;
       return hasTeamResponse(issue) && isDuplicateIssue(issue) && isDuplicatedBy(issue);
     };
   }

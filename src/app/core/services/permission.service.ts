@@ -4,145 +4,148 @@ import { UserRole } from '../models/user.model';
 import { PhaseService } from './phase.service';
 import { UserService } from './user.service';
 
-const enum PermissionLevel { Phase = 'Phase', User = 'User' }
+const enum PermissionLevel {
+  Phase = 'Phase',
+  User = 'User'
+}
 
 const PERMISSIONS = {
   [Phase.phaseBugReporting]: {
     [UserRole.Student]: {
-      'isIssueCreatable': true,
-      'isIssueDeletable': true,
-      'isIssueTitleEditable': true,
-      'isIssueDescriptionEditable': true,
-      'isIssueLabelsEditable': true,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: true,
+      isIssueDeletable: true,
+      isIssueTitleEditable: true,
+      isIssueDescriptionEditable: true,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     },
     [UserRole.Tutor]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': false,
-      'isIssueLabelsEditable': false,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: false,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     },
     [UserRole.Admin]: {
-      'isIssueCreatable': true,
-      'isIssueDeletable': true,
-      'isIssueTitleEditable': true,
-      'isIssueDescriptionEditable': true,
-      'isIssueLabelsEditable': true,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: true,
+      isIssueDeletable: true,
+      isIssueTitleEditable: true,
+      isIssueDescriptionEditable: true,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     }
   },
 
   [Phase.phaseTeamResponse]: {
     [UserRole.Student]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': false,
-      'isIssueLabelsEditable': true,
-      'isTeamResponseEditable': true,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: true,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     },
     [UserRole.Tutor]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': false,
-      'isIssueLabelsEditable': false,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: false,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     },
     [UserRole.Admin]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': true,
-      'isIssueLabelsEditable': true,
-      'isTeamResponseEditable': true,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: true,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: true,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     }
   },
 
   [Phase.phaseTesterResponse]: {
     [UserRole.Student]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': false,
-      'isIssueLabelsEditable': false,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': true,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: false,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: true,
+      isTutorResponseEditable: false
     },
     [UserRole.Tutor]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': false,
-      'isIssueLabelsEditable': false,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: false,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     },
     [UserRole.Admin]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': true,
-      'isIssueLabelsEditable': true,
-      'isTeamResponseEditable': true,
-      'isTesterResponseEditable': true,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: true,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: true,
+      isTesterResponseEditable: true,
+      isTutorResponseEditable: false
     }
   },
 
   /** Phase 3 Permissions **/
   [Phase.phaseModeration]: {
     [UserRole.Student]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': false,
-      'isIssueLabelsEditable': false,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': false,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: false,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
     },
     [UserRole.Tutor]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': true,
-      'isIssueLabelsEditable': true,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': true,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: true,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: true
     },
     [UserRole.Admin]: {
-      'isIssueCreatable': false,
-      'isIssueDeletable': false,
-      'isIssueTitleEditable': false,
-      'isIssueDescriptionEditable': true,
-      'isIssueLabelsEditable': true,
-      'isTeamResponseEditable': false,
-      'isTesterResponseEditable': false,
-      'isTutorResponseEditable': true,
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: true,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: true
     }
   }
 };
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class PermissionService {
   constructor(private userService: UserService, private phaseService: PhaseService) {}
@@ -180,9 +183,14 @@ export class PermissionService {
   }
 
   isIssueEditable(): boolean {
-    return this.isIssueTitleEditable() || this.isIssueDescriptionEditable()
-           || this.isIssueLabelsEditable() || this.isTeamResponseEditable()
-           || this.isTesterResponseEditable() || this.isTutorResponseEditable();
+    return (
+      this.isIssueTitleEditable() ||
+      this.isIssueDescriptionEditable() ||
+      this.isIssueLabelsEditable() ||
+      this.isTeamResponseEditable() ||
+      this.isTesterResponseEditable() ||
+      this.isTutorResponseEditable()
+    );
   }
 
   private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {

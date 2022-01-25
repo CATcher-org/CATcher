@@ -1,4 +1,4 @@
-import { MarkedOptions, MarkedRenderer } from "ngx-markdown";
+import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -17,6 +17,6 @@ export function markedOptionsFactory(): MarkedOptions {
     pedantic: false,
     sanitize: false,
     smartLists: true,
-    smartypants: false,
+    smartypants: false
   };
 }

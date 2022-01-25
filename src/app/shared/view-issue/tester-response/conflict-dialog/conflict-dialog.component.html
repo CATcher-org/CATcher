@@ -1,7 +1,6 @@
 <div style="display: flex; margin-bottom: 20px; align-items: center">
-  <h1 mat-dialog-title style="margin: 0">{{ 'The content you are editing has changed'}}</h1>
-  <mat-slide-toggle style="display: inline-block; margin-left: 50px"
-                    color="primary" [checked]="showDiff" (change)="handleChangeShowDiff()">
+  <h1 mat-dialog-title style="margin: 0">{{ 'The content you are editing has changed' }}</h1>
+  <mat-slide-toggle style="display: inline-block; margin-left: 50px" color="primary" [checked]="showDiff" (change)="handleChangeShowDiff()">
     Show Difference
   </mat-slide-toggle>
   <button mat-icon-button color="default" style="margin: 0 0 0 auto" (click)="close()">
@@ -11,38 +10,41 @@
 
 <div mat-dialog-content>
   <mat-accordion [multi]="true">
-    <mat-expansion-panel class="full-width" *ngFor="let conflict of conflicts; index as i;" [expanded]="panelOpenStates[i]">
+    <mat-expansion-panel class="full-width" *ngFor="let conflict of conflicts; index as i" [expanded]="panelOpenStates[i]">
       <mat-expansion-panel-header>
         <mat-panel-title class="response-title">
-          <div class="question-mark"> ? </div>
+          <div class="question-mark">?</div>
           <markdown [data]="data.updatedResponses[i].getTitleInMarkDown()"></markdown>
         </mat-panel-title>
         <mat-panel-description>
           <mat-chip-list>
-            <mat-chip *ngIf="data.outdatedResponses[i].compareTo(data.updatedResponses[i]) === 0" style="margin-top: 10px;">
+            <mat-chip *ngIf="data.outdatedResponses[i].compareTo(data.updatedResponses[i]) === 0" style="margin-top: 10px">
               No Changes
             </mat-chip>
           </mat-chip-list>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <br>
+      <br />
       <markdown [data]="data.updatedResponses[i].description"></markdown>
-      <br>
-      <div *ngIf="(data.updatedResponses[i].isDisagree() === data.outdatedResponses[i].isDisagree()) || !showDiff" style="margin-bottom: 10px">
+      <br />
+      <div
+        *ngIf="data.updatedResponses[i].isDisagree() === data.outdatedResponses[i].isDisagree() || !showDiff"
+        style="margin-bottom: 10px"
+      >
         <mat-checkbox style="display: inline-block; width: 20%" [disabled]="true" [checked]="data.updatedResponses[i].isDisagree()">
           I disagree
         </mat-checkbox>
       </div>
       <div *ngIf="!data.outdatedResponses[i].isDisagree() && data.updatedResponses[i].isDisagree() && showDiff" class="checkbox-changes">
         <i style="color: green" class="material-icons-outlined">add_box</i>
-        <ins style="background: #d4fcbc; text-decoration: none;"> I disagree </ins>
+        <ins style="background: #d4fcbc; text-decoration: none"> I disagree </ins>
       </div>
       <div *ngIf="data.outdatedResponses[i].isDisagree() && !data.updatedResponses[i].isDisagree() && showDiff" class="checkbox-changes">
         <i style="color: red" class="material-icons-outlined">indeterminate_check_box</i>
         <del style="background: #fbb">I disagree</del>
       </div>
 
-      <mat-tab-group style="margin-bottom: 20px;" class="mat-elevation-z1" animationDuration="0ms">
+      <mat-tab-group style="margin-bottom: 20px" class="mat-elevation-z1" animationDuration="0ms">
         <mat-tab label="Markdown Text">
           <div class="tab-content" *ngIf="isReady">
             <div *ngIf="showDiff" [innerHTML]="diffHtmls[i]"></div>
@@ -51,7 +53,7 @@
         </mat-tab>
         <mat-tab label="Preview Updated Content">
           <div class="tab-content">
-            <markdown>{{conflict.updatedContent}}</markdown>
+            <markdown>{{ conflict.updatedContent }}</markdown>
           </div>
         </mat-tab>
       </mat-tab-group>

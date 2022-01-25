@@ -6,13 +6,17 @@ import { IssueComponent } from './issue/issue.component';
 import { PhaseTesterResponseComponent } from './phase-tester-response.component';
 
 const routes: Routes = [
-  { path: 'phaseTesterResponse', component: PhaseTesterResponseComponent, canActivate: [AuthGuard]},
-  { path: 'phaseTesterResponse/issues/:issue_id', component: IssueComponent, canActivate: [AuthGuard],
-    canDeactivate: [CanDeactivateIssueGuard] }
+  { path: 'phaseTesterResponse', component: PhaseTesterResponseComponent, canActivate: [AuthGuard] },
+  {
+    path: 'phaseTesterResponse/issues/:issue_id',
+    component: IssueComponent,
+    canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateIssueGuard]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class PhaseTesterResponseRoutingModule { }
+export class PhaseTesterResponseRoutingModule {}

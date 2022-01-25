@@ -42,7 +42,7 @@ export class IssueDispute {
 
   toString(): string {
     let toString = '';
-    toString += this.TITLE_PREFIX +  this.title + '\n\n';
+    toString += this.TITLE_PREFIX + this.title + '\n\n';
     toString += this.description + '\n\n';
     toString += this.LINE_BREAK;
     return toString;

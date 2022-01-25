@@ -12,9 +12,7 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/iss
   templateUrl: './phase-moderation.component.html',
   styleUrls: ['./phase-moderation.component.css']
 })
-
 export class PhaseModerationComponent implements OnInit {
-
   displayedColumns = [
     TABLE_COLUMNS.ID,
     TABLE_COLUMNS.TITLE,
@@ -30,9 +28,7 @@ export class PhaseModerationComponent implements OnInit {
 
   @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
 
-  constructor(private issueService: IssueService,
-              public userService: UserService,
-              private dataService: DataService) { }
+  constructor(private issueService: IssueService, public userService: UserService, private dataService: DataService) {}
 
   ngOnInit() {
     this.issueService.setIssueTeamFilter(this.teamFilter);
@@ -46,7 +42,7 @@ export class PhaseModerationComponent implements OnInit {
     const teams = this.dataService.getTeams();
     switch (IssuesFilter[Phase.phaseModeration][this.userService.currentUser.role]) {
       case 'FILTER_BY_TEAM_ASSIGNED':
-        return ['All Teams', ...this.userService.currentUser.allocatedTeams.map(team => team.id)];
+        return ['All Teams', ...this.userService.currentUser.allocatedTeams.map((team) => team.id)];
       case 'NO_FILTER':
         return ['All Teams', ...teams];
       default:
@@ -58,5 +54,4 @@ export class PhaseModerationComponent implements OnInit {
     this.teamFilter = newTeam;
     this.table.issues.teamFilter = this.teamFilter;
   }
-
 }

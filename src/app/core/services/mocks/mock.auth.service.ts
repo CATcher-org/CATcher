@@ -12,7 +12,12 @@ import { LoggingService } from '../logging.service';
 import { PhaseService } from '../phase.service';
 import { UserService } from '../user.service';
 
-export enum AuthState { 'NotAuthenticated', 'AwaitingAuthentication', 'ConfirmOAuthUser', 'Authenticated'}
+export enum AuthState {
+  'NotAuthenticated',
+  'AwaitingAuthentication',
+  'ConfirmOAuthUser',
+  'Authenticated'
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,15 +27,18 @@ export class MockAuthService {
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
 
-  constructor(private router: Router, private ngZone: NgZone,
-              private githubService: GithubService,
-              private userService: UserService,
-              private issueService: IssueService,
-              private phaseService: PhaseService,
-              private dataService: DataService,
-              private githubEventService: GithubEventService,
-              private titleService: Title,
-              private logger: LoggingService) {}
+  constructor(
+    private router: Router,
+    private ngZone: NgZone,
+    private githubService: GithubService,
+    private userService: UserService,
+    private issueService: IssueService,
+    private phaseService: PhaseService,
+    private dataService: DataService,
+    private githubEventService: GithubEventService,
+    private titleService: Title,
+    private logger: LoggingService
+  ) {}
 
   /**
    * Will store the OAuth token.

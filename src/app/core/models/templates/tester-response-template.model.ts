@@ -4,10 +4,9 @@ import { Section } from './sections/section.model';
 import { TesterResponseSection } from './sections/tester-response-section.model';
 import { Header, Template } from './template.model';
 
-
 export const TesterResponseHeaders = {
-  teamResponse: new Header('Team\'s Response', 1),
-  testerResponses: new Header('Items for the Tester to Verify', 1),
+  teamResponse: new Header("Team's Response", 1),
+  testerResponses: new Header('Items for the Tester to Verify', 1)
 };
 
 export class TesterResponseTemplate extends Template {
@@ -20,7 +19,7 @@ export class TesterResponseTemplate extends Template {
   constructor(githubIssueComments: GithubComment[]) {
     super(Object.values(TesterResponseHeaders));
 
-    const templateConformingComment = githubIssueComments.find(comment => this.test(comment.body));
+    const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
     if (templateConformingComment) {
       this.comment = <IssueComment>{
         ...templateConformingComment,
@@ -30,7 +29,6 @@ export class TesterResponseTemplate extends Template {
       this.testerResponse = this.parseTesterResponse(this.comment.description);
       this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
       this.teamChosenType = this.testerResponse.getTeamChosenType();
-
     }
   }
 

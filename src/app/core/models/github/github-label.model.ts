@@ -1,7 +1,7 @@
 export class GithubLabel {
   static readonly LABEL_ORDER = {
     severity: { Low: 0, Medium: 1, High: 2 },
-    type: { DocumentationBug: 0, FunctionalityBug: 1 },
+    type: { DocumentationBug: 0, FunctionalityBug: 1 }
   };
   static readonly LABELS = {
     severity: 'severity',

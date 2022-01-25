@@ -10,50 +10,54 @@ W3C recommendation is 0.179, but 0.184 is chosen so that some colors (like brigh
 are considered dark (Github too consider them dark) */
 const COLOR_DARKNESS_THRESHOLD = 0.184;
 
-const COLOR_DARK_TEXT  = '000000'; // Dark color for text with light background
-const COLOR_LIGHT_TEXT  = 'FFFFFF'; // Light color for text with dark background
+const COLOR_DARK_TEXT = '000000'; // Dark color for text with light background
+const COLOR_LIGHT_TEXT = 'FFFFFF'; // Light color for text with dark background
 
 const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
 
 // The HTML template definition of selected labels are hard-coded here, move to a config file in the future
-const VERY_LOW_DEFINITION = '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not affect usage</mark>. For example, '
-  + '<ul>'
-  + '<li>typo issues</li>'
-  + '<li>spacing issues</li>'
-  + '<li>layout issues</li>'
-  + '<li>color issues</li>'
-  + '<li>font issues</li>'
-  + '</ul>'
-  + 'in the docs or the UI that doesn\'t affect usage.</p>';
-const LOW_DEFINITION = '<p>A flaw that is unlikely to affect normal operations of the product. '
-  + 'Appears only in very rare situations and causes a minor inconvenience only.</p>';
-const MEDIUM_DEFINITION = '<p>A flaw that causes occasional inconvenience to some users but they can '
-  + 'continue to use the product.</p>';
-const HIGH_DEFINITION = '<p>A flaw that affects most users and causes major problems for users.'
-  + 'i.e., makes the product almost unusable for most users.</p>';
+const VERY_LOW_DEFINITION =
+  '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not affect usage</mark>. For example, ' +
+  '<ul>' +
+  '<li>typo issues</li>' +
+  '<li>spacing issues</li>' +
+  '<li>layout issues</li>' +
+  '<li>color issues</li>' +
+  '<li>font issues</li>' +
+  '</ul>' +
+  "in the docs or the UI that doesn't affect usage.</p>";
+const LOW_DEFINITION =
+  '<p>A flaw that is unlikely to affect normal operations of the product. ' +
+  'Appears only in very rare situations and causes a minor inconvenience only.</p>';
+const MEDIUM_DEFINITION = '<p>A flaw that causes occasional inconvenience to some users but they can ' + 'continue to use the product.</p>';
+const HIGH_DEFINITION =
+  '<p>A flaw that affects most users and causes major problems for users.' + 'i.e., makes the product almost unusable for most users.</p>';
 
 const FUNCTIONALITY_BUG_DEFINITION = '<p>A functionality does not work as specified/expected.</p>';
-const FEATURE_FLAW_DEFINITION = '<p>Some functionality missing from a feature delivered in the current version in '
-  + 'a way that the feature becomes less useful to the intended target user for <i>normal</i> usage. '
-  + 'i.e., the feature is not \'complete\'.\nIn other words, an acceptance-testing bug that falls within '
-  + 'the scope of the current version features. These issues are counted against the <i>product design</i> aspect '
-  + 'of the project.</p>';
-const DOCUMENTATION_BUG_DEFINITION = '<p>A flaw in the documentation '
-  + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
+const FEATURE_FLAW_DEFINITION =
+  '<p>Some functionality missing from a feature delivered in the current version in ' +
+  'a way that the feature becomes less useful to the intended target user for <i>normal</i> usage. ' +
+  "i.e., the feature is not 'complete'.\nIn other words, an acceptance-testing bug that falls within " +
+  'the scope of the current version features. These issues are counted against the <i>product design</i> aspect ' +
+  'of the project.</p>';
+const DOCUMENTATION_BUG_DEFINITION =
+  '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
 
 const ACCEPTED_DEFINITION = '<p>You accept it as a bug.</p>';
-const NOT_IN_SCOPE_DEFINITION = '<p>It is a valid issue but not something the team should be penalized for '
-  + '<span style="color:grey;">e.g., it was not related to features delivered in this version</span>.</p>';
-const REJECTED_DEFINITION = '<p>What tester treated as a bug is in fact the expected behavior (from the user\'s point of view), or the tester '
-  + 'was mistaken in some other way.</p>';
+const NOT_IN_SCOPE_DEFINITION =
+  '<p>It is a valid issue but not something the team should be penalized for ' +
+  '<span style="color:grey;">e.g., it was not related to features delivered in this version</span>.</p>';
+const REJECTED_DEFINITION =
+  "<p>What tester treated as a bug is in fact the expected behavior (from the user's point of view), or the tester " +
+  'was mistaken in some other way.</p>';
 const CANNOT_REPRODUCE_DEFINITION = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
 const ISSUE_UNCLEAR_DEFINITION = '<p>The issue description is not clear.</p>';
 const UNDEFINED_DEFINITION = null;
 
 export const LABEL_DEFINITIONS = {
-  severityVeryLow : VERY_LOW_DEFINITION,
+  severityVeryLow: VERY_LOW_DEFINITION,
   severityLow: LOW_DEFINITION,
   severityMedium: MEDIUM_DEFINITION,
   severityHigh: HIGH_DEFINITION,
@@ -105,7 +109,6 @@ const REQUIRED_LABELS = {
  * from the GitHub repository for the CATcher application.
  */
 export class LabelService {
-
   private static severityLabels: Label[] = Object.values(REQUIRED_LABELS.severity);
   private static typeLabels: Label[] = Object.values(REQUIRED_LABELS.type);
   private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
@@ -120,17 +123,16 @@ export class LabelService {
   };
   private static testerLabelArrays = {
     severity: LabelService.severityLabels,
-    type: LabelService.typeLabels,
+    type: LabelService.typeLabels
   };
 
-  constructor(private githubService: GithubService) {
-  }
+  constructor(private githubService: GithubService) {}
 
   public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
 
     const labels = needAllLabels ? Object.values(this.allLabelArrays) : Object.values(this.testerLabelArrays);
-    labels.map(label => requiredLabels = requiredLabels.concat(label));
+    labels.map((label) => (requiredLabels = requiredLabels.concat(label)));
     return requiredLabels;
   }
 
@@ -140,21 +142,19 @@ export class LabelService {
    * with the remote repository.
    */
   syncLabels(needAllLabels: boolean): UnaryFunction<Observable<boolean>, Observable<any>> {
-    return pipe(
-      flatMap(() => this.synchronizeRemoteLabels(needAllLabels))
-    );
+    return pipe(flatMap(() => this.synchronizeRemoteLabels(needAllLabels)));
   }
 
   /**
    * Synchronizes the labels in github with those required by the application.
    */
   synchronizeRemoteLabels(needAllLabels: boolean): Observable<any> {
-      return this.githubService.fetchAllLabels().pipe(
-        map((response) => {
-          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray(needAllLabels));
-          return response;
-        })
-      );
+    return this.githubService.fetchAllLabels().pipe(
+      map((response) => {
+        this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray(needAllLabels));
+        return response;
+      })
+    );
   }
 
   /**
@@ -201,7 +201,7 @@ export class LabelService {
       return WHITE_COLOR;
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find(label => label.labelValue === labelValue);
+    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find((label) => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
       return WHITE_COLOR;
@@ -222,7 +222,7 @@ export class LabelService {
     }
 
     const existingLabel = LabelService.getRequiredLabelsAsArray(true).find(
-      label => label.labelValue === labelValue && label.labelCategory === labelCategory
+      (label) => label.labelValue === labelValue && label.labelCategory === labelCategory
     );
 
     if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
@@ -242,33 +242,23 @@ export class LabelService {
    * @param requiredLabels: required labels.
    */
   private ensureRepoHasRequiredLabels(actualLabels: Label[], requiredLabels: Label[]): void {
-
-    requiredLabels.forEach(label => {
-
+    requiredLabels.forEach((label) => {
       // Finds for a label that has the same name as a required label.
-      const nameMatchedLabels: Label[] = actualLabels.filter(remoteLabel =>
-          remoteLabel.getFormattedName() === label.getFormattedName());
+      const nameMatchedLabels: Label[] = actualLabels.filter((remoteLabel) => remoteLabel.getFormattedName() === label.getFormattedName());
 
       if (nameMatchedLabels.length === 0) {
-
         // Create new Label (Could not find a label with the same name & category)
         this.githubService.createLabel(label.getFormattedName(), label.labelColor);
-
       } else if (nameMatchedLabels.length === 1) {
         if (nameMatchedLabels[0].equals(label)) {
-
           // the label exists exactly as expected -> do nothing
-
         } else {
-
           // the label exists but the color does not match
           this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
-
         }
       } else {
         throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());
       }
-
     });
   }
 
@@ -280,16 +270,13 @@ export class LabelService {
     const labelData: Label[] = [];
 
     for (const label of labels) {
-
       let labelCategory: string;
       let labelValue: string;
       const containsDotRegex = /\./g;
 
       const rawName: string = String(label['name']);
 
-      [labelCategory, labelValue] = containsDotRegex.test(rawName)
-        ? String(label['name']).split('.')
-        : [undefined, rawName];
+      [labelCategory, labelValue] = containsDotRegex.test(rawName) ? String(label['name']).split('.') : [undefined, rawName];
 
       const labelColor: string = String(label['color']);
 
@@ -300,13 +287,13 @@ export class LabelService {
     return labelData;
   }
 
-   /**
+  /**
    * Returns true if the given color is considered "dark"
    * The color is considered "dark" if its luminance is less than COLOR_DARKNESS_THRESHOLD
    * @param inputColor: the color
    */
   isDarkColor(inputColor: string): boolean {
-    const COLOR = (inputColor.charAt(0) === '#') ? inputColor.substring(1, 7) : inputColor;
+    const COLOR = inputColor.charAt(0) === '#' ? inputColor.substring(1, 7) : inputColor;
     const R = parseInt(COLOR.substring(0, 2), 16);
     const G = parseInt(COLOR.substring(2, 4), 16);
     const B = parseInt(COLOR.substring(4, 6), 16);
@@ -318,7 +305,7 @@ export class LabelService {
       return Math.pow((col + 0.055) / 1.055, 2.4);
     });
     // Calculate the luminance of the color
-    const LUMINANCE = (0.2126 * LINEAR_RGB[0]) + (0.7152 * LINEAR_RGB[1]) + (0.0722 * LINEAR_RGB[2]);
+    const LUMINANCE = 0.2126 * LINEAR_RGB[0] + 0.7152 * LINEAR_RGB[1] + 0.0722 * LINEAR_RGB[2];
     // The color is "dark" if the luminance is lower than the threshold
     return LUMINANCE < COLOR_DARKNESS_THRESHOLD;
   }
@@ -335,16 +322,15 @@ export class LabelService {
     textColor = this.isDarkColor(color) ? COLOR_LIGHT_TEXT : COLOR_DARK_TEXT;
 
     const styles = {
-      'background-color' : `#${color}`,
-      'border-radius' : '3px',
-      'cursor' : 'default',
-      'padding' : '3px',
-      'color' : `#${textColor}`,
-      'font-weight' : '410',
-      'display': display
+      'background-color': `#${color}`,
+      'border-radius': '3px',
+      cursor: 'default',
+      padding: '3px',
+      color: `#${textColor}`,
+      'font-weight': '410',
+      display: display
     };
 
     return styles;
   }
-
 }

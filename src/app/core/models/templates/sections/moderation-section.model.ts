@@ -10,7 +10,7 @@ export class ModerationSection extends Section {
     if (!this.parseError) {
       let matches;
       const regex = /#{2} *:question: *(.*)[\n\r]*(.*)[\n\r]*([\s\S]*?(?=-{19}))/gi;
-      while (matches = regex.exec(this.content)) {
+      while ((matches = regex.exec(this.content))) {
         if (matches) {
           const [_regexString, title, todo, tutorResponse] = matches;
           const description = `${todo}\n${tutorResponse}`;
@@ -25,7 +25,7 @@ export class ModerationSection extends Section {
   }
 
   get todoList(): Checkbox[] {
-    return this.disputesToResolve.map(e => e.todo);
+    return this.disputesToResolve.map((e) => e.todo);
   }
 
   toString(): string {

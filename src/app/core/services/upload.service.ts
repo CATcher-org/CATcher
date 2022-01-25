@@ -4,27 +4,37 @@ import { uuid } from '../../shared/lib/uuid';
 import { GithubService } from './github.service';
 
 const SUPPORTED_VIDEO_FILE_TYPES = ['mp4', 'mov'];
-export const SUPPORTED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png', 'docx', 'gz', 'log', 'pdf', 'pptx', 'txt', 'xlsx', 'zip',
-                                     ...SUPPORTED_VIDEO_FILE_TYPES];
-export const FILE_TYPE_SUPPORT_ERROR = 'We don\'t support that file type.' +
-  ' Try again with ' + SUPPORTED_FILE_TYPES.join(', ') + '.';
+export const SUPPORTED_FILE_TYPES = [
+  'gif',
+  'jpeg',
+  'jpg',
+  'png',
+  'docx',
+  'gz',
+  'log',
+  'pdf',
+  'pptx',
+  'txt',
+  'xlsx',
+  'zip',
+  ...SUPPORTED_VIDEO_FILE_TYPES
+];
+export const FILE_TYPE_SUPPORT_ERROR = "We don't support that file type." + ' Try again with ' + SUPPORTED_FILE_TYPES.join(', ') + '.';
 /**
  * Returns an error message string for when file exceeds the defined size limit
  * @param fileType Canonical name for file, not to be confused with file extension
  * @param size Number of MBs
  */
-export const getSizeExceedErrorMsg = (fileType: string, size: number): string =>
-  `Oops, ${fileType} is too big. Keep it under ${size}MiB.`;
+export const getSizeExceedErrorMsg = (fileType: string, size: number): string => `Oops, ${fileType} is too big. Keep it under ${size}MiB.`;
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 
 /**
  * Responsible for upload of media files to the current phase's repository.
  */
 export class UploadService {
-
   constructor(private githubService: GithubService) {}
 
   uploadFile(base64File: string | ArrayBuffer, userFilename: string) {

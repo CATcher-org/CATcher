@@ -1,12 +1,9 @@
-<h3 class="mat-title">
-  Team's Response</h3>
+<h3 class="mat-title">Team's Response</h3>
 <form [formGroup]="responseForm" #myForm="ngForm" (ngSubmit)="updateResponse(myForm)">
   <div class="timeline-comment">
     <div class="timeline-header">
       <span> <strong> Team </strong> responded. </span>
-      <button style="float: right;" mat-button *ngIf="canEditIssue() && !isEditing" (click)="changeToEditMode()">
-        Edit
-      </button>
+      <button style="float: right" mat-button *ngIf="canEditIssue() && !isEditing" (click)="changeToEditMode()">Edit</button>
     </div>
     <div *ngIf="!isEditing" class="comment">
       <markdown [data]="issue.teamResponse"></markdown>
@@ -17,23 +14,42 @@
         [commentField]="this.responseForm.get('description')"
         [commentForm]="this.responseForm"
         [(isFormPending)]="this.isSavePending"
-        [(submitButtonText)]="this.submitButtonText">
+        [(submitButtonText)]="this.submitButtonText"
+      >
       </app-comment-editor>
       <div class="editor-actions">
-        <button class="editor-action" *ngIf="conflict" type="button" [disabled]="isSavePending"
-                mat-raised-button color="primary" (click)="viewChanges()">
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="button"
+          [disabled]="isSavePending"
+          mat-raised-button
+          color="primary"
+          (click)="viewChanges()"
+        >
           View Updated Response
         </button>
-        <button class="editor-action" *ngIf="conflict" type="submit" [disabled]="responseForm.invalid || isSavePending"
-                mat-raised-button color="warn">
+        <button
+          class="editor-action"
+          *ngIf="conflict"
+          type="submit"
+          [disabled]="responseForm.invalid || isSavePending"
+          mat-raised-button
+          color="warn"
+        >
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" *ngIf="!conflict" type="submit" [disabled]="responseForm.invalid || isSavePending"
-                mat-stroked-button color="primary">
+        <button
+          class="editor-action"
+          *ngIf="!conflict"
+          type="submit"
+          [disabled]="responseForm.invalid || isSavePending"
+          mat-stroked-button
+          color="primary"
+        >
           {{ submitButtonText }}
         </button>
-        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn"
-                (click)="cancelEditMode()">
+        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="cancelEditMode()">
           Cancel
         </button>
       </div>
