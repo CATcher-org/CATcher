@@ -18,18 +18,22 @@ let authWindow;
  * @param repoPermissionLevel - The level of permission required to be granted by the user to use CATcher.
  */
 export function getAccessToken(window: BrowserWindow, repoPermissionLevel: string): Promise<any> {
-  return getAuthorizationCode(window, repoPermissionLevel).then((code) => {
-    Logger.info('Obtained authorization code from Github');
-    const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
-    return fetch(accessTokenUrl).then(res => res.json()).then(data => {
-      if (data.error) {
-        throw(new Error(data.error));
-      }
-      return data;
+  return getAuthorizationCode(window, repoPermissionLevel)
+    .then((code) => {
+      Logger.info('Obtained authorization code from Github');
+      const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
+      return fetch(accessTokenUrl)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            throw new Error(data.error);
+          }
+          return data;
+        });
+    })
+    .catch((error) => {
+      throw error;
     });
-  }).catch(error => {
-    throw(error);
-  });
 }
 
 /**
@@ -40,7 +44,9 @@ export function getAccessToken(window: BrowserWindow, repoPermissionLevel: strin
 function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: string) {
   let state: string;
   state = generateStateString();
-  const oauthUrl = encodeURI(`${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${repoPermissionLevel},read:user&state=${state}`);
+  const oauthUrl = encodeURI(
+    `${BASE_URL}/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${repoPermissionLevel},read:user&state=${state}`
+  );
 
   return new Promise(function (resolve, reject) {
     const windowParams = {
@@ -64,7 +70,7 @@ function getAuthorizationCode(parentWindow: BrowserWindow, repoPermissionLevel: 
     authWindow.webContents.on('will-navigate', (event, newUrl) => {
       if (newUrl.startsWith(CALLBACK_URL)) {
         onCallback(newUrl);
-      } else if (newUrl.startsWith(`${BASE_URL}/session`) || (newUrl.startsWith(`${BASE_URL}/login`))) {
+      } else if (newUrl.startsWith(`${BASE_URL}/session`) || newUrl.startsWith(`${BASE_URL}/login`)) {
         // continue navigation within the auth window
         return;
       } else {
