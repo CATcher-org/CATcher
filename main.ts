@@ -16,24 +16,26 @@ const isDevMode = isDeveloperMode();
  */
 ipcMain.on('github-oauth', (event, repoPermissionLevel) => {
   Logger.info('Starting authentication');
-  getAccessToken(win, repoPermissionLevel).then((data) => {
-    Logger.info('Obtained access token from Github');
-    event.sender.send('github-oauth-reply', {token: data.token});
-  }).catch(error => {
-    event.sender.send('github-oauth-reply', {
-      error: error.message,
-      isWindowClosed: error.message === 'WINDOW_CLOSED'});
-  });
+  getAccessToken(win, repoPermissionLevel)
+    .then((data) => {
+      Logger.info('Obtained access token from Github');
+      event.sender.send('github-oauth-reply', { token: data.token });
+    })
+    .catch((error) => {
+      event.sender.send('github-oauth-reply', {
+        error: error.message,
+        isWindowClosed: error.message === 'WINDOW_CLOSED'
+      });
+    });
 });
 
 ipcMain.handle('clear-storage', () => {
-    return win.webContents.session.clearStorageData();
+  return win.webContents.session.clearStorageData();
 });
 
 ipcMain.handle('open-link', (e, address) => {
-    shell.openExternal(address);
+  shell.openExternal(address);
 });
-
 
 function createWindow() {
   Logger.info('Creating primary window.');
@@ -45,8 +47,8 @@ function createWindow() {
     height: size.height,
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: !isDevMode,
-    },
+      allowRunningInsecureContent: !isDevMode
+    }
   };
 
   if (isLinuxOs()) {
@@ -69,11 +71,13 @@ function createWindow() {
     win.loadURL('http://localhost:4200');
     win.webContents.openDevTools();
   } else {
-    win.loadURL(url.format({
-      pathname: path.join(__dirname, 'dist/index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
+    win.loadURL(
+      url.format({
+        pathname: path.join(__dirname, 'dist/index.html'),
+        protocol: 'file:',
+        slashes: true
+      })
+    );
   }
 
   // Emitted when the window is closed.
@@ -83,7 +87,6 @@ function createWindow() {
     // when you should delete the corresponding element.
     win = null;
   });
-
 }
 
 try {
@@ -119,7 +122,6 @@ try {
       createWindow();
     }
   });
-
 } catch (e) {
   Logger.error('Something went wrong in Electron.', e);
 }
