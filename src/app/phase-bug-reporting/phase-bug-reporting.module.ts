@@ -22,10 +22,6 @@ import { PhaseBugReportingComponent } from './phase-bug-reporting.component';
     IssueTablesModule,
     LabelDropdownModule
   ],
-  declarations: [
-    PhaseBugReportingComponent,
-    NewIssueComponent,
-    IssueComponent,
-  ],
+  declarations: [PhaseBugReportingComponent, NewIssueComponent, IssueComponent]
 })
 export class PhaseBugReportingModule {}

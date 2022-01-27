@@ -14,7 +14,6 @@ import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-t
 import { TesterResponse } from './tester-response.model';
 
 export class Issue {
-
   /** Basic Fields */
   readonly globalId: string;
   readonly id: number;
@@ -67,7 +66,7 @@ export class Issue {
 
     const newLinesRegex = /[\n\r]/gi;
     const textSplitArray = text.split(newLinesRegex);
-    if (textSplitArray.filter(split => split.trim() !== '').length > 0) {
+    if (textSplitArray.filter((split) => split.trim() !== '').length > 0) {
       return `${text}\n\n`;
     } else {
       return text;
@@ -137,6 +136,7 @@ export class Issue {
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
+
     return issue;
   }
 
@@ -255,8 +255,10 @@ export class Issue {
 
   // Template url: https://github.com/CATcher-org/templates#dev-response-phase
   createGithubTeamResponse(): string {
-    return `# Team\'s Response\n${this.teamResponse}\n` +
-      `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`;
+    return (
+      `# Team\'s Response\n${this.teamResponse}\n` +
+      `## Duplicate status (if any):\n${this.duplicateOf ? `Duplicate of #${this.duplicateOf}` : `--`}`
+    );
   }
 
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
@@ -270,8 +272,10 @@ export class Issue {
 
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   createGithubTesterResponse(): string {
-    return `# Team\'s Response\n${this.teamResponse}\n` +
-      `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`;
+    return (
+      `# Team\'s Response\n${this.teamResponse}\n` +
+      `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`
+    );
   }
 
   /**
@@ -298,34 +302,34 @@ export interface Issues {
   [id: number]: Issue;
 }
 
-export const SEVERITY_ORDER = { '-': 0 , VeryLow: 1, Low: 2, Medium: 3, High: 4 };
+export const SEVERITY_ORDER = { '-': 0, VeryLow: 1, Low: 2, Medium: 3, High: 4 };
 
-export const ISSUE_TYPE_ORDER = { '-': 0 , DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3  };
+export const ISSUE_TYPE_ORDER = { '-': 0, DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3 };
 
 export enum STATUS {
   Incomplete = 'Incomplete',
-  Done = 'Done',
+  Done = 'Done'
 }
 
 export const IssuesFilter = {
   phaseBugReporting: {
     Student: 'FILTER_BY_CREATOR',
     Tutor: 'NO_FILTER',
-    Admin: 'NO_FILTER',
+    Admin: 'NO_FILTER'
   },
   phaseTeamResponse: {
     Student: 'FILTER_BY_TEAM',
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
-    Admin: 'NO_FILTER',
+    Admin: 'NO_FILTER'
   },
   phaseTesterResponse: {
     Student: 'NO_FILTER',
     Tutor: 'NO_ACCESS',
-    Admin: 'NO_FILTER',
+    Admin: 'NO_FILTER'
   },
   phaseModeration: {
     Student: 'NO_ACCESS',
     Tutor: 'FILTER_BY_TEAM_ASSIGNED',
-    Admin: 'NO_FILTER',
+    Admin: 'NO_FILTER'
   }
 };

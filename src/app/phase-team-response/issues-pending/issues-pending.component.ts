@@ -27,8 +27,7 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
 
   @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
 
-  constructor(public issueService: IssueService,
-              public permissions: PermissionService, public userService: UserService) {
+  constructor(public issueService: IssueService, public permissions: PermissionService, public userService: UserService) {
     if (userService.currentUser.role !== UserRole.Student) {
       this.displayedColumns = [
         TABLE_COLUMNS.ID,

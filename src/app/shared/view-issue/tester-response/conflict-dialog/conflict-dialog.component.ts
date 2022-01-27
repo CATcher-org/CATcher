@@ -6,7 +6,6 @@ import { TesterResponse } from '../../../../core/models/tester-response.model';
 import { IssueService } from '../../../../core/services/issue.service';
 import { LabelService } from '../../../../core/services/label.service';
 
-
 export interface TesterResponseConflictData {
   outdatedResponses: TesterResponse[];
   updatedResponses: TesterResponse[];
@@ -31,11 +30,15 @@ export class ConflictDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: TesterResponseConflictData,
     private sanitizer: DomSanitizer,
     public labelService: LabelService,
-    public issueService: IssueService) {
-
+    public issueService: IssueService
+  ) {
     for (let i = 0; i < data.updatedResponses.length; i++) {
-      this.conflicts.push(new Conflict(data.outdatedResponses[i].getDisagreementWithoutDefaultResponse(),
-        data.updatedResponses[i].getDisagreementWithoutDefaultResponse()));
+      this.conflicts.push(
+        new Conflict(
+          data.outdatedResponses[i].getDisagreementWithoutDefaultResponse(),
+          data.updatedResponses[i].getDisagreementWithoutDefaultResponse()
+        )
+      );
       this.diffHtmls.push(this.sanitizer.bypassSecurityTrustHtml(this.conflicts[i].getHtmlDiffString()));
       this.updatedHtmls.push(this.sanitizer.bypassSecurityTrustHtml(this.conflicts[i].getHtmlUpdatedString()));
       this.panelOpenStates.push(data.outdatedResponses[i].compareTo(data.updatedResponses[i]) !== 0);

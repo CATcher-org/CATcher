@@ -7,8 +7,8 @@
 
 .title {
   color: black;
-  margin:0;
-  padding:30px 20px;
+  margin: 0;
+  padding: 30px 20px;
 }
 
 .mat-column-actions {
@@ -21,11 +21,11 @@
 }
 
 .mat-column-title {
-  width: 35%
+  width: 35%;
 }
 
 .mat-column-type {
-  width: 25%
+  width: 25%;
 }
 
 .mat-column-severity {

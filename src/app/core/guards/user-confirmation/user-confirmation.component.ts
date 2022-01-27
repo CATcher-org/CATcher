@@ -13,15 +13,11 @@ import { CanDeactivateIssueGuard } from '../can-deactivate-issue-guard.service';
   styleUrls: ['./user-confirmation.component.css']
 })
 export class UserConfirmationComponent implements OnInit {
-
   // Injection of a reference to Dialog from the Service that it is to be
   // displayed in.
-  constructor(public dialogRef: MatDialogRef<CanDeactivateIssueGuard>,
-    @Inject(MAT_DIALOG_DATA) public data,
-  ) { }
+  constructor(public dialogRef: MatDialogRef<CanDeactivateIssueGuard>, @Inject(MAT_DIALOG_DATA) public data) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   /**
    * Closes the dialog.
@@ -29,5 +25,4 @@ export class UserConfirmationComponent implements OnInit {
   onNoClick(): void {
     this.dialogRef.close(false);
   }
-
 }

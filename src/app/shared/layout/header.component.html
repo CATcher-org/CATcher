@@ -1,22 +1,33 @@
-<mat-toolbar color="primary" style="position: sticky; position: -webkit-sticky; top: 0; z-index: 1000;">
-  <button *ngIf="isBackButtonShown()" mat-icon-button class="mat-toolbar mat-primary back-button" style="transform: scale(0.9)" (click)="goBack()">
+<mat-toolbar color="primary" style="position: sticky; position: -webkit-sticky; top: 0; z-index: 1000">
+  <button
+    *ngIf="isBackButtonShown()"
+    mat-icon-button
+    class="mat-toolbar mat-primary back-button"
+    style="transform: scale(0.9)"
+    (click)="goBack()"
+  >
     <mat-icon>arrow_back_ios</mat-icon>
   </button>
-  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase">CATcher 
-    v{{this.getVersion()}}</a>
+  <a class="mat-toolbar mat-primary" style="text-decoration: none" [routerLink]="phaseService.currentPhase"
+    >CATcher v{{ this.getVersion() }}</a
+  >
   <span id="phase-descriptor" *ngIf="auth.isAuthenticated()" style="margin-left: 10px">
-    ({{this.getPhaseDescription(phaseService.currentPhase)}})
+    ({{ this.getPhaseDescription(phaseService.currentPhase) }})
   </span>
 
   <div *ngIf="auth.isAuthenticated() && this.phaseService.sessionData.openPhases.length > 1">
-    <button mat-button [matMenuTriggerFor]="menu"><mat-icon style="color: white;">expand_more</mat-icon></button>
+    <button mat-button [matMenuTriggerFor]="menu"><mat-icon style="color: white">expand_more</mat-icon></button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item *ngFor="let openPhase of this.phaseService.sessionData.openPhases"
-       (click)="this.routeToSelectedPhase(openPhase)">
+      <button
+        mat-menu-item
+        *ngFor="let openPhase of this.phaseService.sessionData.openPhases"
+        (click)="this.routeToSelectedPhase(openPhase)"
+      >
         <span>
-          <mat-icon [ngStyle]="{color: 'green',
-            visibility: this.phaseService.currentPhase === openPhase ? 'visible' : 'hidden'}">done</mat-icon>
-          {{this.getPhaseDescription(openPhase)}}
+          <mat-icon [ngStyle]="{ color: 'green', visibility: this.phaseService.currentPhase === openPhase ? 'visible' : 'hidden' }"
+            >done</mat-icon
+          >
+          {{ this.getPhaseDescription(openPhase) }}
         </span>
       </button>
     </mat-menu>
@@ -26,23 +37,31 @@
   <button mat-button matTooltip="Download CATcher Log" (click)="this.exportLogFile()">
     <mat-icon>receipt</mat-icon>
   </button>
-  <button *ngIf="auth.isAuthenticated() && isOpenUrlButtonShown()" mat-button matTooltip="View current page on GitHub" (click)="viewBrowser()">
+  <button
+    *ngIf="auth.isAuthenticated() && isOpenUrlButtonShown()"
+    mat-button
+    matTooltip="View current page on GitHub"
+    (click)="viewBrowser()"
+  >
     View on GitHub
     <mat-icon>open_in_new</mat-icon>
   </button>
-  <button *ngIf="auth.isAuthenticated() && isReloadButtonShown() && !this.isReloadButtonDisabled"
-    mat-button matTooltip="Synchronize with Github data" (click)="reload()">
+  <button
+    *ngIf="auth.isAuthenticated() && isReloadButtonShown() && !this.isReloadButtonDisabled"
+    mat-button
+    matTooltip="Synchronize with Github data"
+    (click)="reload()"
+  >
     Sync
     <mat-icon>refresh</mat-icon>
   </button>
   <div class="sync-spinner" *ngIf="auth.isAuthenticated() && isReloadButtonShown() && this.isReloadButtonDisabled">
-    <span style="font-size: 14px; margin-right: 7px;">Sync</span>
+    <span style="font-size: 14px; margin-right: 7px">Sync</span>
     <mat-spinner class="white-spinner" [diameter]="20"></mat-spinner>
   </div>
 
-  <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" 
-    (click)="openLogOutDialog(); $event.stopPropagation()">
-      ({{userService.currentUser.loginId}})
+  <button *ngIf="auth.isAuthenticated()" mat-button matTooltip="Log out" (click)="openLogOutDialog(); $event.stopPropagation()">
+    ({{ userService.currentUser.loginId }})
     <mat-icon style="margin-left: 2px">exit_to_app</mat-icon>
   </button>
 </mat-toolbar>

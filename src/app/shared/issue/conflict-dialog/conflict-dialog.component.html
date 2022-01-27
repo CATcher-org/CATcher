@@ -1,7 +1,12 @@
 <div style="display: flex; margin-bottom: 20px; align-items: center">
-  <h1 mat-dialog-title style="margin: 0">{{ 'The content you are editing has changed'}}</h1>
-  <mat-slide-toggle *ngIf="!isOnPreview" style="display: inline-block; margin-left: 50px"
-                    color="primary" [checked]="showDiff" (change)="handleChangeShowDiff()">
+  <h1 mat-dialog-title style="margin: 0">{{ 'The content you are editing has changed' }}</h1>
+  <mat-slide-toggle
+    *ngIf="!isOnPreview"
+    style="display: inline-block; margin-left: 50px"
+    color="primary"
+    [checked]="showDiff"
+    (change)="handleChangeShowDiff()"
+  >
     Show Difference
   </mat-slide-toggle>
   <button mat-icon-button color="default" style="margin: 0 0 0 auto" (click)="close()">
@@ -9,7 +14,7 @@
   </button>
 </div>
 
-<div mat-dialog-content style="display: flex;">
+<div mat-dialog-content style="display: flex">
   <div class="full-width">
     <mat-tab-group class="mat-elevation-z1" animationDuration="0ms" (selectedTabChange)="handleTabChange($event)">
       <mat-tab label="Markdown Text">
@@ -20,7 +25,7 @@
       </mat-tab>
       <mat-tab label="Preview Updated Content">
         <div class="tab-content">
-          <markdown>{{data.updatedContent}}</markdown>
+          <markdown>{{ data.updatedContent }}</markdown>
         </div>
       </mat-tab>
     </mat-tab-group>

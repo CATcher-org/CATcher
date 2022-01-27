@@ -16,7 +16,7 @@ import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 @Component({
   selector: 'app-team-response',
   templateUrl: './team-response.component.html',
-  styleUrls: ['./team-response.component.css'],
+  styleUrls: ['./team-response.component.css']
 })
 export class TeamResponseComponent implements OnInit {
   isSavePending = false;
@@ -30,17 +30,18 @@ export class TeamResponseComponent implements OnInit {
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
 
-  constructor(private issueService: IssueService,
-              private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              private permissions: PermissionService,
-              private dialog: MatDialog,
-              private phaseService: PhaseService) {
-  }
+  constructor(
+    private issueService: IssueService,
+    private formBuilder: FormBuilder,
+    private errorHandlingService: ErrorHandlingService,
+    private permissions: PermissionService,
+    private dialog: MatDialog,
+    private phaseService: PhaseService
+  ) {}
 
   ngOnInit() {
     this.responseForm = this.formBuilder.group({
-      description: [''],
+      description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
   }
@@ -48,7 +49,7 @@ export class TeamResponseComponent implements OnInit {
   changeToEditMode() {
     this.updateEditState.emit(true);
     this.responseForm.setValue({
-      description: this.issue.teamResponse || '',
+      description: this.issue.teamResponse || ''
     });
   }
 
@@ -61,30 +62,35 @@ export class TeamResponseComponent implements OnInit {
     const updatedIssue = this.getUpdatedIssue();
     const updatedIssueComment = <IssueComment>{
       ...updatedIssue.issueComment,
-      description: updatedIssue.createGithubTeamResponse(),
+      description: updatedIssue.createGithubTeamResponse()
     };
 
-    this.isSafeToUpdate().pipe(
-      flatMap((isSaveToUpdate: boolean) => {
-        if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
-          return this.issueService.updateIssueWithComment(updatedIssue, updatedIssueComment);
-        } else if (this.isUpdatingDeletedResponse()) {
-          return this.issueService.createTeamResponse(updatedIssue);
-        } else {
-          this.conflict = new Conflict(this.issue.teamResponse, this.issueService.issues[this.issue.id].teamResponse);
-          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
-          this.viewChanges();
-          return throwError('The content you are editing has changed. Please verify the changes and try again.');
+    this.isSafeToUpdate()
+      .pipe(
+        flatMap((isSaveToUpdate: boolean) => {
+          if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+            return this.issueService.updateIssueWithComment(updatedIssue, updatedIssueComment);
+          } else if (this.isUpdatingDeletedResponse()) {
+            return this.issueService.createTeamResponse(updatedIssue);
+          } else {
+            this.conflict = new Conflict(this.issue.teamResponse, this.issueService.issues[this.issue.id].teamResponse);
+            this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+            this.viewChanges();
+            return throwError('The content you are editing has changed. Please verify the changes and try again.');
+          }
+        }),
+        finalize(() => (this.isSavePending = false))
+      )
+      .subscribe(
+        (updatedIssue: Issue) => {
+          this.issueUpdated.emit(updatedIssue);
+          this.resetToDefault();
+          form.resetForm();
+        },
+        (error) => {
+          this.errorHandlingService.handleError(error);
         }
-      }),
-      finalize(() => this.isSavePending = false)
-    ).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(updatedIssue);
-      this.resetToDefault();
-      form.resetForm();
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+      );
   }
 
   /**

@@ -3,10 +3,9 @@ import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
 import { Header, Template } from './template.model';
 
-
 const tutorModerationIssueDescriptionHeaders = {
   description: new Header('Issue Description', 1),
-  teamResponse: new Header('Team\'s Response', 1),
+  teamResponse: new Header("Team's Response", 1),
   disputes: new Header('Disputes', 1)
 };
 

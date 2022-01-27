@@ -12,12 +12,7 @@ export interface RepositoryData {
   styleUrls: ['./session-fix-confirmation.component.css']
 })
 export class SessionFixConfirmationComponent implements OnInit {
+  constructor(public dialogRef: MatDialogRef<SessionFixConfirmationComponent>, @Inject(MAT_DIALOG_DATA) public data: RepositoryData) {}
 
-  constructor(
-    public dialogRef: MatDialogRef<SessionFixConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: RepositoryData) {}
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

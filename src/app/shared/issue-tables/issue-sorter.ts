@@ -3,10 +3,10 @@ import { Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER } from '../../core/models/issue
 
 export function getSortedData(sort: MatSort, data: Issue[]): Issue[] {
   if (!sort.active) {
-      return data;
+    return data;
   }
 
-  const direction: number = (sort.direction === 'asc' ? 1 : -1);
+  const direction: number = sort.direction === 'asc' ? 1 : -1;
 
   return data.sort((a, b) => {
     switch (sort.active) {
@@ -22,7 +22,8 @@ export function getSortedData(sort: MatSort, data: Issue[]): Issue[] {
         return -direction * compareByIntegerValue(a.numOfUnresolvedDisputes(), b.numOfUnresolvedDisputes());
       case 'id':
         return direction * compareByIntegerValue(a.id, b.id);
-      default: // title, responseTag are string values
+      default:
+        // title, responseTag are string values
         return direction * compareByStringValue(a[sort.active], b[sort.active]);
     }
   });
@@ -45,9 +46,9 @@ function compareByIssueType(issueTypeA: string, issueTypeB: string): number {
 function compareByStringValue(valueA: string, valueB: string): number {
   const orderA = String(valueA || '').toUpperCase();
   const orderB = String(valueB || '').toUpperCase();
-  return (orderA < orderB ? -1 : 1);
+  return orderA < orderB ? -1 : 1;
 }
 
 function compareByIntegerValue(valueA: number, valueB: number): number {
-  return (valueA < valueB ? -1 : 1);
+  return valueA < valueB ? -1 : 1;
 }

@@ -25,7 +25,7 @@ export enum ISSUE_COMPONENTS {
 export const SUBMIT_BUTTON_TEXT = {
   SUBMIT: 'Submit',
   SAVE: 'Save',
-  OVERWRITE: 'Overwrite',
+  OVERWRITE: 'Overwrite'
 };
 
 @Component({
@@ -48,11 +48,13 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   public readonly issueComponentsEnum = ISSUE_COMPONENTS;
   public readonly userRole = UserRole;
 
-  constructor(private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService,
-              public userService: UserService,
-              public issueService: IssueService,
-              private phaseService: PhaseService) { }
+  constructor(
+    private errorHandlingService: ErrorHandlingService,
+    public permissions: PermissionService,
+    public userService: UserService,
+    public issueService: IssueService,
+    private phaseService: PhaseService
+  ) {}
 
   ngOnInit() {
     this.getAndPollIssue(this.issueId);
@@ -115,21 +117,28 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private pollIssue(id: number): void {
-    this.issueSubscription = this.issueService.pollIssue(id).subscribe((issue: Issue) => {
-      const updatedIssue = issue.clone(this.phaseService.currentPhase);
-      if (!this.isIssueLoading) {
-        // prevent updating of respective attributes while editing
-        if (this.isIssueDescriptionEditing ||
-            (this.isTeamResponseEditing || (!this.issue.teamResponse && updatedIssue.teamResponse)) ||
-            this.isTesterResponseEditing || this.isTutorResponseEditing) {
-          updatedIssue.retainResponses(this.phaseService.currentPhase, this.issue);
+    this.issueSubscription = this.issueService.pollIssue(id).subscribe(
+      (issue: Issue) => {
+        const updatedIssue = issue.clone(this.phaseService.currentPhase);
+        if (!this.isIssueLoading) {
+          // prevent updating of respective attributes while editing
+          if (
+            this.isIssueDescriptionEditing ||
+            this.isTeamResponseEditing ||
+            (!this.issue.teamResponse && updatedIssue.teamResponse) ||
+            this.isTesterResponseEditing ||
+            this.isTutorResponseEditing
+          ) {
+            updatedIssue.retainResponses(this.phaseService.currentPhase, this.issue);
+          }
         }
+        this.issue = updatedIssue;
+        this.isIssueLoading = false;
+      },
+      (error) => {
+        this.errorHandlingService.handleError(error, () => this.pollIssue(id));
       }
-      this.issue = updatedIssue;
-      this.isIssueLoading = false;
-    }, (error) => {
-      this.errorHandlingService.handleError(error, () => this.pollIssue(id));
-    });
+    );
   }
 
   private stopPolling(): void {

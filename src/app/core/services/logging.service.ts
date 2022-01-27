@@ -4,7 +4,6 @@ import { AppConfig } from '../../../environments/environment';
 import { downloadAsTextFile } from '../../shared/lib/file-download';
 import { ElectronService } from './electron.service';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -66,9 +65,10 @@ export class LoggingService {
     const logHeaderWithDateTime = `${this.LOG_START_HEADER}\n${currentDateTime}`;
 
     // Check if Trimming is Necessary
-    const numberOfSessions: number = currentLog == null ? 0 : currentLog.split('\n')
-      .filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER))
-      .length;
+    const numberOfSessions: number =
+      currentLog == null
+        ? 0
+        : currentLog.split('\n').filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER)).length;
 
     if (numberOfSessions === 0) {
       return logHeaderWithDateTime;
@@ -78,7 +78,8 @@ export class LoggingService {
       return `${currentLog}${this.SESSION_LOG_SEPARATOR}${logHeaderWithDateTime}`;
     }
 
-    const separatedSessionLogs: string[] = currentLog.split(`${this.LOG_START_HEADER}`)
+    const separatedSessionLogs: string[] = currentLog
+      .split(`${this.LOG_START_HEADER}`)
       .filter((line: string) => !!line)
       .map((line: string) => `${this.LOG_START_HEADER}\n${line.trim()}`);
 
@@ -96,7 +97,7 @@ export class LoggingService {
     localStorage.setItem(this.LOG_KEY, updatedLog);
   }
 
-  private updateLog(... updatedLog: any[]): void {
+  private updateLog(...updatedLog: any[]): void {
     this.setCachedLog(`${this.getCachedLog()}\n${updatedLog.toString()}`);
   }
 

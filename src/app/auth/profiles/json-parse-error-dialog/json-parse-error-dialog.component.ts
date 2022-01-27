@@ -13,11 +13,9 @@ import { ProfilesComponent } from '../profiles.component';
   styleUrls: ['./json-parse-error-dialog.component.css']
 })
 export class JsonParseErrorDialogComponent implements OnInit {
+  constructor(public dialogRef: MatDialogRef<ProfilesComponent>) {}
 
-  constructor(public dialogRef: MatDialogRef<ProfilesComponent>) { }
-
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   /**
    * Closes the Dialog
@@ -25,5 +23,4 @@ export class JsonParseErrorDialogComponent implements OnInit {
   onClick(): void {
     this.dialogRef.close();
   }
-
 }

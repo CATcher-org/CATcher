@@ -13,12 +13,8 @@ import { TesterResponseModule } from './tester-response/tester-response.module';
 import { ViewIssueComponent } from './view-issue.component';
 
 @NgModule({
-  exports: [
-    ViewIssueComponent
-  ],
-  declarations: [
-    ViewIssueComponent
-  ],
+  exports: [ViewIssueComponent],
+  declarations: [ViewIssueComponent],
   imports: [
     CommonModule,
     CommentEditorModule,
@@ -30,7 +26,7 @@ import { ViewIssueComponent } from './view-issue.component';
     SharedModule,
     IssueComponentsModule,
     LabelDropdownModule,
-    MarkdownModule.forChild(),
+    MarkdownModule.forChild()
   ]
 })
-export class ViewIssueModule { }
+export class ViewIssueModule {}

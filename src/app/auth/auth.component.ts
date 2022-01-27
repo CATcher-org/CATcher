@@ -15,7 +15,7 @@ import { LoggingService } from '../core/services/logging.service';
 import { PhaseService } from '../core/services/phase.service';
 import { UserService } from '../core/services/user.service';
 
-const APPLICATION_VERSION_OUTDATED_ERROR = "Please update to the latest version of CATcher.";
+const APPLICATION_VERSION_OUTDATED_ERROR = 'Please update to the latest version of CATcher.';
 
 @Component({
   selector: 'app-auth',
@@ -33,21 +33,21 @@ export class AuthComponent implements OnInit, OnDestroy {
   currentUserName: string;
   urlEncodedSessionName: string;
 
-  constructor(public appService: ApplicationService,
-              public electronService: ElectronService,
-              private githubService: GithubService,
-              private authService: AuthService,
-              private userService: UserService,
-              private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              private router: Router,
-              private phaseService: PhaseService,
-              private ngZone: NgZone,
-              private activatedRoute: ActivatedRoute,
-              private logger: LoggingService
+  constructor(
+    public appService: ApplicationService,
+    public electronService: ElectronService,
+    private githubService: GithubService,
+    private authService: AuthService,
+    private userService: UserService,
+    private formBuilder: FormBuilder,
+    private errorHandlingService: ErrorHandlingService,
+    private router: Router,
+    private phaseService: PhaseService,
+    private ngZone: NgZone,
+    private activatedRoute: ActivatedRoute,
+    private logger: LoggingService
   ) {
-    this.electronService.registerIpcListener('github-oauth-reply',
-      (event, {token, error, isWindowClosed}) => {
+    this.electronService.registerIpcListener('github-oauth-reply', (event, { token, error, isWindowClosed }) => {
       this.ngZone.run(() => {
         if (error) {
           if (!isWindowClosed) {
@@ -78,7 +78,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.initAuthStateSubscription();
     this.initProfileForm();
     this.createProfileFromUrlQueryParams();
-    if (oauthCode) { // runs upon receiving oauthCode from the redirect
+    if (oauthCode) {
+      // runs upon receiving oauthCode from the redirect
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.restoreOrgDetailsFromLocalStorage();
       this.logger.info('Obtained authorisation code from Github');
@@ -100,16 +101,16 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.logger.info('Retrieving access token from Github');
 
     const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
-    fetch(accessTokenUrl).then(res => res.json())
-      .then(data => {
-          if (data.error) {
-            throw(new Error(data.error));
-          }
-          this.authService.storeOAuthAccessToken(data.token);
-          this.logger.info('Sucessfully obtained access token');
+    fetch(accessTokenUrl)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.error);
         }
-      )
-      .catch(err => {
+        this.authService.storeOAuthAccessToken(data.token);
+        this.logger.info('Sucessfully obtained access token');
+      })
+      .catch((err) => {
         this.logger.info(`Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
@@ -135,7 +136,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         if (isOutdated) {
           throw new Error(APPLICATION_VERSION_OUTDATED_ERROR);
         }
-      }),
+      })
     );
   }
 
@@ -162,17 +163,21 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
 
-    this.phaseService.storeSessionData().subscribe(() => {
-      try {
-        this.authService.startOAuthProcess();
-      } catch (error) {
+    this.phaseService.storeSessionData().subscribe(
+      () => {
+        try {
+          this.authService.startOAuthProcess();
+        } catch (error) {
+          this.errorHandlingService.handleError(error);
+          this.authService.changeAuthState(AuthState.NotAuthenticated);
+        }
+      },
+      (error) => {
         this.errorHandlingService.handleError(error);
-        this.authService.changeAuthState(AuthState.NotAuthenticated);
-      }
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-      this.isSettingUpSession = false;
-    }, () => this.isSettingUpSession = false);
+        this.isSettingUpSession = false;
+      },
+      () => (this.isSettingUpSession = false)
+    );
   }
 
   goToSessionSelect() {
@@ -229,7 +234,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   private initProfileForm() {
     this.profileForm = this.formBuilder.group({
-      session: ['', Validators.required],
+      session: ['', Validators.required]
     });
   }
 
@@ -242,15 +247,17 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   private initAccessTokenSubscription() {
-    this.accessTokenSubscription = this.authService.accessToken.pipe(
-      filter((token: string) => !!token),
-      flatMap(() => this.userService.getAuthenticatedUser())
-    ).subscribe((user: GithubUser) => {
-      this.ngZone.run(() => {
-        this.currentUserName = user.login;
-        this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
+    this.accessTokenSubscription = this.authService.accessToken
+      .pipe(
+        filter((token: string) => !!token),
+        flatMap(() => this.userService.getAuthenticatedUser())
+      )
+      .subscribe((user: GithubUser) => {
+        this.ngZone.run(() => {
+          this.currentUserName = user.login;
+          this.authService.changeAuthState(AuthState.ConfirmOAuthUser);
+        });
       });
-    });
   }
 
   private createProfileFromUrlQueryParams() {

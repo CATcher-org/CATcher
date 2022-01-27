@@ -7,8 +7,8 @@
 
 .title {
   color: black;
-  margin:0;
-  padding:30px 20px;
+  margin: 0;
+  padding: 30px 20px;
 }
 
 .mat-column-id {
@@ -20,23 +20,23 @@
 }
 
 .mat-column-type {
-  width: 15%
+  width: 15%;
 }
 
 .mat-column-severity {
   width: 10%;
 }
 .mat-column-responseTag {
-  width: 10%
+  width: 10%;
 }
 .mat-column-assignees {
-  width: 10%
+  width: 10%;
 }
 .mat-column-teamAssigned {
-  width: 7%
+  width: 7%;
 }
 .mat-column-duplicatedIssues {
-  width: 10%
+  width: 10%;
 }
 .mat-column-actions {
   width: 15%;

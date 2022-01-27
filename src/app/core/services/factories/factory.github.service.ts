@@ -7,7 +7,7 @@ import { MockGithubService } from '../mocks/mock.github.service';
 
 export function GithubServiceFactory(handling: ErrorHandlingService, apollo: Apollo, electron: ElectronService) {
   if (AppConfig.test) {
-      return new MockGithubService();
+    return new MockGithubService();
   }
   return new GithubService(handling, apollo, electron);
 }

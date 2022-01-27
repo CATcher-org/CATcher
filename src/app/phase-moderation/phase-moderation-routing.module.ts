@@ -9,7 +9,7 @@ const routes: Routes = [
   {
     path: 'phaseModeration',
     component: PhaseModerationComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard]
   },
   {
     path: 'phaseModeration/issues/:issue_id',

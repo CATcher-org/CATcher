@@ -11,7 +11,7 @@ import { PhaseService } from '../../../core/services/phase.service';
 @Component({
   selector: 'app-issue-title',
   templateUrl: './title.component.html',
-  styleUrls: ['./title.component.css'],
+  styleUrls: ['./title.component.css']
 })
 export class TitleComponent implements OnInit {
   isEditing = false;
@@ -26,17 +26,18 @@ export class TitleComponent implements OnInit {
   private readonly yesButtonModalMessage = 'Cancel';
   private readonly noButtonModalMessage = 'Continue editing';
 
-  constructor(private issueService: IssueService,
-              private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService,
-              public permissions: PermissionService,
-              public phaseService: PhaseService,
-              private dialogService: DialogService) {
-  }
+  constructor(
+    private issueService: IssueService,
+    private formBuilder: FormBuilder,
+    private errorHandlingService: ErrorHandlingService,
+    public permissions: PermissionService,
+    public phaseService: PhaseService,
+    private dialogService: DialogService
+  ) {}
 
   ngOnInit() {
     this.issueTitleForm = this.formBuilder.group({
-      title: new FormControl('', [Validators.required, Validators.maxLength(256)]),
+      title: new FormControl('', [Validators.required, Validators.maxLength(256)])
     });
   }
 
@@ -59,23 +60,33 @@ export class TitleComponent implements OnInit {
     this.isSavePending = true;
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     newIssue.title = this.issueTitleForm.get('title').value;
-    this.issueService.updateIssue(newIssue).pipe(finalize(() => {
-      this.isEditing = false;
-      this.isSavePending = false;
-    })).subscribe((editedIssue: Issue) => {
-      this.issueUpdated.emit(editedIssue);
-      form.resetForm();
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+    this.issueService
+      .updateIssue(newIssue)
+      .pipe(
+        finalize(() => {
+          this.isEditing = false;
+          this.isSavePending = false;
+        })
+      )
+      .subscribe(
+        (editedIssue: Issue) => {
+          this.issueUpdated.emit(editedIssue);
+          form.resetForm();
+        },
+        (error) => {
+          this.errorHandlingService.handleError(error);
+        }
+      );
   }
 
   openCancelDialog(): void {
     const dialogRef = this.dialogService.openUserConfirmationModal(
-      this.cancelEditModalMessages, this.yesButtonModalMessage, this.noButtonModalMessage
+      this.cancelEditModalMessages,
+      this.yesButtonModalMessage,
+      this.noButtonModalMessage
     );
 
-    dialogRef.afterClosed().subscribe(res => {
+    dialogRef.afterClosed().subscribe((res) => {
       if (res) {
         this.cancelEditMode();
       }
