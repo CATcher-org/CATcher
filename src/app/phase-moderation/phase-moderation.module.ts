@@ -17,11 +17,8 @@ import { PhaseModerationComponent } from './phase-moderation.component';
     CommentEditorModule,
     ViewIssueModule,
     MarkdownModule.forChild(),
-    IssueTablesModule,
+    IssueTablesModule
   ],
-  declarations: [
-    PhaseModerationComponent,
-    IssueComponent,
-  ],
+  declarations: [PhaseModerationComponent, IssueComponent]
 })
 export class PhaseModerationModule {}

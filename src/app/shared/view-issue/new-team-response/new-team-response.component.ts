@@ -32,12 +32,14 @@ export class NewTeamResponseComponent implements OnInit {
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(public issueService: IssueService,
-              private formBuilder: FormBuilder,
-              public labelService: LabelService,
-              private errorHandlingService: ErrorHandlingService,
-              private dialog: MatDialog,
-              private phaseService: PhaseService) { }
+  constructor(
+    public issueService: IssueService,
+    private formBuilder: FormBuilder,
+    public labelService: LabelService,
+    private errorHandlingService: ErrorHandlingService,
+    private dialog: MatDialog,
+    private phaseService: PhaseService
+  ) {}
 
   ngOnInit() {
     this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
@@ -49,11 +51,11 @@ export class NewTeamResponseComponent implements OnInit {
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
       responseTag: [this.issue.responseTag, Validators.required],
-      assignees: [this.issue.assignees.map(a => a.toLowerCase())],
+      assignees: [this.issue.assignees.map((a) => a.toLowerCase())],
       duplicated: [false],
       duplicateOf: ['']
     });
-    this.duplicated.valueChanges.subscribe(checked => {
+    this.duplicated.valueChanges.subscribe((checked) => {
       if (checked) {
         this.duplicateOf.setValidators(Validators.required);
         this.responseTag.setValidators(null);
@@ -74,32 +76,37 @@ export class NewTeamResponseComponent implements OnInit {
     this.isFormPending = true;
     const latestIssue = this.getUpdatedIssue();
 
-    this.isSafeToSubmit().pipe(
-      flatMap((isSaveToSubmit: boolean) => {
-        const newCommentDescription = latestIssue.createGithubTeamResponse();
-        if (isSaveToSubmit) {
-          return this.issueService.createTeamResponse(latestIssue);
-        } else if (this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
-          const issueCommentId = this.issueService.issues[this.issue.id].issueComment.id;
-          return this.issueService.updateIssueWithComment(latestIssue, <IssueComment>{
-            id: issueCommentId,
-            description: newCommentDescription,
-          });
-        } else {
-          this.conflict = new Conflict(' ', this.issueService.issues[this.issue.id].teamResponse);
-          this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
-          this.viewUpdatedResponse();
-          return throwError('A response has been submitted. Please verify the changes and try again.');
+    this.isSafeToSubmit()
+      .pipe(
+        flatMap((isSaveToSubmit: boolean) => {
+          const newCommentDescription = latestIssue.createGithubTeamResponse();
+          if (isSaveToSubmit) {
+            return this.issueService.createTeamResponse(latestIssue);
+          } else if (this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
+            const issueCommentId = this.issueService.issues[this.issue.id].issueComment.id;
+            return this.issueService.updateIssueWithComment(latestIssue, <IssueComment>{
+              id: issueCommentId,
+              description: newCommentDescription
+            });
+          } else {
+            this.conflict = new Conflict(' ', this.issueService.issues[this.issue.id].teamResponse);
+            this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;
+            this.viewUpdatedResponse();
+            return throwError('A response has been submitted. Please verify the changes and try again.');
+          }
+        }),
+        finalize(() => (this.isFormPending = false))
+      )
+      .subscribe(
+        (updatedIssue: Issue) => {
+          // updatedIssue.issueComment = updatedComment;
+          this.issueUpdated.emit(updatedIssue);
+          form.resetForm();
+        },
+        (error) => {
+          this.errorHandlingService.handleError(error);
         }
-      }),
-      finalize(() => this.isFormPending = false)
-    ).subscribe((updatedIssue: Issue) => {
-      // updatedIssue.issueComment = updatedComment;
-      this.issueUpdated.emit(updatedIssue);
-      form.resetForm();
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+      );
   }
 
   /**
@@ -138,7 +145,7 @@ export class NewTeamResponseComponent implements OnInit {
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
-    return SEVERITY_ORDER[this.severity.value] > SEVERITY_ORDER[issue.severity] || (issue.duplicated || !!issue.duplicateOf);
+    return SEVERITY_ORDER[this.severity.value] > SEVERITY_ORDER[issue.severity] || issue.duplicated || !!issue.duplicateOf;
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
@@ -180,11 +187,13 @@ export class NewTeamResponseComponent implements OnInit {
   }
 
   private getDupIssueList(): Observable<Issue[]> {
-    return this.issueService.issues$.pipe(map((issues) => {
-      return issues.filter((issue) => {
-        return this.issue.id !== issue.id;
-      });
-    }));
+    return this.issueService.issues$.pipe(
+      map((issues) => {
+        return issues.filter((issue) => {
+          return this.issue.id !== issue.id;
+        });
+      })
+    );
   }
 
   get description() {

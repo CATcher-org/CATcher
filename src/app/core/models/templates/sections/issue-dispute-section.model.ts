@@ -9,7 +9,7 @@ export class IssueDisputeSection extends Section {
     if (!this.parseError) {
       let matches;
       const regex = /#{2} *:question: *(.*)[\r\n]*([\s\S]*?(?=-{19}))/gi;
-      while (matches = regex.exec(this.content)) {
+      while ((matches = regex.exec(this.content))) {
         if (matches) {
           const [_regexString, title, description] = matches;
           this.disputes.push(new IssueDispute(title, description.trim()));

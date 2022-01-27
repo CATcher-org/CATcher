@@ -27,15 +27,16 @@ export class AssigneeComponent implements OnInit {
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
-  constructor(private issueService: IssueService,
-              private errorHandlingService: ErrorHandlingService,
-              private phaseService: PhaseService,
-              public permissions: PermissionService) {
-  }
+  constructor(
+    private issueService: IssueService,
+    private errorHandlingService: ErrorHandlingService,
+    private phaseService: PhaseService,
+    public permissions: PermissionService
+  ) {}
 
   ngOnInit(): void {
     this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
-    this.assignees = this.issue.assignees.map(a => a.toLowerCase());
+    this.assignees = this.issue.assignees.map((a) => a.toLowerCase());
   }
 
   openSelector() {
@@ -52,18 +53,24 @@ export class AssigneeComponent implements OnInit {
   updateAssignee(): void {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     newIssue.assignees = this.assignees;
-    this.issueService.updateIssue(newIssue).subscribe((updatedIssue: Issue) => {
-      this.issueUpdated.emit(updatedIssue);
-    }, (error) => {
-      this.errorHandlingService.handleError(error);
-    });
+    this.issueService.updateIssue(newIssue).subscribe(
+      (updatedIssue: Issue) => {
+        this.issueUpdated.emit(updatedIssue);
+      },
+      (error) => {
+        this.errorHandlingService.handleError(error);
+      }
+    );
     // Update assignees of duplicate issues
-    this.issueService.getDuplicateIssuesFor(this.issue).pipe(first()).subscribe((issues: Issue[]) => {
-      issues.forEach((issue: Issue) => {
-        const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
-        newDuplicateIssue.assignees = this.assignees;
-        this.issueService.updateIssue(newDuplicateIssue);
+    this.issueService
+      .getDuplicateIssuesFor(this.issue)
+      .pipe(first())
+      .subscribe((issues: Issue[]) => {
+        issues.forEach((issue: Issue) => {
+          const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
+          newDuplicateIssue.assignees = this.assignees;
+          this.issueService.updateIssue(newDuplicateIssue);
+        });
       });
-    });
   }
 }

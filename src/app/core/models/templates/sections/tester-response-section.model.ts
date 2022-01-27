@@ -26,7 +26,7 @@ export class TesterResponseSection extends Section {
     if (!this.parseError) {
       let matches;
       const regex: RegExp = new RegExp([matchTitle, matchDescription, matchDisagreement].join('[\\r\\n]*') + matchLinebreak, 'gi');
-      while (matches = regex.exec(this.content)) {
+      while ((matches = regex.exec(this.content))) {
         if (matches) {
           const [_, title, description, disagreeCheckbox, reasonForDisagreement] = matches;
 
@@ -36,8 +36,15 @@ export class TesterResponseSection extends Section {
             this.teamChosenType = this.parseTeamChosenType(description);
           }
 
-          this.testerResponses.push(new TesterResponse(title, description, this.parseCheckboxDescription(disagreeCheckbox),
-            this.parseCheckboxValue(disagreeCheckbox), reasonForDisagreement.trim()));
+          this.testerResponses.push(
+            new TesterResponse(
+              title,
+              description,
+              this.parseCheckboxDescription(disagreeCheckbox),
+              this.parseCheckboxValue(disagreeCheckbox),
+              reasonForDisagreement.trim()
+            )
+          );
         }
       }
     }
@@ -60,13 +67,15 @@ export class TesterResponseSection extends Section {
   }
 
   parseTeamChosenSeverity(description: string): string {
-    return extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_SEVERITY_VALUE_PREFIX,
-      this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
+    return extractStringBetween(
+      description,
+      this.TEAM_RESPONSE_DESCRIPTION_SEVERITY_VALUE_PREFIX,
+      this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX
+    );
   }
 
   parseTeamChosenType(description: string): string {
-    return extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX,
-      this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
+    return extractStringBetween(description, this.TEAM_RESPONSE_DESCRIPTION_TYPE_VALUE_PREFIX, this.TEAM_RESPONSE_DESCRIPTION_VALUE_SUFFIX);
   }
 
   parseCheckboxValue(checkboxString: string): boolean {

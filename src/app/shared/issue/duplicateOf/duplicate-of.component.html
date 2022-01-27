@@ -1,27 +1,51 @@
 <div>
-  <mat-checkbox [disabled]="!permissions.isTeamResponseEditable() && !permissions.isTutorResponseEditable()" labelPosition="after" [checked]="issue.duplicated" (change)="handleCheckboxChange($event)">
+  <mat-checkbox
+    [disabled]="!permissions.isTeamResponseEditable() && !permissions.isTutorResponseEditable()"
+    labelPosition="after"
+    [checked]="issue.duplicated"
+    (change)="handleCheckboxChange($event)"
+  >
     <span class="mat-title">A Duplicate Of:</span>
   </mat-checkbox>
-  <button *ngIf="permissions.isIssueLabelsEditable()" [style.visibility]="issue.duplicated ? 'inherit' : 'hidden'" style="float: right" (click)="openSelection()" mat-icon-button>
+  <button
+    *ngIf="permissions.isIssueLabelsEditable()"
+    [style.visibility]="issue.duplicated ? 'inherit' : 'hidden'"
+    style="float: right"
+    (click)="openSelection()"
+    mat-icon-button
+  >
     <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
   </button>
 
-  <mat-select [style.display]="isEditing ? 'block' : 'none'" class="no-arrow" placeholder="-" [value]="issue.duplicateOf"
-              (selectionChange)="updateDuplicateStatus($event)" (openedChange)="handleSelectionOpenChange($event)">
+  <mat-select
+    [style.display]="isEditing ? 'block' : 'none'"
+    class="no-arrow"
+    placeholder="-"
+    [value]="issue.duplicateOf"
+    (selectionChange)="updateDuplicateStatus($event)"
+    (openedChange)="handleSelectionOpenChange($event)"
+  >
     <mat-select-trigger></mat-select-trigger>
-    <mat-option [matTooltip]="issue.title" [matTooltipDisabled]="!isTooltipNecessary(issue)" [matTooltipPosition]="'left'"
-                *ngFor="let issue of duplicatedIssueList | async" [disabled]="dupIssueOptionIsDisabled(issue)"
-                [value]="issue.id">
-      <div class="duplicate-dropdown-issuedetails" [ngStyle]="{'width': dupIssueOptionIsDisabled(issue) ? '150px' : 'auto'}">
-        <span class="mat-body-strong"> #{{issue.id}}: </span>  <span class="mat-body">{{issue.title}}</span>
+    <mat-option
+      [matTooltip]="issue.title"
+      [matTooltipDisabled]="!isTooltipNecessary(issue)"
+      [matTooltipPosition]="'left'"
+      *ngFor="let issue of duplicatedIssueList | async"
+      [disabled]="dupIssueOptionIsDisabled(issue)"
+      [value]="issue.id"
+    >
+      <div class="duplicate-dropdown-issuedetails" [ngStyle]="{ width: dupIssueOptionIsDisabled(issue) ? '150px' : 'auto' }">
+        <span class="mat-body-strong"> #{{ issue.id }}: </span> <span class="mat-body">{{ issue.title }}</span>
       </div>
-      <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="display: inline-block; color: #f44336"> ({{getDisabledDupOptionErrorText(issue)}}) </span>
+      <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="display: inline-block; color: #f44336">
+        ({{ getDisabledDupOptionErrorText(issue) }})
+      </span>
     </mat-option>
   </mat-select>
 
   <div>
     <span *ngIf="issue.duplicated" style="margin-top: 5px">
-      {{ issue.duplicateOf ? ('#' + issue.duplicateOf + ': ' + (issueService.getIssue(issue.duplicateOf) | async).title) : 'Not specified'}}
+      {{ issue.duplicateOf ? '#' + issue.duplicateOf + ': ' + (issueService.getIssue(issue.duplicateOf) | async).title : 'Not specified' }}
     </span>
     <span *ngIf="!issue.duplicated" style="margin-top: 5px"> - </span>
   </div>

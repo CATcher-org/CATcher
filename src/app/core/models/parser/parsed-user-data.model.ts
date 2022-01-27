@@ -3,4 +3,3 @@ export interface ParsedUserData {
   name?: string;
   team?: string;
 }
-

@@ -26,8 +26,8 @@ export class Section {
   constructor(sectionalDependency: SectionalDependency, unprocessedContent: string) {
     this.header = sectionalDependency.sectionHeader;
     // If length === 0, match till end of string else match till regex hits another section
-    const matchTillRegex = sectionalDependency.remainingTemplateHeaders.length === 0 ? '$'
-      : sectionalDependency.remainingTemplateHeaders.join('|');
+    const matchTillRegex =
+      sectionalDependency.remainingTemplateHeaders.length === 0 ? '$' : sectionalDependency.remainingTemplateHeaders.join('|');
     this.sectionRegex = new RegExp(`(${this.header})\\s+([\\s\\S]*?)(?=${matchTillRegex}|$)`, 'i');
     const matches = this.sectionRegex.exec(unprocessedContent);
     if (matches) {

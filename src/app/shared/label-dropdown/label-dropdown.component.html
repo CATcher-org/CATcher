@@ -1,24 +1,29 @@
 <form [formGroup]="dropdownForm">
-  <mat-form-field style="width: 100%;">
-    <mat-select [ngClass]="dropdownTextColor" formControlName="{{attributeName}}" placeholder="{{this.labelService.getLabelTitle(attributeName)}}"
-      (selectionChange)="setSelectedLabelColor($event.value)" [ngStyle]="this.labelService.setLabelStyle(this.selectedColor, 'inline-block')" required>
+  <mat-form-field style="width: 100%">
+    <mat-select
+      [ngClass]="dropdownTextColor"
+      formControlName="{{ attributeName }}"
+      placeholder="{{ this.labelService.getLabelTitle(attributeName) }}"
+      (selectionChange)="setSelectedLabelColor($event.value)"
+      [ngStyle]="this.labelService.setLabelStyle(this.selectedColor, 'inline-block')"
+      required
+    >
       <mat-select-trigger>
-        {{dropdownControl.value}}
+        {{ dropdownControl.value }}
       </mat-select-trigger>
       <div mat-menu-item class="labelLine" *ngFor="let value of labelList">
-        <mat-option [value]="value.labelValue" [ngStyle]="{'background': 'transparent'}">
-          <mat-icon [ngStyle]="{'color': '#' + value.labelColor}">stop</mat-icon>
-          <span> {{value.labelValue}}</span>
+        <mat-option [value]="value.labelValue" [ngStyle]="{ background: 'transparent' }">
+          <mat-icon [ngStyle]="{ color: '#' + value.labelColor }">stop</mat-icon>
+          <span> {{ value.labelValue }}</span>
         </mat-option>
 
         <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openModalPopup(value)">
           <mat-icon style="font-size: 20px">info</mat-icon>
         </button>
-        
       </div>
     </mat-select>
     <mat-error *ngIf="dropdownControl.errors && dropdownControl.errors['required'] && dropdownControl.touched">
-      {{this.labelService.getLabelTitle(attributeName)}} required.
+      {{ this.labelService.getLabelTitle(attributeName) }} required.
     </mat-error>
   </mat-form-field>
 </form>

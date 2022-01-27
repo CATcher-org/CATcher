@@ -18,16 +18,20 @@ export class NewIssueComponent implements OnInit {
   isFormPending = false;
   submitButtonText: string;
 
-  constructor(private issueService: IssueService, private formBuilder: FormBuilder,
-              private errorHandlingService: ErrorHandlingService, public labelService: LabelService,
-              private router: Router) { }
+  constructor(
+    private issueService: IssueService,
+    private formBuilder: FormBuilder,
+    private errorHandlingService: ErrorHandlingService,
+    public labelService: LabelService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.newIssueForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.maxLength(256)]],
       description: [''],
       severity: ['', Validators.required],
-      type: ['', Validators.required],
+      type: ['', Validators.required]
     });
 
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SUBMIT;
@@ -38,23 +42,28 @@ export class NewIssueComponent implements OnInit {
       return;
     }
     this.isFormPending = true;
-    this.issueService.createIssue(this.title.value,
-      Issue.updateDescription(this.description.value),
-      this.severity.value, this.type.value).pipe(finalize(() => this.isFormPending = false))
+    this.issueService
+      .createIssue(this.title.value, Issue.updateDescription(this.description.value), this.severity.value, this.type.value)
+      .pipe(finalize(() => (this.isFormPending = false)))
       .subscribe(
-        newIssue => {
+        (newIssue) => {
           this.issueService.updateLocalStore(newIssue);
           this.router.navigateByUrl(`phaseBugReporting/issues/${newIssue.id}`);
           form.resetForm();
-          },
-          error => {
+        },
+        (error) => {
           this.errorHandlingService.handleError(error);
-        });
+        }
+      );
   }
 
   canDeactivate() {
-    return !this.isAttributeEditing(this.title) && !this.isAttributeEditing(this.description)
-      && !this.isAttributeEditing(this.severity) && !this.isAttributeEditing(this.type);
+    return (
+      !this.isAttributeEditing(this.title) &&
+      !this.isAttributeEditing(this.description) &&
+      !this.isAttributeEditing(this.severity) &&
+      !this.isAttributeEditing(this.type)
+    );
   }
 
   isAttributeEditing(attribute: AbstractControl) {

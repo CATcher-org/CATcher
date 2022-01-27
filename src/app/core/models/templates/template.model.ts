@@ -12,7 +12,7 @@ export abstract class Template {
   }
 
   getSectionalDependency(header: Header): SectionalDependency {
-    const otherHeaders = this.headers.filter(e => !e.equals(header));
+    const otherHeaders = this.headers.filter((e) => !e.equals(header));
     return <SectionalDependency>{
       sectionHeader: header,
       remainingTemplateHeaders: otherHeaders
@@ -39,12 +39,12 @@ export class Header {
 
   constructor(name, headerSize, prefix: string = '') {
     this.name = name;
-    this.headerHash = '\#'.repeat(headerSize);
+    this.headerHash = '#'.repeat(headerSize);
     this.prefix = prefix;
   }
 
   toString(): string {
-    return this.headerHash.concat(this.prefix === '' ? ' ' : (' ' + this.prefix + ' ')).concat(this.name);
+    return this.headerHash.concat(this.prefix === '' ? ' ' : ' ' + this.prefix + ' ').concat(this.name);
   }
 
   equals(section: Header): boolean {

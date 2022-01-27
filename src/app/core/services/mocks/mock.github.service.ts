@@ -21,7 +21,7 @@ let octokit = new Octokit();
 
 @Injectable()
 export class MockGithubService {
-  numIssuesCreated: number;  // tracks the number of GithubIssues created by this mock service
+  numIssuesCreated: number; // tracks the number of GithubIssues created by this mock service
 
   constructor() {
     this.numIssuesCreated = 0;
@@ -58,17 +58,17 @@ export class MockGithubService {
    * Creates a GithubIssue with the specified title / description / labels.
    */
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
-      const githubLabels: GithubLabel[] = labels.map(labelString => new GithubLabel({name: labelString}));
+    const githubLabels: GithubLabel[] = labels.map((labelString) => new GithubLabel({ name: labelString }));
 
-      const githubIssueData = {
-        number: this.numIssuesCreated, // Issue's display ID
-        title: title,
-        body: description,
-        labels: githubLabels
-      };
+    const githubIssueData = {
+      number: this.numIssuesCreated, // Issue's display ID
+      title: title,
+      body: description,
+      labels: githubLabels
+    };
 
-      this.numIssuesCreated++;
-      return of(new GithubIssue(githubIssueData));
+    this.numIssuesCreated++;
+    return of(new GithubIssue(githubIssueData));
   }
 
   /**
@@ -77,12 +77,14 @@ export class MockGithubService {
    * being present.
    */
   fetchAllLabels(): Observable<Array<{}>> {
-    return of(LabelService.getRequiredLabelsAsArray(true).map((label: Label) => {
-      return {
-        name: label.labelCategory ? `${label.labelCategory}.${label.labelValue}` : `${label.labelValue}`,
-        color: `${label.labelColor}`
-      };
-    }));
+    return of(
+      LabelService.getRequiredLabelsAsArray(true).map((label: Label) => {
+        return {
+          name: label.labelCategory ? `${label.labelCategory}.${label.labelValue}` : `${label.labelValue}`,
+          color: `${label.labelColor}`
+        };
+      })
+    );
   }
 
   /**
@@ -97,8 +99,7 @@ export class MockGithubService {
    */
   fetchDataFile(): Observable<{}> {
     return of({
-      data: 'role,name,team\n' +
-        `${AppConfig.role},${AppConfig.username},${AppConfig.team}\n`
+      data: 'role,name,team\n' + `${AppConfig.role},${AppConfig.username},${AppConfig.team}\n`
     });
   }
 
@@ -121,7 +122,7 @@ export class MockGithubService {
    */
   fetchSettingsFile(): Observable<SessionData> {
     return of({
-      openPhases : [Phase.phaseBugReporting, Phase.phaseTeamResponse, Phase.phaseTesterResponse, Phase.phaseModeration],
+      openPhases: [Phase.phaseBugReporting, Phase.phaseTeamResponse, Phase.phaseTesterResponse, Phase.phaseModeration],
       [Phase.phaseBugReporting]: 'undefined',
       [Phase.phaseTeamResponse]: 'undefined',
       [Phase.phaseTesterResponse]: 'undefined',

@@ -18,17 +18,18 @@ export class ConfirmLoginComponent implements OnInit {
   @Input() username: string;
   @Input() currentSessionOrg: string;
 
-  constructor(public electronService: ElectronService,
-              private authService: AuthService,
-              private phaseService: PhaseService,
-              private userService: UserService,
-              private errorHandlingService: ErrorHandlingService,
-              private githubEventService: GithubEventService,
-              private logger: LoggingService,
-              private router: Router
-  ) { }
+  constructor(
+    public electronService: ElectronService,
+    private authService: AuthService,
+    private phaseService: PhaseService,
+    private userService: UserService,
+    private errorHandlingService: ErrorHandlingService,
+    private githubEventService: GithubEventService,
+    private logger: LoggingService,
+    private router: Router
+  ) {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   onGithubWebsiteClicked() {
     window.open('https://github.com/', '_blank');
@@ -56,15 +57,21 @@ export class ConfirmLoginComponent implements OnInit {
   completeLoginProcess(): void {
     this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, this.username);
-    this.userService.createUserModel(this.username).pipe(
-      flatMap(() => this.phaseService.sessionSetup()),
-      flatMap(() => this.githubEventService.setLatestChangeEvent()),
-    ).subscribe(() => {
-      this.handleAuthSuccess();
-    }, (error) => {
-      this.authService.changeAuthState(AuthState.NotAuthenticated);
-      this.errorHandlingService.handleError(error);
-      this.logger.info(`Completion of login process failed with an error: ${error}`);
-    });
+    this.userService
+      .createUserModel(this.username)
+      .pipe(
+        flatMap(() => this.phaseService.sessionSetup()),
+        flatMap(() => this.githubEventService.setLatestChangeEvent())
+      )
+      .subscribe(
+        () => {
+          this.handleAuthSuccess();
+        },
+        (error) => {
+          this.authService.changeAuthState(AuthState.NotAuthenticated);
+          this.errorHandlingService.handleError(error);
+          this.logger.info(`Completion of login process failed with an error: ${error}`);
+        }
+      );
   }
 }

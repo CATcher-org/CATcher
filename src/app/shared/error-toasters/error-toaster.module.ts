@@ -6,24 +6,9 @@ import { GeneralMessageErrorComponent } from './general-message-error/general-me
 import { InvalidCredentialsErrorComponent } from './invalid-credentials-error/invalid-credentials-error.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MaterialModule,
-  ],
-  declarations: [
-    GeneralMessageErrorComponent,
-    FormErrorComponent,
-    InvalidCredentialsErrorComponent,
-  ],
-  exports: [
-    GeneralMessageErrorComponent,
-    FormErrorComponent,
-    InvalidCredentialsErrorComponent,
-  ],
-  entryComponents: [
-    GeneralMessageErrorComponent,
-    FormErrorComponent,
-    InvalidCredentialsErrorComponent,
-  ]
+  imports: [CommonModule, MaterialModule],
+  declarations: [GeneralMessageErrorComponent, FormErrorComponent, InvalidCredentialsErrorComponent],
+  exports: [GeneralMessageErrorComponent, FormErrorComponent, InvalidCredentialsErrorComponent],
+  entryComponents: [GeneralMessageErrorComponent, FormErrorComponent, InvalidCredentialsErrorComponent]
 })
 export class ErrorToasterModule {}
