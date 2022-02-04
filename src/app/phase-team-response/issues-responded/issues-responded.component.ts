@@ -19,7 +19,7 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
 
   @Input() teamFilter: string;
 
-  @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
+  @ViewChild(IssueTablesComponent, { static: false }) table: IssueTablesComponent;
 
   constructor(public issueService: IssueService, public userService: UserService) {
     if (userService.currentUser.role === UserRole.Student) {

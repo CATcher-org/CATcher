@@ -41,8 +41,8 @@ export class CommentEditorComponent implements OnInit {
   initialSubmitButtonText: string;
   lastUploadingTime: string;
 
-  @ViewChild('dropArea', { static: true }) dropArea;
-  @ViewChild('commentTextArea', { static: true }) commentTextArea;
+  @ViewChild('dropArea', { static: false }) dropArea;
+  @ViewChild('commentTextArea', { static: false }) commentTextArea;
   @ViewChild('markdownArea', { static: false }) markdownArea;
 
   dragActiveCounter = 0;

@@ -9,7 +9,7 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
   styleUrls: ['./issue-pending.component.css']
 })
 export class IssuePendingComponent implements OnInit {
-  @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
+  @ViewChild(IssueTablesComponent, { static: false }) table: IssueTablesComponent;
 
   readonly displayedColumns = [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE, TABLE_COLUMNS.TYPE, TABLE_COLUMNS.SEVERITY, TABLE_COLUMNS.ACTIONS];
   readonly actionButtons: ACTION_BUTTONS[] = [

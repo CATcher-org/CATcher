@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterContentChecked, AfterContentInit, AfterViewChecked, AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
@@ -27,13 +27,13 @@ export enum ACTION_BUTTONS {
   templateUrl: './issue-tables.component.html',
   styleUrls: ['./issue-tables.component.css']
 })
-export class IssueTablesComponent implements OnInit, AfterViewInit {
+export class IssueTablesComponent implements OnInit, AfterViewChecked {
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
@@ -62,7 +62,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.issuesPendingDeletion = {};
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewChecked(): void {
     setTimeout(() => {
       this.issues.loadIssues();
     });
