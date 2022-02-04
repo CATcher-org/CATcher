@@ -6,7 +6,11 @@ const fileMenu: MenuItemConstructorOptions = {
   label: 'File',
   submenu: [
     {
-      label: 'Quit CATcher', accelerator: 'CmdOrCtrl+Q', click() { app.quit(); }
+      label: 'Quit CATcher',
+      accelerator: 'CmdOrCtrl+Q',
+      click() {
+        app.quit();
+      }
     }
   ]
 };
@@ -21,19 +25,13 @@ const editMenu: MenuItemConstructorOptions = {
     { role: 'cut' },
     { role: 'copy' },
     { role: 'paste' },
-    { role: 'delete' },
+    { role: 'delete' }
   ]
 };
 
 const viewMenu: MenuItemConstructorOptions = {
   label: 'View',
-  submenu: [
-    { role: 'resetZoom' },
-    { role: 'zoomIn' },
-    { role: 'zoomOut' },
-    { type: 'separator' },
-    { role: 'togglefullscreen' }
-  ]
+  submenu: [{ role: 'resetZoom' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { type: 'separator' }, { role: 'togglefullscreen' }]
 };
 
 export function createMenuOptions(isDevMode: boolean): MenuItemConstructorOptions[] {
@@ -42,18 +40,15 @@ export function createMenuOptions(isDevMode: boolean): MenuItemConstructorOption
   if (isDevMode) {
     let viewSubMenu: MenuItemConstructorOptions[];
     viewSubMenu = mainMenuTemplate[2].submenu as MenuItemConstructorOptions[];
-    viewSubMenu.push(
-      { type: 'separator' },
-      { role: 'toggleDevTools'}
-    );
+    viewSubMenu.push({ type: 'separator' }, { role: 'toggleDevTools' });
   }
   return mainMenuTemplate;
 }
 
-function createInspectElementMenuItem(contextMenuCoords: {x, y}): MenuItem {
-   return new MenuItem({
+function createInspectElementMenuItem(contextMenuCoords: { x; y }): MenuItem {
+  return new MenuItem({
     label: 'Inspect Element',
-    click:  (menuItem, window, event) => {
+    click: (menuItem, window, event) => {
       window.webContents.inspectElement(contextMenuCoords.x, contextMenuCoords.y);
     }
   });
@@ -65,14 +60,14 @@ function createInspectElementMenuItem(contextMenuCoords: {x, y}): MenuItem {
  * This menu will contain an 'Inspect Element' MenuItem.
  */
 export function createContextMenu(win: BrowserWindow): void {
-  const contextMenuCoords = {x: null, y: null};
+  const contextMenuCoords = { x: null, y: null };
   const contextMenu = new Menu();
   contextMenu.append(createInspectElementMenuItem(contextMenuCoords));
 
-  win.webContents.on('context-menu',  (event, contextMenuParams) => {
+  win.webContents.on('context-menu', (event, contextMenuParams) => {
     // record the mouse position, when context-menu event is fired
     contextMenuCoords.x = contextMenuParams.x;
     contextMenuCoords.y = contextMenuParams.y;
-    contextMenu.popup({window: win});
+    contextMenu.popup({ window: win });
   });
 }
