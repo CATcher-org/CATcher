@@ -36,7 +36,7 @@ export class AssigneeComponent implements OnInit {
 
   ngOnInit(): void {
     this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
-    this.assignees = this.issue.assignees.map((a) => a);
+    this.assignees = this.issue.assignees.map((a) => a.toLowerCase());
   }
 
   openSelector() {
@@ -65,7 +65,7 @@ export class AssigneeComponent implements OnInit {
             issues.forEach((issue: Issue) => {
               const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
               newDuplicateIssue.assignees = this.assignees;
-              this.issueService.updateIssue(newDuplicateIssue).subscribe((updatedIssue: Issue) => this.issueUpdated.emit(updatedIssue));
+              this.issueService.updateIssue(newDuplicateIssue);
             });
           });
       },
