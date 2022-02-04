@@ -17,7 +17,7 @@ describe('LabelComponent', () => {
 
   beforeEach(() => {
     labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel']);
-    issueService = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'updateIssue', 'updateLocalStore']);
+    issueService = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'updateIssue']);
     phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
 
     labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null, null);
