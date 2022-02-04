@@ -131,7 +131,7 @@ describe('AssigneeComponent', () => {
     const updatedDuplicateIssue = duplicateIssue.clone(phaseService.currentPhase);
     updatedDuplicateIssue.assignees = [testStudent.loginId];
 
-    expect(issueService.updateIssueWithAssigneeCheck).toHaveBeenCalledWith(updatedIssue);
+    expect(issueService.updateIssue).toHaveBeenCalledWith(updatedIssue);
     expect(issueService.updateIssue).toHaveBeenCalledWith(updatedDuplicateIssue);
   });
 
@@ -149,7 +149,7 @@ describe('AssigneeComponent', () => {
 
   function dispatchClosedEvent() {
     const matSelectElement: HTMLElement = debugElement.query(By.css('.mat-select')).nativeElement;
-    issueService.updateIssueWithAssigneeCheck.and.callFake((updatedIssue: Issue) => of(updatedIssue));
+    issueService.updateIssue.and.callFake((updatedIssue: Issue) => of(updatedIssue));
     matSelectElement.dispatchEvent(new Event('closed'));
     fixture.detectChanges();
   }
