@@ -258,10 +258,10 @@ export class GithubService {
         repo: REPO
       })
     ).pipe(
-      map(({ data }: { data: { login: string }[] }) => data.map(({ login }) => login)),
-      map((assignables: string[]) =>
+      map((response: { data: { login: string }[] }) => response.data.map((user) => user.login)),
+      map((list: string[]) =>
         assignees.forEach((assignee) => {
-          if (!assignables.includes(assignee)) {
+          if (!list.includes(assignee)) {
             throw new Error(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`);
           }
         })
