@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSelect } from '@angular/material';
 import { forkJoin } from 'rxjs';
-import { first, switchMap, tap } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { Team } from '../../../core/models/team.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
@@ -72,8 +72,7 @@ export class AssigneeComponent implements OnInit {
               return this.issueService.updateIssue(newDuplicateIssue);
             })
           )
-        ),
-        tap((updatedIssues) => updatedIssues.forEach((issue) => this.issueService.updateLocalStore(issue)))
+        )
       )
       .subscribe({
         error: (error) => {
