@@ -4,7 +4,7 @@ import { Apollo, QueryRef } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import { DocumentNode } from 'graphql';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { catchError, every, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
+import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
 import {
   FetchIssue,
   FetchIssueQuery,
@@ -250,17 +250,21 @@ export class GithubService {
    * Checks if the given list of users are allowed to be assigned to an issue.
    * @param assignees - GitHub usernames to be checked
    */
-  areUsersAssignable(assignees: string[]): Observable<boolean> {
-    return from(assignees).pipe(
-      flatMap((assignee) =>
-        octokit.issues.checkAssignee({
-          owner: ORG_NAME,
-          repo: REPO,
-          assignee: assignee
+  areUsersAssignable(assignees: string[]): Observable<void> {
+    return from(
+      octokit.issues.listAssignees({
+        owner: ORG_NAME,
+        repo: REPO
+      })
+    ).pipe(
+      map(({ data }: { data: { login: string }[] }) => data.map(({ login }) => login)),
+      map((assignables: string[]) =>
+        assignees.forEach((assignee) => {
+          if (!assignables.includes(assignee)) {
+            throw new Error(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`);
+          }
         })
-      ),
-      every((response: any) => response.status === 204),
-      catchError((err) => of(false))
+      )
     );
   }
 
