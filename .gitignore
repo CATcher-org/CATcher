@@ -29,7 +29,6 @@ CATcher.iml
 
 # IDE - VSCode
 .vscode/*
-!.vscode/launch.json
 
 # misc
 /.sass-cache
