@@ -1,11 +1,9 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { filter, flatMap, map } from 'rxjs/operators';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
-import { Profile } from '../core/models/profile.model';
 import { ApplicationService } from '../core/services/application.service';
 import { AuthService, AuthState } from '../core/services/auth.service';
 import { ElectronService } from '../core/services/electron.service';
@@ -23,15 +21,12 @@ const APPLICATION_VERSION_OUTDATED_ERROR = 'Please update to the latest version 
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit, OnDestroy {
-  // isSettingUpSession is used to indicate whether CATcher is in the midst of setting up the session.
-  isSettingUpSession: boolean;
-
   authState: AuthState;
   accessTokenSubscription: Subscription;
   authStateSubscription: Subscription;
-  profileForm: FormGroup;
   currentUserName: string;
   urlEncodedSessionName: string;
+  sessionInformation: string;
 
   constructor(
     public appService: ApplicationService,
@@ -39,7 +34,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     private githubService: GithubService,
     private authService: AuthService,
     private userService: UserService,
-    private formBuilder: FormBuilder,
     private errorHandlingService: ErrorHandlingService,
     private router: Router,
     private phaseService: PhaseService,
@@ -64,9 +58,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.logger.startSession();
 
-    // Initialize State
-    this.isSettingUpSession = false;
-
     const oauthCode = this.activatedRoute.snapshot.queryParamMap.get('code');
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
 
@@ -76,7 +67,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
     this.initAccessTokenSubscription();
     this.initAuthStateSubscription();
-    this.initProfileForm();
     this.createProfileFromUrlQueryParams();
     if (oauthCode) {
       // runs upon receiving oauthCode from the redirect
@@ -140,44 +130,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     );
   }
 
-  /**
-   * Fills the login form with data from the given Profile.
-   * @param profile - Profile selected by the user.
-   */
-  onProfileSelect(profile: Profile): void {
-    this.profileForm.get('session').setValue(profile.repoName);
-  }
-
-  setupSession() {
-    if (this.profileForm.invalid) {
-      return;
-    }
-    this.isSettingUpSession = true;
-    const sessionInformation: string = this.profileForm.get('session').value;
-    const org: string = this.getOrgDetails(sessionInformation);
-    const dataRepo: string = this.getDataRepoDetails(sessionInformation);
-    // Persist session information in local storage
-    window.localStorage.setItem('org', org);
-    window.localStorage.setItem('dataRepo', dataRepo);
-    this.githubService.storeOrganizationDetails(org, dataRepo);
-
-    this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
-
-    this.phaseService.storeSessionData().subscribe(
-      () => {
-        try {
-          this.authService.startOAuthProcess();
-        } catch (error) {
-          this.errorHandlingService.handleError(error);
-          this.authService.changeAuthState(AuthState.NotAuthenticated);
-        }
-      },
-      (error) => {
-        this.errorHandlingService.handleError(error);
-        this.isSettingUpSession = false;
-      },
-      () => (this.isSettingUpSession = false)
-    );
+  updateSession(sessionEvent: string) {
+    this.sessionInformation = sessionEvent;
   }
 
   goToSessionSelect() {
@@ -197,12 +151,11 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   get currentSessionOrg(): string {
-    const sessionInformation: string = this.profileForm.get('session').value;
-    if (!sessionInformation) {
+    if (!this.sessionInformation) {
       // Retrieve org details of session information from local storage
       return window.localStorage.getItem('org');
     }
-    return this.getOrgDetails(sessionInformation);
+    return this.getOrgDetails(this.sessionInformation);
   }
 
   /**
@@ -222,20 +175,6 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   private getOrgDetails(sessionInformation: string) {
     return sessionInformation.split('/')[0];
-  }
-
-  /**
-   * Extracts the Data Repository Details from the input sessionInformation.
-   * @param sessionInformation - string in the format of 'orgName/dataRepo'
-   */
-  private getDataRepoDetails(sessionInformation: string) {
-    return sessionInformation.split('/')[1];
-  }
-
-  private initProfileForm() {
-    this.profileForm = this.formBuilder.group({
-      session: ['', Validators.required]
-    });
   }
 
   private initAuthStateSubscription() {
