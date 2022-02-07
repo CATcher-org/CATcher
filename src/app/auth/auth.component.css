@@ -18,20 +18,9 @@
   font-size: 30px;
 }
 
-.login-field {
-  width: 100%;
-}
-
 .login-card {
   text-align: center;
   padding: 40px 70px 50px;
-}
-
-.sign-in-button {
-  background: #f7fcfe;
-  line-height: 45px;
-  border: 1px solid currentColor;
-  width: 100%;
 }
 
 .spinner-centralize {
