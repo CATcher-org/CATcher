@@ -7,10 +7,10 @@ import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
 import { SharedModule } from '../shared.module';
 import { IssueDisputeModule } from './issue-dispute/issue-dispute.module';
 import { NewTeamResponseModule } from './new-team-response/new-team-response.module';
+import { TeamAcceptedModule } from './team-accepted/team-accepted.module';
 import { TeamResponseModule } from './team-response/team-response.module';
 import { TesterResponseModule } from './tester-response/tester-response.module';
 import { ViewIssueComponent } from './view-issue.component';
-import { TeamAcceptedModule } from './team-accepted/team-accepted.module';
 
 @NgModule({
   exports: [ViewIssueComponent],
