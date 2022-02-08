@@ -44,15 +44,16 @@
       </app-new-team-response>
 
       <!-- Team Response Parsing Error -->
-      <app-team-response-parse-error
+      <app-parse-error
         *ngIf="
           this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) &&
           permissions.isTeamResponseEditable() &&
           issue.teamResponseError &&
           issue.status
         "
+        phase="Team Response"
       >
-      </app-team-response-parse-error>
+      </app-parse-error>
 
       <!-- Tester's Response -->
       <app-tester-response
