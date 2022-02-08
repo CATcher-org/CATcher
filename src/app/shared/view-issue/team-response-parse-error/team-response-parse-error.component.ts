@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Issue } from '../../../core/models/issue.model';
 
 @Component({
   selector: 'app-team-response-parse-error',
@@ -7,12 +6,7 @@ import { Issue } from '../../../core/models/issue.model';
   styleUrls: ['./team-response-parse-error.component.css']
 })
 export class TeamResponseParseErrorComponent implements OnInit {
+  constructor() {}
 
-  @Input() issue: Issue;
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
