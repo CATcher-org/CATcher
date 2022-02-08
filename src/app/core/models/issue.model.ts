@@ -47,7 +47,7 @@ export class Issue {
   teamChosenType?: string;
 
   /** Fields for error messages during parsing of Github's issue description */
-  teamResponseError?: string;
+  teamResponseError?: boolean;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -129,7 +129,7 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
-    issue.assignees = githubIssue.assignees.map(assignee => assignee.login);
+    issue.assignees = githubIssue.assignees.map((assignee) => assignee.login);
 
     issue.teamResponseError = template.parseError;
     issue.issueComment = template.comment;
