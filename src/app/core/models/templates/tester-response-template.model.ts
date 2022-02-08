@@ -25,6 +25,10 @@ export class TesterResponseTemplate extends Template {
     const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
     const teamAcceptedComment = githubIssueComments.find((comment) => this.testTeamAccepted(comment.body));
 
+    if (templateConformingComment === undefined && teamAcceptedComment === undefined) {
+      return;
+    }
+
     if (teamAcceptedComment) {
       this.teamAccepted = true;
       return;
