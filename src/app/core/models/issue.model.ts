@@ -45,6 +45,7 @@ export class Issue {
   issueDisputes?: IssueDispute[];
   teamChosenSeverity?: string;
   teamChosenType?: string;
+  teamAccepted?: boolean;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -139,6 +140,7 @@ export class Issue {
     const template = new TesterResponseTemplate(githubIssue.comments);
 
     issue.githubComments = githubIssue.comments;
+    issue.teamAccepted = template.teamAccepted;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
