@@ -12,7 +12,7 @@ export class IssueAcceptedComponent implements OnInit {
   @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
 
   readonly displayedColumns = [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE, TABLE_COLUMNS.TYPE, TABLE_COLUMNS.SEVERITY, TABLE_COLUMNS.ACTIONS];
-  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.FIX_ISSUE];
+  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB];
   filter: (issue: Issue) => boolean;
 
   constructor() {}
