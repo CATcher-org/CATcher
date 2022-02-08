@@ -9,10 +9,11 @@ import { IssueRespondedComponent } from './issue-responded/issue-responded.compo
 import { IssueComponent } from './issue/issue.component';
 import { PhaseTesterResponseRoutingModule } from './phase-tester-response-routing.module';
 import { PhaseTesterResponseComponent } from './phase-tester-response.component';
+import { IssueFaultyComponent } from './issue-faulty/issue-faulty.component';
 
 @NgModule({
   exports: [PhaseTesterResponseComponent],
-  declarations: [PhaseTesterResponseComponent, IssueComponent, IssuePendingComponent, IssueRespondedComponent],
+  declarations: [PhaseTesterResponseComponent, IssueComponent, IssuePendingComponent, IssueRespondedComponent, IssueFaultyComponent],
   imports: [CommonModule, PhaseTesterResponseRoutingModule, SharedModule, ViewIssueModule, IssueTablesModule, MarkdownModule.forChild()]
 })
 export class PhaseTesterResponseModule {}
