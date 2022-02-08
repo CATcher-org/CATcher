@@ -48,6 +48,7 @@ export class Issue {
 
   /** Fields for error messages during parsing of Github's issue description */
   teamResponseError?: boolean;
+  testerResponseError?: boolean;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -145,6 +146,7 @@ export class Issue {
     const template = new TesterResponseTemplate(githubIssue.comments);
 
     issue.githubComments = githubIssue.comments;
+    issue.testerResponseError = template.parseError;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.testerResponses = template.testerResponse && template.testerResponse.testerResponses;

@@ -51,7 +51,7 @@
           issue.teamResponseError &&
           issue.status
         "
-        phase="Team Response"
+        [phase]="'Team Response'"
       >
       </app-parse-error>
 
@@ -64,6 +64,13 @@
         (issueUpdated)="updateIssue($event)"
       >
       </app-tester-response>
+
+      <!-- Tester Response Parsing Error -->
+      <app-parse-error
+        *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && issue.testerResponseError"
+        [phase]="'Tester Response'"
+      >
+      </app-parse-error>
 
       <!-- Issue Disputes For Tutor's Response -->
       <app-issue-dispute
