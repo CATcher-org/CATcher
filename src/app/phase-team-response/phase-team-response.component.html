@@ -12,7 +12,29 @@
     </mat-menu>
   </div>
 
-  <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
-  <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
-  <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
+  <mat-accordion class="example-headers-align">
+    <mat-expansion-panel [expanded]="step === 0" (opened)="step = 0">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Issues Pending Response </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel [expanded]="step === 1" (opened)="step = 1">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Issues Responded </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel [expanded]="step === 2" (opened)="step = 2">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Faulty Issues </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
