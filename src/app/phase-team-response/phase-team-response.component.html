@@ -12,8 +12,12 @@
     </mat-menu>
   </div>
 
-  <mat-accordion class="example-headers-align">
-    <mat-expansion-panel [expanded]="step === 0" (opened)="step = 0">
+  <div>
+    <button mat-raised-button (click)="accordion.closeAll()">Collapse All</button>
+  </div>
+
+  <mat-accordion class="example-headers-align" multi>
+    <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title> Issues Pending Response </mat-panel-title>
       </mat-expansion-panel-header>
@@ -21,7 +25,7 @@
       <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
     </mat-expansion-panel>
 
-    <mat-expansion-panel [expanded]="step === 1" (opened)="step = 1">
+    <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title> Issues Responded </mat-panel-title>
       </mat-expansion-panel-header>
@@ -29,7 +33,7 @@
       <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
     </mat-expansion-panel>
 
-    <mat-expansion-panel [expanded]="step === 2" (opened)="step = 2">
+    <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title> Faulty Issues </mat-panel-title>
       </mat-expansion-panel-header>
