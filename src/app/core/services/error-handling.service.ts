@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { RequestError } from '@octokit/request-error';
+import { AppConfig } from '../../../environments/environment';
 import { FormErrorComponent } from '../../shared/error-toasters/form-error/form-error.component';
 import { GeneralMessageErrorComponent } from '../../shared/error-toasters/general-message-error/general-message-error.component';
 import { LoggingService } from './logging.service';
@@ -18,7 +19,7 @@ export class ErrorHandlingService implements ErrorHandler {
 
   handleError(error: HttpErrorResponse | Error | RequestError, actionCallback?: () => void) {
     this.logger.error(error);
-    if (error instanceof Error) {
+    if (error instanceof Error && !AppConfig.production) {
       this.logger.error(this.cleanStack(error.stack));
     }
     if (error instanceof HttpErrorResponse || error instanceof RequestError) {
