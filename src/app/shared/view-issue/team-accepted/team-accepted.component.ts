@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TeamAcceptedMessage } from '../../../core/models/templates/tester-response-template.model';
+import { TeamAcceptedMessage } from '../../../core/models/templates/team-accepted-template.model';
 
 @Component({
   selector: 'app-team-accepted',

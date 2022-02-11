@@ -8,8 +8,6 @@ export const TesterResponseHeaders = {
   teamResponse: new Header("Team's Response", 1),
   testerResponses: new Header('Items for the Tester to Verify', 1)
 };
-export const TeamAcceptedMessage = 'Your response not required for this bug as the team has accepted the bug as it is.';
-const TeamAcceptedRegex = new RegExp(TeamAcceptedMessage);
 
 export class TesterResponseTemplate extends Template {
   teamResponse: Section;
@@ -17,20 +15,13 @@ export class TesterResponseTemplate extends Template {
   comment: IssueComment;
   teamChosenSeverity?: string;
   teamChosenType?: string;
-  teamAccepted?: boolean;
 
   constructor(githubIssueComments: GithubComment[]) {
     super(Object.values(TesterResponseHeaders));
 
     const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
-    const teamAcceptedComment = githubIssueComments.find((comment) => this.testTeamAccepted(comment.body));
 
-    if (templateConformingComment === undefined && teamAcceptedComment === undefined) {
-      return;
-    }
-
-    if (teamAcceptedComment) {
-      this.teamAccepted = true;
+    if (templateConformingComment === undefined) {
       return;
     }
 
@@ -50,9 +41,5 @@ export class TesterResponseTemplate extends Template {
 
   parseTesterResponse(toParse: string): TesterResponseSection {
     return new TesterResponseSection(this.getSectionalDependency(TesterResponseHeaders.testerResponses), toParse);
-  }
-
-  testTeamAccepted(toTest: string): boolean {
-    return TeamAcceptedRegex.exec(toTest) != null;
   }
 }
