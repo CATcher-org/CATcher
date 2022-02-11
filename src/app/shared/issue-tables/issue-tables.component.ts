@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, AfterViewChecked, AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
@@ -27,7 +27,7 @@ export enum ACTION_BUTTONS {
   templateUrl: './issue-tables.component.html',
   styleUrls: ['./issue-tables.component.css']
 })
-export class IssueTablesComponent implements OnInit, AfterViewChecked {
+export class IssueTablesComponent implements OnInit, AfterContentInit {
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
@@ -57,14 +57,14 @@ export class IssueTablesComponent implements OnInit, AfterViewChecked {
     private dialogService: DialogService
   ) {}
 
-  ngOnInit() {
-    this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
+  ngOnInit(): void {
+    this.issues = new IssuesDataTable(this.issueService, this.headers, this.filters);
     this.issuesPendingDeletion = {};
   }
 
-  ngAfterViewChecked(): void {
+  ngAfterContentInit(): void {
     setTimeout(() => {
-      this.issues.loadIssues();
+      this.issues.loadIssues(this.paginator, this.sort);
     });
   }
 

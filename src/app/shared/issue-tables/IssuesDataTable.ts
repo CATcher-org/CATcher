@@ -16,13 +16,7 @@ export class IssuesDataTable extends DataSource<Issue> {
 
   public isLoading$ = this.issueService.isLoading.asObservable();
 
-  constructor(
-    private issueService: IssueService,
-    private sort: MatSort,
-    private paginator: MatPaginator,
-    private displayedColumn: string[],
-    private defaultFilter?: (issue: Issue) => boolean
-  ) {
+  constructor(private issueService: IssueService, private displayedColumn: string[], private defaultFilter?: (issue: Issue) => boolean) {
     super();
   }
 
@@ -38,14 +32,8 @@ export class IssuesDataTable extends DataSource<Issue> {
     this.issueService.stopPollIssues();
   }
 
-  loadIssues() {
-    const displayDataChanges = [
-      this.issueService.issues$,
-      this.paginator.page,
-      this.sort.sortChange,
-      this.filterChange,
-      this.teamFilterChange
-    ];
+  loadIssues(paginator: MatPaginator, sort: MatSort) {
+    const displayDataChanges = [this.issueService.issues$, paginator.page, sort.sortChange, this.filterChange, this.teamFilterChange];
 
     this.issueService.startPollIssues();
     this.issueSubscription = this.issueService.issues$
@@ -57,10 +45,10 @@ export class IssuesDataTable extends DataSource<Issue> {
               if (this.defaultFilter) {
                 data = data.filter(this.defaultFilter);
               }
-              data = getSortedData(this.sort, data);
+              data = getSortedData(sort, data);
               data = this.getFilteredTeamData(data);
               data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
-              data = paginateData(this.paginator, data);
+              data = paginateData(paginator, data);
 
               return data;
             })
