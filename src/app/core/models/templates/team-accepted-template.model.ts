@@ -1,8 +1,9 @@
 import { GithubComment } from '../github/github-comment.model';
 import { Header, Template } from './template.model';
 
-export const TeamAcceptedMessage = 'Your response not required for this bug as the team has accepted the bug as it is.';
-export const TeamAcceptedHeader = new Header(TeamAcceptedMessage, 0);
+const TeamAcceptedRegexString = 'response not required for this bug as the team has accepted the bug as it';
+export const TeamAcceptedMessage = 'Your ' + TeamAcceptedRegexString + ' is.';
+export const TeamAcceptedHeader = { teamAccepted: new Header(TeamAcceptedRegexString, 0) };
 
 export class TeamAcceptedTemplate extends Template {
   teamAccepted?: boolean;
