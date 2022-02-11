@@ -1,0 +1,23 @@
+.toaster {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.message-container {
+  vertical-align: middle;
+  flex-basis: 80%;
+  overflow-wrap: anywhere;
+}
+
+.message-container > p {
+  margin: auto 5px;
+  text-align: center;
+}
+
+button {
+  vertical-align: middle;
+  flex-basis: 20%;
+  margin: auto 5px;
+  text-align: center;
+}
