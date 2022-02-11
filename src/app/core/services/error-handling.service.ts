@@ -21,8 +21,10 @@ export class ErrorHandlingService implements ErrorHandler {
     if (error instanceof Error) {
       this.logger.error(this.cleanStack(error.stack));
     }
-    if (error instanceof HttpErrorResponse || error instanceof RequestError) {
+    if (error instanceof HttpErrorResponse) {
       this.handleHttpError(error, actionCallback);
+    } else if (error.constructor.name === 'RequestError') {
+      this.handleHttpError(error as RequestError, actionCallback);
     } else {
       this.handleGeneralError(error.message || JSON.stringify(error));
     }
