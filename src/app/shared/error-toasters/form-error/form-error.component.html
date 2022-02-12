@@ -1,21 +1,14 @@
-<div *ngIf="data.errors; else generalMessage" style="display: inline-block">
-  <div *ngFor="let error of data.errors">
-    Validation Error:
-    <ul>
-      <li>{{ error.code + ' in ' + error.field }}</li>
-    </ul>
+<app-toaster>
+  <div *ngIf="data.errors; else generalMessage">
+    <div *ngFor="let error of data.errors">
+      Validation Error:
+      <ul>
+        <li>{{ error.code + ' in ' + error.field }}</li>
+      </ul>
+    </div>
   </div>
-  <button
-    style="position: absolute; top: 30%; bottom: 30%; left: 75%; height: 40%"
-    mat-button
-    color="accent"
-    (click)="snackBarRef.dismiss()"
-  >
-    Close
-  </button>
-</div>
+</app-toaster>
 
 <ng-template #generalMessage>
-  <div style="max-width: 300px; display: inline-block">{{ 'Error code ' + data.status + ': ' + data.message }}</div>
-  <button style="float: right; margin-top: 8px" mat-button color="accent" (click)="snackBarRef.dismiss()">Close</button>
+  {{ 'Error code ' + data.status + ': ' + data.message }}
 </ng-template>
