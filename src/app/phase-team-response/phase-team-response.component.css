@@ -11,6 +11,11 @@
   padding: 30px 20px;
 }
 
+.panel-buttons {
+  display: flex;
+  justify-content: center;
+}
+
 .mat-column-actions {
   width: 80px;
   text-align: center;
