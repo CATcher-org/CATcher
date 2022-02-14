@@ -14,6 +14,20 @@
 .panel-buttons {
   display: flex;
   justify-content: center;
+  padding-bottom: 20px;
+}
+
+.mat-raised-button {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.mat-accordion .mat-expansion-panel {
+  margin-bottom: 10px;
+}
+
+.mat-expansion-panel-header-title {
+  font-size: x-large;
 }
 
 .mat-column-actions {
