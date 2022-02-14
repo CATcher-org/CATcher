@@ -1,21 +1,29 @@
 <div>
-  <div style="text-align: center; margin-bottom: 20px">
-    <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id }} </span>
-    <button *ngIf="teamList" [matMenuTriggerFor]="teamMenu" mat-icon-button>
-      <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> settings </mat-icon>
-    </button>
+  <mat-grid-list cols="3" rowHeight="60px">
+    <mat-grid-tile> </mat-grid-tile>
 
-    <mat-menu #teamMenu>
-      <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList" (click)="updateDisplayedTeam(team)">
-        <span> {{ team }} </span>
-      </button>
-    </mat-menu>
-  </div>
+    <mat-grid-tile>
+      <div style="margin-bottom: 20px">
+        <span class="mat-display-1"> {{ teamList ? teamFilter : userService.currentUser.team.id }} </span>
+        <button *ngIf="teamList" [matMenuTriggerFor]="teamMenu" mat-icon-button>
+          <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> settings </mat-icon>
+        </button>
 
-  <div class="panel-buttons">
-    <button mat-raised-button (click)="accordion.openAll()">Expand All</button>
-    <button mat-raised-button (click)="accordion.closeAll()">Collapse All</button>
-  </div>
+        <mat-menu #teamMenu>
+          <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList" (click)="updateDisplayedTeam(team)">
+            <span> {{ team }} </span>
+          </button>
+        </mat-menu>
+      </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <div class="grid-flush-right">
+        <button mat-raised-button (click)="accordion.openAll()">Expand All</button>
+        <button mat-raised-button (click)="accordion.closeAll()">Collapse All</button>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
 
   <mat-accordion multi>
     <mat-expansion-panel expanded>

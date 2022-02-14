@@ -11,15 +11,9 @@
   padding: 30px 20px;
 }
 
-.panel-buttons {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 20px;
-}
-
 .mat-raised-button {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 20px;
+  margin-bottom: 20px;
 }
 
 .mat-accordion .mat-expansion-panel {
