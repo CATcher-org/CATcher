@@ -5,6 +5,7 @@ import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
 import { IssueService } from '../core/services/issue.service';
 import { UserService } from '../core/services/user.service';
+import { IssuesPendingComponent } from './issues-pending/issues-pending.component';
 
 @Component({
   selector: 'app-phase-team-response',
@@ -13,8 +14,10 @@ import { UserService } from '../core/services/user.service';
 })
 export class PhaseTeamResponseComponent implements OnInit {
   @ViewChild(MatAccordion, { static: false }) accordion: MatAccordion;
+  @ViewChild(IssuesPendingComponent, { static: true }) issuesPending: IssuesPendingComponent;
 
   public teamFilter = 'All Teams';
+  pendingPanelOpenState = true;
 
   constructor(public userService: UserService, private dataService: DataService, private issueService: IssueService) {}
 
