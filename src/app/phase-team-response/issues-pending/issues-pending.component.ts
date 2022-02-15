@@ -14,6 +14,7 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
 })
 export class IssuesPendingComponent implements OnInit, OnChanges {
   displayedColumns;
+  panelOpenState = true;
   filter: (issue: Issue) => boolean;
 
   readonly actionButtons: ACTION_BUTTONS[] = [

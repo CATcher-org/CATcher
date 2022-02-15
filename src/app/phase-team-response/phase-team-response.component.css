@@ -16,20 +16,6 @@
   margin-bottom: 20px;
 }
 
-.mat-accordion .mat-expansion-panel {
-  margin-bottom: 10px;
-}
-
-.mat-expansion-panel-header-title {
-  font-size: x-large;
-  align-self: center;
-}
-
-.mat-expansion-panel-header-description {
-  display: inline-grid;
-  grid-template-columns: 1fr 1fr;
-}
-
 .mat-column-actions {
   width: 80px;
   text-align: center;

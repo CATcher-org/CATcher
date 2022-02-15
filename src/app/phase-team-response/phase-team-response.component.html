@@ -28,13 +28,6 @@
   <mat-accordion multi>
     <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
     <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
-
-    <mat-expansion-panel expanded>
-      <mat-expansion-panel-header>
-        <mat-panel-title> Issues Responded </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
-    </mat-expansion-panel>
+    <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
   </mat-accordion>
 </div>
