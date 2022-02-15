@@ -14,10 +14,8 @@ import { IssuesPendingComponent } from './issues-pending/issues-pending.componen
 })
 export class PhaseTeamResponseComponent implements OnInit {
   @ViewChild(MatAccordion, { static: false }) accordion: MatAccordion;
-  @ViewChild(IssuesPendingComponent, { static: true }) issuesPending: IssuesPendingComponent;
 
   public teamFilter = 'All Teams';
-  pendingPanelOpenState = true;
 
   constructor(public userService: UserService, private dataService: DataService, private issueService: IssueService) {}
 

@@ -20,10 +20,6 @@
   margin-bottom: 10px;
 }
 
-.search-bar {
-  pointer-events: auto;
-}
-
 .mat-expansion-panel-header-title {
   font-size: x-large;
   align-self: center;

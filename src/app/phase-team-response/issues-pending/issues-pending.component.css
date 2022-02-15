@@ -4,6 +4,19 @@
   justify-content: center;
   text-align: center;
 }
+.mat-expansion-panel {
+  margin-bottom: 10px;
+}
+
+.mat-expansion-panel-header-title {
+  font-size: x-large;
+  align-self: center;
+}
+
+.mat-expansion-panel-header-description {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+}
 
 .title {
   color: black;

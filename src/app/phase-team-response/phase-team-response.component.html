@@ -26,30 +26,7 @@
   </mat-grid-list>
 
   <mat-accordion multi>
-    <mat-expansion-panel expanded (opened)="pendingPanelOpenState = true" (closed)="pendingPanelOpenState = false">
-      <mat-expansion-panel-header class="align-header" [expandedHeight]="'70px'">
-        <mat-panel-title> Issues Pending Response </mat-panel-title>
-        <mat-panel-description>
-          <div class="grid-item">
-            <mat-form-field style="width: 100%" *ngIf="pendingPanelOpenState">
-              <input
-                matInput
-                class="search-bar"
-                (click)="$event.stopPropagation()"
-                (keyup)="issuesPending.applyFilter($event.target.value)"
-                (keydown.space)="$event.stopPropagation()"
-                (keydown.enter)="$event.stopPropagation()"
-                placeholder="Search"
-              />
-            </mat-form-field>
-          </div>
-          <div class="grid-item"></div>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
-    </mat-expansion-panel>
-
+    <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title> Faulty Issues </mat-panel-title>

@@ -1,3 +1,21 @@
-<div>
+<mat-expansion-panel expanded (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+  <mat-expansion-panel-header [expandedHeight]="'70px'">
+    <mat-panel-title> Issues Pending Response </mat-panel-title>
+    <mat-panel-description>
+      <div class="grid-item">
+        <mat-form-field style="width: 100%" *ngIf="panelOpenState">
+          <input
+            matInput
+            (click)="$event.stopPropagation()"
+            (keyup)="applyFilter($event.target.value)"
+            (keydown.space)="$event.stopPropagation()"
+            (keydown.enter)="$event.stopPropagation()"
+            placeholder="Search"
+          />
+        </mat-form-field>
+      </div>
+      <div class="grid-item"></div>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
   <app-issue-tables [headers]="this.displayedColumns" [actions]="this.actionButtons" [filters]="this.filter"></app-issue-tables>
-</div>
+</mat-expansion-panel>
