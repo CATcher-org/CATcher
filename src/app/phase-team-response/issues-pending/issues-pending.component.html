@@ -1,4 +1,8 @@
-<div>
+<mat-expansion-panel expanded>
+  <mat-expansion-panel-header>
+    <mat-panel-title>Issues Pending Response</mat-panel-title>
+  </mat-expansion-panel-header>
+
   <mat-grid-list cols="3" rowHeight="60px">
     <mat-grid-tile>
       <mat-form-field class="full-grid-width">
@@ -8,4 +12,4 @@
   </mat-grid-list>
 
   <app-issue-tables [headers]="this.displayedColumns" [actions]="this.actionButtons" [filters]="this.filter"></app-issue-tables>
-</div>
+</mat-expansion-panel>

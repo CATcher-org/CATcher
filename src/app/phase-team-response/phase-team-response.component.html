@@ -26,28 +26,8 @@
   </mat-grid-list>
 
   <mat-accordion multi>
-    <mat-expansion-panel expanded>
-      <mat-expansion-panel-header>
-        <mat-panel-title> Issues Pending Response </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel expanded>
-      <mat-expansion-panel-header>
-        <mat-panel-title> Faulty Issues </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel expanded>
-      <mat-expansion-panel-header>
-        <mat-panel-title> Issues Responded </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
-    </mat-expansion-panel>
+    <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
+    <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
+    <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
   </mat-accordion>
 </div>

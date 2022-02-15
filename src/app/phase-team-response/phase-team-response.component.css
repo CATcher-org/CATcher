@@ -16,12 +16,8 @@
   margin-bottom: 20px;
 }
 
-.mat-accordion .mat-expansion-panel {
-  margin-bottom: 10px;
-}
-
-.mat-expansion-panel-header-title {
-  font-size: x-large;
+.mat-grid-list {
+  min-width: 1050px;
 }
 
 .mat-column-actions {
