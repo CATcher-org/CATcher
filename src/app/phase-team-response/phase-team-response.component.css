@@ -20,8 +20,23 @@
   margin-bottom: 10px;
 }
 
+.search-bar {
+  pointer-events: auto;
+}
+
+.align-header {
+  display: flex;
+  align-items: baseline;
+}
+
 .mat-expansion-panel-header-title {
   font-size: x-large;
+  align-self: center;
+}
+
+.mat-expansion-panel-header-description {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .mat-column-actions {

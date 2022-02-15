@@ -1,11 +1,3 @@
 <div>
-  <mat-grid-list cols="3" rowHeight="60px">
-    <mat-grid-tile>
-      <mat-form-field class="full-grid-width">
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search" />
-      </mat-form-field>
-    </mat-grid-tile>
-  </mat-grid-list>
-
   <app-issue-tables [headers]="this.displayedColumns" [actions]="this.actionButtons" [filters]="this.filter"></app-issue-tables>
 </div>
