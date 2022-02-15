@@ -37,6 +37,8 @@
                 class="search-bar"
                 (click)="$event.stopPropagation()"
                 (keyup)="issuesPending.applyFilter($event.target.value)"
+                (keydown.space)="$event.stopPropagation()"
+                (keydown.enter)="$event.stopPropagation()"
                 placeholder="Search"
               />
             </mat-form-field>
