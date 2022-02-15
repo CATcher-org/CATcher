@@ -7,6 +7,7 @@
 
 .mat-expansion-panel {
   margin-bottom: 10px;
+  min-width: 1050px;
 }
 
 .mat-expansion-panel-header-title {

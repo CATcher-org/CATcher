@@ -11,6 +11,10 @@
   padding: 30px 20px;
 }
 
+.mat-grid-list {
+  min-width: 1050px;
+}
+
 .mat-raised-button {
   margin-left: 20px;
   margin-bottom: 20px;
