@@ -2,7 +2,7 @@
   <mat-expansion-panel-header [expandedHeight]="'70px'">
     <mat-panel-title> Faulty Issues </mat-panel-title>
     <mat-panel-description>
-      <mat-form-field style="width: 100%" *ngIf="panelOpenState">
+      <mat-form-field class="full-grid-width" *ngIf="panelOpenState">
         <input
           matInput
           (click)="$event.stopPropagation()"
