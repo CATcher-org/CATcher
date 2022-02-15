@@ -27,13 +27,7 @@
 
   <mat-accordion multi>
     <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
-    <mat-expansion-panel expanded>
-      <mat-expansion-panel-header>
-        <mat-panel-title> Faulty Issues </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
-    </mat-expansion-panel>
+    <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
 
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>

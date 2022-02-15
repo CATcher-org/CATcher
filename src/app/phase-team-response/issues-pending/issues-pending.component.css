@@ -10,6 +10,7 @@
 }
 
 .mat-expansion-panel-header-title {
+  flex-basis: 15%;
   font-size: x-large;
   align-self: center;
 }
