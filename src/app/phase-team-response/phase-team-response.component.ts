@@ -5,7 +5,6 @@ import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
 import { IssueService } from '../core/services/issue.service';
 import { UserService } from '../core/services/user.service';
-import { IssuesPendingComponent } from './issues-pending/issues-pending.component';
 
 @Component({
   selector: 'app-phase-team-response',
