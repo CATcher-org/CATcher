@@ -1,4 +1,6 @@
 .mat-table {
+  display: flex;
+  flex-wrap: wrap;
   min-width: 1000px;
 }
 
@@ -10,31 +12,28 @@
 }
 
 .mat-column-id {
-  width: 6%;
+  flex: 0 1 5%;
 }
 
 .mat-column-title {
-  width: 20%;
-  padding: 0 10px 0 10px;
 }
 
 .mat-column-type {
+  overflow-x: auto;
 }
 
 .mat-column-responseTag {
+  overflow-x: auto;
 }
 
 .mat-column-severity {
-  padding-left: 20px;
 }
 
 .mat-column-duplicatedIssues {
-  padding-left: 25px;
+  overflow-x: auto;
 }
 
 .mat-column-assignees {
-  padding-left: 25px;
-  padding-right: 20px;
   word-wrap: normal;
 }
 
@@ -42,6 +41,16 @@
 }
 
 .mat-column-actions {
-  width: 20%;
+  overflow-x: auto;
   text-align: center !important;
+}
+
+.mat-header-row {
+  column-gap: 10px;
+  min-width: 100%;
+}
+
+.mat-row {
+  column-gap: 10px;
+  min-width: 100%;
 }
