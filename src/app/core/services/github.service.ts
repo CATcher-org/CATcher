@@ -70,6 +70,12 @@ export class GithubService {
     octokit = new Octokit({
       auth() {
         return `Token ${accessToken}`;
+      },
+      log: {
+        debug: (message, ...otherInfo) => this.logger.debug(message, ...otherInfo),
+        info: (message, ...otherInfo) => this.logger.info(message, ...otherInfo),
+        warn: (message, ...otherInfo) => this.logger.warn(message, ...otherInfo),
+        error: (message, ...otherInfo) => this.logger.error(message, ...otherInfo)
       }
     });
   }
@@ -174,7 +180,6 @@ export class GithubService {
    *                                created.
    */
   createRepository(name: string): void {
-    this.logger.info(`Creating repository for ${name}`);
     octokit.repos.createForAuthenticatedUser({ name: name });
   }
 
@@ -241,7 +246,6 @@ export class GithubService {
    * @param labelColor - colour of new label.
    */
   createLabel(formattedLabelName: string, labelColor: string): void {
-    this.logger.info(`Creating label: ${formattedLabelName} (color: ${labelColor})`);
     octokit.issues.createLabel({ owner: ORG_NAME, repo: REPO, name: formattedLabelName, color: labelColor });
   }
 
@@ -251,7 +255,6 @@ export class GithubService {
    * @param labelColor - new color to be assigned to existing label.
    */
   updateLabel(labelName: string, labelColor: string): void {
-    this.logger.info(`Updating label: ${labelName} (color: ${labelColor})`);
     octokit.issues.updateLabel({ owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor });
   }
 
@@ -278,7 +281,6 @@ export class GithubService {
   }
 
   closeIssue(id: number): Observable<GithubIssue> {
-    this.logger.info(`Closing issue id: ${id}`);
     return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed' })).pipe(
       map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
@@ -288,7 +290,6 @@ export class GithubService {
   }
 
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
-    this.logger.info(`Creating issue with title: ${title}`);
     return from(octokit.issues.create({ owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels })).pipe(
       map((response: GithubResponse<GithubIssue>) => {
         return new GithubIssue(response.data);
@@ -297,7 +298,6 @@ export class GithubService {
   }
 
   createIssueComment(issueId: number, description: string): Observable<GithubComment> {
-    this.logger.info(`Creating issue comment on issue id: ${issueId}`);
     return from(octokit.issues.createComment({ owner: ORG_NAME, repo: REPO, issue_number: issueId, body: description })).pipe(
       map((response: GithubResponse<GithubComment>) => {
         return response.data;
@@ -306,7 +306,6 @@ export class GithubService {
   }
 
   updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
-    this.logger.info(`Updating issue id: ${id}`);
     return from(
       octokit.issues.update({
         owner: ORG_NAME,
@@ -329,7 +328,6 @@ export class GithubService {
   }
 
   updateIssueComment(issueComment: IssueComment): Observable<GithubComment> {
-    this.logger.info(`Updating issue comment id: ${issueComment.id}`);
     return from(
       octokit.issues.updateComment({ owner: ORG_NAME, repo: REPO, comment_id: issueComment.id, body: issueComment.description })
     ).pipe(
@@ -340,7 +338,6 @@ export class GithubService {
   }
 
   uploadFile(filename: string, base64String: string): Observable<any> {
-    this.logger.info(`Uploading file: ${filename}`);
     return from(
       octokit.repos.createOrUpdateFile({
         owner: ORG_NAME,

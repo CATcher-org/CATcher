@@ -122,6 +122,9 @@ export class LoggingService {
   }
 
   debug(...params: any[]) {
+    if (AppConfig.production) {
+      return;
+    }
     this.updateLog(params);
     this.logger.debug(params);
   }
