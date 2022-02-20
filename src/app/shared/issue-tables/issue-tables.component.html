@@ -151,6 +151,19 @@
     </td>
   </ng-container>
 
+  <!--Tester Disagree Column-->
+  <ng-container matColumnDef="testerDisagree">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Response</th>
+    <td mat-cell *matCellDef="let issue">
+      <span (click)="$event.stopPropagation()" *ngIf="issue.testerDisagree" [ngStyle]="this.labelService.setLabelStyle('ff9900')"
+        >Disagree
+      </span>
+      <span (click)="$event.stopPropagation()" *ngIf="!issue.testerDisagree" [ngStyle]="this.labelService.setLabelStyle('00802b')"
+        >Agree
+      </span>
+    </td></ng-container
+  >
+
   <!-- Action Buttons Column -->
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>Actions</th>
