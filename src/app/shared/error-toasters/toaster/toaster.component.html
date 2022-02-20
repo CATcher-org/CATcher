@@ -1,0 +1,8 @@
+<div class="toaster">
+  <div class="message-container">
+    <p>
+      <ng-content></ng-content>
+    </p>
+  </div>
+  <button mat-button color="accent" (click)="snackBarRef.dismiss()">Close</button>
+</div>
