@@ -10,7 +10,14 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
 })
 export class IssueRespondedComponent implements OnInit {
   @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
-  readonly displayedColumns = [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE, TABLE_COLUMNS.TYPE, TABLE_COLUMNS.SEVERITY, TABLE_COLUMNS.ACTIONS];
+  readonly displayedColumns = [
+    TABLE_COLUMNS.ID,
+    TABLE_COLUMNS.TITLE,
+    TABLE_COLUMNS.TYPE,
+    TABLE_COLUMNS.SEVERITY,
+    TABLE_COLUMNS.TESTER_DISAGREE,
+    TABLE_COLUMNS.ACTIONS
+  ];
   readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.MARK_AS_PENDING, ACTION_BUTTONS.FIX_ISSUE];
   filter: (issue: Issue) => boolean;
 

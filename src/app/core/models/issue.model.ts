@@ -41,6 +41,7 @@ export class Issue {
   duplicateOf?: number;
   teamResponse?: string;
   testerResponses?: TesterResponse[];
+  testerDisagree?: boolean; // whether tester agrees or disagree to teams reponse
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
   teamChosenSeverity?: string;
@@ -142,6 +143,7 @@ export class Issue {
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
+    issue.testerDisagree = template.testerDisagree;
 
     issue.teamChosenSeverity = template.teamChosenSeverity || null;
     issue.teamChosenType = template.teamChosenType || null;

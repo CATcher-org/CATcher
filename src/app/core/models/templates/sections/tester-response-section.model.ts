@@ -12,6 +12,7 @@ const matchLinebreak = '[\\n\\r]-{19}';
 
 export class TesterResponseSection extends Section {
   testerResponses: TesterResponse[] = [];
+  testerDisagree: boolean;
   teamChosenSeverity?: string;
   teamChosenType?: string;
 
@@ -36,12 +37,14 @@ export class TesterResponseSection extends Section {
             this.teamChosenType = this.parseTeamChosenType(description);
           }
 
+          this.testerDisagree = this.parseCheckboxValue(disagreeCheckbox);
+
           this.testerResponses.push(
             new TesterResponse(
               title,
               description,
               this.parseCheckboxDescription(disagreeCheckbox),
-              this.parseCheckboxValue(disagreeCheckbox),
+              this.testerDisagree,
               reasonForDisagreement.trim()
             )
           );
@@ -64,6 +67,10 @@ export class TesterResponseSection extends Section {
 
   getTeamChosenSeverity(): string {
     return this.teamChosenSeverity;
+  }
+
+  getTesterDisagree(): boolean {
+    return this.testerDisagree;
   }
 
   parseTeamChosenSeverity(description: string): string {
