@@ -239,7 +239,7 @@ export class LabelService {
    * @param labelCategory: the label's category (e.g Type/ Severity / ...).
    */
   getPlainLabelDefinition(labelValue: string, labelCategory: string): string {
-    let x: string = this.getLabelDefinition(labelValue, labelCategory);
+    const x: string = this.getLabelDefinition(labelValue, labelCategory);
     return x.replace(/<\/li>/g, ', ').replace(/(<[^>]*>)|(\\.)/g, '');
   }
 
