@@ -15,7 +15,12 @@
       <span> {{ value.labelValue }}</span>
     </button>
 
-    <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openDefinitionPage(value); $event.stopPropagation()">
+    <button
+      *ngIf="hasLabelDefinition(value)"
+      class="infoPopup"
+      [matTooltip]="getPlainLabelDefinition(value)"
+      (click)="openDefinitionPage(value); $event.stopPropagation()"
+    >
       <mat-icon style="font-size: 20px">info</mat-icon>
     </button>
   </div>

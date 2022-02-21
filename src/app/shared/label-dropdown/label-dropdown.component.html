@@ -17,7 +17,12 @@
           <span> {{ value.labelValue }}</span>
         </mat-option>
 
-        <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openModalPopup(value)">
+        <button
+          *ngIf="hasLabelDefinition(value)"
+          class="infoPopup"
+          [matTooltip]="getPlainLabelDefinition(value)"
+          (click)="openModalPopup(value)"
+        >
           <mat-icon style="font-size: 20px">info</mat-icon>
         </button>
       </div>

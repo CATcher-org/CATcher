@@ -233,6 +233,17 @@ export class LabelService {
   }
 
   /**
+   * Returns the html-stripped plain text definition of the label by regex of label
+   * definition.
+   * @param labelValue: the label's value (e.g Low/ Medium/ High / ...).
+   * @param labelCategory: the label's category (e.g Type/ Severity / ...).
+   */
+  getPlainLabelDefinition(labelValue: string, labelCategory: string): string {
+    let x: string = this.getLabelDefinition(labelValue, labelCategory);
+    return x.replace(/<\/li>/g, ', ').replace(/(<[^>]*>)|(\\.)/g, '');
+  }
+
+  /**
    * Ensures that the repo has the required labels.
    * Compares the actual labels in the repo with the required labels. If an required label is missing,
    * it is added to the repo. If the required label exists but the label color is not as expected,

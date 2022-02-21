@@ -76,4 +76,8 @@ export class LabelComponent implements OnInit, OnChanges {
   hasLabelDefinition(value: Label): boolean {
     return this.labelService.getLabelDefinition(value.labelValue, value.labelCategory) !== null;
   }
+
+  getPlainLabelDefinition(value: Label): string {
+    return this.labelService.getPlainLabelDefinition(value.labelValue, value.labelCategory) || '';
+  }
 }
