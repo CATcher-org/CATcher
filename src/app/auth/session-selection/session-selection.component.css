@@ -1,0 +1,10 @@
+.login-field {
+  width: 100%;
+}
+
+.sign-in-button {
+  background: #f7fcfe;
+  line-height: 45px;
+  border: 1px solid currentColor;
+  width: 100%;
+}
