@@ -12,7 +12,6 @@ import { PermissionService } from '../../core/services/permission.service';
 import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { IssuesDataTable } from './IssuesDataTable';
-import { COLOR_GREEN, COLOR_ORANGE } from '../../core/services/label.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,

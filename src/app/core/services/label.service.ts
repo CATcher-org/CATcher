@@ -21,10 +21,10 @@ const COLOR_RED_DARK = 'ff6666';
 const COLOR_PURPLE_LIGHT = 'd966ff';
 const COLOR_PURPLE = '9900cc';
 
-export const COLOR_GREEN = '00802b';
+const COLOR_GREEN = '00802b';
 const COLOR_ORANGE_PALE = 'ffebcc';
 const COLOR_ORANGE_LIGHT = 'ffcc80';
-export const COLOR_ORANGE = 'ff9900';
+const COLOR_ORANGE = 'ff9900';
 
 const COLOR_SILVER = 'a6a6a6';
 

@@ -151,16 +151,24 @@
 
   <!--Tester Disagree Column-->
   <ng-container matColumnDef="testerDisagree">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Response</th>
-    <td mat-cell *matCellDef="let issue">
-      <span (click)="$event.stopPropagation()" *ngIf="issue.testerDisagree" [ngStyle]="this.labelService.setLabelStyle(COLOR_ORANGE)"
-        >Disagree
+    <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>Response</mat-header-cell>
+    <mat-cell *matCellDef="let issue">
+      <span
+        (click)="$event.stopPropagation()"
+        *ngIf="issue.testerDisagree"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('Rejected'))"
+      >
+        Disagree
       </span>
-      <span (click)="$event.stopPropagation()" *ngIf="!issue.testerDisagree" [ngStyle]="this.labelService.setLabelStyle(COLOR_GREEN))"
-        >Agree
+      <span
+        (click)="$event.stopPropagation()"
+        *ngIf="!issue.testerDisagree"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('Accepted'))"
+      >
+        Agree
       </span>
-    </td></ng-container
-  >
+    </mat-cell>
+  </ng-container>
 
   <!-- Action Buttons Column -->
   <ng-container matColumnDef="actions">
