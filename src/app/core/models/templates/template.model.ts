@@ -44,7 +44,15 @@ export class Header {
   }
 
   toString(): string {
-    return this.headerHash.concat(this.prefix === '' ? ' ' : ' ' + this.prefix + ' ').concat(this.name);
+    let str = this.name;
+    if (this.prefix !== '') {
+      str = this.prefix + ' ' + str;
+    }
+    if (this.headerHash !== '') {
+      str = this.headerHash + ' ' + str;
+    }
+
+    return str;
   }
 
   equals(section: Header): boolean {
