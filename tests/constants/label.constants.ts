@@ -24,7 +24,7 @@ export const STATUS = 'status';
 
 // Label color constants
 export const COLOR_BLACK = '000000';
-export const COLOR_WHITE = 'FFFFFF';
+export const COLOR_WHITE = 'ffffff';
 export const COLOR_SEVERITY_VERY_LOW = 'ffe0e0';
 export const COLOR_SEVERITY_LOW = 'ffcccc';
 export const COLOR_SEVERITY_MEDIUM = 'ff9999';

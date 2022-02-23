@@ -11,7 +11,7 @@ are considered dark (Github too consider them dark) */
 const COLOR_DARKNESS_THRESHOLD = 0.184;
 
 const COLOR_BLACK = '000000'; // Dark color for text with light background
-const COLOR_WHITE = 'FFFFFF'; // Light color for text with dark background
+const COLOR_WHITE = 'ffffff'; // Light color for text with dark background
 
 const COLOR_RED_PALE = 'ffe0e0';
 const COLOR_RED_LIGHT = 'ffcccc';
