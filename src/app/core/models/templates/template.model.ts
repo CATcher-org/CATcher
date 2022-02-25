@@ -44,15 +44,9 @@ export class Header {
   }
 
   toString(): string {
-    let str = this.name;
-    if (this.prefix !== '') {
-      str = this.prefix + ' ' + str;
-    }
-    if (this.headerHash !== '') {
-      str = this.headerHash + ' ' + str;
-    }
-
-    return str;
+    const prefix = this.prefix !== "" ? this.prefix + " " : ""
+    const headerHashPrefix = this.headerHash !== "" ? this.headerHash + " " : ""
+    return `${headerHashPrefix}${prefix}${this.name}`;
   }
 
   equals(section: Header): boolean {
