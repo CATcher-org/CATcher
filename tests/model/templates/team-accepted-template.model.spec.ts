@@ -28,6 +28,6 @@ describe('TeamAcceptedTemplate class', () => {
   it('does not find team accepted comment', () => {
     const template = new TeamAcceptedTemplate(noAcceptedComment);
 
-    expect(template.teamAccepted).toBe(undefined);
+    expect(template.teamAccepted).not.toBe(true);
   });
 });
