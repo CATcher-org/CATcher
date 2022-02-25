@@ -8,7 +8,7 @@ export abstract class Template {
     this.headers = headers;
 
     const headerString = headers.join('|');
-    this.regex = new RegExp(`(${headerString})\\s+([\\s\\S]*?)(?=${headerString}|$)`, 'gi');
+    this.regex = new RegExp(`(${headerString})(\\s+|$)([\\s\\S]*?)(?=${headerString}|$)`, 'gi');
   }
 
   getSectionalDependency(header: Header): SectionalDependency {
