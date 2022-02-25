@@ -122,7 +122,10 @@ export class LoggingService {
   }
 
   debug(...params: any[]) {
-    this.updateLog(params);
+    if (AppConfig.production) {
+      return;
+    }
+    // Log file will not be updated to keep log messages short
     this.logger.debug(params);
   }
 }
