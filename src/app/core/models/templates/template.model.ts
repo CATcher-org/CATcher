@@ -44,8 +44,8 @@ export class Header {
   }
 
   toString(): string {
-    const prefix = this.prefix !== "" ? this.prefix + " " : ""
-    const headerHashPrefix = this.headerHash !== "" ? this.headerHash + " " : ""
+    const prefix = this.prefix !== '' ? this.prefix + ' ' : '';
+    const headerHashPrefix = this.headerHash !== '' ? this.headerHash + ' ' : '';
     return `${headerHashPrefix}${prefix}${this.name}`;
   }
 
