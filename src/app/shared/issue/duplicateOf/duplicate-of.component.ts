@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
@@ -72,7 +72,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
     this.searchFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe((_) => this.filterIssues());
   }
 
-  filterIssues(): void {
+  private filterIssues(): void {
     this.changeFilter(this.duplicatedIssueList, this.searchFilterCtrl.value).subscribe((issues) =>
       this.filteredDuplicateIssueList.next(issues)
     );
@@ -96,7 +96,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
       if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
         reason.push('Issue of lower priority');
       } else if (issue.duplicated || !!issue.duplicateOf) {
-        reason.push('A duplicated issue');
+        reason.push('Duplicate of #' + issue.duplicateOf);
       }
     }
     return reason.join(', ');
@@ -140,7 +140,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
     return clone;
   }
 
-  changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
+  private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
     return issuesObservable.pipe(
       first(),
       map((issues) => {
