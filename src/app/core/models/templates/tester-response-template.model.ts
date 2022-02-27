@@ -20,16 +20,19 @@ export class TesterResponseTemplate extends Template {
     super(Object.values(TesterResponseHeaders));
 
     const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
-    if (templateConformingComment) {
-      this.comment = <IssueComment>{
-        ...templateConformingComment,
-        description: templateConformingComment.body
-      };
-      this.teamResponse = this.parseTeamResponse(this.comment.description);
-      this.testerResponse = this.parseTesterResponse(this.comment.description);
-      this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
-      this.teamChosenType = this.testerResponse.getTeamChosenType();
+
+    if (templateConformingComment === undefined) {
+      return;
     }
+
+    this.comment = <IssueComment>{
+      ...templateConformingComment,
+      description: templateConformingComment.body
+    };
+    this.teamResponse = this.parseTeamResponse(this.comment.description);
+    this.testerResponse = this.parseTesterResponse(this.comment.description);
+    this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
+    this.teamChosenType = this.testerResponse.getTeamChosenType();
   }
 
   parseTeamResponse(toParse: string): Section {
