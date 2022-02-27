@@ -8,7 +8,7 @@ export abstract class Template {
     this.headers = headers;
 
     const headerString = headers.join('|');
-    this.regex = new RegExp(`(${headerString})\\s+([\\s\\S]*?)(?=${headerString}|$)`, 'gi');
+    this.regex = new RegExp(`(${headerString})(\\s+|$)([\\s\\S]*?)(?=${headerString}|$)`, 'gi');
   }
 
   getSectionalDependency(header: Header): SectionalDependency {
@@ -44,7 +44,9 @@ export class Header {
   }
 
   toString(): string {
-    return this.headerHash.concat(this.prefix === '' ? ' ' : ' ' + this.prefix + ' ').concat(this.name);
+    const prefix = this.prefix !== '' ? this.prefix + ' ' : '';
+    const headerHashPrefix = this.headerHash !== '' ? this.headerHash + ' ' : '';
+    return `${headerHashPrefix}${prefix}${this.name}`;
   }
 
   equals(section: Header): boolean {
