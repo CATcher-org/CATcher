@@ -50,6 +50,9 @@
       >
       </app-tester-response>
 
+      <!-- Team Accepted -->
+      <app-team-accepted *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && issue.teamAccepted"> </app-team-accepted>
+
       <!-- Issue Disputes For Tutor's Response -->
       <app-issue-dispute
         *ngIf="this.isComponentVisible(issueComponentsEnum.ISSUE_DISPUTE)"

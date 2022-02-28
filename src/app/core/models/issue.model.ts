@@ -7,6 +7,7 @@ import { GithubLabel } from './github/github-label.model';
 import { HiddenData } from './hidden-data.model';
 import { IssueDispute } from './issue-dispute.model';
 import { Team } from './team.model';
+import { TeamAcceptedTemplate } from './templates/team-accepted-template.model';
 import { TeamResponseTemplate } from './templates/team-response-template.model';
 import { TesterResponseTemplate } from './templates/tester-response-template.model';
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
@@ -45,6 +46,7 @@ export class Issue {
   issueDisputes?: IssueDispute[];
   teamChosenSeverity?: string;
   teamChosenType?: string;
+  teamAccepted?: boolean;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -136,15 +138,17 @@ export class Issue {
 
   public static createPhaseTesterResponseIssue(githubIssue: GithubIssue): Issue {
     const issue = new Issue(githubIssue);
-    const template = new TesterResponseTemplate(githubIssue.comments);
+    const testerResponseTemplate = new TesterResponseTemplate(githubIssue.comments);
+    const teamAcceptedTemplate = new TeamAcceptedTemplate(githubIssue.comments);
 
     issue.githubComments = githubIssue.comments;
-    issue.issueComment = template.comment;
-    issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
-    issue.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
+    issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
+    issue.issueComment = testerResponseTemplate.comment;
+    issue.teamResponse = testerResponseTemplate.teamResponse && Issue.updateTeamResponse(testerResponseTemplate.teamResponse.content);
+    issue.testerResponses = testerResponseTemplate.testerResponse && testerResponseTemplate.testerResponse.testerResponses;
 
-    issue.teamChosenSeverity = template.teamChosenSeverity || null;
-    issue.teamChosenType = template.teamChosenType || null;
+    issue.teamChosenSeverity = testerResponseTemplate.teamChosenSeverity || null;
+    issue.teamChosenType = testerResponseTemplate.teamChosenType || null;
 
     return issue;
   }
