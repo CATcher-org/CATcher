@@ -1,5 +1,5 @@
 import { GithubComment } from '../../../src/app/core/models/github/github-comment.model';
-import { TeamAcceptedTemplate, TeamAcceptedMessage } from '../../../src/app/core/models/templates/team-accepted-template.model';
+import { TeamAcceptedMessage, TeamAcceptedTemplate } from '../../../src/app/core/models/templates/team-accepted-template.model';
 
 import { TEAM_RESPONSE_MULTIPLE_DISAGREEMENT } from '../../constants/githubcomment.constants';
 
