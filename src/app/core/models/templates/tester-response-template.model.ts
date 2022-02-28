@@ -12,6 +12,7 @@ export const TesterResponseHeaders = {
 export class TesterResponseTemplate extends Template {
   teamResponse: Section;
   testerResponse: TesterResponseSection;
+  testerDisagree: boolean;
   comment: IssueComment;
   teamChosenSeverity?: string;
   teamChosenType?: string;
@@ -20,7 +21,7 @@ export class TesterResponseTemplate extends Template {
     super(Object.values(TesterResponseHeaders));
 
     const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
-
+    
     if (templateConformingComment === undefined) {
       return;
     }
@@ -31,6 +32,7 @@ export class TesterResponseTemplate extends Template {
     };
     this.teamResponse = this.parseTeamResponse(this.comment.description);
     this.testerResponse = this.parseTesterResponse(this.comment.description);
+    this.testerDisagree = this.testerResponse.getTesterDisagree();
     this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
     this.teamChosenType = this.testerResponse.getTeamChosenType();
   }
