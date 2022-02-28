@@ -38,7 +38,7 @@ export class TesterResponseSection extends Section {
           }
 
           const disagreeCheckboxValue = this.parseCheckboxValue(disagreeCheckbox);
-          if (disagreeCheckboxValue === true) {
+          if (disagreeCheckboxValue) {
             this.testerDisagree = true; // on any disagree, overall disagree with team response
           }
 
