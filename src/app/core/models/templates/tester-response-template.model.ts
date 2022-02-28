@@ -21,7 +21,7 @@ export class TesterResponseTemplate extends Template {
     super(Object.values(TesterResponseHeaders));
 
     const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
-    
+
     if (templateConformingComment === undefined) {
       return;
     }
