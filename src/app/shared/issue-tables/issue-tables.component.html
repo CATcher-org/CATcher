@@ -179,7 +179,7 @@
         mat-button
         matTooltip="View this issue on GitHub"
         *ngIf="this.isActionVisible(action_buttons.VIEW_IN_WEB)"
-        (click)="this.viewIssueInBrowser(issue.id)"
+        (click)="this.viewIssueInBrowser(issue.id, $event)"
         style="transform: scale(0.8)"
       >
         <mat-icon>open_in_new</mat-icon>
