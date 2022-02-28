@@ -153,6 +153,7 @@
   <ng-container matColumnDef="testerDisagree">
     <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>Response</mat-header-cell>
     <mat-cell *matCellDef="let issue">
+      <!-- Response Agree/Disagree colours are the same as Response Agree/Rejected label colours for uniformity in the app -->
       <span
         (click)="$event.stopPropagation()"
         *ngIf="issue.testerDisagree"
