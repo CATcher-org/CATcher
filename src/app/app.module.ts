@@ -65,7 +65,7 @@ import { SharedModule } from './shared/shared.module';
     {
       provide: GithubService,
       useFactory: GithubServiceFactory,
-      deps: [ErrorHandlingService, Apollo, ElectronService]
+      deps: [ErrorHandlingService, Apollo, ElectronService, LoggingService]
     },
     {
       provide: AuthService,
