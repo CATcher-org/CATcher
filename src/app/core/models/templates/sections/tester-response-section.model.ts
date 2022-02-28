@@ -37,14 +37,17 @@ export class TesterResponseSection extends Section {
             this.teamChosenType = this.parseTeamChosenType(description);
           }
 
-          this.testerDisagree = this.parseCheckboxValue(disagreeCheckbox);
+          const disagreeCheckboxValue = this.parseCheckboxValue(disagreeCheckbox);
+          if (disagreeCheckboxValue == true) {
+            this.testerDisagree = true; // on any disagree, overall disagree with team response
+          }
 
           this.testerResponses.push(
             new TesterResponse(
               title,
               description,
               this.parseCheckboxDescription(disagreeCheckbox),
-              this.testerDisagree,
+              disagreeCheckboxValue,
               reasonForDisagreement.trim()
             )
           );
