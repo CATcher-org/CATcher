@@ -36,7 +36,7 @@ export class AssigneeComponent implements OnInit {
 
   ngOnInit(): void {
     this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
-    this.assignees = this.issue.assignees.map((a) => a.toLowerCase());
+    this.assignees = this.issue.assignees.map((a) => a);
   }
 
   openSelector() {
@@ -52,25 +52,27 @@ export class AssigneeComponent implements OnInit {
 
   updateAssignee(): void {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
+    const oldAssignees = newIssue.assignees;
     newIssue.assignees = this.assignees;
-    this.issueService.updateIssue(newIssue).subscribe(
+    this.issueService.updateIssueWithAssigneeCheck(newIssue).subscribe(
       (updatedIssue: Issue) => {
         this.issueUpdated.emit(updatedIssue);
+        // Update assignees of duplicate issues
+        this.issueService
+          .getDuplicateIssuesFor(this.issue)
+          .pipe(first())
+          .subscribe((issues: Issue[]) => {
+            issues.forEach((issue: Issue) => {
+              const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
+              newDuplicateIssue.assignees = this.assignees;
+              this.issueService.updateIssue(newDuplicateIssue);
+            });
+          });
       },
       (error) => {
         this.errorHandlingService.handleError(error);
+        this.assignees = oldAssignees;
       }
     );
-    // Update assignees of duplicate issues
-    this.issueService
-      .getDuplicateIssuesFor(this.issue)
-      .pipe(first())
-      .subscribe((issues: Issue[]) => {
-        issues.forEach((issue: Issue) => {
-          const newDuplicateIssue = issue.clone(this.phaseService.currentPhase);
-          newDuplicateIssue.assignees = this.assignees;
-          this.issueService.updateIssue(newDuplicateIssue);
-        });
-      });
   }
 }

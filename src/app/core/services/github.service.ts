@@ -28,6 +28,7 @@ import { GithubRelease } from '../models/github/github.release';
 import { SessionData } from '../models/session.model';
 import { ElectronService } from './electron.service';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
+import { LoggingService } from './logging.service';
 
 const Octokit = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -58,12 +59,24 @@ export class GithubService {
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private issueQueryRefs = new Map<Number, QueryRef<FetchIssueQuery>>();
 
-  constructor(private errorHandlingService: ErrorHandlingService, private apollo: Apollo, private electronService: ElectronService) {}
+  constructor(
+    private errorHandlingService: ErrorHandlingService,
+    private apollo: Apollo,
+    private electronService: ElectronService,
+    private logger: LoggingService
+  ) {}
 
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
       auth() {
         return `Token ${accessToken}`;
+      },
+      log: {
+        debug: (message, ...otherInfo) => this.logger.debug(message, ...otherInfo),
+        // Do not log info for HTTP response 304 due to repeated polling
+        info: (message, ...otherInfo) => (/304 in \d+ms$/.test(message) ? undefined : this.logger.info(message, ...otherInfo)),
+        warn: (message, ...otherInfo) => this.logger.warn(message, ...otherInfo),
+        error: (message, ...otherInfo) => this.logger.error(message, ...otherInfo)
       }
     });
   }
@@ -244,6 +257,28 @@ export class GithubService {
    */
   updateLabel(labelName: string, labelColor: string): void {
     octokit.issues.updateLabel({ owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor });
+  }
+
+  /**
+   * Checks if the given list of users are allowed to be assigned to an issue.
+   * @param assignees - GitHub usernames to be checked
+   */
+  areUsersAssignable(assignees: string[]): Observable<void> {
+    return from(
+      octokit.issues.listAssignees({
+        owner: ORG_NAME,
+        repo: REPO
+      })
+    ).pipe(
+      map(({ data }: { data: { login: string }[] }) => data.map(({ login }) => login)),
+      map((assignables: string[]) =>
+        assignees.forEach((assignee) => {
+          if (!assignables.includes(assignee)) {
+            throw new Error(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`);
+          }
+        })
+      )
+    );
   }
 
   closeIssue(id: number): Observable<GithubIssue> {
