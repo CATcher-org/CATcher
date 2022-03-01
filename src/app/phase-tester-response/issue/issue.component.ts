@@ -18,7 +18,7 @@ export class IssueComponent implements OnInit {
     ISSUE_COMPONENTS.TESTER_RESPONSE
   ];
 
-  @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
+  @ViewChild(ViewIssueComponent, { static: false }) viewIssue: ViewIssueComponent;
 
   constructor(private route: ActivatedRoute) {}
 
