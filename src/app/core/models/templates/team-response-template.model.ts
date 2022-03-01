@@ -13,7 +13,7 @@ export class TeamResponseTemplate extends Template {
   teamResponse: Section;
   duplicateOf: DuplicateOfSection;
   comment: IssueComment;
-  parseError?: boolean;
+  parseError: boolean;
 
   constructor(githubComments: GithubComment[]) {
     super(Object.values(TeamResponseHeaders));

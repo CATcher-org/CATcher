@@ -49,8 +49,8 @@ export class Issue {
   teamAccepted?: boolean;
 
   /** Fields for error messages during parsing of Github's issue description */
-  teamResponseError?: boolean;
-  testerResponseError?: boolean;
+  teamResponseError: boolean;
+  testerResponseError: boolean;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
