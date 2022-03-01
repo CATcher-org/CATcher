@@ -15,8 +15,7 @@ export class IssueFaultyComponent implements OnInit {
   filter: (issue: Issue) => boolean;
 
   ngOnInit() {
-    const hasParseError = (issue: Issue) => issue.testerResponseError;
-    this.filter = (issue: Issue) => hasParseError(issue);
+    this.filter = (issue: Issue) => issue.testerResponseError;
   }
 
   applyFilter(filterValue: string) {
