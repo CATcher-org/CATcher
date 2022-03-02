@@ -149,6 +149,28 @@
     </mat-cell>
   </ng-container>
 
+  <!--Tester Disagree Column-->
+  <ng-container matColumnDef="testerDisagree">
+    <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>Response</mat-header-cell>
+    <mat-cell *matCellDef="let issue">
+      <!-- Response Agree/Disagree colours are the same as Response Agree/Rejected label colours for uniformity in the app -->
+      <span
+        (click)="$event.stopPropagation()"
+        *ngIf="issue.testerDisagree"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('Rejected'))"
+      >
+        Disagree
+      </span>
+      <span
+        (click)="$event.stopPropagation()"
+        *ngIf="!issue.testerDisagree"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('Accepted'))"
+      >
+        Agree
+      </span>
+    </mat-cell>
+  </ng-container>
+
   <!-- Action Buttons Column -->
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
