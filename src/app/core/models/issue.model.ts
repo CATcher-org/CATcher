@@ -42,11 +42,16 @@ export class Issue {
   duplicateOf?: number;
   teamResponse?: string;
   testerResponses?: TesterResponse[];
+  testerDisagree?: boolean; // whether tester agrees or disagree to teams reponse
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
   teamChosenSeverity?: string;
   teamChosenType?: string;
   teamAccepted?: boolean;
+
+  /** Fields for error messages during parsing of Github's issue description */
+  teamResponseError: boolean;
+  testerResponseError: boolean;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -128,11 +133,14 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
+    issue.assignees = githubIssue.assignees.map((assignee) => assignee.login);
+
+    issue.teamResponseError = template.parseError;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
-    issue.assignees = githubIssue.assignees.map((assignee) => assignee.login);
+
     return issue;
   }
 
@@ -142,10 +150,12 @@ export class Issue {
     const teamAcceptedTemplate = new TeamAcceptedTemplate(githubIssue.comments);
 
     issue.githubComments = githubIssue.comments;
+    issue.testerResponseError = testerResponseTemplate.parseError && !teamAcceptedTemplate.teamAccepted;
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
     issue.teamResponse = testerResponseTemplate.teamResponse && Issue.updateTeamResponse(testerResponseTemplate.teamResponse.content);
     issue.testerResponses = testerResponseTemplate.testerResponse && testerResponseTemplate.testerResponse.testerResponses;
+    issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
     issue.teamChosenSeverity = testerResponseTemplate.teamChosenSeverity || null;
     issue.teamChosenType = testerResponseTemplate.teamChosenType || null;

@@ -13,12 +13,14 @@ export class TeamResponseTemplate extends Template {
   teamResponse: Section;
   duplicateOf: DuplicateOfSection;
   comment: IssueComment;
+  parseError: boolean;
 
   constructor(githubComments: GithubComment[]) {
     super(Object.values(TeamResponseHeaders));
 
     const comment = githubComments.find((githubComment: GithubComment) => this.test(githubComment.body));
     if (comment === undefined) {
+      this.parseError = true;
       return;
     }
     this.comment = <IssueComment>{
