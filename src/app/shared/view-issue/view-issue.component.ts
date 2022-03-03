@@ -105,6 +105,20 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
     this.isTutorResponseEditing = updatedState;
   }
 
+  hasNoTeamResponse(): boolean {
+    const isTeamResponsePhase =
+      this.isComponentVisible(this.issueComponentsEnum.NEW_TEAM_RESPONSE) && this.permissions.isTeamResponseEditable();
+    const hasNoResponse = !this.issue.teamResponse && !this.issue.status;
+    return isTeamResponsePhase && hasNoResponse;
+  }
+
+  hasTeamResponseParseError(): boolean {
+    const isTeamResponsePhase =
+      this.isComponentVisible(this.issueComponentsEnum.NEW_TEAM_RESPONSE) && this.permissions.isTeamResponseEditable();
+    const hasParseError = this.issue.teamResponseError && !!this.issue.status;
+    return isTeamResponsePhase && hasParseError;
+  }
+
   private getAndPollIssue(id: number): void {
     this.issueService.getIssue(id).subscribe(
       (issue: Issue) => {
