@@ -60,7 +60,8 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
     const isNotDuplicate = (issue: Issue) => !issue.duplicateOf;
     const doesNotHaveFinalisedResponse = (issue: Issue) =>
       !this.issueService.hasTeamResponse(issue.id) || !issue.status || issue.status === STATUS.Incomplete;
-    this.filter = (issue: Issue) => doesNotHaveFinalisedResponse(issue) && isNotDuplicate(issue);
+    const hasNoParseErrors = (issue: Issue) => !issue.status || !issue.teamResponseError;
+    this.filter = (issue: Issue) => doesNotHaveFinalisedResponse(issue) && isNotDuplicate(issue) && hasNoParseErrors(issue);
   }
 
   applyFilter(filterValue: string) {
