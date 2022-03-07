@@ -4,7 +4,7 @@ import { DuplicateOfSection } from './sections/duplicate-of-section.model';
 import { Section } from './sections/section.model';
 import { Header, Template } from './template.model';
 
-const { choice, coroutine, digits, everyCharUntil, sequenceOf, str, whitespace } = require('arcsecond');
+const { choice, coroutine, digits, everyCharUntil, str, whitespace } = require('arcsecond');
 
 export const TeamResponseHeaders = {
   teamResponse: new Header("Team's Response", 1),
@@ -17,7 +17,7 @@ const DUPLICATE_OF_HEADER = '## Duplicate status (if any):';
 const DuplicateNumberParser = coroutine(function* () {
   yield str('Duplicate of #'); // parse and ignore
   const issueNumber = yield digits; // parse and store duplicate issue number
-  return parseInt(issueNumber); // issueNumber is a string
+  return parseInt(issueNumber, 10); // issueNumber is a string, radix added to pass linting
 });
 
 const TeamResponseParser = coroutine(function* () {
