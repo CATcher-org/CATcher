@@ -1,7 +1,7 @@
 import { GithubIssue } from '../github/github-issue.model';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
-import { Header, Template } from './template.model';
+import { FAIL_PARSER, Header, Template } from './template.model';
 
 const tutorModerationIssueDescriptionHeaders = {
   description: new Header('Issue Description', 1),
@@ -15,7 +15,7 @@ export class TutorModerationIssueTemplate extends Template {
   dispute: IssueDisputeSection;
 
   constructor(githubIssue: GithubIssue) {
-    super(Object.values(tutorModerationIssueDescriptionHeaders));
+    super(FAIL_PARSER, Object.values(tutorModerationIssueDescriptionHeaders));
 
     const issueContent = githubIssue.body;
     this.description = this.parseDescription(issueContent);

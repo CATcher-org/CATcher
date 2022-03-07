@@ -2,7 +2,7 @@ import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { Section } from './sections/section.model';
 import { TesterResponseSection } from './sections/tester-response-section.model';
-import { Header, Template } from './template.model';
+import { FAIL_PARSER, Header, Template } from './template.model';
 
 export const TesterResponseHeaders = {
   teamResponse: new Header("Team's Response", 1),
@@ -18,7 +18,7 @@ export class TesterResponseTemplate extends Template {
   teamChosenType?: string;
 
   constructor(githubIssueComments: GithubComment[]) {
-    super(Object.values(TesterResponseHeaders));
+    super(FAIL_PARSER, Object.values(TesterResponseHeaders));
 
     const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
 

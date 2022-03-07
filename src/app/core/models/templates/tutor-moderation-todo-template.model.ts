@@ -1,7 +1,7 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { ModerationSection } from './sections/moderation-section.model';
-import { Header, Template } from './template.model';
+import { FAIL_PARSER, Header, Template } from './template.model';
 
 const tutorModerationTodoHeaders = {
   todo: new Header('Tutor Moderation', 1)
@@ -12,7 +12,7 @@ export class TutorModerationTodoTemplate extends Template {
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
-    super(Object.values(tutorModerationTodoHeaders));
+    super(FAIL_PARSER, Object.values(tutorModerationTodoHeaders));
 
     const templateConformingComment = githubComments.find((comment) => this.test(comment.body));
     if (templateConformingComment) {
