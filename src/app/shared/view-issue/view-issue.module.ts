@@ -7,6 +7,7 @@ import { LabelDropdownModule } from '../label-dropdown/label-dropdown.module';
 import { SharedModule } from '../shared.module';
 import { IssueDisputeModule } from './issue-dispute/issue-dispute.module';
 import { NewTeamResponseModule } from './new-team-response/new-team-response.module';
+import { ParseErrorModule } from './parse-error/parse-error.module';
 import { TeamAcceptedModule } from './team-accepted/team-accepted.module';
 import { TeamResponseModule } from './team-response/team-response.module';
 import { TesterResponseModule } from './tester-response/tester-response.module';
@@ -20,6 +21,7 @@ import { ViewIssueComponent } from './view-issue.component';
     CommentEditorModule,
     NewTeamResponseModule,
     TeamResponseModule,
+    ParseErrorModule,
     IssueDisputeModule,
     TesterResponseModule,
     SharedModule,

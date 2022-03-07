@@ -31,14 +31,10 @@
       </app-team-response>
 
       <!-- New Team's Response -->
-      <app-new-team-response
-        *ngIf="
-          this.isComponentVisible(issueComponentsEnum.NEW_TEAM_RESPONSE) && permissions.isTeamResponseEditable() && !issue.teamResponse
-        "
-        [issue]="issue"
-        (issueUpdated)="updateIssue($event)"
-      >
-      </app-new-team-response>
+      <app-new-team-response *ngIf="hasNoTeamResponse()" [issue]="issue" (issueUpdated)="updateIssue($event)"> </app-new-team-response>
+
+      <!-- Team Response Parsing Error -->
+      <app-parse-error *ngIf="hasTeamResponseParseError()" [phase]="'Team Response'"> </app-parse-error>
 
       <!-- Tester's Response -->
       <app-tester-response
@@ -49,6 +45,13 @@
         (issueUpdated)="updateIssue($event)"
       >
       </app-tester-response>
+
+      <!-- Tester Response Parsing Error -->
+      <app-parse-error
+        *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && issue.testerResponseError"
+        [phase]="'Tester Response'"
+      >
+      </app-parse-error>
 
       <!-- Team Accepted -->
       <app-team-accepted *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_RESPONSE) && issue.teamAccepted"> </app-team-accepted>
