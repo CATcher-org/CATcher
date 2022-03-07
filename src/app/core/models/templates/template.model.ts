@@ -2,7 +2,6 @@ import { SectionalDependency } from './sections/section.model';
 
 export abstract class Template {
   headers: Header[];
-  regex: RegExp;
   parser;
 
   protected constructor(parser, headers: Header[]) {
