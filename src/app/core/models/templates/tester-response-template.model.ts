@@ -2,12 +2,24 @@ import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { Section } from './sections/section.model';
 import { TesterResponseSection } from './sections/tester-response-section.model';
-import { FAIL_PARSER, Header, Template } from './template.model';
+import { Header, Template } from './template.model';
+
+const { everyCharUntil, str, sequenceOf, whitespace } = require('arcsecond');
 
 export const TesterResponseHeaders = {
   teamResponse: new Header("Team's Response", 1),
   testerResponses: new Header('Items for the Tester to Verify', 1)
 };
+
+const TEAM_RESPONSE_HEADER = "# Team's Response";
+const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
+
+const TesterResponseParser = sequenceOf([
+  str(TEAM_RESPONSE_HEADER),
+  whitespace,
+  everyCharUntil(str(TESTER_RESPONSES_HEADER)),
+  str(TESTER_RESPONSES_HEADER)
+]);
 
 export class TesterResponseTemplate extends Template {
   teamResponse: Section;
@@ -19,7 +31,7 @@ export class TesterResponseTemplate extends Template {
   parseError: boolean;
 
   constructor(githubIssueComments: GithubComment[]) {
-    super(FAIL_PARSER, Object.values(TesterResponseHeaders));
+    super(TesterResponseParser, Object.values(TesterResponseHeaders));
 
     const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
     if (templateConformingComment === undefined) {
