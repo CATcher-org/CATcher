@@ -11,7 +11,7 @@ const ACCEPTED_MESSAGE_GITHUB_COMMENT = {
   body: TeamAcceptedMessage
 } as GithubComment;
 
-const hasAcceptedComment = [EMPTY_BODY_GITHUB_COMMENT, ACCEPTED_MESSAGE_GITHUB_COMMENT, TEAM_RESPONSE_MULTIPLE_DISAGREEMENT];
+const hasAcceptedComment = [EMPTY_BODY_GITHUB_COMMENT, ACCEPTED_MESSAGE_GITHUB_COMMENT];
 const noAcceptedComment = [EMPTY_BODY_GITHUB_COMMENT, TEAM_RESPONSE_MULTIPLE_DISAGREEMENT];
 
 describe('TeamAcceptedTemplate class', () => {
