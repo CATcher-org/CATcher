@@ -4,10 +4,27 @@ import { DuplicateOfSection } from './sections/duplicate-of-section.model';
 import { Section } from './sections/section.model';
 import { Header, Template } from './template.model';
 
+const { choice, digits, everyCharUntil, sequenceOf, str, whitespace } = require('arcsecond');
+
 export const TeamResponseHeaders = {
   teamResponse: new Header("Team's Response", 1),
   duplicateOf: new Header('Duplicate status \\(if any\\):', 2)
 };
+
+const TEAM_RESPONSE_HEADER = "# Team's Response";
+const DUPLICATE_OF_HEADER = '## Duplicate status (if any):';
+
+const DuplicateOfParser = choice([sequenceOf([str('Duplicate of #'), digits]), str('--')]);
+
+const TeamResponseParser = sequenceOf([
+  str(TEAM_RESPONSE_HEADER),
+  whitespace,
+  everyCharUntil(str(DUPLICATE_OF_HEADER)),
+
+  str(DUPLICATE_OF_HEADER),
+  whitespace,
+  DuplicateOfParser
+]);
 
 export class TeamResponseTemplate extends Template {
   teamResponse: Section;
@@ -15,7 +32,7 @@ export class TeamResponseTemplate extends Template {
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
-    super(Object.values(TeamResponseHeaders));
+    super(TeamResponseParser, Object.values(TeamResponseHeaders));
 
     const comment = githubComments.find((githubComment: GithubComment) => this.test(githubComment.body));
     if (comment === undefined) {
