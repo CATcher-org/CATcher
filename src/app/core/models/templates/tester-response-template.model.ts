@@ -22,6 +22,7 @@ export class TesterResponseTemplate extends Template {
     super(Object.values(TesterResponseHeaders));
 
     const templateConformingComment = this.findConformingComment(githubComments);
+
     if (this.getParseFailure()) {
       this.parseError = true;
       return;

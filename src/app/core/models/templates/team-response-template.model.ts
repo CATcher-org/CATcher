@@ -19,10 +19,12 @@ export class TeamResponseTemplate extends Template {
     super(Object.values(TeamResponseHeaders));
 
     const templateConformingComment = this.findConformingComment(githubComments);
+
     if (this.getParseFailure()) {
       this.parseError = true;
       return;
     }
+
     this.comment = <IssueComment>{
       ...templateConformingComment,
       description: templateConformingComment.body,
