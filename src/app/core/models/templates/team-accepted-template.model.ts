@@ -12,7 +12,7 @@ export class TeamAcceptedTemplate extends Template {
 
     this.findConformingComment(githubComments);
 
-    if (this.getParseFailure()) {
+    if (this.parseFailure) {
       return;
     }
 

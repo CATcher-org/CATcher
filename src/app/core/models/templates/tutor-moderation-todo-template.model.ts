@@ -16,7 +16,7 @@ export class TutorModerationTodoTemplate extends Template {
 
     const templateConformingComment = this.findConformingComment(githubComments);
 
-    if (this.getParseFailure()) {
+    if (this.parseFailure) {
       return;
     }
 
