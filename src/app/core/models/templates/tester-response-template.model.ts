@@ -18,11 +18,11 @@ export class TesterResponseTemplate extends Template {
   teamChosenType?: string;
   parseError: boolean;
 
-  constructor(githubIssueComments: GithubComment[]) {
+  constructor(githubComments: GithubComment[]) {
     super(Object.values(TesterResponseHeaders));
 
-    const templateConformingComment = githubIssueComments.find((comment) => this.test(comment.body));
-    if (templateConformingComment === undefined) {
+    const templateConformingComment = this.findConformingComment(githubComments);
+    if (this.getParseFailure()) {
       this.parseError = true;
       return;
     }
