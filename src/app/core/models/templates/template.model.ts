@@ -43,10 +43,6 @@ export abstract class Template {
     }
     return templateConformingComment;
   }
-
-  getParseFailure(): boolean {
-    return this.parseFailure;
-  }
 }
 
 export class Header {
