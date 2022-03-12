@@ -135,7 +135,7 @@ export class Issue {
     issue.teamAssigned = teamData;
     issue.assignees = githubIssue.assignees.map((assignee) => assignee.login);
 
-    issue.teamResponseError = template.parseError;
+    issue.teamResponseError = template.parseFailure;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
     issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
@@ -150,7 +150,7 @@ export class Issue {
     const teamAcceptedTemplate = new TeamAcceptedTemplate(githubIssue.comments);
 
     issue.githubComments = githubIssue.comments;
-    issue.testerResponseError = testerResponseTemplate.parseError && !teamAcceptedTemplate.teamAccepted;
+    issue.testerResponseError = testerResponseTemplate.parseFailure && teamAcceptedTemplate.parseFailure;
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
     issue.teamResponse = testerResponseTemplate.teamResponse && Issue.updateTeamResponse(testerResponseTemplate.teamResponse.content);

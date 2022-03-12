@@ -1,3 +1,4 @@
+import { GithubComment } from '../github/github-comment.model';
 import { SectionalDependency } from './sections/section.model';
 
 const { fail } = require('arcsecond');
@@ -8,6 +9,7 @@ export abstract class Template {
   headers: Header[];
   regex: RegExp;
   parser;
+  parseFailure: boolean;
 
   protected constructor(parser, headers: Header[]) {
     this.parser = parser;
@@ -37,6 +39,17 @@ export abstract class Template {
   //   this.regex.lastIndex = 0;
   //   return numOfMatch >= this.headers.length;
   // }
+
+  /**
+   * Finds a comment that conforms to the template
+   */
+  findConformingComment(githubComments: GithubComment[]): GithubComment {
+    const templateConformingComment = githubComments.find((githubComment) => this.test(githubComment.body));
+    if (templateConformingComment === undefined) {
+      this.parseFailure = true;
+    }
+    return templateConformingComment;
+  }
 }
 
 export class Header {
