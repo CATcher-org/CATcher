@@ -71,7 +71,7 @@ export class TesterResponseTemplate extends Template {
   teamChosenType?: string;
 
   constructor(githubComments: GithubComment[]) {
-    super(FAIL_PARSER, Object.values(TesterResponseHeaders));
+    super(TesterResponseSectionParser, Object.values(TesterResponseHeaders));
 
     const templateConformingComment = this.findConformingComment(githubComments);
 
