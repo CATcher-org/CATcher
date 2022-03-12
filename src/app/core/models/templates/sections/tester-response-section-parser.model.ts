@@ -14,7 +14,7 @@ const {
 
 const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const TEAM_CHOSE_PREFIX = 'Team chose ';
-const TESTER_CHOSE_PREFIX = 'Originally';
+const TESTER_CHOSE_PREFIX = 'Originally ';
 const DISAGREEMENT_REASON_PREFIX = '**Reason for disagreement:**';
 const LINE_SEPARATOR = '-------------------';
 const DUPLICATE_STATUS_MESSAGE =
