@@ -69,7 +69,7 @@ const DuplicateSectionParser = coroutine(function* () {
   };
 });
 
-const TesterResponseSectionParser = coroutine(function* () {
+export const TesterResponseSectionParser = coroutine(function* () {
   // section title
   yield str(SECTION_TITLE_PREFIX);
   const title = yield letters;
