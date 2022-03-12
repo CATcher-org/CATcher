@@ -21,7 +21,12 @@ const DUPLICATE_STATUS_MESSAGE =
   "Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)";
 
 function buildExtractResponseParser(category: string) {
-  return between(str('[`' + category + '.'))(letters)(str('`]'));
+  return coroutine(function* () {
+    yield str('[' + category + '.');
+    const response = yield letters;
+    yield str(']');
+    return response;
+  });
 }
 
 function buildTesterResponseParser(extractResponseParser) {
