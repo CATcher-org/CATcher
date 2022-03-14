@@ -14,14 +14,17 @@ export class TutorModerationTodoTemplate extends Template {
   constructor(githubComments: GithubComment[]) {
     super(Object.values(tutorModerationTodoHeaders));
 
-    const templateConformingComment = githubComments.find((comment) => this.test(comment.body));
-    if (templateConformingComment) {
-      this.comment = <IssueComment>{
-        ...templateConformingComment,
-        description: templateConformingComment.body
-      };
-      this.moderation = this.parseModeration(this.comment.description);
+    const templateConformingComment = this.findConformingComment(githubComments);
+
+    if (this.parseFailure) {
+      return;
     }
+
+    this.comment = <IssueComment>{
+      ...templateConformingComment,
+      description: templateConformingComment.body
+    };
+    this.moderation = this.parseModeration(this.comment.description);
   }
 
   parseModeration(toParse: string): ModerationSection {
