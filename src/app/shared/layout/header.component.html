@@ -37,6 +37,11 @@
   <button mat-button matTooltip="Download CATcher Log" (click)="this.exportLogFile()">
     <mat-icon>receipt</mat-icon>
   </button>
+  <button mat-button matTooltip="Report CATcher Bugs" (click)="openIssueTracker()">
+    Report CATcher Bugs
+    <mat-icon>bug_report</mat-icon>
+  </button>
+
   <button
     *ngIf="auth.isAuthenticated() && isOpenUrlButtonShown()"
     mat-button

@@ -135,6 +135,10 @@ export class HeaderComponent implements OnInit {
     this.electronService.openLink('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
   }
 
+  openIssueTracker() {
+    this.electronService.openLink('https://github.com/CATcher-org/CATcher/issues');
+  }
+
   private getTeamFilterString() {
     // First Phase does not need team filtering
     if (this.phaseService.currentPhase === Phase.phaseBugReporting || this.phaseService.currentPhase === Phase.phaseTesterResponse) {
