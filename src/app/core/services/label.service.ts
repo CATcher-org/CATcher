@@ -10,8 +10,25 @@ W3C recommendation is 0.179, but 0.184 is chosen so that some colors (like brigh
 are considered dark (Github too consider them dark) */
 const COLOR_DARKNESS_THRESHOLD = 0.184;
 
-const COLOR_DARK_TEXT = '000000'; // Dark color for text with light background
-const COLOR_LIGHT_TEXT = 'FFFFFF'; // Light color for text with dark background
+const COLOR_BLACK = '000000'; // Dark color for text with light background
+const COLOR_WHITE = 'ffffff'; // Light color for text with dark background
+
+const COLOR_RED_PALE = 'ffe0e0';
+const COLOR_RED_LIGHT = 'ffcccc';
+const COLOR_RED = 'ff9999';
+const COLOR_RED_DARK = 'ff6666';
+
+const COLOR_PURPLE_LIGHT = 'd966ff';
+const COLOR_PURPLE = '9900cc';
+
+const COLOR_GREEN = '00802b';
+const COLOR_ORANGE_PALE = 'ffebcc';
+const COLOR_ORANGE_LIGHT = 'ffcc80';
+const COLOR_ORANGE = 'ff9900';
+
+const COLOR_SILVER = 'a6a6a6';
+
+const COLOR_BLUE = '0066ff';
 
 const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
@@ -74,29 +91,29 @@ export const LABEL_DEFINITIONS = {
 
 const REQUIRED_LABELS = {
   severity: {
-    VeryLow: new Label('severity', 'VeryLow', 'ffe0e0', VERY_LOW_DEFINITION),
-    Low: new Label('severity', 'Low', 'ffcccc', LOW_DEFINITION),
-    Medium: new Label('severity', 'Medium', 'ff9999', MEDIUM_DEFINITION),
-    High: new Label('severity', 'High', 'ff6666', HIGH_DEFINITION)
+    VeryLow: new Label('severity', 'VeryLow', COLOR_RED_PALE, VERY_LOW_DEFINITION),
+    Low: new Label('severity', 'Low', COLOR_RED_LIGHT, LOW_DEFINITION),
+    Medium: new Label('severity', 'Medium', COLOR_RED, MEDIUM_DEFINITION),
+    High: new Label('severity', 'High', COLOR_RED_DARK, HIGH_DEFINITION)
   },
   type: {
-    DocumentationBug: new Label('type', 'DocumentationBug', 'd966ff', DOCUMENTATION_BUG_DEFINITION),
-    FeatureFlaw: new Label('type', 'FeatureFlaw', 'd966ff', FEATURE_FLAW_DEFINITION),
-    FunctionalityBug: new Label('type', 'FunctionalityBug', '9900cc', FUNCTIONALITY_BUG_DEFINITION)
+    DocumentationBug: new Label('type', 'DocumentationBug', COLOR_PURPLE_LIGHT, DOCUMENTATION_BUG_DEFINITION),
+    FeatureFlaw: new Label('type', 'FeatureFlaw', COLOR_PURPLE_LIGHT, FEATURE_FLAW_DEFINITION),
+    FunctionalityBug: new Label('type', 'FunctionalityBug', COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION)
   },
   response: {
-    Accepted: new Label('response', 'Accepted', '00802b', ACCEPTED_DEFINITION),
-    CannotReproduce: new Label('response', 'CannotReproduce', 'ffebcc', CANNOT_REPRODUCE_DEFINITION),
-    IssueUnclear: new Label('response', 'IssueUnclear', 'ffcc80', ISSUE_UNCLEAR_DEFINITION),
-    NotInScope: new Label('response', 'NotInScope', 'ffcc80', NOT_IN_SCOPE_DEFINITION),
-    Rejected: new Label('response', 'Rejected', 'ff9900', REJECTED_DEFINITION)
+    Accepted: new Label('response', 'Accepted', COLOR_GREEN, ACCEPTED_DEFINITION),
+    CannotReproduce: new Label('response', 'CannotReproduce', COLOR_ORANGE_PALE, CANNOT_REPRODUCE_DEFINITION),
+    IssueUnclear: new Label('response', 'IssueUnclear', COLOR_ORANGE_LIGHT, ISSUE_UNCLEAR_DEFINITION),
+    NotInScope: new Label('response', 'NotInScope', COLOR_ORANGE_LIGHT, NOT_IN_SCOPE_DEFINITION),
+    Rejected: new Label('response', 'Rejected', COLOR_ORANGE, REJECTED_DEFINITION)
   },
   status: {
-    Done: new Label('status', 'Done', 'a6a6a6'),
-    Incomplete: new Label('status', 'Incomplete', '000000')
+    Done: new Label('status', 'Done', COLOR_SILVER),
+    Incomplete: new Label('status', 'Incomplete', COLOR_BLACK)
   },
   others: {
-    duplicate: new Label(undefined, 'duplicate', '0066ff')
+    duplicate: new Label(undefined, 'duplicate', COLOR_BLUE)
   }
 };
 
@@ -196,15 +213,14 @@ export class LabelService {
    */
   getColorOfLabel(labelValue: string): string {
     // TODO: Rewrite function - labelValue insufficient to differentiate between labels. Should use `labelCategory.labelValue` format.
-    const WHITE_COLOR = 'ffffff';
     if (labelValue === '') {
-      return WHITE_COLOR;
+      return COLOR_WHITE;
     }
 
     const existingLabel = LabelService.getRequiredLabelsAsArray(true).find((label) => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
-      return WHITE_COLOR;
+      return COLOR_WHITE;
     } else {
       return existingLabel.labelColor;
     }
@@ -319,7 +335,7 @@ export class LabelService {
   setLabelStyle(color: string, display: string = 'inline-flex') {
     let textColor: string;
 
-    textColor = this.isDarkColor(color) ? COLOR_LIGHT_TEXT : COLOR_DARK_TEXT;
+    textColor = this.isDarkColor(color) ? COLOR_WHITE : COLOR_BLACK;
 
     const styles = {
       'background-color': `#${color}`,

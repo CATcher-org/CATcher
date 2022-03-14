@@ -24,7 +24,7 @@ export const STATUS = 'status';
 
 // Label color constants
 export const COLOR_BLACK = '000000';
-export const COLOR_WHITE = 'FFFFFF';
+export const COLOR_WHITE = 'ffffff';
 export const COLOR_SEVERITY_VERY_LOW = 'ffe0e0';
 export const COLOR_SEVERITY_LOW = 'ffcccc';
 export const COLOR_SEVERITY_MEDIUM = 'ff9999';
@@ -38,35 +38,42 @@ export const COLOR_RESPONSE_CANNOT_REPRODUCE = 'ffebcc';
 export const COLOR_STATUS_DONE = 'a6a6a6';
 export const COLOR_STATUS_INCOMPLETE = '000000';
 
+export const CSS_BORDER_RADIUS_3PX = '3px';
+export const CSS_CURSOR_DEFAULT = 'default';
+export const CSS_PADDING_3PX = '3px';
+export const CSS_FONT_WEIGHT_410 = '410';
+export const CSS_DISPLAY_INLINE_FLEX = 'inline-flex';
+export const CSS_DISPLAY_INLINE_BLOCK = 'inline-block';
+
 // CSS style constants
 export const DARK_BG_LIGHT_TEXT = {
   'background-color': `#${COLOR_BLACK}`,
-  'border-radius': '3px',
-  cursor: 'default',
-  padding: '3px',
+  'border-radius': CSS_BORDER_RADIUS_3PX,
+  cursor: CSS_CURSOR_DEFAULT,
+  padding: CSS_PADDING_3PX,
   color: `#${COLOR_WHITE}`,
-  'font-weight': '410',
-  display: 'inline-flex'
+  'font-weight': CSS_FONT_WEIGHT_410,
+  display: CSS_DISPLAY_INLINE_FLEX
 };
 
 export const LIGHT_BG_DARK_TEXT = {
   'background-color': `#${COLOR_WHITE}`,
-  'border-radius': '3px',
-  cursor: 'default',
-  padding: '3px',
+  'border-radius': CSS_BORDER_RADIUS_3PX,
+  cursor: CSS_CURSOR_DEFAULT,
+  padding: CSS_PADDING_3PX,
   color: `#${COLOR_BLACK}`,
-  'font-weight': '410',
-  display: 'inline-flex'
+  'font-weight': CSS_FONT_WEIGHT_410,
+  display: CSS_DISPLAY_INLINE_FLEX
 };
 
 export const INLINE_BLOCK_TEXT = {
   'background-color': `#${COLOR_WHITE}`,
-  'border-radius': '3px',
-  cursor: 'default',
-  padding: '3px',
+  'border-radius': CSS_BORDER_RADIUS_3PX,
+  cursor: CSS_CURSOR_DEFAULT,
+  padding: CSS_PADDING_3PX,
   color: `#${COLOR_BLACK}`,
-  'font-weight': '410',
-  display: 'inline-block'
+  'font-weight': CSS_FONT_WEIGHT_410,
+  display: CSS_DISPLAY_INLINE_BLOCK
 };
 
 export const RESPONSE_REJECTED_LABEL = new Label(RESPONSE, RESPONSE_REJECTED, COLOR_RESPONSE_REJECTED, LABEL_DEFINITIONS.responseRejected);

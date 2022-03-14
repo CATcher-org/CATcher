@@ -17,17 +17,19 @@ export class TeamResponseTemplate extends Template {
   constructor(githubComments: GithubComment[]) {
     super(Object.values(TeamResponseHeaders));
 
-    const comment = githubComments.find((githubComment: GithubComment) => this.test(githubComment.body));
-    if (comment === undefined) {
+    const templateConformingComment = this.findConformingComment(githubComments);
+
+    if (this.parseFailure) {
       return;
     }
+
     this.comment = <IssueComment>{
-      ...comment,
-      description: comment.body,
-      createdAt: comment.created_at,
-      updatedAt: comment.updated_at
+      ...templateConformingComment,
+      description: templateConformingComment.body,
+      createdAt: templateConformingComment.created_at,
+      updatedAt: templateConformingComment.updated_at
     };
-    const commentsContent: string = comment.body;
+    const commentsContent: string = templateConformingComment.body;
     this.teamResponse = this.parseTeamResponse(commentsContent);
     this.duplicateOf = this.parseDuplicateOf(commentsContent);
   }
