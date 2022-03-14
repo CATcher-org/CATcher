@@ -1,0 +1,22 @@
+.timeline-header {
+  background-color: #f7d2d2;
+  border-bottom: 1px solid #ebc0c0;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  color: #586069;
+  height: 35px;
+  padding: 5px 10px;
+}
+
+.timeline-comment {
+  overflow: auto;
+  border: 1px solid #ebc0c0;
+  background-color: #fff;
+  border-radius: 3px;
+  margin-bottom: 30px;
+  white-space: pre-line;
+}
+
+.comment {
+  padding: 15px;
+}
