@@ -35,3 +35,12 @@ describe('TutorModerationIssueParser', () => {
     expect(result.issueDisputes[2].description).toBe(EXPECTED_DISPUTE_DESCRIPTION);
   });
 });
+
+describe('TutorModerationIssueTemplate class', () => {
+  it('parses a tutor moderation issue successfully', () => {
+    const template = new TutorModerationIssueTemplate(ISSUE_PENDING_MODERATION);
+
+    expect(template.description.content).toBe(EXPECTED_ISSUE_DESCRIPTION);
+    expect(template.teamResponse.content).toBe(EXPECTED_TEAM_RESPONSE);
+  });
+});
