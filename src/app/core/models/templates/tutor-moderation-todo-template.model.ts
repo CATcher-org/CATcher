@@ -6,7 +6,7 @@ import { ModerationSectionParser } from './sections/moderation-section-parser.mo
 import { ModerationSection } from './sections/moderation-section.model';
 import { Header, Template } from './template.model';
 
-const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
+const { coroutine, many1, str, whitespace } = require('arcsecond');
 
 const tutorModerationTodoHeaders = {
   todo: new Header('Tutor Moderation', 1)

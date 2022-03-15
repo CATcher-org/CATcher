@@ -1,8 +1,6 @@
 import { GithubComment } from '../github/github-comment.model';
 import { SectionalDependency } from './sections/section.model';
 
-const { fail } = require('arcsecond');
-
 export abstract class Template {
   headers: Header[];
   regex: RegExp;
