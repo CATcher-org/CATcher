@@ -41,7 +41,7 @@ export const TutorModerationIssueParser = coroutine(function* () {
   return {
     description: description.trim(),
     teamResponse: teamResponse.trim(),
-    dispute: issueDisputes
+    disputes: issueDisputes
   };
 });
 
