@@ -68,3 +68,16 @@ describe('DisagreeCheckboxParser', () => {
     expect(result).toBe(true);
   });
 });
+
+describe('TesterResponseSectionParser', () => {
+  it('parses response disagreement correctly', () => {
+    const result = TesterResponseSectionParser.run(RESPONSE_DISAGREEMENT).result;
+
+    expect(result.title).toBe(RESPONSE_TITLE);
+    expect(result.description).toBe(RESPONSE_DESCRIPTION);
+    expect(result.teamChose).toBe(RESPONSE_TEAM_CHOSE);
+    expect(result.testerChose).toBe(null);
+    expect(result.disagreeCheckboxValue).toBe(false);
+    expect(result.reasonForDisagreement).toBe(DEFAULT_DISAGREEMENT_REASON);
+  });
+});
