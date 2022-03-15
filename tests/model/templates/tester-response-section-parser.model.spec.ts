@@ -3,62 +3,57 @@ import {
   TesterResponseSectionParser
 } from '../../../src/app/core/models/templates/sections/tester-response-section-parser.model';
 
-const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const EMPTY_DISAGREE_CHECKBOX = '- [ ] I disagree';
 const FILLED_DISAGREE_CHECKBOX = '- [x] I disagree';
-const DISAGREEMENT_REASON_PREFIX = '**Reason for disagreement:** ';
 const DEFAULT_DISAGREEMENT_REASON = '[replace this with your reason]';
 const USER_DISAGREEMENT_REASON = 'I disagree!';
-const LINE_SEPARATOR = '-------------------';
-const DUPLICATE_STATUS_MESSAGE =
+
+const RESPONSE_TITLE = 'response';
+const RESPONSE_DESCRIPTION = 'Team chose [`response.Rejected`]';
+const RESPONSE_TEAM_CHOSE = 'Rejected';
+
+const SEVERITY_TITLE = 'severity';
+const SEVERITY_DESCRIPTION = 'Team chose [`severity.Low`]\nOriginally [`severity.High`]';
+const SEVERITY_TEAM_CHOSE = 'Low';
+const SEVERITY_TESTER_CHOSE = 'High';
+
+const TYPE_TITLE = 'type';
+const TYPE_DESCRIPTION = 'Team chose [`type.DocumentationBug`]\nOriginally [`type.FunctionalityBug`]';
+const TYPE_TEAM_CHOSE = 'DocumentationBug';
+const TYPE_TESTER_CHOSE = 'FunctionalityBug';
+
+const DUPLICATE_TITLE = 'duplicate status';
+const DUPLICATE_DESCRIPTION =
   "Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)";
 
 export const RESPONSE_DISAGREEMENT =
-  SECTION_TITLE_PREFIX +
-  'response\n\n' +
+  '## :question: Issue response\n\n' +
   'Team chose [`response.Rejected`]\n\n' +
-  EMPTY_DISAGREE_CHECKBOX +
-  '\n\n' +
-  DISAGREEMENT_REASON_PREFIX +
-  DEFAULT_DISAGREEMENT_REASON +
-  '\n\n' +
-  LINE_SEPARATOR;
+  '- [ ] I disagree\n\n' +
+  '**Reason for disagreement:** [replace this with your reason]\n\n' +
+  '-------------------';
 
 export const SEVERITY_DISAGREEMENT =
-  SECTION_TITLE_PREFIX +
-  'severity\n\n' +
+  '## :question: Issue severity\n\n' +
   'Team chose [`severity.Low`]\n' +
   'Originally [`severity.High`]\n\n' +
-  FILLED_DISAGREE_CHECKBOX +
-  '\n\n' +
-  DISAGREEMENT_REASON_PREFIX +
-  USER_DISAGREEMENT_REASON +
-  '\n\n' +
-  LINE_SEPARATOR;
+  '- [x] I disagree\n\n' +
+  '**Reason for disagreement:** I disagree!\n\n' +
+  '-------------------';
 
 export const TYPE_DISAGREEMENT =
-  SECTION_TITLE_PREFIX +
-  'type\n\n' +
+  '## :question: Issue type\n\n' +
   'Team chose [`type.DocumentationBug`]\n' +
   'Originally [`type.FunctionalityBug`]\n\n' +
-  EMPTY_DISAGREE_CHECKBOX +
-  '\n\n' +
-  DISAGREEMENT_REASON_PREFIX +
-  DEFAULT_DISAGREEMENT_REASON +
-  '\n\n' +
-  LINE_SEPARATOR;
+  '- [ ] I disagree\n\n' +
+  '**Reason for disagreement:** [replace this with your reason]\n\n' +
+  '-------------------';
 
-export const DUPLICATE_DISAGREEMENT =
-  SECTION_TITLE_PREFIX +
-  'duplicate status\n\n' +
-  DUPLICATE_STATUS_MESSAGE +
-  '\n\n' +
-  EMPTY_DISAGREE_CHECKBOX +
-  '\n\n' +
-  DISAGREEMENT_REASON_PREFIX +
-  DEFAULT_DISAGREEMENT_REASON +
-  '\n\n' +
-  LINE_SEPARATOR;
+export const DUPLICATE_DISAGREEMENT = '## :question: Issue duplicate status\n\n';
+"Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)\n\n" +
+  '- [ ] I disagree\n\n' +
+  '**Reason for disagreement:** [replace this with your reason]\n\n' +
+  '-------------------';
 
 describe('DisagreeCheckboxParser', () => {
   it('parses empty checkbox correctly', () => {
