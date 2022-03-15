@@ -50,6 +50,17 @@ export abstract class Template {
     }
     return templateConformingComment;
   }
+
+  /**
+   * Finds a comment that conforms to the template
+   */
+  findConformingComment(githubComments: GithubComment[]): GithubComment {
+    const templateConformingComment = githubComments.find((githubComment) => this.test(githubComment.body));
+    if (templateConformingComment === undefined) {
+      this.parseFailure = true;
+    }
+    return templateConformingComment;
+  }
 }
 
 export class Header {
