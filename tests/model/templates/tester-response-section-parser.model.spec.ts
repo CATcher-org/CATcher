@@ -49,8 +49,9 @@ export const TYPE_DISAGREEMENT =
   '**Reason for disagreement:** [replace this with your reason]\n\n' +
   '-------------------';
 
-export const DUPLICATE_DISAGREEMENT = '## :question: Issue duplicate status\n\n';
-"Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)\n\n" +
+export const DUPLICATE_DISAGREEMENT =
+  '## :question: Issue duplicate status\n\n' +
+  "Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)\n\n" +
   '- [ ] I disagree\n\n' +
   '**Reason for disagreement:** [replace this with your reason]\n\n' +
   '-------------------';
