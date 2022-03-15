@@ -1,4 +1,7 @@
-import { TesterResponseSectionParser } from '../../../src/app/core/models/templates/sections/tester-response-section-parser.model';
+import {
+  DisagreeCheckboxParser,
+  TesterResponseSectionParser
+} from '../../../src/app/core/models/templates/sections/tester-response-section-parser.model';
 
 const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const EMPTY_DISAGREE_CHECKBOX = '- [ ] I disagree';
@@ -56,3 +59,16 @@ export const DUPLICATE_DISAGREEMENT =
   DEFAULT_DISAGREEMENT_REASON +
   '\n\n' +
   LINE_SEPARATOR;
+
+describe('DisagreeCheckboxParser', () => {
+  it('parses empty checkbox correctly', () => {
+    const result = DisagreeCheckboxParser.run(EMPTY_DISAGREE_CHECKBOX).result;
+
+    expect(result).toBe(false);
+  });
+  it('parses filled checkbox correctly', () => {
+    const result = DisagreeCheckboxParser.run(FILLED_DISAGREE_CHECKBOX).result;
+
+    expect(result).toBe(true);
+  });
+});
