@@ -80,4 +80,14 @@ describe('TesterResponseSectionParser', () => {
     expect(result.disagreeCheckboxValue).toBe(false);
     expect(result.reasonForDisagreement).toBe(DEFAULT_DISAGREEMENT_REASON);
   });
+  it('parses severity disagreement correctly', () => {
+    const result = TesterResponseSectionParser.run(SEVERITY_DISAGREEMENT).result;
+
+    expect(result.title).toBe(SEVERITY_TITLE);
+    expect(result.description).toBe(SEVERITY_DESCRIPTION);
+    expect(result.teamChose).toBe(SEVERITY_TEAM_CHOSE);
+    expect(result.testerChose).toBe(SEVERITY_TESTER_CHOSE);
+    expect(result.disagreeCheckboxValue).toBe(true);
+    expect(result.reasonForDisagreement).toBe(USER_DISAGREEMENT_REASON);
+  });
 });
