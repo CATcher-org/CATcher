@@ -49,7 +49,7 @@ function buildTesterResponseParser(category: string) {
   });
 }
 
-const DisagreeCheckboxParser = coroutine(function* () {
+export const DisagreeCheckboxParser = coroutine(function* () {
   yield str('- [');
   const disagreeCheckboxChar = yield choice([char('x'), whitespace]);
   yield str('] I disagree');
@@ -57,7 +57,7 @@ const DisagreeCheckboxParser = coroutine(function* () {
   return disagreeCheckboxChar === 'x';
 });
 
-const DisagreeReasonParser = coroutine(function* () {
+export const DisagreeReasonParser = coroutine(function* () {
   yield str(DISAGREEMENT_REASON_PREFIX);
   const reasonForDisagreement = yield everyCharUntil(str(LINE_SEPARATOR));
   yield str(LINE_SEPARATOR);
