@@ -22,9 +22,9 @@ const DUPLICATE_STATUS_MESSAGE =
 
 function buildExtractResponseParser(category: string) {
   return coroutine(function* () {
-    yield str('[' + category + '.');
+    yield str('[`' + category + '.');
     const response = yield letters;
-    yield str(']');
+    yield str('`]');
     return response;
   });
 }
