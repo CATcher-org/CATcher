@@ -1,7 +1,11 @@
 import { GithubIssue } from '../github/github-issue.model';
+import { IssueDispute } from '../issue-dispute.model';
+import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
-import { FAIL_PARSER, Header, Template } from './template.model';
+import { Header, Template } from './template.model';
+
+const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
 
 const tutorModerationIssueDescriptionHeaders = {
   description: new Header('Issue Description', 1),
@@ -9,13 +13,45 @@ const tutorModerationIssueDescriptionHeaders = {
   disputes: new Header('Disputes', 1)
 };
 
+const DESCRIPTION_HEADER = '# Issue Description';
+const TEAM_RESPONSE_HEADER = "# Team's Response";
+const DISPUTES_HEADER = '# Disputes';
+
+export const TutorModerationIssueParser = coroutine(function* () {
+  yield str(DESCRIPTION_HEADER);
+  yield whitespace;
+  const description = yield everyCharUntil(str(TEAM_RESPONSE_HEADER));
+
+  yield str(TEAM_RESPONSE_HEADER);
+  yield whitespace;
+  const teamResponse = yield everyCharUntil(str(DISPUTES_HEADER));
+
+  // parse disputes
+  yield str(DISPUTES_HEADER);
+  yield whitespace;
+  const disputes = yield many1(IssueDisputeSectionParser);
+
+  // build array of IssueDisputes
+  const issueDisputes: IssueDispute[] = [];
+
+  for (const dispute of disputes) {
+    issueDisputes.push(new IssueDispute(dispute.title, dispute.description));
+  }
+
+  return {
+    description: description.trim(),
+    teamResponse: teamResponse.trim(),
+    dispute: issueDisputes
+  };
+});
+
 export class TutorModerationIssueTemplate extends Template {
   description: Section;
   teamResponse: Section;
   dispute: IssueDisputeSection;
 
   constructor(githubIssue: GithubIssue) {
-    super(FAIL_PARSER, Object.values(tutorModerationIssueDescriptionHeaders));
+    super(TutorModerationIssueParser, Object.values(tutorModerationIssueDescriptionHeaders));
 
     const issueContent = githubIssue.body;
     this.description = this.parseDescription(issueContent);
