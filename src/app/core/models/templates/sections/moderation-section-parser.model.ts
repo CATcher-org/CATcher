@@ -27,6 +27,6 @@ export const ModerationSectionParser = coroutine(function* () {
     title: title.trim(),
     description: description.trim(),
     doneCheckboxValue: doneCheckboxValue,
-    tutorResponse: tutorResponse
+    tutorResponse: tutorResponse.trim()
   };
 });
