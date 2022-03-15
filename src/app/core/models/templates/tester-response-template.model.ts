@@ -4,7 +4,7 @@ import { TesterResponse } from '../tester-response.model';
 import { Section } from './sections/section.model';
 import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
 import { TesterResponseSection } from './sections/tester-response-section.model';
-import { FAIL_PARSER, Header, Template } from './template.model';
+import { Header, Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
 
@@ -29,7 +29,7 @@ const TesterResponseParser = coroutine(function* () {
   let testerDisagree: boolean;
   let teamChosenSeverity: string;
   let teamChosenType: string;
-  let testerResponses: TesterResponse[];
+  const testerResponses: TesterResponse[] = [];
 
   for (const response of testerReponses) {
     if (response.disagreeCheckboxValue) {

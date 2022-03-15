@@ -1,16 +1,4 @@
-const {
-  between,
-  char,
-  choice,
-  coroutine,
-  everyCharUntil,
-  letters,
-  lookAhead,
-  optionalWhitespace,
-  possibly,
-  str,
-  whitespace
-} = require('arcsecond');
+const { char, choice, coroutine, everyCharUntil, letters, lookAhead, optionalWhitespace, possibly, str, whitespace } = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const TEAM_CHOSE_PREFIX = 'Team chose ';
