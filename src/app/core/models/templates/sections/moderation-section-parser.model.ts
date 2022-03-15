@@ -1,4 +1,4 @@
-const { char, choice, coroutine, everyCharUntil, lookAhead, str, whitespace } = require('arcsecond');
+const { char, choice, coroutine, everyCharUntil, lookAhead, optionalWhitespace, str, whitespace } = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: ';
 const LINE_SEPARATOR = '-------------------';
@@ -20,6 +20,8 @@ export const ModerationSectionParser = coroutine(function* () {
   const doneCheckboxValue = yield DoneCheckboxParser;
   yield whitespace;
   const tutorResponse = yield everyCharUntil(LINE_SEPARATOR);
+  yield str(LINE_SEPARATOR);
+  yield optionalWhitespace;
 
   return {
     title: title.trim(),

@@ -1,4 +1,4 @@
-const { coroutine, everyCharUntil, str, whitespace } = require('arcsecond');
+const { coroutine, everyCharUntil, optionalWhitespace, str } = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: ';
 const TEAM_SAYS_HEADER = '### Team says:';
@@ -9,6 +9,9 @@ export const IssueDisputeSectionParser = coroutine(function* () {
   const title = yield everyCharUntil(str(TEAM_SAYS_HEADER));
 
   const description = yield everyCharUntil(str(LINE_SEPARATOR));
+  yield str(LINE_SEPARATOR);
+  yield optionalWhitespace;
+
   return {
     title: title.trim(),
     description: description.trim()
