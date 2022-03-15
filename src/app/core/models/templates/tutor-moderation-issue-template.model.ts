@@ -1,6 +1,6 @@
 import { GithubIssue } from '../github/github-issue.model';
 import { IssueDispute } from '../issue-dispute.model';
-import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser';
+import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
 import { Header, Template } from './template.model';
