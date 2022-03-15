@@ -17,16 +17,18 @@ const TEAM_RESPONSE_HEADER = "# Team's Response";
 const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
 const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 
-const TesterResponseParser = coroutine(function* () {
+export const TesterResponseParser = coroutine(function* () {
   yield str(TEAM_RESPONSE_HEADER); // parse and ignore header
   yield whitespace;
   const teamResponse = yield everyCharUntil(str(TESTER_RESPONSES_HEADER));
 
+  // parse tester responses from comment
   yield str(TESTER_RESPONSES_HEADER);
   yield whitespace;
   const testerReponses = yield many1(TesterResponseSectionParser);
 
-  let testerDisagree: boolean;
+  // build array of TesterResponse
+  let testerDisagree: boolean = false;
   let teamChosenSeverity: string;
   let teamChosenType: string;
   const testerResponses: TesterResponse[] = [];
@@ -44,7 +46,7 @@ const TesterResponseParser = coroutine(function* () {
 
     testerResponses.push(
       new TesterResponse(
-        response.title,
+        'Issue ' + response.title,
         response.description,
         DISAGREE_CHECKBOX_DESCRIPTION,
         response.disagreeCheckboxValue,
@@ -55,7 +57,7 @@ const TesterResponseParser = coroutine(function* () {
 
   return {
     teamResponse: teamResponse.trim(),
-    testerReponses: testerReponses,
+    testerResponses: testerResponses,
     testerDisagree: testerDisagree,
     teamChosenSeverity: teamChosenSeverity,
     teamChosenType: teamChosenType
