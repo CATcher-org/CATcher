@@ -100,4 +100,14 @@ describe('TesterResponseSectionParser', () => {
     expect(result.disagreeCheckboxValue).toBe(false);
     expect(result.reasonForDisagreement).toBe(DEFAULT_DISAGREEMENT_REASON);
   });
+  fit('parses duplicate status disagreement correctly', () => {
+    const result = TesterResponseSectionParser.run(DUPLICATE_DISAGREEMENT).result;
+
+    expect(result.title).toBe(DUPLICATE_TITLE);
+    expect(result.description).toBe(DUPLICATE_DESCRIPTION);
+    expect(result.teamChose).toBe(null);
+    expect(result.testerChose).toBe(null);
+    expect(result.disagreeCheckboxValue).toBe(false);
+    expect(result.reasonForDisagreement).toBe(DEFAULT_DISAGREEMENT_REASON);
+  });
 });
