@@ -14,9 +14,7 @@ const EXPECTED_DESCRIPTION =
 
 describe('IssueDisputeSectionParser', () => {
   it('parses type dispute correctly', () => {
-    const parsed = IssueDisputeSectionParser.run(TYPE_DISPUTE);
-    console.log(parsed);
-    const result = parsed.result;
+    const result = IssueDisputeSectionParser.run(TYPE_DISPUTE).result;
 
     expect(result.title).toBe(EXPECTED_TITLE);
     expect(result.description).toBe(EXPECTED_DESCRIPTION);
