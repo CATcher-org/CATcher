@@ -95,7 +95,7 @@ export const TesterResponseSectionParser = coroutine(function* () {
 
     return {
       title: title + ' status',
-      description: description,
+      description: description.trim(),
       teamChose: null,
       testerChose: null,
       disagreeCheckboxValue: dupSectionResult.disagreeCheckboxValue,
@@ -120,7 +120,7 @@ export const TesterResponseSectionParser = coroutine(function* () {
 
   return {
     title: title,
-    description: description,
+    description: description.trim(),
     teamChose: teamChose,
     testerChose: testerChose,
     disagreeCheckboxValue: disagreeCheckboxValue,
