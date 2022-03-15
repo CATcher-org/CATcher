@@ -20,7 +20,7 @@ const DuplicateNumberParser = coroutine(function* () {
   return parseInt(issueNumber, 10); // issueNumber is a string, radix added to pass linting
 });
 
-const TeamResponseParser = coroutine(function* () {
+export const TeamResponseParser = coroutine(function* () {
   yield str(TEAM_RESPONSE_HEADER); // parse and ignore header
   yield whitespace; // parse and ignore newline character
   const teamResponse = yield everyCharUntil(str(DUPLICATE_OF_HEADER)); // parse and store team's response
