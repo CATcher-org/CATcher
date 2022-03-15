@@ -90,4 +90,14 @@ describe('TesterResponseSectionParser', () => {
     expect(result.disagreeCheckboxValue).toBe(true);
     expect(result.reasonForDisagreement).toBe(USER_DISAGREEMENT_REASON);
   });
+  it('parses type disagreement correctly', () => {
+    const result = TesterResponseSectionParser.run(TYPE_DISAGREEMENT).result;
+
+    expect(result.title).toBe(TYPE_TITLE);
+    expect(result.description).toBe(TYPE_DESCRIPTION);
+    expect(result.teamChose).toBe(TYPE_TEAM_CHOSE);
+    expect(result.testerChose).toBe(TYPE_TESTER_CHOSE);
+    expect(result.disagreeCheckboxValue).toBe(false);
+    expect(result.reasonForDisagreement).toBe(DEFAULT_DISAGREEMENT_REASON);
+  });
 });
