@@ -15,7 +15,7 @@ const {
 const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const TEAM_CHOSE_PREFIX = 'Team chose ';
 const TESTER_CHOSE_PREFIX = 'Originally ';
-const DISAGREEMENT_REASON_PREFIX = '**Reason for disagreement:**';
+const DISAGREEMENT_REASON_PREFIX = '**Reason for disagreement:** ';
 const LINE_SEPARATOR = '-------------------';
 const DUPLICATE_STATUS_MESSAGE =
   "Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)";
@@ -29,7 +29,19 @@ function buildExtractResponseParser(category: string) {
   });
 }
 
-function buildTesterResponseParser(extractResponseParser) {
+function buildTeamResponseParser(category: string) {
+  const extractResponseParser = buildExtractResponseParser(category);
+
+  return coroutine(function* () {
+    yield str(TEAM_CHOSE_PREFIX);
+    const teamChose = yield extractResponseParser;
+    return teamChose;
+  });
+}
+
+function buildTesterResponseParser(category: string) {
+  const extractResponseParser = buildExtractResponseParser(category);
+
   return coroutine(function* () {
     yield str(TESTER_CHOSE_PREFIX);
     const testerChose = yield extractResponseParser;
@@ -59,6 +71,7 @@ const DuplicateSectionParser = coroutine(function* () {
   yield str('status');
   yield whitespace;
   yield str(DUPLICATE_STATUS_MESSAGE);
+  yield whitespace;
 
   const disagreeCheckboxValue = yield DisagreeCheckboxParser;
   const reasonForDisagreement = yield DisagreeReasonParser;
@@ -81,7 +94,7 @@ export const TesterResponseSectionParser = coroutine(function* () {
     const dupSectionResult = yield DuplicateSectionParser;
 
     return {
-      title: title,
+      title: title + ' status',
       description: description,
       teamChose: null,
       testerChose: null,
@@ -91,11 +104,10 @@ export const TesterResponseSectionParser = coroutine(function* () {
   }
 
   // team and tester response
-  const extractResponseParser = buildExtractResponseParser(title);
-  const testerResponseParser = buildTesterResponseParser(extractResponseParser);
+  const teamResponseParser = buildTeamResponseParser(title);
+  const testerResponseParser = buildTesterResponseParser(title);
 
-  yield str(TEAM_CHOSE_PREFIX);
-  const teamChose = yield extractResponseParser;
+  const teamChose = yield teamResponseParser;
   yield whitespace;
   // response section does not have tester response
   const testerChose = yield possibly(testerResponseParser);
