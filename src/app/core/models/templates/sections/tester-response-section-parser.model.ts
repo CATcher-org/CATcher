@@ -51,16 +51,15 @@ function buildTesterResponseParser(category: string) {
 
 const DisagreeCheckboxParser = coroutine(function* () {
   yield str('- [');
-  const disagreeCheckboxChar = choice([char('x'), whitespace]);
+  const disagreeCheckboxChar = yield choice([char('x'), whitespace]);
   yield str('] I disagree');
-  yield whitespace;
 
   return disagreeCheckboxChar === 'x';
 });
 
 const DisagreeReasonParser = coroutine(function* () {
   yield str(DISAGREEMENT_REASON_PREFIX);
-  const reasonForDisagreement = everyCharUntil(str(LINE_SEPARATOR));
+  const reasonForDisagreement = yield everyCharUntil(str(LINE_SEPARATOR));
   yield str(LINE_SEPARATOR);
 
   return reasonForDisagreement.trim();
@@ -92,6 +91,7 @@ export const TesterResponseSectionParser = coroutine(function* () {
 
   if (title === 'duplicate') {
     const dupSectionResult = yield DuplicateSectionParser;
+    yield optionalWhitespace;
 
     return {
       title: title + ' status',
@@ -114,7 +114,9 @@ export const TesterResponseSectionParser = coroutine(function* () {
   yield optionalWhitespace;
 
   const disagreeCheckboxValue = yield DisagreeCheckboxParser;
+  yield whitespace;
   const reasonForDisagreement = yield DisagreeReasonParser;
+  yield optionalWhitespace;
 
   return {
     title: title,
