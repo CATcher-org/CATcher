@@ -3,8 +3,6 @@ import { SectionalDependency } from './sections/section.model';
 
 const { fail } = require('arcsecond');
 
-export const FAIL_PARSER = fail('FAIL');
-
 export abstract class Template {
   headers: Header[];
   regex: RegExp;
@@ -26,29 +24,6 @@ export abstract class Template {
 
   test(toTest: string): boolean {
     return !this.parser.run(toTest).isError;
-  }
-
-  /**
-   * Check whether the given string conforms to the template.
-   */
-  // test(toTest: string): boolean {
-  //   let numOfMatch = 0;
-  //   while (this.regex.exec(toTest) != null) {
-  //     numOfMatch += 1;
-  //   }
-  //   this.regex.lastIndex = 0;
-  //   return numOfMatch >= this.headers.length;
-  // }
-
-  /**
-   * Finds a comment that conforms to the template
-   */
-  findConformingComment(githubComments: GithubComment[]): GithubComment {
-    const templateConformingComment = githubComments.find((githubComment) => this.test(githubComment.body));
-    if (templateConformingComment === undefined) {
-      this.parseFailure = true;
-    }
-    return templateConformingComment;
   }
 
   /**
