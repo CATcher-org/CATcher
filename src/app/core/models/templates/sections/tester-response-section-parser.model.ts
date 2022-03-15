@@ -67,7 +67,7 @@ export const DisagreeReasonParser = coroutine(function* () {
 
 // Issue duplicate section has a different format than the other three
 const DuplicateSectionParser = coroutine(function* () {
-  yield str(' status');
+  yield str('status');
   yield whitespace;
   yield str(DUPLICATE_STATUS_MESSAGE);
   yield whitespace;
