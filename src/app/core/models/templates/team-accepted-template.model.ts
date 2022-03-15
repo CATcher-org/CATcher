@@ -11,12 +11,12 @@ const TeamAcceptedParser = sequenceOf([startOfInput, str(TeamAcceptedMessage), e
 export class TeamAcceptedTemplate extends Template {
   teamAccepted?: boolean;
 
-  constructor(githubIssueComments: GithubComment[]) {
+  constructor(githubComments: GithubComment[]) {
     super(TeamAcceptedParser, Object.values(TeamAcceptedHeader));
 
-    const teamAcceptedComment = githubIssueComments.find((comment) => this.test(comment.body));
+    this.findConformingComment(githubComments);
 
-    if (teamAcceptedComment === undefined) {
+    if (this.parseFailure) {
       return;
     }
 
