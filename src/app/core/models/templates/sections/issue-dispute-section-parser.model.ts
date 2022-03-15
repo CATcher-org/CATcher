@@ -7,7 +7,6 @@ const LINE_SEPARATOR = '-------------------';
 export const IssueDisputeSectionParser = coroutine(function* () {
   yield str(SECTION_TITLE_PREFIX);
   const title = yield everyCharUntil(str(TEAM_SAYS_HEADER));
-  yield whitespace;
 
   const description = yield everyCharUntil(str(LINE_SEPARATOR));
   return {
