@@ -88,21 +88,21 @@ export const TesterResponseSectionParser = coroutine(function* () {
   const title = yield letters;
   yield whitespace;
 
-  const description = yield lookAhead(everyCharUntil(DisagreeCheckboxParser));
-
   if (title === 'duplicate') {
     const dupSectionResult = yield DuplicateSectionParser;
     yield optionalWhitespace;
 
     return {
       title: title + ' status',
-      description: description.trim(),
+      description: DUPLICATE_STATUS_MESSAGE,
       teamChose: null,
       testerChose: null,
       disagreeCheckboxValue: dupSectionResult.disagreeCheckboxValue,
       reasonForDisagreement: dupSectionResult.reasonForDisagreement
     };
   }
+
+  const description = yield lookAhead(everyCharUntil(DisagreeCheckboxParser));
 
   // team and tester response
   const teamResponseParser = buildTeamResponseParser(title);
