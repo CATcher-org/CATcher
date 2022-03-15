@@ -28,7 +28,7 @@ export const TesterResponseParser = coroutine(function* () {
   const testerReponses = yield many1(TesterResponseSectionParser);
 
   // build array of TesterResponse
-  let testerDisagree: boolean = false;
+  let testerDisagree = false;
   let teamChosenSeverity: string;
   let teamChosenType: string;
   const testerResponses: TesterResponse[] = [];
