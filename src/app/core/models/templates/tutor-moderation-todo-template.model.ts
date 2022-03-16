@@ -16,7 +16,7 @@ const TODO_HEADER = '# Tutor Moderation';
 const DONE_CHECKBOX_DESCRIPTION = 'Done';
 
 export const TutorModerationTodoParser = coroutine(function* () {
-  str(TODO_HEADER);
+  yield str(TODO_HEADER);
   yield whitespace;
 
   const tutorResponses = yield many1(ModerationSectionParser);

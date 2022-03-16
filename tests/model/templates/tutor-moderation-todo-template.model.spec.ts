@@ -16,7 +16,7 @@ const TYPE_TITLE = 'Issue Type';
 const SEVERITY_TITLE = 'Issue Severity';
 const NOT_RELATED_TITLE = 'Not Related Question';
 
-fdescribe('TutorModerationTodoParser', () => {
+describe('TutorModerationTodoParser', () => {
   it('parses comment body correctly', () => {
     const parsed = TutorModerationTodoParser.run(PENDING_TUTOR_MODERATION.body);
     console.log(parsed);
@@ -30,11 +30,11 @@ fdescribe('TutorModerationTodoParser', () => {
     expect(result[1].title).toBe(SEVERITY_TITLE);
     expect(result[1].description).toBe(DEFAULT_DESCRIPTION);
     expect(result[1].todo.isChecked).toBe(false);
-    expect(result[1].tutorResponse).toBe(DEFAULT_DESCRIPTION);
+    expect(result[1].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
 
     expect(result[2].title).toBe(NOT_RELATED_TITLE);
     expect(result[2].description).toBe(DEFAULT_DESCRIPTION);
     expect(result[2].todo.isChecked).toBe(false);
-    expect(result[2].tutorResponse).toBe(DEFAULT_DESCRIPTION);
+    expect(result[2].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
   });
 });
