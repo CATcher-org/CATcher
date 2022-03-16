@@ -24,3 +24,16 @@ describe('DoneCheckboxParser', () => {
     expect(result).toBe(true);
   });
 });
+
+describe('ModerationSectionParser', () => {
+  it('parses type dispute correctly', () => {
+    const parsed = ModerationSectionParser.run(TYPE_DISPUTE);
+    console.log(parsed);
+    const result = parsed.result;
+
+    expect(result.title).toBe(EXPECTED_TITLE);
+    expect(result.description).toBe(EXPECTED_DESCRIPTION);
+    expect(result.doneCheckboxValue).toBe(false);
+    expect(result.tutorResponse).toBe(EXPECTED_TUTOR_RESPONSE);
+  });
+});
