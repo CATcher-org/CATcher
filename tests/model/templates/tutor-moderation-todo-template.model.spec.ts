@@ -18,9 +18,7 @@ const NOT_RELATED_TITLE = 'Not Related Question';
 
 describe('TutorModerationTodoParser', () => {
   it('parses comment body correctly', () => {
-    const parsed = TutorModerationTodoParser.run(PENDING_TUTOR_MODERATION.body);
-    console.log(parsed);
-    const result = parsed.result;
+    const result = TutorModerationTodoParser.run(PENDING_TUTOR_MODERATION.body).result;
 
     expect(result[0].title).toBe(TYPE_TITLE);
     expect(result[0].description).toBe(TEST_DESCRIPTION);
@@ -36,5 +34,13 @@ describe('TutorModerationTodoParser', () => {
     expect(result[2].description).toBe(DEFAULT_DESCRIPTION);
     expect(result[2].todo.isChecked).toBe(false);
     expect(result[2].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
+  });
+});
+
+describe('TutorModerationTodoTemplate', () => {
+  it('parses the github comment successfully', () => {
+    const template = new TutorModerationTodoTemplate([PENDING_TUTOR_MODERATION]);
+
+    expect(template.parseFailure).not.toBe(true);
   });
 });
