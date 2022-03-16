@@ -18,7 +18,7 @@ import {
   ISSUE_PENDING_MODERATION_LOW_SEVERITY_DOCUMENTATION_BUG
 } from '../../../../constants/githubissue.constants';
 
-xdescribe('DuplicatedIssuesComponent', () => {
+describe('DuplicatedIssuesComponent', () => {
   let component: DuplicatedIssuesComponent;
   let debugElement: DebugElement;
   let nativeElement: HTMLElement;
