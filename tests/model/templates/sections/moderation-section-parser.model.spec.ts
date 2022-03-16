@@ -27,9 +27,7 @@ describe('DoneCheckboxParser', () => {
 
 describe('ModerationSectionParser', () => {
   it('parses type dispute correctly', () => {
-    const parsed = ModerationSectionParser.run(TYPE_DISPUTE);
-    console.log(parsed);
-    const result = parsed.result;
+    const result = ModerationSectionParser.run(TYPE_DISPUTE).result;
 
     expect(result.title).toBe(EXPECTED_TITLE);
     expect(result.description).toBe(EXPECTED_DESCRIPTION);
