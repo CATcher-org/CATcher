@@ -21,9 +21,7 @@ describe('TutorModerationIssueParser', () => {
     expect(result.teamResponse).toBe(EXPECTED_TEAM_RESPONSE);
   });
   it('parses the issue disputes correctly', () => {
-    const parsed = TutorModerationIssueParser.run(ISSUE_PENDING_MODERATION.body);
-    console.log(parsed);
-    const result = parsed.result;
+    const result = TutorModerationIssueParser.run(ISSUE_PENDING_MODERATION.body).result;
 
     expect(result.issueDisputes[0].title).toBe(TYPE_TITLE);
     expect(result.issueDisputes[0].description).toBe(EXPECTED_DISPUTE_DESCRIPTION);
