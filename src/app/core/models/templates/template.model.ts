@@ -3,7 +3,6 @@ import { SectionalDependency } from './sections/section.model';
 
 export abstract class Template {
   headers: Header[];
-  regex: RegExp;
   parser;
   parseFailure: boolean;
 
