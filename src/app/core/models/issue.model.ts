@@ -137,8 +137,8 @@ export class Issue {
 
     issue.teamResponseError = template.parseFailure;
     issue.issueComment = template.comment;
-    issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
-    issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
+    issue.teamResponse = Issue.updateTeamResponse(template.teamResponse);
+    issue.duplicateOf = template.duplicateOf;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
 
     return issue;

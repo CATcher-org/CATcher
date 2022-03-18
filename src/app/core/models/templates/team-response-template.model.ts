@@ -1,7 +1,5 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
-import { DuplicateOfSection } from './sections/duplicate-of-section.model';
-import { Section } from './sections/section.model';
 import { Header, Template } from './template.model';
 
 const { choice, coroutine, digits, everyCharUntil, str, whitespace } = require('arcsecond');
@@ -23,7 +21,7 @@ const DuplicateNumberParser = coroutine(function* () {
 export const TeamResponseParser = coroutine(function* () {
   yield str(TEAM_RESPONSE_HEADER); // parse and ignore header
   yield whitespace; // parse and ignore newline character
-  const teamResponse = yield everyCharUntil(str(DUPLICATE_OF_HEADER)); // parse and store team's response
+  let teamResponse = yield everyCharUntil(str(DUPLICATE_OF_HEADER)); // parse and store team's response
 
   yield str(DUPLICATE_OF_HEADER);
   yield whitespace;
@@ -33,19 +31,24 @@ export const TeamResponseParser = coroutine(function* () {
     str('--')
   ]);
 
+  teamResponse = teamResponse.trim(); // remove trailing whitespace
+  if (teamResponse === '') {
+    teamResponse = null;
+  }
+
   if (issueNumber === '--') {
     issueNumber = null;
   }
 
   return {
-    teamResponse: teamResponse.trim(), // remove trailing whitespace
+    teamResponse: teamResponse,
     issueNumber: issueNumber
   };
 });
 
 export class TeamResponseTemplate extends Template {
-  teamResponse: Section;
-  duplicateOf: DuplicateOfSection;
+  teamResponse: string;
+  duplicateOf: number;
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
@@ -63,16 +66,8 @@ export class TeamResponseTemplate extends Template {
       createdAt: templateConformingComment.created_at,
       updatedAt: templateConformingComment.updated_at
     };
-    const commentsContent: string = templateConformingComment.body;
-    this.teamResponse = this.parseTeamResponse(commentsContent);
-    this.duplicateOf = this.parseDuplicateOf(commentsContent);
-  }
 
-  parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(TeamResponseHeaders.teamResponse), toParse);
-  }
-
-  parseDuplicateOf(toParse: string): DuplicateOfSection {
-    return new DuplicateOfSection(this.getSectionalDependency(TeamResponseHeaders.duplicateOf), toParse);
+    this.teamResponse = this.parseResult.teamResponse;
+    this.duplicateOf = this.parseResult.issueNumber;
   }
 }
