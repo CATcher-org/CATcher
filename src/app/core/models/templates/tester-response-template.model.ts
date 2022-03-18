@@ -1,9 +1,7 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
-import { Section } from './sections/section.model';
 import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
-import { TesterResponseSection } from './sections/tester-response-section.model';
 import { Header, Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
@@ -20,12 +18,17 @@ const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 export const TesterResponseParser = coroutine(function* () {
   yield str(TEAM_RESPONSE_HEADER); // parse and ignore header
   yield whitespace;
-  const teamResponse = yield everyCharUntil(str(TESTER_RESPONSES_HEADER));
+  let teamResponse = yield everyCharUntil(str(TESTER_RESPONSES_HEADER));
 
   // parse tester responses from comment
   yield str(TESTER_RESPONSES_HEADER);
   yield whitespace;
   const testerReponses = yield many1(TesterResponseSectionParser);
+
+  teamResponse = teamResponse.trim();
+  if (teamResponse === '') {
+    teamResponse = null;
+  }
 
   // build array of TesterResponse
   let testerDisagree = false;
@@ -56,7 +59,7 @@ export const TesterResponseParser = coroutine(function* () {
   }
 
   return {
-    teamResponse: teamResponse.trim(),
+    teamResponse: teamResponse,
     testerResponses: testerResponses,
     testerDisagree: testerDisagree,
     teamChosenSeverity: teamChosenSeverity,
@@ -65,8 +68,8 @@ export const TesterResponseParser = coroutine(function* () {
 });
 
 export class TesterResponseTemplate extends Template {
-  teamResponse: Section;
-  testerResponse: TesterResponseSection;
+  teamResponse: string;
+  testerResponses: TesterResponse[];
   testerDisagree: boolean;
   comment: IssueComment;
   teamChosenSeverity?: string;
@@ -85,18 +88,10 @@ export class TesterResponseTemplate extends Template {
       ...templateConformingComment,
       description: templateConformingComment.body
     };
-    this.teamResponse = this.parseTeamResponse(this.comment.description);
-    this.testerResponse = this.parseTesterResponse(this.comment.description);
-    this.testerDisagree = this.testerResponse.getTesterDisagree();
-    this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
-    this.teamChosenType = this.testerResponse.getTeamChosenType();
-  }
-
-  parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(TesterResponseHeaders.teamResponse), toParse);
-  }
-
-  parseTesterResponse(toParse: string): TesterResponseSection {
-    return new TesterResponseSection(this.getSectionalDependency(TesterResponseHeaders.testerResponses), toParse);
+    this.teamResponse = this.parseResult.teamResponse;
+    this.testerResponses = this.parseResult.testerResponses;
+    this.testerDisagree = this.parseResult.testerDisagree;
+    this.teamChosenSeverity = this.parseResult.teamChosenSeverity;
+    this.teamChosenType = this.parseResult.teamChosenType;
   }
 }

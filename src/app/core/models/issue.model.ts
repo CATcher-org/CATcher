@@ -153,8 +153,8 @@ export class Issue {
     issue.testerResponseError = testerResponseTemplate.parseFailure && teamAcceptedTemplate.parseFailure;
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
-    issue.teamResponse = testerResponseTemplate.teamResponse && Issue.updateTeamResponse(testerResponseTemplate.teamResponse.content);
-    issue.testerResponses = testerResponseTemplate.testerResponse && testerResponseTemplate.testerResponse.testerResponses;
+    issue.teamResponse = Issue.updateTeamResponse(testerResponseTemplate.teamResponse);
+    issue.testerResponses = testerResponseTemplate.testerResponses;
     issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
     issue.teamChosenSeverity = testerResponseTemplate.teamChosenSeverity || null;
@@ -240,8 +240,8 @@ export class Issue {
   updateTesterResponse(githubComment: GithubComment): void {
     const template = new TesterResponseTemplate([githubComment]);
     this.issueComment = template.comment;
-    this.teamResponse = template.teamResponse && template.teamResponse.content;
-    this.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
+    this.teamResponse = template.teamResponse;
+    this.testerResponses = template.testerResponses;
   }
 
   /**
