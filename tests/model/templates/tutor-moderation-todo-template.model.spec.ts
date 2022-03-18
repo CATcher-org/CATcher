@@ -41,6 +41,19 @@ describe('TutorModerationTodoTemplate', () => {
   it('parses the github comment successfully', () => {
     const template = new TutorModerationTodoTemplate([PENDING_TUTOR_MODERATION]);
 
-    expect(template.parseFailure).not.toBe(true);
+    expect(template.moderation[0].title).toBe(TYPE_TITLE);
+    expect(template.moderation[0].description).toBe(TEST_DESCRIPTION);
+    expect(template.moderation[0].todo.isChecked).toBe(true);
+    expect(template.moderation[0].tutorResponse).toBe(TEST_TUTOR_RESPONSE);
+
+    expect(template.moderation[1].title).toBe(SEVERITY_TITLE);
+    expect(template.moderation[1].description).toBe(DEFAULT_DESCRIPTION);
+    expect(template.moderation[1].todo.isChecked).toBe(false);
+    expect(template.moderation[1].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
+
+    expect(template.moderation[2].title).toBe(NOT_RELATED_TITLE);
+    expect(template.moderation[2].description).toBe(DEFAULT_DESCRIPTION);
+    expect(template.moderation[2].todo.isChecked).toBe(false);
+    expect(template.moderation[2].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
   });
 });
