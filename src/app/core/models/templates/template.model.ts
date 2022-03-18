@@ -1,23 +1,12 @@
 import { GithubComment } from '../github/github-comment.model';
-import { SectionalDependency } from './sections/section.model';
 
 export abstract class Template {
-  headers: Header[];
   parser;
   parseResult;
   parseFailure: boolean;
 
-  protected constructor(parser, headers: Header[]) {
+  protected constructor(parser) {
     this.parser = parser;
-    this.headers = headers;
-  }
-
-  getSectionalDependency(header: Header): SectionalDependency {
-    const otherHeaders = this.headers.filter((e) => !e.equals(header));
-    return <SectionalDependency>{
-      sectionHeader: header,
-      remainingTemplateHeaders: otherHeaders
-    };
   }
 
   /**
