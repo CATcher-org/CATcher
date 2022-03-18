@@ -1,8 +1,6 @@
 import { GithubIssue } from '../github/github-issue.model';
 import { IssueDispute } from '../issue-dispute.model';
 import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
-import { IssueDisputeSection } from './sections/issue-dispute-section.model';
-import { Section } from './sections/section.model';
 import { Header, Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
@@ -24,12 +22,17 @@ export const TutorModerationIssueParser = coroutine(function* () {
 
   yield str(TEAM_RESPONSE_HEADER);
   yield whitespace;
-  const teamResponse = yield everyCharUntil(str(DISPUTES_HEADER));
+  let teamResponse = yield everyCharUntil(str(DISPUTES_HEADER));
 
   // parse disputes
   yield str(DISPUTES_HEADER);
   yield whitespace;
   const disputes = yield many1(IssueDisputeSectionParser);
+
+  teamResponse = teamResponse.trim();
+  if (teamResponse === '') {
+    teamResponse = null;
+  }
 
   // build array of IssueDisputes
   const issueDisputes: IssueDispute[] = [];
@@ -40,34 +43,29 @@ export const TutorModerationIssueParser = coroutine(function* () {
 
   return {
     description: description.trim(),
-    teamResponse: teamResponse.trim(),
+    teamResponse: teamResponse,
     issueDisputes: issueDisputes
   };
 });
 
 export class TutorModerationIssueTemplate extends Template {
-  description: Section;
-  teamResponse: Section;
-  dispute: IssueDisputeSection;
+  description: string;
+  teamResponse: string;
+  issueDisputes: IssueDispute[];
 
   constructor(githubIssue: GithubIssue) {
     super(TutorModerationIssueParser, Object.values(tutorModerationIssueDescriptionHeaders));
 
-    const issueContent = githubIssue.body;
-    this.description = this.parseDescription(issueContent);
-    this.teamResponse = this.parseTeamResponse(issueContent);
-    this.dispute = this.parseDisputes(issueContent);
-  }
+    const parsed = TutorModerationIssueParser.run(githubIssue.body);
 
-  parseDescription(toParse: string): Section {
-    return new Section(this.getSectionalDependency(tutorModerationIssueDescriptionHeaders.description), toParse);
-  }
+    if (parsed.isError) {
+      this.parseFailure = true;
+      return;
+    }
 
-  parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(tutorModerationIssueDescriptionHeaders.teamResponse), toParse);
-  }
-
-  parseDisputes(toParse: string): IssueDisputeSection {
-    return new IssueDisputeSection(this.getSectionalDependency(tutorModerationIssueDescriptionHeaders.disputes), toParse);
+    this.parseResult = parsed.result;
+    this.description = this.parseResult.description;
+    this.teamResponse = this.parseResult.teamResponse;
+    this.issueDisputes = this.parseResult.issueDisputes;
   }
 }

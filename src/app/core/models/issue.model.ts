@@ -170,13 +170,13 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
-    issue.description = issueTemplate.description.content;
-    issue.teamResponse = issueTemplate.teamResponse && Issue.updateTeamResponse(issueTemplate.teamResponse.content);
-    issue.issueDisputes = issueTemplate.dispute.disputes;
+    issue.description = issueTemplate.description;
+    issue.teamResponse = Issue.updateTeamResponse(issueTemplate.teamResponse);
+    issue.issueDisputes = issueTemplate.issueDisputes;
 
     if (todoTemplate.moderation && todoTemplate.comment) {
       issue.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
-        dispute.description = issueTemplate.dispute.disputes[i].description;
+        dispute.description = issueTemplate.issueDisputes[i].description;
         return dispute;
       });
       issue.issueComment = todoTemplate.comment;
@@ -272,6 +272,10 @@ export class Issue {
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(): string {
     let tutorResponseString = '# Tutor Moderation\n\n';
+    if (this.issueDisputes === undefined) {
+      return tutorResponseString;
+    }
+
     for (const issueDispute of this.issueDisputes) {
       tutorResponseString += issueDispute.toTutorResponseString();
     }
