@@ -2,14 +2,9 @@ import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
 import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
-import { Header, Template } from './template.model';
+import { Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
-
-export const TesterResponseHeaders = {
-  teamResponse: new Header("Team's Response", 1),
-  testerResponses: new Header('Items for the Tester to Verify', 1)
-};
 
 const TEAM_RESPONSE_HEADER = "# Team's Response";
 const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
@@ -76,7 +71,7 @@ export class TesterResponseTemplate extends Template {
   teamChosenType?: string;
 
   constructor(githubComments: GithubComment[]) {
-    super(TesterResponseParser, Object.values(TesterResponseHeaders));
+    super(TesterResponseParser);
 
     const templateConformingComment = this.findConformingComment(githubComments);
 

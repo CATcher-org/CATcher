@@ -1,13 +1,8 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
-import { Header, Template } from './template.model';
+import { Template } from './template.model';
 
 const { choice, coroutine, digits, everyCharUntil, str, whitespace } = require('arcsecond');
-
-export const TeamResponseHeaders = {
-  teamResponse: new Header("Team's Response", 1),
-  duplicateOf: new Header('Duplicate status \\(if any\\):', 2)
-};
 
 const TEAM_RESPONSE_HEADER = "# Team's Response";
 const DUPLICATE_OF_HEADER = '## Duplicate status (if any):';
@@ -52,7 +47,7 @@ export class TeamResponseTemplate extends Template {
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
-    super(TeamResponseParser, Object.values(TeamResponseHeaders));
+    super(TeamResponseParser);
 
     const templateConformingComment = this.findConformingComment(githubComments);
 

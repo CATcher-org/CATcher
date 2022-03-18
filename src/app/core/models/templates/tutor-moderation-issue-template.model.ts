@@ -1,15 +1,9 @@
 import { GithubIssue } from '../github/github-issue.model';
 import { IssueDispute } from '../issue-dispute.model';
 import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
-import { Header, Template } from './template.model';
+import { Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
-
-const tutorModerationIssueDescriptionHeaders = {
-  description: new Header('Issue Description', 1),
-  teamResponse: new Header("Team's Response", 1),
-  disputes: new Header('Disputes', 1)
-};
 
 const DESCRIPTION_HEADER = '# Issue Description';
 const TEAM_RESPONSE_HEADER = "# Team's Response";
@@ -54,7 +48,7 @@ export class TutorModerationIssueTemplate extends Template {
   issueDisputes: IssueDispute[];
 
   constructor(githubIssue: GithubIssue) {
-    super(TutorModerationIssueParser, Object.values(tutorModerationIssueDescriptionHeaders));
+    super(TutorModerationIssueParser);
 
     const parsed = TutorModerationIssueParser.run(githubIssue.body);
 

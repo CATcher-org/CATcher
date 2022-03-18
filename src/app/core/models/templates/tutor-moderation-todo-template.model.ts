@@ -3,13 +3,9 @@ import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { IssueDispute } from '../issue-dispute.model';
 import { ModerationSectionParser } from './sections/moderation-section-parser.model';
-import { Header, Template } from './template.model';
+import { Template } from './template.model';
 
 const { coroutine, many1, str, whitespace } = require('arcsecond');
-
-const tutorModerationTodoHeaders = {
-  todo: new Header('Tutor Moderation', 1)
-};
 
 const TODO_HEADER = '# Tutor Moderation';
 const DONE_CHECKBOX_DESCRIPTION = 'Done';
@@ -38,7 +34,7 @@ export class TutorModerationTodoTemplate extends Template {
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
-    super(TutorModerationTodoParser, Object.values(tutorModerationTodoHeaders));
+    super(TutorModerationTodoParser);
 
     const templateConformingComment = this.findConformingComment(githubComments);
 
