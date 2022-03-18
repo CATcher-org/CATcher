@@ -38,7 +38,16 @@ describe('TutorModerationIssueTemplate class', () => {
   it('parses a tutor moderation issue successfully', () => {
     const template = new TutorModerationIssueTemplate(ISSUE_PENDING_MODERATION);
 
-    expect(template.description.content).toBe(EXPECTED_ISSUE_DESCRIPTION);
-    expect(template.teamResponse.content).toBe(EXPECTED_TEAM_RESPONSE);
+    expect(template.description).toBe(EXPECTED_ISSUE_DESCRIPTION);
+    expect(template.teamResponse).toBe(EXPECTED_TEAM_RESPONSE);
+
+    expect(template.issueDisputes[0].title).toBe(TYPE_TITLE);
+    expect(template.issueDisputes[0].description).toBe(EXPECTED_DISPUTE_DESCRIPTION);
+
+    expect(template.issueDisputes[1].title).toBe(SEVERITY_TITLE);
+    expect(template.issueDisputes[1].description).toBe(EXPECTED_DISPUTE_DESCRIPTION);
+
+    expect(template.issueDisputes[2].title).toBe(NOT_RELATED_TITLE);
+    expect(template.issueDisputes[2].description).toBe(EXPECTED_DISPUTE_DESCRIPTION);
   });
 });
