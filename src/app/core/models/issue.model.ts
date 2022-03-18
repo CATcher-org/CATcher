@@ -175,7 +175,7 @@ export class Issue {
     issue.issueDisputes = issueTemplate.issueDisputes;
 
     if (todoTemplate.moderation && todoTemplate.comment) {
-      issue.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+      issue.issueDisputes = todoTemplate.moderation.map((dispute, i) => {
         dispute.description = issueTemplate.issueDisputes[i].description;
         return dispute;
       });
@@ -251,7 +251,7 @@ export class Issue {
   updateDispute(githubComment: GithubComment): void {
     const todoTemplate = new TutorModerationTodoTemplate([githubComment]);
     this.issueComment = todoTemplate.comment;
-    this.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+    this.issueDisputes = todoTemplate.moderation.map((dispute, i) => {
       dispute.description = this.issueDisputes[i].description;
       return dispute;
     });
