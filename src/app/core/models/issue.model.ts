@@ -137,7 +137,7 @@ export class Issue {
 
     issue.teamResponseError = template.parseFailure;
     issue.issueComment = template.comment;
-    issue.teamResponse = Issue.updateTeamResponse(template.teamResponse);
+    issue.teamResponse = !!template.teamResponse && Issue.updateTeamResponse(template.teamResponse);
     issue.duplicateOf = template.duplicateOf;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
 
@@ -153,7 +153,7 @@ export class Issue {
     issue.testerResponseError = testerResponseTemplate.parseFailure && teamAcceptedTemplate.parseFailure;
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
-    issue.teamResponse = Issue.updateTeamResponse(testerResponseTemplate.teamResponse);
+    issue.teamResponse = !!testerResponseTemplate.teamResponse && Issue.updateTeamResponse(testerResponseTemplate.teamResponse);
     issue.testerResponses = testerResponseTemplate.testerResponses;
     issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
