@@ -30,25 +30,3 @@ export abstract class Template {
     return templateConformingComment;
   }
 }
-
-export class Header {
-  name: string;
-  headerHash: string;
-  prefix?: string;
-
-  constructor(name, headerSize, prefix: string = '') {
-    this.name = name;
-    this.headerHash = '#'.repeat(headerSize);
-    this.prefix = prefix;
-  }
-
-  toString(): string {
-    const prefix = this.prefix !== '' ? this.prefix + ' ' : '';
-    const headerHashPrefix = this.headerHash !== '' ? this.headerHash + ' ' : '';
-    return `${headerHashPrefix}${prefix}${this.name}`;
-  }
-
-  equals(section: Header): boolean {
-    return this.name === section.name;
-  }
-}
