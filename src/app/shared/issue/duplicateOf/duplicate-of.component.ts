@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { first, map, takeUntil } from 'rxjs/operators';
-import { Issue, SEVERITY_ORDER } from '../../../core/models/issue.model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Issue } from '../../../core/models/issue.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
