@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsul
 import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Issue, SEVERITY_ORDER } from '../../../core/models/issue.model';
+import { Issue } from '../../../core/models/issue.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
