@@ -10,7 +10,7 @@ describe("CATcher's Login Page", () => {
   });
 
   it('displays "CATcher" in header bar', async () => {
-    expect(await page.getTitle()).toEqual(`CATcher v${AppConfig.version}\nreceipt\mail`);
+    expect(await page.getTitle()).toEqual(`CATcher v${AppConfig.version}\nreceipt\nmail`);
   });
 
   it('allows users to authenticate themselves', async () => {
