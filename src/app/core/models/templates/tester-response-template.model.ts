@@ -1,8 +1,8 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
-import { Section } from './sections/section.model';
 import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
+import { Section } from './sections/section.model';
 import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
 import { TesterResponseSection } from './sections/tester-response-section.model';
 import { Header, Template } from './template.model';
