@@ -1,19 +1,14 @@
 import { Checkbox } from '../../checkbox.model';
 import { IssueDispute } from '../../issue-dispute.model';
+import { buildCheckboxParser } from './common-parsers.model';
 
-const { char, choice, coroutine, everyCharUntil, lookAhead, optionalWhitespace, str, whitespace } = require('arcsecond');
+const { coroutine, everyCharUntil, lookAhead, optionalWhitespace, str, whitespace } = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: ';
 const DONE_CHECKBOX_DESCRIPTION = 'Done';
 const LINE_SEPARATOR = '-------------------';
 
-export const DoneCheckboxParser = coroutine(function* () {
-  yield str('- [');
-  const disagreeCheckboxChar = yield choice([char('x'), whitespace]);
-  yield str('] Done');
-
-  return disagreeCheckboxChar === 'x';
-});
+export const DoneCheckboxParser = buildCheckboxParser(DONE_CHECKBOX_DESCRIPTION);
 
 export const ModerationSectionParser = coroutine(function* () {
   yield str(SECTION_TITLE_PREFIX);

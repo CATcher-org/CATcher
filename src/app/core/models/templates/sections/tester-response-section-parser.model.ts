@@ -1,24 +1,17 @@
-const {
-  char,
-  choice,
-  coroutine,
-  everyCharUntil,
-  letters,
-  lookAhead,
-  optionalWhitespace,
-  pipeParsers,
-  possibly,
-  str,
-  whitespace
-} = require('arcsecond');
+import { buildCheckboxParser } from './common-parsers.model';
+
+const { coroutine, everyCharUntil, letters, lookAhead, optionalWhitespace, pipeParsers, possibly, str, whitespace } = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const TEAM_CHOSE_PREFIX = 'Team chose ';
 const TESTER_CHOSE_PREFIX = 'Originally ';
+const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 const DISAGREEMENT_REASON_PREFIX = '**Reason for disagreement:** ';
 const LINE_SEPARATOR = '-------------------';
 const DUPLICATE_STATUS_MESSAGE =
   "Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)";
+
+export const DisagreeCheckboxParser = buildCheckboxParser(DISAGREE_CHECKBOX_DESCRIPTION);
 
 function buildExtractResponseParser(category: string) {
   return coroutine(function* () {
@@ -40,14 +33,6 @@ function buildTesterResponseParser(category: string) {
 
   return pipeParsers([str(TESTER_CHOSE_PREFIX), extractResponseParser]);
 }
-
-export const DisagreeCheckboxParser = coroutine(function* () {
-  yield str('- [');
-  const disagreeCheckboxChar = yield choice([char('x'), whitespace]);
-  yield str('] I disagree');
-
-  return disagreeCheckboxChar === 'x';
-});
 
 export const DisagreeReasonParser = coroutine(function* () {
   yield str(DISAGREEMENT_REASON_PREFIX);
