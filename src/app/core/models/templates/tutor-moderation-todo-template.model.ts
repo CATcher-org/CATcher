@@ -1,7 +1,5 @@
-import { Checkbox } from '../checkbox.model';
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
-import { IssueDispute } from '../issue-dispute.model';
 import { ModerationSectionParser } from './sections/moderation-section-parser.model';
 import { ModerationSection } from './sections/moderation-section.model';
 import { Header, Template } from './template.model';
@@ -13,7 +11,6 @@ const tutorModerationTodoHeaders = {
 };
 
 const TODO_HEADER = '# Tutor Moderation';
-const DONE_CHECKBOX_DESCRIPTION = 'Done';
 
 export const TutorModerationTodoParser = coroutine(function* () {
   yield str(TODO_HEADER);
@@ -21,17 +18,7 @@ export const TutorModerationTodoParser = coroutine(function* () {
 
   const tutorResponses = yield many1(ModerationSectionParser);
 
-  // build array of IssueDisputes
-  const disputesToResolve: IssueDispute[] = [];
-
-  for (const response of tutorResponses) {
-    const newDispute = new IssueDispute(response.title, response.description);
-    newDispute.todo = new Checkbox(DONE_CHECKBOX_DESCRIPTION, response.doneCheckboxValue);
-    newDispute.tutorResponse = response.tutorResponse;
-    disputesToResolve.push(newDispute);
-  }
-
-  return disputesToResolve;
+  return tutorResponses;
 });
 
 export class TutorModerationTodoTemplate extends Template {

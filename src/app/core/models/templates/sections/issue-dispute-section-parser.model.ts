@@ -1,3 +1,5 @@
+import { IssueDispute } from '../../issue-dispute.model';
+
 const { coroutine, everyCharUntil, optionalWhitespace, str } = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: ';
@@ -12,8 +14,5 @@ export const IssueDisputeSectionParser = coroutine(function* () {
   yield str(LINE_SEPARATOR);
   yield optionalWhitespace;
 
-  return {
-    title: title.trim(),
-    description: description.trim()
-  };
+  return new IssueDispute(title.trim(), description.trim());
 });

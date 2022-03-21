@@ -1,5 +1,4 @@
 import { GithubIssue } from '../github/github-issue.model';
-import { IssueDispute } from '../issue-dispute.model';
 import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
@@ -32,17 +31,10 @@ export const TutorModerationIssueParser = coroutine(function* () {
   yield whitespace;
   const disputes = yield many1(IssueDisputeSectionParser);
 
-  // build array of IssueDisputes
-  const issueDisputes: IssueDispute[] = [];
-
-  for (const dispute of disputes) {
-    issueDisputes.push(new IssueDispute(dispute.title, dispute.description));
-  }
-
   return {
     description: description.trim(),
-    teamResponse: teamResponse.trim(),
-    issueDisputes: issueDisputes
+    teamResponse: teamResponse,
+    issueDisputes: disputes
   };
 });
 

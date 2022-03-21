@@ -31,7 +31,7 @@ describe('ModerationSectionParser', () => {
 
     expect(result.title).toBe(EXPECTED_TITLE);
     expect(result.description).toBe(EXPECTED_DESCRIPTION);
-    expect(result.doneCheckboxValue).toBe(false);
+    expect(result.todo.isChecked).toBe(false);
     expect(result.tutorResponse).toBe(EXPECTED_TUTOR_RESPONSE);
   });
 });

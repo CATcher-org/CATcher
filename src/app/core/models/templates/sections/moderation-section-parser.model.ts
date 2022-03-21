@@ -1,6 +1,10 @@
+import { Checkbox } from '../../checkbox.model';
+import { IssueDispute } from '../../issue-dispute.model';
+
 const { char, choice, coroutine, everyCharUntil, lookAhead, optionalWhitespace, str, whitespace } = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: ';
+const DONE_CHECKBOX_DESCRIPTION = 'Done';
 const LINE_SEPARATOR = '-------------------';
 
 export const DoneCheckboxParser = coroutine(function* () {
@@ -23,10 +27,9 @@ export const ModerationSectionParser = coroutine(function* () {
   yield str(LINE_SEPARATOR);
   yield optionalWhitespace;
 
-  return {
-    title: title.trim(),
-    description: description.trim(),
-    doneCheckboxValue: doneCheckboxValue,
-    tutorResponse: tutorResponse.trim()
-  };
+  const dispute = new IssueDispute(title.trim(), description.trim());
+  dispute.todo = new Checkbox(DONE_CHECKBOX_DESCRIPTION, doneCheckboxValue);
+  dispute.tutorResponse = tutorResponse.trim();
+
+  return dispute;
 });
