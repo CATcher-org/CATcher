@@ -6,7 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import { finalize, flatMap, map } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
-import { Issue, SEVERITY_ORDER, STATUS } from '../../../core/models/issue.model';
+import { Issue, STATUS } from '../../../core/models/issue.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { LabelService } from '../../../core/services/label.service';
@@ -145,19 +145,11 @@ export class NewTeamResponseComponent implements OnInit {
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
-    return SEVERITY_ORDER[this.severity.value] > SEVERITY_ORDER[issue.severity] || issue.duplicated || !!issue.duplicateOf;
+    return issue.duplicated || !!issue.duplicateOf;
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
-    const reason = new Array<string>();
-    if (this.dupIssueOptionIsDisabled(issue)) {
-      if (SEVERITY_ORDER[this.severity.value] > SEVERITY_ORDER[issue.severity]) {
-        reason.push('Issue of lower priority');
-      } else if (issue.duplicated || !!issue.duplicateOf) {
-        reason.push('A duplicated issue');
-      }
-    }
-    return reason.join(', ');
+    return this.dupIssueOptionIsDisabled(issue) ? 'A duplicated issue' : '';
   }
 
   handleChangeOfDuplicateCheckbox(event: MatCheckboxChange) {
