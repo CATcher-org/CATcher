@@ -26,6 +26,7 @@ export const TutorModerationTodoParser = coroutine(function* () {
   const result: TutorModerationTodoParseResult = {
     disputesToResolve: tutorResponses
   };
+  return result;
 });
 
 export class TutorModerationTodoTemplate extends Template {
