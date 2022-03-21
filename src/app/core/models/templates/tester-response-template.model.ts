@@ -26,7 +26,7 @@ export const TesterResponseParser = coroutine(function* () {
   // parse tester responses from comment
   yield str(TESTER_RESPONSES_HEADER);
   yield whitespace;
-  const testerReponses = yield many1(TesterResponseSectionParser);
+  const responses = yield many1(TesterResponseSectionParser);
 
   // build array of TesterResponse
   let testerDisagree = false;
@@ -34,7 +34,7 @@ export const TesterResponseParser = coroutine(function* () {
   let teamChosenType: string;
   const testerResponses: TesterResponse[] = [];
 
-  for (const response of testerReponses) {
+  for (const response of responses) {
     if (response.disagreeCheckboxValue) {
       testerDisagree = true;
     }
