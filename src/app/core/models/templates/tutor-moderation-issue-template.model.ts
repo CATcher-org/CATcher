@@ -1,4 +1,5 @@
 import { GithubIssue } from '../github/github-issue.model';
+import { IssueDispute } from '../issue-dispute.model';
 import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
@@ -12,6 +13,12 @@ const tutorModerationIssueDescriptionHeaders = {
   teamResponse: new Header("Team's Response", 1),
   disputes: new Header('Disputes', 1)
 };
+
+interface TutorModerationIssueParseResult {
+  description: string;
+  teamResponse: string;
+  issueDisputes: IssueDispute[];
+}
 
 const DESCRIPTION_HEADER = '# Issue Description';
 const TEAM_RESPONSE_HEADER = "# Team's Response";
@@ -31,11 +38,12 @@ export const TutorModerationIssueParser = coroutine(function* () {
   yield whitespace;
   const disputes = yield many1(IssueDisputeSectionParser);
 
-  return {
+  const result: TutorModerationIssueParseResult = {
     description: description.trim(),
     teamResponse: teamResponse,
     issueDisputes: disputes
   };
+  return result;
 });
 
 export class TutorModerationIssueTemplate extends Template {

@@ -1,5 +1,6 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
+import { IssueDispute } from '../issue-dispute.model';
 import { ModerationSectionParser } from './sections/moderation-section-parser.model';
 import { ModerationSection } from './sections/moderation-section.model';
 import { Header, Template } from './template.model';
@@ -10,6 +11,10 @@ const tutorModerationTodoHeaders = {
   todo: new Header('Tutor Moderation', 1)
 };
 
+interface TutorModerationTodoParseResult {
+  disputesToResolve: IssueDispute[];
+}
+
 const TODO_HEADER = '# Tutor Moderation';
 
 export const TutorModerationTodoParser = coroutine(function* () {
@@ -18,7 +23,9 @@ export const TutorModerationTodoParser = coroutine(function* () {
 
   const tutorResponses = yield many1(ModerationSectionParser);
 
-  return tutorResponses;
+  const result: TutorModerationTodoParseResult = {
+    disputesToResolve: tutorResponses
+  };
 });
 
 export class TutorModerationTodoTemplate extends Template {

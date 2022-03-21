@@ -12,6 +12,11 @@ export const TeamResponseHeaders = {
   duplicateOf: new Header('Duplicate status \\(if any\\):', 2)
 };
 
+interface TeamResponseParseResult {
+  teamResponse: string;
+  issueNumber: number;
+}
+
 const DUPLICATE_OF_HEADER = '## Duplicate status (if any):';
 
 const TeamResponseSectionParser = buildTeamResponseSectionParser(DUPLICATE_OF_HEADER);
@@ -27,16 +32,17 @@ export const TeamResponseParser = coroutine(function* () {
 
   yield str(DUPLICATE_OF_HEADER);
   yield whitespace;
-  let issueNumber = yield choice([
+  const issueNumber = yield choice([
     // either parse duplicate issue number or '--' if no duplicates
     DuplicateNumberParser,
     str('--')
   ]).map((num) => (num === '--' ? null : num));
 
-  return {
+  const result: TeamResponseParseResult = {
     teamResponse: teamResponse,
     issueNumber: issueNumber
   };
+  return result;
 });
 
 export class TeamResponseTemplate extends Template {

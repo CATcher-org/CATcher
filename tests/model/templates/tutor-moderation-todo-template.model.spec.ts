@@ -20,20 +20,20 @@ describe('TutorModerationTodoParser', () => {
   it('parses comment body correctly', () => {
     const result = TutorModerationTodoParser.run(PENDING_TUTOR_MODERATION.body).result;
 
-    expect(result[0].title).toBe(TYPE_TITLE);
-    expect(result[0].description).toBe(TEST_DESCRIPTION);
-    expect(result[0].todo.isChecked).toBe(true);
-    expect(result[0].tutorResponse).toBe(TEST_TUTOR_RESPONSE);
+    expect(result.disputesToResolve[0].title).toBe(TYPE_TITLE);
+    expect(result.disputesToResolve[0].description).toBe(TEST_DESCRIPTION);
+    expect(result.disputesToResolve[0].todo.isChecked).toBe(true);
+    expect(result.disputesToResolve[0].tutorResponse).toBe(TEST_TUTOR_RESPONSE);
 
-    expect(result[1].title).toBe(SEVERITY_TITLE);
-    expect(result[1].description).toBe(DEFAULT_DESCRIPTION);
-    expect(result[1].todo.isChecked).toBe(false);
-    expect(result[1].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
+    expect(result.disputesToResolve[1].title).toBe(SEVERITY_TITLE);
+    expect(result.disputesToResolve[1].description).toBe(DEFAULT_DESCRIPTION);
+    expect(result.disputesToResolve[1].todo.isChecked).toBe(false);
+    expect(result.disputesToResolve[1].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
 
-    expect(result[2].title).toBe(NOT_RELATED_TITLE);
-    expect(result[2].description).toBe(DEFAULT_DESCRIPTION);
-    expect(result[2].todo.isChecked).toBe(false);
-    expect(result[2].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
+    expect(result.disputesToResolve[2].title).toBe(NOT_RELATED_TITLE);
+    expect(result.disputesToResolve[2].description).toBe(DEFAULT_DESCRIPTION);
+    expect(result.disputesToResolve[2].todo.isChecked).toBe(false);
+    expect(result.disputesToResolve[2].tutorResponse).toBe(DEFAULT_TUTOR_RESPONSE);
   });
 });
 

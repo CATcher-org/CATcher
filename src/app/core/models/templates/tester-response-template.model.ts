@@ -7,14 +7,21 @@ import { TesterResponseSectionParser } from './sections/tester-response-section-
 import { TesterResponseSection } from './sections/tester-response-section.model';
 import { Header, Template } from './template.model';
 
-const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
+const { coroutine, many1, str, whitespace } = require('arcsecond');
 
 export const TesterResponseHeaders = {
   teamResponse: new Header("Team's Response", 1),
   testerResponses: new Header('Items for the Tester to Verify', 1)
 };
 
-const TEAM_RESPONSE_HEADER = "# Team's Response";
+interface TesterResponseParseResult {
+  teamResponse: string;
+  testerResponses: TesterResponse[];
+  testerDisagree: boolean;
+  teamChosenSeverity: string;
+  teamChosenType: string;
+}
+
 const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
 const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 
@@ -56,13 +63,14 @@ export const TesterResponseParser = coroutine(function* () {
     );
   }
 
-  return {
+  const result: TesterResponseParseResult = {
     teamResponse: teamResponse,
     testerResponses: testerResponses,
     testerDisagree: testerDisagree,
     teamChosenSeverity: teamChosenSeverity,
     teamChosenType: teamChosenType
   };
+  return result;
 });
 
 export class TesterResponseTemplate extends Template {
