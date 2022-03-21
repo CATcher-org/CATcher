@@ -1,4 +1,16 @@
-const { char, choice, coroutine, everyCharUntil, letters, lookAhead, optionalWhitespace, possibly, str, whitespace } = require('arcsecond');
+const {
+  char,
+  choice,
+  coroutine,
+  everyCharUntil,
+  letters,
+  lookAhead,
+  optionalWhitespace,
+  pipeParsers,
+  possibly,
+  str,
+  whitespace
+} = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const TEAM_CHOSE_PREFIX = 'Team chose ';
@@ -20,21 +32,13 @@ function buildExtractResponseParser(category: string) {
 function buildTeamResponseParser(category: string) {
   const extractResponseParser = buildExtractResponseParser(category);
 
-  return coroutine(function* () {
-    yield str(TEAM_CHOSE_PREFIX);
-    const teamChose = yield extractResponseParser;
-    return teamChose;
-  });
+  return pipeParsers([str(TEAM_CHOSE_PREFIX), extractResponseParser]);
 }
 
 function buildTesterResponseParser(category: string) {
   const extractResponseParser = buildExtractResponseParser(category);
 
-  return coroutine(function* () {
-    yield str(TESTER_CHOSE_PREFIX);
-    const testerChose = yield extractResponseParser;
-    return testerChose;
-  });
+  return pipeParsers([str(TESTER_CHOSE_PREFIX), extractResponseParser]);
 }
 
 export const DisagreeCheckboxParser = coroutine(function* () {
