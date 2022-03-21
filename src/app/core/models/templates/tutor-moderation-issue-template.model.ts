@@ -3,6 +3,7 @@ import { IssueDispute } from '../issue-dispute.model';
 import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
 import { IssueDisputeSection } from './sections/issue-dispute-section.model';
 import { Section } from './sections/section.model';
+import { buildTeamResponseSectionParser } from './sections/team-response-section-parser.model';
 import { Header, Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
@@ -17,14 +18,14 @@ const DESCRIPTION_HEADER = '# Issue Description';
 const TEAM_RESPONSE_HEADER = "# Team's Response";
 const DISPUTES_HEADER = '# Disputes';
 
+const TeamResponseSectionParser = buildTeamResponseSectionParser(DISPUTES_HEADER);
+
 export const TutorModerationIssueParser = coroutine(function* () {
   yield str(DESCRIPTION_HEADER);
   yield whitespace;
   const description = yield everyCharUntil(str(TEAM_RESPONSE_HEADER));
 
-  yield str(TEAM_RESPONSE_HEADER);
-  yield whitespace;
-  const teamResponse = yield everyCharUntil(str(DISPUTES_HEADER));
+  const teamResponse = yield TeamResponseSectionParser;
 
   // parse disputes
   yield str(DISPUTES_HEADER);

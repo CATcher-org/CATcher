@@ -2,6 +2,7 @@ import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
 import { Section } from './sections/section.model';
+import { buildTeamResponseSectionParser } from './sections/team-response-section-parser.model';
 import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
 import { TesterResponseSection } from './sections/tester-response-section.model';
 import { Header, Template } from './template.model';
@@ -17,10 +18,10 @@ const TEAM_RESPONSE_HEADER = "# Team's Response";
 const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
 const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 
+const TeamResponseSectionParser = buildTeamResponseSectionParser(TESTER_RESPONSES_HEADER);
+
 export const TesterResponseParser = coroutine(function* () {
-  yield str(TEAM_RESPONSE_HEADER); // parse and ignore header
-  yield whitespace;
-  const teamResponse = yield everyCharUntil(str(TESTER_RESPONSES_HEADER));
+  const teamResponse = yield TeamResponseSectionParser;
 
   // parse tester responses from comment
   yield str(TESTER_RESPONSES_HEADER);
@@ -56,7 +57,7 @@ export const TesterResponseParser = coroutine(function* () {
   }
 
   return {
-    teamResponse: teamResponse.trim(),
+    teamResponse: teamResponse,
     testerResponses: testerResponses,
     testerDisagree: testerDisagree,
     teamChosenSeverity: teamChosenSeverity,
