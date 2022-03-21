@@ -1,6 +1,17 @@
 import { buildCheckboxParser } from './common-parsers.model';
 
-const { coroutine, everyCharUntil, letters, lookAhead, optionalWhitespace, pipeParsers, possibly, str, whitespace } = require('arcsecond');
+const {
+  between,
+  coroutine,
+  everyCharUntil,
+  letters,
+  lookAhead,
+  optionalWhitespace,
+  pipeParsers,
+  possibly,
+  str,
+  whitespace
+} = require('arcsecond');
 
 const SECTION_TITLE_PREFIX = '## :question: Issue ';
 const TEAM_CHOSE_PREFIX = 'Team chose ';
@@ -14,12 +25,7 @@ const DUPLICATE_STATUS_MESSAGE =
 export const DisagreeCheckboxParser = buildCheckboxParser(DISAGREE_CHECKBOX_DESCRIPTION);
 
 function buildExtractResponseParser(category: string) {
-  return coroutine(function* () {
-    yield str('[`' + category + '.');
-    const response = yield letters;
-    yield str('`]');
-    return response;
-  });
+  return between(str('[`' + category + '.'))(str('`]'))(letters);
 }
 
 function buildTeamResponseParser(category: string) {
