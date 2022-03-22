@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Observable, throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subject, throwError } from 'rxjs';
+import { finalize, first, flatMap, map, takeUntil } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, SEVERITY_ORDER, STATUS } from '../../../core/models/issue.model';
@@ -11,6 +11,8 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
 import { IssueService } from '../../../core/services/issue.service';
 import { LabelService } from '../../../core/services/label.service';
 import { PhaseService } from '../../../core/services/phase.service';
+import { TABLE_COLUMNS } from '../../issue-tables/issue-tables-columns';
+import { applySearchFilter } from '../../issue-tables/search-filter';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 
@@ -19,11 +21,13 @@ import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.compo
   templateUrl: './new-team-response.component.html',
   styleUrls: ['./new-team-response.component.css']
 })
-export class NewTeamResponseComponent implements OnInit {
+export class NewTeamResponseComponent implements OnInit, OnDestroy {
   newTeamResponseForm: FormGroup;
   teamMembers: string[];
   duplicatedIssueList: Observable<Issue[]>;
   conflict: Conflict;
+  searchFilterCtrl: FormControl = new FormControl();
+  filteredDuplicateIssueList: ReplaySubject<Issue[]> = new ReplaySubject<Issue[]>(1);
 
   isFormPending = false;
 
@@ -31,6 +35,9 @@ export class NewTeamResponseComponent implements OnInit {
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
+
+  // A subject that will emit a signal when this component is being destroyed
+  private _onDestroy = new Subject<void>();
 
   constructor(
     public issueService: IssueService,
@@ -46,6 +53,9 @@ export class NewTeamResponseComponent implements OnInit {
       return member.loginId;
     });
     this.duplicatedIssueList = this.getDupIssueList();
+    // Populate the filtered list with all the issues first
+    this.duplicatedIssueList.pipe(first()).subscribe((issues) => this.filteredDuplicateIssueList.next(issues));
+    this.searchFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe((_) => this.filterIssues());
     this.newTeamResponseForm = this.formBuilder.group({
       description: [''],
       severity: [this.issue.severity, Validators.required],
@@ -67,6 +77,26 @@ export class NewTeamResponseComponent implements OnInit {
       this.responseTag.updateValueAndValidity();
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SUBMIT;
+  }
+
+  private filterIssues(): void {
+    this.changeFilter(this.duplicatedIssueList, this.searchFilterCtrl.value).subscribe((issues) =>
+      this.filteredDuplicateIssueList.next(issues)
+    );
+  }
+
+  private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
+    return issuesObservable.pipe(
+      first(),
+      map((issues) => {
+        return applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues);
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this._onDestroy.next(); // Emits the destroy signal
+    this._onDestroy.complete();
   }
 
   submitNewTeamResponse(form: NgForm) {
@@ -154,7 +184,7 @@ export class NewTeamResponseComponent implements OnInit {
       if (SEVERITY_ORDER[this.severity.value] > SEVERITY_ORDER[issue.severity]) {
         reason.push('Issue of lower priority');
       } else if (issue.duplicated || !!issue.duplicateOf) {
-        reason.push('A duplicated issue');
+        reason.push('Duplicate of #' + issue.duplicateOf);
       }
     }
     return reason.join(', ');
