@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MarkdownModule } from 'ngx-markdown';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CommentEditorModule } from '../../comment-editor/comment-editor.module';
 import { IssueComponentsModule } from '../../issue/issue-components.module';
 import { LabelDropdownModule } from '../../label-dropdown/label-dropdown.module';
@@ -11,7 +12,15 @@ import { NewTeamResponseComponent } from './new-team-response.component';
 @NgModule({
   exports: [NewTeamResponseComponent, ConflictDialogComponent],
   declarations: [NewTeamResponseComponent, ConflictDialogComponent],
-  imports: [CommonModule, CommentEditorModule, SharedModule, IssueComponentsModule, LabelDropdownModule, MarkdownModule.forChild()],
+  imports: [
+    CommonModule,
+    CommentEditorModule,
+    SharedModule,
+    IssueComponentsModule,
+    LabelDropdownModule,
+    MarkdownModule.forChild(),
+    NgxMatSelectSearchModule
+  ],
   entryComponents: [ConflictDialogComponent]
 })
 export class NewTeamResponseModule {}
