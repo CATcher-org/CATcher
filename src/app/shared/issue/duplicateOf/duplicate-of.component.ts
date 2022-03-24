@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { first, map, takeUntil } from 'rxjs/operators';
-import { Issue, SEVERITY_ORDER } from '../../../core/models/issue.model';
+import { Issue } from '../../../core/models/issue.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
@@ -87,19 +87,11 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
   }
 
   dupIssueOptionIsDisabled(issue: Issue): boolean {
-    return SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity] || issue.duplicated || !!issue.duplicateOf;
+    return issue.duplicated || !!issue.duplicateOf;
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
-    const reason = new Array<string>();
-    if (this.dupIssueOptionIsDisabled(issue)) {
-      if (SEVERITY_ORDER[this.issue.severity] > SEVERITY_ORDER[issue.severity]) {
-        reason.push('Issue of lower priority');
-      } else if (issue.duplicated || !!issue.duplicateOf) {
-        reason.push('Duplicate of #' + issue.duplicateOf);
-      }
-    }
-    return reason.join(', ');
+    return this.dupIssueOptionIsDisabled(issue) ? 'A duplicated issue' : '';
   }
 
   handleCheckboxChange(event) {
