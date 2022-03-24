@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -7,6 +8,8 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
+import { TABLE_COLUMNS } from '../../issue-tables/issue-tables-columns';
+import { applySearchFilter } from '../../issue-tables/search-filter';
 
 @Component({
   selector: 'app-duplicate-of-component',
@@ -14,9 +17,11 @@ import { PhaseService } from '../../../core/services/phase.service';
   styleUrls: ['./duplicate-of.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class DuplicateOfComponent implements OnInit {
+export class DuplicateOfComponent implements OnInit, OnDestroy {
   isEditing = false;
   duplicatedIssueList: Observable<Issue[]>;
+  searchFilterCtrl: FormControl = new FormControl();
+  filteredDuplicateIssueList: ReplaySubject<Issue[]> = new ReplaySubject<Issue[]>(1);
 
   @Input() issue: Issue;
 
@@ -24,6 +29,9 @@ export class DuplicateOfComponent implements OnInit {
 
   @ViewChild(MatSelect, { static: true }) duplicateOfSelection: MatSelect;
   @ViewChild(MatCheckbox, { static: true }) duplicatedCheckbox: MatCheckbox;
+
+  // A subject that will emit a signal when this component is being destroyed
+  private _onDestroy = new Subject<void>();
 
   // Max chars visible for a duplicate entry in duplicates dropdown list.
   readonly MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE = 17;
@@ -52,8 +60,22 @@ export class DuplicateOfComponent implements OnInit {
     return issue.title.length > maxTitleLength;
   }
 
+  ngOnDestroy(): void {
+    this._onDestroy.next(); // Emits the destroy signal
+    this._onDestroy.complete();
+  }
+
   ngOnInit() {
     this.duplicatedIssueList = this.getDupIssueList();
+    // Populate the filtered list with all the issues first
+    this.duplicatedIssueList.pipe(first()).subscribe((issues) => this.filteredDuplicateIssueList.next(issues));
+    this.searchFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe((_) => this.filterIssues());
+  }
+
+  private filterIssues(): void {
+    this.changeFilter(this.duplicatedIssueList, this.searchFilterCtrl.value).subscribe((issues) =>
+      this.filteredDuplicateIssueList.next(issues)
+    );
   }
 
   updateDuplicateStatus(event: MatSelectChange) {
@@ -108,6 +130,15 @@ export class DuplicateOfComponent implements OnInit {
     }
     clone.issueComment.description = clone.createGithubTeamResponse();
     return clone;
+  }
+
+  private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
+    return issuesObservable.pipe(
+      first(),
+      map((issues) => {
+        return applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues);
+      })
+    );
   }
 
   private getDupIssueList(): Observable<Issue[]> {
