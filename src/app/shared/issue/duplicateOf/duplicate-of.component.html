@@ -19,18 +19,26 @@
 
   <mat-select
     [style.display]="isEditing ? 'block' : 'none'"
+    style="width: 100%"
     class="no-arrow"
     placeholder="-"
     [value]="issue.duplicateOf"
     (selectionChange)="updateDuplicateStatus($event)"
     (openedChange)="handleSelectionOpenChange($event)"
   >
+    <mat-option>
+      <ngx-mat-select-search
+        placeholderLabel="Search issues"
+        noEntriesFoundLabel="No issues found"
+        [formControl]="searchFilterCtrl"
+      ></ngx-mat-select-search>
+    </mat-option>
     <mat-select-trigger></mat-select-trigger>
     <mat-option
       [matTooltip]="issue.title"
       [matTooltipDisabled]="!isTooltipNecessary(issue)"
       [matTooltipPosition]="'left'"
-      *ngFor="let issue of duplicatedIssueList | async"
+      *ngFor="let issue of filteredDuplicateIssueList | async"
       [disabled]="dupIssueOptionIsDisabled(issue)"
       [value]="issue.id"
     >

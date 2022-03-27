@@ -67,6 +67,7 @@
     "karma-spec-reporter": "0.0.32",
     "moment": "^2.24.0",
     "ngx-markdown": "^8.2.1",
+    "ngx-mat-select-search": "^1.8.0",
     "node-fetch": "^2.6.0",
     "rxjs": "6.5.3",
     "tslib": "^1.9.0",
