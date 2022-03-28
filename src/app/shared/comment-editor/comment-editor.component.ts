@@ -9,6 +9,7 @@ const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
 const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
 const SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB = 5;
+const TIME_BETWEEN_UPLOADS_MS = 250;
 
 const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
 const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
@@ -101,9 +102,18 @@ export class CommentEditorComponent implements OnInit {
     }
 
     const files = event.dataTransfer.files;
-    if (files.length > 0) {
-      this.readAndUploadFile(files[0]);
-      this.commentTextArea.nativeElement.focus();
+
+    if (files === undefined || files.length <= 0) {
+      return;
+    }
+
+    this.commentTextArea.nativeElement.focus();
+
+    for (let i = 0; i < files.length; i++) {
+      setTimeout(() => {
+        console.log(`File {i}. Begin uploading ${files[i].name}.`);
+        this.readAndUploadFile(files[i]);
+      }, TIME_BETWEEN_UPLOADS_MS * i);
     }
   }
 
