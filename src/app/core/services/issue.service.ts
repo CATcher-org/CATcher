@@ -249,6 +249,16 @@ export class IssueService {
     );
   }
 
+  undeleteIssue(id: number): Observable<Issue> {
+    return this.githubService.reopenIssue(id).pipe(
+      map((response: GithubIssue) => {
+        const reopenedIssue = this.createIssueModel(response);
+        this.updateLocalStore(reopenedIssue);
+        return reopenedIssue;
+      })
+    );
+  }
+
   /**
    * This function will update the issue's state of the application. This function needs to be called whenever a issue is deleted.
    */

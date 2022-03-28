@@ -290,6 +290,15 @@ export class GithubService {
     );
   }
 
+  reopenIssue(id: number): Observable<GithubIssue> {
+    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open'})).pipe(
+      map((response: GithubResponse<GithubIssue>) => {
+        this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
+        return new GithubIssue(response.data);
+      })
+    );
+  }
+
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({ owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels })).pipe(
       map((response: GithubResponse<GithubIssue>) => {
