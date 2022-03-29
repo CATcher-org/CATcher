@@ -37,13 +37,16 @@
   <button mat-button matTooltip="Download CATcher Log" (click)="this.exportLogFile()">
     <mat-icon>receipt</mat-icon>
   </button>
+  <button mat-button matTooltip="Give feedback about CATcher" (click)="openIssueTracker()">
+    <mat-icon>mail</mat-icon>
+  </button>
+
   <button
     *ngIf="auth.isAuthenticated() && isOpenUrlButtonShown()"
     mat-button
     matTooltip="View current page on GitHub"
     (click)="viewBrowser()"
   >
-    View on GitHub
     <mat-icon>open_in_new</mat-icon>
   </button>
   <button
