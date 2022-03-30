@@ -75,7 +75,7 @@ export const TesterResponseParser = coroutine(function* () {
 
 export class TesterResponseTemplate extends Template {
   teamResponse: string;
-  testerResponse: TesterResponse[];
+  testerResponses: TesterResponse[];
   testerDisagree: boolean;
   comment: IssueComment;
   teamChosenSeverity?: string;
@@ -96,7 +96,7 @@ export class TesterResponseTemplate extends Template {
     };
 
     this.teamResponse = this.parseResult.teamResponse;
-    this.testerResponse = this.parseResult.testerResponses;
+    this.testerResponses = this.parseResult.testerResponses;
     this.testerDisagree = this.parseResult.testerDisagree;
     this.teamChosenSeverity = this.parseResult.teamChosenSeverity;
     this.teamChosenType = this.parseResult.teamChosenType;

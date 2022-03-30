@@ -146,7 +146,7 @@ export class Issue {
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
     issue.teamResponse = testerResponseTemplate.teamResponse;
-    issue.testerResponses = testerResponseTemplate.testerResponse;
+    issue.testerResponses = testerResponseTemplate.testerResponses;
     issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
     issue.teamChosenSeverity = testerResponseTemplate.teamChosenSeverity || null;
@@ -233,7 +233,7 @@ export class Issue {
     const template = new TesterResponseTemplate([githubComment]);
     this.issueComment = template.comment;
     this.teamResponse = template.teamResponse;
-    this.testerResponses = template.testerResponse;
+    this.testerResponses = template.testerResponses;
   }
 
   /**
