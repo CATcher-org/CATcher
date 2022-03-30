@@ -1,16 +1,9 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
-import { DuplicateOfSection } from './sections/duplicate-of-section.model';
-import { Section } from './sections/section.model';
-import { Header, Template } from './template.model';
+import { Template } from './template.model';
 
 const { choice, coroutine, digits, str, whitespace } = require('arcsecond');
-
-export const TeamResponseHeaders = {
-  teamResponse: new Header("Team's Response", 1),
-  duplicateOf: new Header('Duplicate status \\(if any\\):', 2)
-};
 
 interface TeamResponseParseResult {
   teamResponse: string;
@@ -51,7 +44,7 @@ export class TeamResponseTemplate extends Template {
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
-    super(TeamResponseParser, Object.values(TeamResponseHeaders));
+    super(TeamResponseParser);
 
     const templateConformingComment = this.findConformingComment(githubComments);
 
@@ -68,13 +61,5 @@ export class TeamResponseTemplate extends Template {
 
     this.teamResponse = this.parseResult.teamResponse;
     this.duplicateOf = this.parseResult.issueNumber;
-  }
-
-  parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(TeamResponseHeaders.teamResponse), toParse);
-  }
-
-  parseDuplicateOf(toParse: string): DuplicateOfSection {
-    return new DuplicateOfSection(this.getSectionalDependency(TeamResponseHeaders.duplicateOf), toParse);
   }
 }

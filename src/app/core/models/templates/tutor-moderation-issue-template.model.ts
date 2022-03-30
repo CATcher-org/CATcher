@@ -2,17 +2,9 @@ import { GithubIssue } from '../github/github-issue.model';
 import { IssueDispute } from '../issue-dispute.model';
 import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
 import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
-import { IssueDisputeSection } from './sections/issue-dispute-section.model';
-import { Section } from './sections/section.model';
-import { Header, Template } from './template.model';
+import { Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
-
-const tutorModerationIssueDescriptionHeaders = {
-  description: new Header('Issue Description', 1),
-  teamResponse: new Header("Team's Response", 1),
-  disputes: new Header('Disputes', 1)
-};
 
 interface TutorModerationIssueParseResult {
   description: string;
@@ -52,7 +44,7 @@ export class TutorModerationIssueTemplate extends Template {
   disputes: IssueDispute[];
 
   constructor(githubIssue: GithubIssue) {
-    super(TutorModerationIssueParser, Object.values(tutorModerationIssueDescriptionHeaders));
+    super(TutorModerationIssueParser);
 
     const parsed = TutorModerationIssueParser.run(githubIssue.body);
 
@@ -65,17 +57,5 @@ export class TutorModerationIssueTemplate extends Template {
     this.description = this.parseResult.description;
     this.teamResponse = this.parseResult.teamResponse;
     this.disputes = this.parseResult.issueDisputes;
-  }
-
-  parseDescription(toParse: string): Section {
-    return new Section(this.getSectionalDependency(tutorModerationIssueDescriptionHeaders.description), toParse);
-  }
-
-  parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(tutorModerationIssueDescriptionHeaders.teamResponse), toParse);
-  }
-
-  parseDisputes(toParse: string): IssueDisputeSection {
-    return new IssueDisputeSection(this.getSectionalDependency(tutorModerationIssueDescriptionHeaders.disputes), toParse);
   }
 }

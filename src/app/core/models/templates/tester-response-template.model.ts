@@ -2,17 +2,10 @@ import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
 import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
-import { Section } from './sections/section.model';
 import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
-import { TesterResponseSection } from './sections/tester-response-section.model';
-import { Header, Template } from './template.model';
+import { Template } from './template.model';
 
 const { coroutine, many1, str, whitespace } = require('arcsecond');
-
-export const TesterResponseHeaders = {
-  teamResponse: new Header("Team's Response", 1),
-  testerResponses: new Header('Items for the Tester to Verify', 1)
-};
 
 interface TesterResponseParseResult {
   teamResponse: string;
@@ -82,7 +75,7 @@ export class TesterResponseTemplate extends Template {
   teamChosenType?: string;
 
   constructor(githubComments: GithubComment[]) {
-    super(TesterResponseParser, Object.values(TesterResponseHeaders));
+    super(TesterResponseParser);
 
     const templateConformingComment = this.findConformingComment(githubComments);
 
@@ -100,13 +93,5 @@ export class TesterResponseTemplate extends Template {
     this.testerDisagree = this.parseResult.testerDisagree;
     this.teamChosenSeverity = this.parseResult.teamChosenSeverity;
     this.teamChosenType = this.parseResult.teamChosenType;
-  }
-
-  parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(TesterResponseHeaders.teamResponse), toParse);
-  }
-
-  parseTesterResponse(toParse: string): TesterResponseSection {
-    return new TesterResponseSection(this.getSectionalDependency(TesterResponseHeaders.testerResponses), toParse);
   }
 }
