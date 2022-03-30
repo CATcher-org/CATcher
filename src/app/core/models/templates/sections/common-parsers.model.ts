@@ -10,7 +10,7 @@ export function buildTeamResponseSectionParser(nextHeader: string) {
     let teamResponse = yield everyCharUntil(str(nextHeader));
 
     teamResponse = teamResponse.trim();
-    teamResponse = teamResponse == '' ? DEFAULT_TEAM_RESPONSE : teamResponse;
+    teamResponse = teamResponse === '' ? DEFAULT_TEAM_RESPONSE : teamResponse;
     return teamResponse;
   });
 }

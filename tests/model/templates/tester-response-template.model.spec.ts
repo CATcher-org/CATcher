@@ -6,7 +6,6 @@ const SEVERITY_LOW = 'Low';
 const TYPE_DOCUMENTATION_BUG = 'DocumentationBug';
 
 const EXPECTED_TEAM_RESPONSE_CONTENT = 'This is a dummy team response comment: Thanks for the feedback';
-const EXPECTED_TEAM_RESPONSE_HEADER = "# Team's Response";
 
 const ISSUE_SEVERITY_TITLE = 'Issue severity';
 const ISSUE_TYPE_TITLE = 'Issue type';

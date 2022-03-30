@@ -264,7 +264,7 @@ export class Issue {
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(): string {
     let tutorResponseString = '# Tutor Moderation\n\n';
-    if (this.issueDisputes != undefined) {
+    if (this.issueDisputes !== undefined) {
       for (const issueDispute of this.issueDisputes) {
         tutorResponseString += issueDispute.toTutorResponseString();
       }
