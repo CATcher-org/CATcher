@@ -54,7 +54,14 @@ export class TutorModerationIssueTemplate extends Template {
   constructor(githubIssue: GithubIssue) {
     super(TutorModerationIssueParser, Object.values(tutorModerationIssueDescriptionHeaders));
 
-    const issueContent = githubIssue.body;
+    const parsed = TutorModerationIssueParser.run(githubIssue.body);
+
+    if (parsed.isError) {
+      this.parseFailure = true;
+      return;
+    }
+
+    this.parseResult = parsed.result;
     this.description = this.parseResult.description;
     this.teamResponse = this.parseResult.teamResponse;
     this.disputes = this.parseResult.issueDisputes;

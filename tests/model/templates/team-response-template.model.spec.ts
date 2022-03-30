@@ -38,7 +38,6 @@ describe('TeamResponseTemplate', () => {
     const template = new TeamResponseTemplate([EMPTY_BODY_GITHUB_COMMENT]);
 
     expect(template.teamResponse).toBe(EXPECTED_TEAM_RESPONSE_TEMPLATE_CONTENT);
-    expect(template.teamResponse.toString()).toBe(EXPECTED_TEAM_RESPONSE_HEADER);
     expect(template.duplicateOf).toEqual(null);
   });
   it('parses the duplicateOf value correctly', () => {
