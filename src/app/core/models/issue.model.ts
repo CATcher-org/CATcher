@@ -86,14 +86,6 @@ export class Issue {
   }
 
   /**
-   * Processes and cleans a raw team response obtained from user input.
-   */
-  static updateTeamResponse(teamResponse: string): string {
-    const defaultString = 'No details provided by team.';
-    return Issue.orDefaultString(Issue.formatText(teamResponse), defaultString);
-  }
-
-  /**
    * Given two strings, returns the first if it is not an empty string or a false value such as null/undefined.
    * Returns the second string if the first is an empty string.
    */
@@ -137,8 +129,8 @@ export class Issue {
 
     issue.teamResponseError = template.parseFailure;
     issue.issueComment = template.comment;
-    issue.teamResponse = template.teamResponse && Issue.updateTeamResponse(template.teamResponse.content);
-    issue.duplicateOf = template.duplicateOf && template.duplicateOf.issueNumber;
+    issue.teamResponse = template.teamResponse;
+    issue.duplicateOf = template.duplicateOf;
     issue.duplicated = issue.duplicateOf !== undefined && issue.duplicateOf !== null;
 
     return issue;
@@ -153,8 +145,8 @@ export class Issue {
     issue.testerResponseError = testerResponseTemplate.parseFailure && teamAcceptedTemplate.parseFailure;
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
-    issue.teamResponse = testerResponseTemplate.teamResponse && Issue.updateTeamResponse(testerResponseTemplate.teamResponse.content);
-    issue.testerResponses = testerResponseTemplate.testerResponse && testerResponseTemplate.testerResponse.testerResponses;
+    issue.teamResponse = testerResponseTemplate.teamResponse;
+    issue.testerResponses = testerResponseTemplate.testerResponse;
     issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
     issue.teamChosenSeverity = testerResponseTemplate.teamChosenSeverity || null;
@@ -170,13 +162,13 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
-    issue.description = issueTemplate.description.content;
-    issue.teamResponse = issueTemplate.teamResponse && Issue.updateTeamResponse(issueTemplate.teamResponse.content);
-    issue.issueDisputes = issueTemplate.dispute.disputes;
+    issue.description = issueTemplate.description;
+    issue.teamResponse = issueTemplate.teamResponse;
+    issue.issueDisputes = issueTemplate.disputes;
 
-    if (todoTemplate.moderation && todoTemplate.comment) {
-      issue.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
-        dispute.description = issueTemplate.dispute.disputes[i].description;
+    if (todoTemplate.disputesToResolve && todoTemplate.comment) {
+      issue.issueDisputes = todoTemplate.disputesToResolve.map((dispute, i) => {
+        dispute.description = issueTemplate.disputes[i].description;
         return dispute;
       });
       issue.issueComment = todoTemplate.comment;
@@ -240,8 +232,8 @@ export class Issue {
   updateTesterResponse(githubComment: GithubComment): void {
     const template = new TesterResponseTemplate([githubComment]);
     this.issueComment = template.comment;
-    this.teamResponse = template.teamResponse && template.teamResponse.content;
-    this.testerResponses = template.testerResponse && template.testerResponse.testerResponses;
+    this.teamResponse = template.teamResponse;
+    this.testerResponses = template.testerResponse;
   }
 
   /**
@@ -251,7 +243,7 @@ export class Issue {
   updateDispute(githubComment: GithubComment): void {
     const todoTemplate = new TutorModerationTodoTemplate([githubComment]);
     this.issueComment = todoTemplate.comment;
-    this.issueDisputes = todoTemplate.moderation.disputesToResolve.map((dispute, i) => {
+    this.issueDisputes = todoTemplate.disputesToResolve.map((dispute, i) => {
       dispute.description = this.issueDisputes[i].description;
       return dispute;
     });
@@ -272,8 +264,10 @@ export class Issue {
   // Template url: https://github.com/CATcher-org/templates#tutor-moderation
   createGithubTutorResponse(): string {
     let tutorResponseString = '# Tutor Moderation\n\n';
-    for (const issueDispute of this.issueDisputes) {
-      tutorResponseString += issueDispute.toTutorResponseString();
+    if (this.issueDisputes != undefined) {
+      for (const issueDispute of this.issueDisputes) {
+        tutorResponseString += issueDispute.toTutorResponseString();
+      }
     }
     return tutorResponseString;
   }
