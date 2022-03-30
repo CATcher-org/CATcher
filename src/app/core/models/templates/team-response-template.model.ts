@@ -46,8 +46,8 @@ export const TeamResponseParser = coroutine(function* () {
 });
 
 export class TeamResponseTemplate extends Template {
-  teamResponse: Section;
-  duplicateOf: DuplicateOfSection;
+  teamResponse: string;
+  duplicateOf: number;
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
@@ -65,9 +65,9 @@ export class TeamResponseTemplate extends Template {
       createdAt: templateConformingComment.created_at,
       updatedAt: templateConformingComment.updated_at
     };
-    const commentsContent: string = templateConformingComment.body;
-    this.teamResponse = this.parseTeamResponse(commentsContent);
-    this.duplicateOf = this.parseDuplicateOf(commentsContent);
+
+    this.teamResponse = this.parseResult.teamResponse;
+    this.duplicateOf = this.parseResult.issueNumber;
   }
 
   parseTeamResponse(toParse: string): Section {

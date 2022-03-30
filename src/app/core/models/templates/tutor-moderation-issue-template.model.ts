@@ -47,17 +47,17 @@ export const TutorModerationIssueParser = coroutine(function* () {
 });
 
 export class TutorModerationIssueTemplate extends Template {
-  description: Section;
-  teamResponse: Section;
-  dispute: IssueDisputeSection;
+  description: string;
+  teamResponse: string;
+  dispute: IssueDispute[];
 
   constructor(githubIssue: GithubIssue) {
     super(TutorModerationIssueParser, Object.values(tutorModerationIssueDescriptionHeaders));
 
     const issueContent = githubIssue.body;
-    this.description = this.parseDescription(issueContent);
-    this.teamResponse = this.parseTeamResponse(issueContent);
-    this.dispute = this.parseDisputes(issueContent);
+    this.description = this.parseResult.description;
+    this.teamResponse = this.parseResult.teamResponse;
+    this.dispute = this.parseResult.issueDisputes;
   }
 
   parseDescription(toParse: string): Section {

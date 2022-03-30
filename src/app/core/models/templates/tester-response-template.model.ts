@@ -74,8 +74,8 @@ export const TesterResponseParser = coroutine(function* () {
 });
 
 export class TesterResponseTemplate extends Template {
-  teamResponse: Section;
-  testerResponse: TesterResponseSection;
+  teamResponse: string;
+  testerResponse: TesterResponse[];
   testerDisagree: boolean;
   comment: IssueComment;
   teamChosenSeverity?: string;
@@ -94,11 +94,12 @@ export class TesterResponseTemplate extends Template {
       ...templateConformingComment,
       description: templateConformingComment.body
     };
-    this.teamResponse = this.parseTeamResponse(this.comment.description);
-    this.testerResponse = this.parseTesterResponse(this.comment.description);
-    this.testerDisagree = this.testerResponse.getTesterDisagree();
-    this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
-    this.teamChosenType = this.testerResponse.getTeamChosenType();
+
+    this.teamResponse = this.parseResult.teamResponse;
+    this.testerResponse = this.parseResult.testerResponses;
+    this.testerDisagree = this.parseResult.testerDisagree;
+    this.teamChosenSeverity = this.parseResult.teamChosenSeverity;
+    this.teamChosenType = this.parseResult.teamChosenType;
   }
 
   parseTeamResponse(toParse: string): Section {

@@ -30,7 +30,7 @@ export const TutorModerationTodoParser = coroutine(function* () {
 });
 
 export class TutorModerationTodoTemplate extends Template {
-  moderation: ModerationSection;
+  moderation: IssueDispute[];
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
@@ -46,7 +46,7 @@ export class TutorModerationTodoTemplate extends Template {
       ...templateConformingComment,
       description: templateConformingComment.body
     };
-    this.moderation = this.parseModeration(this.comment.description);
+    this.moderation = this.parseResult.disputesToResolve;
   }
 
   parseModeration(toParse: string): ModerationSection {
