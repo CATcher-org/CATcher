@@ -1,8 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { MatTabChangeEvent } from '@angular/material';
 import * as DOMPurify from 'dompurify';
+import { MarkdownService } from 'ngx-markdown';
+import { Observable, of } from 'rxjs';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
+import { GithubService } from '../../core/services/github.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
@@ -16,12 +20,18 @@ const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_M
 @Component({
   selector: 'app-comment-editor',
   templateUrl: './comment-editor.component.html',
-  styleUrls: ['./comment-editor.component.css']
+  styleUrls: ['./comment-editor.component.css', '../../../../node_modules/github-markdown-css/github-markdown.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class CommentEditorComponent implements OnInit {
   readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
 
-  constructor(private uploadService: UploadService, private errorHandlingService: ErrorHandlingService) {}
+  constructor(
+    private uploadService: UploadService,
+    private errorHandlingService: ErrorHandlingService,
+    private githubService: GithubService,
+    private markdownService: MarkdownService
+  ) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
@@ -29,6 +39,7 @@ export class CommentEditorComponent implements OnInit {
 
   @Input() initialDescription?: string;
   placeholderText = 'No details provided.';
+  convertedValue = ''; // The html string that is converted from markdown.
 
   // Allows the comment editor to control the overall form's completeness.
   @Input() isFormPending?: boolean;
@@ -192,6 +203,27 @@ export class CommentEditorComponent implements OnInit {
     }
     if (blob) {
       this.readAndUploadFile(blob);
+    }
+  }
+
+  convertMdToHtml(text: string): Observable<any> {
+    return text.trim() // is not empty string or whitespace
+      ? this.githubService.convertMarkdown(text)
+      : of({ data: '' });
+  }
+
+  handleTabChange(event: MatTabChangeEvent) {
+    if (event.tab.textLabel === 'Preview') {
+      this.convertMdToHtml(this.commentField.value).subscribe({
+        next: ({ data }) => {
+          this.convertedValue = data;
+        },
+        error: (err) => {
+          // If Github API does not work, fall back on ngx-markdown
+          this.convertedValue = this.markdownService.compile(this.sanitize(this.commentField.value));
+          this.errorHandlingService.handleError(err);
+        }
+      });
     }
   }
 

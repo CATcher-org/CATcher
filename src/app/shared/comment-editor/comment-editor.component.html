@@ -1,5 +1,5 @@
 <form [formGroup]="commentForm" style="min-height: 350px">
-  <mat-tab-group class="mat-elevation-z1" animationDuration="0ms">
+  <mat-tab-group class="mat-elevation-z1" animationDuration="0ms" (selectedTabChange)="handleTabChange($event)">
     <mat-tab label="Write">
       <div
         #dropArea
@@ -45,10 +45,12 @@
       </div>
     </mat-tab>
     <mat-tab label="Preview">
-      <div class="tab-content" style="min-height: 228px">
-        <markdown #markdownArea *ngIf="commentField.value !== ''" [data]="sanitize(commentField.value)"></markdown>
-        <div *ngIf="commentField.value === ''">Nothing to preview.</div>
-      </div>
+      <ng-template matTabContent>
+        <div class="tab-content" style="min-height: 228px">
+          <article class="markdown-body" *ngIf="commentField.value !== ''" [innerHTML]="convertedValue"></article>
+          <div *ngIf="commentField.value === ''">Nothing to preview.</div>
+        </div>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </form>
