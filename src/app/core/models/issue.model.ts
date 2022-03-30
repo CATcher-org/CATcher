@@ -86,6 +86,14 @@ export class Issue {
   }
 
   /**
+   * Processes and cleans a raw team response obtained from user input.
+   */
+  static updateTeamResponse(teamResponse: string): string {
+    const defaultString = 'No details provided by team.';
+    return Issue.orDefaultString(Issue.formatText(teamResponse), defaultString);
+  }
+
+  /**
    * Given two strings, returns the first if it is not an empty string or a false value such as null/undefined.
    * Returns the second string if the first is an empty string.
    */
