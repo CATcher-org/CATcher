@@ -4,6 +4,7 @@ import { SectionalDependency } from './sections/section.model';
 export abstract class Template {
   headers: Header[];
   parser;
+  parseResult;
   parseFailure: boolean;
 
   protected constructor(parser, headers: Header[]) {
@@ -19,15 +20,21 @@ export abstract class Template {
     };
   }
 
-  test(toTest: string): boolean {
-    return !this.parser.run(toTest).isError;
-  }
-
   /**
    * Finds a comment that conforms to the template
    */
   findConformingComment(githubComments: GithubComment[]): GithubComment {
-    const templateConformingComment = githubComments.find((githubComment) => this.test(githubComment.body));
+    let templateConformingComment: GithubComment;
+
+    for (const comment of githubComments) {
+      const parsed = this.parser.run(comment.body);
+      if (!parsed.isError) {
+        this.parseResult = parsed.result;
+        templateConformingComment = comment;
+        break;
+      }
+    }
+
     if (templateConformingComment === undefined) {
       this.parseFailure = true;
     }
