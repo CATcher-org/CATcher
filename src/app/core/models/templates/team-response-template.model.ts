@@ -38,6 +38,11 @@ export const TeamResponseParser = coroutine(function* () {
   return result;
 });
 
+interface TeamResponseParseResult {
+  teamResponse: string;
+  issueNumber: number;
+}
+
 export class TeamResponseTemplate extends Template {
   teamResponse: string;
   duplicateOf: number;
