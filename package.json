@@ -58,6 +58,7 @@
     "apollo-client": "^2.6.0",
     "apollo-link": "^1.2.14",
     "apollo-link-context": "^1.0.20",
+    "arcsecond": "^4.1.0",
     "core-js": "^3.16.4",
     "diff-match-patch": "^1.0.4",
     "dompurify": "^2.3.1",

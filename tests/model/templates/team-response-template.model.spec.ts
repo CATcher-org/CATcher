@@ -1,5 +1,5 @@
 import { GithubComment } from '../../../src/app/core/models/github/github-comment.model';
-import { TeamResponseTemplate } from '../../../src/app/core/models/templates/team-response-template.model';
+import { TeamResponseParser, TeamResponseTemplate } from '../../../src/app/core/models/templates/team-response-template.model';
 
 const EMPTY_BODY_GITHUB_COMMENT = {
   body: ''
@@ -17,6 +17,20 @@ const TEAM_RESPONSE_WITH_DUPLICATE =
   '\r\n' +
   '## Duplicate status (if any): Duplicate of #' +
   DUPLICATE_ISSUE_NUMBER;
+
+describe('TeamResponseParser', () => {
+  it('parses the team response correctly', () => {
+    const result = TeamResponseParser.run(TEAM_RESPONSE_WITH_EXTRA_NEWLINES_AND_WHITESPACE).result;
+
+    expect(result.teamResponse).toBe(EXPECTED_TEAM_RESPONSE_TEMPLATE_CONTENT);
+    expect(result.issueNumber).toBe(null);
+  });
+  it('parses the duplicate issue number correctly', () => {
+    const result = TeamResponseParser.run(TEAM_RESPONSE_WITH_DUPLICATE).result;
+
+    expect(result.issueNumber).toBe(DUPLICATE_ISSUE_NUMBER);
+  });
+});
 
 describe('TeamResponseTemplate', () => {
   it('parses the teamResponse correctly', () => {
