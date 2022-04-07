@@ -7,11 +7,8 @@ export function buildTeamResponseSectionParser(nextHeader: string) {
   return coroutine(function* () {
     yield str(TEAM_RESPONSE_HEADER);
     yield whitespace;
-    let teamResponse = yield everyCharUntil(str(nextHeader));
-
-    teamResponse = teamResponse.trim();
-    teamResponse = teamResponse === '' ? DEFAULT_TEAM_RESPONSE : teamResponse;
-    return teamResponse;
+    const teamResponse = yield everyCharUntil(str(nextHeader));
+    return teamResponse.trim() ? teamResponse.trim() : DEFAULT_TEAM_RESPONSE;
   });
 }
 
