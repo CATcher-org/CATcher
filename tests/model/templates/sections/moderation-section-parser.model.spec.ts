@@ -1,7 +1,7 @@
 import {
   DoneCheckboxParser,
   ModerationSectionParser
-} from '../../../../src/app/core/models/templates/sections/moderation-section-parser.model';
+} from '../../../../src/app/core/models/templates/section-parsers/moderation-section-parser.model';
 
 const TYPE_DISPUTE = '## :question: Issue Type\n\n' + '- [ ] Done\n\n' + '[replace this with your explanation]\n\n' + '-------------------';
 

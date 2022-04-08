@@ -1,8 +1,8 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
-import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
-import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
+import { buildTeamResponseSectionParser } from './section-parsers/common-parsers.model';
+import { TesterResponseSectionParser } from './section-parsers/tester-response-section-parser.model';
 import { Template } from './template.model';
 
 const { coroutine, many1, str, whitespace } = require('arcsecond');

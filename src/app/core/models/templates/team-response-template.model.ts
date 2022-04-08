@@ -1,6 +1,6 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
-import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
+import { buildTeamResponseSectionParser } from './section-parsers/common-parsers.model';
 import { Template } from './template.model';
 
 const { choice, coroutine, digits, str, whitespace } = require('arcsecond');

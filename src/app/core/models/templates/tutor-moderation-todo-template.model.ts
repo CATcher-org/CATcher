@@ -1,7 +1,7 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { IssueDispute } from '../issue-dispute.model';
-import { ModerationSectionParser } from './sections/moderation-section-parser.model';
+import { ModerationSectionParser } from './section-parsers/moderation-section-parser.model';
 import { Template } from './template.model';
 
 const { coroutine, many1, str, whitespace } = require('arcsecond');

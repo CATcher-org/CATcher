@@ -1,7 +1,7 @@
 import { GithubIssue } from '../github/github-issue.model';
 import { IssueDispute } from '../issue-dispute.model';
-import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
-import { IssueDisputeSectionParser } from './sections/issue-dispute-section-parser.model';
+import { buildTeamResponseSectionParser } from './section-parsers/common-parsers.model';
+import { IssueDisputeSectionParser } from './section-parsers/issue-dispute-section-parser.model';
 import { Template } from './template.model';
 
 const { coroutine, everyCharUntil, many1, str, whitespace } = require('arcsecond');
