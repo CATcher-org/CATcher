@@ -3,14 +3,12 @@ import { SectionalDependency } from './sections/section.model';
 
 export abstract class Template {
   headers: Header[];
-  regex: RegExp;
+  parser;
   parseFailure: boolean;
 
-  protected constructor(headers: Header[]) {
+  protected constructor(parser, headers: Header[]) {
+    this.parser = parser;
     this.headers = headers;
-
-    const headerString = headers.join('|');
-    this.regex = new RegExp(`(${headerString})(\\s+|$)([\\s\\S]*?)(?=${headerString}|$)`, 'gi');
   }
 
   getSectionalDependency(header: Header): SectionalDependency {
@@ -21,16 +19,8 @@ export abstract class Template {
     };
   }
 
-  /**
-   * Check whether the given string conforms to the template.
-   */
   test(toTest: string): boolean {
-    let numOfMatch = 0;
-    while (this.regex.exec(toTest) != null) {
-      numOfMatch += 1;
-    }
-    this.regex.lastIndex = 0;
-    return numOfMatch >= this.headers.length;
+    return !this.parser.run(toTest).isError;
   }
 
   /**
