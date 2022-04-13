@@ -179,7 +179,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   }
 
   getDisabledDupOptionErrorText(issue: Issue): string {
-    return this.dupIssueOptionIsDisabled(issue) ? 'A duplicated issue' : '';
+    return this.dupIssueOptionIsDisabled(issue) ? 'Duplicate of #' + issue.duplicateOf : '';
   }
 
   handleChangeOfDuplicateCheckbox(event: MatCheckboxChange) {
