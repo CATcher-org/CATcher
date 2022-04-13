@@ -1,4 +1,4 @@
-import { TesterResponseTemplate } from '../../../src/app/core/models/templates/tester-response-template.model';
+import { TesterResponseParser, TesterResponseTemplate } from '../../../src/app/core/models/templates/tester-response-template.model';
 
 import { TEAM_RESPONSE_MULTIPLE_DISAGREEMENT } from '../../constants/githubcomment.constants';
 
@@ -15,6 +15,35 @@ const DISAGREE_REASON = '[replace this with your reason]';
 
 const ISSUE_SEVERITY_DESCRIPTION = 'Team chose [`severity.Low`]\nOriginally [`severity.High`]';
 const ISSUE_TYPE_DESCRIPTION = 'Team chose [`type.DocumentationBug`]\nOriginally [`type.FunctionalityBug`]';
+
+describe('TesterResponseParser', () => {
+  describe('testerDisagree, teamChosenSeverity and teamChosenType fields', () => {
+    it('fields are parsed correctly from the body of the GithubComment', () => {
+      const result = TesterResponseParser.run(TEAM_RESPONSE_MULTIPLE_DISAGREEMENT.body).result;
+
+      expect(result.testerDisagree).toBe(false);
+      expect(result.teamChosenSeverity).toBe(SEVERITY_LOW);
+      expect(result.teamChosenType).toBe(TYPE_DOCUMENTATION_BUG);
+    });
+  });
+  describe('testerResponse and teamResponse fields', () => {
+    it('parses the fields correctly from the body of the GithubComment', () => {
+      const result = TesterResponseParser.run(TEAM_RESPONSE_MULTIPLE_DISAGREEMENT.body).result;
+
+      expect(result.teamResponse).toBe(EXPECTED_TEAM_RESPONSE_CONTENT);
+
+      expect(result.testerResponses[0].title).toBe(ISSUE_SEVERITY_TITLE);
+      expect(result.testerResponses[0].description).toBe(ISSUE_SEVERITY_DESCRIPTION);
+      expect(result.testerResponses[0].disagreeCheckbox.toString()).toBe(DISAGREE_CHECKBOX);
+      expect(result.testerResponses[0].reasonForDisagreement).toBe(DISAGREE_REASON);
+
+      expect(result.testerResponses[1].title).toBe(ISSUE_TYPE_TITLE);
+      expect(result.testerResponses[1].description).toBe(ISSUE_TYPE_DESCRIPTION);
+      expect(result.testerResponses[1].disagreeCheckbox.toString()).toBe(DISAGREE_CHECKBOX);
+      expect(result.testerResponses[1].reasonForDisagreement).toBe(DISAGREE_REASON);
+    });
+  });
+});
 
 describe('TesterResponseTemplate class', () => {
   describe('teamChosenType and teamChosenSeverity fields', () => {
