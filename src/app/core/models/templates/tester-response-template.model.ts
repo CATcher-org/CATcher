@@ -1,18 +1,11 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
-import { buildTeamResponseSectionParser } from './sections/common-parsers.model';
-import { Section } from './sections/section.model';
-import { TesterResponseSectionParser } from './sections/tester-response-section-parser.model';
-import { TesterResponseSection } from './sections/tester-response-section.model';
-import { Header, Template } from './template.model';
+import { buildTeamResponseSectionParser } from './section-parsers/common-parsers.model';
+import { TesterResponseSectionParser } from './section-parsers/tester-response-section-parser.model';
+import { Template } from './template.model';
 
 const { coroutine, many1, str, whitespace } = require('arcsecond');
-
-export const TesterResponseHeaders = {
-  teamResponse: new Header("Team's Response", 1),
-  testerResponses: new Header('Items for the Tester to Verify', 1)
-};
 
 interface TesterResponseParseResult {
   teamResponse: string;
@@ -74,15 +67,15 @@ export const TesterResponseParser = coroutine(function* () {
 });
 
 export class TesterResponseTemplate extends Template {
-  teamResponse: Section;
-  testerResponse: TesterResponseSection;
+  teamResponse: string;
+  testerResponses: TesterResponse[];
   testerDisagree: boolean;
   comment: IssueComment;
   teamChosenSeverity?: string;
   teamChosenType?: string;
 
   constructor(githubComments: GithubComment[]) {
-    super(TesterResponseParser, Object.values(TesterResponseHeaders));
+    super(TesterResponseParser);
 
     const templateConformingComment = this.findConformingComment(githubComments);
 
@@ -94,18 +87,11 @@ export class TesterResponseTemplate extends Template {
       ...templateConformingComment,
       description: templateConformingComment.body
     };
-    this.teamResponse = this.parseTeamResponse(this.comment.description);
-    this.testerResponse = this.parseTesterResponse(this.comment.description);
-    this.testerDisagree = this.testerResponse.getTesterDisagree();
-    this.teamChosenSeverity = this.testerResponse.getTeamChosenSeverity();
-    this.teamChosenType = this.testerResponse.getTeamChosenType();
-  }
 
-  parseTeamResponse(toParse: string): Section {
-    return new Section(this.getSectionalDependency(TesterResponseHeaders.teamResponse), toParse);
-  }
-
-  parseTesterResponse(toParse: string): TesterResponseSection {
-    return new TesterResponseSection(this.getSectionalDependency(TesterResponseHeaders.testerResponses), toParse);
+    this.teamResponse = this.parseResult.teamResponse;
+    this.testerResponses = this.parseResult.testerResponses;
+    this.testerDisagree = this.parseResult.testerDisagree;
+    this.teamChosenSeverity = this.parseResult.teamChosenSeverity;
+    this.teamChosenType = this.parseResult.teamChosenType;
   }
 }

@@ -1,15 +1,10 @@
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { IssueDispute } from '../issue-dispute.model';
-import { ModerationSectionParser } from './sections/moderation-section-parser.model';
-import { ModerationSection } from './sections/moderation-section.model';
-import { Header, Template } from './template.model';
+import { ModerationSectionParser } from './section-parsers/moderation-section-parser.model';
+import { Template } from './template.model';
 
 const { coroutine, many1, str, whitespace } = require('arcsecond');
-
-const tutorModerationTodoHeaders = {
-  todo: new Header('Tutor Moderation', 1)
-};
 
 interface TutorModerationTodoParseResult {
   disputesToResolve: IssueDispute[];
@@ -30,11 +25,11 @@ export const TutorModerationTodoParser = coroutine(function* () {
 });
 
 export class TutorModerationTodoTemplate extends Template {
-  moderation: ModerationSection;
+  disputesToResolve: IssueDispute[];
   comment: IssueComment;
 
   constructor(githubComments: GithubComment[]) {
-    super(TutorModerationTodoParser, Object.values(tutorModerationTodoHeaders));
+    super(TutorModerationTodoParser);
 
     const templateConformingComment = this.findConformingComment(githubComments);
 
@@ -46,10 +41,6 @@ export class TutorModerationTodoTemplate extends Template {
       ...templateConformingComment,
       description: templateConformingComment.body
     };
-    this.moderation = this.parseModeration(this.comment.description);
-  }
-
-  parseModeration(toParse: string): ModerationSection {
-    return new ModerationSection(this.getSectionalDependency(tutorModerationTodoHeaders.todo), toParse);
+    this.disputesToResolve = this.parseResult.disputesToResolve;
   }
 }

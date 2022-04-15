@@ -1,7 +1,7 @@
 import {
   DisagreeCheckboxParser,
   TesterResponseSectionParser
-} from '../../../../src/app/core/models/templates/sections/tester-response-section-parser.model';
+} from '../../../../src/app/core/models/templates/section-parsers/tester-response-section-parser.model';
 
 const EMPTY_DISAGREE_CHECKBOX = '- [ ] I disagree';
 const FILLED_DISAGREE_CHECKBOX = '- [x] I disagree';

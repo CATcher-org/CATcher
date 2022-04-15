@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DataFile } from '../models/data-file.model';
-import { Admins } from '../models/parser/admins.model';
-import { ParsedUserData } from '../models/parser/parsed-user-data.model';
-import { Roles } from '../models/parser/roles.model';
-import { Students } from '../models/parser/students.model';
-import { TabulatedUserData } from '../models/parser/tabulated-user-data.model';
-import { Teams } from '../models/parser/teams.model';
-import { Tutors } from '../models/parser/tutors.model';
 import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
+import { Admins } from '../models/users/admins.model';
+import { ParsedUserData } from '../models/users/parsed-user-data.model';
+import { Roles } from '../models/users/roles.model';
+import { Students } from '../models/users/students.model';
+import { TabulatedUserData } from '../models/users/tabulated-user-data.model';
+import { Teams } from '../models/users/teams.model';
+import { Tutors } from '../models/users/tutors.model';
 import { GithubService } from './github.service';
 
 @Injectable({

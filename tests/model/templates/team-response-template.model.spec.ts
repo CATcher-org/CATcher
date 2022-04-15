@@ -37,14 +37,13 @@ describe('TeamResponseTemplate', () => {
     EMPTY_BODY_GITHUB_COMMENT.body = TEAM_RESPONSE_WITH_EXTRA_NEWLINES_AND_WHITESPACE;
     const template = new TeamResponseTemplate([EMPTY_BODY_GITHUB_COMMENT]);
 
-    expect(template.teamResponse.content).toBe(EXPECTED_TEAM_RESPONSE_TEMPLATE_CONTENT);
-    expect(template.teamResponse.header.toString()).toBe(EXPECTED_TEAM_RESPONSE_HEADER);
-    expect(template.duplicateOf.issueNumber).toEqual(null);
+    expect(template.teamResponse).toBe(EXPECTED_TEAM_RESPONSE_TEMPLATE_CONTENT);
+    expect(template.duplicateOf).toEqual(null);
   });
   it('parses the duplicateOf value correctly', () => {
     EMPTY_BODY_GITHUB_COMMENT.body = TEAM_RESPONSE_WITH_DUPLICATE;
     const template = new TeamResponseTemplate([EMPTY_BODY_GITHUB_COMMENT]);
 
-    expect(template.duplicateOf.issueNumber).toBe(DUPLICATE_ISSUE_NUMBER);
+    expect(template.duplicateOf).toBe(DUPLICATE_ISSUE_NUMBER);
   });
 });

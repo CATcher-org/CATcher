@@ -1,4 +1,4 @@
-import { IssueDisputeSectionParser } from '../../../../src/app/core/models/templates/sections/issue-dispute-section-parser.model';
+import { IssueDisputeSectionParser } from '../../../../src/app/core/models/templates/section-parsers/issue-dispute-section-parser.model';
 
 const TYPE_DISPUTE =
   '## :question: Issue Type\n\n' +
