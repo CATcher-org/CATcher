@@ -3,6 +3,7 @@ import { NgZone } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AppConfig } from '../../../environments/environment';
 import { generateSessionId } from '../../shared/lib/session';
 import { uuid } from '../../shared/lib/uuid';
@@ -50,18 +51,34 @@ export class AuthService {
     private githubEventService: GithubEventService,
     private titleService: Title,
     private logger: LoggingService
-  ) {}
+  ) {
+    const token = window.localStorage.getItem('token');
+    if (token) {
+      this.storeOAuthAccessToken(token);
+      const org = window.localStorage.getItem('org');
+      const dataRepo = window.localStorage.getItem('dataRepo');
+      this.githubService.storeOrganizationDetails(org, dataRepo);
+      this.phaseService.setSessionData();
+      this.userService.getAuthenticatedUser().pipe(
+        switchMap((ghUser) => {
+          return this.userService.createUserModel(ghUser.login);
+        })
+      );
+    }
+  }
 
   /**
    * Will store the OAuth token.
    */
   storeOAuthAccessToken(token: string) {
+    window.localStorage.setItem('token', token);
     this.githubService.storeOAuthAccessToken(token);
     this.accessToken.next(token);
   }
 
   reset(): void {
     this.accessToken.next(undefined);
+    window.localStorage.removeItem('token');
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));
   }

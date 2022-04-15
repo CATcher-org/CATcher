@@ -62,6 +62,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     const state = this.activatedRoute.snapshot.queryParamMap.get('state');
 
     if (this.authService.isAuthenticated()) {
+      this.currentUserName = this.userService.currentUser.loginId;
       this.router.navigate([this.phaseService.currentPhase]);
       return;
     }
