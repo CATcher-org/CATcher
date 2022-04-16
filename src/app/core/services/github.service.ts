@@ -420,6 +420,10 @@ export class GithubService {
     this.issueQueryRefs.clear();
   }
 
+  removeAuth(): void {
+    octokit = new Octokit();
+  }
+
   getProfilesData(): Promise<Response> {
     return fetch(AppConfig.clientDataUrl);
   }

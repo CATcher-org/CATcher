@@ -35,6 +35,7 @@ export class AuthService {
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
+  isProcessingAutoLogin = new BehaviorSubject(false);
   private state: string;
 
   ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
@@ -54,16 +55,8 @@ export class AuthService {
   ) {
     const token = window.localStorage.getItem('token');
     if (token) {
-      this.storeOAuthAccessToken(token);
-      const org = window.localStorage.getItem('org');
-      const dataRepo = window.localStorage.getItem('dataRepo');
-      this.githubService.storeOrganizationDetails(org, dataRepo);
-      this.phaseService.setSessionData();
-      this.userService.getAuthenticatedUser().pipe(
-        switchMap((ghUser) => {
-          return this.userService.createUserModel(ghUser.login);
-        })
-      );
+      this.isProcessingAutoLogin.next(true);
+      this.autoLogin(token);
     }
   }
 
@@ -85,6 +78,7 @@ export class AuthService {
 
   logOut(): void {
     this.githubService.reset();
+    this.githubService.removeAuth();
     this.userService.reset();
     this.issueService.reset(true);
     this.phaseService.reset();
@@ -163,5 +157,33 @@ export class AuthService {
       return;
     }
     window.location.href = url;
+  }
+
+  private autoLogin(token: string): void {
+    this.storeOAuthAccessToken(token);
+    const org = window.localStorage.getItem('org');
+    const dataRepo = window.localStorage.getItem('dataRepo');
+    this.githubService.storeOrganizationDetails(org, dataRepo);
+    this.phaseService
+      .storeSessionData()
+      .pipe(
+        // Retrieve the latest phase details
+        switchMap(() => this.userService.getAuthenticatedUser()), // Check if user token is valid
+        switchMap((ghUser) => {
+          return this.userService.createUserModel(ghUser.login);
+        })
+      )
+      .subscribe({
+        next: (user) => {
+          this.phaseService.setPhaseOwners(org, user.loginId);
+          this.changeAuthState(AuthState.Authenticated);
+          this.isProcessingAutoLogin.next(false);
+        },
+        error: (err) => {
+          this.logOut();
+          this.isProcessingAutoLogin.next(false);
+          throw new Error('Please log in again.');
+        }
+      });
   }
 }
