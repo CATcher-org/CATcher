@@ -262,6 +262,7 @@ export class GithubService {
   /**
    * Checks if the given list of users are allowed to be assigned to an issue during Team Response Phase.
    * @param assignees - GitHub usernames to be checked
+   * @return Observable of array of users who are not assignable
    */
   areUsersAssignable(assignees: string[], teamResponseOwner: string, teamResponseRepo: string): Observable<string[]> {
     let responseInFirstPage: GithubResponse<any>;

@@ -152,6 +152,10 @@ export class MockGithubService {
     return Promise.resolve(mockResponse);
   }
 
+  areUsersAssignable(assignees: string[], teamResponseOwner: string, teamResponseRepo: string) {
+    return of([]);
+  }
+
   reset(): void {
     // Function currently exists to prevent errors when logout is clicked and
     // services reset.
