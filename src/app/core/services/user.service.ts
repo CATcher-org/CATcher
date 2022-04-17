@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { filter, map, throwIfEmpty } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { filter, map, switchMap, tap, throwIfEmpty } from 'rxjs/operators';
 import { GithubUser } from '../models/github-user.model';
 import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
 import { DataService } from './data.service';
+import { ErrorHandlingService } from './error-handling.service';
 import { GithubService } from './github.service';
 
 @Injectable({
@@ -17,7 +18,7 @@ import { GithubService } from './github.service';
 export class UserService {
   public currentUser: User;
 
-  constructor(private githubService: GithubService, private dataService: DataService) {}
+  constructor(private githubService: GithubService, private dataService: DataService, private errorHandlingService: ErrorHandlingService) {}
 
   /**
    * Get the authenticated user if it exist.
@@ -30,11 +31,11 @@ export class UserService {
     );
   }
 
-  createUserModel(userLoginId: string): Observable<User> {
+  createUserModel(userLoginId: string, teamResponseOrg?: string, teamResponseRepo?: string): Observable<User> {
     return this.dataService.getDataFile().pipe(
-      map((jsonData: {}) => {
-        this.currentUser = this.createUser(jsonData, userLoginId);
-        return this.currentUser;
+      switchMap((jsonData: {}) => this.createUser(jsonData, userLoginId, teamResponseOrg, teamResponseRepo)),
+      tap((user: User) => {
+        this.currentUser = user;
       }),
       filter((user) => user !== null),
       throwIfEmpty(() => new Error('Unauthorized user.'))
@@ -45,40 +46,68 @@ export class UserService {
     this.currentUser = undefined;
   }
 
-  private createUser(data: {}, userLoginId: string): User {
+  private createUser(data: {}, userLoginId: string, teamResponseOrg?: string, teamResponseRepo?: string): Observable<User> {
     const lowerCaseUserLoginId = userLoginId.toLowerCase();
 
     const userRole = this.parseUserRole(data, lowerCaseUserLoginId);
     switch (userRole) {
       case UserRole.Student:
         const teamId = data[DataService.STUDENTS_ALLOCATION][lowerCaseUserLoginId][DataService.TEAM_ID];
-        const studentTeam = this.createTeamModel(data[DataService.TEAM_STRUCTURE], teamId);
-        return <User>{ loginId: userLoginId, role: userRole, team: studentTeam };
+
+        return this.createTeamModel(data[DataService.TEAM_STRUCTURE], teamId, teamResponseOrg, teamResponseRepo).pipe(
+          map((studentTeam: Team) => <User>{ loginId: userLoginId, role: userRole, team: studentTeam })
+        );
 
       case UserRole.Tutor:
-        const tutorTeams: Array<Team> = Object.keys(
+        const tutorTeams: Array<Observable<Team>> = Object.keys(
           data[DataService.TUTORS_ALLOCATION][lowerCaseUserLoginId]
-        ).map((allocatedTeamId: string) => this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
+        ).map((allocatedTeamId: string) =>
+          this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId, teamResponseOrg, teamResponseRepo)
+        );
 
-        return <User>{ loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams };
+        return tutorTeams.length === 0
+          ? of(<User>{ loginId: userLoginId, role: userRole, allocatedTeams: [] })
+          : forkJoin(tutorTeams).pipe(map((teams: Team[]) => <User>{ loginId: userLoginId, role: userRole, allocatedTeams: teams }));
 
       case UserRole.Admin:
-        const studentTeams: Array<Team> = Object.keys(
+        const studentTeams: Array<Observable<Team>> = Object.keys(
           data[DataService.ADMINS_ALLOCATION][lowerCaseUserLoginId]
-        ).map((allocatedTeamId: string) => this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
+        ).map((allocatedTeamId: string) =>
+          this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId, teamResponseOrg, teamResponseRepo)
+        );
 
-        return <User>{ loginId: userLoginId, role: userRole, allocatedTeams: studentTeams };
+        return studentTeams.length === 0
+          ? of(<User>{ loginId: userLoginId, role: userRole, allocatedTeams: [] })
+          : forkJoin(studentTeams).pipe(map((teams: Team[]) => <User>{ loginId: userLoginId, role: userRole, allocatedTeams: teams }));
+
       default:
-        return null;
+        return of(null);
     }
   }
 
-  private createTeamModel(teamData: {}, teamId: string): Team {
-    const teammates: Array<User> = Object.values(teamData[teamId]).map(
-      (teammate: string) => <User>{ loginId: teammate, role: UserRole.Student }
-    );
+  private createTeamModel(teamData: {}, teamId: string, teamResponseOrg?: string, teamResponseRepo?: string): Observable<Team> {
+    const teammatesUserIds: string[] = Object.values(teamData[teamId]);
+    if (teamResponseOrg) {
+      // If we need to check for assignees
+      return this.githubService.areUsersAssignable(teammatesUserIds, teamResponseOrg, teamResponseRepo).pipe(
+        map((unauthorized: string[]) => {
+          if (unauthorized.length !== 0) {
+            this.errorHandlingService.handleError(new Error(`Unauthorized teammates: ${unauthorized.join(', ')}`));
+          }
+          const teammates: Array<User> = Object.values(teamData[teamId]).map(
+            (teammate: string) => <User>{ loginId: teammate, role: UserRole.Student }
+          );
 
-    return new Team({ id: teamId, teamMembers: teammates });
+          return new Team({ id: teamId, teamMembers: teammates });
+        })
+      );
+    } else {
+      const teammates: Array<User> = Object.values(teamData[teamId]).map(
+        (teammate: string) => <User>{ loginId: teammate, role: UserRole.Student }
+      );
+
+      return of(new Team({ id: teamId, teamMembers: teammates }));
+    }
   }
 
   /**

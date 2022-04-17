@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
+import { Phase } from '../../core/models/phase.model';
 import { AuthService, AuthState } from '../../core/services/auth.service';
 import { ElectronService } from '../../core/services/electron.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
@@ -55,10 +56,17 @@ export class ConfirmLoginComponent implements OnInit {
    * Will complete the process of logging in the given user.
    */
   completeLoginProcess(): void {
+    const hasTeamResponsePhase = this.phaseService.sessionData.openPhases.includes(Phase.phaseTeamResponse);
     this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, this.username);
-    this.userService
-      .createUserModel(this.username)
+    (hasTeamResponsePhase
+      ? this.userService.createUserModel(
+          this.username,
+          this.phaseService.getPhaseOwner(Phase.phaseTeamResponse),
+          this.phaseService.sessionData.phaseTeamResponse
+        )
+      : this.userService.createUserModel(this.username)
+    )
       .pipe(
         flatMap(() => this.phaseService.sessionSetup()),
         flatMap(() => this.githubEventService.setLatestChangeEvent())

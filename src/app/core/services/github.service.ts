@@ -260,24 +260,55 @@ export class GithubService {
   }
 
   /**
-   * Checks if the given list of users are allowed to be assigned to an issue.
+   * Checks if the given list of users are allowed to be assigned to an issue during Team Response Phase.
    * @param assignees - GitHub usernames to be checked
    */
-  areUsersAssignable(assignees: string[]): Observable<void> {
+  areUsersAssignable(assignees: string[], teamResponseOwner: string, teamResponseRepo: string): Observable<string[]> {
+    let responseInFirstPage: GithubResponse<any>;
+    const NUM_PER_PAGE = MAX_ITEMS_PER_PAGE;
     return from(
       octokit.issues.listAssignees({
-        owner: ORG_NAME,
-        repo: REPO
+        owner: teamResponseOwner,
+        repo: teamResponseRepo,
+        per_page: NUM_PER_PAGE,
+        page: 1
       })
     ).pipe(
-      map(({ data }: { data: { login: string }[] }) => data.map(({ login }) => login)),
-      map((assignables: string[]) =>
+      map((response: GithubResponse<any>) => {
+        responseInFirstPage = response;
+        return getNumberOfPages(response);
+      }),
+      flatMap((numOfPages: number) => {
+        const apiCalls: Observable<any>[] = [];
+        for (let i = 2; i <= numOfPages; i++) {
+          apiCalls.push(
+            from(
+              octokit.issues.listAssignees({
+                owner: teamResponseOwner,
+                repo: teamResponseRepo,
+                per_page: NUM_PER_PAGE,
+                page: i
+              })
+            )
+          );
+        }
+        return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
+      }),
+      map((resultArray: GithubResponse<any>[]) => {
+        const responses = [responseInFirstPage, ...resultArray];
+        const setOfAllAssignees = new Set();
+        const unauthorizedAssignees = [];
+        responses.forEach((response) => {
+          response.data.forEach((assignee) => setOfAllAssignees.add(assignee.login));
+        });
         assignees.forEach((assignee) => {
-          if (!assignables.includes(assignee)) {
-            throw new Error(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`);
+          if (setOfAllAssignees.has(assignee)) {
+            return;
           }
-        })
-      )
+          unauthorizedAssignees.push(assignee);
+        });
+        return unauthorizedAssignees;
+      })
     );
   }
 
