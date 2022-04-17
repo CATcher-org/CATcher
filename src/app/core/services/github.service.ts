@@ -274,7 +274,7 @@ export class GithubService {
       map((assignables: string[]) =>
         assignees.forEach((assignee) => {
           if (!assignables.includes(assignee)) {
-            throw new Error(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`);
+            // throw new Error(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`);
           }
         })
       )
