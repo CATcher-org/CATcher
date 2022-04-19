@@ -3,7 +3,7 @@ import { Team } from '../../../../src/app/core/models/team.model';
 import { IssueService } from '../../../../src/app/core/services/issue.service';
 import { TABLE_COLUMNS } from '../../../../src/app/shared/issue-tables/issue-tables-columns';
 import { applySearchFilter } from '../../../../src/app/shared/issue-tables/search-filter';
-import { USER_ANUBHAV } from '../../../constants/data.constants';
+import { USER_ANUBHAV, USER_SHUMING } from '../../../constants/data.constants';
 import {
   DUPLICATED_ISSUE_WITH_EMPTY_DESCRIPTION_HIGH_SEVERITY,
   ISSUE_WITH_ASSIGNEES,
@@ -55,8 +55,8 @@ describe('search-filter', () => {
       issueService.updateLocalStore(duplicatedIssue);
     });
 
-    it('can filter for issues which are assigned to a specific user', () => {
-      searchKey = USER_ANUBHAV.loginId;
+    fit('can filter for issues which are assigned to a specific user', () => {
+      searchKey = USER_SHUMING.loginId;
       expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList)).toEqual([mediumSeverityIssueWithAssigneee]);
     });
 
