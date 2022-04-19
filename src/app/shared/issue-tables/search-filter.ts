@@ -45,8 +45,11 @@ function duplicatedIssuesContainsSearchKey(duplicatedIssues: Issue[], searchKey:
 function matchesAssignee(assignees: string[], searchKey: string): boolean {
   for (const assignee of assignees) {
     const lowerCaseAssignee = assignee.toLowerCase();
-    return containsSearchKey(lowerCaseAssignee, searchKey);
+    if (containsSearchKey(lowerCaseAssignee, searchKey)) {
+      return true;
+    }
   }
+  return false;
 }
 
 function matchesDuplicatedIssue(issueService: IssueService, id: number, searchKey: string): boolean {
