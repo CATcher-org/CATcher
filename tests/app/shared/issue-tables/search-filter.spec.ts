@@ -55,7 +55,7 @@ describe('search-filter', () => {
       issueService.updateLocalStore(duplicatedIssue);
     });
 
-    fit('can filter for issues which are assigned to a specific user', () => {
+    it('can filter for issues which are assigned to a specific user', () => {
       searchKey = USER_SHUMING.loginId;
       expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList)).toEqual([mediumSeverityIssueWithAssigneee]);
     });
