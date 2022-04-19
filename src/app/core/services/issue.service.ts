@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, forkJoin, Observable, of, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, EMPTY, forkJoin, Observable, of, Subscription, throwError, timer } from 'rxjs';
 import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
 import { IssueComment } from '../models/comment.model';
 import { GithubComment } from '../models/github/github-comment.model';
@@ -14,6 +14,7 @@ import { appVersion } from './application.service';
 import { DataService } from './data.service';
 import { ElectronService } from './electron.service';
 import { GithubService } from './github.service';
+import { LoggingService } from './logging.service';
 import { PhaseService } from './phase.service';
 import { UserService } from './user.service';
 
@@ -42,7 +43,8 @@ export class IssueService {
     private userService: UserService,
     private phaseService: PhaseService,
     private electronService: ElectronService,
-    private dataService: DataService
+    private dataService: DataService,
+    private logger: LoggingService
   ) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
@@ -142,6 +144,10 @@ export class IssueService {
         map((response: GithubIssue) => {
           response.comments = issue.githubComments;
           return this.createIssueModel(response);
+        }),
+        catchError((err) => {
+          this.logger.error(err); // Log full details of error first
+          return throwError(err.response.data.message); // More readable error message
         })
       );
   }
