@@ -24,7 +24,7 @@ describe('Issue model class', () => {
       expect(issue.teamResponse).toBe('No details provided by team.');
       expect(issue.severity).toBe('Medium');
       expect(issue.assignees).toContain('anubh-v');
-      expect(issue.assignees.length).toBe(1);
+      expect(issue.assignees.length).toBe(2);
     });
   });
   describe('.updateDescription(description) and .updateTeamResponse(teamResponse)', () => {
