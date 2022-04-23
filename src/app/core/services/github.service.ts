@@ -259,28 +259,6 @@ export class GithubService {
     octokit.issues.updateLabel({ owner: ORG_NAME, repo: REPO, name: labelName, current_name: labelName, color: labelColor });
   }
 
-  /**
-   * Checks if the given list of users are allowed to be assigned to an issue.
-   * @param assignees - GitHub usernames to be checked
-   */
-  areUsersAssignable(assignees: string[]): Observable<void> {
-    return from(
-      octokit.issues.listAssignees({
-        owner: ORG_NAME,
-        repo: REPO
-      })
-    ).pipe(
-      map(({ data }: { data: { login: string }[] }) => data.map(({ login }) => login)),
-      map((assignables: string[]) =>
-        assignees.forEach((assignee) => {
-          if (!assignables.includes(assignee)) {
-            throw new Error(`Cannot assign ${assignee} to the issue. Please check if ${assignee} is authorized.`);
-          }
-        })
-      )
-    );
-  }
-
   closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed' })).pipe(
       map((response: GithubResponse<GithubIssue>) => {

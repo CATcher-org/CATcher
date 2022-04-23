@@ -14,6 +14,7 @@ import { appVersion } from './application.service';
 import { DataService } from './data.service';
 import { ElectronService } from './electron.service';
 import { GithubService } from './github.service';
+import { LoggingService } from './logging.service';
 import { PhaseService } from './phase.service';
 import { UserService } from './user.service';
 
@@ -42,7 +43,8 @@ export class IssueService {
     private userService: UserService,
     private phaseService: PhaseService,
     private electronService: ElectronService,
-    private dataService: DataService
+    private dataService: DataService,
+    private logger: LoggingService
   ) {
     this.issues$ = new BehaviorSubject(new Array<Issue>());
   }
@@ -134,11 +136,6 @@ export class IssueService {
       .pipe(map((response: GithubIssue) => this.createIssueModel(response)));
   }
 
-  updateIssueWithAssigneeCheck(issue: Issue): Observable<Issue> {
-    const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
-    return this.githubService.areUsersAssignable(assignees).pipe(flatMap(() => this.updateIssue(issue)));
-  }
-
   updateIssue(issue: Issue): Observable<Issue> {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService
@@ -147,6 +144,10 @@ export class IssueService {
         map((response: GithubIssue) => {
           response.comments = issue.githubComments;
           return this.createIssueModel(response);
+        }),
+        catchError((err) => {
+          this.logger.error(err); // Log full details of error first
+          return throwError(err.response.data.message); // More readable error message
         })
       );
   }
@@ -190,16 +191,11 @@ export class IssueService {
 
   createTeamResponse(issue: Issue): Observable<Issue> {
     const teamResponse = issue.createGithubTeamResponse();
-    return this.githubService.areUsersAssignable(issue.assignees || []).pipe(
-      flatMap(() =>
-        this.githubService.createIssueComment(issue.id, teamResponse).pipe(
-          flatMap((githubComment: GithubComment) => {
-            issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
-            return this.updateIssue(issue);
-          })
-        )
-      ),
-      catchError((err) => throwError(err))
+    return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
+      flatMap((githubComment: GithubComment) => {
+        issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
+        return this.updateIssue(issue);
+      })
     );
   }
 
