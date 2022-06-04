@@ -16,6 +16,8 @@ import { LoggingService } from '../../core/services/logging.service';
 import { PhaseDescription, PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 
+const ISSUE_TRACKER_URL = 'https://github.com/CATcher-org/CATcher/issues';
+
 @Component({
   selector: 'app-layout-header',
   templateUrl: './header.component.html'
@@ -133,6 +135,10 @@ export class HeaderComponent implements OnInit {
     }
     // Open the url in user's preferred browser
     this.electronService.openLink('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
+  }
+
+  openIssueTracker() {
+    this.electronService.openLink(ISSUE_TRACKER_URL);
   }
 
   private getTeamFilterString() {

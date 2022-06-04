@@ -87,7 +87,7 @@ import { SharedModule } from './shared/shared.module';
     {
       provide: IssueService,
       useFactory: IssueServiceFactory,
-      deps: [GithubService, UserService, PhaseService, ElectronService, DataService]
+      deps: [GithubService, UserService, PhaseService, ElectronService, DataService, LoggingService]
     },
     {
       provide: ErrorHandler,

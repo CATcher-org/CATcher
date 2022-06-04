@@ -25,6 +25,8 @@ export class ErrorHandlingService implements ErrorHandler {
       this.handleHttpError(error, actionCallback);
     } else if (error.constructor.name === 'RequestError') {
       this.handleHttpError(error as RequestError, actionCallback);
+    } else if (typeof error === 'string') {
+      this.handleGeneralError(error);
     } else {
       this.handleGeneralError(error.message || JSON.stringify(error));
     }

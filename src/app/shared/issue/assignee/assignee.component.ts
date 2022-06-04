@@ -54,7 +54,7 @@ export class AssigneeComponent implements OnInit {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     const oldAssignees = newIssue.assignees;
     newIssue.assignees = this.assignees;
-    this.issueService.updateIssueWithAssigneeCheck(newIssue).subscribe(
+    this.issueService.updateIssue(newIssue).subscribe(
       (updatedIssue: Issue) => {
         this.issueUpdated.emit(updatedIssue);
         // Update assignees of duplicate issues

@@ -17,7 +17,18 @@
 
           <mat-form-field [style.visibility]="!duplicated.value ? 'hidden' : 'visible'" style="display: inline-block; width: 50%">
             <mat-select formControlName="duplicateOf" placeholder="Duplicate of">
-              <mat-option *ngFor="let issue of duplicatedIssueList | async" [disabled]="dupIssueOptionIsDisabled(issue)" [value]="issue.id">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search issues"
+                  noEntriesFoundLabel="No issues found"
+                  [formControl]="searchFilterCtrl"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="let issue of filteredDuplicateIssueList | async"
+                [disabled]="dupIssueOptionIsDisabled(issue)"
+                [value]="issue.id"
+              >
                 <span class="mat-body-strong"> #{{ issue.id }}: </span> <span class="mat-body">{{ issue.title }}</span>
                 <span *ngIf="dupIssueOptionIsDisabled(issue)" class="mat-caption" style="color: #f44336">
                   ({{ getDisabledDupOptionErrorText(issue) }})
