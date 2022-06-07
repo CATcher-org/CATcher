@@ -321,6 +321,14 @@ export enum STATUS {
   Done = 'Done'
 }
 
+export enum FILTER {
+  NoFilter = 'NO_FILTER',
+  NoAccess = 'NO_ACCESS',
+  FilterByCreator = 'FILTER_BY_CREATOR',
+  FilterByTeam = 'FILTER_BY_TEAM',
+  FilterByTeamAssigned = 'FILTER_BY_TEAM_ASSIGNED'
+}
+
 export const IssuesFilter = {
   phaseBugReporting: {
     Student: 'FILTER_BY_CREATOR',
