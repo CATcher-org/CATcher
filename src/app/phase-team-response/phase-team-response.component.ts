@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatAccordion } from '@angular/material';
 import { IssuesFilter } from '../core/models/issue.model';
 import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
@@ -11,6 +12,8 @@ import { UserService } from '../core/services/user.service';
   styleUrls: ['./phase-team-response.component.css']
 })
 export class PhaseTeamResponseComponent implements OnInit {
+  @ViewChild(MatAccordion, { static: false }) accordion: MatAccordion;
+
   public teamFilter = 'All Teams';
 
   constructor(public userService: UserService, private dataService: DataService, private issueService: IssueService) {}

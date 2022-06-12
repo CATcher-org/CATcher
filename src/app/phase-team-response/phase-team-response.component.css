@@ -11,6 +11,15 @@
   padding: 30px 20px;
 }
 
+.mat-raised-button {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.mat-grid-list {
+  min-width: 1050px;
+}
+
 .mat-column-actions {
   width: 80px;
   text-align: center;

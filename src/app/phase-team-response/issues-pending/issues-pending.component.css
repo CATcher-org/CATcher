@@ -11,6 +11,15 @@
   padding: 30px 20px;
 }
 
+.mat-expansion-panel {
+  min-width: 1050px;
+  margin-bottom: 10px;
+}
+
+.mat-expansion-panel-header-title {
+  font-size: x-large;
+}
+
 .mat-column-actions {
   width: 13%;
   text-align: center;
