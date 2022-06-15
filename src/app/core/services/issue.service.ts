@@ -8,7 +8,7 @@ import { GithubIssue } from '../models/github/github-issue.model';
 import { GithubLabel } from '../models/github/github-label.model';
 import { HiddenData } from '../models/hidden-data.model';
 import { IssueDispute } from '../models/issue-dispute.model';
-import { Issue, Issues, IssuesFilter, STATUS, FILTER } from '../models/issue.model';
+import { FILTER, Issue, Issues, IssuesFilter, STATUS } from '../models/issue.model';
 import { Phase } from '../models/phase.model';
 import { appVersion } from './application.service';
 import { DataService } from './data.service';
