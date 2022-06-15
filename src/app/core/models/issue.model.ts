@@ -322,11 +322,11 @@ export enum STATUS {
 }
 
 export enum FILTER {
-  NoFilter = 'NO_FILTER',
-  NoAccess = 'NO_ACCESS',
-  FilterByCreator = 'FILTER_BY_CREATOR',
-  FilterByTeam = 'FILTER_BY_TEAM',
-  FilterByTeamAssigned = 'FILTER_BY_TEAM_ASSIGNED'
+  NoFilter = 'NoFilter',
+  NoAccess = 'NoAccess',
+  FilterByCreator = 'FilterByCreator',
+  FilterByTeam = 'FilterByTeam',
+  FilterByTeamAssigned = 'FilterByTeamAssigned'
 }
 
 export const IssuesFilter = {
