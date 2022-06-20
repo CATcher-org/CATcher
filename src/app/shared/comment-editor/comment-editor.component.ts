@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -49,6 +49,7 @@ export class CommentEditorComponent implements OnInit {
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
+  maxLength = 40000;
 
   formatFileUploadingButtonText(currentButtonText: string) {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
@@ -64,6 +65,7 @@ export class CommentEditorComponent implements OnInit {
     }
 
     this.initialSubmitButtonText = this.submitButtonText;
+    this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
   }
 
   onDragEnter(event) {
