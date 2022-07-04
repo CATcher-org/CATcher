@@ -172,7 +172,11 @@ export class CommentEditorComponent implements OnInit {
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe(
         (response) => {
-          this.insertUploadUrl(filename, response.data.content.download_url);
+          if (this.uploadService.isVideoFile(filename)) {
+            this.insertUploadUrlVideo(filename, response.data.content.download_url);
+          } else {
+            this.insertUploadUrl(filename, response.data.content.download_url);
+          }
         },
         (error) => {
           this.handleUploadError(error, insertedText);
@@ -251,11 +255,11 @@ export class CommentEditorComponent implements OnInit {
     return toInsert;
   }
 
-  private insertUploadUrl(filename: string, uploadUrl: string) {
+  private getNewCursorPosition(insertingString: string, insertedString: string) {
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
-    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
-    const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
+    const startIndexOfString = this.commentField.value.indexOf(insertingString);
+    const endIndexOfString = startIndexOfString + insertingString.length;
+    const endOfInsertedString = startIndexOfString + insertedString.length;
     const differenceInLength = endOfInsertedString - endIndexOfString;
     const newCursorPosition =
       cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString // within the range of uploading text
@@ -264,7 +268,27 @@ export class CommentEditorComponent implements OnInit {
         ? cursorPosition
         : cursorPosition + differenceInLength; // after the uploading text
 
-    this.commentField.setValue(this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
+    return newCursorPosition;
+  }
+
+  private insertUploadUrlVideo(filename: string, uploadUrl: string) {
+    const insertedString = `<video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+    const insertingString = `[Uploading ${filename}...]`;
+
+    const newCursorPosition = this.getNewCursorPosition(insertingString, insertedString);
+
+    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
+
+    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
+  }
+
+  private insertUploadUrl(filename: string, uploadUrl: string) {
+    const insertedString = `[${filename}](${uploadUrl})`;
+    const insertingString = `[Uploading ${filename}...]`;
+
+    const newCursorPosition = this.getNewCursorPosition(insertingString, insertedString);
+
+    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
 
     this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
   }
