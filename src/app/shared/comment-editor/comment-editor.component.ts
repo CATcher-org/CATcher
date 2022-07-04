@@ -46,7 +46,7 @@ export class CommentEditorComponent implements OnInit {
 
   @ViewChild('dropArea', { static: true }) dropArea;
   @ViewChild('commentTextArea', { static: true }) commentTextArea;
-  @ViewChild('markdownArea', { static: false }) markdownArea;
+  @ViewChild('markdownArea') markdownArea;
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
