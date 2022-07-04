@@ -1,4 +1,4 @@
-import { MatSort } from '@angular/material';
+import { MatSort } from '@angular/material/sort';
 import { Issue } from '../../../../src/app/core/models/issue.model';
 import { getSortedData } from '../../../../src/app/shared/issue-tables/issue-sorter';
 import { TEAM_4 } from '../../../constants/data.constants';
