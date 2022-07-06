@@ -114,6 +114,11 @@ export class GithubService {
     );
   }
 
+  /**
+   * Fetches an array of filtered GitHubIssues using GraphQL query.
+   * @param issuesFilter - The issue filter.
+   * @returns An observable array of filtered GithubIssues
+   */
   fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
@@ -130,7 +135,10 @@ export class GithubService {
   }
 
   /**
-   * Will make multiple request to Github as per necessary and determine whether a graphql fetch is required.
+   * Checks to see if there are pages of filtered issues that are not yet cached in the cache model,
+   * and updates the model to cache these new pages.
+   * @param filter - The issue filter.
+   * @returns Observable<boolean> that returns true if there are pages that do not exist in the cache model.
    */
   private toFetchIssues(filter: RestGithubIssueFilter): Observable<boolean> {
     let responseInFirstPage: GithubResponse<GithubIssue[]>;
@@ -269,7 +277,7 @@ export class GithubService {
   }
 
   reopenIssue(id: number): Observable<GithubIssue> {
-    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open'})).pipe(
+    return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open' })).pipe(
       map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return new GithubIssue(response.data);
@@ -411,6 +419,17 @@ export class GithubService {
     return fetch(AppConfig.clientDataUrl);
   }
 
+  /**
+   * Performs an API call to fetch a page of filtered issues with a given pageNumber.
+   *
+   * The request is sent with the ETag of the latest cached HTTP response.
+   * If page requested has the same ETag, or the request results in an error,
+   * then the cached page is returned instead.
+   *
+   * @param filter - The issue filter
+   * @param pageNumber - The page to be fetched
+   * @returns An observable representing the response containing a single page of filtered issues
+   */
   private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {
     const apiCall: Promise<GithubResponse<GithubIssue[]>> = octokit.issues.listForRepo({
       ...filter,
@@ -430,6 +449,15 @@ export class GithubService {
     );
   }
 
+  /**
+   * Fetches a list of items using a GraphQL query that queries for paginated data.
+   *
+   * @param query - The GraphQL query that queries for paginated data.
+   * @param variables - Additional variables for the GraphQL query.
+   * @callback pluckEdges A function that returns a list of edges in a ApolloQueryResult.
+   * @callback Model Constructor for the item model.
+   * @returns A list of items from the query.
+   */
   private fetchGraphqlList<T, M>(
     query: DocumentNode,
     variables: {},
@@ -447,6 +475,14 @@ export class GithubService {
     );
   }
 
+  /**
+   * Returns an async function that will accept a GraphQL query that requests for paginated items.
+   * Said function will proceed to query for all subsequent pages, returning an array of queried pages.
+   * The total count of items from all pages will not exceed 100.
+   *
+   * @callback pluckEdges - A function that returns a list of edges in a ApolloQueryResult.
+   * @returns an async function that accepts a GraphQL query for paginated data and any additional variables to that query
+   */
   private withPagination<T>(pluckEdges: (results: ApolloQueryResult<T>) => Array<any>) {
     return async (query: DocumentNode, variables: { [key: string]: any } = {}): Promise<Array<ApolloQueryResult<T>>> => {
       const maxResultsCount = 100;
