@@ -135,8 +135,8 @@ export class GithubService {
   }
 
   /**
-   * Checks to see if there are pages of filtered issues that are not yet cached in the cache model,
-   * and updates the model to cache these new pages.
+   * Checks if there are pages of filtered issues that are not cached in the cache model, 
+   * and updates the model to cache these new pages. 
    * @param filter - The issue filter.
    * @returns Observable<boolean> that returns true if there are pages that do not exist in the cache model.
    */
