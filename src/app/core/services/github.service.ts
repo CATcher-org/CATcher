@@ -91,6 +91,14 @@ export class GithubService {
     ORG_NAME = phaseRepoOwner;
   }
 
+  /**
+   * Fetches an array of filtered GitHubIssues using GraphQL query for a given team.
+   *
+   * @param tutorial - The tutorial that the team belongs to.
+   * @param team - The team's designated name.
+   * @param issuesFilter - The issue filter.
+   * @returns An observable array of filtered GithubIssues
+   */
   fetchIssuesGraphqlByTeam(tutorial: string, team: string, issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
@@ -135,8 +143,8 @@ export class GithubService {
   }
 
   /**
-   * Checks if there are pages of filtered issues that are not cached in the cache model, 
-   * and updates the model to cache these new pages. 
+   * Checks if there are pages of filtered issues that are not cached in the cache model,
+   * and updates the model to cache these new pages.
    * @param filter - The issue filter.
    * @returns Observable<boolean> that returns true if there are pages that do not exist in the cache model.
    */
@@ -192,6 +200,14 @@ export class GithubService {
     octokit.repos.createForAuthenticatedUser({ name: name });
   }
 
+  /**
+   * Fetches information about an issue using GraphQL.
+   *
+   * If the issue is not modified, return a `304 - Not Modified` response.
+   *
+   * @param id - The issue id.
+   * @returns Observable<GithubGraphqlIssue> that represents the response object.
+   */
   fetchIssueGraphql(id: number): Observable<GithubGraphqlIssue> {
     if (this.issueQueryRefs.get(id) === undefined) {
       const newQueryRef = this.apollo.watchQuery<FetchIssueQuery>({
@@ -216,6 +232,13 @@ export class GithubService {
     );
   }
 
+  /**
+   * Checks if the issue has been modified since the last query, and
+   * updates the model to reflect the last modified time.
+   *
+   * @param id - The issue id.
+   * @returns Observable<boolean> that returns true if the issue has been modified.
+   */
   toFetchIssue(id: number): Observable<boolean> {
     return from(
       octokit.issues.get({
@@ -477,8 +500,8 @@ export class GithubService {
 
   /**
    * Returns an async function that will accept a GraphQL query that requests for paginated items.
-   * Said function will proceed to query for all subsequent pages, returning an array of queried pages.
-   * The total count of items from all pages will not exceed 100.
+   * Said function will recursively query for all subsequent pages until a page that has less than 100 items is found,
+   * then return all queried pages in an array.
    *
    * @callback pluckEdges - A function that returns a list of edges in a ApolloQueryResult.
    * @returns an async function that accepts a GraphQL query for paginated data and any additional variables to that query
