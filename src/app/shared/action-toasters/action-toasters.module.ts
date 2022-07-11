@@ -6,7 +6,6 @@ import { UndoActionComponent } from './undo-action/undo-action.component';
 @NgModule({
   imports: [CommonModule, MaterialModule],
   declarations: [UndoActionComponent],
-  exports: [UndoActionComponent],
-  entryComponents: [UndoActionComponent]
+  exports: [UndoActionComponent]
 })
 export class ActionToasterModule {}
