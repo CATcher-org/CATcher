@@ -50,7 +50,7 @@ export class CommentEditorComponent implements OnInit {
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
-  @Input() maxLength = ISSUE_BODY_SIZE_LIMIT;
+  maxLength = ISSUE_BODY_SIZE_LIMIT;
 
   formatFileUploadingButtonText(currentButtonText: string) {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
