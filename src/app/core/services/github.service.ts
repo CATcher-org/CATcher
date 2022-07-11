@@ -269,7 +269,7 @@ export class GithubService {
   }
 
   reopenIssue(id: number): Observable<GithubIssue> {
-    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open'})).pipe(
+    return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open' })).pipe(
       map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return new GithubIssue(response.data);
@@ -351,7 +351,7 @@ export class GithubService {
       octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
       map((rawData) => {
-        return { data: atob(rawData['data']['content']) };
+        return { data: Buffer.from(rawData['data']['content'], 'base64') };
       }),
       catchError((err) => throwError('Failed to fetch data file.'))
     );
@@ -374,7 +374,7 @@ export class GithubService {
     return from(
       octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
-      map((rawData) => JSON.parse(atob(rawData['data']['content']))),
+      map((rawData) => JSON.parse(Buffer.from(rawData['data']['content'], 'base64').toString())),
       catchError((err) => throwError('Failed to fetch settings file.'))
     );
   }
