@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { Label } from '../../src/app/core/models/label.model';
-import { LABEL_DEFINITIONS, LabelService } from '../../src/app/core/services/label.service';
+import { LabelService, LABEL_DEFINITIONS } from '../../src/app/core/services/label.service';
 import * as LabelConstant from '../constants/label.constants';
 
 let labelService: LabelService;
