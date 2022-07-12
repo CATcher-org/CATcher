@@ -460,7 +460,7 @@ export class GithubService {
       repo: REPO,
       sort: 'created',
       direction: 'desc',
-      per_page: 100,
+      per_page: MAX_ITEMS_PER_PAGE,
       page: pageNumber,
       headers: { 'If-None-Match': this.issuesCacheManager.getEtagFor(pageNumber) }
     });
@@ -508,7 +508,6 @@ export class GithubService {
    */
   private withPagination<T>(pluckEdges: (results: ApolloQueryResult<T>) => Array<any>) {
     return async (query: DocumentNode, variables: { [key: string]: any } = {}): Promise<Array<ApolloQueryResult<T>>> => {
-      const maxResultsCount = 100;
       const cursor = variables.cursor || null;
       const graphqlQuery = this.apollo.watchQuery<T>({ query, variables: { ...variables, cursor } });
       return graphqlQuery.refetch().then(async (results: ApolloQueryResult<T>) => {
@@ -516,7 +515,7 @@ export class GithubService {
         const edges = pluckEdges(results);
         const nextCursor = edges.length === 0 ? null : edges[edges.length - 1].cursor;
 
-        if (edges.length < maxResultsCount || !nextCursor) {
+        if (edges.length < MAX_ITEMS_PER_PAGE || !nextCursor) {
           return intermediate;
         }
         const nextResults = await this.withPagination<T>(pluckEdges)(query, {
