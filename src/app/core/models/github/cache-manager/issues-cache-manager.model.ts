@@ -3,7 +3,7 @@ import { GithubResponse } from '../github-response.model';
 
 /**
  * A model that is used to manage the cache of multiple list of issues paginated by pages.
- * Example of a single list of issues: https://developer.github.com/v3/issues/#list-issues-for-a-repository
+ * Example of a single list of issues: https://docs.github.com/en/rest/issues/issues#list-repository-issues
  */
 export class IssuesCacheManager {
   // An array of cache github responses containing the array of GithubIssue as its data
