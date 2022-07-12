@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IssuesFilter } from '../core/models/issue.model';
+import { FILTER, IssuesFilter } from '../core/models/issue.model';
 import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
 import { IssueService } from '../core/services/issue.service';
@@ -22,9 +22,9 @@ export class PhaseTeamResponseComponent implements OnInit {
   get teamList(): string[] {
     const teams = this.dataService.getTeams();
     switch (IssuesFilter[Phase.phaseTeamResponse][this.userService.currentUser.role]) {
-      case 'FILTER_BY_TEAM_ASSIGNED':
+      case FILTER.FilterByTeamAssigned:
         return ['All Teams', ...this.userService.currentUser.allocatedTeams.map((team) => team.id)];
-      case 'NO_FILTER':
+      case FILTER.NoFilter:
         return ['All Teams', ...teams];
       default:
         break;
