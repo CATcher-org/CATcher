@@ -1,19 +1,21 @@
-<div *ngIf="!isEditing">
+<div *ngIf="!isEditing" class="row">
   <h1 class="mat-display-1 title">
     {{ issue.title }} <span style="color: #a3aab1">#{{ issue.id }}</span>
   </h1>
-  <button
-    *ngIf="permissions.isIssueCreatable()"
-    mat-stroked-button
-    color="primary"
-    class="title-button"
-    [routerLink]="'/' + phaseService.currentPhase + '/issues/new'"
-  >
-    New Issue
-  </button>
-  <button *ngIf="permissions.isIssueTitleEditable()" mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">
-    Edit
-  </button>
+  <div class="row">
+    <button *ngIf="permissions.isIssueTitleEditable()" mat-stroked-button color="primary" class="title-button" (click)="changeToEditMode()">
+      Edit
+    </button>
+    <button
+      *ngIf="permissions.isIssueCreatable()"
+      mat-stroked-button
+      color="primary"
+      class="title-button"
+      [routerLink]="'/' + phaseService.currentPhase + '/issues/new'"
+    >
+      New Issue
+    </button>
+  </div>
 </div>
 
 <div *ngIf="isEditing">

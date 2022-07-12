@@ -1,10 +1,15 @@
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
 .title {
   margin: 0 0 16px;
-  display: inline-block;
 }
 
 .title-button {
-  display: inline-block;
-  float: right;
   margin: 5px;
+  float: right;
 }
