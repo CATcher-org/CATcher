@@ -321,25 +321,33 @@ export enum STATUS {
   Done = 'Done'
 }
 
+export enum FILTER {
+  NoFilter = 'NoFilter',
+  NoAccess = 'NoAccess',
+  FilterByCreator = 'FilterByCreator',
+  FilterByTeam = 'FilterByTeam',
+  FilterByTeamAssigned = 'FilterByTeamAssigned'
+}
+
 export const IssuesFilter = {
   phaseBugReporting: {
-    Student: 'FILTER_BY_CREATOR',
-    Tutor: 'NO_FILTER',
-    Admin: 'NO_FILTER'
+    Student: FILTER.FilterByCreator,
+    Tutor: FILTER.NoFilter,
+    Admin: FILTER.NoFilter
   },
   phaseTeamResponse: {
-    Student: 'FILTER_BY_TEAM',
-    Tutor: 'FILTER_BY_TEAM_ASSIGNED',
-    Admin: 'NO_FILTER'
+    Student: FILTER.FilterByTeam,
+    Tutor: FILTER.FilterByTeamAssigned,
+    Admin: FILTER.NoFilter
   },
   phaseTesterResponse: {
-    Student: 'NO_FILTER',
-    Tutor: 'NO_ACCESS',
-    Admin: 'NO_FILTER'
+    Student: FILTER.NoFilter,
+    Tutor: FILTER.NoAccess,
+    Admin: FILTER.NoFilter
   },
   phaseModeration: {
-    Student: 'NO_ACCESS',
-    Tutor: 'FILTER_BY_TEAM_ASSIGNED',
-    Admin: 'NO_FILTER'
+    Student: FILTER.NoAccess,
+    Tutor: FILTER.FilterByTeamAssigned,
+    Admin: FILTER.NoFilter
   }
 };
