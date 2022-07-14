@@ -54,3 +54,16 @@
   column-gap: 10px;
   min-width: 100%;
 }
+
+.mat-icon.arrow-right {
+  cursor: default;
+  vertical-align: middle;
+}
+
+.mat-cell.type-cell {
+  flex-wrap: wrap;
+}
+
+.mat-cell.actions-cell > button {
+  min-width: 32px;
+}

@@ -24,7 +24,7 @@
   <!-- Type Column -->
   <ng-container matColumnDef="type">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
-    <mat-cell *matCellDef="let issue">
+    <mat-cell *matCellDef="let issue" class="type-cell">
       <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
         {{ issue.type || '-' }}
       </span>
@@ -33,7 +33,7 @@
         (click)="$event.stopPropagation()"
         style="display: inline; padding: 1px 2px"
       >
-        <mat-icon style="vertical-align: middle">arrow_right_alt</mat-icon>
+        <mat-icon class="arrow-right">arrow_right_alt</mat-icon>
       </span>
       <span
         *ngIf="issue.teamChosenType && issue.teamChosenType != issue.type"
@@ -60,7 +60,7 @@
         (click)="$event.stopPropagation()"
         style="display: inline; margin: 3px"
       >
-        <mat-icon style="vertical-align: middle">arrow_right_alt</mat-icon>
+        <mat-icon class="arrow-right">arrow_right_alt</mat-icon>
       </span>
       <span
         *ngIf="issue.teamChosenSeverity && issue.teamChosenSeverity != issue.severity"
@@ -174,7 +174,7 @@
   <!-- Action Buttons Column -->
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-    <mat-cell *matCellDef="let issue">
+    <mat-cell class="actions-cell" *matCellDef="let issue">
       <button
         mat-button
         matTooltip="View this issue on GitHub"
