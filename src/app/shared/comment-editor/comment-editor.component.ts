@@ -255,10 +255,10 @@ export class CommentEditorComponent implements OnInit {
     return toInsert;
   }
 
-  private getNewCursorPosition(insertingString: string, insertedString: string) {
+  private getNewCursorPosition(filename: string, insertedString: string) {
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const startIndexOfString = this.commentField.value.indexOf(insertingString);
-    const endIndexOfString = startIndexOfString + insertingString.length;
+    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
+    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
     const endOfInsertedString = startIndexOfString + insertedString.length;
     const differenceInLength = endOfInsertedString - endIndexOfString;
     const newCursorPosition =
@@ -275,7 +275,7 @@ export class CommentEditorComponent implements OnInit {
     const insertedString = `<video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
     const insertingString = `[Uploading ${filename}...]`;
 
-    const newCursorPosition = this.getNewCursorPosition(insertingString, insertedString);
+    const newCursorPosition = this.getNewCursorPosition(filename, insertedString);
 
     this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
 
@@ -286,7 +286,7 @@ export class CommentEditorComponent implements OnInit {
     const insertedString = `[${filename}](${uploadUrl})`;
     const insertingString = `[Uploading ${filename}...]`;
 
-    const newCursorPosition = this.getNewCursorPosition(insertingString, insertedString);
+    const newCursorPosition = this.getNewCursorPosition(filename, insertedString);
 
     this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
 
