@@ -1,0 +1,11 @@
+query FetchLabels($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    labels(first: 100) {
+      edges {
+        node {
+          ...issueLabel
+        }
+      }
+    }
+  }
+}
