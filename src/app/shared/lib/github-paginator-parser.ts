@@ -17,7 +17,7 @@ export function getNumberOfPages<T>(response: GithubResponse<T>): number {
  * Will return in the format of { paginateAction: number }
  * Example { next: '15', last: '34', first: '1', prev: '13' }
  *
- * ref: https://developer.github.com/v3/guides/traversing-with-pagination/
+ * ref: https://docs.github.com/en/rest/guides/traversing-with-pagination
  *
  * @param linkStr represent the pagination string provided by github API.
  *
