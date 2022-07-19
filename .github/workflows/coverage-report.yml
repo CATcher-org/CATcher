@@ -6,9 +6,9 @@ name: Get Code Coverage Report
 
 on:
   push:
-    branches: [ master, release ]
+    branches: [master, release]
   pull_request:
-    branches: [ master, release ]
+    branches: [master, release]
 
 jobs:
   code-coverage:
@@ -24,6 +24,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm run test -- "--code-coverage"
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
           directory: ./tests/coverage
