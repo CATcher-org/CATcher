@@ -8,7 +8,7 @@ import { GithubIssue } from '../models/github/github-issue.model';
 import { GithubLabel } from '../models/github/github-label.model';
 import { HiddenData } from '../models/hidden-data.model';
 import { IssueDispute } from '../models/issue-dispute.model';
-import { Issue, Issues, IssuesFilter, STATUS } from '../models/issue.model';
+import { FILTER, Issue, Issues, IssuesFilter, STATUS } from '../models/issue.model';
 import { Phase } from '../models/phase.model';
 import { appVersion } from './application.service';
 import { DataService } from './data.service';
@@ -312,12 +312,12 @@ export class IssueService {
     const issuesAPICallsByFilter: Array<Observable<Array<GithubIssue>>> = [];
 
     switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
-      case 'FILTER_BY_CREATOR':
+      case FILTER.FilterByCreator:
         issuesAPICallsByFilter.push(
           this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
         );
         break;
-      case 'FILTER_BY_TEAM': // Only student has this filter
+      case FILTER.FilterByTeam: // Only student has this filter
         issuesAPICallsByFilter.push(
           this.githubService.fetchIssuesGraphqlByTeam(
             this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
@@ -326,7 +326,7 @@ export class IssueService {
           )
         );
         break;
-      case 'FILTER_BY_TEAM_ASSIGNED': // Only for Tutors and Admins
+      case FILTER.FilterByTeamAssigned: // Only for Tutors and Admins
         const allocatedTeams = this.userService.currentUser.allocatedTeams;
         allocatedTeams.forEach((team) => {
           issuesAPICallsByFilter.push(
@@ -338,10 +338,10 @@ export class IssueService {
           );
         });
         break;
-      case 'NO_FILTER':
+      case FILTER.NoFilter:
         issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({})));
         break;
-      case 'NO_ACCESS':
+      case FILTER.NoAccess:
       default:
         return of([]);
     }
