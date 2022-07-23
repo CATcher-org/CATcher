@@ -259,23 +259,10 @@ export class GithubService {
     );
   }
 
-  fetchAllLabels(): Observable<Array<{}>> {
-    return this.fetchAllLabelsGraphQL().pipe(
-      map((labels: GithubLabel[]) => {
-        return labels.map((label) => {
-          return {
-            name: label.name,
-            id: label.id,
-            color: label.color,
-            url: label.url
-          };
-        });
-      }),
-      catchError((err) => throwError('Failed to fetch labels.'))
-    );
-  }
-
-  fetchAllLabelsGraphQL(): Observable<Array<GithubLabel>> {
+  /**
+   * Fetches all labels in the current repository.
+   */
+  fetchAllLabels(): Observable<Array<GithubLabel>> {
     const githubLabels = this.fetchGraphqlList<FetchLabelsQuery, GithubLabel>(
       FetchLabels,
       { owner: ORG_NAME, name: REPO },
@@ -283,7 +270,7 @@ export class GithubService {
       GithubLabel
     );
 
-    return githubLabels;
+    return githubLabels.pipe(catchError((err) => throwError('Failed to fetch labels.')));
   }
 
   /**
