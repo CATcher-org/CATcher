@@ -64,6 +64,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
+    console.log(this.issues);
   }
 
   ngAfterViewInit(): void {

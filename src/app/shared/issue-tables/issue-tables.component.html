@@ -20,12 +20,16 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
     <mat-cell *matCellDef="let issue"> {{ (issue.teamAssigned && issue.teamAssigned.id) || '-' }} </mat-cell>
   </ng-container>
+  <!-- <span>{{console.log(this.issues)}}</span> -->
 
   <!-- Type Column -->
   <ng-container matColumnDef="type">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
     <mat-cell *matCellDef="let issue">
-      <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
+      <span
+        (click)="$event.stopPropagation()"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('type', issue.type))"
+      >
         {{ issue.type || '-' }}
       </span>
       <span
@@ -38,7 +42,7 @@
       <span
         *ngIf="issue.teamChosenType && issue.teamChosenType != issue.type"
         (click)="$event.stopPropagation()"
-        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.teamChosenType))"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('type', issue.teamChosenType))"
       >
         {{ issue.teamChosenType }}
       </span>
@@ -51,7 +55,7 @@
     <mat-cell *matCellDef="let issue">
       <span
         (click)="$event.stopPropagation()"
-        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.severity))"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('severity', issue.severity))"
       >
         {{ issue.severity || '-' }}
       </span>
@@ -65,7 +69,7 @@
       <span
         *ngIf="issue.teamChosenSeverity && issue.teamChosenSeverity != issue.severity"
         (click)="$event.stopPropagation()"
-        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.teamChosenSeverity))"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('severity', issue.teamChosenSeverity))"
       >
         {{ issue.teamChosenSeverity }}
       </span>
@@ -79,7 +83,7 @@
       <span
         (click)="$event.stopPropagation()"
         *ngIf="issue.responseTag"
-        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.responseTag))"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('response', issue.responseTag))"
       >
         {{ issue.responseTag }}
       </span>
@@ -157,14 +161,14 @@
       <span
         (click)="$event.stopPropagation()"
         *ngIf="issue.testerDisagree"
-        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('Rejected'))"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('response', 'Rejected'))"
       >
         Disagree
       </span>
       <span
         (click)="$event.stopPropagation()"
         *ngIf="!issue.testerDisagree"
-        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('Accepted'))"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('response', 'Accepted'))"
       >
         Agree
       </span>
