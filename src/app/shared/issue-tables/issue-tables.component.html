@@ -20,7 +20,6 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
     <mat-cell *matCellDef="let issue"> {{ (issue.teamAssigned && issue.teamAssigned.id) || '-' }} </mat-cell>
   </ng-container>
-  <!-- <span>{{console.log(this.issues)}}</span> -->
 
   <!-- Type Column -->
   <ng-container matColumnDef="type">

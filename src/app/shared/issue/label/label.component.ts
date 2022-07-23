@@ -40,9 +40,6 @@ export class LabelComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     // Color will change when @Input issue changes
-    // console.log(this.issue); // issue object { severity: 'high', type: 'bug', response: 'in progress' }
-    // console.log(this.attributeName); // severity
-    // this.issue[this.attributeName] = 'high';
     this.labelColor = this.labelService.getColorOfLabel(this.attributeName, this.issue[this.attributeName]);
   }
 
