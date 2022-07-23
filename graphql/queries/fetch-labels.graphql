@@ -4,6 +4,7 @@ query FetchLabels($owner: String!, $name: String!) {
       edges {
         node {
           ...issueLabel
+          description
         }
       }
     }
