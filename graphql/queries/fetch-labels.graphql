@@ -1,7 +1,8 @@
-query FetchLabels($owner: String!, $name: String!) {
+query FetchLabels($owner: String!, $name: String!, $cursor: String) {
   repository(owner: $owner, name: $name) {
-    labels(first: 100) {
+    labels(first: 100, after: $cursor) {
       edges {
+        cursor
         node {
           ...issueLabel
           description
