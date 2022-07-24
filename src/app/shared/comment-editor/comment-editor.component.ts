@@ -257,8 +257,9 @@ export class CommentEditorComponent implements OnInit {
 
   private getNewCursorPosition(filename: string, insertedString: string) {
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
-    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
+    const insertingString = `[Uploading ${filename}...]`;
+    const startIndexOfString = this.commentField.value.indexOf(insertingString);
+    const endIndexOfString = startIndexOfString + insertingString.length;
     const endOfInsertedString = startIndexOfString + insertedString.length;
     const differenceInLength = endOfInsertedString - endIndexOfString;
     const newCursorPosition =
