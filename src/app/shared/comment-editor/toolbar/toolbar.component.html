@@ -1,1 +1,46 @@
-<p>toolbar works!</p>
+<div class="row bg-light no-gutters">
+  <div class="col-">
+    <button (click)="bold($event)" type="button" class="btn btn-light"><fa-icon icon="bold"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="italic($event)" type="button" class="btn btn-light"><fa-icon icon="italic"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="strikethrough($event)" type="button" class="btn btn-light"><fa-icon icon="strikethrough"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="uList($event)" type="button" class="btn btn-light"><fa-icon icon="list-ul"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="oList($event)" type="button" class="btn btn-light"><fa-icon icon="list-ol"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="heading($event)" type="button" class="btn btn-light"><fa-icon icon="heading"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="blockquotes($event)" type="button" class="btn btn-light"><fa-icon icon="quote-right"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="inlineCode($event)" type="button" class="btn btn-light"><fa-icon icon="code"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="insertLink($event)" type="button" class="btn btn-light"><fa-icon icon="link"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="insertImage($event)" type="button" class="btn btn-light"><fa-icon icon="file-image"></fa-icon></button>
+  </div>
+  <div class="col-">
+    <button (click)="insertTable($event)" type="button" class="btn btn-light"><fa-icon icon="table"></fa-icon></button>
+  </div>
+  <div class="col">
+    <div ngbDropdown class="d-inline-block">
+      <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle><fa-icon icon="question-circle"></fa-icon> CheatSheet</button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button class="dropdown-item">
+          <a href="https://daringfireball.net/projects/markdown/basics" target="_blank">Original - John Gruber's spec</a>
+        </button>
+        <button class="dropdown-item"><a href="https://guides.github.com/features/mastering-markdown/" target="_blank">GitHub</a></button>
+      </div>
+    </div>
+  </div>
+</div>
