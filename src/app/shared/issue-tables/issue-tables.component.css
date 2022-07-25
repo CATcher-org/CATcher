@@ -60,10 +60,10 @@
   vertical-align: middle;
 }
 
-.mat-cell.type-cell {
+.mat-cell.mat-column-type {
   flex-wrap: wrap;
 }
 
-.mat-cell.actions-cell > button {
+.mat-cell.mat-column-actions-cell > button {
   min-width: 32px;
 }

@@ -24,7 +24,7 @@
   <!-- Type Column -->
   <ng-container matColumnDef="type">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
-    <mat-cell *matCellDef="let issue" class="type-cell">
+    <mat-cell *matCellDef="let issue">
       <span (click)="$event.stopPropagation()" [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel(issue.type))">
         {{ issue.type || '-' }}
       </span>
@@ -174,7 +174,7 @@
   <!-- Action Buttons Column -->
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-    <mat-cell class="actions-cell" *matCellDef="let issue">
+    <mat-cell *matCellDef="let issue">
       <button
         mat-button
         matTooltip="View this issue on GitHub"
