@@ -1,46 +1,27 @@
 <div class="row bg-light no-gutters">
-  <div class="col-">
-    <button (click)="bold($event)" type="button" class="btn btn-light"><fa-icon icon="bold"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="italic($event)" type="button" class="btn btn-light"><fa-icon icon="italic"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="strikethrough($event)" type="button" class="btn btn-light"><fa-icon icon="strikethrough"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="uList($event)" type="button" class="btn btn-light"><fa-icon icon="list-ul"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="oList($event)" type="button" class="btn btn-light"><fa-icon icon="list-ol"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="heading($event)" type="button" class="btn btn-light"><fa-icon icon="heading"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="blockquotes($event)" type="button" class="btn btn-light"><fa-icon icon="quote-right"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="inlineCode($event)" type="button" class="btn btn-light"><fa-icon icon="code"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="insertLink($event)" type="button" class="btn btn-light"><fa-icon icon="link"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="insertImage($event)" type="button" class="btn btn-light"><fa-icon icon="file-image"></fa-icon></button>
-  </div>
-  <div class="col-">
-    <button (click)="insertTable($event)" type="button" class="btn btn-light"><fa-icon icon="table"></fa-icon></button>
-  </div>
-  <div class="col">
-    <div ngbDropdown class="d-inline-block">
-      <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle><fa-icon icon="question-circle"></fa-icon> CheatSheet</button>
-      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-        <button class="dropdown-item">
-          <a href="https://daringfireball.net/projects/markdown/basics" target="_blank">Original - John Gruber's spec</a>
-        </button>
-        <button class="dropdown-item"><a href="https://guides.github.com/features/mastering-markdown/" target="_blank">GitHub</a></button>
-      </div>
-    </div>
-  </div>
+  <button mat-icon-button color="accent" (click)="bold($event)" type="button"><mat-icon>format_bold</mat-icon></button>
+  <button mat-icon-button color="accent" (click)="italic($event)" type="button" class="btn btn-light">
+    <mat-icon>format_italic</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="strikethrough($event)" type="button" class="btn btn-light">
+    <mat-icon>format_strikethrough</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="uList($event)" type="button" class="btn btn-light">
+    <mat-icon>format_list_bulleted</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="oList($event)" type="button" class="btn btn-light">
+    <mat-icon>format_list_numbered</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="heading($event)" type="button" class="btn btn-light"><mat-icon>title</mat-icon></button>
+  <button mat-icon-button color="accent" (click)="blockquotes($event)" type="button" class="btn btn-light">
+    <mat-icon>format_quote</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="inlineCode($event)" type="button" class="btn btn-light"><mat-icon>code</mat-icon></button>
+  <button mat-icon-button color="accent" (click)="insertLink($event)" type="button" class="btn btn-light"><mat-icon>link</mat-icon></button>
+  <button mat-icon-button color="accent" (click)="insertImage($event)" type="button" class="btn btn-light">
+    <mat-icon>image</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="insertTable($event)" type="button" class="btn btn-light">
+    <mat-icon>table_chart</mat-icon>
+  </button>
 </div>

@@ -9,9 +9,9 @@
         (drop)="onDrop($event)"
         (dragover)="enableFileDrop($event)"
       >
+        <app-toolbar></app-toolbar>
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
-          <app-toolbar></app-toolbar>
           <textarea
             (paste)="onPaste($event)"
             #commentTextArea
