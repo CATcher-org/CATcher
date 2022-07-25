@@ -5,10 +5,6 @@ import { CommentEditorComponent } from './comment-editor.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-import { fontAwesomeLoader } from './fontAwesomeLoader';
-
-fontAwesomeLoader.libraryLoader();
-
 @NgModule({
   imports: [SharedModule, MarkdownModule.forChild(), FontAwesomeModule],
   declarations: [CommentEditorComponent, ToolbarComponent],
