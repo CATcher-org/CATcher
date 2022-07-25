@@ -64,6 +64,10 @@
   flex-wrap: wrap;
 }
 
-.mat-cell.mat-column-actions-cell > button {
+.mat-cell.mat-column-actions > button {
   min-width: 32px;
+}
+
+.mat-column-type {
+  flex-basis: 12px;
 }
