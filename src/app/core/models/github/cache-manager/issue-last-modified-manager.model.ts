@@ -1,6 +1,6 @@
 /**
  * A model that is used to manage the last modified timing of individual issues.
- * Example of a single issue: https://developer.github.com/v3/issues/#get-a-single-issue
+ * Example of a single issue: https://docs.github.com/en/rest/issues/issues#get-an-issue
  */
 export class IssueLastModifiedManagerModel {
   // A mapping from issue ID to their respective last modified timing
