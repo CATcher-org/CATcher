@@ -7,8 +7,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class ToolbarComponent implements OnInit {
   @Input() textArea;
-
-  // return { value: string, startIndex: number, endIndex: number, newCursorPosition: number } // { value: string, cursorPosition: number }
   @Output() transformToolReturned: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
@@ -41,7 +39,6 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 4, end + 4]
       });
     }
-    // this.textArea.focus();
     this.textArea.focus();
   }
 
@@ -114,7 +111,6 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [start + 2, start + 4]
       });
     } else {
-      // TODO improve selected list
       selectedText = value.substring(start, end);
       insertString = `- ${selectedText}`;
       value = value.slice(0, start) + value.slice(end);
@@ -142,7 +138,6 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [start + 3, start + 5]
       });
     } else {
-      // TODO improve selected list
       selectedText = value.substring(start, end);
       insertString = `1. ${selectedText}`;
       value = value.slice(0, start) + value.slice(end);
@@ -155,10 +150,6 @@ export class ToolbarComponent implements OnInit {
     this.textArea.focus();
   }
 
-  /**
-   * @TODO: Improve heading with different sub heading levels
-   * @param event
-   */
   heading(event: Event) {
     const start = this.textArea.selectionStart;
     const end = this.textArea.selectionEnd;
@@ -294,10 +285,6 @@ export class ToolbarComponent implements OnInit {
     this.textArea.focus();
   }
 
-  /**
-   * @TODO: Improve table by pre selecting number of cell, like the google sheet selector
-   * @param event
-   */
   insertTable(event: Event) {
     const start = this.textArea.selectionStart;
     const end = this.textArea.selectionEnd;
@@ -325,7 +312,6 @@ export class ToolbarComponent implements OnInit {
     this.textArea.focus();
   }
 
-  // TODO: Move to an 'Util' file
   insertStringAtIndex(baseString: string, insertString: string, at: number) {
     if (!at) {
       at = 0;
