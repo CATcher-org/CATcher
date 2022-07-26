@@ -9,7 +9,7 @@
         (drop)="onDrop($event)"
         (dragover)="enableFileDrop($event)"
       >
-        <app-toolbar></app-toolbar>
+        <app-toolbar [textArea]="commentTextArea" (transformToolReturned)="onTransformToolReturned($event)"></app-toolbar>
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
           <textarea

@@ -57,6 +57,8 @@ export class CommentEditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.commentTextArea);
+
     if (this.initialDescription !== undefined) {
       this.commentField.setValue(this.initialDescription);
     }
@@ -211,6 +213,11 @@ export class CommentEditorComponent implements OnInit {
 
   get isInErrorState(): boolean {
     return !!this.uploadErrorMessage;
+  }
+
+  onTransformToolReturned(eventData): void {
+    this.commentField.setValue(eventData.value);
+    this.commentTextArea.nativeElement.setSelectionRange(eventData.cursorPosition[0], eventData.cursorPosition[1]);
   }
 
   private handleUploadError(error, insertedText: string) {

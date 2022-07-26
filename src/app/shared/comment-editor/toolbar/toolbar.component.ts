@@ -16,9 +16,9 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {}
 
   bold(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -41,13 +41,14 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 4, end + 4]
       });
     }
-    this.textArea.nativeElement.focus();
+    // this.textArea.focus();
+    this.textArea.focus();
   }
 
   italic(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -68,13 +69,13 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 2, end + 2]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   strikethrough(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -95,13 +96,13 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 4, end + 4]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   uList(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -123,13 +124,13 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 2, end + 2]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   oList(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -151,7 +152,7 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 3, end + 3]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   /**
@@ -159,9 +160,9 @@ export class ToolbarComponent implements OnInit {
    * @param event
    */
   heading(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -182,13 +183,13 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 2, end + 2]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   blockquotes(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -209,40 +210,40 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 2, end + 2]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   inlineCode(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
     if (start === end) {
-      insertString = `    `;
+      insertString = '``';
       value = this.insertStringAtIndex(value, insertString, start);
       this.transformToolReturned.emit({
         value,
-        cursorPosition: [start + 4, start + 4]
+        cursorPosition: [start + 1, start + 1]
       });
     } else {
       selectedText = value.substring(start, end);
-      insertString = `    ${selectedText}`;
+      insertString = '`' + `${selectedText}` + '`';
       value = value.slice(0, start) + value.slice(end);
       value = this.insertStringAtIndex(value, insertString, start);
       this.transformToolReturned.emit({
         value,
-        cursorPosition: [end + 4, end + 4]
+        cursorPosition: [end + 2, end + 2]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   insertLink(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -263,13 +264,13 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 3, end + 11]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   insertImage(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -290,7 +291,7 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [end + 4, end + 7]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   /**
@@ -298,9 +299,9 @@ export class ToolbarComponent implements OnInit {
    * @param event
    */
   insertTable(event: Event) {
-    const start = this.textArea.nativeElement.selectionStart;
-    const end = this.textArea.nativeElement.selectionEnd;
-    let value = this.textArea.nativeElement.value;
+    const start = this.textArea.selectionStart;
+    const end = this.textArea.selectionEnd;
+    let value = this.textArea.value;
     let selectedText = '';
     let insertString = '';
 
@@ -321,7 +322,7 @@ export class ToolbarComponent implements OnInit {
         cursorPosition: [start + 2, end + 2]
       });
     }
-    this.textArea.nativeElement.focus();
+    this.textArea.focus();
   }
 
   // TODO: Move to an 'Util' file
