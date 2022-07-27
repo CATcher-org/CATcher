@@ -30,7 +30,7 @@ import { ElectronService } from './electron.service';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
 
-const Octokit = require('@octokit/rest');
+const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
 const UNABLE_TO_OPEN_IN_BROWSER = 'Unable to open this issue in Browser';
