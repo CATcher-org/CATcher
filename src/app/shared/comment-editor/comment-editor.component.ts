@@ -255,7 +255,7 @@ export class CommentEditorComponent implements OnInit {
     return toInsert;
   }
 
-  private getNewCursorPosition(filename: string, insertedString: string) {
+  private replacePlaceholderString(filename: string, insertedString: string) {
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
     const insertingString = `[Uploading ${filename}...]`;
     const startIndexOfString = this.commentField.value.indexOf(insertingString);
@@ -269,29 +269,19 @@ export class CommentEditorComponent implements OnInit {
         ? cursorPosition
         : cursorPosition + differenceInLength; // after the uploading text
 
-    return newCursorPosition;
+    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
+    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 
   private insertUploadUrlVideo(filename: string, uploadUrl: string) {
     const insertedString = `<video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
-    const insertingString = `[Uploading ${filename}...]`;
 
-    const newCursorPosition = this.getNewCursorPosition(filename, insertedString);
-
-    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
-
-    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
+    this.replacePlaceholderString(filename, insertedString);
   }
 
   private insertUploadUrl(filename: string, uploadUrl: string) {
     const insertedString = `[${filename}](${uploadUrl})`;
-    const insertingString = `[Uploading ${filename}...]`;
-
-    const newCursorPosition = this.getNewCursorPosition(filename, insertedString);
-
-    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
-
-    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
+    this.replacePlaceholderString(filename, insertedString);
   }
 
   private removeHighlightBorderStyle() {
