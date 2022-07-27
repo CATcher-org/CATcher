@@ -91,6 +91,14 @@ export class GithubService {
     ORG_NAME = phaseRepoOwner;
   }
 
+  /**
+   * Fetches an array of filtered GitHubIssues using GraphQL query for a given team.
+   *
+   * @param tutorial - The tutorial that the team belongs to.
+   * @param team - The team's designated name.
+   * @param issuesFilter - The issue filter.
+   * @returns An observable array of filtered GithubIssues
+   */
   fetchIssuesGraphqlByTeam(tutorial: string, team: string, issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
@@ -114,6 +122,11 @@ export class GithubService {
     );
   }
 
+  /**
+   * Fetches an array of filtered GitHubIssues using GraphQL query.
+   * @param issuesFilter - The issue filter.
+   * @returns An observable array of filtered GithubIssues
+   */
   fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
@@ -130,7 +143,10 @@ export class GithubService {
   }
 
   /**
-   * Will make multiple request to Github as per necessary and determine whether a graphql fetch is required.
+   * Checks if there are pages of filtered issues that are not cached in the cache model,
+   * and updates the model to cache these new pages.
+   * @param filter - The issue filter.
+   * @returns Observable<boolean> that returns true if there are pages that do not exist in the cache model.
    */
   private toFetchIssues(filter: RestGithubIssueFilter): Observable<boolean> {
     let responseInFirstPage: GithubResponse<GithubIssue[]>;
@@ -184,6 +200,14 @@ export class GithubService {
     octokit.repos.createForAuthenticatedUser({ name: name });
   }
 
+  /**
+   * Fetches information about an issue using GraphQL.
+   *
+   * If the issue is not modified, return a `304 - Not Modified` response.
+   *
+   * @param id - The issue id.
+   * @returns Observable<GithubGraphqlIssue> that represents the response object.
+   */
   fetchIssueGraphql(id: number): Observable<GithubGraphqlIssue> {
     if (this.issueQueryRefs.get(id) === undefined) {
       const newQueryRef = this.apollo.watchQuery<FetchIssueQuery>({
@@ -208,6 +232,13 @@ export class GithubService {
     );
   }
 
+  /**
+   * Checks if the issue has been modified since the last query, and
+   * updates the model to reflect the last modified time.
+   *
+   * @param id - The issue id.
+   * @returns Observable<boolean> that returns true if the issue has been modified.
+   */
   toFetchIssue(id: number): Observable<boolean> {
     return from(
       octokit.issues.get({
@@ -269,7 +300,7 @@ export class GithubService {
   }
 
   reopenIssue(id: number): Observable<GithubIssue> {
-    return from(octokit.issues.update({owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open'})).pipe(
+    return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open' })).pipe(
       map((response: GithubResponse<GithubIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return new GithubIssue(response.data);
@@ -411,6 +442,17 @@ export class GithubService {
     return fetch(AppConfig.clientDataUrl);
   }
 
+  /**
+   * Performs an API call to fetch a page of filtered issues with a given pageNumber.
+   *
+   * The request is sent with the ETag of the latest cached HTTP response.
+   * If page requested has the same ETag, or the request results in an error,
+   * then the cached page is returned instead.
+   *
+   * @param filter - The issue filter
+   * @param pageNumber - The page to be fetched
+   * @returns An observable representing the response containing a single page of filtered issues
+   */
   private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {
     const apiCall: Promise<GithubResponse<GithubIssue[]>> = octokit.issues.listForRepo({
       ...filter,
@@ -418,7 +460,7 @@ export class GithubService {
       repo: REPO,
       sort: 'created',
       direction: 'desc',
-      per_page: 100,
+      per_page: MAX_ITEMS_PER_PAGE,
       page: pageNumber,
       headers: { 'If-None-Match': this.issuesCacheManager.getEtagFor(pageNumber) }
     });
@@ -430,6 +472,15 @@ export class GithubService {
     );
   }
 
+  /**
+   * Fetches a list of items using a GraphQL query that queries for paginated data.
+   *
+   * @param query - The GraphQL query that queries for paginated data.
+   * @param variables - Additional variables for the GraphQL query.
+   * @callback pluckEdges A function that returns a list of edges in a ApolloQueryResult.
+   * @callback Model Constructor for the item model.
+   * @returns A list of items from the query.
+   */
   private fetchGraphqlList<T, M>(
     query: DocumentNode,
     variables: {},
@@ -447,9 +498,16 @@ export class GithubService {
     );
   }
 
+  /**
+   * Returns an async function that will accept a GraphQL query that requests for paginated items.
+   * Said function will recursively query for all subsequent pages until a page that has less than 100 items is found,
+   * then return all queried pages in an array.
+   *
+   * @callback pluckEdges - A function that returns a list of edges in a ApolloQueryResult.
+   * @returns an async function that accepts a GraphQL query for paginated data and any additional variables to that query
+   */
   private withPagination<T>(pluckEdges: (results: ApolloQueryResult<T>) => Array<any>) {
     return async (query: DocumentNode, variables: { [key: string]: any } = {}): Promise<Array<ApolloQueryResult<T>>> => {
-      const maxResultsCount = 100;
       const cursor = variables.cursor || null;
       const graphqlQuery = this.apollo.watchQuery<T>({ query, variables: { ...variables, cursor } });
       return graphqlQuery.refetch().then(async (results: ApolloQueryResult<T>) => {
@@ -457,7 +515,7 @@ export class GithubService {
         const edges = pluckEdges(results);
         const nextCursor = edges.length === 0 ? null : edges[edges.length - 1].cursor;
 
-        if (edges.length < maxResultsCount || !nextCursor) {
+        if (edges.length < MAX_ITEMS_PER_PAGE || !nextCursor) {
           return intermediate;
         }
         const nextResults = await this.withPagination<T>(pluckEdges)(query, {

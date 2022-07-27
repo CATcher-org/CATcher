@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -14,6 +14,7 @@ const TIME_BETWEEN_UPLOADS_MS = 250;
 
 const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
 const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
+const ISSUE_BODY_SIZE_LIMIT = 40000;
 
 @Component({
   selector: 'app-comment-editor',
@@ -49,6 +50,7 @@ export class CommentEditorComponent implements OnInit {
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
+  maxLength = ISSUE_BODY_SIZE_LIMIT;
 
   formatFileUploadingButtonText(currentButtonText: string) {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
@@ -64,6 +66,7 @@ export class CommentEditorComponent implements OnInit {
     }
 
     this.initialSubmitButtonText = this.submitButtonText;
+    this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
   }
 
   onDragEnter(event) {

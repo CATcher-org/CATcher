@@ -39,7 +39,7 @@ export class ErrorHandlingService implements ErrorHandler {
       .join('\n');
   }
 
-  // Ref: https://developer.github.com/v3/#client-errors
+  // Ref: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#client-errors
   private handleHttpError(error: HttpErrorResponse | RequestError, actionCallback?: () => void): void {
     // Angular treats 304 Not Modified as an error, we will ignore it.
     if (error.status === 304) {
