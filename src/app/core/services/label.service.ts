@@ -154,6 +154,18 @@ export class LabelService {
   }
 
   /**
+   * Updates the required label to be in sync with the labels on the GitHub repository.
+   */
+  public static updateRequiredLabelColor(labelColor: string, label: Label) {
+    const labelArray = LabelService.allLabelArrays[label.labelCategory];
+
+    if (labelArray) {
+      const requiredLabel = labelArray.find((requiredLabel: Label) => requiredLabel.labelValue === label.labelValue);
+      requiredLabel.labelColor = labelColor;
+    }
+  }
+
+  /**
    * Returns an custom operator which helps to
    * synchronise the labels in our application
    * with the remote repository.
@@ -269,8 +281,8 @@ export class LabelService {
         if (nameMatchedLabels[0].equals(label)) {
           // the label exists exactly as expected -> do nothing
         } else {
-          // the label exists but the color does not match
-          this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
+          // the label exists but the color does not match -> update the required label's color to the one in github
+          LabelService.updateRequiredLabelColor(nameMatchedLabels[0].labelColor, label);
         }
       } else {
         throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());

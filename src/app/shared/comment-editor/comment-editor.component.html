@@ -24,10 +24,17 @@
             cdkAutosizeMaxRows="20"
             class="text-input-area"
             placeholder="{{ this.placeholderText }}"
+            maxlength="{{ this.maxLength }}"
           ></textarea>
           <mat-error *ngIf="commentField.errors && commentField.errors['required'] && commentField.touched">
             Description required.
           </mat-error>
+          <mat-error *ngIf="commentField.errors && commentField.errors['maxLength']">
+            Description cannot exceed {{ maxLength }} characters.
+          </mat-error>
+          <mat-hint *ngIf="commentField.value?.length >= maxLength - 50">
+            {{ maxLength - commentField.value?.length }} character(s) remaining.
+          </mat-hint>
 
           <div class="drag-and-drop">
             <span *ngIf="!isInErrorState"> Attach files by dragging & dropping or select them by clicking here. </span>

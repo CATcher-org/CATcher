@@ -1,4 +1,4 @@
-const BaseConfig = {
+export const BaseConfig = {
   githubUrl: 'https://github.com',
   accessTokenUrl: 'https://catcher-auth.herokuapp.com/authenticate',
   clientDataUrl: 'https://raw.githubusercontent.com/CATcher-org/client_data/master/profiles-dev.json'
