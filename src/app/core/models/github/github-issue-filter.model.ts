@@ -17,7 +17,7 @@ export interface RestGithubIssueFilterData {
 }
 /**
  * A filter to filter out the issues to retrieve from github.
- * Ref: https://developer.github.com/v3/issues/#parameters-3
+ * Ref: https://docs.github.com/en/rest/issues/issues#list-repository-issues--parameters
  * */
 export default class RestGithubIssueFilter implements RestGithubIssueFilterData {
   state?: RestGithubIssueState;
