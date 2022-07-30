@@ -277,7 +277,7 @@ export class CommentEditorComponent implements OnInit {
   }
 
   private insertUploadUrlVideo(filename: string, uploadUrl: string) {
-    const insertedString = `<video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+    const insertedString = `<i><video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video><br>video:${uploadUrl}</i>`;
 
     this.replacePlaceholderString(filename, insertedString);
   }
