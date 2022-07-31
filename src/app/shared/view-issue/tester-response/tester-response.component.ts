@@ -140,8 +140,8 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   }
 
   openCancelDialogIfModified(): void {
-    const isModified = this.issue.testerResponses
-      .filter((t: TesterResponse, index: number) => this.testerResponseForm.get(this.getDisagreeRadioFormId(index)).value)
+    const reasonForDisagreementIsModified = this.issue.testerResponses
+      .filter((t: TesterResponse, index: number) => this.isResponseDisagreed(index))
       .map((t: TesterResponse, index: number) => {
         const currentValue = this.getTesterResponseText(index);
         const initialValue = t.reasonForDisagreement || '';
@@ -150,8 +150,20 @@ export class TesterResponseComponent implements OnInit, OnChanges {
       })
       .reduce((a, b) => a || b, false);
 
+    const disagreementIsModified = this.issue.testerResponses
+      .map((t: TesterResponse, index: number) => {
+        const currentValue = this.isResponseDisagreed(index);
+        const initialValue = t.isDisagree();
+
+        return currentValue !== initialValue;
+      })
+      .reduce((a, b) => a || b, false);
+
+    const isModified = reasonForDisagreementIsModified || disagreementIsModified;
+
     if (isModified) {
-      // if the description has been edited, request user to confirm the cancellation
+      // if the disagreement decision and/or reason for disagreement of any response has been edited,
+      // request user to confirm the cancellation
       this.openCancelDialog();
     } else {
       // if no changes have been made, simply cancel edit mode without getting confirmation
