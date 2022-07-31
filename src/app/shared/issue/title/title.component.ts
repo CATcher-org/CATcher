@@ -17,7 +17,6 @@ export class TitleComponent implements OnInit {
   isEditing = false;
   isSavePending = false;
   issueTitleForm: FormGroup;
-  issueTitleInitialValue?: string;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -44,9 +43,10 @@ export class TitleComponent implements OnInit {
 
   changeToEditMode() {
     this.isEditing = true;
-    this.issueTitleInitialValue = this.issue.title || '';
+
+    let issueTitleInitialValue = this.issue.title || '';
     this.issueTitleForm.setValue({
-      title: this.issueTitleInitialValue
+      title: issueTitleInitialValue
     });
   }
 
@@ -82,7 +82,8 @@ export class TitleComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    if (this.issueTitleForm.get('title').value !== this.issueTitleInitialValue) {
+    let issueTitleInitialValue = this.issue.title || '';
+    if (this.issueTitleForm.get('title').value !== issueTitleInitialValue) {
       // if the title has been edited, request user to confirm the cancellation
       this.openCancelDialog();
     } else {
