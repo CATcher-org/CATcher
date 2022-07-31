@@ -6,6 +6,7 @@ import { finalize, flatMap, map } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, STATUS } from '../../../core/models/issue.model';
+import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
@@ -30,13 +31,19 @@ export class TeamResponseComponent implements OnInit {
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
 
+  // Messages for the modal popup window upon cancelling edit
+  private readonly cancelEditModalMessages = ['Do you wish to cancel?', 'Your changes will be discarded.'];
+  private readonly yesButtonModalMessage = 'Cancel';
+  private readonly noButtonModalMessage = 'Continue editing';
+
   constructor(
     private issueService: IssueService,
     private formBuilder: FormBuilder,
     private errorHandlingService: ErrorHandlingService,
     private permissions: PermissionService,
     private dialog: MatDialog,
-    private phaseService: PhaseService
+    private phaseService: PhaseService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit() {
@@ -138,6 +145,32 @@ export class TeamResponseComponent implements OnInit {
     this.issueService.getIssue(this.issue.id).subscribe((issue: Issue) => {
       this.issueUpdated.emit(issue);
       this.resetToDefault();
+    });
+  }
+
+  openCancelDialogIfModified(): void {
+    const issueTeamResponseInitialValue = this.issue.teamResponse || '';
+
+    if (this.responseForm.get('description').value !== issueTeamResponseInitialValue) {
+      // if the response has been edited, request user to confirm the cancellation
+      this.openCancelDialog();
+    } else {
+      // if no changes have been made, simply cancel edit mode without getting confirmation
+      this.cancelEditMode();
+    }
+  }
+
+  openCancelDialog(): void {
+    const dialogRef = this.dialogService.openUserConfirmationModal(
+      this.cancelEditModalMessages,
+      this.yesButtonModalMessage,
+      this.noButtonModalMessage
+    );
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.cancelEditMode();
+      }
     });
   }
 
