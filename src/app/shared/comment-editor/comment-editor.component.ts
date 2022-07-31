@@ -306,24 +306,51 @@ export class CommentEditorComponent implements OnInit {
     const currentText = this.commentField.value;
     const highlightedText = currentText.slice(selectionStart, selectionEnd);
 
-    if (this.isAlreadyFormatted(selectionStart, selectionEnd, currentText, char)) {
+    if (this.hasCharsBeforeAndAfterHighlight(selectionStart, selectionEnd, currentText, char)) {
+      this.removeCharsBeforeAndAfterHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
+    } else if (this.hasCharsInTrimmedHighlight(highlightedText, char)) {
       this.removeCharsFromHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
     } else {
       this.addCharsToHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
     }
   }
 
-  private isAlreadyFormatted(selectionStart, selectionEnd, currentText, char) {
+  private hasCharsBeforeAndAfterHighlight(selectionStart, selectionEnd, currentText, char) {
     const hasInsertedCharBefore = currentText.slice(selectionStart - char.length, selectionStart) === char;
     const hasInsertedCharAfter = currentText.slice(selectionEnd, selectionEnd + char.length) === char;
     return hasInsertedCharBefore && hasInsertedCharAfter;
   }
 
-  private removeCharsFromHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
+  private hasCharsInTrimmedHighlight(highlightedText, char) {
+    const highlightedTextTrimmed = highlightedText.trim();
+    const hasCharAtFront = highlightedTextTrimmed.slice(0, char.length) === char;
+    const hasCharAtEnd = highlightedTextTrimmed.slice(-char.length) === char;
+    return hasCharAtFront && hasCharAtEnd;
+  }
+
+  private removeCharsBeforeAndAfterHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
     this.commentField.setValue(
       currentText.slice(0, selectionStart - char.length) + highlightedText + currentText.slice(selectionEnd + char.length)
     );
     this.commentTextArea.nativeElement.setSelectionRange(selectionStart - char.length, selectionEnd - char.length);
+  }
+
+  private removeCharsFromHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
+    const highlightedTextTrimmed = highlightedText.trim();
+    const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
+    const spacesRemovedRight = highlightedText.trimLeft().length - highlightedTextTrimmed.length;
+    const SPACE = ' ';
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart) +
+        SPACE.repeat(spacesRemovedLeft) +
+        highlightedTextTrimmed.slice(char.length, -char.length) +
+        SPACE.repeat(spacesRemovedRight) +
+        currentText.slice(selectionEnd)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(
+      selectionStart + spacesRemovedLeft,
+      selectionEnd - 2 * char.length - spacesRemovedRight
+    );
   }
 
   private addCharsToHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
