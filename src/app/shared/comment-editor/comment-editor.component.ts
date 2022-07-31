@@ -47,7 +47,6 @@ export class CommentEditorComponent implements OnInit {
   @ViewChild('dropArea', { static: true }) dropArea;
   @ViewChild('commentTextArea', { static: true }) commentTextArea;
   @ViewChild('markdownArea', { static: false }) markdownArea;
-
   dragActiveCounter = 0;
   uploadErrorMessage: string;
   maxLength = ISSUE_BODY_SIZE_LIMIT;
@@ -67,6 +66,23 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
+  }
+
+  onKeyPress(event) {
+    if (this.isControlKeyPressed(event)) {
+      switch (event.key) {
+        case 'b':
+          event.preventDefault();
+          this.insertOrRemoveCharsFromHighlightedText('**');
+          break;
+        case 'i':
+          event.preventDefault();
+          this.insertOrRemoveCharsFromHighlightedText('_');
+          break;
+        default:
+          return;
+      }
+    }
   }
 
   onDragEnter(event) {
@@ -233,7 +249,6 @@ export class CommentEditorComponent implements OnInit {
     } else {
       toInsert = `[Uploading ${filename}...]\n`;
     }
-
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
     const endOfLineIndex = originalDescription.indexOf('\n', cursorPosition);
     const nextCursorPosition = cursorPosition + toInsert.length;
@@ -279,5 +294,55 @@ export class CommentEditorComponent implements OnInit {
       this.dropArea.nativeElement.classList.remove('highlight-drag-box');
       this.dropArea.nativeElement.classList.remove('highlight-drag-box-disabled');
     }
+  }
+
+  private isControlKeyPressed(event) {
+    return event.ctrlKey || event.metaKey;
+  }
+
+  private insertOrRemoveCharsFromHighlightedText(char) {
+    const selectionStart = this.commentTextArea.nativeElement.selectionStart;
+    const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
+    const currentText = this.commentField.value;
+    const highlightedText = currentText.slice(selectionStart, selectionEnd);
+
+    if (this.isAlreadyFormatted(selectionStart, selectionEnd, currentText, char)) {
+      this.removeCharsFromHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
+    } else {
+      this.addCharsToHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
+    }
+  }
+
+  private isAlreadyFormatted(selectionStart, selectionEnd, currentText, char) {
+    const hasInsertedCharBefore = currentText.slice(selectionStart - char.length, selectionStart) === char;
+    const hasInsertedCharAfter = currentText.slice(selectionEnd, selectionEnd + char.length) === char;
+    return hasInsertedCharBefore && hasInsertedCharAfter;
+  }
+
+  private removeCharsFromHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart - char.length) + highlightedText + currentText.slice(selectionEnd + char.length)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(selectionStart - char.length, selectionEnd - char.length);
+  }
+
+  private addCharsToHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
+    const highlightedTextTrimmed = highlightedText.trim();
+    const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
+    const spacesRemovedRight = highlightedText.trimLeft().length - highlightedTextTrimmed.length;
+    const SPACE = ' ';
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart) +
+        SPACE.repeat(spacesRemovedLeft) +
+        char +
+        highlightedTextTrimmed +
+        char +
+        SPACE.repeat(spacesRemovedRight) +
+        currentText.slice(selectionEnd)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(
+      selectionStart + char.length + spacesRemovedLeft,
+      selectionEnd + char.length - spacesRemovedRight
+    );
   }
 }
