@@ -119,7 +119,7 @@ export class DescriptionComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    let issueDescriptionInitialValue = this.issue.description || '';
+    const issueDescriptionInitialValue = this.issue.description || '';
     if (this.issueDescriptionForm.get('description').value !== issueDescriptionInitialValue) {
       // if the description has been edited, request user to confirm the cancellation
       this.openCancelDialog();
