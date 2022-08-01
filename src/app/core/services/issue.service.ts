@@ -147,7 +147,7 @@ export class IssueService {
         }),
         catchError((err) => {
           this.logger.error(err); // Log full details of error first
-          return throwError(err.response.data.message); // More readable error message
+          return throwError(this.getIssueCustomErrorMessage(err)); // More readable error message
         })
       );
   }
@@ -482,5 +482,27 @@ export class IssueService {
 
   getIssueTeamFilter(): string {
     return this.issueTeamFilter;
+  }
+
+  /**
+   * Returns a customised error message for operations with 1 Issue
+   */
+  private getIssueCustomErrorMessage(error) {
+    const issueErrors = error.response.data.errors;
+    const defaultErrorMessage = error.response.data.message;
+
+    if (!issueErrors || issueErrors.length !== 1) {
+      return defaultErrorMessage;
+    }
+
+    const issueError = issueErrors[0];
+
+    if (error.status === 422 && issueError.field === 'assignees' && issueError.code === 'invalid') {
+      return `Unable to assign the selected user(s) to this issue.
+              Possible reason: a selected user has not joined the GitHub organization
+              ${this.phaseService.getPhaseOwner(this.phaseService.currentPhase)} yet`;
+    }
+
+    return defaultErrorMessage;
   }
 }
