@@ -91,7 +91,7 @@ export class RepoCreatorService {
           return of(null);
         } else {
           this.githubService.createRepository(phaseRepo);
-          return new Observable((subscriber) => {
+          return new Observable<boolean>((subscriber) => {
             setTimeout(() => subscriber.next(true), 1000);
           });
         }
