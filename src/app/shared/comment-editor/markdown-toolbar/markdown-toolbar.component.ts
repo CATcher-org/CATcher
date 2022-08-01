@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import '@github/markdown-toolbar-element';
 
 @Component({
   selector: 'app-markdown-toolbar',
@@ -7,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MarkdownToolbarComponent implements OnInit {
   constructor() {}
+
+  @Input() forTextAreaId: string; // Compulsory Input
 
   ngOnInit() {}
 }

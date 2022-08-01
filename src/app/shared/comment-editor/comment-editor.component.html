@@ -9,6 +9,7 @@
         (drop)="onDrop($event)"
         (dragover)="enableFileDrop($event)"
       >
+        <app-markdown-toolbar [forTextAreaId]="this.id"></app-markdown-toolbar>
         <mat-form-field appearance="outline" style="width: 100%">
           <mat-label></mat-label>
           <textarea
