@@ -1,6 +1,11 @@
-<button mat-stroked-button class="sign-in-button" color="primary" (click)="this.completeLoginProcess()">
+<button mat-stroked-button class="sign-in-button" color="primary" (click)="this.completeLoginProcess(false)">
   <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo" /> </span>
   <span> Continue as {{ this.username }} </span>
+</button>
+
+<button mat-stroked-button class="sign-in-button" color="primary" (click)="this.completeLoginProcess(true)">
+  <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo" /> </span>
+  <span> Continue as {{ this.username }} as dev </span>
 </button>
 
 <button *ngIf="electronService.isElectron()" mat-button style="margin-top: 10px; margin-bottom: 10px" (click)="logIntoAnotherAccount()">

@@ -1,1 +1,11 @@
-<p>previewer works!</p>
+<form [formGroup]="previewInput" (ngSubmit)="handleSubmit()">
+  <label>
+    Phase
+    <input type="text" formControlName="phase" />
+  </label>
+  <label>
+    Username
+    <input type="text" formControlName="username" />
+  </label>
+  <button type="submit">Preview</button>
+</form>

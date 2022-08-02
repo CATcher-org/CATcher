@@ -45,16 +45,22 @@ export class ConfirmLoginComponent implements OnInit {
   /**
    * Handles the clean up required after authentication and setting up of user data is completed.
    */
-  handleAuthSuccess() {
+  handleAuthSuccess(loginAsDev: boolean) {
     this.authService.setTitleWithPhaseDetail();
-    this.router.navigateByUrl(this.phaseService.currentPhase);
     this.authService.changeAuthState(AuthState.Authenticated);
+
+    if (loginAsDev) {
+      this.router.navigateByUrl('preview');
+      return;
+    }
+
+    this.router.navigateByUrl(this.phaseService.currentPhase);
   }
 
   /**
    * Will complete the process of logging in the given user.
    */
-  completeLoginProcess(): void {
+  completeLoginProcess(loginAsDev: boolean): void {
     this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, this.username);
     this.userService
@@ -65,7 +71,7 @@ export class ConfirmLoginComponent implements OnInit {
       )
       .subscribe(
         () => {
-          this.handleAuthSuccess();
+          this.handleAuthSuccess(loginAsDev);
         },
         (error) => {
           this.authService.changeAuthState(AuthState.NotAuthenticated);
