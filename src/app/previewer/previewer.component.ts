@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { Phase } from '../core/models/phase.model';
+import { DataService } from '../core/services/data.service';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { GithubService } from '../core/services/github.service';
 import { GithubEventService } from '../core/services/githubevent.service';
@@ -14,6 +18,9 @@ import { PhaseService } from '../core/services/phase.service';
   styleUrls: ['./previewer.component.css']
 })
 export class PreviewerComponent implements OnInit {
+  phases: string[];
+  students: string[];
+
   constructor(
     private phaseService: PhaseService,
     private githubService: GithubService,
@@ -21,19 +28,23 @@ export class PreviewerComponent implements OnInit {
     private issueService: IssueService,
     private errorHandlingService: ErrorHandlingService,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private dataService: DataService
+  ) {
+    this.phases = Object.keys(Phase);
+  }
 
   previewInput = new FormGroup({
-    phase: new FormControl(''),
-    username: new FormControl('')
+    selectedPhase: new FormControl(''),
+    selectedUsername: new FormControl('')
   });
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getAllStudentsInSession().subscribe((students) => (this.students = students));
+  }
 
   handleSubmit(): void {
-    const phaseToPreview = this.previewInput.get('phase').value;
-    const username = this.previewInput.get('username').value;
+    const phaseToPreview = this.previewInput.get('selectedPhase').value;
+    const username = this.previewInput.get('selectedUsername').value;
 
     this.routeToSelectedPhase(phaseToPreview, username);
   }
@@ -61,6 +72,10 @@ export class PreviewerComponent implements OnInit {
 
     // Route app to new phase.
     this.router.navigateByUrl(this.phaseService.currentPhase);
+  }
+
+  getAllStudentsInSession(): Observable<any> {
+    return this.dataService.getDataFile().pipe(map((jsonData: {}) => Object.keys(jsonData[DataService.STUDENTS_ALLOCATION])));
   }
 
   private reload() {

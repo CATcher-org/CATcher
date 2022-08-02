@@ -1,0 +1,12 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.preview-button {
+  background: #f7fcfe;
+  line-height: 45px;
+  border: 1px solid currentColor;
+  width: 50%;
+}

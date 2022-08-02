@@ -1,11 +1,21 @@
 <form [formGroup]="previewInput" (ngSubmit)="handleSubmit()">
-  <label>
-    Phase
-    <input type="text" formControlName="phase" />
-  </label>
-  <label>
-    Username
-    <input type="text" formControlName="username" />
-  </label>
-  <button type="submit">Preview</button>
+  <mat-form-field appearance="fill">
+    <mat-label>Phase</mat-label>
+    <mat-select [formControl]="previewInput.get('selectedPhase')">
+      <mat-option *ngFor="let phase of phases" [value]="phase">
+        {{ phase }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Username</mat-label>
+    <mat-select [formControl]="previewInput.get('selectedUsername')">
+      <mat-option *ngFor="let student of students" [value]="student">
+        {{ student }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-stroked-button class="preview-button" type="submit">Preview</button>
 </form>
