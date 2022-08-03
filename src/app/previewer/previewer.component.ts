@@ -51,10 +51,7 @@ export class PreviewerComponent implements OnInit {
   }
 
   routeToSelectedPhaseAndUsername(phaseToPreview: string, username: string): void {
-    // Set issue service to preview mode
-    this.issueService.switchToPreviewMode();
-
-    // Replace Current Phase Data.
+    // Replace current phase data
     this.phaseService.currentPhase = Phase[phaseToPreview];
 
     // Set GitHub repo to fetch issues from

@@ -38,9 +38,6 @@ export class IssueService {
   /** Whether the IssueService is downloading the data from Github*/
   public isLoading = new BehaviorSubject<boolean>(false);
 
-  /** Whether CATcher is launched in preview mode */
-  private inPreviewMode = false;
-
   constructor(
     private githubService: GithubService,
     private userService: UserService,
@@ -311,50 +308,42 @@ export class IssueService {
     this.isLoading = new BehaviorSubject<boolean>(false);
   }
 
-  switchToPreviewMode() {
-    this.inPreviewMode = true;
-  }
-
   private initializeData(): Observable<Issue[]> {
     const issuesAPICallsByFilter: Array<Observable<Array<GithubIssue>>> = [];
 
-    if (this.inPreviewMode) {
-      issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({})));
-    } else {
-      switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
-        case FILTER.FilterByCreator:
-          issuesAPICallsByFilter.push(
-            this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
-          );
-          break;
-        case FILTER.FilterByTeam: // Only student has this filter
+    switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
+      case FILTER.FilterByCreator:
+        issuesAPICallsByFilter.push(
+          this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
+        );
+        break;
+      case FILTER.FilterByTeam: // Only student has this filter
+        issuesAPICallsByFilter.push(
+          this.githubService.fetchIssuesGraphqlByTeam(
+            this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
+            this.createLabel('team', this.userService.currentUser.team.teamId),
+            new RestGithubIssueFilter({})
+          )
+        );
+        break;
+      case FILTER.FilterByTeamAssigned: // Only for Tutors and Admins
+        const allocatedTeams = this.userService.currentUser.allocatedTeams;
+        allocatedTeams.forEach((team) => {
           issuesAPICallsByFilter.push(
             this.githubService.fetchIssuesGraphqlByTeam(
-              this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
-              this.createLabel('team', this.userService.currentUser.team.teamId),
+              this.createLabel('tutorial', team.tutorialClassId),
+              this.createLabel('team', team.teamId),
               new RestGithubIssueFilter({})
             )
           );
-          break;
-        case FILTER.FilterByTeamAssigned: // Only for Tutors and Admins
-          const allocatedTeams = this.userService.currentUser.allocatedTeams;
-          allocatedTeams.forEach((team) => {
-            issuesAPICallsByFilter.push(
-              this.githubService.fetchIssuesGraphqlByTeam(
-                this.createLabel('tutorial', team.tutorialClassId),
-                this.createLabel('team', team.teamId),
-                new RestGithubIssueFilter({})
-              )
-            );
-          });
-          break;
-        case FILTER.NoFilter:
-          issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({})));
-          break;
-        case FILTER.NoAccess:
-        default:
-          return of([]);
-      }
+        });
+        break;
+      case FILTER.NoFilter:
+        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({})));
+        break;
+      case FILTER.NoAccess:
+      default:
+        return of([]);
     }
 
     // const issuesAPICallsByFilter = filters.map(filter => this.githubService.fetchIssuesGraphql(filter));
