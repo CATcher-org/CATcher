@@ -1,12 +1,26 @@
-<button mat-stroked-button class="sign-in-button" color="primary" (click)="this.completeLoginProcess(false)">
+<button
+  *ngIf="!(loggedInUserIsAdmin | async)"
+  mat-stroked-button
+  class="sign-in-button"
+  color="primary"
+  (click)="this.completeLoginProcess()"
+>
   <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo" /> </span>
   <span> Continue as {{ this.username }} </span>
 </button>
 
-<button mat-stroked-button class="sign-in-button" color="primary" (click)="this.completeLoginProcess(true)">
+<button
+  *ngIf="loggedInUserIsAdmin | async"
+  mat-stroked-button
+  class="sign-in-button-admin"
+  color="primary"
+  (click)="this.completeLoginProcessAsAdmin()"
+>
   <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo" /> </span>
-  <span> Continue as {{ this.username }} as dev </span>
+  <span> Continue as {{ this.username }} </span>
 </button>
+
+<div *ngIf="loggedInUserIsAdmin | async" class="mat-body-2" style="margin-top: 20px">You are logging in as an administrator!</div>
 
 <button *ngIf="electronService.isElectron()" mat-button style="margin-top: 10px; margin-bottom: 10px" (click)="logIntoAnotherAccount()">
   Log in to another account

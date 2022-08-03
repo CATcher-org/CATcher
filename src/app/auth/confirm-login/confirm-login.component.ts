@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { flatMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { flatMap, map } from 'rxjs/operators';
+import { User, UserRole } from '../../core/models/user.model';
 import { AuthService, AuthState } from '../../core/services/auth.service';
 import { ElectronService } from '../../core/services/electron.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
@@ -18,6 +20,9 @@ export class ConfirmLoginComponent implements OnInit {
   @Input() username: string;
   @Input() currentSessionOrg: string;
 
+  loggedInUser: Observable<User>;
+  loggedInUserIsAdmin: Observable<boolean>;
+
   constructor(
     public electronService: ElectronService,
     private authService: AuthService,
@@ -29,7 +34,10 @@ export class ConfirmLoginComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loggedInUser = this.userService.createUserModel(this.username);
+    this.loggedInUserIsAdmin = this.checkIfLoggedInUserIsAdmin();
+  }
 
   onGithubWebsiteClicked() {
     window.open('https://github.com/', '_blank');
@@ -42,36 +50,39 @@ export class ConfirmLoginComponent implements OnInit {
     this.authService.startOAuthProcess();
   }
 
+  checkIfLoggedInUserIsAdmin(): Observable<boolean> {
+    return this.loggedInUser.pipe(
+      map((user: User) => {
+        console.log(user);
+
+        return user.role === UserRole.Admin;
+      })
+    );
+  }
+
   /**
    * Handles the clean up required after authentication and setting up of user data is completed.
    */
-  handleAuthSuccess(loginAsDev: boolean) {
+  handleAuthSuccess() {
     this.authService.setTitleWithPhaseDetail();
     this.authService.changeAuthState(AuthState.Authenticated);
-
-    if (loginAsDev) {
-      this.router.navigateByUrl('preview');
-      return;
-    }
-
     this.router.navigateByUrl(this.phaseService.currentPhase);
   }
 
   /**
    * Will complete the process of logging in the given user.
    */
-  completeLoginProcess(loginAsDev: boolean): void {
+  completeLoginProcess(): void {
     this.authService.changeAuthState(AuthState.AwaitingAuthentication);
     this.phaseService.setPhaseOwners(this.currentSessionOrg, this.username);
-    this.userService
-      .createUserModel(this.username)
+    this.loggedInUser
       .pipe(
         flatMap(() => this.phaseService.sessionSetup()),
         flatMap(() => this.githubEventService.setLatestChangeEvent())
       )
       .subscribe(
         () => {
-          this.handleAuthSuccess(loginAsDev);
+          this.handleAuthSuccess();
         },
         (error) => {
           this.authService.changeAuthState(AuthState.NotAuthenticated);
@@ -79,5 +90,22 @@ export class ConfirmLoginComponent implements OnInit {
           this.logger.info(`Completion of login process failed with an error: ${error}`);
         }
       );
+  }
+
+  /**
+   * Will complete the process of logging in the given user as an admin.
+   */
+  completeLoginProcessAsAdmin(): void {
+    this.authService.changeAuthState(AuthState.AwaitingAuthentication);
+    this.phaseService.setPhaseOwners(this.currentSessionOrg, this.username);
+    this.loggedInUser.subscribe(() => this.handleAuthSuccessAsAdmin());
+  }
+
+  /**
+   * Navigates the administrator to the preview page after authentication is completed.
+   */
+  handleAuthSuccessAsAdmin() {
+    this.authService.changeAuthState(AuthState.Authenticated);
+    this.router.navigateByUrl('preview');
   }
 }

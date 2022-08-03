@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { flatMap, map } from 'rxjs/operators';
 
 import { Phase } from '../core/models/phase.model';
 import { DataService } from '../core/services/data.service';
@@ -11,6 +10,7 @@ import { GithubService } from '../core/services/github.service';
 import { GithubEventService } from '../core/services/githubevent.service';
 import { IssueService } from '../core/services/issue.service';
 import { PhaseService } from '../core/services/phase.service';
+import { UserService } from '../core/services/user.service';
 
 @Component({
   selector: 'app-previewer',
@@ -25,6 +25,7 @@ export class PreviewerComponent implements OnInit {
     private phaseService: PhaseService,
     private githubService: GithubService,
     private githubEventService: GithubEventService,
+    private userService: UserService,
     private issueService: IssueService,
     private errorHandlingService: ErrorHandlingService,
     private router: Router,
@@ -33,36 +34,36 @@ export class PreviewerComponent implements OnInit {
     this.phases = Object.keys(Phase);
   }
 
-  previewInput = new FormGroup({
-    selectedPhase: new FormControl(''),
-    selectedUsername: new FormControl('')
+  previewInputForm = new FormGroup({
+    selectedPhase: new FormControl('', Validators.required),
+    selectedUsername: new FormControl('', Validators.required)
   });
 
   ngOnInit(): void {
-    this.getAllStudentsInSession().subscribe((students) => (this.students = students));
+    this.dataService.getAllStudentsInSession().subscribe((students) => (this.students = students));
   }
 
   handleSubmit(): void {
-    const phaseToPreview = this.previewInput.get('selectedPhase').value;
-    const username = this.previewInput.get('selectedUsername').value;
+    const phaseToPreview = this.previewInputForm.get('selectedPhase').value;
+    const username = this.previewInputForm.get('selectedUsername').value;
 
-    this.routeToSelectedPhase(phaseToPreview, username);
+    this.routeToSelectedPhaseAndUsername(phaseToPreview, username);
   }
 
-  routeToSelectedPhase(phaseToPreview: string, username: string): void {
+  routeToSelectedPhaseAndUsername(phaseToPreview: string, username: string): void {
     // Set issue service to preview mode
     this.issueService.switchToPreviewMode();
 
     // Replace Current Phase Data.
     this.phaseService.currentPhase = Phase[phaseToPreview];
 
+    // Set GitHub repo to fetch issues from
     let repoOwner: string;
     if (this.phaseService.currentPhase === Phase.phaseBugReporting || this.phaseService.currentPhase === Phase.phaseTesterResponse) {
       repoOwner = username;
     } else {
       repoOwner = this.phaseService.getPhaseOwner(this.phaseService.currentPhase);
     }
-
     this.githubService.storePhaseDetails(repoOwner, this.phaseService.sessionData[phaseToPreview]);
 
     // Remove current phase issues and load selected phase issues.
@@ -70,12 +71,14 @@ export class PreviewerComponent implements OnInit {
     this.issueService.reset(false);
     this.reload();
 
-    // Route app to new phase.
-    this.router.navigateByUrl(this.phaseService.currentPhase);
-  }
-
-  getAllStudentsInSession(): Observable<any> {
-    return this.dataService.getDataFile().pipe(map((jsonData: {}) => Object.keys(jsonData[DataService.STUDENTS_ALLOCATION])));
+    // Set user model
+    this.userService
+      .createUserModel(username)
+      .pipe(flatMap(() => this.githubEventService.setLatestChangeEvent()))
+      .subscribe(() => {
+        // Route app to new phase.
+        this.router.navigateByUrl(phaseToPreview);
+      });
   }
 
   private reload() {

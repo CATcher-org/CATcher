@@ -1,21 +1,40 @@
-<form [formGroup]="previewInput" (ngSubmit)="handleSubmit()">
-  <mat-form-field appearance="fill">
-    <mat-label>Phase</mat-label>
-    <mat-select [formControl]="previewInput.get('selectedPhase')">
-      <mat-option *ngFor="let phase of phases" [value]="phase">
-        {{ phase }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+<div class="preview-page">
+  <mat-card class="preview-card">
+    <mat-card-header style="margin-bottom: 20px">
+      <mat-card-title class="preview-title">Select Phase and User</mat-card-title>
+    </mat-card-header>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Username</mat-label>
-    <mat-select [formControl]="previewInput.get('selectedUsername')">
-      <mat-option *ngFor="let student of students" [value]="student">
-        {{ student }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <form class="preview-form" [formGroup]="previewInputForm" (ngSubmit)="handleSubmit()">
+      <mat-card-content>
+        <mat-form-field appearance="fill" class="preview-input-field">
+          <mat-label>Phase</mat-label>
+          <mat-select [formControl]="previewInputForm.get('selectedPhase')">
+            <mat-option *ngFor="let phase of phases" [value]="phase">
+              {{ phase }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-  <button mat-stroked-button class="preview-button" type="submit">Preview</button>
-</form>
+        <mat-form-field appearance="fill" class="preview-input-field">
+          <mat-label>Username</mat-label>
+          <mat-select [formControl]="previewInputForm.get('selectedUsername')">
+            <mat-option *ngFor="let student of students" [value]="student">
+              {{ student }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-card-actions>
+          <button mat-stroked-button [disabled]="previewInputForm.invalid" class="preview-button" type="submit">Preview</button>
+        </mat-card-actions>
+      </mat-card-content>
+    </form>
+  </mat-card>
+
+  <div class="mat-body-1" style="margin-top: 20px">
+    Note: To subsequently change the phase and/or user you are previewing, press the "back" button on your browser to come back to this
+    page.
+  </div>
+  <div class="mat-body-2" style="margin-top: 10px">
+    (DO NOT use the app's navigation bar to change phases as it currently does not work in preview mode)
+  </div>
+</div>
