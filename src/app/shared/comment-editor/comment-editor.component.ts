@@ -16,6 +16,8 @@ const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB t
 const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
 const ISSUE_BODY_SIZE_LIMIT = 40000;
 
+const SPACE = ' ';
+
 @Component({
   selector: 'app-comment-editor',
   templateUrl: './comment-editor.component.html',
@@ -305,13 +307,32 @@ export class CommentEditorComponent implements OnInit {
     const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
     const currentText = this.commentField.value;
     const highlightedText = currentText.slice(selectionStart, selectionEnd);
+    const highlightedTextTrimmed = highlightedText.trim();
+    const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
+    const spacesRemovedRight = highlightedText.trimLeft().length - highlightedTextTrimmed.length;
 
     if (this.hasCharsBeforeAndAfterHighlight(selectionStart, selectionEnd, currentText, char)) {
       this.removeCharsBeforeAndAfterHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
     } else if (this.hasCharsInTrimmedHighlight(highlightedText, char)) {
-      this.removeCharsFromHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
+      this.removeCharsFromHighlightedText(
+        selectionStart,
+        selectionEnd,
+        currentText,
+        highlightedText,
+        char,
+        spacesRemovedLeft,
+        spacesRemovedRight
+      );
     } else {
-      this.addCharsToHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
+      this.insertCharsToHighlightedText(
+        selectionStart,
+        selectionEnd,
+        currentText,
+        highlightedText,
+        char,
+        spacesRemovedLeft,
+        spacesRemovedRight
+      );
     }
   }
 
@@ -335,11 +356,15 @@ export class CommentEditorComponent implements OnInit {
     this.commentTextArea.nativeElement.setSelectionRange(selectionStart - char.length, selectionEnd - char.length);
   }
 
-  private removeCharsFromHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
-    const highlightedTextTrimmed = highlightedText.trim();
-    const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
-    const spacesRemovedRight = highlightedText.trimLeft().length - highlightedTextTrimmed.length;
-    const SPACE = ' ';
+  private removeCharsFromHighlightedText(
+    selectionStart,
+    selectionEnd,
+    currentText,
+    highlightedTextTrimmed,
+    char,
+    spacesRemovedLeft,
+    spacesRemovedRight
+  ) {
     this.commentField.setValue(
       currentText.slice(0, selectionStart) +
         SPACE.repeat(spacesRemovedLeft) +
@@ -353,11 +378,15 @@ export class CommentEditorComponent implements OnInit {
     );
   }
 
-  private addCharsToHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
-    const highlightedTextTrimmed = highlightedText.trim();
-    const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
-    const spacesRemovedRight = highlightedText.trimLeft().length - highlightedTextTrimmed.length;
-    const SPACE = ' ';
+  private insertCharsToHighlightedText(
+    selectionStart,
+    selectionEnd,
+    currentText,
+    highlightedTextTrimmed,
+    char,
+    spacesRemovedLeft,
+    spacesRemovedRight
+  ) {
     this.commentField.setValue(
       currentText.slice(0, selectionStart) +
         SPACE.repeat(spacesRemovedLeft) +
