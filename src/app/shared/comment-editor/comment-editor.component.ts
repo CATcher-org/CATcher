@@ -5,8 +5,8 @@ import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
+import { insertUploadingText, insertUploadUrl, insertUploadUrlVideo } from './upload-text-insertor';
 
-const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
 const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
 const SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB = 5;
@@ -148,7 +148,7 @@ export class CommentEditorComponent implements OnInit {
     this.uploadErrorMessage = null;
     const reader = new FileReader();
     const filename = file.name;
-    const insertedText = this.insertUploadingText(filename);
+    const insertedText = insertUploadingText(filename, this.commentField, this.commentTextArea);
 
     if (file.size >= MAX_UPLOAD_SIZE) {
       this.handleUploadError(getSizeExceedErrorMsg('file', SHOWN_MAX_UPLOAD_SIZE_MB), insertedText);
@@ -176,9 +176,9 @@ export class CommentEditorComponent implements OnInit {
       this.uploadService.uploadFile(reader.result, filename).subscribe(
         (response) => {
           if (this.uploadService.isVideoFile(filename)) {
-            this.insertUploadUrlVideo(filename, response.data.content.download_url);
+            insertUploadUrlVideo(filename, response.data.content.download_url, this.commentField, this.commentTextArea);
           } else {
-            this.insertUploadUrl(filename, response.data.content.download_url);
+            insertUploadUrl(filename, response.data.content.download_url, this.commentField, this.commentTextArea);
           }
         },
         (error) => {
@@ -225,66 +225,6 @@ export class CommentEditorComponent implements OnInit {
       this.uploadErrorMessage = error;
     }
     this.commentField.setValue(this.commentField.value.replace(insertedText, ''));
-  }
-
-  private insertUploadingText(filename: string): string {
-    const originalDescription = this.commentField.value;
-
-    const fileType = filename.split('.').pop();
-    let toInsert: string;
-    if (DISPLAYABLE_CONTENT.includes(fileType.toLowerCase())) {
-      toInsert = `![Uploading ${filename}...]\n`;
-    } else {
-      toInsert = `[Uploading ${filename}...]\n`;
-    }
-
-    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const endOfLineIndex = originalDescription.indexOf('\n', cursorPosition);
-    const nextCursorPosition = cursorPosition + toInsert.length;
-
-    if (endOfLineIndex === -1) {
-      if (this.commentField.value === '') {
-        this.commentField.setValue(toInsert);
-      } else {
-        this.commentField.setValue(`${this.commentField.value}\n${toInsert}`);
-      }
-    } else {
-      const startTillNewline = originalDescription.slice(0, endOfLineIndex + 1);
-      const newlineTillEnd = originalDescription.slice(endOfLineIndex);
-      this.commentField.setValue(`${startTillNewline + toInsert + newlineTillEnd}`);
-    }
-
-    this.commentTextArea.nativeElement.setSelectionRange(nextCursorPosition, nextCursorPosition);
-    return toInsert;
-  }
-
-  private replacePlaceholderString(filename: string, insertedString: string) {
-    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const insertingString = `[Uploading ${filename}...]`;
-    const startIndexOfString = this.commentField.value.indexOf(insertingString);
-    const endIndexOfString = startIndexOfString + insertingString.length;
-    const endOfInsertedString = startIndexOfString + insertedString.length;
-    const differenceInLength = endOfInsertedString - endIndexOfString;
-    const newCursorPosition =
-      cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString // within the range of uploading text
-        ? endOfInsertedString
-        : cursorPosition < startIndexOfString // before the uploading text
-        ? cursorPosition
-        : cursorPosition + differenceInLength; // after the uploading text
-
-    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
-    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
-  }
-
-  private insertUploadUrlVideo(filename: string, uploadUrl: string) {
-    const insertedString = `<i><video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video><br>video:${uploadUrl}</i>`;
-
-    this.replacePlaceholderString(filename, insertedString);
-  }
-
-  private insertUploadUrl(filename: string, uploadUrl: string) {
-    const insertedString = `[${filename}](${uploadUrl})`;
-    this.replacePlaceholderString(filename, insertedString);
   }
 
   private removeHighlightBorderStyle() {
