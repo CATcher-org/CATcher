@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { PreviewerService } from '../../previewer/previewer.service';
 import { Phase } from '../models/phase.model';
 import { UserRole } from '../models/user.model';
 import { PhaseService } from './phase.service';
@@ -148,7 +149,7 @@ const PERMISSIONS = {
   providedIn: 'root'
 })
 export class PermissionService {
-  constructor(private userService: UserService, private phaseService: PhaseService) {}
+  constructor(private userService: UserService, private phaseService: PhaseService, private previewerService: PreviewerService) {}
 
   isIssueCreatable(): boolean {
     return this.askForPermission(PermissionLevel.User, 'isIssueCreatable');
@@ -194,6 +195,10 @@ export class PermissionService {
   }
 
   private askForPermission(permissionLevel: PermissionLevel, permissionType: string): boolean {
+    if (this.previewerService.inPreviewMode) {
+      return false;
+    }
+
     switch (permissionLevel) {
       case PermissionLevel.Phase:
         return PERMISSIONS[this.phaseService.currentPhase][permissionType];
