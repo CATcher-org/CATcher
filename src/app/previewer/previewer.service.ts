@@ -4,5 +4,13 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class PreviewerService {
-  constructor() {}
+  private _inPreviewMode = false;
+
+  set inPreviewMode(option: boolean) {
+    this._inPreviewMode = option;
+  }
+
+  get inPreviewMode() {
+    return this._inPreviewMode;
+  }
 }

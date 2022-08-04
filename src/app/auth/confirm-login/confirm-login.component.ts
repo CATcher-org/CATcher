@@ -10,6 +10,7 @@ import { GithubEventService } from '../../core/services/githubevent.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
+import { PreviewerService } from '../../previewer/previewer.service';
 
 @Component({
   selector: 'app-auth-confirm-login',
@@ -30,6 +31,7 @@ export class ConfirmLoginComponent implements OnInit {
     private userService: UserService,
     private errorHandlingService: ErrorHandlingService,
     private githubEventService: GithubEventService,
+    private previewerService: PreviewerService,
     private logger: LoggingService,
     private router: Router
   ) {}
@@ -106,6 +108,7 @@ export class ConfirmLoginComponent implements OnInit {
    */
   handleAuthSuccessAsAdmin() {
     this.authService.changeAuthState(AuthState.Authenticated);
+    this.previewerService.inPreviewMode = true;
     this.router.navigateByUrl('preview');
   }
 }
