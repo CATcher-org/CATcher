@@ -7,6 +7,7 @@ import '@github/markdown-toolbar-element';
   styleUrls: ['./markdown-toolbar.component.css']
 })
 export class MarkdownToolbarComponent {
-  // Specifies the text area element that this toolbar would operate on
-  @Input() forTextAreaId: string; // compulsory input
+  // Specifies the text area element that this
+  //   toolbar would operate on
+  @Input() forTextAreaId: string; // Compulsory Input
 }
