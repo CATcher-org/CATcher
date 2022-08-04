@@ -89,8 +89,6 @@ export class GithubService {
   storePhaseDetails(phaseRepoOwner: string, repoName: string) {
     REPO = repoName;
     ORG_NAME = phaseRepoOwner;
-
-    console.log(REPO, ORG_NAME);
   }
 
   /**
