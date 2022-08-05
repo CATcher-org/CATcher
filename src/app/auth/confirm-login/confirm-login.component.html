@@ -1,20 +1,20 @@
 <button
-  *ngIf="!(loggedInUserIsAdmin | async)"
+  *ngIf="(loggedInUserIsAdmin | async) === true"
   mat-stroked-button
-  class="sign-in-button"
+  class="sign-in-button-admin"
   color="primary"
-  (click)="this.completeLoginProcess()"
+  (click)="this.completeLoginProcessAsAdmin()"
 >
   <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo" /> </span>
   <span> Continue as {{ this.username }} </span>
 </button>
 
 <button
-  *ngIf="loggedInUserIsAdmin | async"
+  *ngIf="(loggedInUserIsAdmin | async) === false"
   mat-stroked-button
-  class="sign-in-button-admin"
+  class="sign-in-button"
   color="primary"
-  (click)="this.completeLoginProcessAsAdmin()"
+  (click)="this.completeLoginProcess()"
 >
   <span class="logo"> <img class="github-logo" src="./assets/images/github-logo.png" alt="github-logo" /> </span>
   <span> Continue as {{ this.username }} </span>
