@@ -89,7 +89,7 @@ export class PhaseService {
 
   /**
    * Determines the github's level of repo permission required for the phase.
-   * Ref: https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/#available-scopes
+   * Ref: https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps#available-scopes
    */
   githubRepoPermissionLevel(): string {
     if (this.sessionData.openPhases.includes(Phase.phaseModeration)) {
