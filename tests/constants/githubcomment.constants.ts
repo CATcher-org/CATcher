@@ -27,13 +27,13 @@ export const TEAM_RESPONSE_MULTIPLE_DISAGREEMENT = {
     'Originally [`severity.High`]\n\n' +
     '- [ ] I disagree\n\n' +
     '**Reason for disagreement:** [replace this with your reason]\n\n' +
-    '-------------------\n\n' +
+    '<line-separator><hr>\n\n' +
     '## :question: Issue type\n\n' +
     'Team chose [`type.DocumentationBug`]\n' +
     'Originally [`type.FunctionalityBug`]\n\n' +
     '- [ ] I disagree\n\n' +
     '**Reason for disagreement:** [replace this with your reason]\n\n' +
-    '-------------------',
+    '<line-separator><hr>',
   created_at: '2021-06-29T17:15:11Z',
   id: 870774171,
   updated_at: '2021-06-29T17:15:11Z'
