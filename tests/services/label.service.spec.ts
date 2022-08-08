@@ -77,28 +77,24 @@ describe('LabelService: toLabel()', () => {
     labelService = null;
   });
 
-  it('should be severity.Low label', () => {
-    const label = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_LOW_SEVERITY);
+  it('should convert a GithubLabel object to a corresponding Label object', () => {
+    const lowSeverityLabel = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_LOW_SEVERITY);
 
-    expect(label.labelCategory).toBe(LabelConstant.SEVERITY);
-    expect(label.labelValue).toBe(LabelConstant.SEVERITY_LOW);
-    expect(label.labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
-  });
+    expect(lowSeverityLabel.labelCategory).toBe(LabelConstant.SEVERITY);
+    expect(lowSeverityLabel.labelValue).toBe(LabelConstant.SEVERITY_LOW);
+    expect(lowSeverityLabel.labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
 
-  it('should be type.FunctionalityBug label', () => {
-    const label = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_FUNCTIONALITY_BUG);
+    const functionalityBugLabel = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_FUNCTIONALITY_BUG);
 
-    expect(label.labelCategory).toBe(LabelConstant.TYPE);
-    expect(label.labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
-    expect(label.labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
-  });
+    expect(functionalityBugLabel.labelCategory).toBe(LabelConstant.TYPE);
+    expect(functionalityBugLabel.labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
+    expect(functionalityBugLabel.labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
 
-  it('should be tutorial.CS2103T-W12 label', () => {
-    const label = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_TUTORIAL_LABEL);
+    const tutoriallabel = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_TUTORIAL_LABEL);
 
-    expect(label.labelCategory).toBe('tutorial');
-    expect(label.labelValue).toBe('CS2103T-W12');
-    expect(label.labelColor).toBe('c2e0c6');
+    expect(tutoriallabel.labelCategory).toBe('tutorial');
+    expect(tutoriallabel.labelValue).toBe('CS2103T-W12');
+    expect(tutoriallabel.labelColor).toBe('c2e0c6');
   });
 });
 
