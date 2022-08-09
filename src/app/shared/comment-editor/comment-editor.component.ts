@@ -5,6 +5,7 @@ import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
+const os = require('os');
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
@@ -299,7 +300,10 @@ export class CommentEditorComponent implements OnInit {
   }
 
   private isControlKeyPressed(event) {
-    return event.ctrlKey || event.metaKey;
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey;
+    }
+    return event.ctrlKey;
   }
 
   private insertOrRemoveCharsFromHighlightedText(char) {
@@ -318,7 +322,7 @@ export class CommentEditorComponent implements OnInit {
         selectionStart,
         selectionEnd,
         currentText,
-        highlightedText,
+        highlightedTextTrimmed,
         char,
         spacesRemovedLeft,
         spacesRemovedRight
@@ -328,7 +332,7 @@ export class CommentEditorComponent implements OnInit {
         selectionStart,
         selectionEnd,
         currentText,
-        highlightedText,
+        highlightedTextTrimmed,
         char,
         spacesRemovedLeft,
         spacesRemovedRight
