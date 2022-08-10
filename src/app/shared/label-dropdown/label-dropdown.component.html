@@ -7,6 +7,7 @@
       (selectionChange)="setSelectedLabelColor($event.value)"
       [ngStyle]="this.labelService.setLabelStyle(this.selectedColor, 'inline-block')"
       required
+      disableOptionCentering
     >
       <mat-select-trigger>
         {{ dropdownControl.value }}
