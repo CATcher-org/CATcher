@@ -18,13 +18,10 @@
 
 .labelLine {
   display: grid;
-  grid-template-columns: auto 20%;
+  grid-template-columns: 3fr 1fr;
 }
 
 .labelInfo {
-  display: grid;
-  grid-template-columns: 20% auto;
-  align-items: center;
+  font-size: 1em;
   text-align: left;
-  grid-gap: 20%;
 }
