@@ -5,7 +5,6 @@ import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
-const os = require('os');
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
