@@ -33,7 +33,7 @@
         (click)="$event.stopPropagation()"
         style="display: inline; padding: 1px 2px"
       >
-        <mat-icon style="vertical-align: middle">arrow_right_alt</mat-icon>
+        <mat-icon class="arrow-right">arrow_right_alt</mat-icon>
       </span>
       <span
         *ngIf="issue.teamChosenType && issue.teamChosenType != issue.type"
@@ -60,7 +60,7 @@
         (click)="$event.stopPropagation()"
         style="display: inline; margin: 3px"
       >
-        <mat-icon style="vertical-align: middle">arrow_right_alt</mat-icon>
+        <mat-icon class="arrow-right">arrow_right_alt</mat-icon>
       </span>
       <span
         *ngIf="issue.teamChosenSeverity && issue.teamChosenSeverity != issue.severity"
