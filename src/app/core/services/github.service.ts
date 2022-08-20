@@ -11,7 +11,9 @@ import {
   FetchIssues,
   FetchIssuesByTeam,
   FetchIssuesByTeamQuery,
-  FetchIssuesQuery
+  FetchIssuesQuery,
+  FetchLabels,
+  FetchLabelsQuery
 } from '../../../../graphql/graphql-types';
 import { AppConfig } from '../../../environments/environment';
 import { getNumberOfPages } from '../../shared/lib/github-paginator-parser';
@@ -23,6 +25,7 @@ import { GithubComment } from '../models/github/github-comment.model';
 import { GithubGraphqlIssue } from '../models/github/github-graphql.issue';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
 import { GithubIssue } from '../models/github/github-issue.model';
+import { GithubLabel } from '../models/github/github-label.model';
 import { GithubResponse } from '../models/github/github-response.model';
 import { GithubRelease } from '../models/github/github.release';
 import { SessionData } from '../models/session.model';
@@ -256,20 +259,18 @@ export class GithubService {
     );
   }
 
-  fetchAllLabels(): Observable<Array<{}>> {
-    return from(
-      octokit.issues.listLabelsForRepo({
-        owner: ORG_NAME,
-        repo: REPO,
-        per_page: MAX_ITEMS_PER_PAGE,
-        headers: GithubService.IF_NONE_MATCH_EMPTY
-      })
-    ).pipe(
-      map((response) => {
-        return response['data'];
-      }),
-      catchError((err) => throwError('Failed to fetch labels.'))
+  /**
+   * Fetches all labels in the current repository.
+   */
+  fetchAllLabels(): Observable<Array<GithubLabel>> {
+    const githubLabels = this.fetchGraphqlList<FetchLabelsQuery, GithubLabel>(
+      FetchLabels,
+      { owner: ORG_NAME, name: REPO },
+      (result) => result.data.repository.labels.edges,
+      GithubLabel
     );
+
+    return githubLabels.pipe(catchError((err) => throwError('Failed to fetch labels.')));
   }
 
   /**
