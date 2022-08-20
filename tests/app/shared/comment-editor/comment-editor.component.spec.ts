@@ -43,22 +43,22 @@ describe('CommentEditor', () => {
     component.submitButtonText = TEST_SUBMIT_BUTTON_TEXT;
   });
 
-  describe('text box is rendered correctly', () => {
-    it('should render a text box', () => {
+  describe('text box', () => {
+    it('should render', () => {
       fixture.detectChanges();
 
       const textBoxDe: DebugElement = debugElement.query(By.css('textarea'));
       expect(textBoxDe).toBeTruthy();
     });
 
-    it('should initialize text box with an empty string if no initial description is provided', () => {
+    it('should contain an empty string if no initial description is provided', () => {
       fixture.detectChanges();
 
       const textBox: any = debugElement.query(By.css('textarea')).nativeElement;
       expect(textBox.value).toEqual('');
     });
 
-    it('should initialize text box with initial description if one is provided', () => {
+    it('should contain an initial description if one is provided', () => {
       component.initialDescription = TEST_INITIAL_DESCRIPTION;
       fixture.detectChanges();
 
