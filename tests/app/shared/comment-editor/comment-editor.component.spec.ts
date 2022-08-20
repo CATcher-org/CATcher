@@ -43,7 +43,7 @@ describe('CommentEditor', () => {
     component.submitButtonText = TEST_SUBMIT_BUTTON_TEXT;
   });
 
-  describe('text box', () => {
+  describe('text input box', () => {
     it('should render', () => {
       fixture.detectChanges();
 
