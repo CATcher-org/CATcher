@@ -2,7 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule, NgZone } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Apollo, ApolloModule } from 'apollo-angular';
 import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
@@ -98,7 +98,13 @@ import { SharedModule } from './shared/shared.module';
   entryComponents: [UserConfirmationComponent, SessionFixConfirmationComponent, LabelDefinitionPopupComponent]
 })
 export class AppModule {
-  constructor(private apollo: Apollo, private httpLink: HttpLink, private authService: AuthService) {
+  constructor(
+    private apollo: Apollo,
+    private httpLink: HttpLink,
+    private authService: AuthService,
+    private router: Router,
+    private errorHandlingService: ErrorHandlingService
+  ) {
     const URI = 'https://api.github.com/graphql';
     const basic = setContext(() => {
       return { headers: { Accept: 'charset=utf-8' } };
@@ -114,6 +120,11 @@ export class AppModule {
     this.apollo.create({
       link: link,
       cache: cache
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.errorHandlingService.clearError();
+      }
     });
   }
 }
