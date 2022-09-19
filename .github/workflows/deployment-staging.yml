@@ -1,20 +1,20 @@
-# The Purpose of this workflow file is to enable us to 
-# automatically deploy the app based on the latest 
+# The Purpose of this workflow file is to enable us to
+# automatically deploy the app based on the latest
 # commit on the staging repo.
 
 name: Staging Deployment
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   deploy_web:
-    if: ${{ github.repository == 'CATcher-org/CATcher-staging' }} 
+    if: ${{ github.repository == 'CATcher-org/CATcher-staging' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Deploy on Staging Website
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install
