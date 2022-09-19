@@ -1,10 +1,11 @@
 import { of } from 'rxjs';
+import { GithubLabel } from '../../src/app/core/models/github/github-label.model';
 import { Label } from '../../src/app/core/models/label.model';
 import { LABEL_DEFINITIONS, LabelService } from '../../src/app/core/services/label.service';
+import * as GithubLabelConstant from '../constants/githublabel.constants';
 import * as LabelConstant from '../constants/label.constants';
 
 let labelService: LabelService;
-let labelList: Label[];
 let githubService: any;
 
 describe('LabelService', () => {
@@ -67,34 +68,33 @@ describe('LabelService', () => {
   });
 });
 
-describe('LabelService: parseLabelData()', () => {
+describe('LabelService: toLabel()', () => {
   beforeAll(() => {
     labelService = new LabelService(null);
-    labelList = labelService.parseLabelData(LabelConstant.SOME_TEAM_RESPONSE_PHASE_LABELS);
   });
 
   afterAll(() => {
     labelService = null;
   });
 
-  it('should be response.Accepted label', () => {
-    expect(labelList[0].labelCategory).toBe(LabelConstant.RESPONSE);
-    expect(labelList[0].labelValue).toBe(LabelConstant.RESPONSE_ACCEPTED);
-    expect(labelList[0].labelColor).toBe(LabelConstant.COLOR_RESPONSE_ACCEPTED);
-  });
+  it('should convert a GithubLabel object to a corresponding Label object', () => {
+    const lowSeverityLabel = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_LOW_SEVERITY);
 
-  it('should be severity.Low', () => {
-    expect(labelList[1].labelCategory).toBe(LabelConstant.SEVERITY);
-    expect(labelList[1].labelValue).toBe(LabelConstant.SEVERITY_LOW);
-    expect(labelList[1].labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
-    expect(labelList[1].labelDefinition).toBe(LABEL_DEFINITIONS.severityLow);
-  });
+    expect(lowSeverityLabel.labelCategory).toBe(LabelConstant.SEVERITY);
+    expect(lowSeverityLabel.labelValue).toBe(LabelConstant.SEVERITY_LOW);
+    expect(lowSeverityLabel.labelColor).toBe(LabelConstant.COLOR_SEVERITY_LOW);
 
-  it('should be type.FunctionalityBug', () => {
-    expect(labelList[2].labelCategory).toBe(LabelConstant.TYPE);
-    expect(labelList[2].labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
-    expect(labelList[2].labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
-    expect(labelList[2].labelDefinition).toBe(LABEL_DEFINITIONS.typeFunctionalityBug);
+    const functionalityBugLabel = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_FUNCTIONALITY_BUG);
+
+    expect(functionalityBugLabel.labelCategory).toBe(LabelConstant.TYPE);
+    expect(functionalityBugLabel.labelValue).toBe(LabelConstant.TYPE_FUNCTIONALITY_BUG);
+    expect(functionalityBugLabel.labelColor).toBe(LabelConstant.COLOR_TYPE_FUNCTIONALITY_BUG);
+
+    const tutoriallabel = labelService.toLabel(GithubLabelConstant.GITHUB_LABEL_TUTORIAL_LABEL);
+
+    expect(tutoriallabel.labelCategory).toBe('tutorial');
+    expect(tutoriallabel.labelValue).toBe('CS2103T-W12');
+    expect(tutoriallabel.labelColor).toBe('c2e0c6');
   });
 });
 

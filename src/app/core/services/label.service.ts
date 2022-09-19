@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, pipe, UnaryFunction } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
+import { GithubLabel } from '../models/github/github-label.model';
 import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
 
@@ -157,6 +158,18 @@ export class LabelService {
   }
 
   /**
+   * Updates the required label to be in sync with the labels on the GitHub repository.
+   */
+  public static updateRequiredLabelColor(labelColor: string, label: Label) {
+    const labelArray = LabelService.allLabelArrays[label.labelCategory];
+
+    if (labelArray) {
+      const requiredLabel = labelArray.find((requiredLabel: Label) => requiredLabel.labelValue === label.labelValue);
+      requiredLabel.labelColor = labelColor;
+    }
+  }
+
+  /**
    * Returns an custom operator which helps to
    * synchronise the labels in our application
    * with the remote repository.
@@ -170,8 +183,9 @@ export class LabelService {
    */
   synchronizeRemoteLabels(needAllLabels: boolean): Observable<any> {
     return this.githubService.fetchAllLabels().pipe(
+      map((githubLabels) => githubLabels.map(this.toLabel)),
       map((response) => {
-        this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray(needAllLabels));
+        this.ensureRepoHasRequiredLabels(response, LabelService.getRequiredLabelsAsArray(needAllLabels));
         return response;
       })
     );
@@ -271,8 +285,8 @@ export class LabelService {
         if (nameMatchedLabels[0].equals(label)) {
           // the label exists exactly as expected -> do nothing
         } else {
-          // the label exists but the color does not match
-          this.githubService.updateLabel(label.getFormattedName(), label.labelColor);
+          // the label exists but the color does not match -> update the required label's color to the one in github
+          LabelService.updateRequiredLabelColor(nameMatchedLabels[0].labelColor, label);
         }
       } else {
         throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());
@@ -281,28 +295,20 @@ export class LabelService {
   }
 
   /**
-   * Parses label information and returns an array of Label objects.
-   * @param labels - Label Information from API.
+   * Converts a GithubLabel object to Label object.
    */
-  parseLabelData(labels: Array<{}>): Label[] {
-    const labelData: Label[] = [];
+  toLabel(githubLabel: GithubLabel) {
+    let labelCategory: string;
+    let labelValue: string;
 
-    for (const label of labels) {
-      let labelCategory: string;
-      let labelValue: string;
-      const containsDotRegex = /\./g;
+    const containsDotRegex = /\./g;
+    const rawName: string = String(githubLabel.name);
+    [labelCategory, labelValue] = containsDotRegex.test(rawName) ? githubLabel.name.split('.') : [undefined, rawName];
 
-      const rawName: string = String(label['name']);
+    const labelColor = githubLabel.color;
+    const labelDefinition: string = String(githubLabel.description);
 
-      [labelCategory, labelValue] = containsDotRegex.test(rawName) ? String(label['name']).split('.') : [undefined, rawName];
-
-      const labelColor: string = String(label['color']);
-
-      const labelDefinition: string = String(label['definition']);
-
-      labelData.push(new Label(labelCategory, labelValue, labelColor, labelDefinition));
-    }
-    return labelData;
+    return new Label(labelCategory, labelValue, labelColor, labelDefinition);
   }
 
   /**

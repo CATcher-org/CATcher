@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -14,6 +14,7 @@ const TIME_BETWEEN_UPLOADS_MS = 250;
 
 const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
 const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
+const ISSUE_BODY_SIZE_LIMIT = 40000;
 
 @Component({
   selector: 'app-comment-editor',
@@ -49,6 +50,7 @@ export class CommentEditorComponent implements OnInit {
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
+  maxLength = ISSUE_BODY_SIZE_LIMIT;
 
   formatFileUploadingButtonText(currentButtonText: string) {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
@@ -64,6 +66,7 @@ export class CommentEditorComponent implements OnInit {
     }
 
     this.initialSubmitButtonText = this.submitButtonText;
+    this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
   }
 
   onDragEnter(event) {
@@ -172,7 +175,11 @@ export class CommentEditorComponent implements OnInit {
     reader.onload = () => {
       this.uploadService.uploadFile(reader.result, filename).subscribe(
         (response) => {
-          this.insertUploadUrl(filename, response.data.content.download_url);
+          if (this.uploadService.isVideoFile(filename)) {
+            this.insertUploadUrlVideo(filename, response.data.content.download_url);
+          } else {
+            this.insertUploadUrl(filename, response.data.content.download_url);
+          }
         },
         (error) => {
           this.handleUploadError(error, insertedText);
@@ -251,11 +258,12 @@ export class CommentEditorComponent implements OnInit {
     return toInsert;
   }
 
-  private insertUploadUrl(filename: string, uploadUrl: string) {
+  private replacePlaceholderString(filename: string, insertedString: string) {
     const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const startIndexOfString = this.commentField.value.indexOf(`[Uploading ${filename}...]`);
-    const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
-    const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
+    const insertingString = `[Uploading ${filename}...]`;
+    const startIndexOfString = this.commentField.value.indexOf(insertingString);
+    const endIndexOfString = startIndexOfString + insertingString.length;
+    const endOfInsertedString = startIndexOfString + insertedString.length;
     const differenceInLength = endOfInsertedString - endIndexOfString;
     const newCursorPosition =
       cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString // within the range of uploading text
@@ -264,9 +272,19 @@ export class CommentEditorComponent implements OnInit {
         ? cursorPosition
         : cursorPosition + differenceInLength; // after the uploading text
 
-    this.commentField.setValue(this.commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
-
+    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
     this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
+  }
+
+  private insertUploadUrlVideo(filename: string, uploadUrl: string) {
+    const insertedString = `<i><video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video><br>video:${uploadUrl}</i>`;
+
+    this.replacePlaceholderString(filename, insertedString);
+  }
+
+  private insertUploadUrl(filename: string, uploadUrl: string) {
+    const insertedString = `[${filename}](${uploadUrl})`;
+    this.replacePlaceholderString(filename, insertedString);
   }
 
   private removeHighlightBorderStyle() {
