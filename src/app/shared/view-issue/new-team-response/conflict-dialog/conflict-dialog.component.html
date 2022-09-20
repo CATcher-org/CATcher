@@ -25,6 +25,7 @@
     <div *ngIf="data.type">
       <mat-divider></mat-divider>
       <span class="mat-title"> Type </span>
+      <!-- This component isn't used, but when it is we need to fix this method -->
       <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.type))">
         {{ data.type || '-' }}
       </p>
