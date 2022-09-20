@@ -4,7 +4,7 @@
       [ngClass]="dropdownTextColor"
       formControlName="{{ attributeName }}"
       placeholder="{{ this.labelService.getLabelTitle(attributeName) }}"
-      (selectionChange)="setSelectedLabelColor($event.value)"
+      (selectionChange)="setSelectedLabelColor(attributeName, $event.value)"
       [ngStyle]="this.labelService.setLabelStyle(this.selectedColor, 'inline-block')"
       required
       disableOptionCentering
