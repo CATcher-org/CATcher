@@ -33,6 +33,7 @@ describe('SessionSelectionComponent (unit tests)', () => {
   let nativeElement: HTMLElement;
   let profilesDebugEl: DebugElement;
   let profilesComponent: ProfilesComponent;
+  let profileEmitter: EventEmitter<Profile>;
 
   const logger = jasmine.createSpyObj('LoggingService', ['info']);
   const githubService = jasmine.createSpyObj('GithubService', ['storeOrganizationDetails']);
@@ -67,6 +68,7 @@ describe('SessionSelectionComponent (unit tests)', () => {
     nativeElement = debugElement.nativeElement;
     profilesDebugEl = debugElement.query(By.directive(ProfilesStubComponent));
     profilesComponent = profilesDebugEl.componentInstance;
+    profileEmitter = profilesComponent.selectedProfileEmitter;
     spyOn(component.sessionEmitter, 'emit');
   });
 
@@ -80,13 +82,13 @@ describe('SessionSelectionComponent (unit tests)', () => {
 
   describe('when profile is selected', () => {
     it('should emit the correct repo name', () => {
-      profilesComponent.selectProfile(testProfile);
+      profileEmitter.emit(testProfile);
       fixture.detectChanges();
       expect(component.sessionEmitter.emit).toHaveBeenCalledWith(testProfile.repoName);
     });
 
     it('should update the session input correctly', () => {
-      profilesComponent.selectProfile(testProfile);
+      profileEmitter.emit(testProfile);
       fixture.detectChanges();
       const sessionInput = nativeElement.querySelector('input[formcontrolname="session"]');
 
