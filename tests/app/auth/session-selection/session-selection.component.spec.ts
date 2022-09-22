@@ -67,6 +67,7 @@ describe('SessionSelectionComponent (unit tests)', () => {
     nativeElement = debugElement.nativeElement;
     profilesDebugEl = debugElement.query(By.directive(ProfilesStubComponent));
     profilesComponent = profilesDebugEl.componentInstance;
+    spyOn(component.sessionEmitter, 'emit');
   });
 
   it('renders without errors', () => {
@@ -77,16 +78,23 @@ describe('SessionSelectionComponent (unit tests)', () => {
     expect(profilesComponent).toBeTruthy();
   });
 
-  it('should update the session input correctly when profile is selected', () => {
-    profilesComponent.selectProfile(testProfile);
-    fixture.detectChanges();
+  describe('when profile is selected', () => {
+    it('should emit the correct repo name', () => {
+      profilesComponent.selectProfile(testProfile);
+      fixture.detectChanges();
+      expect(component.sessionEmitter.emit).toHaveBeenCalledWith(testProfile.repoName);
+    });
 
-    const sessionInput = nativeElement.querySelector('input[formcontrolname="session"]');
+    it('should update the session input correctly', () => {
+      profilesComponent.selectProfile(testProfile);
+      fixture.detectChanges();
+      const sessionInput = nativeElement.querySelector('input[formcontrolname="session"]');
 
-    if (sessionInput == null) {
-      fail('sessionFieldEl should not be null');
-      return;
-    }
-    expect((<HTMLInputElement>sessionInput).value).toBe(testProfile.repoName);
+      if (sessionInput == null) {
+        fail('sessionFieldEl should not be null');
+        return;
+      }
+      expect((<HTMLInputElement>sessionInput).value).toBe(testProfile.repoName);
+    });
   });
 });
