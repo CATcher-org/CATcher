@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, forkJoin, Observable, of, Subscription, throwError, timer } from 'rxjs';
-import { catchError, exhaustMap, finalize, flatMap, map, tap } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
 import { IssueComment } from '../models/comment.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
@@ -104,19 +104,11 @@ export class IssueService {
   }
 
   getIssue(id: number): Observable<Issue> {
-    let issueObservable: Observable<Issue>;
     if (this.issues === undefined) {
-      issueObservable = this.getLatestIssue(id);
+      return this.getLatestIssue(id);
     } else {
-      issueObservable = of(this.issues[id]);
+      return of(this.issues[id]);
     }
-    return issueObservable.pipe(
-      tap((issue) => {
-        if (issue.parseError) {
-          this.logger.error(issue.parseError);
-        }
-      })
-    );
   }
 
   getLatestIssue(id: number): Observable<Issue> {
@@ -464,18 +456,29 @@ export class IssueService {
   }
 
   private createIssueModel(githubIssue: GithubIssue): Issue {
+    let issue: Issue;
+
     switch (this.phaseService.currentPhase) {
       case Phase.phaseBugReporting:
-        return Issue.createPhaseBugReportingIssue(githubIssue);
+        issue = Issue.createPhaseBugReportingIssue(githubIssue);
+        break;
       case Phase.phaseTeamResponse:
-        return Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        issue = Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        break;
       case Phase.phaseTesterResponse:
-        return Issue.createPhaseTesterResponseIssue(githubIssue);
+        issue = Issue.createPhaseTesterResponseIssue(githubIssue);
+        break;
       case Phase.phaseModeration:
-        return Issue.createPhaseModerationIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        issue = Issue.createPhaseModerationIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        break;
       default:
         return;
     }
+
+    if (issue.parseError) {
+      this.logger.error(issue.parseError);
+    }
+    return issue;
   }
 
   setIssueTeamFilter(filterValue: string) {
