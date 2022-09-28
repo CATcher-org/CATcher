@@ -1,6 +1,6 @@
-# The purpose of this workflow file is to 
+# The purpose of this workflow file is to
 # deploy the app and upload the
-# release assets for the four platforms 
+# release assets for the four platforms
 # (browser, Linux, Windows, MacOS) automatically
 
 name: Version Deployment
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -62,7 +62,7 @@ jobs:
     needs: draft_release
     strategy:
       matrix:
-        node-version: [ 12.x ]
+        node-version: [14.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -89,7 +89,7 @@ jobs:
     needs: draft_release
     strategy:
       matrix:
-        node-version: [ 12.x ]
+        node-version: [14.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -116,7 +116,7 @@ jobs:
     needs: draft_release
     strategy:
       matrix:
-        node-version: [ 12.x ]
+        node-version: [14.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
