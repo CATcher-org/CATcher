@@ -65,9 +65,9 @@ function replacePlaceholderString(
   commentField: AbstractControl,
   commentTextArea: ElementRef<HTMLTextAreaElement>
 ) {
-  const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
+  const cursorPosition = commentTextArea.nativeElement.selectionEnd;
   const insertingString = `[Uploading ${filename}...]`;
-  const startIndexOfString = this.commentField.value.indexOf(insertingString);
+  const startIndexOfString = commentField.value.indexOf(insertingString);
   const endIndexOfString = startIndexOfString + insertingString.length;
   const endOfInsertedString = startIndexOfString + insertedString.length;
   const differenceInLength = endOfInsertedString - endIndexOfString;
@@ -78,6 +78,6 @@ function replacePlaceholderString(
       ? cursorPosition
       : cursorPosition + differenceInLength; // after the uploading text
 
-  commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
+  commentField.setValue(commentField.value.replace(insertingString, insertedString));
   commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
 }
