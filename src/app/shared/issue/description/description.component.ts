@@ -118,6 +118,17 @@ export class DescriptionComponent implements OnInit {
     });
   }
 
+  openCancelDialogIfModified(): void {
+    const issueDescriptionInitialValue = this.issue.description || '';
+    if (this.issueDescriptionForm.get('description').value !== issueDescriptionInitialValue) {
+      // if the description has been edited, request user to confirm the cancellation
+      this.openCancelDialog();
+    } else {
+      // if no changes have been made, simply cancel edit mode without getting confirmation
+      this.cancelEditMode();
+    }
+  }
+
   openCancelDialog(): void {
     const dialogRef = this.dialogService.openUserConfirmationModal(
       this.cancelEditModalMessages,
