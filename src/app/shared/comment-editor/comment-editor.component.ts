@@ -16,6 +16,8 @@ const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB t
 const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
 const ISSUE_BODY_SIZE_LIMIT = 40000;
 
+const SPACE = ' ';
+
 @Component({
   selector: 'app-comment-editor',
   templateUrl: './comment-editor.component.html',
@@ -47,7 +49,6 @@ export class CommentEditorComponent implements OnInit {
   @ViewChild('dropArea', { static: true }) dropArea;
   @ViewChild('commentTextArea', { static: true }) commentTextArea;
   @ViewChild('markdownArea', { static: false }) markdownArea;
-
   dragActiveCounter = 0;
   uploadErrorMessage: string;
   maxLength = ISSUE_BODY_SIZE_LIMIT;
@@ -67,6 +68,23 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
+  }
+
+  onKeyPress(event) {
+    if (this.isControlKeyPressed(event)) {
+      switch (event.key) {
+        case 'b':
+          event.preventDefault();
+          this.insertOrRemoveCharsFromHighlightedText('**');
+          break;
+        case 'i':
+          event.preventDefault();
+          this.insertOrRemoveCharsFromHighlightedText('_');
+          break;
+        default:
+          return;
+      }
+    }
   }
 
   onDragEnter(event) {
@@ -234,5 +252,112 @@ export class CommentEditorComponent implements OnInit {
       this.dropArea.nativeElement.classList.remove('highlight-drag-box');
       this.dropArea.nativeElement.classList.remove('highlight-drag-box-disabled');
     }
+  }
+
+  private isControlKeyPressed(event) {
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey;
+    }
+    return event.ctrlKey;
+  }
+
+  private insertOrRemoveCharsFromHighlightedText(char) {
+    const selectionStart = this.commentTextArea.nativeElement.selectionStart;
+    const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
+    const currentText = this.commentField.value;
+    const highlightedText = currentText.slice(selectionStart, selectionEnd);
+    const highlightedTextTrimmed = highlightedText.trim();
+    const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
+    const spacesRemovedRight = highlightedText.trimLeft().length - highlightedTextTrimmed.length;
+
+    if (this.hasCharsBeforeAndAfterHighlight(selectionStart, selectionEnd, currentText, char)) {
+      this.removeCharsBeforeAndAfterHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
+    } else if (this.hasCharsInTrimmedHighlight(highlightedText, char)) {
+      this.removeCharsFromHighlightedText(
+        selectionStart,
+        selectionEnd,
+        currentText,
+        highlightedTextTrimmed,
+        char,
+        spacesRemovedLeft,
+        spacesRemovedRight
+      );
+    } else {
+      this.insertCharsToHighlightedText(
+        selectionStart,
+        selectionEnd,
+        currentText,
+        highlightedTextTrimmed,
+        char,
+        spacesRemovedLeft,
+        spacesRemovedRight
+      );
+    }
+  }
+
+  private hasCharsBeforeAndAfterHighlight(selectionStart, selectionEnd, currentText, char) {
+    const hasInsertedCharBefore = currentText.slice(selectionStart - char.length, selectionStart) === char;
+    const hasInsertedCharAfter = currentText.slice(selectionEnd, selectionEnd + char.length) === char;
+    return hasInsertedCharBefore && hasInsertedCharAfter;
+  }
+
+  private hasCharsInTrimmedHighlight(highlightedText, char) {
+    const highlightedTextTrimmed = highlightedText.trim();
+    const hasCharAtFront = highlightedTextTrimmed.slice(0, char.length) === char;
+    const hasCharAtEnd = highlightedTextTrimmed.slice(-char.length) === char;
+    return hasCharAtFront && hasCharAtEnd;
+  }
+
+  private removeCharsBeforeAndAfterHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart - char.length) + highlightedText + currentText.slice(selectionEnd + char.length)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(selectionStart - char.length, selectionEnd - char.length);
+  }
+
+  private removeCharsFromHighlightedText(
+    selectionStart,
+    selectionEnd,
+    currentText,
+    highlightedTextTrimmed,
+    char,
+    spacesRemovedLeft,
+    spacesRemovedRight
+  ) {
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart) +
+        SPACE.repeat(spacesRemovedLeft) +
+        highlightedTextTrimmed.slice(char.length, -char.length) +
+        SPACE.repeat(spacesRemovedRight) +
+        currentText.slice(selectionEnd)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(
+      selectionStart + spacesRemovedLeft,
+      selectionEnd - 2 * char.length - spacesRemovedRight
+    );
+  }
+
+  private insertCharsToHighlightedText(
+    selectionStart,
+    selectionEnd,
+    currentText,
+    highlightedTextTrimmed,
+    char,
+    spacesRemovedLeft,
+    spacesRemovedRight
+  ) {
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart) +
+        SPACE.repeat(spacesRemovedLeft) +
+        char +
+        highlightedTextTrimmed +
+        char +
+        SPACE.repeat(spacesRemovedRight) +
+        currentText.slice(selectionEnd)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(
+      selectionStart + char.length + spacesRemovedLeft,
+      selectionEnd + char.length - spacesRemovedRight
+    );
   }
 }
