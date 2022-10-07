@@ -13,6 +13,7 @@
           <mat-label></mat-label>
           <textarea
             (paste)="onPaste($event)"
+            (keydown)="onKeyPress($event)"
             #commentTextArea
             (dragover)="disableCaretMovement($event)"
             id="{{ this.id }}"
