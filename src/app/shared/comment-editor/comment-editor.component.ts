@@ -49,7 +49,7 @@ export class CommentEditorComponent implements OnInit {
   @ViewChild('dropArea', { static: true }) dropArea;
   @ViewChild('commentTextArea', { static: true }) commentTextArea;
   @ViewChild('markdownArea') markdownArea;
-  
+
   dragActiveCounter = 0;
   uploadErrorMessage: string;
   maxLength = ISSUE_BODY_SIZE_LIMIT;
