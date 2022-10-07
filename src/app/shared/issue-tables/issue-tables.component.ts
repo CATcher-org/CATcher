@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSnackBar, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSort } from '@angular/material/sort';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { DialogService } from '../../core/services/dialog.service';

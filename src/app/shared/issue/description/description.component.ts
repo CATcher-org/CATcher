@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
 import { finalize, flatMap, map } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
