@@ -38,16 +38,38 @@ export function insertUploadingText(
   return toInsert;
 }
 
+export function insertUploadUrlVideo(
+  filename: string,
+  uploadUrl: string,
+  commentField: AbstractControl,
+  commentTextArea: ElementRef<HTMLTextAreaElement>
+) {
+  const insertedString = `<i><video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video><br>video:${uploadUrl}</i>`;
+
+  replacePlaceholderString(filename, insertedString, commentField, commentTextArea);
+}
+
 export function insertUploadUrl(
   filename: string,
   uploadUrl: string,
   commentField: AbstractControl,
   commentTextArea: ElementRef<HTMLTextAreaElement>
 ) {
+  const insertedString = `[${filename}](${uploadUrl})`;
+  replacePlaceholderString(filename, insertedString, commentField, commentTextArea);
+}
+
+function replacePlaceholderString(
+  filename: string,
+  insertedString: string,
+  commentField: AbstractControl,
+  commentTextArea: ElementRef<HTMLTextAreaElement>
+) {
   const cursorPosition = commentTextArea.nativeElement.selectionEnd;
-  const startIndexOfString = commentField.value.indexOf(`[Uploading ${filename}...]`);
-  const endIndexOfString = startIndexOfString + `[Uploading ${filename}...]`.length;
-  const endOfInsertedString = startIndexOfString + `[${filename}](${uploadUrl})`.length;
+  const insertingString = `[Uploading ${filename}...]`;
+  const startIndexOfString = commentField.value.indexOf(insertingString);
+  const endIndexOfString = startIndexOfString + insertingString.length;
+  const endOfInsertedString = startIndexOfString + insertedString.length;
   const differenceInLength = endOfInsertedString - endIndexOfString;
   const newCursorPosition =
     cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString // within the range of uploading text
@@ -56,7 +78,6 @@ export function insertUploadUrl(
       ? cursorPosition
       : cursorPosition + differenceInLength; // after the uploading text
 
-  commentField.setValue(commentField.value.replace(`[Uploading ${filename}...]`, `[${filename}](${uploadUrl})`));
-
+  commentField.setValue(commentField.value.replace(insertingString, insertedString));
   commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
 }

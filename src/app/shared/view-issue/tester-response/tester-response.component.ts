@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
 import { finalize, flatMap, map } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
@@ -30,7 +30,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
-  @ViewChild(CommentEditorComponent, { static: false }) commentEditor: CommentEditorComponent;
+  @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
   private readonly responseRadioIdentifier = 'response-radio';
   private readonly responseTextIdentifier = 'tester-response';
