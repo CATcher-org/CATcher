@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, throwError } from 'rxjs';
 import { finalize, first, flatMap, map, takeUntil } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';

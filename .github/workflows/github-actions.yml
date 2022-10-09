@@ -6,65 +6,65 @@ name: Setup Builds and Tests
 
 on:
   push:
-    branches: [ master, release ]
+    branches: [master, release]
   pull_request:
-    branches: [ master, release ]
+    branches: [master, release]
 
 jobs:
   linux-setup-and-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm update
-    - run: npm run electron:linux
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: npm run lint
-    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
-    - run: npm run webdriver-manager update -- --gecko false --standalone false --versions.chrome $(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$(google-chrome --version | grep -iEo "[0-9]{1,3}" | head -n1))
-    - run: npm run webdriver-manager update -- --chrome false --standalone false
-    - run: npm run actions:e2e
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm update
+      - run: npm run electron:linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run lint
+      - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+      - run: npm run webdriver-manager update -- --gecko false --standalone false --versions.chrome $(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$(google-chrome --version | grep -iEo "[0-9]{1,3}" | head -n1))
+      - run: npm run webdriver-manager update -- --chrome false --standalone false
+      - run: npm run actions:e2e
 
   macos-setup-and-tests:
     runs-on: macos-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm update
-    - run: npm run electron:mac
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: npm run lint
-    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js" || npm test -- "--karma-config=./tests/karma.ci.conf.js"
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm update
+      - run: npm run electron:mac
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run lint
+      - run: npm test -- "--karma-config=./tests/karma.ci.conf.js" || npm test -- "--karma-config=./tests/karma.ci.conf.js"
     # retry tests once, in case they timed out on Mac OS
   windows-setup-and-tests:
     runs-on: windows-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm update
-    - run: npm run electron:windows
-    - run: npm run lint
-    - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm update
+      - run: npm run electron:windows
+      - run: npm run lint
+      - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
