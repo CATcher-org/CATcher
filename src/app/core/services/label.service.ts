@@ -72,7 +72,7 @@ const REJECTED_DEFINITION =
   'was mistaken in some other way.</p>';
 const CANNOT_REPRODUCE_DEFINITION = '<p>You are unable to reproduce the behavior reported in the bug after multiple tries.</p>';
 const ISSUE_UNCLEAR_DEFINITION = '<p>The issue description is not clear.</p>';
-const UNDEFINED_DEFINITION = undefined;
+const UNDEFINED_DEFINITION = null;
 
 export const LABEL_DEFINITIONS = {
   severityVeryLow: VERY_LOW_DEFINITION,
