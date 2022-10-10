@@ -54,3 +54,20 @@
   column-gap: 10px;
   min-width: 100%;
 }
+
+.mat-icon.arrow-right {
+  cursor: default;
+  vertical-align: middle;
+}
+
+.mat-cell.mat-column-type {
+  flex-wrap: wrap;
+}
+
+.mat-cell.mat-column-actions > button {
+  min-width: 32px;
+}
+
+.mat-column-type {
+  flex-basis: 12px;
+}

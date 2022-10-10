@@ -11,7 +11,7 @@ import { Profile } from '../../models/profile.model';
 import { SessionData } from '../../models/session.model';
 import { LabelService } from '../label.service';
 
-const Octokit = require('@octokit/rest');
+const { Octokit } = require('@octokit/rest');
 
 let ORG_NAME = '';
 let MOD_ORG = '';

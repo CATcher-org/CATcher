@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of, pipe, UnaryFunction } from 'rxjs';
 import { flatMap, tap } from 'rxjs/operators';
 import { Phase } from '../models/phase.model';

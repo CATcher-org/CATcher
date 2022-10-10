@@ -1,29 +1,29 @@
-# The Purpose of this workflow file is to enable us to automatically 
+# The Purpose of this workflow file is to enable us to automatically
 # synchronize the staging repository with the latest commit
-# of CATcher-org/CATcher. 
+# of CATcher-org/CATcher.
 
 name: Fetch Upstream Master to Staging
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   fetch_from_upstream:
-    if: ${{ github.repository == 'CATcher-org/CATcher' }} 
+    if: ${{ github.repository == 'CATcher-org/CATcher' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
-    steps: 
-      - name: Checkout Upstream 
+        node-version: [14.x]
+    steps:
+      - name: Checkout Upstream
         uses: actions/checkout@v2
         with:
           repository: CATcher-org/CATcher-staging
-          ref: master 
+          ref: master
           token: ${{ secrets.STAGING_TOKEN }}
-          fetch-depth: 0 
-      - name: Merge Upstream 
+          fetch-depth: 0
+      - name: Merge Upstream
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com

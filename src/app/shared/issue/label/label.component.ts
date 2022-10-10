@@ -5,7 +5,7 @@ import { Issue } from '../../../core/models/issue.model';
 import { Label } from '../../../core/models/label.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
-import { LabelService } from '../../../core/services/label.service';
+import { LabelCategory, LabelService } from '../../../core/services/label.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 
@@ -20,7 +20,7 @@ export class LabelComponent implements OnInit, OnChanges {
   labelDefinition?: string;
 
   @Input() issue: Issue;
-  @Input() attributeName: string;
+  @Input() attributeName: LabelCategory;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
@@ -40,7 +40,7 @@ export class LabelComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     // Color will change when @Input issue changes
-    this.labelColor = this.labelService.getColorOfLabel(this.issue[this.attributeName]);
+    this.labelColor = this.labelService.getColorOfLabel(this.attributeName, this.issue[this.attributeName]);
   }
 
   updateLabel(value: string) {
@@ -49,7 +49,7 @@ export class LabelComponent implements OnInit, OnChanges {
     this.issueService.updateIssue(newIssue).subscribe(
       (updatedIssue: Issue) => {
         this.issueUpdated.emit(updatedIssue);
-        this.labelColor = this.labelService.getColorOfLabel(updatedIssue[this.attributeName]);
+        this.labelColor = this.labelService.getColorOfLabel(this.attributeName, updatedIssue[this.attributeName]);
       },
       (error) => {
         this.errorHandlingService.handleError(error);

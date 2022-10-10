@@ -43,6 +43,7 @@ export class TitleComponent implements OnInit {
 
   changeToEditMode() {
     this.isEditing = true;
+
     this.issueTitleForm.setValue({
       title: this.issue.title || ''
     });
@@ -77,6 +78,17 @@ export class TitleComponent implements OnInit {
           this.errorHandlingService.handleError(error);
         }
       );
+  }
+
+  openCancelDialogIfModified(): void {
+    const issueTitleInitialValue = this.issue.title || '';
+    if (this.issueTitleForm.get('title').value !== issueTitleInitialValue) {
+      // if the title has been edited, request user to confirm the cancellation
+      this.openCancelDialog();
+    } else {
+      // if no changes have been made, simply cancel edit mode without getting confirmation
+      this.cancelEditMode();
+    }
   }
 
   openCancelDialog(): void {
