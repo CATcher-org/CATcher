@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { LabelDefinitionPopupComponent } from '../../shared/label-definition-popup/label-definition-popup.component';
 import { UserConfirmationComponent } from '../guards/user-confirmation/user-confirmation.component';
 
