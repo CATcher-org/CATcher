@@ -36,7 +36,7 @@ describe('CommentEditor', () => {
     });
     const id = 'description';
 
-    // manually inject inputs into the component
+    // manually inject inputs into component
     component.commentField = commentField;
     component.commentForm = commentForm;
     component.id = id;
