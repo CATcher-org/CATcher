@@ -1,4 +1,4 @@
-import { MatSort } from '@angular/material';
+import { MatSort } from '@angular/material/sort';
 import { Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER } from '../../core/models/issue.model';
 
 export function getSortedData(sort: MatSort, data: Issue[]): Issue[] {

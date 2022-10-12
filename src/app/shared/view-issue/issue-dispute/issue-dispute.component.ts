@@ -28,7 +28,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
-  @ViewChild(CommentEditorComponent, { static: false }) commentEditor: CommentEditorComponent;
+  @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
   constructor(
     private formBuilder: FormBuilder,
