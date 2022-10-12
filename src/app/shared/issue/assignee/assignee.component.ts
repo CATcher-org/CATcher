@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatSelect } from '@angular/material';
+import { MatSelect } from '@angular/material/select';
 import { first } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { Team } from '../../../core/models/team.model';

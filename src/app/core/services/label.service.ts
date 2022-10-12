@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, pipe, UnaryFunction } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
+import { GithubLabel } from '../models/github/github-label.model';
 import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
 
@@ -117,6 +118,8 @@ const REQUIRED_LABELS = {
   }
 };
 
+export type LabelCategory = keyof typeof REQUIRED_LABELS;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -131,6 +134,7 @@ export class LabelService {
   private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
   private static statusLabels: Label[] = Object.values(REQUIRED_LABELS.status);
   private static otherLabels: Label[] = Object.values(REQUIRED_LABELS.others);
+
   private static allLabelArrays = {
     severity: LabelService.severityLabels,
     type: LabelService.typeLabels,
@@ -179,8 +183,9 @@ export class LabelService {
    */
   synchronizeRemoteLabels(needAllLabels: boolean): Observable<any> {
     return this.githubService.fetchAllLabels().pipe(
+      map((githubLabels) => githubLabels.map(this.toLabel)),
       map((response) => {
-        this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray(needAllLabels));
+        this.ensureRepoHasRequiredLabels(response, LabelService.getRequiredLabelsAsArray(needAllLabels));
         return response;
       })
     );
@@ -223,13 +228,12 @@ export class LabelService {
    * all available labels.
    * @param labelValue: the label's value (e.g Low / Medium / High / ...)
    */
-  getColorOfLabel(labelValue: string): string {
-    // TODO: Rewrite function - labelValue insufficient to differentiate between labels. Should use `labelCategory.labelValue` format.
-    if (labelValue === '') {
+  getColorOfLabel(labelCategory: LabelCategory, labelValue: string): string {
+    if (labelValue === '' || !LabelService.allLabelArrays[labelCategory]) {
       return COLOR_WHITE;
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find((label) => label.labelValue === labelValue);
+    const existingLabel = LabelService.allLabelArrays[labelCategory].find((label: Label) => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
       return COLOR_WHITE;
@@ -291,28 +295,20 @@ export class LabelService {
   }
 
   /**
-   * Parses label information and returns an array of Label objects.
-   * @param labels - Label Information from API.
+   * Converts a GithubLabel object to Label object.
    */
-  parseLabelData(labels: Array<{}>): Label[] {
-    const labelData: Label[] = [];
+  toLabel(githubLabel: GithubLabel) {
+    let labelCategory: string;
+    let labelValue: string;
 
-    for (const label of labels) {
-      let labelCategory: string;
-      let labelValue: string;
-      const containsDotRegex = /\./g;
+    const containsDotRegex = /\./g;
+    const rawName: string = String(githubLabel.name);
+    [labelCategory, labelValue] = containsDotRegex.test(rawName) ? githubLabel.name.split('.') : [undefined, rawName];
 
-      const rawName: string = String(label['name']);
+    const labelColor = githubLabel.color;
+    const labelDefinition: string = String(githubLabel.description);
 
-      [labelCategory, labelValue] = containsDotRegex.test(rawName) ? String(label['name']).split('.') : [undefined, rawName];
-
-      const labelColor: string = String(label['color']);
-
-      const labelDefinition: string = String(label['definition']);
-
-      labelData.push(new Label(labelCategory, labelValue, labelColor, labelDefinition));
-    }
-    return labelData;
+    return new Label(labelCategory, labelValue, labelColor, labelDefinition);
   }
 
   /**
