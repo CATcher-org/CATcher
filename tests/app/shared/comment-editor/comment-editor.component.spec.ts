@@ -37,7 +37,6 @@ describe('CommentEditor', () => {
     });
     const id = 'description';
 
-
     // manually inject inputs into the component
     component.commentField = commentField;
     component.commentForm = commentForm;
@@ -163,6 +162,7 @@ describe('CommentEditor', () => {
         });
       });
     }
+  });
 
   describe('text input box', () => {
     it('should render', () => {
