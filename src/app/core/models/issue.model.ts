@@ -52,6 +52,7 @@ export class Issue {
   /** Fields for error messages during parsing of Github's issue description */
   teamResponseError: boolean;
   testerResponseError: boolean;
+  parseError: string;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -136,6 +137,7 @@ export class Issue {
     issue.assignees = githubIssue.assignees.map((assignee) => assignee.login);
 
     issue.teamResponseError = template.parseFailure;
+    issue.parseError = template.parseError;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse;
     issue.duplicateOf = template.duplicateOf;
@@ -151,6 +153,7 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.testerResponseError = testerResponseTemplate.parseFailure && teamAcceptedTemplate.parseFailure;
+    issue.parseError = testerResponseTemplate.parseError;
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
     issue.teamResponse = testerResponseTemplate.teamResponse;

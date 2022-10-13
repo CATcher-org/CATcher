@@ -37,6 +37,7 @@ describe('CommentEditor', () => {
     });
     const id = 'description';
 
+
     // manually inject inputs into the component
     component.commentField = commentField;
     component.commentForm = commentForm;
@@ -162,5 +163,40 @@ describe('CommentEditor', () => {
         });
       });
     }
+
+  describe('text input box', () => {
+    it('should render', () => {
+      fixture.detectChanges();
+
+      const textBoxDe: DebugElement = debugElement.query(By.css('textarea'));
+      expect(textBoxDe).toBeTruthy();
+    });
+
+    it('should contain an empty string if no initial description is provided', () => {
+      fixture.detectChanges();
+
+      const textBox: any = debugElement.query(By.css('textarea')).nativeElement;
+      expect(textBox.value).toEqual('');
+    });
+
+    it('should contain an initial description if one is provided', () => {
+      component.initialDescription = TEST_INITIAL_DESCRIPTION;
+      fixture.detectChanges();
+
+      const textBox: any = debugElement.query(By.css('textarea')).nativeElement;
+      expect(textBox.value).toEqual(TEST_INITIAL_DESCRIPTION);
+    });
+
+    it('should allow users to input text', async () => {
+      fixture.detectChanges();
+
+      const textBox: any = debugElement.query(By.css('textarea')).nativeElement;
+      textBox.value = '123';
+      textBox.dispatchEvent(new Event('input'));
+
+      fixture.whenStable().then(() => {
+        expect(textBox.value).toEqual('123');
+      });
+    });
   });
 });
