@@ -3,6 +3,7 @@ import { GithubComment } from '../github/github-comment.model';
 export abstract class Template {
   parser;
   parseResult;
+  parseError: string;
   parseFailure: boolean;
 
   protected constructor(parser) {
@@ -14,9 +15,10 @@ export abstract class Template {
    */
   findConformingComment(githubComments: GithubComment[]): GithubComment {
     let templateConformingComment: GithubComment;
+    let parsed: any;
 
     for (const comment of githubComments) {
-      const parsed = this.parser.run(comment.body);
+      parsed = this.parser.run(comment.body);
       if (!parsed.isError) {
         this.parseResult = parsed.result;
         templateConformingComment = comment;
@@ -26,6 +28,10 @@ export abstract class Template {
 
     if (templateConformingComment === undefined) {
       this.parseFailure = true;
+
+      if (parsed) {
+        this.parseError = parsed.error;
+      }
     }
     return templateConformingComment;
   }
