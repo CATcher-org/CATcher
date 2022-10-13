@@ -63,7 +63,7 @@ export class DataService {
   }
 
   /**
-   * Returns a list of usernames of all students in the session.
+   * Returns a list of usernames of all students in the session
    */
   getAllStudentsInSession(): Observable<Array<string>> {
     return this.getDataFile().pipe(map((jsonData: {}) => Object.keys(jsonData[DataService.STUDENTS_ALLOCATION])));
