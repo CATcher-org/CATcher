@@ -456,18 +456,29 @@ export class IssueService {
   }
 
   private createIssueModel(githubIssue: GithubIssue): Issue {
+    let issue: Issue;
+
     switch (this.phaseService.currentPhase) {
       case Phase.phaseBugReporting:
-        return Issue.createPhaseBugReportingIssue(githubIssue);
+        issue = Issue.createPhaseBugReportingIssue(githubIssue);
+        break;
       case Phase.phaseTeamResponse:
-        return Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        issue = Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        break;
       case Phase.phaseTesterResponse:
-        return Issue.createPhaseTesterResponseIssue(githubIssue);
+        issue = Issue.createPhaseTesterResponseIssue(githubIssue);
+        break;
       case Phase.phaseModeration:
-        return Issue.createPhaseModerationIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        issue = Issue.createPhaseModerationIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        break;
       default:
         return;
     }
+
+    if (issue.parseError) {
+      this.logger.error(issue.parseError);
+    }
+    return issue;
   }
 
   setIssueTeamFilter(filterValue: string) {
