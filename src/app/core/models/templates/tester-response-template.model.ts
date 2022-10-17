@@ -5,7 +5,7 @@ import { buildTeamResponseSectionParser } from './section-parsers/common-parsers
 import { TesterResponseSectionParser } from './section-parsers/tester-response-section-parser.model';
 import { Template } from './template.model';
 
-const { coroutine, many1, str, whitespace } = require('arcsecond');
+const { coroutine, many1, str, optionalWhitespace, possibly, whitespace } = require('arcsecond');
 
 interface TesterResponseParseResult {
   teamResponse: string;
