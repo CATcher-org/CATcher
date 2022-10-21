@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { MatProgressBarModule } from '@angular/material';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CommentEditorModule } from '../comment-editor/comment-editor.module';
