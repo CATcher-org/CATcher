@@ -147,7 +147,8 @@ export class IssueService {
         }),
         catchError((err) => {
           this.logger.error(err); // Log full details of error first
-          return throwError(this.getIssueCustomErrorMessage(err)); // More readable error message
+          const hasNoResponseData = !err.response || !err.response.data;
+          return throwError(hasNoResponseData ? err : this.getIssueCustomErrorMessage(err)); // More readable error message
         })
       );
   }
