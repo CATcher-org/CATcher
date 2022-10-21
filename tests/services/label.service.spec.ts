@@ -148,11 +148,11 @@ describe('LabelService: getColorOfLabel()', () => {
   });
 
   it('should be correct label color for Severity.Low', () => {
-    expect(labelService.getColorOfLabel(LabelConstant.SEVERITY_LOW)).toEqual(LabelConstant.COLOR_SEVERITY_LOW);
+    expect(labelService.getColorOfLabel('severity', LabelConstant.SEVERITY_LOW)).toEqual(LabelConstant.COLOR_SEVERITY_LOW);
   });
 
   it('should be white color for invalid inputs', () => {
-    expect(labelService.getColorOfLabel(null)).toEqual(LabelConstant.COLOR_WHITE.toLowerCase());
+    expect(labelService.getColorOfLabel('others', null)).toEqual(LabelConstant.COLOR_WHITE.toLowerCase());
   });
 });
 

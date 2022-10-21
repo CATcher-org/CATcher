@@ -118,6 +118,8 @@ const REQUIRED_LABELS = {
   }
 };
 
+export type LabelCategory = keyof typeof REQUIRED_LABELS;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -132,6 +134,7 @@ export class LabelService {
   private static responseLabels: Label[] = Object.values(REQUIRED_LABELS.response);
   private static statusLabels: Label[] = Object.values(REQUIRED_LABELS.status);
   private static otherLabels: Label[] = Object.values(REQUIRED_LABELS.others);
+
   private static allLabelArrays = {
     severity: LabelService.severityLabels,
     type: LabelService.typeLabels,
@@ -225,13 +228,12 @@ export class LabelService {
    * all available labels.
    * @param labelValue: the label's value (e.g Low / Medium / High / ...)
    */
-  getColorOfLabel(labelValue: string): string {
-    // TODO: Rewrite function - labelValue insufficient to differentiate between labels. Should use `labelCategory.labelValue` format.
-    if (labelValue === '') {
+  getColorOfLabel(labelCategory: LabelCategory, labelValue: string): string {
+    if (labelValue === '' || !LabelService.allLabelArrays[labelCategory]) {
       return COLOR_WHITE;
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find((label) => label.labelValue === labelValue);
+    const existingLabel = LabelService.allLabelArrays[labelCategory].find((label: Label) => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
       return COLOR_WHITE;

@@ -5,8 +5,8 @@ import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
+import { insertUploadingText, insertUploadUrl, insertUploadUrlVideo } from './upload-text-insertor';
 
-const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
 const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
 const SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB = 5;
@@ -15,6 +15,8 @@ const TIME_BETWEEN_UPLOADS_MS = 250;
 const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
 const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
 const ISSUE_BODY_SIZE_LIMIT = 40000;
+
+const SPACE = ' ';
 
 @Component({
   selector: 'app-comment-editor',
@@ -46,7 +48,7 @@ export class CommentEditorComponent implements OnInit {
 
   @ViewChild('dropArea', { static: true }) dropArea;
   @ViewChild('commentTextArea', { static: true }) commentTextArea;
-  @ViewChild('markdownArea', { static: false }) markdownArea;
+  @ViewChild('markdownArea') markdownArea;
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
@@ -67,6 +69,23 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
+  }
+
+  onKeyPress(event) {
+    if (this.isControlKeyPressed(event)) {
+      switch (event.key) {
+        case 'b':
+          event.preventDefault();
+          this.insertOrRemoveCharsFromHighlightedText('**');
+          break;
+        case 'i':
+          event.preventDefault();
+          this.insertOrRemoveCharsFromHighlightedText('_');
+          break;
+        default:
+          return;
+      }
+    }
   }
 
   onDragEnter(event) {
@@ -148,7 +167,7 @@ export class CommentEditorComponent implements OnInit {
     this.uploadErrorMessage = null;
     const reader = new FileReader();
     const filename = file.name;
-    const insertedText = this.insertUploadingText(filename);
+    const insertedText = insertUploadingText(filename, this.commentField, this.commentTextArea);
 
     if (file.size >= MAX_UPLOAD_SIZE) {
       this.handleUploadError(getSizeExceedErrorMsg('file', SHOWN_MAX_UPLOAD_SIZE_MB), insertedText);
@@ -176,9 +195,9 @@ export class CommentEditorComponent implements OnInit {
       this.uploadService.uploadFile(reader.result, filename).subscribe(
         (response) => {
           if (this.uploadService.isVideoFile(filename)) {
-            this.insertUploadUrlVideo(filename, response.data.content.download_url);
+            insertUploadUrlVideo(filename, response.data.content.download_url, this.commentField, this.commentTextArea);
           } else {
-            this.insertUploadUrl(filename, response.data.content.download_url);
+            insertUploadUrl(filename, response.data.content.download_url, this.commentField, this.commentTextArea);
           }
         },
         (error) => {
@@ -227,66 +246,6 @@ export class CommentEditorComponent implements OnInit {
     this.commentField.setValue(this.commentField.value.replace(insertedText, ''));
   }
 
-  private insertUploadingText(filename: string): string {
-    const originalDescription = this.commentField.value;
-
-    const fileType = filename.split('.').pop();
-    let toInsert: string;
-    if (DISPLAYABLE_CONTENT.includes(fileType.toLowerCase())) {
-      toInsert = `![Uploading ${filename}...]\n`;
-    } else {
-      toInsert = `[Uploading ${filename}...]\n`;
-    }
-
-    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const endOfLineIndex = originalDescription.indexOf('\n', cursorPosition);
-    const nextCursorPosition = cursorPosition + toInsert.length;
-
-    if (endOfLineIndex === -1) {
-      if (this.commentField.value === '') {
-        this.commentField.setValue(toInsert);
-      } else {
-        this.commentField.setValue(`${this.commentField.value}\n${toInsert}`);
-      }
-    } else {
-      const startTillNewline = originalDescription.slice(0, endOfLineIndex + 1);
-      const newlineTillEnd = originalDescription.slice(endOfLineIndex);
-      this.commentField.setValue(`${startTillNewline + toInsert + newlineTillEnd}`);
-    }
-
-    this.commentTextArea.nativeElement.setSelectionRange(nextCursorPosition, nextCursorPosition);
-    return toInsert;
-  }
-
-  private replacePlaceholderString(filename: string, insertedString: string) {
-    const cursorPosition = this.commentTextArea.nativeElement.selectionEnd;
-    const insertingString = `[Uploading ${filename}...]`;
-    const startIndexOfString = this.commentField.value.indexOf(insertingString);
-    const endIndexOfString = startIndexOfString + insertingString.length;
-    const endOfInsertedString = startIndexOfString + insertedString.length;
-    const differenceInLength = endOfInsertedString - endIndexOfString;
-    const newCursorPosition =
-      cursorPosition > startIndexOfString - 1 && cursorPosition <= endIndexOfString // within the range of uploading text
-        ? endOfInsertedString
-        : cursorPosition < startIndexOfString // before the uploading text
-        ? cursorPosition
-        : cursorPosition + differenceInLength; // after the uploading text
-
-    this.commentField.setValue(this.commentField.value.replace(insertingString, insertedString));
-    this.commentTextArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
-  }
-
-  private insertUploadUrlVideo(filename: string, uploadUrl: string) {
-    const insertedString = `<i><video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video><br>video:${uploadUrl}</i>`;
-
-    this.replacePlaceholderString(filename, insertedString);
-  }
-
-  private insertUploadUrl(filename: string, uploadUrl: string) {
-    const insertedString = `[${filename}](${uploadUrl})`;
-    this.replacePlaceholderString(filename, insertedString);
-  }
-
   private removeHighlightBorderStyle() {
     this.dragActiveCounter--;
     if (this.dragActiveCounter === 0) {
@@ -294,5 +253,112 @@ export class CommentEditorComponent implements OnInit {
       this.dropArea.nativeElement.classList.remove('highlight-drag-box');
       this.dropArea.nativeElement.classList.remove('highlight-drag-box-disabled');
     }
+  }
+
+  private isControlKeyPressed(event) {
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey;
+    }
+    return event.ctrlKey;
+  }
+
+  private insertOrRemoveCharsFromHighlightedText(char) {
+    const selectionStart = this.commentTextArea.nativeElement.selectionStart;
+    const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
+    const currentText = this.commentField.value;
+    const highlightedText = currentText.slice(selectionStart, selectionEnd);
+    const highlightedTextTrimmed = highlightedText.trim();
+    const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
+    const spacesRemovedRight = highlightedText.trimLeft().length - highlightedTextTrimmed.length;
+
+    if (this.hasCharsBeforeAndAfterHighlight(selectionStart, selectionEnd, currentText, char)) {
+      this.removeCharsBeforeAndAfterHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char);
+    } else if (this.hasCharsInTrimmedHighlight(highlightedText, char)) {
+      this.removeCharsFromHighlightedText(
+        selectionStart,
+        selectionEnd,
+        currentText,
+        highlightedTextTrimmed,
+        char,
+        spacesRemovedLeft,
+        spacesRemovedRight
+      );
+    } else {
+      this.insertCharsToHighlightedText(
+        selectionStart,
+        selectionEnd,
+        currentText,
+        highlightedTextTrimmed,
+        char,
+        spacesRemovedLeft,
+        spacesRemovedRight
+      );
+    }
+  }
+
+  private hasCharsBeforeAndAfterHighlight(selectionStart, selectionEnd, currentText, char) {
+    const hasInsertedCharBefore = currentText.slice(selectionStart - char.length, selectionStart) === char;
+    const hasInsertedCharAfter = currentText.slice(selectionEnd, selectionEnd + char.length) === char;
+    return hasInsertedCharBefore && hasInsertedCharAfter;
+  }
+
+  private hasCharsInTrimmedHighlight(highlightedText, char) {
+    const highlightedTextTrimmed = highlightedText.trim();
+    const hasCharAtFront = highlightedTextTrimmed.slice(0, char.length) === char;
+    const hasCharAtEnd = highlightedTextTrimmed.slice(-char.length) === char;
+    return hasCharAtFront && hasCharAtEnd;
+  }
+
+  private removeCharsBeforeAndAfterHighlightedText(selectionStart, selectionEnd, currentText, highlightedText, char) {
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart - char.length) + highlightedText + currentText.slice(selectionEnd + char.length)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(selectionStart - char.length, selectionEnd - char.length);
+  }
+
+  private removeCharsFromHighlightedText(
+    selectionStart,
+    selectionEnd,
+    currentText,
+    highlightedTextTrimmed,
+    char,
+    spacesRemovedLeft,
+    spacesRemovedRight
+  ) {
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart) +
+        SPACE.repeat(spacesRemovedLeft) +
+        highlightedTextTrimmed.slice(char.length, -char.length) +
+        SPACE.repeat(spacesRemovedRight) +
+        currentText.slice(selectionEnd)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(
+      selectionStart + spacesRemovedLeft,
+      selectionEnd - 2 * char.length - spacesRemovedRight
+    );
+  }
+
+  private insertCharsToHighlightedText(
+    selectionStart,
+    selectionEnd,
+    currentText,
+    highlightedTextTrimmed,
+    char,
+    spacesRemovedLeft,
+    spacesRemovedRight
+  ) {
+    this.commentField.setValue(
+      currentText.slice(0, selectionStart) +
+        SPACE.repeat(spacesRemovedLeft) +
+        char +
+        highlightedTextTrimmed +
+        char +
+        SPACE.repeat(spacesRemovedRight) +
+        currentText.slice(selectionEnd)
+    );
+    this.commentTextArea.nativeElement.setSelectionRange(
+      selectionStart + char.length + spacesRemovedLeft,
+      selectionEnd + char.length - spacesRemovedRight
+    );
   }
 }
