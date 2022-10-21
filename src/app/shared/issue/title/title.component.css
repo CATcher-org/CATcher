@@ -7,6 +7,7 @@
 
 .title {
   margin: 0 0 16px;
+  overflow-wrap: anywhere;
 }
 
 .title-button {
