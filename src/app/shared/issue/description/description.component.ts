@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
 import { finalize, flatMap, map } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
@@ -116,6 +116,17 @@ export class DescriptionComponent implements OnInit {
       this.issueUpdated.emit(issue);
       this.resetToDefault();
     });
+  }
+
+  openCancelDialogIfModified(): void {
+    const issueDescriptionInitialValue = this.issue.description || '';
+    if (this.issueDescriptionForm.get('description').value !== issueDescriptionInitialValue) {
+      // if the description has been edited, request user to confirm the cancellation
+      this.openCancelDialog();
+    } else {
+      // if no changes have been made, simply cancel edit mode without getting confirmation
+      this.cancelEditMode();
+    }
   }
 
   openCancelDialog(): void {
