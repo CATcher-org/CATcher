@@ -1,4 +1,4 @@
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 import { Issue } from '../../../../src/app/core/models/issue.model';
 import { paginateData } from '../../../../src/app/shared/issue-tables/issue-paginator';
 import { TEAM_4 } from '../../../constants/data.constants';

@@ -21,6 +21,7 @@ export class GithubLabel {
   category: string;
   label: string;
   url: string;
+  description: string;
 
   constructor(githubLabels: {}) {
     Object.assign(this, githubLabels);
@@ -41,6 +42,10 @@ export class GithubLabel {
 
   getValue(): string {
     return this.label;
+  }
+
+  getDescription(): string {
+    return this.description;
   }
 
   isCategorical(): boolean {

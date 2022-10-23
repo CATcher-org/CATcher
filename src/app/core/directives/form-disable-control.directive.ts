@@ -6,7 +6,7 @@ import { NgControl } from '@angular/forms';
 })
 export class FormDisableControlDirective {
   @Input() set disableControl(condition: boolean) {
-    condition ? this.ngControl.control.disable() : this.ngControl.control.enable();
+    condition ? this.ngControl.control?.disable() : this.ngControl.control?.enable();
   }
 
   constructor(private ngControl: NgControl) {}

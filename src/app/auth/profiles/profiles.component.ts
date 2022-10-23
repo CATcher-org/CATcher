@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { isValidProfile, Profile } from '../../core/models/profile.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
