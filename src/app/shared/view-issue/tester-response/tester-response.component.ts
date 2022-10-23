@@ -7,6 +7,7 @@ import { IssueComment } from '../../../core/models/comment.model';
 import { Issue } from '../../../core/models/issue.model';
 import { TesterResponse } from '../../../core/models/tester-response.model';
 import { UserRole } from '../../../core/models/user.model';
+import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PhaseService } from '../../../core/services/phase.service';
@@ -32,6 +33,11 @@ export class TesterResponseComponent implements OnInit, OnChanges {
   @Output() updateEditState = new EventEmitter<boolean>();
   @ViewChild(CommentEditorComponent) commentEditor: CommentEditorComponent;
 
+  // Messages for the modal popup window upon cancelling edit
+  private readonly cancelEditModalMessages = ['Do you wish to cancel?', 'Your changes will be discarded.'];
+  private readonly yesButtonModalMessage = 'Cancel';
+  private readonly noButtonModalMessage = 'Continue editing';
+
   private readonly responseRadioIdentifier = 'response-radio';
   private readonly responseTextIdentifier = 'tester-response';
 
@@ -41,7 +47,8 @@ export class TesterResponseComponent implements OnInit, OnChanges {
     public userService: UserService,
     private errorHandlingService: ErrorHandlingService,
     private dialog: MatDialog,
-    private phaseService: PhaseService
+    private phaseService: PhaseService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit() {
@@ -130,6 +137,51 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
   changeToEditMode() {
     this.updateEditState.emit(true);
+  }
+
+  openCancelDialogIfModified(): void {
+    const reasonForDisagreementIsModified = this.issue.testerResponses
+      .filter((t: TesterResponse, index: number) => this.isResponseDisagreed(index))
+      .map((t: TesterResponse, index: number) => {
+        const currentValue = this.getTesterResponseText(index);
+        const initialValue = t.reasonForDisagreement || '';
+
+        return currentValue !== initialValue;
+      })
+      .reduce((a, b) => a || b, false);
+
+    const disagreementIsModified = this.issue.testerResponses
+      .map((t: TesterResponse, index: number) => {
+        const currentValue = this.isResponseDisagreed(index);
+        const initialValue = t.isDisagree();
+
+        return currentValue !== initialValue;
+      })
+      .reduce((a, b) => a || b, false);
+
+    const isModified = reasonForDisagreementIsModified || disagreementIsModified;
+
+    if (isModified) {
+      // if the disagreement decision and/or reason for disagreement of any response has been edited,
+      // request user to confirm the cancellation
+      this.openCancelDialog();
+    } else {
+      // if no changes have been made, simply cancel edit mode without getting confirmation
+      this.cancelEditMode();
+    }
+  }
+
+  openCancelDialog(): void {
+    const dialogRef = this.dialogService.openUserConfirmationModal(
+      this.cancelEditModalMessages,
+      this.yesButtonModalMessage,
+      this.noButtonModalMessage
+    );
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.cancelEditMode();
+      }
+    });
   }
 
   cancelEditMode() {
