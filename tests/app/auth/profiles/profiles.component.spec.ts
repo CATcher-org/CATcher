@@ -82,7 +82,7 @@ describe('ProfilesComponent', () => {
     });
   });
 
-  it('should emit the correct profile when mat-option is clicked', () => {
+  it('should emit the correct profile through selectProfile when mat-option is clicked', () => {
     openMatSelect();
     const displayedOptions = getOptions();
 
