@@ -93,7 +93,7 @@
     "@types/node": "^15.6.1",
     "angular-cli-ghpages": "^1.0.0-rc.2",
     "codelyzer": "^5.1.2",
-    "electron": "11.4.8",
+    "electron": "21.2.3",
     "electron-builder": "22.2.0",
     "electron-reload": "1.5.0",
     "graphql-codegen-fragment-matcher": "^0.18.2",
