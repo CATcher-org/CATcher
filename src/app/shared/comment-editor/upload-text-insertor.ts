@@ -1,7 +1,7 @@
 import { ElementRef } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 
-const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
+export const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 
 export function insertUploadingText(
   filename: string,
