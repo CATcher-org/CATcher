@@ -116,7 +116,7 @@
     "tslint": "5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "3.8.3",
-    "wait-on": "3.3.0",
+    "wait-on": "6.0.1",
     "webdriver-manager": "12.1.7"
   }
 }
