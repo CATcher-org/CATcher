@@ -149,15 +149,14 @@ export class TeamResponseComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    const issueTeamResponseInitialValue = this.issue.teamResponse || '';
-
-    if (this.responseForm.get('description').value !== issueTeamResponseInitialValue) {
-      // if the response has been edited, request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    this.dialogService.checkIfModified(
+      this.responseForm,
+      'teamResponse',
+      'description',
+      this.issue,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
   }
 
   openCancelDialog(): void {
