@@ -119,7 +119,7 @@ export class DescriptionComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    this.dialogService.checkIfModified(
+    this.dialogService.checkIfFieldIsModified(
       this.issueDescriptionForm,
       'description',
       'description',

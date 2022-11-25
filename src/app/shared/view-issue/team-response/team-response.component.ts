@@ -149,7 +149,7 @@ export class TeamResponseComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    this.dialogService.checkIfModified(
+    this.dialogService.checkIfFieldIsModified(
       this.responseForm,
       'teamResponse',
       'description',

@@ -30,22 +30,26 @@ export class DialogService {
     });
   }
 
-  checkIfModified(
+  checkIfFieldIsModified(
     form: FormGroup,
     initialField: string,
     formField: string,
     issue: Issue,
-    openCancelDialog: () => void,
-    cancelEditMode: () => void
+    actionIfModified: () => void,
+    actionIfNotModified: () => void
   ) {
     const issueTitleInitialValue = issue[initialField] || '';
     const isModified = form.get(formField).value !== issueTitleInitialValue;
+    this.performActionIfModified(isModified, actionIfModified, actionIfNotModified);
+  }
+
+  performActionIfModified(isModified: boolean, actionIfModified: () => void, actionIfNotModified: () => void) {
     if (isModified) {
       // if the field has been edited, request user to confirm the cancellation
-      openCancelDialog();
+      actionIfModified();
     } else {
       // if no changes have been made, simply cancel edit mode without getting confirmation
-      cancelEditMode();
+      actionIfNotModified();
     }
   }
 }
