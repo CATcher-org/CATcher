@@ -80,7 +80,7 @@
     "@angular-devkit/build-angular": "~0.901.15",
     "@angular/cli": "^9.1.15",
     "@angular/compiler-cli": "^9.1.13",
-    "@angular/language-service": "^9.1.13",
+    "@angular/language-service": "^15.0.1",
     "@graphql-codegen/cli": "^2.6.4",
     "@graphql-codegen/typescript": "1.17.7",
     "@graphql-codegen/typescript-document-nodes": "1.17.7",
