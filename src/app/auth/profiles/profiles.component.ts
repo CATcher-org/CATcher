@@ -5,7 +5,7 @@ import { isValidProfile, Profile } from '../../core/models/profile.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
-import { ProfileParseSuccessDialog } from './profile-parse-success-dialog/profile-parse-success-dialog.component';
+import { ProfileParseSuccessDialogComponent } from './profile-parse-success-dialog/profile-parse-success-dialog.component';
 
 @Component({
   selector: 'app-profiles',
@@ -117,7 +117,7 @@ export class ProfilesComponent implements OnInit {
    * Makes Successful Profile Load dialog visible to the user
    */
   openSuccessfulProfileLoadingDialog(loadedProfile: Profile): void {
-    this.dialog.open(ProfileParseSuccessDialog, { data: loadedProfile });
+    this.dialog.open(ProfileParseSuccessDialogComponent, { data: loadedProfile });
   }
 
   /**
