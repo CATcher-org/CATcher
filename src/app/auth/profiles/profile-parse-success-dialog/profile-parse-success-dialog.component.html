@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Success!</h1>
+<div mat-dialog-content>
+  <p align="center" style="max-width: 390px">
+    You have successfully loaded the profile with
+    <code>profileName: "{{ this.loadedProfile.profileName }}"</code> and <code>repoName: "{{ this.loadedProfile.repoName }}"</code>!
+  </p>
+</div>
+<div mat-dialog-actions align="center">
+  <button mat-raised-button color="primary" (click)="onClick()">Ok</button>
+</div>
