@@ -3,8 +3,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { isValidProfile, Profile } from '../../core/models/profile.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
+import { DUPLICATE_PROFILE_EXISTS_ERROR, MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
+import { PROFILE_ERRORS } from './json-parse-error-dialog/json-parse-error-dialog.utils';
 
 @Component({
   selector: 'app-profiles',
@@ -73,10 +74,21 @@ export class ProfilesComponent implements OnInit {
         try {
           const { profiles } = JSON.parse(reader.result);
           this.profileService.validateProfiles(profiles);
+          // this is alright as validateProfiles only allows for one profile to be loaded at a time
+          const profile = profiles[0];
+          const isDuplicate = this.isDuplicateProfile(profile, this.profiles);
+          if (isDuplicate) {
+            throw DUPLICATE_PROFILE_EXISTS_ERROR;
+          }
+
           this.profiles = profiles.concat(this.profiles).filter((p) => !!p);
           target.value = '';
         } catch (e) {
-          this.openErrorDialog();
+          if (e === DUPLICATE_PROFILE_EXISTS_ERROR) {
+            this.openErrorDialog(PROFILE_ERRORS.DUPLICATE_PROFILE_ERROR);
+          } else {
+            this.openErrorDialog();
+          }
         }
       }
     };
@@ -105,8 +117,9 @@ export class ProfilesComponent implements OnInit {
   /**
    * Makes Error dialog visible to the user.
    */
-  openErrorDialog(): void {
-    this.errorDialog.open(JsonParseErrorDialogComponent);
+  openErrorDialog(profileError?: PROFILE_ERRORS): void {
+    const error = !profileError ? PROFILE_ERRORS.JSON_PARSE_ERROR : profileError;
+    this.errorDialog.open(JsonParseErrorDialogComponent, { data: error });
   }
 
   /**
@@ -132,5 +145,23 @@ export class ProfilesComponent implements OnInit {
     } else {
       this.errorHandlingService.handleError(new Error('Invalid URL provided session'));
     }
+  }
+
+  /**
+   * Checks if there are duplicates in profiles based on profile selected
+   * @param loadedProfile - Custom Profile loaded by user
+   * @param profiles - Profiles which already exist
+   */
+  isDuplicateProfile(loadedProfile: Profile, profiles: Profile[]): boolean {
+    return profiles.reduce((prev, curr) => prev || this.areSameProfile(curr, loadedProfile), false);
+  }
+
+  /**
+   * Checks if 2 profiles are the same by checking the repoName and profileName
+   * @param profileA - First Profile
+   * @param profileB - Second Profile
+   */
+  areSameProfile(profileA: Profile, profileB: Profile): boolean {
+    return profileA.profileName === profileB.profileName && profileA.repoName === profileB.repoName;
   }
 }

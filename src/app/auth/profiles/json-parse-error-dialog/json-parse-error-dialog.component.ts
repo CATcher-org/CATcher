@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ProfilesComponent } from '../profiles.component';
+import { getErrorMessage, PROFILE_ERRORS } from './json-parse-error-dialog.utils';
 
 /**
  * This Component is responsible for informing the user if there
@@ -13,7 +15,11 @@ import { ProfilesComponent } from '../profiles.component';
   styleUrls: ['./json-parse-error-dialog.component.css']
 })
 export class JsonParseErrorDialogComponent implements OnInit {
-  constructor(public dialogRef: MatDialogRef<ProfilesComponent>) {}
+  constructor(
+    public dialogRef: MatDialogRef<ProfilesComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: PROFILE_ERRORS,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {}
 
@@ -22,5 +28,13 @@ export class JsonParseErrorDialogComponent implements OnInit {
    */
   onClick(): void {
     this.dialogRef.close();
+  }
+
+  /**
+   * Get appropriate Error message.
+   */
+  getProfileErrorMessage() {
+    const errorMessage = getErrorMessage(this.data);
+    return this.sanitizer.bypassSecurityTrustHtml(errorMessage);
   }
 }

@@ -3,6 +3,7 @@ import { isValidProfile, Profile } from '../models/profile.model';
 import { GithubService } from './github.service';
 
 export const MALFORMED_PROFILES_ERROR: Error = new Error('profiles.json is malformed');
+export const DUPLICATE_PROFILE_EXISTS_ERROR: Error = new Error('duplicate profile exists');
 
 @Injectable({
   providedIn: 'root'
