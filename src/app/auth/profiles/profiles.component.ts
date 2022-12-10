@@ -5,6 +5,7 @@ import { isValidProfile, Profile } from '../../core/models/profile.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { MALFORMED_PROFILES_ERROR, ProfileService } from '../../core/services/profile.service';
 import { JsonParseErrorDialogComponent } from './json-parse-error-dialog/json-parse-error-dialog.component';
+import { ProfileParseSuccessDialog } from './profile-parse-success-dialog/profile-parse-success-dialog.component';
 
 @Component({
   selector: 'app-profiles',
@@ -42,7 +43,7 @@ export class ProfilesComponent implements OnInit {
     fileDirectory: null
   };
 
-  constructor(public errorDialog: MatDialog, public profileService: ProfileService, public errorHandlingService: ErrorHandlingService) {}
+  constructor(public dialog: MatDialog, public profileService: ProfileService, public errorHandlingService: ErrorHandlingService) {}
 
   ngOnInit() {
     this.initProfiles();
@@ -75,6 +76,9 @@ export class ProfilesComponent implements OnInit {
           this.profileService.validateProfiles(profiles);
           this.profiles = profiles.concat(this.profiles).filter((p) => !!p);
           target.value = '';
+          // should only be one profile by virtue of validateProfiles, choose the first profile
+          const loadedProfile = profiles[0] as Profile;
+          this.openSuccessfulProfileLoadingDialog(loadedProfile);
         } catch (e) {
           this.openErrorDialog();
         }
@@ -106,7 +110,14 @@ export class ProfilesComponent implements OnInit {
    * Makes Error dialog visible to the user.
    */
   openErrorDialog(): void {
-    this.errorDialog.open(JsonParseErrorDialogComponent);
+    this.dialog.open(JsonParseErrorDialogComponent);
+  }
+
+  /**
+   * Makes Successful Profile Load dialog visible to the user
+   */
+  openSuccessfulProfileLoadingDialog(loadedProfile: Profile): void {
+    this.dialog.open(ProfileParseSuccessDialog, { data: loadedProfile });
   }
 
   /**

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Profile } from '../../../core/models/profile.model';
 import { ProfilesComponent } from '../profiles.component';
 
@@ -14,9 +14,7 @@ import { ProfilesComponent } from '../profiles.component';
   styleUrls: ['./profile-parse-success-dialog.component.css']
 })
 export class ProfileParseSuccessDialog implements OnInit {
-  @Input() loadedProfile: Profile;
-
-  constructor(public dialogRef: MatDialogRef<ProfilesComponent>) {}
+  constructor(public dialogRef: MatDialogRef<ProfilesComponent>, @Inject(MAT_DIALOG_DATA) public data: Profile) {}
 
   ngOnInit() {}
 
