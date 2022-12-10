@@ -1,5 +1,6 @@
 const JSON_PARSE_ERROR_MESSAGE = `The format of the "profiles.json" file is not as required.
-You might not have included <code>profileName</code> and <code>repoName</code> keys. Please refer to our User Guide for the correct format.`;
+You might not have included <code>profileName</code> and <code>repoName</code> keys.
+Please refer to our User Guide for the correct format.`;
 
 const DUPLICATE_PROFILE_ERROR_MESSAGE = `You have already provided this profile.`;
 
