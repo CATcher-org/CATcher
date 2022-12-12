@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.15",
-    "@angular/cli": "^9.1.15",
+    "@angular/cli": "^15.0.3",
     "@angular/compiler-cli": "^9.1.13",
     "@angular/language-service": "^9.1.13",
     "@graphql-codegen/cli": "^2.6.4",
