@@ -84,7 +84,7 @@
     "@graphql-codegen/cli": "^2.6.4",
     "@graphql-codegen/typescript": "1.17.7",
     "@graphql-codegen/typescript-document-nodes": "1.17.7",
-    "@graphql-codegen/typescript-operations": "^1.18.4",
+    "@graphql-codegen/typescript-operations": "^2.5.10",
     "@graphql-codegen/typescript-resolvers": "^1.20.0",
     "@octokit/graphql-schema": "^8.24.0",
     "@types/dompurify": "^2.3.1",
