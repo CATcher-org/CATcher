@@ -5,6 +5,8 @@ import { GithubLabel } from '../models/github/github-label.model';
 import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
 
+import { ATTRIBUTES, SEVERITY, BUG, RESPONSE, STATUS, UNDEFINED } from '../models/issue.model'
+
 /* The threshold to decide if color is dark or light.
 A higher threshold value will result in more colors determined to be "dark".
 W3C recommendation is 0.179, but 0.184 is chosen so that some colors (like bright red)
@@ -92,29 +94,29 @@ export const LABEL_DEFINITIONS = {
 
 const REQUIRED_LABELS = {
   severity: {
-    VeryLow: new Label('severity', 'VeryLow', COLOR_RED_PALE, VERY_LOW_DEFINITION),
-    Low: new Label('severity', 'Low', COLOR_RED_LIGHT, LOW_DEFINITION),
-    Medium: new Label('severity', 'Medium', COLOR_RED, MEDIUM_DEFINITION),
-    High: new Label('severity', 'High', COLOR_RED_DARK, HIGH_DEFINITION)
+    VeryLow: new Label(ATTRIBUTES.Severity, SEVERITY.VeryLow, COLOR_RED_PALE, VERY_LOW_DEFINITION),
+    Low: new Label(ATTRIBUTES.Severity, SEVERITY.Low, COLOR_RED_LIGHT, LOW_DEFINITION),
+    Medium: new Label(ATTRIBUTES.Severity, SEVERITY.Medium, COLOR_RED, MEDIUM_DEFINITION),
+    High: new Label(ATTRIBUTES.Severity, SEVERITY.High, COLOR_RED_DARK, HIGH_DEFINITION)
   },
   type: {
-    DocumentationBug: new Label('type', 'DocumentationBug', COLOR_PURPLE_LIGHT, DOCUMENTATION_BUG_DEFINITION),
-    FeatureFlaw: new Label('type', 'FeatureFlaw', COLOR_PURPLE_LIGHT, FEATURE_FLAW_DEFINITION),
-    FunctionalityBug: new Label('type', 'FunctionalityBug', COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION)
+    DocumentationBug: new Label(ATTRIBUTES.Type, BUG.DocumentationBug, COLOR_PURPLE_LIGHT, DOCUMENTATION_BUG_DEFINITION),
+    FeatureFlaw: new Label(ATTRIBUTES.Type, BUG.FeatureFlaw, COLOR_PURPLE_LIGHT, FEATURE_FLAW_DEFINITION),
+    FunctionalityBug: new Label(ATTRIBUTES.Type, BUG.FunctionalityBug, COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION)
   },
   response: {
-    Accepted: new Label('response', 'Accepted', COLOR_GREEN, ACCEPTED_DEFINITION),
-    CannotReproduce: new Label('response', 'CannotReproduce', COLOR_ORANGE_PALE, CANNOT_REPRODUCE_DEFINITION),
-    IssueUnclear: new Label('response', 'IssueUnclear', COLOR_ORANGE_LIGHT, ISSUE_UNCLEAR_DEFINITION),
-    NotInScope: new Label('response', 'NotInScope', COLOR_ORANGE_LIGHT, NOT_IN_SCOPE_DEFINITION),
-    Rejected: new Label('response', 'Rejected', COLOR_ORANGE, REJECTED_DEFINITION)
+    Accepted: new Label(ATTRIBUTES.Response, RESPONSE.Accepted, COLOR_GREEN, ACCEPTED_DEFINITION),
+    CannotReproduce: new Label(ATTRIBUTES.Response, RESPONSE.CannotReproduce, COLOR_ORANGE_PALE, CANNOT_REPRODUCE_DEFINITION),
+    IssueUnclear: new Label(ATTRIBUTES.Response, RESPONSE.IssueUnclear, COLOR_ORANGE_LIGHT, ISSUE_UNCLEAR_DEFINITION),
+    NotInScope: new Label(ATTRIBUTES.Response, RESPONSE.NotInScope, COLOR_ORANGE_LIGHT, NOT_IN_SCOPE_DEFINITION),
+    Rejected: new Label(ATTRIBUTES.Response, RESPONSE.Rejected, COLOR_ORANGE, REJECTED_DEFINITION)
   },
   status: {
-    Done: new Label('status', 'Done', COLOR_SILVER),
-    Incomplete: new Label('status', 'Incomplete', COLOR_BLACK)
+    Done: new Label(ATTRIBUTES.Status, STATUS.Done, COLOR_SILVER),
+    Incomplete: new Label(ATTRIBUTES.Status, STATUS.Incomplete, COLOR_BLACK)
   },
   others: {
-    duplicate: new Label(undefined, 'duplicate', COLOR_BLUE)
+    duplicate: new Label(ATTRIBUTES.Undefined, UNDEFINED.Duplicate, COLOR_BLUE)
   }
 };
 
@@ -196,14 +198,14 @@ export class LabelService {
    * @param attributeName: the type of the label
    * @return an array of label of that type
    */
-  getLabelList(attributeName: string): Label[] {
+  getLabelList(attributeName: ATTRIBUTES): Label[] {
     switch (attributeName) {
-      case 'severity':
+      case ATTRIBUTES.Severity:
         return LabelService.severityLabels;
-      case 'type':
+      case ATTRIBUTES.Type:
         return LabelService.typeLabels;
-      case 'responseTag':
-      case 'response':
+      case ATTRIBUTES.ResponseTag:
+      case ATTRIBUTES.Response:
         return LabelService.responseLabels;
     }
   }
@@ -212,13 +214,13 @@ export class LabelService {
    * Returns a title for the label type
    * @param attributeName: the type of the label
    */
-  getLabelTitle(attributeName: string): string {
+  getLabelTitle(attributeName: string | ATTRIBUTES): string {
     switch (attributeName) {
-      case 'severity':
+      case ATTRIBUTES.Severity:
         return DISPLAY_NAME_SEVERITY;
-      case 'type':
+      case ATTRIBUTES.Type:
         return DISPLAY_NAME_BUG_TYPE;
-      case 'responseTag':
+      case ATTRIBUTES.ResponseTag:
         return DISPLAY_NAME_RESPONSE;
     }
   }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { DialogService } from '../../..//core/services/dialog.service';
-import { Issue } from '../../../core/models/issue.model';
+import { ATTRIBUTES, Issue } from '../../../core/models/issue.model';
 import { Label } from '../../../core/models/label.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
@@ -35,7 +35,7 @@ export class LabelComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     // Get the list of labels based on their type (severity, type, response)
-    this.labelValues = this.labelService.getLabelList(this.attributeName);
+    this.labelValues = this.labelService.getLabelList(ATTRIBUTES[this.attributeName]);
   }
 
   ngOnChanges() {
