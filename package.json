@@ -70,7 +70,7 @@
     "moment": "^2.24.0",
     "ngx-markdown": "^9.1.1",
     "ngx-mat-select-search": "^3.3.3",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.3.0",
     "rxjs": "6.6.7",
     "tslib": "^1.10.0",
     "uuid": "7.0.3",
