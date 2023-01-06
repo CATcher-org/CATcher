@@ -81,11 +81,9 @@ export class TitleComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    this.dialogService.checkIfFieldIsModified(
-      this.issueTitleForm,
-      'title',
-      'title',
-      this.issue,
+    const isModified = this.dialogService.checkIfFieldIsModified(this.issueTitleForm, 'title', 'title', this.issue);
+    this.dialogService.performActionIfModified(
+      isModified,
       () => this.openCancelDialog(),
       () => this.cancelEditMode()
     );

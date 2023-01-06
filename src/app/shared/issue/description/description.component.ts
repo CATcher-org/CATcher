@@ -119,11 +119,9 @@ export class DescriptionComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    this.dialogService.checkIfFieldIsModified(
-      this.issueDescriptionForm,
-      'description',
-      'description',
-      this.issue,
+    const isModified = this.dialogService.checkIfFieldIsModified(this.issueDescriptionForm, 'description', 'description', this.issue);
+    this.dialogService.performActionIfModified(
+      isModified,
       () => this.openCancelDialog(),
       () => this.cancelEditMode()
     );

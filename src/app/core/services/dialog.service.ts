@@ -30,17 +30,10 @@ export class DialogService {
     });
   }
 
-  checkIfFieldIsModified(
-    form: FormGroup,
-    initialField: string,
-    formField: string,
-    issue: Issue,
-    actionIfModified: () => void,
-    actionIfNotModified: () => void
-  ) {
+  checkIfFieldIsModified(form: FormGroup, initialField: string, formField: string, issue: Issue) {
     const issueTitleInitialValue = issue[initialField] || '';
     const isModified = form.get(formField).value !== issueTitleInitialValue;
-    this.performActionIfModified(isModified, actionIfModified, actionIfNotModified);
+    return isModified;
   }
 
   performActionIfModified(isModified: boolean, actionIfModified: () => void, actionIfNotModified: () => void) {
