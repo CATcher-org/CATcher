@@ -1,5 +1,5 @@
 import { FormBuilder, NgForm } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { UserConfirmationComponent } from '../../../../../src/app/core/guards/user-confirmation/user-confirmation.component';
 import { Issue } from '../../../../../src/app/core/models/issue.model';

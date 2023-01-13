@@ -31,7 +31,14 @@
         >
           View Updated Description
         </button>
-        <button class="editor-action" type="button" [disabled]="isSavePending" mat-stroked-button color="warn" (click)="openCancelDialog()">
+        <button
+          class="editor-action"
+          type="button"
+          [disabled]="isSavePending"
+          mat-stroked-button
+          color="warn"
+          (click)="openCancelDialogIfModified()"
+        >
           Cancel
         </button>
         <button

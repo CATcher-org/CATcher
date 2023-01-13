@@ -32,7 +32,14 @@
     <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary" class="title-button">
       Save
     </button>
-    <button type="button" [disabled]="isSavePending" mat-stroked-button color="warn" class="title-button" (click)="openCancelDialog()">
+    <button
+      type="button"
+      [disabled]="isSavePending"
+      mat-stroked-button
+      color="warn"
+      class="title-button"
+      (click)="openCancelDialogIfModified()"
+    >
       Cancel
     </button>
   </form>

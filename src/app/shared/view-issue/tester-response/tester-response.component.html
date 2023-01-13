@@ -80,7 +80,7 @@
           *ngIf="!this.isNewResponse()"
           mat-stroked-button
           color="warn"
-          (click)="cancelEditMode()"
+          (click)="openCancelDialogIfModified()"
         >
           Cancel
         </button>
