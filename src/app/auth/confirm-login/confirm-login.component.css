@@ -5,6 +5,13 @@
   width: 100%;
 }
 
+.sign-in-button-admin {
+  background: #f5ddab;
+  line-height: 45px;
+  border: 1px solid currentColor;
+  width: 100%;
+}
+
 .logo {
   align-items: center;
   display: inline-flex;

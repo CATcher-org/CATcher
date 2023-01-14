@@ -5,7 +5,7 @@
       <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> settings </mat-icon>
     </button>
 
-    <mat-menu #teamMenu>
+    <mat-menu #teamMenu *ngIf="teamList">
       <button mat-menu-item [disabled]="team === teamFilter" *ngFor="let team of teamList" (click)="updateDisplayedTeam(team)">
         <span> {{ team }} </span>
       </button>
