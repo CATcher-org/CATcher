@@ -65,7 +65,7 @@
     "dompurify": "^2.3.1",
     "electron-log": "^4.4.1",
     "graphql": "^14.6.0",
-    "graphql-tag": "2.11.0",
+    "graphql-tag": "2.12.6",
     "karma-spec-reporter": "0.0.32",
     "moment": "^2.24.0",
     "ngx-markdown": "^9.1.1",
