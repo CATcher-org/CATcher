@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 
 const nodeUrl = require('url');
 const Logger = require('electron-log');
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(args[0], ...args.slice(1)));
+const fetch = require('node-fetch');
 
 const CLIENT_ID = '6750652c0c9001314434';
 const BASE_URL = 'https://github.com';
