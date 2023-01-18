@@ -29,16 +29,16 @@ describe('TitleComponent', () => {
     titleComponent.issue = thisIssue;
   });
 
-  it('should be initialised with an issueTitleForm', () => {
+  it('should be initialised with an formGroup', () => {
     titleComponent.ngOnInit();
-    expect(titleComponent.issueTitleForm.value).toEqual({ title: '' });
+    expect(titleComponent.formGroup.value).toEqual({ title: '' });
   });
 
   it('should be updated with correct flags and values in editing mode', () => {
     titleComponent.ngOnInit();
     titleComponent.changeToEditMode();
     expect(titleComponent.isEditing).toEqual(true);
-    expect(titleComponent.issueTitleForm.value).toEqual({ title: thisIssue.title });
+    expect(titleComponent.formGroup.value).toEqual({ title: thisIssue.title });
   });
 
   it('should not have its value updated with issue title is invalid', () => {
@@ -47,7 +47,7 @@ describe('TitleComponent', () => {
     titleComponent.ngOnInit();
     titleComponent.changeToEditMode();
     expect(titleComponent.isEditing).toEqual(true);
-    expect(titleComponent.issueTitleForm.value).toEqual({ title: '' });
+    expect(titleComponent.formGroup.value).toEqual({ title: '' });
   });
 
   it('should be configured correctly when title is updated', () => {
