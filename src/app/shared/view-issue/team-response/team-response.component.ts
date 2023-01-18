@@ -8,7 +8,7 @@ import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, STATUS } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { IssueService } from '../../../core/services/issue.service';
+import { EditCancellable, IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { ConflictDialogComponent } from '../../issue/conflict-dialog/conflict-dialog.component';
@@ -19,9 +19,9 @@ import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
   templateUrl: './team-response.component.html',
   styleUrls: ['./team-response.component.css']
 })
-export class TeamResponseComponent implements OnInit {
+export class TeamResponseComponent implements OnInit, EditCancellable {
   isSavePending = false;
-  responseForm: FormGroup;
+  formGroup: FormGroup;
   conflict: Conflict;
 
   submitButtonText: string;
@@ -47,7 +47,7 @@ export class TeamResponseComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.responseForm = this.formBuilder.group({
+    this.formGroup = this.formBuilder.group({
       description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
@@ -55,13 +55,13 @@ export class TeamResponseComponent implements OnInit {
 
   changeToEditMode() {
     this.updateEditState.emit(true);
-    this.responseForm.setValue({
+    this.formGroup.setValue({
       description: this.issue.teamResponse || ''
     });
   }
 
   updateResponse(form: NgForm) {
-    if (this.responseForm.invalid) {
+    if (this.formGroup.invalid) {
       return;
     }
     this.isSavePending = true;
@@ -149,15 +149,7 @@ export class TeamResponseComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    const issueTeamResponseInitialValue = this.issue.teamResponse || '';
-
-    if (this.responseForm.get('description').value !== issueTeamResponseInitialValue) {
-      // if the response has been edited, request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    this.issueService.openCancelDialogIfModified(this, this.issue, 'teamResponse', 'description');
   }
 
   openCancelDialog(): void {
@@ -176,7 +168,7 @@ export class TeamResponseComponent implements OnInit {
 
   private getUpdatedIssue(): Issue {
     const clone = this.issue.clone(this.phaseService.currentPhase);
-    clone.teamResponse = Issue.updateTeamResponse(this.responseForm.get('description').value);
+    clone.teamResponse = Issue.updateTeamResponse(this.formGroup.get('description').value);
     if (!clone.status) {
       clone.status = clone.teamResponse === '' ? STATUS.Incomplete : STATUS.Done;
     }

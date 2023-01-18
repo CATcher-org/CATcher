@@ -4,7 +4,7 @@ import { finalize } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { IssueService } from '../../../core/services/issue.service';
+import { EditCancellable, IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 
@@ -13,10 +13,10 @@ import { PhaseService } from '../../../core/services/phase.service';
   templateUrl: './title.component.html',
   styleUrls: ['./title.component.css']
 })
-export class TitleComponent implements OnInit {
+export class TitleComponent implements OnInit, EditCancellable {
   isEditing = false;
   isSavePending = false;
-  issueTitleForm: FormGroup;
+  formGroup: FormGroup;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -36,7 +36,7 @@ export class TitleComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.issueTitleForm = this.formBuilder.group({
+    this.formGroup = this.formBuilder.group({
       title: new FormControl('', [Validators.required, Validators.maxLength(256)])
     });
   }
@@ -44,7 +44,7 @@ export class TitleComponent implements OnInit {
   changeToEditMode() {
     this.isEditing = true;
 
-    this.issueTitleForm.setValue({
+    this.formGroup.setValue({
       title: this.issue.title || ''
     });
   }
@@ -54,13 +54,13 @@ export class TitleComponent implements OnInit {
   }
 
   updateTitle(form: NgForm) {
-    if (this.issueTitleForm.invalid) {
+    if (this.formGroup.invalid) {
       return;
     }
 
     this.isSavePending = true;
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
-    newIssue.title = this.issueTitleForm.get('title').value;
+    newIssue.title = this.formGroup.get('title').value;
     this.issueService
       .updateIssue(newIssue)
       .pipe(
@@ -81,14 +81,7 @@ export class TitleComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    const issueTitleInitialValue = this.issue.title || '';
-    if (this.issueTitleForm.get('title').value !== issueTitleInitialValue) {
-      // if the title has been edited, request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    this.issueService.openCancelDialogIfModified(this, this.issue, 'title', 'title');
   }
 
   openCancelDialog(): void {

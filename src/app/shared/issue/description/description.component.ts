@@ -7,7 +7,7 @@ import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { IssueService } from '../../../core/services/issue.service';
+import { EditCancellable, IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
@@ -18,9 +18,9 @@ import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.comp
   templateUrl: './description.component.html',
   styleUrls: ['./description.component.css']
 })
-export class DescriptionComponent implements OnInit {
+export class DescriptionComponent implements OnInit, EditCancellable {
   isSavePending = false;
-  issueDescriptionForm: FormGroup;
+  formGroup: FormGroup;
   conflict: Conflict;
   submitButtonText: string;
 
@@ -46,7 +46,7 @@ export class DescriptionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.issueDescriptionForm = this.formBuilder.group({
+    this.formGroup = this.formBuilder.group({
       description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
@@ -54,13 +54,13 @@ export class DescriptionComponent implements OnInit {
 
   changeToEditMode() {
     this.changeEditState.emit(true);
-    this.issueDescriptionForm.setValue({
+    this.formGroup.setValue({
       description: this.issue['description'] || ''
     });
   }
 
   updateDescription(form: NgForm) {
-    if (this.issueDescriptionForm.invalid) {
+    if (this.formGroup.invalid) {
       return;
     }
 
@@ -119,14 +119,7 @@ export class DescriptionComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    const issueDescriptionInitialValue = this.issue.description || '';
-    if (this.issueDescriptionForm.get('description').value !== issueDescriptionInitialValue) {
-      // if the description has been edited, request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    this.issueService.openCancelDialogIfModified(this, this.issue, 'description', 'description');
   }
 
   openCancelDialog(): void {
@@ -145,7 +138,7 @@ export class DescriptionComponent implements OnInit {
 
   private getUpdatedIssue(): Issue {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
-    newIssue.description = Issue.updateDescription(this.issueDescriptionForm.get('description').value);
+    newIssue.description = Issue.updateDescription(this.formGroup.get('description').value);
     return newIssue;
   }
 }
