@@ -8,3 +8,9 @@
   * [Direct link to the **User Guide**](https://catcher-org.github.io/ug/)
   * [Direct link to the **Developer Guide**](https://catcher-org.github.io/dg/)
   
+
+This project is based in [NUS School of Computing](https://www.comp.nus.edu.sg/), and part of the [NUS-OSS initiative](https://nus-oss.github.io/).
+
+Licence: MIT
+
+Contact: `seer@comp.nus.edu.sg`
