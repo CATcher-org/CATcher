@@ -20,7 +20,7 @@ import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.comp
 })
 export class DescriptionComponent implements OnInit, EditCancellable {
   isSavePending = false;
-  formGroup: FormGroup;
+  issueDescriptionForm: FormGroup;
   conflict: Conflict;
   submitButtonText: string;
 
@@ -46,7 +46,7 @@ export class DescriptionComponent implements OnInit, EditCancellable {
   ) {}
 
   ngOnInit() {
-    this.formGroup = this.formBuilder.group({
+    this.issueDescriptionForm = this.formBuilder.group({
       description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
@@ -54,13 +54,13 @@ export class DescriptionComponent implements OnInit, EditCancellable {
 
   changeToEditMode() {
     this.changeEditState.emit(true);
-    this.formGroup.setValue({
+    this.issueDescriptionForm.setValue({
       description: this.issue['description'] || ''
     });
   }
 
   updateDescription(form: NgForm) {
-    if (this.formGroup.invalid) {
+    if (this.issueDescriptionForm.invalid) {
       return;
     }
 
@@ -119,7 +119,9 @@ export class DescriptionComponent implements OnInit, EditCancellable {
   }
 
   openCancelDialogIfModified(): void {
-    this.issueService.openCancelDialogIfModified(this, this.issue, 'description', 'description');
+    const issueDescriptionInitialValue = this.issue.description || '';
+    const isModified = () => this.issueDescriptionForm.get('description').value !== issueDescriptionInitialValue;
+    this.issueService.openCancelDialogIfModified(this, isModified);
   }
 
   openCancelDialog(): void {
@@ -138,7 +140,7 @@ export class DescriptionComponent implements OnInit, EditCancellable {
 
   private getUpdatedIssue(): Issue {
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
-    newIssue.description = Issue.updateDescription(this.formGroup.get('description').value);
+    newIssue.description = Issue.updateDescription(this.issueDescriptionForm.get('description').value);
     return newIssue;
   }
 }

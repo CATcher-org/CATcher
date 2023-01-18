@@ -44,7 +44,7 @@ describe('DescriptionComponent', () => {
 
   it('should be initialised with a FromGroup instance', () => {
     descriptionComponent.ngOnInit();
-    expect(descriptionComponent.formGroup.value).toEqual({ description: '' });
+    expect(descriptionComponent.issueDescriptionForm.value).toEqual({ description: '' });
   });
 
   it('should update the form value correctly and emit an event when entering edit mode', () => {
@@ -53,14 +53,14 @@ describe('DescriptionComponent', () => {
     descriptionComponent.ngOnInit();
     descriptionComponent.changeToEditMode();
     expect(descriptionComponentEditState).toHaveBeenCalledTimes(1);
-    expect(descriptionComponent.formGroup.value).toEqual({ description: thisIssue.description });
+    expect(descriptionComponent.issueDescriptionForm.value).toEqual({ description: thisIssue.description });
   });
 
   it('should not have its value updated with issue description is invalid', () => {
     descriptionComponent.issue.description = undefined;
     descriptionComponent.ngOnInit();
     descriptionComponent.changeToEditMode();
-    expect(descriptionComponent.formGroup.value).toEqual({ description: '' });
+    expect(descriptionComponent.issueDescriptionForm.value).toEqual({ description: '' });
   });
 
   it('should highlight conflicting changes, if the issue description was updated simultaneously by another user', () => {

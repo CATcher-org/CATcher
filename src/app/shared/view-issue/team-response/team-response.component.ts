@@ -21,7 +21,7 @@ import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 })
 export class TeamResponseComponent implements OnInit, EditCancellable {
   isSavePending = false;
-  formGroup: FormGroup;
+  responseForm: FormGroup;
   conflict: Conflict;
 
   submitButtonText: string;
@@ -47,7 +47,7 @@ export class TeamResponseComponent implements OnInit, EditCancellable {
   ) {}
 
   ngOnInit() {
-    this.formGroup = this.formBuilder.group({
+    this.responseForm = this.formBuilder.group({
       description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
@@ -55,13 +55,13 @@ export class TeamResponseComponent implements OnInit, EditCancellable {
 
   changeToEditMode() {
     this.updateEditState.emit(true);
-    this.formGroup.setValue({
+    this.responseForm.setValue({
       description: this.issue.teamResponse || ''
     });
   }
 
   updateResponse(form: NgForm) {
-    if (this.formGroup.invalid) {
+    if (this.responseForm.invalid) {
       return;
     }
     this.isSavePending = true;
@@ -149,7 +149,9 @@ export class TeamResponseComponent implements OnInit, EditCancellable {
   }
 
   openCancelDialogIfModified(): void {
-    this.issueService.openCancelDialogIfModified(this, this.issue, 'teamResponse', 'description');
+    const issueTeamResponseInitialValue = this.issue.teamResponse || '';
+    const isModified = () => this.responseForm.get('description').value !== issueTeamResponseInitialValue;
+    this.issueService.openCancelDialogIfModified(this, isModified);
   }
 
   openCancelDialog(): void {
@@ -168,7 +170,7 @@ export class TeamResponseComponent implements OnInit, EditCancellable {
 
   private getUpdatedIssue(): Issue {
     const clone = this.issue.clone(this.phaseService.currentPhase);
-    clone.teamResponse = Issue.updateTeamResponse(this.formGroup.get('description').value);
+    clone.teamResponse = Issue.updateTeamResponse(this.responseForm.get('description').value);
     if (!clone.status) {
       clone.status = clone.teamResponse === '' ? STATUS.Incomplete : STATUS.Done;
     }

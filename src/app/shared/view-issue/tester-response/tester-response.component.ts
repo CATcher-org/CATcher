@@ -9,7 +9,7 @@ import { TesterResponse } from '../../../core/models/tester-response.model';
 import { UserRole } from '../../../core/models/user.model';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { IssueService } from '../../../core/services/issue.service';
+import { EditCancellable, IssueService } from '../../../core/services/issue.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { UserService } from '../../../core/services/user.service';
 import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
@@ -21,7 +21,7 @@ import { ConflictDialogComponent, TesterResponseConflictData } from './conflict-
   templateUrl: './tester-response.component.html',
   styleUrls: ['./tester-response.component.css']
 })
-export class TesterResponseComponent implements OnInit, OnChanges {
+export class TesterResponseComponent implements OnInit, OnChanges, EditCancellable {
   testerResponseForm: FormGroup;
   isFormPending = false;
 
@@ -159,16 +159,8 @@ export class TesterResponseComponent implements OnInit, OnChanges {
       })
       .reduce((a, b) => a || b, false);
 
-    const isModified = reasonForDisagreementIsModified || disagreementIsModified;
-
-    if (isModified) {
-      // if the disagreement decision and/or reason for disagreement of any response has been edited,
-      // request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    const isModified = () => reasonForDisagreementIsModified || disagreementIsModified;
+    this.issueService.openCancelDialogIfModified(this, isModified);
   }
 
   openCancelDialog(): void {

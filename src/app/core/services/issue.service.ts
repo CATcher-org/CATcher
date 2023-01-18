@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, EMPTY, forkJoin, Observable, of, Subscription, throwError, timer } from 'rxjs';
 import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
 import { IssueComment } from '../models/comment.model';
@@ -24,7 +23,6 @@ import { UserService } from './user.service';
  * edits.
  */
 export interface EditCancellable {
-  formGroup: FormGroup;
   openCancelDialog(): void;
   cancelEditMode(): void;
 }
@@ -64,13 +62,10 @@ export class IssueService {
    * Method that cancels the display of the confirmation dialog box if issue is
    * not modified.
    * @param component Component that implements `EditCancellable`
-   * @param issue The current issue
-   * @param issueField The field of the issue to check if modified
-   * @param formGroupField The field of the `formGroup` to check against the `issueField`
+   * @param isModified Callback function that checks if the field has actually been modified
    */
-  openCancelDialogIfModified<T extends EditCancellable>(component: T, issue: Issue, issueField: keyof Issue, formGroupField: string) {
-    const issueFieldInitialValue = issue[issueField] || '';
-    if (component.formGroup.get(formGroupField).value !== issueFieldInitialValue) {
+  openCancelDialogIfModified<T extends EditCancellable>(component: T, isModified: () => boolean) {
+    if (isModified()) {
       // if the initial field has been changed, request user to confirm the cancellation
       component.openCancelDialog();
     } else {

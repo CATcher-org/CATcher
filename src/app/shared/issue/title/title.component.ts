@@ -16,7 +16,7 @@ import { PhaseService } from '../../../core/services/phase.service';
 export class TitleComponent implements OnInit, EditCancellable {
   isEditing = false;
   isSavePending = false;
-  formGroup: FormGroup;
+  issueTitleForm: FormGroup;
 
   @Input() issue: Issue;
   @Output() issueUpdated = new EventEmitter<Issue>();
@@ -36,7 +36,7 @@ export class TitleComponent implements OnInit, EditCancellable {
   ) {}
 
   ngOnInit() {
-    this.formGroup = this.formBuilder.group({
+    this.issueTitleForm = this.formBuilder.group({
       title: new FormControl('', [Validators.required, Validators.maxLength(256)])
     });
   }
@@ -44,7 +44,7 @@ export class TitleComponent implements OnInit, EditCancellable {
   changeToEditMode() {
     this.isEditing = true;
 
-    this.formGroup.setValue({
+    this.issueTitleForm.setValue({
       title: this.issue.title || ''
     });
   }
@@ -54,13 +54,13 @@ export class TitleComponent implements OnInit, EditCancellable {
   }
 
   updateTitle(form: NgForm) {
-    if (this.formGroup.invalid) {
+    if (this.issueTitleForm.invalid) {
       return;
     }
 
     this.isSavePending = true;
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
-    newIssue.title = this.formGroup.get('title').value;
+    newIssue.title = this.issueTitleForm.get('title').value;
     this.issueService
       .updateIssue(newIssue)
       .pipe(
@@ -81,7 +81,9 @@ export class TitleComponent implements OnInit, EditCancellable {
   }
 
   openCancelDialogIfModified(): void {
-    this.issueService.openCancelDialogIfModified(this, this.issue, 'title', 'title');
+    const issueTitleInitialValue = this.issue.title || '';
+    const isModified = () => this.issueTitleForm.get('title').value !== issueTitleInitialValue;
+    this.issueService.openCancelDialogIfModified(this, isModified);
   }
 
   openCancelDialog(): void {
