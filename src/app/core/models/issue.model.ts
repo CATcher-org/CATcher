@@ -28,7 +28,7 @@ export class Issue {
   /** Fields derived from Labels */
   severity: string;
   type: string;
-  responseTag?: string;
+  responseTag?: string; // all instance of this should be renamed to response
   duplicated?: boolean;
   status?: string;
   pending?: string;
