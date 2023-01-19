@@ -202,10 +202,11 @@ export class LabelService {
         return LabelService.severityLabels;
       case 'type':
         return LabelService.typeLabels;
-      case 'responseTag':
+      // case 'responseTag':
       case 'response':
         return LabelService.responseLabels;
     }
+    console.log('GetLabelList: Unfiltered Attr');
   }
 
   /**
@@ -218,9 +219,10 @@ export class LabelService {
         return DISPLAY_NAME_SEVERITY;
       case 'type':
         return DISPLAY_NAME_BUG_TYPE;
-      case 'responseTag':
+      case 'response':
         return DISPLAY_NAME_RESPONSE;
     }
+    console.log('getLabelTitle: Unfiltered Attr');
   }
 
   /**
@@ -230,6 +232,8 @@ export class LabelService {
    */
   getColorOfLabel(labelCategory: LabelCategory, labelValue: string): string {
     if (labelValue === '' || !LabelService.allLabelArrays[labelCategory]) {
+      console.log(`getColorOfLabel: Unfiltered Attr, ${labelValue}: ${labelCategory}`);
+
       return COLOR_WHITE;
     }
 

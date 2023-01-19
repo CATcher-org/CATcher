@@ -299,8 +299,8 @@ export class MockIssueService {
       result.push(this.createLabel('type', issue.type));
     }
 
-    if (issue.responseTag) {
-      result.push(this.createLabel('response', issue.responseTag));
+    if (issue.response) {
+      result.push(this.createLabel('response', issue.response));
     }
 
     if (issue.duplicated) {
