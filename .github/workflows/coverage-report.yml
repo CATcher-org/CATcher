@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm run test -- "--code-coverage"
+      - run: npm run test -- "--code-coverage" "--source-map=false"
       - uses: codecov/codecov-action@v3
         with:
           directory: ./tests/coverage
