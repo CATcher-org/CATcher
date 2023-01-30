@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, pipe, UnaryFunction } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
 import { GithubLabel } from '../models/github/github-label.model';
+import { LoggingService } from './logging.service';
 import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
 
@@ -147,7 +148,7 @@ export class LabelService {
     type: LabelService.typeLabels
   };
 
-  constructor(private githubService: GithubService) {}
+  constructor(private githubService: GithubService, private logger: LoggingService) {}
 
   public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
@@ -206,7 +207,7 @@ export class LabelService {
       case 'response':
         return LabelService.responseLabels;
     }
-    console.log('GetLabelList: Unfiltered Attr');
+    this.logger.info(`LabelService: Unfiltered Attribute ${attributeName} in getLabelList`);
   }
 
   /**
@@ -222,7 +223,7 @@ export class LabelService {
       case 'response':
         return DISPLAY_NAME_RESPONSE;
     }
-    console.log('getLabelTitle: Unfiltered Attr');
+    this.logger.info(`LabelService: Unfiltered Attribute ${attributeName} in getLabelTitle`);
   }
 
   /**
@@ -232,7 +233,7 @@ export class LabelService {
    */
   getColorOfLabel(labelCategory: LabelCategory, labelValue: string): string {
     if (labelValue === '' || !LabelService.allLabelArrays[labelCategory]) {
-      console.log(`getColorOfLabel: Unfiltered Attr, ${labelValue}: ${labelCategory}`);
+      this.logger.info(`LabelService: Unfiltered Attribute, ${labelValue}: ${labelCategory} in getColorOfLabel`);
 
       return COLOR_WHITE;
     }
