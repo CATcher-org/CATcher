@@ -24,7 +24,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm update
-      - run: npm run electron:linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run lint
@@ -46,7 +45,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm update
-      - run: npm run electron:mac
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run lint
@@ -65,6 +63,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm update
-      - run: npm run electron:windows
       - run: npm run lint
       - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
