@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -54,7 +54,7 @@ describe('AssigneeComponent', () => {
   const issueService: any = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'getLatestIssue', 'updateIssue']);
   const permissionsService: any = jasmine.createSpyObj('PermissionService', ['isIssueLabelsEditable']);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AssigneeComponent],
       providers: [IssueService, ErrorHandlingService, PhaseService, PermissionService],
