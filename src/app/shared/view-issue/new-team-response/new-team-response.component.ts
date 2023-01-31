@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angula
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, throwError } from 'rxjs';
-import { finalize, first, flatMap, map, takeUntil } from 'rxjs/operators';
+import { finalize, first, map, mergeMap, takeUntil } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, STATUS } from '../../../core/models/issue.model';
@@ -108,7 +108,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
 
     this.isSafeToSubmit()
       .pipe(
-        flatMap((isSaveToSubmit: boolean) => {
+        mergeMap((isSaveToSubmit: boolean) => {
           const newCommentDescription = latestIssue.createGithubTeamResponse();
           if (isSaveToSubmit) {
             return this.issueService.createTeamResponse(latestIssue);

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { flatMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { AuthService, AuthState } from '../../core/services/auth.service';
 import { ElectronService } from '../../core/services/electron.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
@@ -60,8 +60,8 @@ export class ConfirmLoginComponent implements OnInit {
     this.userService
       .createUserModel(this.username)
       .pipe(
-        flatMap(() => this.phaseService.sessionSetup()),
-        flatMap(() => this.githubEventService.setLatestChangeEvent())
+        mergeMap(() => this.phaseService.sessionSetup()),
+        mergeMap(() => this.githubEventService.setLatestChangeEvent())
       )
       .subscribe(
         () => {
