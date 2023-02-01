@@ -18,6 +18,7 @@ export const EMPTY_TEAM_RESPONSE: GithubComment = {
 // Type and severity disagreeement
 export const TEAM_RESPONSE_MULTIPLE_DISAGREEMENT = {
   body:
+    '[IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. You can respond to it using CATcher during the next phase of the PE]\n\n' +
     "# Team's Response\n" +
     'This is a dummy team response comment: ' +
     'Thanks for the feedback\n\n' +

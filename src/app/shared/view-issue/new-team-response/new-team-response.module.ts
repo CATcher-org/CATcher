@@ -20,7 +20,6 @@ import { NewTeamResponseComponent } from './new-team-response.component';
     LabelDropdownModule,
     MarkdownModule.forChild(),
     NgxMatSelectSearchModule
-  ],
-  entryComponents: [ConflictDialogComponent]
+  ]
 })
 export class NewTeamResponseModule {}
