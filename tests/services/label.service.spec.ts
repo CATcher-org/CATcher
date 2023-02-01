@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 import { GithubLabel } from '../../src/app/core/models/github/github-label.model';
 import { Label } from '../../src/app/core/models/label.model';
-import { LABEL_DEFINITIONS, LabelService } from '../../src/app/core/services/label.service';
+import { LabelService, LABEL_DEFINITIONS } from '../../src/app/core/services/label.service';
 import * as GithubLabelConstant from '../constants/githublabel.constants';
 import * as LabelConstant from '../constants/label.constants';
 
