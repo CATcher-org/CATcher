@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, STATUS } from '../../../core/models/issue.model';
@@ -74,7 +74,7 @@ export class TeamResponseComponent implements OnInit {
 
     this.isSafeToUpdate()
       .pipe(
-        flatMap((isSaveToUpdate: boolean) => {
+        mergeMap((isSaveToUpdate: boolean) => {
           if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateIssueWithComment(updatedIssue, updatedIssueComment);
           } else if (this.isUpdatingDeletedResponse()) {
