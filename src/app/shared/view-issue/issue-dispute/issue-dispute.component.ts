@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Observable, throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Issue } from '../../../core/models/issue.model';
 import { ElectronService } from '../../../core/services/electron.service';
@@ -65,7 +65,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
 
     this.isSafeToSubmitTutorResponse()
       .pipe(
-        flatMap((isSave: boolean) => {
+        mergeMap((isSave: boolean) => {
           if (isSave || this.isUpdatingDeletedResponse()) {
             if (this.issue.issueComment && !this.isUpdatingDeletedResponse()) {
               return this.updateTutorResponse();

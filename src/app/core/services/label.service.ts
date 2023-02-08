@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, pipe, UnaryFunction } from 'rxjs';
-import { flatMap, map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { GithubLabel } from '../models/github/github-label.model';
 import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
@@ -175,7 +175,7 @@ export class LabelService {
    * with the remote repository.
    */
   syncLabels(needAllLabels: boolean): UnaryFunction<Observable<boolean>, Observable<any>> {
-    return pipe(flatMap(() => this.synchronizeRemoteLabels(needAllLabels)));
+    return pipe(mergeMap(() => this.synchronizeRemoteLabels(needAllLabels)));
   }
 
   /**
