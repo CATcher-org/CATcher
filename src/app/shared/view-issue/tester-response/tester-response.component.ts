@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Issue } from '../../../core/models/issue.model';
 import { TesterResponse } from '../../../core/models/tester-response.model';
@@ -74,7 +74,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
     this.isSafeToSubmit()
       .pipe(
-        flatMap((isSaveToSubmit: boolean) => {
+        mergeMap((isSaveToSubmit: boolean) => {
           if (isSaveToSubmit || this.isUpdatingDeletedResponse() || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
               ...this.issue.issueComment,

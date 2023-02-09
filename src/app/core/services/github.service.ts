@@ -4,7 +4,7 @@ import { Apollo, QueryRef } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import { DocumentNode } from 'graphql';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, throwIfEmpty } from 'rxjs/operators';
 import {
   FetchIssue,
   FetchIssueQuery,
@@ -106,7 +106,7 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => {
+      mergeMap(() => {
         return this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
           FetchIssuesByTeam,
           {
@@ -134,7 +134,7 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => {
+      mergeMap(() => {
         return this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
           FetchIssues,
           { owner: ORG_NAME, name: REPO, filter: graphqlFilter },
@@ -158,7 +158,7 @@ export class GithubService {
         responseInFirstPage = response;
         return getNumberOfPages(response);
       }),
-      flatMap((numOfPages: number) => {
+      mergeMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
           apiCalls.push(this.getIssuesAPICall(filter, i));
@@ -227,7 +227,7 @@ export class GithubService {
     const queryRef = this.issueQueryRefs.get(id);
     return this.toFetchIssue(id).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => from(queryRef.refetch())),
+      mergeMap(() => from(queryRef.refetch())),
       map((value: ApolloQueryResult<FetchIssueQuery>) => {
         return new GithubGraphqlIssue(value.data.repository.issue);
       }),

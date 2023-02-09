@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, pipe } from 'rxjs';
-import { flatMap, map, retry, tap } from 'rxjs/operators';
+import { map, mergeMap, retry, tap } from 'rxjs/operators';
 import { throwIfFalse } from '../../shared/lib/custom-ops';
 import { Phase } from '../models/phase.model';
 import { assertSessionDataIntegrity, SessionData } from '../models/session.model';
@@ -135,7 +135,7 @@ export class PhaseService {
 
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
-      flatMap((sessionData: SessionData) => {
+      mergeMap((sessionData: SessionData) => {
         this.updateSessionParameters(sessionData);
         return this.verifySessionAvailability(sessionData);
       }),
