@@ -161,14 +161,11 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
     const isModified = reasonForDisagreementIsModified || disagreementIsModified;
 
-    if (isModified) {
-      // if the disagreement decision and/or reason for disagreement of any response has been edited,
-      // request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    this.dialogService.performActionIfModified(
+      isModified,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
   }
 
   openCancelDialog(): void {
