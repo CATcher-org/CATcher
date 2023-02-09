@@ -2,8 +2,8 @@ import { BrowserWindow, shell } from 'electron';
 import { v4 as uuid } from 'uuid';
 
 const nodeUrl = require('url');
-const fetch = require('node-fetch');
 const Logger = require('electron-log');
+const fetch = require('node-fetch');
 
 const CLIENT_ID = '6750652c0c9001314434';
 const BASE_URL = 'https://github.com';
@@ -24,7 +24,7 @@ export function getAccessToken(window: BrowserWindow, repoPermissionLevel: strin
       const accessTokenUrl = `${ACCESS_TOKEN_URL}/${code}`;
       return fetch(accessTokenUrl)
         .then((res) => res.json())
-        .then((data) => {
+        .then((data: { error }) => {
           if (data.error) {
             throw new Error(data.error);
           }

@@ -2,7 +2,7 @@ import { DataSource } from '@angular/cdk/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
-import { flatMap, map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
 import { paginateData } from './issue-paginator';
@@ -51,7 +51,7 @@ export class IssuesDataTable extends DataSource<Issue> {
     this.issueService.startPollIssues();
     this.issueSubscription = this.issueService.issues$
       .pipe(
-        flatMap(() => {
+        mergeMap(() => {
           return merge(...displayDataChanges).pipe(
             map(() => {
               let data = <Issue[]>Object.values(this.issueService.issues$.getValue()).reverse();

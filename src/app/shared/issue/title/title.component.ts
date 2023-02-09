@@ -81,14 +81,12 @@ export class TitleComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    const issueTitleInitialValue = this.issue.title || '';
-    if (this.issueTitleForm.get('title').value !== issueTitleInitialValue) {
-      // if the title has been edited, request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    const isModified = this.dialogService.checkIfFieldIsModified(this.issueTitleForm, 'title', 'title', this.issue);
+    this.dialogService.performActionIfModified(
+      isModified,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
   }
 
   openCancelDialog(): void {

@@ -34,7 +34,6 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
     ConflictDialogComponent
-  ],
-  entryComponents: [ConflictDialogComponent]
+  ]
 })
 export class IssueComponentsModule {}
