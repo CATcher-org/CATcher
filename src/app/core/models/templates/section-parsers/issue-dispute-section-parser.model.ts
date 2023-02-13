@@ -4,7 +4,7 @@ const { coroutine, everyCharUntil, optionalWhitespace, str } = require('arcsecon
 
 const SECTION_TITLE_PREFIX = '## :question: ';
 const TEAM_SAYS_HEADER = '### Team says:';
-const LINE_SEPARATOR = '-------------------';
+const LINE_SEPARATOR = '<catcher-end-of-segment><hr>';
 
 export const IssueDisputeSectionParser = coroutine(function* () {
   yield str(SECTION_TITLE_PREFIX);
