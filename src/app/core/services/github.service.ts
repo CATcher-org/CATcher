@@ -426,7 +426,7 @@ export class GithubService {
 
   viewIssueInBrowser(id: number, event: Event) {
     if (id) {
-      this.electronService.openLink('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
+      window.open('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
     } else {
       this.errorHandlingService.handleError(new Error(UNABLE_TO_OPEN_IN_BROWSER));
     }

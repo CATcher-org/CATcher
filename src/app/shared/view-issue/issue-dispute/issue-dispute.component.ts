@@ -139,7 +139,7 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
   }
 
   viewInGithub(): void {
-    this.electronService.openLink(
+    window.open(
       `https://github.com/${this.githubService.getRepoURL()}/issues/` + `${this.issue.id}#issuecomment-${this.issue.issueComment.id}`
     );
   }

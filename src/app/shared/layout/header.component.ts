@@ -134,11 +134,11 @@ export class HeaderComponent implements OnInit {
       issueUrl = routerUrl.substring(issueUrlIndex);
     }
     // Open the url in user's preferred browser
-    this.electronService.openLink('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
+    window.open('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
   }
 
   openIssueTracker() {
-    this.electronService.openLink(ISSUE_TRACKER_URL);
+    window.open(ISSUE_TRACKER_URL);
   }
 
   private getTeamFilterString() {

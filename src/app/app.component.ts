@@ -39,7 +39,7 @@ export class AppComponent implements AfterViewInit {
         if (elem) {
           event.preventDefault();
           event.stopPropagation();
-          this.electronService.openLink(elem.href);
+          window.open(elem.href);
         }
       },
       false
