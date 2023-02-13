@@ -45,7 +45,7 @@ describe('search-filter', () => {
       TABLE_COLUMNS.ASSIGNEE,
       TABLE_COLUMNS.DUPLICATED_ISSUES
     ];
-    const issueService: IssueService = new IssueService(null, null, null, null, null, null);
+    const issueService: IssueService = new IssueService(null, null, null, null, null);
 
     beforeEach(() => {
       issueService.updateLocalStore(mediumSeverityIssueWithResponse);
