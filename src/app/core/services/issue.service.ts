@@ -146,7 +146,7 @@ export class IssueService {
           return this.createIssueModel(response);
         }),
         catchError((err) => {
-          this.logger.error(err); // Log full details of error first
+          this.logger.error('IssueService: ', err); // Log full details of error first
           return throwError(err.response.data.message); // More readable error message
         })
       );
@@ -476,7 +476,7 @@ export class IssueService {
     }
 
     if (issue.parseError) {
-      this.logger.error(issue.parseError);
+      this.logger.error('IssueService: ' + issue.parseError);
     }
     return issue;
   }

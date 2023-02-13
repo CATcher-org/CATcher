@@ -134,7 +134,7 @@ export class CommentEditorComponent implements OnInit {
 
     for (let i = 0; i < files.length; i++) {
       setTimeout(() => {
-        this.logger.info(`File ${i + 1} of ${files.length}. Begin uploading ${files[i].name}.`);
+        this.logger.info(`CommentEditorComponent: File ${i + 1} of ${files.length}. Begin uploading ${files[i].name}.`);
         this.readAndUploadFile(files[i]);
       }, TIME_BETWEEN_UPLOADS_MS * i);
     }
