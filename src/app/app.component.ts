@@ -1,6 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { AppConfig } from '../environments/environment';
-import { ElectronService } from './core/services/electron.service';
 import { ErrorHandlingService } from './core/services/error-handling.service';
 import { LoggingService } from './core/services/logging.service';
 
@@ -12,14 +11,9 @@ import { LoggingService } from './core/services/logging.service';
 export class AppComponent implements AfterViewInit {
   NOT_CONNECTED_ERROR: Error = new Error('You are not connected to the internet.');
 
-  constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
+  constructor(logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
     logger.info('AppConfig', AppConfig);
-
-    if (electronService.isElectron()) {
-      logger.info('Mode electron');
-    } else {
-      logger.info('Mode web');
-    }
+    logger.info('Mode web');
   }
 
   ngAfterViewInit() {

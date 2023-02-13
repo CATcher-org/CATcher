@@ -20,9 +20,7 @@ const mockDates = () => {
 };
 
 const initializeLoggingService = () => {
-  const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
-  electronService.isElectron = jasmine.createSpy('isElectron', () => false);
-  loggingService = new LoggingService(electronService);
+  loggingService = new LoggingService();
   headerLog = `${loggingService.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
   sessionSeparator = loggingService.SESSION_LOG_SEPARATOR;
 };

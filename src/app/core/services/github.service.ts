@@ -29,7 +29,6 @@ import { GithubLabel } from '../models/github/github-label.model';
 import { GithubResponse } from '../models/github/github-response.model';
 import { GithubRelease } from '../models/github/github.release';
 import { SessionData } from '../models/session.model';
-import { ElectronService } from './electron.service';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
 
@@ -62,12 +61,7 @@ export class GithubService {
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private issueQueryRefs = new Map<Number, QueryRef<FetchIssueQuery>>();
 
-  constructor(
-    private errorHandlingService: ErrorHandlingService,
-    private apollo: Apollo,
-    private electronService: ElectronService,
-    private logger: LoggingService
-  ) {}
+  constructor(private errorHandlingService: ErrorHandlingService, private apollo: Apollo, private logger: LoggingService) {}
 
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({

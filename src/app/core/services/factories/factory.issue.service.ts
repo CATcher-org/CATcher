@@ -1,6 +1,5 @@
 import { AppConfig } from '../../../../environments/environment';
 import { DataService } from '../data.service';
-import { ElectronService } from '../electron.service';
 import { GithubService } from '../github.service';
 import { IssueService } from '../issue.service';
 import { LoggingService } from '../logging.service';
@@ -12,12 +11,11 @@ export function IssueServiceFactory(
   githubService: GithubService,
   userService: UserService,
   phaseService: PhaseService,
-  electronService: ElectronService,
   dataService: DataService,
   logger: LoggingService
 ) {
   if (AppConfig.test) {
     return new MockIssueService(githubService, phaseService, dataService);
   }
-  return new IssueService(githubService, userService, phaseService, electronService, dataService, logger);
+  return new IssueService(githubService, userService, phaseService, dataService, logger);
 }
