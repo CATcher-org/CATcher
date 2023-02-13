@@ -83,7 +83,7 @@
     "@angular/compiler-cli": "^10.2.5",
     "@angular/language-service": "^10.2.5",
     "@graphql-codegen/cli": "^2.6.4",
-    "@graphql-codegen/typescript": "1.17.7",
+    "@graphql-codegen/typescript": "^2.8.5",
     "@graphql-codegen/typescript-document-nodes": "1.17.7",
     "@graphql-codegen/typescript-operations": "^1.18.4",
     "@graphql-codegen/typescript-resolvers": "^1.20.0",

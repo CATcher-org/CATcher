@@ -26,11 +26,11 @@ export class Issue {
   hiddenDataInDescription: HiddenData;
 
   /** Fields derived from Labels */
-  severity: string;
-  type: string;
+  severity: SEVERITY;
+  type: ATTRIBUTES;
   responseTag?: string;
   duplicated?: boolean;
-  status?: string;
+  status?: STATUS;
   pending?: string;
   unsure?: boolean;
   teamAssigned?: Team;
@@ -116,11 +116,11 @@ export class Issue {
     this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
-    this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity);
-    this.type = githubIssue.findLabel(GithubLabel.LABELS.type);
+    this.severity = SEVERITY[githubIssue.findLabel(GithubLabel.LABELS.severity)];
+    this.type = ATTRIBUTES[githubIssue.findLabel(GithubLabel.LABELS.type)];
     this.responseTag = githubIssue.findLabel(GithubLabel.LABELS.response);
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
-    this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
+    this.status = STATUS[githubIssue.findLabel(GithubLabel.LABELS.status)];
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
@@ -322,6 +322,41 @@ export const ISSUE_TYPE_ORDER = { '-': 0, DocumentationBug: 1, FeatureFlaw: 2, F
 export enum STATUS {
   Incomplete = 'Incomplete',
   Done = 'Done'
+}
+
+export enum ATTRIBUTES {
+  Severity = 'severity',
+  Type = 'type',
+  Response = 'response',
+  ResponseTag = 'responseTag',
+  Status = 'status',
+  Undefined = 'undefined',
+  Others = 'others'
+} 
+
+export enum SEVERITY {
+  VeryLow = 'VeryLow',
+  Low = 'Low',
+  Medium = 'Medium',
+  High = 'High'
+}
+
+export enum BUG {
+  DocumentationBug = 'DocumentationBug',
+  FeatureFlaw = 'FeatureFlaw',
+  FunctionalityBug = 'FunctionalityBug'
+}
+
+export enum RESPONSE {
+  Accepted = 'Accepted',
+  CannotReproduce = 'CannotReproduce',
+  IssueUnclear = 'IssueUnclear',
+  NotInScope = 'NotInScope',
+  Rejected = 'Rejected'
+}
+
+export enum UNDEFINED {
+  Duplicate = 'Duplicate'
 }
 
 export enum FILTER {
