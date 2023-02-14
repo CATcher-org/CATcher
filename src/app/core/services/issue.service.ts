@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, forkJoin, Observable, of, Subscription, throwError, timer } from 'rxjs';
-import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../models/comment.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
@@ -154,7 +154,7 @@ export class IssueService {
 
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
-      flatMap((updatedComment: GithubComment) => {
+      mergeMap((updatedComment: GithubComment) => {
         issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
         return this.updateIssue(issue);
       })
@@ -192,7 +192,7 @@ export class IssueService {
   createTeamResponse(issue: Issue): Observable<Issue> {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
-      flatMap((githubComment: GithubComment) => {
+      mergeMap((githubComment: GithubComment) => {
         issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
         return this.updateIssue(issue);
       })
