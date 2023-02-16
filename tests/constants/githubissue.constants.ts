@@ -57,11 +57,11 @@ const ISSUE_BODY =
   '# Issue Description\n{original issue description}\n' +
   "# Team's Response\n{team's response}\n # Disputes\n\n" +
   "## :question: Issue Type\n\n### Team says:\r\n{the team's action that is being disputed}\r\n\r\n" +
-  "### Tester says:\r\n{tester's objection}\n\n-------------------\n## :question: Issue Severity\n\n" +
+  "### Tester says:\r\n{tester's objection}\n\n<catcher-end-of-segment><hr>\n## :question: Issue Severity\n\n" +
   "### Team says:\r\n{the team's action that is being disputed}\r\n\r\n" +
-  "### Tester says:\r\n{tester's objection}\n\n-------------------\n## :question: Not Related Question\n\n" +
+  "### Tester says:\r\n{tester's objection}\n\n<catcher-end-of-segment><hr>\n## :question: Not Related Question\n\n" +
   "### Team says:\r\n{the team's action that is being disputed}\r\n\r\n" +
-  "### Tester says:\r\n{tester's objection}\n\n-------------------\n\n";
+  "### Tester says:\r\n{tester's objection}\n\n<catcher-end-of-segment><hr>\n\n";
 
 export const ISSUE_WITH_EMPTY_DESCRIPTION = new GithubIssue({
   id: '574085971',
