@@ -60,7 +60,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
       description: [''],
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
-      responseTag: [this.issue.responseTag, Validators.required],
+      response: [this.issue.response, Validators.required],
       assignees: [this.issue.assignees.map((a) => a.toLowerCase())],
       duplicated: [false],
       duplicateOf: ['']
@@ -162,12 +162,12 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
       clone.severity = duplicatedIssue.severity;
       clone.type = duplicatedIssue.type;
       clone.assignees = duplicatedIssue.assignees;
-      clone.responseTag = duplicatedIssue.responseTag;
+      clone.response = duplicatedIssue.response;
     } else {
       clone.severity = this.severity.value;
       clone.type = this.type.value;
       clone.assignees = this.assignees.value;
-      clone.responseTag = this.responseTag.value;
+      clone.response = this.responseTag.value;
     }
     clone.status = STATUS.Done;
     clone.teamResponse = Issue.updateTeamResponse(this.description.value);
