@@ -31,7 +31,7 @@ export const RESPONSE_DISAGREEMENT =
   'Team chose [`response.Rejected`]\n\n' +
   '- [ ] I disagree\n\n' +
   '**Reason for disagreement:** [replace this with your reason]\n\n' +
-  '-------------------';
+  '<catcher-end-of-segment><hr>';
 
 export const SEVERITY_DISAGREEMENT =
   '## :question: Issue severity\n\n' +
@@ -39,7 +39,7 @@ export const SEVERITY_DISAGREEMENT =
   'Originally [`severity.High`]\n\n' +
   '- [x] I disagree\n\n' +
   '**Reason for disagreement:** I disagree!\n\n' +
-  '-------------------';
+  '<catcher-end-of-segment><hr>';
 
 export const TYPE_DISAGREEMENT =
   '## :question: Issue type\n\n' +
@@ -47,14 +47,14 @@ export const TYPE_DISAGREEMENT =
   'Originally [`type.FunctionalityBug`]\n\n' +
   '- [ ] I disagree\n\n' +
   '**Reason for disagreement:** [replace this with your reason]\n\n' +
-  '-------------------';
+  '<catcher-end-of-segment><hr>';
 
 export const DUPLICATE_DISAGREEMENT =
   '## :question: Issue duplicate status\n\n' +
   "Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)\n\n" +
   '- [ ] I disagree\n\n' +
   '**Reason for disagreement:** [replace this with your reason]\n\n' +
-  '-------------------';
+  '<catcher-end-of-segment><hr>';
 
 describe('DisagreeCheckboxParser', () => {
   it('parses empty checkbox correctly', () => {

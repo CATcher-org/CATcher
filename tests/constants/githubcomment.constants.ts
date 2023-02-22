@@ -28,13 +28,13 @@ export const TEAM_RESPONSE_MULTIPLE_DISAGREEMENT = {
     'Originally [`severity.High`]\n\n' +
     '- [ ] I disagree\n\n' +
     '**Reason for disagreement:** [replace this with your reason]\n\n' +
-    '-------------------\n\n' +
+    '<catcher-end-of-segment><hr>\n\n' +
     '## :question: Issue type\n\n' +
     'Team chose [`type.DocumentationBug`]\n' +
     'Originally [`type.FunctionalityBug`]\n\n' +
     '- [ ] I disagree\n\n' +
     '**Reason for disagreement:** [replace this with your reason]\n\n' +
-    '-------------------',
+    '<catcher-end-of-segment><hr>',
   created_at: '2021-06-29T17:15:11Z',
   id: 870774171,
   updated_at: '2021-06-29T17:15:11Z'
@@ -43,11 +43,11 @@ export const TEAM_RESPONSE_MULTIPLE_DISAGREEMENT = {
 export const PENDING_TUTOR_MODERATION: GithubComment = {
   body:
     '# Tutor Moderation\n\n' +
-    '## :question: Issue Type\n\n- [x] Done\n\ntest\n\n-------------------\n' +
+    '## :question: Issue Type\n\n- [x] Done\n\ntest\n\n<catcher-end-of-segment><hr>\n' +
     '## :question: Issue Severity\n\n- [ ] Done\n\n' +
-    '[replace this with your explanation]\n\n-------------------\n' +
+    '[replace this with your explanation]\n\n<catcher-end-of-segment><hr>\n' +
     '## :question: Not Related Question\n\n- [ ] Done\n\n' +
-    '[replace this with your explanation]\n\n-------------------\n',
+    '[replace this with your explanation]\n\n<catcher-end-of-segment><hr>\n',
   created_at: '2020-08-15T06:39:24Z',
   id: 674357972,
   issue_url: 'https://api.github.com/repos/CATcher-org/pe-evaluation/issues/26',

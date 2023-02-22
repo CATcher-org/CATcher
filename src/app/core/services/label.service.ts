@@ -4,6 +4,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { GithubLabel } from '../models/github/github-label.model';
 import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
+import { LoggingService } from './logging.service';
 
 /* The threshold to decide if color is dark or light.
 A higher threshold value will result in more colors determined to be "dark".
@@ -147,7 +148,7 @@ export class LabelService {
     type: LabelService.typeLabels
   };
 
-  constructor(private githubService: GithubService) {}
+  constructor(private githubService: GithubService, private logger: LoggingService) {}
 
   public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
@@ -202,10 +203,11 @@ export class LabelService {
         return LabelService.severityLabels;
       case 'type':
         return LabelService.typeLabels;
-      case 'responseTag':
+      // case 'responseTag':
       case 'response':
         return LabelService.responseLabels;
     }
+    this.logger.info(`LabelService: Unfiltered Attribute ${attributeName} in getLabelList`);
   }
 
   /**
@@ -218,9 +220,10 @@ export class LabelService {
         return DISPLAY_NAME_SEVERITY;
       case 'type':
         return DISPLAY_NAME_BUG_TYPE;
-      case 'responseTag':
+      case 'response':
         return DISPLAY_NAME_RESPONSE;
     }
+    this.logger.info(`LabelService: Unfiltered Attribute ${attributeName} in getLabelTitle`);
   }
 
   /**
@@ -230,6 +233,8 @@ export class LabelService {
    */
   getColorOfLabel(labelCategory: LabelCategory, labelValue: string): string {
     if (labelValue === '' || !LabelService.allLabelArrays[labelCategory]) {
+      this.logger.info(`LabelService: Unfiltered Attribute, ${labelValue}: ${labelCategory} in getColorOfLabel`);
+
       return COLOR_WHITE;
     }
 

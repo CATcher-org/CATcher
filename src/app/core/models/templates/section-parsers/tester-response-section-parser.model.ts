@@ -18,7 +18,7 @@ const TEAM_CHOSE_PREFIX = 'Team chose ';
 const TESTER_CHOSE_PREFIX = 'Originally ';
 const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 const DISAGREEMENT_REASON_PREFIX = '**Reason for disagreement:** ';
-const LINE_SEPARATOR = '-------------------';
+const LINE_SEPARATOR = '<catcher-end-of-segment><hr>';
 const DUPLICATE_STATUS_MESSAGE =
   "Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)";
 
