@@ -61,6 +61,7 @@ export class AuthService {
   }
 
   reset(): void {
+    this.logger.info('AuthService: Clearing access token and setting AuthState to NotAuthenticated.');
     this.accessToken.next(undefined);
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));
@@ -82,12 +83,14 @@ export class AuthService {
   setTitleWithPhaseDetail(): void {
     const appSetting = require('../../../../package.json');
     const title = `${appSetting.name} ${appSetting.version} - ${this.phaseService.getPhaseDetail()}`;
+    this.logger.info(`AuthService: Setting Title as ${title}`);
     this.titleService.setTitle(title);
   }
 
   setLandingPageTitle(): void {
     const appSetting = require('../../../../package.json');
     const title = `${appSetting.name} ${appSetting.version}`;
+    this.logger.info(`AuthService: Setting LandingPageTitle as ${title}`);
     this.titleService.setTitle(title);
   }
 
