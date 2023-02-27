@@ -12,7 +12,7 @@ describe('IssuesPendingComponent', () => {
     let dummyIssue: Issue;
     let issuesPendingComponent: IssuesPendingComponent;
     const issueService: IssueService = new IssueService(null, null, null, null, null, null);
-    const userService: UserService = new UserService(null, null);
+    const userService: UserService = new UserService(null, null, null);
     userService.currentUser = USER_Q;
     const DUMMY_DUPLICATE_ISSUE_ID = 1;
     const DUMMY_RESPONSE = 'dummy response';
