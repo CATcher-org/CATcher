@@ -1,7 +1,7 @@
 import { LoggingService } from '../../src/app/core/services/logging.service';
 import { MockLocalStorage } from '../helper/mock.local.storage';
 
-let loggingService: LoggingService;
+let logger: LoggingService;
 let headerLog: string;
 let sessionSeparator: string;
 const mockDate = new Date(2021, 6, 27);
@@ -22,9 +22,9 @@ const mockDates = () => {
 const initializeLoggingService = () => {
   const electronService = jasmine.createSpyObj('ElectronService', ['isElectron']);
   electronService.isElectron = jasmine.createSpy('isElectron', () => false);
-  loggingService = new LoggingService(electronService);
-  headerLog = `${loggingService.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
-  sessionSeparator = loggingService.SESSION_LOG_SEPARATOR;
+  logger = new LoggingService(electronService);
+  headerLog = `${logger.LOG_START_HEADER}\n${mockDate.toLocaleString()}`;
+  sessionSeparator = logger.SESSION_LOG_SEPARATOR;
 };
 
 describe('LoggingService', () => {
@@ -36,7 +36,7 @@ describe('LoggingService', () => {
   });
 
   beforeEach(() => {
-    loggingService.reset();
+    logger.reset();
     localStorage.clear();
   });
 
@@ -46,31 +46,31 @@ describe('LoggingService', () => {
 
   describe('.startSession()', () => {
     it('should successfully initialize logging session', () => {
-      loggingService.startSession();
-      const actualLog = loggingService.getCachedLog();
+      logger.startSession();
+      const actualLog = logger.getCachedLog();
       const expectedLog = headerLog;
       expect(actualLog).toEqual(expectedLog);
     });
 
     it('should successfully reinitialize logging session', () => {
-      loggingService.startSession();
-      loggingService.reset();
-      loggingService.startSession();
-      const actualLog = loggingService.getCachedLog();
+      logger.startSession();
+      logger.reset();
+      logger.startSession();
+      const actualLog = logger.getCachedLog();
       const expectedLog = `${headerLog}${sessionSeparator}${headerLog}`;
       expect(actualLog).toEqual(expectedLog);
     });
 
     it('should successfully reinitialize logging session when limit reached', () => {
-      Array(loggingService.LOG_COUNT_LIMIT)
+      Array(logger.LOG_COUNT_LIMIT)
         .fill(0)
         .forEach(() => {
-          loggingService.startSession();
-          loggingService.reset();
+          logger.startSession();
+          logger.reset();
         });
-      loggingService.startSession();
-      const actualLog = loggingService.getCachedLog();
-      const expectedLog = Array(loggingService.LOG_COUNT_LIMIT)
+      logger.startSession();
+      const actualLog = logger.getCachedLog();
+      const expectedLog = Array(logger.LOG_COUNT_LIMIT)
         .fill('')
         .map((_) => headerLog)
         .join(sessionSeparator);
@@ -80,19 +80,19 @@ describe('LoggingService', () => {
 
   describe('.reset()', () => {
     it('should do nothing if no session is ongoing', () => {
-      loggingService.reset();
-      const actualLog = loggingService.getCachedLog();
+      logger.reset();
+      const actualLog = logger.getCachedLog();
       expect(actualLog).toBeNull();
     });
 
     it('should not tamper with existing log histories', () => {
       let expectedLog = headerLog;
-      for (let i = 0; i < loggingService.LOG_COUNT_LIMIT + 1; i += 1) {
-        loggingService.startSession();
-        loggingService.reset();
-        const actualLog = loggingService.getCachedLog();
+      for (let i = 0; i < logger.LOG_COUNT_LIMIT + 1; i += 1) {
+        logger.startSession();
+        logger.reset();
+        const actualLog = logger.getCachedLog();
         expect(actualLog).toEqual(expectedLog);
-        if (i < loggingService.LOG_COUNT_LIMIT - 1) {
+        if (i < logger.LOG_COUNT_LIMIT - 1) {
           expectedLog += `${sessionSeparator}${headerLog}`;
         }
       }
@@ -101,10 +101,10 @@ describe('LoggingService', () => {
 
   describe('adding logs', () => {
     it('should successfully add info logs', () => {
-      loggingService.startSession();
-      const initialLog = loggingService.getCachedLog();
-      loggingService.info(infoLogMessage);
-      const actualLog = loggingService.getCachedLog();
+      logger.startSession();
+      const initialLog = logger.getCachedLog();
+      logger.info(infoLogMessage);
+      const actualLog = logger.getCachedLog();
       const expectedLog = `${initialLog}\n${infoLogMessage}`;
       expect(actualLog).toEqual(expectedLog);
     });
@@ -112,16 +112,16 @@ describe('LoggingService', () => {
 
   describe('updating and trimming logs from sessions', () => {
     it('should trim oldest log if number of sessions exceed session limit', () => {
-      Array(loggingService.LOG_COUNT_LIMIT + 1)
+      Array(logger.LOG_COUNT_LIMIT + 1)
         .fill(0)
         .forEach(() => {
-          loggingService.startSession();
-          loggingService.info(infoLogMessage);
-          loggingService.reset();
+          logger.startSession();
+          logger.info(infoLogMessage);
+          logger.reset();
         });
-      loggingService.startSession();
-      const actualLog = loggingService.getCachedLog();
-      const expectedLog = Array(loggingService.LOG_COUNT_LIMIT)
+      logger.startSession();
+      const actualLog = logger.getCachedLog();
+      const expectedLog = Array(logger.LOG_COUNT_LIMIT)
         .fill('')
         .map((_) => headerLog)
         .join(`\n${infoLogMessage}${sessionSeparator}`);
