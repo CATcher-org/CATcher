@@ -6,6 +6,7 @@ import { Team } from '../models/team.model';
 import { User, UserRole } from '../models/user.model';
 import { DataService } from './data.service';
 import { GithubService } from './github.service';
+import { LoggingService } from './logging.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ import { GithubService } from './github.service';
 export class UserService {
   public currentUser: User;
 
-  constructor(private githubService: GithubService, private dataService: DataService) {}
+  constructor(private githubService: GithubService, private dataService: DataService, private logger: LoggingService) {}
 
   /**
    * Get the authenticated user if it exist.
@@ -42,6 +43,7 @@ export class UserService {
   }
 
   reset() {
+    this.logger.info('UserService: Clearing current user');
     this.currentUser = undefined;
   }
 
