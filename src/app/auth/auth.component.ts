@@ -1,7 +1,7 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { filter, flatMap, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
 import { ApplicationService } from '../core/services/application.service';
@@ -189,7 +189,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.accessTokenSubscription = this.authService.accessToken
       .pipe(
         filter((token: string) => !!token),
-        flatMap(() => this.userService.getAuthenticatedUser())
+        mergeMap(() => this.userService.getAuthenticatedUser())
       )
       .subscribe((user: GithubUser) => {
         this.ngZone.run(() => {

@@ -28,7 +28,7 @@ export class Issue {
   /** Fields derived from Labels */
   severity: string;
   type: string;
-  responseTag?: string;
+  response?: string; // all instance of this should be renamed to response
   duplicated?: boolean;
   status?: string;
   pending?: string;
@@ -118,7 +118,7 @@ export class Issue {
     /** Fields derived from Labels */
     this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity);
     this.type = githubIssue.findLabel(GithubLabel.LABELS.type);
-    this.responseTag = githubIssue.findLabel(GithubLabel.LABELS.response);
+    this.response = githubIssue.findLabel(GithubLabel.LABELS.response);
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
     this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);

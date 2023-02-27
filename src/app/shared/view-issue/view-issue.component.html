@@ -93,7 +93,7 @@
         <!-- Response Label -->
         <div *ngIf="this.isComponentVisible(issueComponentsEnum.RESPONSE_LABEL)">
           <mat-divider></mat-divider>
-          <app-issue-label [issue]="issue" attributeName="responseTag" (issueUpdated)="updateIssue($event)"></app-issue-label>
+          <app-issue-label [issue]="issue" attributeName="response" (issueUpdated)="updateIssue($event)"></app-issue-label>
         </div>
 
         <!-- Assignee to this Issue -->

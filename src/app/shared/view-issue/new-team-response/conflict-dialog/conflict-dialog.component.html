@@ -39,11 +39,11 @@
       </p>
     </div>
 
-    <div *ngIf="data.responseTag">
+    <div *ngIf="data.response">
       <mat-divider></mat-divider>
       <span class="mat-title"> Response </span>
-      <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.responseTag))">
-        {{ data.responseTag || '-' }}
+      <p [ngStyle]="labelService.setLabelStyle(labelService.getColorOfLabel(data.response))">
+        {{ data.response || '-' }}
       </p>
     </div>
 

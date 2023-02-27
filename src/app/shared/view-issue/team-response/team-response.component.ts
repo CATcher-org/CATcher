@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, STATUS } from '../../../core/models/issue.model';
@@ -74,7 +74,7 @@ export class TeamResponseComponent implements OnInit {
 
     this.isSafeToUpdate()
       .pipe(
-        flatMap((isSaveToUpdate: boolean) => {
+        mergeMap((isSaveToUpdate: boolean) => {
           if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateIssueWithComment(updatedIssue, updatedIssueComment);
           } else if (this.isUpdatingDeletedResponse()) {
@@ -149,15 +149,12 @@ export class TeamResponseComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    const issueTeamResponseInitialValue = this.issue.teamResponse || '';
-
-    if (this.responseForm.get('description').value !== issueTeamResponseInitialValue) {
-      // if the response has been edited, request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    const isModified = this.dialogService.checkIfFieldIsModified(this.responseForm, 'teamResponse', 'description', this.issue);
+    this.dialogService.performActionIfModified(
+      isModified,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
   }
 
   openCancelDialog(): void {

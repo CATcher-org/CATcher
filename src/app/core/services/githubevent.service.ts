@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { flatMap, map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { GithubService } from './github.service';
 import { IssueService } from './issue.service';
 
@@ -37,7 +37,7 @@ export class GithubEventService {
    */
   reloadPage(): Observable<boolean> {
     return this.githubService.fetchEventsForRepo().pipe(
-      flatMap((response: any[]) => {
+      mergeMap((response: any[]) => {
         if (response.length === 0) {
           return of(false);
         }

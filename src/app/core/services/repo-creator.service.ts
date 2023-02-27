@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of, pipe, UnaryFunction } from 'rxjs';
-import { flatMap, tap } from 'rxjs/operators';
+import { mergeMap, tap } from 'rxjs/operators';
 import { Phase } from '../models/phase.model';
 import { UserRole } from '../models/user.model';
 import { GithubService } from './github.service';
@@ -29,7 +29,7 @@ export class RepoCreatorService {
     phaseRepo: string
   ): UnaryFunction<Observable<boolean>, Observable<boolean | null>> {
     return pipe(
-      flatMap((isRepoPresent: boolean) => {
+      mergeMap((isRepoPresent: boolean) => {
         if (!isRepoPresent && currentPhase === Phase.phaseBugReporting) {
           return this.openRepoCreationConfirmation(phaseRepo);
         } else {
@@ -85,7 +85,7 @@ export class RepoCreatorService {
    */
   public attemptRepoCreation(phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean | null>> {
     return pipe(
-      flatMap((repoCreationPermission: boolean | null) => {
+      mergeMap((repoCreationPermission: boolean | null) => {
         if (repoCreationPermission === null) {
           // No Session Fix Necessary
           return of(null);
@@ -106,7 +106,7 @@ export class RepoCreatorService {
    */
   public verifyRepoCreation(phaseOwner: string, phaseRepo: string): UnaryFunction<Observable<boolean | null>, Observable<boolean>> {
     return pipe(
-      flatMap((isFixAttempted: boolean | null) => {
+      mergeMap((isFixAttempted: boolean | null) => {
         if (!isFixAttempted) {
           // If no fix has been attempted, there is no need to verify fix outcome.
           return of(true);

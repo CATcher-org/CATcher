@@ -127,7 +127,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
       clone.severity = duplicatedIssue.severity;
       clone.type = duplicatedIssue.type;
       clone.assignees = duplicatedIssue.assignees;
-      clone.responseTag = duplicatedIssue.responseTag;
+      clone.response = duplicatedIssue.response;
     }
     clone.issueComment.description = clone.createGithubTeamResponse();
     return clone;

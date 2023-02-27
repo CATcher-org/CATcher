@@ -10,7 +10,6 @@ import { SessionSelectionComponent } from './session-selection/session-selection
 
 @NgModule({
   imports: [AuthRoutingModule, SharedModule, CommonModule],
-  declarations: [AuthComponent, ProfilesComponent, JsonParseErrorDialogComponent, ConfirmLoginComponent, SessionSelectionComponent],
-  entryComponents: [JsonParseErrorDialogComponent]
+  declarations: [AuthComponent, ProfilesComponent, JsonParseErrorDialogComponent, ConfirmLoginComponent, SessionSelectionComponent]
 })
 export class AuthModule {}
