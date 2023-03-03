@@ -1,4 +1,4 @@
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 import { Issue } from '../../core/models/issue.model';
 
 export function paginateData(paginator: MatPaginator, data: Issue[]): Issue[] {

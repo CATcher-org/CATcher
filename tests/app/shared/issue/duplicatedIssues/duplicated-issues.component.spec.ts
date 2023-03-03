@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By, HAMMER_LOADER } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable, of } from 'rxjs';
@@ -39,26 +39,28 @@ describe('DuplicatedIssuesComponent', () => {
   ]);
   const phaseService: any = jasmine.createSpyObj('PhaseService', [], { currentPhase: Phase.phaseModeration });
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [DuplicatedIssuesComponent],
-      providers: [
-        IssueService,
-        ErrorHandlingService,
-        PhaseService,
-        PermissionService,
-        {
-          provide: HAMMER_LOADER,
-          useValue: () => new Promise(() => {})
-        }
-      ],
-      imports: [MaterialModule, RouterTestingModule]
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [DuplicatedIssuesComponent],
+        providers: [
+          IssueService,
+          ErrorHandlingService,
+          PhaseService,
+          PermissionService,
+          {
+            provide: HAMMER_LOADER,
+            useValue: () => new Promise(() => {})
+          }
+        ],
+        imports: [MaterialModule, RouterTestingModule]
+      })
+        .overrideProvider(PermissionService, { useValue: permissionService })
+        .overrideProvider(IssueService, { useValue: issueService })
+        .overrideProvider(PhaseService, { useValue: phaseService })
+        .compileComponents();
     })
-      .overrideProvider(PermissionService, { useValue: permissionService })
-      .overrideProvider(IssueService, { useValue: issueService })
-      .overrideProvider(PhaseService, { useValue: phaseService })
-      .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
     dummyDuplicatedIssues = of([firstDummyIssue, secondDummyIssue]);

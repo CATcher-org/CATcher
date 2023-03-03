@@ -28,7 +28,7 @@ export class Issue {
   /** Fields derived from Labels */
   severity: string;
   type: string;
-  responseTag?: string;
+  response?: string; // all instance of this should be renamed to response
   duplicated?: boolean;
   status?: string;
   pending?: string;
@@ -52,6 +52,7 @@ export class Issue {
   /** Fields for error messages during parsing of Github's issue description */
   teamResponseError: boolean;
   testerResponseError: boolean;
+  parseError: string;
 
   /**
    * Formats the text to create space at the end of the user input to prevent any issues with
@@ -117,7 +118,7 @@ export class Issue {
     /** Fields derived from Labels */
     this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity);
     this.type = githubIssue.findLabel(GithubLabel.LABELS.type);
-    this.responseTag = githubIssue.findLabel(GithubLabel.LABELS.response);
+    this.response = githubIssue.findLabel(GithubLabel.LABELS.response);
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
     this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
@@ -136,6 +137,7 @@ export class Issue {
     issue.assignees = githubIssue.assignees.map((assignee) => assignee.login);
 
     issue.teamResponseError = template.parseFailure;
+    issue.parseError = template.parseError;
     issue.issueComment = template.comment;
     issue.teamResponse = template.teamResponse;
     issue.duplicateOf = template.duplicateOf;
@@ -151,6 +153,7 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.testerResponseError = testerResponseTemplate.parseFailure && teamAcceptedTemplate.parseFailure;
+    issue.parseError = testerResponseTemplate.parseError;
     issue.teamAccepted = teamAcceptedTemplate.teamAccepted;
     issue.issueComment = testerResponseTemplate.comment;
     issue.teamResponse = testerResponseTemplate.teamResponse;
