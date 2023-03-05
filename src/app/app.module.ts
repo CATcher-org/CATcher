@@ -94,8 +94,7 @@ import { SharedModule } from './shared/shared.module';
       useClass: ErrorHandlingService
     }
   ],
-  bootstrap: [AppComponent],
-  entryComponents: [UserConfirmationComponent, SessionFixConfirmationComponent, LabelDefinitionPopupComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(

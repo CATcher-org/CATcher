@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, forkJoin, Observable, of, Subscription, throwError, timer } from 'rxjs';
-import { catchError, exhaustMap, finalize, flatMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../models/comment.model';
 import { GithubComment } from '../models/github/github-comment.model';
 import RestGithubIssueFilter from '../models/github/github-issue-filter.model';
@@ -146,7 +146,7 @@ export class IssueService {
           return this.createIssueModel(response);
         }),
         catchError((err) => {
-          this.logger.error(err); // Log full details of error first
+          this.logger.error('IssueService: ', err); // Log full details of error first
           return throwError(err.response.data.message); // More readable error message
         })
       );
@@ -154,7 +154,7 @@ export class IssueService {
 
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
-      flatMap((updatedComment: GithubComment) => {
+      mergeMap((updatedComment: GithubComment) => {
         issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
         return this.updateIssue(issue);
       })
@@ -192,7 +192,7 @@ export class IssueService {
   createTeamResponse(issue: Issue): Observable<Issue> {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
-      flatMap((githubComment: GithubComment) => {
+      mergeMap((githubComment: GithubComment) => {
         issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
         return this.updateIssue(issue);
       })
@@ -422,8 +422,8 @@ export class IssueService {
       result.push(this.createLabel('type', issue.type));
     }
 
-    if (issue.responseTag) {
-      result.push(this.createLabel('response', issue.responseTag));
+    if (issue.response) {
+      result.push(this.createLabel('response', issue.response));
     }
 
     if (issue.duplicated) {
@@ -456,18 +456,29 @@ export class IssueService {
   }
 
   private createIssueModel(githubIssue: GithubIssue): Issue {
+    let issue: Issue;
+
     switch (this.phaseService.currentPhase) {
       case Phase.phaseBugReporting:
-        return Issue.createPhaseBugReportingIssue(githubIssue);
+        issue = Issue.createPhaseBugReportingIssue(githubIssue);
+        break;
       case Phase.phaseTeamResponse:
-        return Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        issue = Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        break;
       case Phase.phaseTesterResponse:
-        return Issue.createPhaseTesterResponseIssue(githubIssue);
+        issue = Issue.createPhaseTesterResponseIssue(githubIssue);
+        break;
       case Phase.phaseModeration:
-        return Issue.createPhaseModerationIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        issue = Issue.createPhaseModerationIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
+        break;
       default:
         return;
     }
+
+    if (issue.parseError) {
+      this.logger.error('IssueService: ' + issue.parseError);
+    }
+    return issue;
   }
 
   setIssueTeamFilter(filterValue: string) {

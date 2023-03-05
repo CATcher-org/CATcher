@@ -13,12 +13,12 @@ export class AppComponent implements AfterViewInit {
   NOT_CONNECTED_ERROR: Error = new Error('You are not connected to the internet.');
 
   constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
-    logger.info('AppConfig', AppConfig);
+    logger.info('AppComponent: AppConfig', AppConfig);
 
     if (electronService.isElectron()) {
-      logger.info('Mode electron');
+      logger.info('AppComponent: Mode electron');
     } else {
-      logger.info('Mode web');
+      logger.info('AppComponent: Mode web');
     }
   }
 

@@ -4,7 +4,7 @@ import { Apollo, QueryRef } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import { DocumentNode } from 'graphql';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, throwIfEmpty } from 'rxjs/operators';
 import {
   FetchIssue,
   FetchIssueQuery,
@@ -75,11 +75,12 @@ export class GithubService {
         return `Token ${accessToken}`;
       },
       log: {
-        debug: (message, ...otherInfo) => this.logger.debug(message, ...otherInfo),
+        debug: (message, ...otherInfo) => this.logger.debug('GithubService: ' + message, ...otherInfo),
         // Do not log info for HTTP response 304 due to repeated polling
-        info: (message, ...otherInfo) => (/304 in \d+ms$/.test(message) ? undefined : this.logger.info(message, ...otherInfo)),
-        warn: (message, ...otherInfo) => this.logger.warn(message, ...otherInfo),
-        error: (message, ...otherInfo) => this.logger.error(message, ...otherInfo)
+        info: (message, ...otherInfo) =>
+          /304 in \d+ms$/.test(message) ? undefined : this.logger.info('GithubService: ' + message, ...otherInfo),
+        warn: (message, ...otherInfo) => this.logger.warn('GithubService: ' + message, ...otherInfo),
+        error: (message, ...otherInfo) => this.logger.error('GithubService: ' + message, ...otherInfo)
       }
     });
   }
@@ -106,7 +107,7 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => {
+      mergeMap(() => {
         return this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
           FetchIssuesByTeam,
           {
@@ -134,7 +135,7 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => {
+      mergeMap(() => {
         return this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
           FetchIssues,
           { owner: ORG_NAME, name: REPO, filter: graphqlFilter },
@@ -158,7 +159,7 @@ export class GithubService {
         responseInFirstPage = response;
         return getNumberOfPages(response);
       }),
-      flatMap((numOfPages: number) => {
+      mergeMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
           apiCalls.push(this.getIssuesAPICall(filter, i));
@@ -227,7 +228,7 @@ export class GithubService {
     const queryRef = this.issueQueryRefs.get(id);
     return this.toFetchIssue(id).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => from(queryRef.refetch())),
+      mergeMap(() => from(queryRef.refetch())),
       map((value: ApolloQueryResult<FetchIssueQuery>) => {
         return new GithubGraphqlIssue(value.data.repository.issue);
       }),
@@ -434,6 +435,7 @@ export class GithubService {
   }
 
   reset(): void {
+    this.logger.info(`GithubService: Resetting issues cache`);
     this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
     this.issueQueryRefs.clear();

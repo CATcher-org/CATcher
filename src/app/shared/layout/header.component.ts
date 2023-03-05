@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit {
     public auth: AuthService,
     public phaseService: PhaseService,
     public userService: UserService,
-    public loggingService: LoggingService,
+    public logger: LoggingService,
     private location: Location,
     private githubEventService: GithubEventService,
     private issueService: IssueService,
@@ -188,13 +188,13 @@ export class HeaderComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((res) => {
       if (res) {
-        this.loggingService.info(`Logging out from ${this.userService.currentUser.loginId}`);
+        this.logger.info(`HeaderComponent: Logging out from ${this.userService.currentUser.loginId}`);
         this.logOut();
       }
     });
   }
 
   exportLogFile() {
-    this.loggingService.exportLogFile();
+    this.logger.exportLogFile();
   }
 }

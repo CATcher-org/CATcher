@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, STATUS } from '../../../core/models/issue.model';
+import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
 import { PermissionService } from '../../../core/services/permission.service';
@@ -30,13 +31,19 @@ export class TeamResponseComponent implements OnInit {
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() updateEditState = new EventEmitter<boolean>();
 
+  // Messages for the modal popup window upon cancelling edit
+  private readonly cancelEditModalMessages = ['Do you wish to cancel?', 'Your changes will be discarded.'];
+  private readonly yesButtonModalMessage = 'Cancel';
+  private readonly noButtonModalMessage = 'Continue editing';
+
   constructor(
     private issueService: IssueService,
     private formBuilder: FormBuilder,
     private errorHandlingService: ErrorHandlingService,
     private permissions: PermissionService,
     private dialog: MatDialog,
-    private phaseService: PhaseService
+    private phaseService: PhaseService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit() {
@@ -67,7 +74,7 @@ export class TeamResponseComponent implements OnInit {
 
     this.isSafeToUpdate()
       .pipe(
-        flatMap((isSaveToUpdate: boolean) => {
+        mergeMap((isSaveToUpdate: boolean) => {
           if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateIssueWithComment(updatedIssue, updatedIssueComment);
           } else if (this.isUpdatingDeletedResponse()) {
@@ -138,6 +145,29 @@ export class TeamResponseComponent implements OnInit {
     this.issueService.getIssue(this.issue.id).subscribe((issue: Issue) => {
       this.issueUpdated.emit(issue);
       this.resetToDefault();
+    });
+  }
+
+  openCancelDialogIfModified(): void {
+    const isModified = this.dialogService.checkIfFieldIsModified(this.responseForm, 'teamResponse', 'description', this.issue);
+    this.dialogService.performActionIfModified(
+      isModified,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
+  }
+
+  openCancelDialog(): void {
+    const dialogRef = this.dialogService.openUserConfirmationModal(
+      this.cancelEditModalMessages,
+      this.yesButtonModalMessage,
+      this.noButtonModalMessage
+    );
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.cancelEditMode();
+      }
     });
   }
 

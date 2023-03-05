@@ -76,17 +76,17 @@
   </ng-container>
 
   <!--Response Tag Column-->
-  <ng-container matColumnDef="responseTag">
+  <ng-container matColumnDef="response">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Response </mat-header-cell>
     <mat-cell *matCellDef="let issue">
       <span
         (click)="$event.stopPropagation()"
-        *ngIf="issue.responseTag"
-        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('response', issue.responseTag))"
+        *ngIf="issue.response"
+        [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('response', issue.response))"
       >
-        {{ issue.responseTag }}
+        {{ issue.response }}
       </span>
-      <span *ngIf="!issue.responseTag" style="margin-left: 10%">
+      <span *ngIf="!issue.response" style="margin-left: 10%">
         <mat-icon matTooltip="Should not be empty" matTooltipPosition="above" color="warn">warning</mat-icon>
       </span>
     </mat-cell>

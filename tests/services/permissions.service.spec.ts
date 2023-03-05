@@ -19,7 +19,7 @@ const testAdmin = {
   role: UserRole.Admin
 };
 
-const mockUserService = new UserService(null, null);
+const mockUserService = new UserService(null, null, null);
 const mockPhaseService = new PhaseService(null, null, null);
 const permissionService = new PermissionService(mockUserService, mockPhaseService);
 

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
@@ -71,7 +71,7 @@ export class DescriptionComponent implements OnInit {
         map((issue: Issue) => {
           return issue.description === this.issue.description;
         }),
-        flatMap((isSaveToUpdate: boolean) => {
+        mergeMap((isSaveToUpdate: boolean) => {
           if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateIssue(this.getUpdatedIssue());
           } else {
@@ -116,6 +116,15 @@ export class DescriptionComponent implements OnInit {
       this.issueUpdated.emit(issue);
       this.resetToDefault();
     });
+  }
+
+  openCancelDialogIfModified(): void {
+    const isModified = this.dialogService.checkIfFieldIsModified(this.issueDescriptionForm, 'description', 'description', this.issue);
+    this.dialogService.performActionIfModified(
+      isModified,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
   }
 
   openCancelDialog(): void {

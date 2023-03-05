@@ -19,7 +19,7 @@ let userService: UserService;
 
 describe('RepoCreatorService', () => {
   beforeEach(() => {
-    userService = new UserService(null, null);
+    userService = new UserService(null, null, null);
     githubService = jasmine.createSpyObj('GithubService', ['isRepositoryPresent', 'createRepository']);
     matDialog = jasmine.createSpyObj('MatDialog', ['open']);
     matDialogRef = jasmine.createSpyObj('MatDialogRef<SessionFixConfirmationComponent>', ['afterClosed']);

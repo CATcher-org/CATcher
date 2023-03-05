@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatCheckbox, MatSelect, MatSelectChange } from '@angular/material';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { first, map, takeUntil } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
@@ -126,7 +127,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
       clone.severity = duplicatedIssue.severity;
       clone.type = duplicatedIssue.type;
       clone.assignees = duplicatedIssue.assignees;
-      clone.responseTag = duplicatedIssue.responseTag;
+      clone.response = duplicatedIssue.response;
     }
     clone.issueComment.description = clone.createGithubTeamResponse();
     return clone;

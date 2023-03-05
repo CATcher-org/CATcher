@@ -29,7 +29,7 @@ describe('UserService', () => {
     });
 
     it('should authorize User despite loginId being of different casing', () => {
-      const userService = new UserService(null, dataService);
+      const userService = new UserService(null, dataService, null);
       userService.createUserModel(USER_JUNWEI.loginId).subscribe((user) => {
         expect(user).toBeDefined();
       });
@@ -40,7 +40,7 @@ describe('UserService', () => {
     });
 
     it('throws an error if the user is unauthorized', (done) => {
-      const userService = new UserService(null, dataService);
+      const userService = new UserService(null, dataService, null);
       userService.createUserModel('RandomUser').subscribe(
         (user) => {
           fail('This test case should have failed.');
@@ -56,7 +56,7 @@ describe('UserService', () => {
 });
 
 async function createAndVerifyUser(loginId: string, expectedUser: User) {
-  const userService = new UserService(null, dataService);
+  const userService = new UserService(null, dataService, null);
   const actualUser = await userService.createUserModel(loginId).toPromise();
   expect(actualUser).toEqual(expectedUser);
 }

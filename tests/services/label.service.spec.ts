@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 import { GithubLabel } from '../../src/app/core/models/github/github-label.model';
 import { Label } from '../../src/app/core/models/label.model';
-import { LABEL_DEFINITIONS, LabelService } from '../../src/app/core/services/label.service';
+import { LabelService, LABEL_DEFINITIONS } from '../../src/app/core/services/label.service';
 import * as GithubLabelConstant from '../constants/githublabel.constants';
 import * as LabelConstant from '../constants/label.constants';
 
@@ -11,7 +11,7 @@ let githubService: any;
 describe('LabelService', () => {
   beforeEach(() => {
     githubService = jasmine.createSpyObj('GithubService', ['fetchAllLabels', 'createLabel']);
-    labelService = new LabelService(githubService);
+    labelService = new LabelService(githubService, null);
   });
 
   describe('.syncLabels()', () => {
@@ -70,7 +70,7 @@ describe('LabelService', () => {
 
 describe('LabelService: toLabel()', () => {
   beforeAll(() => {
-    labelService = new LabelService(null);
+    labelService = new LabelService(null, null);
   });
 
   afterAll(() => {
@@ -100,7 +100,7 @@ describe('LabelService: toLabel()', () => {
 
 describe('LabelService: isDarkColor()', () => {
   beforeEach(() => {
-    labelService = new LabelService(null);
+    labelService = new LabelService(null, null);
   });
 
   afterEach(() => {
@@ -118,7 +118,7 @@ describe('LabelService: isDarkColor()', () => {
 
 describe('LabelService: setLabelStyle()', () => {
   beforeEach(() => {
-    labelService = new LabelService(null);
+    labelService = new LabelService(null, null);
   });
 
   afterEach(() => {
@@ -140,7 +140,7 @@ describe('LabelService: setLabelStyle()', () => {
 
 describe('LabelService: getColorOfLabel()', () => {
   beforeEach(() => {
-    labelService = new LabelService(null);
+    labelService = new LabelService(null, null);
   });
 
   afterEach(() => {
@@ -158,7 +158,7 @@ describe('LabelService: getColorOfLabel()', () => {
 
 describe('LabelService: getLabelDefinition()', () => {
   beforeEach(() => {
-    labelService = new LabelService(null);
+    labelService = new LabelService(null, null);
   });
 
   afterEach(() => {
