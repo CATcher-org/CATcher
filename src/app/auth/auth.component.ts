@@ -57,7 +57,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       // runs upon receiving oauthCode from the redirect
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.restoreOrgDetailsFromLocalStorage();
-      this.logger.info('Obtained authorisation code from Github');
+      this.logger.info('AuthComponent: Obtained authorisation code from Github');
       this.fetchAccessToken(oauthCode, state);
     }
   }
@@ -69,11 +69,11 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   fetchAccessToken(oauthCode: string, state: string) {
     if (!this.authService.isReturnedStateSame(state)) {
-      this.logger.info(`Received incorrect state ${state}, continue waiting for correct state`);
+      this.logger.info(`AuthComponent: Received incorrect state ${state}, continue waiting for correct state`);
       return;
     }
 
-    this.logger.info('Retrieving access token from Github');
+    this.logger.info('AuthComponent: Retrieving access token from Github');
 
     const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
     fetch(accessTokenUrl)
@@ -83,10 +83,10 @@ export class AuthComponent implements OnInit, OnDestroy {
           throw new Error(data.error);
         }
         this.authService.storeOAuthAccessToken(data.token);
-        this.logger.info('Sucessfully obtained access token');
+        this.logger.info('AuthComponent: Sucessfully obtained access token');
       })
       .catch((err) => {
-        this.logger.info(`Error in data fetched from access token URL: ${err}`);
+        this.logger.info(`AuthComponent: Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
       });

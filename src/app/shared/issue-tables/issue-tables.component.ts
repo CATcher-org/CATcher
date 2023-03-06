@@ -58,7 +58,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     public issueService: IssueService,
     private phaseService: PhaseService,
     private errorHandlingService: ErrorHandlingService,
-    private loggingService: LoggingService,
+    private logger: LoggingService,
     private dialogService: DialogService,
     private snackBar: MatSnackBar = null
   ) {}
@@ -100,7 +100,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsResponded(issue: Issue, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
+    this.logger.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Done;
     this.issueService.updateIssue(newIssue).subscribe(
@@ -119,7 +119,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsPending(issue: Issue, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
+    this.logger.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Incomplete;
     this.issueService.updateIssue(newIssue).subscribe(
@@ -134,11 +134,11 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   logIssueRespondRouting(id: number) {
-    this.loggingService.info(`IssueTablesComponent: Proceeding to Respond to Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Proceeding to Respond to Issue ${id}`);
   }
 
   logIssueEditRouting(id: number) {
-    this.loggingService.info(`IssueTablesComponent: Proceeding to Edit Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Proceeding to Edit Issue ${id}`);
   }
 
   /**
@@ -156,12 +156,12 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   viewIssueInBrowser(id: number, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Opening Issue ${id} on Github`);
+    this.logger.info(`IssueTablesComponent: Opening Issue ${id} on Github`);
     this.githubService.viewIssueInBrowser(id, event);
   }
 
   deleteIssue(id: number, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Deleting Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
       [id]: true
@@ -193,7 +193,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   undeleteIssue(id: number, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Undeleting Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Undeleting Issue ${id}`);
     this.issueService.undeleteIssue(id).subscribe(
       (reopenedIssue) => {},
       (error) => {
@@ -214,7 +214,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((res) => {
       if (res) {
-        this.loggingService.info(`Deleting issue ${id}`);
+        this.logger.info(`IssueTablesComponent: Deleting issue ${id}`);
         this.deleteIssue(id, event);
       }
     });

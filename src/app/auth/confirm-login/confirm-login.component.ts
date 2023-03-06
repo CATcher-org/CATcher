@@ -35,7 +35,7 @@ export class ConfirmLoginComponent implements OnInit {
   }
 
   logIntoAnotherAccount() {
-    this.logger.info('Logging into another account');
+    this.logger.info('ConfirmLoginComponent: Logging into another account');
     this.authService.startOAuthProcess();
   }
 
@@ -67,7 +67,7 @@ export class ConfirmLoginComponent implements OnInit {
         (error) => {
           this.authService.changeAuthState(AuthState.NotAuthenticated);
           this.errorHandlingService.handleError(error);
-          this.logger.info(`Completion of login process failed with an error: ${error}`);
+          this.logger.info(`ConfirmLoginComponent: Completion of login process failed with an error: ${error}`);
         }
       );
   }
