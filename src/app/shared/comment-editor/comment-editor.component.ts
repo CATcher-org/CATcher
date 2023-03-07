@@ -375,7 +375,7 @@ export class CommentEditorComponent implements OnInit {
     const selectionStart = this.commentTextArea.nativeElement.selectionStart;
     const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
     const currentText = this.commentField.value;
-    const end = currentText.slice(selectionEnd);
+    let end = currentText.slice(selectionEnd);
     const start = currentText.slice(0, selectionStart);
 
     const lastLineStart = currentText.lastIndexOf('\n', selectionStart - 1) + 1;
@@ -406,12 +406,51 @@ export class CommentEditorComponent implements OnInit {
       // delete the last line if the current bullet is empty
       newText = `${currentText.slice(0, lastLineStart)}${end}`;
     } else if (iterator.slice(-1) === '.') {
-      newText = `${start}\n${indent}${parseInt(iterator.slice(0, -1), 10) + 1}. ${end}`;
+      const num = parseInt(iterator.slice(0, -1), 10) + 1;
+      end = `${lastLine2}${this.incrementOrderedItem(end, lastLineEnd, indent, num)}`;
+      newText = `${start}\n${indent}${num}. ${end}`;
     } else {
       newText = `${start}\n${indent}${iterator} ${end}`;
     }
 
+    // this.commentField.setValue(newText);
     this.commentField.setValue(newText);
     this.commentTextArea.nativeElement.setSelectionRange(newText.length - end.length, newText.length - end.length);
+  }
+
+  private incrementOrderedItem(data: string, startIndex: number, indentLevel: string, incrementIndexIf: number): string {
+    // startIndex is either the index of the first '\n' or the length of data
+    // while slicing is O(n), each element in the string is copied at most twice
+    // thus this function runs in O(n) overall
+
+    /**
+     * A recursive solution is used here despite the potential of reaching maximum callstack
+     * with a input size limit of 40000 characters,
+     * This means that maximum ordered index an ordered list can reach is 5872
+     * This eliminates the problem of reach max call stack in a recursive approach
+     * and this is much faster compared to using an iterative solution
+     */
+
+    if (startIndex >= data.length) {
+      return '';
+    }
+    const matchgrp = /^(\s*)([0-9]+)(\. \s*.*)$/;
+    let index = data.indexOf('\n', startIndex + 1);
+    if (index === -1) {
+      index = data.length;
+    }
+    const line = data.slice(startIndex + 1, index);
+
+    const matchResult = line.match(matchgrp);
+
+    if (!matchResult) {
+      return data.slice(startIndex);
+    }
+    const [_, indent, iterator, text] = [...matchResult];
+    const num = parseInt(iterator, 10);
+    if (indent === indentLevel && num == incrementIndexIf) {
+      return `\n${indent}${num + 1}${text}${this.incrementOrderedItem(data, index, indentLevel, num + 1)}`;
+    }
+    return data.slice(startIndex);
   }
 }
