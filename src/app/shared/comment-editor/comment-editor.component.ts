@@ -376,6 +376,7 @@ export class CommentEditorComponent implements OnInit {
     const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
     const currentText = this.commentField.value;
     const end = currentText.slice(selectionEnd);
+    const start = currentText.slice(0, selectionStart);
 
     const lastLineStart = currentText.lastIndexOf('\n', selectionStart - 1) + 1;
     const lastLine = currentText.slice(lastLineStart, selectionStart);
@@ -392,7 +393,7 @@ export class CommentEditorComponent implements OnInit {
 
     // checks if the last line in before is a list item
     if (!matchResult) {
-      this.commentField.setValue(`${currentText.slice(0, selectionStart)}\n${end}`);
+      this.commentField.setValue(`${start}\n${end}`);
       this.commentTextArea.nativeElement.setSelectionRange(selectionStart + 1, selectionStart + 1);
       return;
     }
@@ -405,9 +406,9 @@ export class CommentEditorComponent implements OnInit {
       // delete the last line if the current bullet is empty
       newText = `${currentText.slice(0, lastLineStart)}${end}`;
     } else if (iterator.slice(-1) === '.') {
-      newText = `${currentText.slice(0, selectionStart)}\n${indent}${parseInt(iterator.slice(0, -1), 10) + 1}. ${end}`;
+      newText = `${start}\n${indent}${parseInt(iterator.slice(0, -1), 10) + 1}. ${end}`;
     } else {
-      newText = `${currentText.slice(0, selectionStart)}\n${indent}${iterator} ${end}`;
+      newText = `${start}\n${indent}${iterator} ${end}`;
     }
 
     this.commentField.setValue(newText);
