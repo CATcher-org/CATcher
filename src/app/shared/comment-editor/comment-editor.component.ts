@@ -448,7 +448,7 @@ export class CommentEditorComponent implements OnInit {
     }
     const [_, indent, iterator, text] = [...matchResult];
     const num = parseInt(iterator, 10);
-    if (indent === indentLevel && num == incrementIndexIf) {
+    if (indent === indentLevel && num === incrementIndexIf) {
       return `\n${indent}${num + 1}${text}${this.incrementOrderedItem(data, index, indentLevel, num + 1)}`;
     }
     return data.slice(startIndex);
