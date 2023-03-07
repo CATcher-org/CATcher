@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
@@ -47,7 +47,7 @@ export class CommentEditorComponent implements OnInit {
   lastUploadingTime: string;
 
   @ViewChild('dropArea', { static: true }) dropArea;
-  @ViewChild('commentTextArea', { static: true }) commentTextArea;
+  @ViewChild('commentTextArea', { static: true }) commentTextArea: ElementRef<HTMLTextAreaElement>;
   @ViewChild('markdownArea') markdownArea;
 
   dragActiveCounter = 0;
@@ -81,6 +81,15 @@ export class CommentEditorComponent implements OnInit {
         case 'i':
           event.preventDefault();
           this.insertOrRemoveCharsFromHighlightedText('_');
+          break;
+        default:
+          return;
+      }
+    } else {
+      switch (event.keyCode) {
+        case 13: // enter key
+          event.preventDefault();
+          this.insertListItem();
           break;
         default:
           return;
@@ -360,5 +369,47 @@ export class CommentEditorComponent implements OnInit {
       selectionStart + char.length + spacesRemovedLeft,
       selectionEnd + char.length - spacesRemovedRight
     );
+  }
+
+  private insertListItem() {
+    const selectionStart = this.commentTextArea.nativeElement.selectionStart;
+    const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
+    const currentText = this.commentField.value;
+    const end = currentText.slice(selectionEnd);
+
+    const lastLineStart = currentText.lastIndexOf('\n', selectionStart - 1) + 1;
+    const lastLine = currentText.slice(lastLineStart, selectionStart);
+
+    let lastLineEnd = end.indexOf('\n');
+    if (lastLineEnd == -1) lastLineEnd = end.length;
+
+    const lastLine2 = end.slice(0, lastLineEnd);
+
+    const matchgrp = /^(\s*)([+\-*]|[0-9]+\.) \s*(.*)$/;
+    const matchResult = lastLine.match(matchgrp);
+
+    // checks if the last line in before is a list item
+    if (!matchResult) {
+      this.commentField.setValue(`${currentText.slice(0, selectionStart)}\n${end}`);
+      this.commentTextArea.nativeElement.setSelectionRange(selectionStart + 1, selectionStart + 1);
+      return;
+    }
+
+    const match2 = /^\s*(\[[ xX]\]\s*)?$/; // checks if it's an empty checkbox
+    let [_, indent, iterator, text] = [...matchResult];
+    let newText: string;
+
+    if (match2.test(text) && lastLine2.trim().length == 0) {
+      // delete the last line if the current bullet is empty
+      newText = `${currentText.slice(0, lastLineStart)}${end}`;
+    } else if (iterator.slice(-1) == '.') {
+      let num = parseInt(iterator.slice(0, -1));
+      newText = `${currentText.slice(0, selectionStart)}\n${indent}${num + 1}. ${end}`;
+    } else {
+      newText = `${currentText.slice(0, selectionStart)}\n${indent}${iterator} ${end}`;
+    }
+
+    this.commentField.setValue(newText);
+    this.commentTextArea.nativeElement.setSelectionRange(newText.length - end.length, newText.length - end.length);
   }
 }
