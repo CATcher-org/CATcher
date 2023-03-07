@@ -381,7 +381,9 @@ export class CommentEditorComponent implements OnInit {
     const lastLine = currentText.slice(lastLineStart, selectionStart);
 
     let lastLineEnd = end.indexOf('\n');
-    if (lastLineEnd == -1) lastLineEnd = end.length;
+    if (lastLineEnd === -1) {
+      lastLineEnd = end.length;
+    }
 
     const lastLine2 = end.slice(0, lastLineEnd);
 
@@ -396,15 +398,14 @@ export class CommentEditorComponent implements OnInit {
     }
 
     const match2 = /^\s*(\[[ xX]\]\s*)?$/; // checks if it's an empty checkbox
-    let [_, indent, iterator, text] = [...matchResult];
+    const [_, indent, iterator, text] = [...matchResult];
     let newText: string;
 
-    if (match2.test(text) && lastLine2.trim().length == 0) {
+    if (match2.test(text) && lastLine2.trim().length === 0) {
       // delete the last line if the current bullet is empty
       newText = `${currentText.slice(0, lastLineStart)}${end}`;
-    } else if (iterator.slice(-1) == '.') {
-      let num = parseInt(iterator.slice(0, -1));
-      newText = `${currentText.slice(0, selectionStart)}\n${indent}${num + 1}. ${end}`;
+    } else if (iterator.slice(-1) === '.') {
+      newText = `${currentText.slice(0, selectionStart)}\n${indent}${parseInt(iterator.slice(0, -1), 10) + 1}. ${end}`;
     } else {
       newText = `${currentText.slice(0, selectionStart)}\n${indent}${iterator} ${end}`;
     }
