@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
@@ -29,6 +29,11 @@ export class DescriptionComponent implements OnInit {
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() changeEditState = new EventEmitter<boolean>();
+
+  // prevents setting of title to bind to defualt html attribute of title
+  @HostBinding('attr.title') get setTitle() {
+    return null;
+  }
 
   // Messages for the modal popup window upon cancelling edit
   private readonly cancelEditModalMessages = ['Do you wish to cancel?', 'Your changes will be discarded.'];
