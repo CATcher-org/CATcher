@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
 import { insertUploadingText, insertUploadUrl, insertUploadUrlVideo } from './upload-text-insertor';
+import { UndoRedo } from '../../core/models/undoredo.model'
 
 const BYTES_PER_MB = 1024 * 1024;
 const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
@@ -17,6 +18,12 @@ const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_M
 const ISSUE_BODY_SIZE_LIMIT = 40000;
 
 const SPACE = ' ';
+
+type textEntry = {
+  text:string;
+  selectStart: number;
+  selectEnd: number;
+}
 
 @Component({
   selector: 'app-comment-editor',
@@ -47,12 +54,14 @@ export class CommentEditorComponent implements OnInit {
   lastUploadingTime: string;
 
   @ViewChild('dropArea', { static: true }) dropArea;
-  @ViewChild('commentTextArea', { static: true }) commentTextArea;
+  @ViewChild('commentTextArea', { static: true }) commentTextArea: ElementRef<HTMLTextAreaElement>;
   @ViewChild('markdownArea') markdownArea;
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
   maxLength = ISSUE_BODY_SIZE_LIMIT;
+
+  history: UndoRedo<textEntry>;
 
   formatFileUploadingButtonText(currentButtonText: string) {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
@@ -69,6 +78,7 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
+    this.history = new UndoRedo<textEntry>(50, {text: "", selectEnd: 0, selectStart: 0});
   }
 
   onKeyPress(event) {
@@ -81,6 +91,14 @@ export class CommentEditorComponent implements OnInit {
         case 'i':
           event.preventDefault();
           this.insertOrRemoveCharsFromHighlightedText('_');
+          break;
+        case 'z':
+          event.preventDefault();
+          this.undo();
+          break;
+        case 'y':
+          event.preventDefault();
+          this.redo();
           break;
         default:
           return;
@@ -230,6 +248,28 @@ export class CommentEditorComponent implements OnInit {
     if (blob) {
       this.readAndUploadFile(blob);
     }
+  }
+
+  updateEntry(): void {
+    const entry: textEntry = {
+      text: this.commentTextArea.nativeElement.value,
+      selectStart: this.commentTextArea.nativeElement.selectionStart,
+      selectEnd: this.commentTextArea.nativeElement.selectionEnd
+    };
+    
+    this.history.updateEntry(entry);
+  }
+
+  undo(): void {
+    const entry = this.history.undo();
+    this.commentField.setValue(entry.text);
+    this.commentTextArea.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
+  }
+
+  redo(): void {
+    const entry = this.history.redo();
+    this.commentTextArea.nativeElement.value = entry.text;
+    this.commentTextArea.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
   }
 
   get isInErrorState(): boolean {
