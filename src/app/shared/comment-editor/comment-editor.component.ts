@@ -2,11 +2,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
+import { UndoRedo } from '../../core/models/undoredo.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
 import { insertUploadingText, insertUploadUrl, insertUploadUrlVideo } from './upload-text-insertor';
-import { UndoRedo } from '../../core/models/undoredo.model'
 
 const BYTES_PER_MB = 1024 * 1024;
 const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
@@ -20,10 +20,10 @@ const ISSUE_BODY_SIZE_LIMIT = 40000;
 const SPACE = ' ';
 
 type textEntry = {
-  text:string;
+  text: string;
   selectStart: number;
   selectEnd: number;
-}
+};
 
 @Component({
   selector: 'app-comment-editor',
@@ -256,7 +256,7 @@ export class CommentEditorComponent implements OnInit {
       selectStart: this.commentTextArea.nativeElement.selectionStart,
       selectEnd: this.commentTextArea.nativeElement.selectionEnd
     };
-    
+
     this.history.updateEntry(entry);
   }
 
