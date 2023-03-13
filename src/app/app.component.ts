@@ -17,27 +17,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.addListenerForHttpLinks();
     this.addListenerForNetworkOffline();
-  }
-
-  /**
-   * This listener will prevent the default behaviour of electron to open http links on electron browser itself.
-   * Will use the client's default OS browser to open the link.
-   */
-  addListenerForHttpLinks() {
-    document.addEventListener(
-      'click',
-      (event) => {
-        const elem = <HTMLLinkElement>(<HTMLElement>event.target).closest('a[href^="http"]');
-        if (elem) {
-          event.preventDefault();
-          event.stopPropagation();
-          window.open(elem.href);
-        }
-      },
-      false
-    );
   }
 
   /**
