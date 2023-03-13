@@ -235,7 +235,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   }
 
   get responseTag() {
-    return this.newTeamResponseForm.get('responseTag');
+    return this.newTeamResponseForm.get('response');
   }
 
   get duplicated() {
