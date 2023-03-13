@@ -10,7 +10,7 @@ export function markedOptionsFactory(): MarkedOptions {
   };
 
   renderer.checkbox = (checked) => {
-    return checked ? '☑️' : '◻️';
+    return checked ? '<i class="fa-solid fa-square-check"></i> ' : '<i class="fa-solid fa-square"></i> ';
   };
 
   return {
