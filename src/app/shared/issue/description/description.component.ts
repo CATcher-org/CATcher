@@ -31,7 +31,7 @@ export class DescriptionComponent implements OnInit {
   @Output() changeEditState = new EventEmitter<boolean>();
 
   // prevents setting of title to bind to defualt html attribute of title
-  @HostBinding('attr.title') get setTitle() {
+  @HostBinding('attr.title') get getTitle() {
     return null;
   }
 
