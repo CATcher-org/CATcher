@@ -57,7 +57,7 @@ export class SessionSelectionComponent implements OnInit {
     window.localStorage.setItem('dataRepo', dataRepo);
     this.githubService.storeOrganizationDetails(org, dataRepo);
 
-    this.logger.info(`Selected Settings Repo: ${sessionInformation}`);
+    this.logger.info(`SessionSelectionComponent: Selected Settings Repo: ${sessionInformation}`);
 
     this.phaseService.storeSessionData().subscribe(
       () => {

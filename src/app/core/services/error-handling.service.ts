@@ -17,9 +17,9 @@ export class ErrorHandlingService implements ErrorHandler {
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 
   handleError(error: HttpErrorResponse | Error | RequestError, actionCallback?: () => void) {
-    this.logger.error(error);
+    this.logger.error('ErrorHandlingService: ' + error);
     if (error instanceof Error) {
-      this.logger.debug(this.cleanStack(error.stack));
+      this.logger.debug('ErrorHandlingService: ' + this.cleanStack(error.stack));
     }
     if (error instanceof HttpErrorResponse) {
       this.handleHttpError(error, actionCallback);

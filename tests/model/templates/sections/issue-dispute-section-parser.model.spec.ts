@@ -6,7 +6,7 @@ const TYPE_DISPUTE =
   "{the team's action that is being disputed}\n\n" +
   '### Tester says:\n\n' +
   "{tester's objection}\n\n" +
-  '-------------------';
+  '<catcher-end-of-segment><hr>';
 
 const EXPECTED_TITLE = 'Issue Type';
 const EXPECTED_DESCRIPTION =

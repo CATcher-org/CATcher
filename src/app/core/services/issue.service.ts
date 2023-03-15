@@ -146,7 +146,7 @@ export class IssueService {
           return this.createIssueModel(response);
         }),
         catchError((err) => {
-          this.logger.error(err); // Log full details of error first
+          this.logger.error('IssueService: ', err); // Log full details of error first
           return throwError(err.response.data.message); // More readable error message
         })
       );
@@ -422,8 +422,8 @@ export class IssueService {
       result.push(this.createLabel('type', issue.type));
     }
 
-    if (issue.responseTag) {
-      result.push(this.createLabel('response', issue.responseTag));
+    if (issue.response) {
+      result.push(this.createLabel('response', issue.response));
     }
 
     if (issue.duplicated) {
@@ -476,7 +476,7 @@ export class IssueService {
     }
 
     if (issue.parseError) {
-      this.logger.error(issue.parseError);
+      this.logger.error('IssueService: ' + issue.parseError);
     }
     return issue;
   }

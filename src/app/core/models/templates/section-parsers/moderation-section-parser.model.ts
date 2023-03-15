@@ -6,7 +6,7 @@ const { coroutine, everyCharUntil, lookAhead, optionalWhitespace, str, whitespac
 
 const SECTION_TITLE_PREFIX = '## :question: ';
 const DONE_CHECKBOX_DESCRIPTION = 'Done';
-const LINE_SEPARATOR = '-------------------';
+const LINE_SEPARATOR = '<catcher-end-of-segment><hr>';
 
 export const DoneCheckboxParser = buildCheckboxParser(DONE_CHECKBOX_DESCRIPTION);
 

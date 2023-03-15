@@ -27,7 +27,7 @@ describe('ErrorHandlingService', () => {
   describe('ErrorHandlingService: handleError()', () => {
     it('should log errors when handling errors', () => {
       errorHandlingService.handleError(STANDARD_ERROR);
-      expect(mockLoggingService.error).toHaveBeenCalledWith(STANDARD_ERROR);
+      expect(mockLoggingService.error).toHaveBeenCalledWith('ErrorHandlingService: ' + STANDARD_ERROR);
     });
 
     it('should use the GeneralMessageErrorComponent when handling Errors', () => {
