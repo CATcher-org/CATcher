@@ -12,7 +12,7 @@ describe('IssuesRespondedComponent', () => {
     const DUMMY_RESPONSE = 'dummy response';
     let dummyIssue: Issue;
 
-    const issueService = new IssueService(null, null, null, null, null, null);
+    const issueService = new IssueService(null, null, null, null, null);
     const userService = new UserService(null, null, null);
     userService.currentUser = USER_Q;
     const issuesRespondedComponent = new IssuesRespondedComponent(issueService, userService);

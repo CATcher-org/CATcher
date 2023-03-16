@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { AppConfig } from '../../../../environments/environment';
 import { AuthService } from '../auth.service';
 import { DataService } from '../data.service';
-import { ElectronService } from '../electron.service';
 import { GithubService } from '../github.service';
 import { GithubEventService } from '../githubevent.service';
 import { IssueService } from '../issue.service';
@@ -14,7 +13,6 @@ import { PhaseService } from '../phase.service';
 import { UserService } from '../user.service';
 
 export function AuthServiceFactory(
-  electronService: ElectronService,
   router: Router,
   ngZone: NgZone,
   githubService: GithubService,
@@ -42,7 +40,6 @@ export function AuthServiceFactory(
   }
   console.log(logger);
   return new AuthService(
-    electronService,
     router,
     ngZone,
     githubService,
