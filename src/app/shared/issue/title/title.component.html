@@ -29,8 +29,22 @@
       </mat-hint>
     </mat-form-field>
 
-    <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary" class="title-button">
+    <button
+      type="submit"
+      [disabled]="issueTitleForm.invalid || isSavePending"
+      mat-stroked-button
+      color="primary"
+      class="title-button"
+      [ngClass]="{ disabled: issueTitleForm.invalid || isSavePending }"
+    >
       Save
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="15"
+        strokeWidth="2"
+        class="mat-progress-spinner"
+        *ngIf="isSavePending"
+      ></mat-progress-spinner>
     </button>
     <button
       type="button"

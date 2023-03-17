@@ -11,6 +11,20 @@
 }
 
 .title-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   margin: 5px;
   float: right;
+}
+
+.mat-progress-spinner {
+  color: rgba(0, 0, 0, 0.5);
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
+}
+
+.title-button.disabled .mat-progress-spinner {
+  color: rgba(0, 0, 0, 0.26); /* adjust as needed */
 }
