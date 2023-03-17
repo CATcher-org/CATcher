@@ -20,7 +20,7 @@ const INVALID_PROFILES = [
 
 describe('ProfileService', () => {
   beforeEach(() => {
-    githubService = new GithubService(null, null, null, null);
+    githubService = new GithubService(null, null, null);
     profileService = new ProfileService(githubService);
   });
 
