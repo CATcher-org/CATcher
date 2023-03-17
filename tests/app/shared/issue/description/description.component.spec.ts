@@ -51,6 +51,22 @@ describe('DescriptionComponent', () => {
     expect(descriptionComponent.issueDescriptionForm.value).toEqual({ description: '' });
   });
 
+  it('should mark isSavePending as true if called', () => {
+    descriptionComponent.isSavePending = false;
+    loader.show.and.callFake(() => of(true));
+    descriptionComponent.showSavePending();
+
+    expect(descriptionComponent.isSavePending).toEqual(true);
+  });
+
+  it('should mark isSavePending as false if called', () => {
+    descriptionComponent.isSavePending = true;
+    loader.hide.and.callFake(() => of(false));
+    descriptionComponent.hideSavePending();
+
+    expect(descriptionComponent.isSavePending).toEqual(false);
+  });
+
   it('should update the form value correctly and emit an event when entering edit mode', () => {
     const descriptionComponentEditState = spyOn(descriptionComponent.changeEditState, 'emit');
 

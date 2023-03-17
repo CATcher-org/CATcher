@@ -2,6 +2,7 @@ import { of } from 'rxjs';
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
 import { LabelService } from '../../../../../src/app/core/services/label.service';
+import { LoadingService } from '../../../../../src/app/core/services/loading.service';
 import { PhaseService } from '../../../../../src/app/core/services/phase.service';
 import { LabelComponent } from '../../../../../src/app/shared/issue/label/label.component';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
@@ -14,18 +15,36 @@ describe('LabelComponent', () => {
   let phaseService: any;
   let thisIssue: Issue;
   let issueUpdatedEmit: any;
+  let loader: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel']);
     issueService = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'updateIssue']);
     phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
+    loader = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
 
-    labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null, null);
+    labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null, null, loader);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;
 
     issueUpdatedEmit = spyOn(labelComponent.issueUpdated, 'emit');
+  });
+
+  it('should mark isSavePending as true if called', () => {
+    labelComponent.isSavePending = false;
+    loader.show.and.callFake(() => of(true));
+    labelComponent.showSavePending();
+
+    expect(labelComponent.isSavePending).toEqual(true);
+  });
+
+  it('should mark isSavePending as false if called', () => {
+    labelComponent.isSavePending = true;
+    loader.hide.and.callFake(() => of(false));
+    labelComponent.hideSavePending();
+
+    expect(labelComponent.isSavePending).toEqual(false);
   });
 
   it('should be initialised with a list of label values and a labelColor', () => {
@@ -48,11 +67,14 @@ describe('LabelComponent', () => {
     phaseService.currentPhase.and.returnValue(Phase.phaseBugReporting);
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
     issueService.getDuplicateIssuesFor.and.returnValue(of([]));
+    loader.show.and.callFake(() => of(true));
+    loader.hide.and.callFake(() => of(false));
     labelComponent.updateLabel(SEVERITY_HIGH);
 
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
     expect(labelComponent.labelValues).toEqual(SEVERITY_LABELS);
     expect(labelComponent.labelColor).toEqual(COLOR_SEVERITY_HIGH);
+    expect(labelComponent.isSavePending).toEqual(false);
   });
 
   it('should update labels of duplicate issues', () => {
@@ -66,6 +88,8 @@ describe('LabelComponent', () => {
 
     const duplicateIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     issueService.getDuplicateIssuesFor.and.returnValue(of([duplicateIssue]));
+    loader.show.and.callFake(() => of(true));
+    loader.hide.and.callFake(() => of(false));
     labelComponent.updateLabel(SEVERITY_HIGH);
 
     const updatedIssue = thisIssue.clone(phaseService.currentPhase);
@@ -75,5 +99,6 @@ describe('LabelComponent', () => {
 
     expect(issueService.updateIssue).toHaveBeenCalledWith(updatedIssue);
     expect(issueService.updateIssue).toHaveBeenCalledWith(updatedDuplicateIssue);
+    expect(labelComponent.isSavePending).toEqual(false);
   });
 });

@@ -37,6 +37,22 @@ describe('TitleComponent', () => {
     expect(titleComponent.issueTitleForm.value).toEqual({ title: '' });
   });
 
+  it('should mark isSavePending as true if called', () => {
+    titleComponent.isSavePending = false;
+    loader.show.and.callFake(() => of(true));
+    titleComponent.showSavePending();
+
+    expect(titleComponent.isSavePending).toEqual(true);
+  });
+
+  it('should mark isSavePending as false if called', () => {
+    titleComponent.isSavePending = true;
+    loader.hide.and.callFake(() => of(false));
+    titleComponent.hideSavePending();
+
+    expect(titleComponent.isSavePending).toEqual(false);
+  });
+
   it('should be updated with correct flags and values in editing mode', () => {
     titleComponent.ngOnInit();
     titleComponent.changeToEditMode();
