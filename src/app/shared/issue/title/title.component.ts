@@ -8,6 +8,7 @@ import { IssueService } from '../../../core/services/issue.service';
 import { LoadingService } from '../../../core/services/loading.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
+import { Saveable } from '../saveable/saveable';
 
 @Component({
   selector: 'app-issue-title',
@@ -15,7 +16,7 @@ import { PhaseService } from '../../../core/services/phase.service';
   styleUrls: ['./title.component.css'],
   providers: [LoadingService]
 })
-export class TitleComponent implements OnInit {
+export class TitleComponent implements OnInit, Saveable {
   isEditing = false;
   isSavePending = false;
   issueTitleForm: FormGroup;
@@ -35,7 +36,7 @@ export class TitleComponent implements OnInit {
     public permissions: PermissionService,
     public phaseService: PhaseService,
     private dialogService: DialogService,
-    private loader: LoadingService
+    public loader: LoadingService
   ) {}
 
   ngOnInit() {

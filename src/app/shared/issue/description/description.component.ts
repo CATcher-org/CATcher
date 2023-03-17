@@ -8,17 +8,19 @@ import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
+import { LoadingService } from '../../../core/services/loading.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
-
+import { Saveable } from '../saveable/saveable';
 @Component({
   selector: 'app-issue-description',
   templateUrl: './description.component.html',
-  styleUrls: ['./description.component.css']
+  styleUrls: ['./description.component.css'],
+  providers: [LoadingService]
 })
-export class DescriptionComponent implements OnInit {
+export class DescriptionComponent implements OnInit, Saveable {
   isSavePending = false;
   issueDescriptionForm: FormGroup;
   conflict: Conflict;
@@ -42,8 +44,17 @@ export class DescriptionComponent implements OnInit {
     private dialog: MatDialog,
     private phaseService: PhaseService,
     public permissions: PermissionService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    public loader: LoadingService
   ) {}
+
+  showSavePending(): void {
+    this.loader.show().subscribe((isLoading) => (this.isSavePending = isLoading));
+  }
+
+  hideSavePending(): void {
+    this.loader.hide().subscribe((isLoading) => (this.isSavePending = isLoading));
+  }
 
   ngOnInit() {
     this.issueDescriptionForm = this.formBuilder.group({
@@ -64,7 +75,7 @@ export class DescriptionComponent implements OnInit {
       return;
     }
 
-    this.isSavePending = true;
+    this.showSavePending();
     this.issueService
       .getLatestIssue(this.issue.id)
       .pipe(
@@ -80,17 +91,18 @@ export class DescriptionComponent implements OnInit {
             this.viewChanges();
             return throwError('The content you are editing has changed. Please verify the changes and try again.');
           }
-        }),
-        finalize(() => (this.isSavePending = false))
+        })
       )
       .subscribe(
         (editedIssue: Issue) => {
           this.issueUpdated.emit(editedIssue);
           this.resetToDefault();
           form.resetForm();
+          this.hideSavePending();
         },
         (error) => {
           this.errorHandlingService.handleError(error);
+          this.hideSavePending();
         }
       );
   }

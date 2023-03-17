@@ -5,6 +5,7 @@ import { UserConfirmationComponent } from '../../../../../src/app/core/guards/us
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
 import { DialogService } from '../../../../../src/app/core/services/dialog.service';
+import { LoadingService } from '../../../../../src/app/core/services/loading.service';
 import { PhaseService } from '../../../../../src/app/core/services/phase.service';
 import { DescriptionComponent } from '../../../../../src/app/shared/issue/description/description.component';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
@@ -18,6 +19,7 @@ describe('DescriptionComponent', () => {
   let dialog: any;
   let errorHandlingService: any;
   let dialogService: jasmine.SpyObj<DialogService>;
+  let loader: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -28,6 +30,7 @@ describe('DescriptionComponent', () => {
     errorHandlingService = jasmine.createSpyObj('ErrorHandlingService', ['handleError']);
     issueService = jasmine.createSpyObj('IssueService', ['getIssue', 'getLatestIssue', 'updateIssue']);
     dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
+    loader = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
 
     descriptionComponent = new DescriptionComponent(
       issueService,
@@ -36,7 +39,8 @@ describe('DescriptionComponent', () => {
       dialog,
       phaseService,
       null,
-      dialogService
+      dialogService,
+      loader
     );
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     descriptionComponent.issue = thisIssue;
@@ -80,11 +84,14 @@ describe('DescriptionComponent', () => {
     issueService.getLatestIssue.and.callFake((x: number) => of(updatedIssue));
     dialog.open.and.callFake((x: any) => {});
     errorHandlingService.handleError.and.callFake((x: any) => {});
+    loader.show.and.callFake(() => of(true));
+    loader.hide.and.callFake(() => of(false));
     descriptionComponent.updateDescription(form);
 
     expect(viewChangesCall).toHaveBeenCalledTimes(1);
     expect(descriptionComponent.conflict.outdatedContent).toEqual(thisIssue.description);
     expect(descriptionComponent.conflict.updatedContent).toEqual(updatedIssue.description);
+    expect(descriptionComponent.isSavePending).toEqual(false);
   });
 
   it('should be configured correctly when description is updated', () => {
@@ -98,11 +105,14 @@ describe('DescriptionComponent', () => {
 
     issueService.getLatestIssue.and.callFake((x: number) => of(thisIssue));
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    loader.show.and.callFake(() => of(true));
+    loader.hide.and.callFake(() => of(false));
     descriptionComponent.updateDescription(form);
 
     expect(formResetForm).toHaveBeenCalledTimes(1);
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
     expect(resetCall).toHaveBeenCalledTimes(1);
+    expect(descriptionComponent.isSavePending).toEqual(false);
   });
 
   it('should revert edits if edit mode is cancelled', () => {

@@ -24,7 +24,3 @@
   vertical-align: middle;
   margin-left: 5px;
 }
-
-.title-button.disabled .mat-progress-spinner {
-  color: rgba(0, 0, 0, 0.26); /* adjust as needed */
-}

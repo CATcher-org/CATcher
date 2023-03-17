@@ -5,6 +5,7 @@ import { UserConfirmationComponent } from '../../../../../src/app/core/guards/us
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
 import { DialogService } from '../../../../../src/app/core/services/dialog.service';
+import { LoadingService } from '../../../../../src/app/core/services/loading.service';
 import { PhaseService } from '../../../../../src/app/core/services/phase.service';
 import { TitleComponent } from '../../../../../src/app/shared/issue/title/title.component';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
@@ -16,6 +17,7 @@ describe('TitleComponent', () => {
   let formBuilder: any;
   let phaseService: PhaseService;
   let dialogService: jasmine.SpyObj<DialogService>;
+  let loader: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -24,7 +26,8 @@ describe('TitleComponent', () => {
 
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
     dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
-    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService, dialogService);
+    loader = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
+    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService, dialogService, loader);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     titleComponent.issue = thisIssue;
   });
@@ -59,11 +62,14 @@ describe('TitleComponent', () => {
     titleComponent.changeToEditMode();
 
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    loader.show.and.callFake(() => of(true));
+    loader.hide.and.callFake(() => of(false));
     titleComponent.updateTitle(form);
 
     expect(formResetForm).toHaveBeenCalledTimes(1);
     expect(titleComponentEmitter).toHaveBeenCalledTimes(1);
     expect(titleComponent.isEditing).toEqual(false);
+    expect(titleComponent.isSavePending).toEqual(false);
   });
 
   it('should cancel edit mode only if confirmed in confirmation dialog', () => {

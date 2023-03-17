@@ -52,14 +52,24 @@
           {{ submitButtonText }}
         </button>
         <button
-          class="editor-action"
+          class="editor-action additional-editor-style"
           *ngIf="!conflict"
           type="submit"
           [disabled]="issueDescriptionForm.invalid || isSavePending"
           mat-stroked-button
           color="primary"
         >
-          {{ submitButtonText }}
+          <mat-button-content>
+            {{ submitButtonText }}
+            <mat-progress-spinner
+              mode="indeterminate"
+              diameter="15"
+              strokeWidth="2"
+              class="mat-progress-spinner"
+              *ngIf="isSavePending"
+              color="warn"
+            ></mat-progress-spinner>
+          </mat-button-content>
         </button>
       </div>
     </div>
