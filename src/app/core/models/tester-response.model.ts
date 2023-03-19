@@ -4,7 +4,7 @@ export class TesterResponse {
   readonly TITLE_PREFIX = '## :question: ';
   readonly DISAGREEMENT_PREFIX = '**Reason for disagreement:** ';
   readonly INITIAL_RESPONSE = '[replace this with your explanation]';
-  readonly LINE_BREAK = '-------------------\n';
+  readonly LINE_BREAK = '<catcher-end-of-segment><hr>\n';
   title: string; // e.g Issue Severity
   description: string; // e.g Team chose `Low`. Originally `High`.
   disagreeCheckbox: Checkbox; // e.g - [x] I disagree
