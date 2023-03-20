@@ -1,5 +1,9 @@
 <form [formGroup]="commentForm" style="min-height: 350px">
-  <mat-tab-group class="mat-elevation-z1" animationDuration="0ms">
+  <mat-tab-group 
+    class="mat-elevation-z1"
+    animationDuration="0ms"
+    (selectedTabChange)="commentField.setValue(commentTextArea.value)"
+  >
     <mat-tab label="Write">
       <div
         #dropArea
@@ -16,6 +20,7 @@
             (paste)="onPaste($event)"
             (keydown)="onKeyPress($event)"
             (beforeinput)="handleBeforeInputChange($event)"
+            (input)="history.createDelayedSave()"
             #commentTextArea
             (dragover)="disableCaretMovement($event)"
             id="{{ this.id }}"

@@ -78,17 +78,16 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
-    this.history = new UndoRedo<textEntry>(50, () => {
+    this.history = new UndoRedo<textEntry>(75, () => {
       return {
         text: this.commentTextArea.nativeElement.value,
         selectStart: this.commentTextArea.nativeElement.selectionStart,
         selectEnd: this.commentTextArea.nativeElement.selectionEnd
       };
-    });
+    }, 500);
   }
 
   onKeyPress(event: KeyboardEvent) {
-
     if (this.isUndo(event)) {
       event.preventDefault();
       this.undo();
@@ -226,6 +225,7 @@ export class CommentEditorComponent implements OnInit {
           } else {
             insertUploadUrl(filename, response.data.content.download_url, this.commentField, this.commentTextArea);
           }
+          this.history.forceSave();
         },
         (error) => {
           this.handleUploadError(error, insertedText);
@@ -280,7 +280,7 @@ export class CommentEditorComponent implements OnInit {
     this.commentTextArea.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
   }
 
-  redo(): void {
+  private redo(): void {
     const entry = this.history.redo();
     if (entry === null) {
       return;
@@ -301,6 +301,7 @@ export class CommentEditorComponent implements OnInit {
       this.uploadErrorMessage = error;
     }
     this.commentField.setValue(this.commentField.value.replace(insertedText, ''));
+    this.history.forceSave();
   }
 
   private removeHighlightBorderStyle() {
