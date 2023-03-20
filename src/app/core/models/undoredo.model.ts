@@ -33,8 +33,9 @@ export class UndoRedo<T> {
     }
 
     /**
-     * Creates a timed delay for adding entries to history.
-     * Enables a more natural form for high frequency saving.
+     * Creates a timed delay to add entries to history.
+     * Enables a more natural feel when performing high frequency saving.
+     * Also prevents history from being rapidly filled up
      * Note:
      * If interval time is set to 0, this method should not be called 
      * within (input) events. Use addEntry(T) instead.
@@ -45,7 +46,7 @@ export class UndoRedo<T> {
       }
       this.isSaved = false;
       this.saveRunning = true;
-      // if interval time is 0 -> add entry should not be called
+      // if interval time is 0 -> add entry will be called with false as parameter
       this.timeout = setTimeout(() => {
         this.addEntry(this.getState(), !!this.intervalTime);
       }, this.intervalTime);

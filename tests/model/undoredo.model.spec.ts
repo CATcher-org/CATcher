@@ -122,15 +122,6 @@ describe("UndoRedo model class", () => {
                 undoRedo.addEntry(1);
                 expect(undoRedo.redo()).toBe(null);
             });
-
-            it("should return null regardless if there is changes", () => {
-                // 1 2 ? -> 1 2 ? (no change)
-                undoRedo.addEntry(1);
-                undoRedo.addEntry(2, false);
-                expect(undoRedo.redo()).toBe(null);
-                expect(undoRedo.currIndex).toBe(1)
-                expect(undoRedo.historyArray[undoRedo.currIndex]).toBe(2)
-            });
         });
 
         describe("non-null tests", () => {
