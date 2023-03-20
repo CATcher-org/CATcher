@@ -259,10 +259,10 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
-  handleBeforeInputChange(event:InputEvent): void {
-    switch(event.inputType){
+  handleBeforeInputChange(event: InputEvent): void {
+    switch (event.inputType) {
       case "historyUndo":
-      case "historyRedo": 
+      case "historyRedo":
         event.preventDefault();
         // ignore these events that doesn't modify the text
         break;
@@ -312,27 +312,27 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
-  private isControlKeyPressed(event:KeyboardEvent) {
+  private isControlKeyPressed(event: KeyboardEvent) {
     if (navigator.platform.indexOf('Mac') === 0) {
       return event.metaKey;
     }
     return event.ctrlKey;
   }
 
-  private isUndo(event:KeyboardEvent) {
-    // prevents undo from firing when ctrl shift z is pressed 
+  private isUndo(event: KeyboardEvent) {
+    // prevents undo from firing when ctrl shift z is pressed
     if (navigator.platform.indexOf('Mac') === 0) {
       return event.metaKey && event.key.toLowerCase() === "z" && !event.shiftKey;
-    } 
-    return event.ctrlKey && event.key.toLowerCase() === "z" && !event.shiftKey
+    }
+    return event.ctrlKey && event.key.toLowerCase() === "z" && !event.shiftKey;
   }
 
-  private isRedo(event:KeyboardEvent) {
+  private isRedo(event: KeyboardEvent) {
     if (navigator.platform.indexOf('Mac') === 0) {
       return event.metaKey && event.shiftKey && event.key.toLowerCase() === "z";
     }
     return (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "z")
-      || (event.ctrlKey && event.key.toLowerCase() === "y"); 
+      || (event.ctrlKey && event.key.toLowerCase() === "y");
   }
 
   private insertOrRemoveCharsFromHighlightedText(char) {

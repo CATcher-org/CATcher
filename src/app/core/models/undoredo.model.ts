@@ -9,7 +9,7 @@ export class UndoRedo<T> {
     constructor(capacity: number, getState: () => T) {
       this.historyArray = new Array<T>(capacity);
       this.firstEntryIndex = 0;
-      this.lastEntryIndex = -1;  
+      this.lastEntryIndex = -1;
       this.currIndex = -1;
       this.getState = getState;
       this.isSaved = false;
@@ -20,7 +20,7 @@ export class UndoRedo<T> {
      * preferably to be called with "beforeinput" event
      * @param entry optional entry to insert
      */
-    updateBeforeChange(entry?:T) {
+    updateBeforeChange(entry?: T) {
       this.addEntry(entry ?? this.getState(), false);
     }
 
@@ -32,8 +32,8 @@ export class UndoRedo<T> {
      */
     addEntry(entry: T, isLatest: boolean = true): void {
       this.isSaved = isLatest;
-      let newIndex = this.incrementIndex(this.currIndex);
-      if (newIndex === this.firstEntryIndex && this.currIndex != -1) {
+      const newIndex = this.incrementIndex(this.currIndex);
+      if (newIndex === this.firstEntryIndex && this.currIndex !== -1) {
         // in case history is already full.
         this.firstEntryIndex = this.incrementIndex(this.firstEntryIndex);
       }
@@ -52,7 +52,10 @@ export class UndoRedo<T> {
 
     undo(): T | null {
       // if the there are unsaved changes, saves it
-      this.isSaved || this.addEntry(this.getState(), true);
+      if (this.isSaved) {
+        this.addEntry(this.getState(), true);
+      }
+
       if (this.currIndex === this.firstEntryIndex || this.currIndex === -1) {
         // if there are no more history to unwind
         return null;
@@ -63,7 +66,7 @@ export class UndoRedo<T> {
 
     redo(): T | null {
       /** redo assumes some undo operation is already saved
-       * thus there is no need to save current state as redo won't 
+       * thus there is no need to save current state as redo won't
        * fire if it is the latest change */
       if (this.currIndex === this.lastEntryIndex) {
         // if current state is already at the latest iteration
