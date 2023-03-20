@@ -68,7 +68,6 @@ export class CommentEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.initialDescription)
     if (this.initialDescription !== undefined) {
       this.commentField.setValue(this.initialDescription);
     }
@@ -79,10 +78,27 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
-    this.history = new UndoRedo<textEntry>(50, {text: this.commentField.value, selectEnd: 0, selectStart: 0});
+    this.history = new UndoRedo<textEntry>(50, () => {
+      return {
+        text: this.commentTextArea.nativeElement.value,
+        selectStart: this.commentTextArea.nativeElement.selectionStart,
+        selectEnd: this.commentTextArea.nativeElement.selectionEnd
+      };
+    });
   }
 
-  onKeyPress(event) {
+  onKeyPress(event: KeyboardEvent) {
+
+    if (this.isUndo(event)) {
+      event.preventDefault();
+      this.undo();
+      return;
+    } else if (this.isRedo(event)) {
+      this.redo();
+      event.preventDefault();
+      return;
+    }
+
     if (this.isControlKeyPressed(event)) {
       switch (event.key) {
         case 'b':
@@ -243,40 +259,32 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
-  handleInputChange(event:InputEvent): void {
-    console.log(event.inputType);
+  handleBeforeInputChange(event:InputEvent): void {
     switch(event.inputType){
       case "historyUndo":
-        event.preventDefault() 
-        this.undo();
-        break;
       case "historyRedo": 
-        event.preventDefault() 
-        this.redo();
+        event.preventDefault();
+        // ignore these events that doesn't modify the text
         break;
       default:
-        this.updateEntry();
+        this.history.updateBeforeChange();
     }
   }
 
-  private updateEntry(): void {
-    const entry: textEntry = {
-      text: this.commentTextArea.nativeElement.value,
-      selectStart: this.commentTextArea.nativeElement.selectionStart,
-      selectEnd: this.commentTextArea.nativeElement.selectionEnd
-    };
-
-    this.history.updateEntry(entry);
-  }
-
-  undo(): void {
+  private undo(): void {
     const entry = this.history.undo();
+    if (entry === null) {
+      return;
+    }
     this.commentField.setValue(entry.text);
     this.commentTextArea.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
   }
 
   redo(): void {
     const entry = this.history.redo();
+    if (entry === null) {
+      return;
+    }
     this.commentTextArea.nativeElement.value = entry.text;
     this.commentTextArea.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
   }
@@ -304,11 +312,27 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
-  private isControlKeyPressed(event) {
+  private isControlKeyPressed(event:KeyboardEvent) {
     if (navigator.platform.indexOf('Mac') === 0) {
       return event.metaKey;
     }
     return event.ctrlKey;
+  }
+
+  private isUndo(event:KeyboardEvent) {
+    // prevents undo from firing when ctrl shift z is pressed 
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey && event.key.toLowerCase() === "z" && !event.shiftKey;
+    } 
+    return event.ctrlKey && event.key.toLowerCase() === "z" && !event.shiftKey
+  }
+
+  private isRedo(event:KeyboardEvent) {
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey && event.shiftKey && event.key.toLowerCase() === "z";
+    }
+    return (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "z")
+      || (event.ctrlKey && event.key.toLowerCase() === "y"); 
   }
 
   private insertOrRemoveCharsFromHighlightedText(char) {
