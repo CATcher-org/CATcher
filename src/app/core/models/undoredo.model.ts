@@ -52,7 +52,7 @@ export class UndoRedo<T> {
 
     undo(): T | null {
       // if the there are unsaved changes, saves it
-      if (this.isSaved) {
+      if (!this.isSaved) {
         this.addEntry(this.getState(), true);
       }
 

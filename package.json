@@ -24,6 +24,7 @@
     "electron:windows": "npm run build:prod && electron-builder build --windows --publish never",
     "electron:mac": "npm run build:prod && electron-builder build --mac --publish never",
     "test": "npm run codegen:gql && ng test",
+    "test:persist": "npm run codegen:gql && ng test --watch",
     "e2e": "npm run codegen:gql && npm run postinstall:web && ng e2e",
     "actions:e2e": "npm run codegen:gql && npm run postinstall:web && ng e2e --protractor-config=e2e/protractor.gh-actions.conf --webdriver-update=false",
     "webdriver-manager": "webdriver-manager",
