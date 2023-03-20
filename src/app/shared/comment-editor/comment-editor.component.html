@@ -15,7 +15,7 @@
           <textarea
             (paste)="onPaste($event)"
             (keydown)="onKeyPress($event)"
-            (input)="updateEntry()"
+            (input)="handleInputChange($event)"
             #commentTextArea
             (dragover)="disableCaretMovement($event)"
             id="{{ this.id }}"

@@ -68,6 +68,7 @@ export class CommentEditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.initialDescription)
     if (this.initialDescription !== undefined) {
       this.commentField.setValue(this.initialDescription);
     }
@@ -78,7 +79,7 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
-    this.history = new UndoRedo<textEntry>(50, {text: "", selectEnd: 0, selectStart: 0});
+    this.history = new UndoRedo<textEntry>(50, {text: this.commentField.value, selectEnd: 0, selectStart: 0});
   }
 
   onKeyPress(event) {
@@ -91,14 +92,6 @@ export class CommentEditorComponent implements OnInit {
         case 'i':
           event.preventDefault();
           this.insertOrRemoveCharsFromHighlightedText('_');
-          break;
-        case 'z':
-          event.preventDefault();
-          this.undo();
-          break;
-        case 'y':
-          event.preventDefault();
-          this.redo();
           break;
         default:
           return;
@@ -250,7 +243,23 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
-  updateEntry(): void {
+  handleInputChange(event:InputEvent): void {
+    console.log(event.inputType);
+    switch(event.inputType){
+      case "historyUndo":
+        event.preventDefault() 
+        this.undo();
+        break;
+      case "historyRedo": 
+        event.preventDefault() 
+        this.redo();
+        break;
+      default:
+        this.updateEntry();
+    }
+  }
+
+  private updateEntry(): void {
     const entry: textEntry = {
       text: this.commentTextArea.nativeElement.value,
       selectStart: this.commentTextArea.nativeElement.selectionStart,
