@@ -9,6 +9,10 @@ export function markedOptionsFactory(): MarkedOptions {
     return html.replace(/^<a /, '<a target="_blank" ');
   };
 
+  renderer.checkbox = (checked) => {
+    return checked ? '<i class="fa-solid fa-square-check"></i> ' : '<i class="fa-solid fa-square"></i> ';
+  };
+
   return {
     renderer,
     gfm: true,
