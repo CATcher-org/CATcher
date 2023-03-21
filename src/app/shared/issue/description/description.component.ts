@@ -25,15 +25,10 @@ export class DescriptionComponent implements OnInit {
   submitButtonText: string;
 
   @Input() issue: Issue;
-  @Input() title: string;
+  @Input() issuePageTitle: string;
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() changeEditState = new EventEmitter<boolean>();
-
-  // prevents setting of title to bind to defualt html attribute of title
-  @HostBinding('attr.title') get getTitle() {
-    return null;
-  }
 
   // Messages for the modal popup window upon cancelling edit
   private readonly cancelEditModalMessages = ['Do you wish to cancel?', 'Your changes will be discarded.'];
