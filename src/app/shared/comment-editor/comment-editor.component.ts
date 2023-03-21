@@ -78,13 +78,17 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
-    this.history = new UndoRedo<textEntry>(75, () => {
-      return {
-        text: this.commentTextArea.nativeElement.value,
-        selectStart: this.commentTextArea.nativeElement.selectionStart,
-        selectEnd: this.commentTextArea.nativeElement.selectionEnd
-      };
-    }, 500);
+    this.history = new UndoRedo<textEntry>(
+      75,
+      () => {
+        return {
+          text: this.commentTextArea.nativeElement.value,
+          selectStart: this.commentTextArea.nativeElement.selectionStart,
+          selectEnd: this.commentTextArea.nativeElement.selectionEnd
+        };
+      },
+      500
+    );
   }
 
   onKeyPress(event: KeyboardEvent) {
@@ -261,8 +265,8 @@ export class CommentEditorComponent implements OnInit {
 
   handleBeforeInputChange(event: InputEvent): void {
     switch (event.inputType) {
-      case "historyUndo":
-      case "historyRedo":
+      case 'historyUndo':
+      case 'historyRedo':
         event.preventDefault();
         // ignore these events that doesn't modify the text
         break;
@@ -323,17 +327,17 @@ export class CommentEditorComponent implements OnInit {
   private isUndo(event: KeyboardEvent) {
     // prevents undo from firing when ctrl shift z is pressed
     if (navigator.platform.indexOf('Mac') === 0) {
-      return event.metaKey && event.key.toLowerCase() === "z" && !event.shiftKey;
+      return event.metaKey && event.code === 'KeyZ' && !event.shiftKey;
     }
-    return event.ctrlKey && event.key.toLowerCase() === "z" && !event.shiftKey;
+    return event.ctrlKey && event.code === 'KeyZ' && !event.shiftKey;
   }
 
   private isRedo(event: KeyboardEvent) {
+    console.log(event);
     if (navigator.platform.indexOf('Mac') === 0) {
-      return event.metaKey && event.shiftKey && event.key.toLowerCase() === "z";
+      return event.metaKey && event.shiftKey && event.code === 'KeyZ';
     }
-    return (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "z")
-      || (event.ctrlKey && event.key.toLowerCase() === "y");
+    return (event.ctrlKey && event.shiftKey && event.code === 'KeyZ') || (event.ctrlKey && event.code === 'KeyY');
   }
 
   private insertOrRemoveCharsFromHighlightedText(char) {
