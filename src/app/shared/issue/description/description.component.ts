@@ -25,7 +25,7 @@ export class DescriptionComponent implements OnInit {
   submitButtonText: string;
 
   @Input() issue: Issue;
-  @Input() title: string;
+  @Input() descriptionTitle: string;
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() changeEditState = new EventEmitter<boolean>();
