@@ -35,15 +35,15 @@ export class LabelComponent implements OnInit, OnChanges, Saveable {
     public labelService: LabelService,
     public permissions: PermissionService,
     public dialogService: DialogService,
-    public loader: LoadingService
+    public loadingService: LoadingService
   ) {}
 
-  showSavePending(): void {
-    this.loader.show().subscribe((isLoading) => (this.isSavePending = isLoading));
+  showSpinner(): void {
+    this.loadingService.showLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
   }
 
-  hideSavePending(): void {
-    this.loader.hide().subscribe((isLoading) => (this.isSavePending = isLoading));
+  hideSpinner(): void {
+    this.loadingService.hideLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
   }
 
   ngOnInit() {
@@ -57,18 +57,18 @@ export class LabelComponent implements OnInit, OnChanges, Saveable {
   }
 
   updateLabel(value: string) {
-    this.showSavePending();
+    this.showSpinner();
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     newIssue[this.attributeName] = value;
     this.issueService.updateIssue(newIssue).subscribe(
       (updatedIssue: Issue) => {
         this.issueUpdated.emit(updatedIssue);
         this.labelColor = this.labelService.getColorOfLabel(this.attributeName, updatedIssue[this.attributeName]);
-        this.hideSavePending();
+        this.hideSpinner();
       },
       (error) => {
         this.errorHandlingService.handleError(error);
-        this.hideSavePending();
+        this.hideSpinner();
       }
     );
     // Update labels of duplicate issues

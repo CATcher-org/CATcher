@@ -36,7 +36,7 @@ export class TitleComponent implements OnInit, Saveable {
     public permissions: PermissionService,
     public phaseService: PhaseService,
     private dialogService: DialogService,
-    public loader: LoadingService
+    public loadingService: LoadingService
   ) {}
 
   ngOnInit() {
@@ -62,7 +62,7 @@ export class TitleComponent implements OnInit, Saveable {
       return;
     }
 
-    this.showSavePending();
+    this.showSpinner();
     const newIssue = this.issue.clone(this.phaseService.currentPhase);
     newIssue.title = this.issueTitleForm.get('title').value;
     this.issueService
@@ -76,11 +76,11 @@ export class TitleComponent implements OnInit, Saveable {
         (editedIssue: Issue) => {
           this.issueUpdated.emit(editedIssue);
           form.resetForm();
-          this.hideSavePending();
+          this.hideSpinner();
         },
         (error) => {
           this.errorHandlingService.handleError(error);
-          this.hideSavePending();
+          this.hideSpinner();
         }
       );
   }
@@ -108,11 +108,11 @@ export class TitleComponent implements OnInit, Saveable {
     });
   }
 
-  showSavePending() {
-    this.loader.show().subscribe((isLoading) => (this.isSavePending = isLoading));
+  showSpinner() {
+    this.loadingService.showLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
   }
 
-  hideSavePending() {
-    this.loader.hide().subscribe((isLoading) => (this.isSavePending = isLoading));
+  hideSpinner() {
+    this.loadingService.hideLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
   }
 }

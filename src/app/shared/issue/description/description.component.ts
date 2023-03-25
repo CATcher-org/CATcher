@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
-import { finalize, map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
@@ -21,7 +21,7 @@ import { Saveable } from '../saveable/saveable';
   providers: [LoadingService]
 })
 export class DescriptionComponent implements OnInit, Saveable {
-  isSavePending = false;
+  isSavePending: boolean = false;
   issueDescriptionForm: FormGroup;
   conflict: Conflict;
   submitButtonText: string;
@@ -45,15 +45,17 @@ export class DescriptionComponent implements OnInit, Saveable {
     private phaseService: PhaseService,
     public permissions: PermissionService,
     private dialogService: DialogService,
-    public loader: LoadingService
+    public loadingService: LoadingService
   ) {}
 
-  showSavePending(): void {
-    this.loader.show().subscribe((isLoading) => (this.isSavePending = isLoading));
+  showSpinner(): void {
+    this.loadingService.showLoader();
+    this.isSavePending = true;
   }
 
-  hideSavePending(): void {
-    this.loader.hide().subscribe((isLoading) => (this.isSavePending = isLoading));
+  hideSpinner(): void {
+    this.loadingService.hideLoader();
+    this.isSavePending = false;
   }
 
   ngOnInit() {
@@ -75,7 +77,7 @@ export class DescriptionComponent implements OnInit, Saveable {
       return;
     }
 
-    this.showSavePending();
+    this.showSpinner();
     this.issueService
       .getLatestIssue(this.issue.id)
       .pipe(
@@ -98,11 +100,11 @@ export class DescriptionComponent implements OnInit, Saveable {
           this.issueUpdated.emit(editedIssue);
           this.resetToDefault();
           form.resetForm();
-          this.hideSavePending();
+          this.hideSpinner();
         },
         (error) => {
           this.errorHandlingService.handleError(error);
-          this.hideSavePending();
+          this.hideSpinner();
         }
       );
   }
