@@ -21,7 +21,7 @@ import { Saveable } from '../saveable/saveable';
   providers: [LoadingService]
 })
 export class DescriptionComponent implements OnInit, Saveable {
-  isSavePending: boolean = false;
+  isSavePending = false;
   issueDescriptionForm: FormGroup;
   conflict: Conflict;
   submitButtonText: string;
