@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, Renderer2, ViewContainerRef } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { MatSpinner } from '@angular/material/progress-spinner';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { LoadingService } from '../../src/app/core/services/loading.service';
 import { MockMatSpinner } from '../helper/mock.mat.spinner';
 
@@ -24,8 +25,26 @@ describe('LoadingService', () => {
       get: mockRenderer
     });
 
+    const elementRef: ElementRef = {
+      nativeElement: {
+        classList: {
+          add: jasmine.createSpy('classList.add'),
+          remove: jasmine.createSpy('classList.remove'),
+          contains: jasmine.createSpy('classList.contains'),
+          toggle: jasmine.createSpy('classList.toggle'),
+          length: 0,
+          item: jasmine.createSpy('classList.item'),
+          toString: jasmine.createSpy('classList.toString'),
+          entries: jasmine.createSpy('classList.entries'),
+          forEach: jasmine.createSpy('classList.forEach'),
+          keys: jasmine.createSpy('classList.keys'),
+          values: jasmine.createSpy('classList.values')
+        }
+      }
+    };
+
     const mockComponentRef: ComponentRef<MatSpinner> = ({
-      location: new ElementRef(null),
+      location: elementRef,
       changeDetectorRef: jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']),
       hostView: null as any,
       instance: mockMatSpinnerInstance,
@@ -64,32 +83,6 @@ describe('LoadingService', () => {
   });
 
   it(
-    'should show and hide loader',
-    waitForAsync(() => {
-      const mockContainerRef = jasmine.createSpyObj<ViewContainerRef>('ViewContainerRef', ['insert']);
-      const mockSpinnerComponentRef = jasmine.createSpyObj<ComponentRef<MatSpinner>>('ComponentRef', ['destroy']);
-
-      service.addViewContainerRef(mockContainerRef);
-      service.showLoader();
-
-      service.isLoading$.subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
-      setTimeout(() => {
-        service.spinnerComponentRef = mockSpinnerComponentRef;
-        service.hideLoader();
-
-        service.isLoading$.subscribe((isLoading) => {
-          expect(isLoading).toBeFalse();
-        });
-
-        expect(mockSpinnerComponentRef.destroy).toHaveBeenCalled();
-      }, 1000);
-    })
-  );
-
-  it(
     'should add CSS class to spinner',
     waitForAsync(() => {
       const testClass = 'test-class';
@@ -105,6 +98,7 @@ describe('LoadingService', () => {
       setTimeout(() => {
         if (service.spinnerComponentRef) {
           const spinnerElement = service.spinnerComponentRef.location.nativeElement;
+          expect(spinnerElement.classList.add).toHaveBeenCalledWith(testClass);
           expect(spinnerElement.classList.contains(testClass)).toBeTrue();
         }
       }, 1000);

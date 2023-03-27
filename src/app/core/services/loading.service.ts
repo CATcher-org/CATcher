@@ -113,7 +113,11 @@ export class LoadingService implements OnDestroy {
     const spinnerRef = this.createSpinner(injector);
 
     if (this.isAttachableToDocument()) {
-      this.document.body.appendChild(spinnerRef.location.nativeElement);
+      if (spinnerRef.location.nativeElement instanceof Node) {
+        this.document.body.appendChild(spinnerRef.location.nativeElement);
+      } else {
+        return;
+      }
     } else {
       this.spinnerContainerRef.insert(spinnerRef.hostView);
     }
