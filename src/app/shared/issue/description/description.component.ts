@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
@@ -13,14 +13,21 @@ import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
 import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.component';
-import { Saveable } from '../saveable/saveable';
+
 @Component({
   selector: 'app-issue-description',
   templateUrl: './description.component.html',
   styleUrls: ['./description.component.css'],
   providers: [LoadingService]
 })
-export class DescriptionComponent implements OnInit, Saveable {
+export class DescriptionComponent implements OnInit {
+  // The container of the loading spinner
+  @ViewChild('loadingSpinnerContainer', {
+    read: ViewContainerRef,
+    static: false
+  })
+  loadingSpinnerContainer: ViewContainerRef;
+
   isSavePending = false;
   issueDescriptionForm: FormGroup;
   conflict: Conflict;
@@ -49,7 +56,7 @@ export class DescriptionComponent implements OnInit, Saveable {
   ) {}
 
   showSpinner(): void {
-    this.loadingService.showLoader();
+    this.loadingService.addViewContainerRef(this.loadingSpinnerContainer).showLoader();
     this.isSavePending = true;
   }
 
@@ -63,6 +70,12 @@ export class DescriptionComponent implements OnInit, Saveable {
       description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
+    // Build the loading service spinner
+    this.loadingService
+      .addAnimationMode('indeterminate')
+      .addSpinnerOptions({ diameter: 15, strokeWidth: 2 })
+      .addTheme('warn')
+      .addCssClasses(['mat-progress-spinner']);
   }
 
   changeToEditMode() {

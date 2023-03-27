@@ -17,7 +17,7 @@ describe('TitleComponent', () => {
   let formBuilder: any;
   let phaseService: PhaseService;
   let dialogService: jasmine.SpyObj<DialogService>;
-  let loader: jasmine.SpyObj<LoadingService>;
+  let loadingService: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -26,8 +26,21 @@ describe('TitleComponent', () => {
 
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
     dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
-    loader = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
-    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService, dialogService, loader);
+    loadingService = jasmine.createSpyObj('LoadingService', [
+      'showLoader',
+      'hideLoader',
+      'addAnimationMode',
+      'addCssClasses',
+      'addSpinnerOptions',
+      'addTheme',
+      'addViewContainerRef'
+    ]);
+    loadingService.addAnimationMode.and.callFake(() => loadingService);
+    loadingService.addCssClasses.and.callFake(() => loadingService);
+    loadingService.addSpinnerOptions.and.callFake(() => loadingService);
+    loadingService.addTheme.and.callFake(() => loadingService);
+    loadingService.addViewContainerRef.and.callFake(() => loadingService);
+    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService, dialogService, loadingService);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     titleComponent.issue = thisIssue;
   });
@@ -39,16 +52,16 @@ describe('TitleComponent', () => {
 
   it('should mark isSavePending as true if called', () => {
     titleComponent.isSavePending = false;
-    loader.show.and.callFake(() => of(true));
-    titleComponent.showSavePending();
+    loadingService.showLoader.and.callFake(() => {});
+    titleComponent.showSpinner();
 
     expect(titleComponent.isSavePending).toEqual(true);
   });
 
   it('should mark isSavePending as false if called', () => {
     titleComponent.isSavePending = true;
-    loader.hide.and.callFake(() => of(false));
-    titleComponent.hideSavePending();
+    loadingService.hideLoader.and.callFake(() => {});
+    titleComponent.hideSpinner();
 
     expect(titleComponent.isSavePending).toEqual(false);
   });
@@ -78,8 +91,8 @@ describe('TitleComponent', () => {
     titleComponent.changeToEditMode();
 
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
-    loader.show.and.callFake(() => of(true));
-    loader.hide.and.callFake(() => of(false));
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     titleComponent.updateTitle(form);
 
     expect(formResetForm).toHaveBeenCalledTimes(1);

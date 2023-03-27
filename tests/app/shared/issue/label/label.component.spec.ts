@@ -15,15 +15,27 @@ describe('LabelComponent', () => {
   let phaseService: any;
   let thisIssue: Issue;
   let issueUpdatedEmit: any;
-  let loader: jasmine.SpyObj<LoadingService>;
+  let loadingService: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     labelService = jasmine.createSpyObj(LabelService, ['getLabelList', 'getColorOfLabel']);
     issueService = jasmine.createSpyObj('IssueService', ['getDuplicateIssuesFor', 'updateIssue']);
     phaseService = jasmine.createSpyObj(PhaseService, ['currentPhase']);
-    loader = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
-
-    labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null, null, loader);
+    loadingService = jasmine.createSpyObj('LoadingService', [
+      'showLoader',
+      'hideLoader',
+      'addAnimationMode',
+      'addCssClasses',
+      'addSpinnerOptions',
+      'addTheme',
+      'addViewContainerRef'
+    ]);
+    loadingService.addAnimationMode.and.callFake(() => loadingService);
+    loadingService.addCssClasses.and.callFake(() => loadingService);
+    loadingService.addSpinnerOptions.and.callFake(() => loadingService);
+    loadingService.addTheme.and.callFake(() => loadingService);
+    loadingService.addViewContainerRef.and.callFake(() => loadingService);
+    labelComponent = new LabelComponent(issueService, null, phaseService, labelService, null, null, loadingService);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     labelComponent.issue = thisIssue;
     labelComponent.attributeName = SEVERITY;
@@ -33,16 +45,16 @@ describe('LabelComponent', () => {
 
   it('should mark isSavePending as true if called', () => {
     labelComponent.isSavePending = false;
-    loader.show.and.callFake(() => of(true));
-    labelComponent.showSavePending();
+    loadingService.showLoader.and.callFake(() => {});
+    labelComponent.showSpinner();
 
     expect(labelComponent.isSavePending).toEqual(true);
   });
 
   it('should mark isSavePending as false if called', () => {
     labelComponent.isSavePending = true;
-    loader.hide.and.callFake(() => of(false));
-    labelComponent.hideSavePending();
+    loadingService.hideLoader.and.callFake(() => {});
+    labelComponent.hideSpinner();
 
     expect(labelComponent.isSavePending).toEqual(false);
   });
@@ -67,8 +79,8 @@ describe('LabelComponent', () => {
     phaseService.currentPhase.and.returnValue(Phase.phaseBugReporting);
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
     issueService.getDuplicateIssuesFor.and.returnValue(of([]));
-    loader.show.and.callFake(() => of(true));
-    loader.hide.and.callFake(() => of(false));
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     labelComponent.updateLabel(SEVERITY_HIGH);
 
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
@@ -88,8 +100,8 @@ describe('LabelComponent', () => {
 
     const duplicateIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     issueService.getDuplicateIssuesFor.and.returnValue(of([duplicateIssue]));
-    loader.show.and.callFake(() => of(true));
-    loader.hide.and.callFake(() => of(false));
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     labelComponent.updateLabel(SEVERITY_HIGH);
 
     const updatedIssue = thisIssue.clone(phaseService.currentPhase);

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { DialogService } from '../../..//core/services/dialog.service';
 import { Issue } from '../../../core/models/issue.model';
@@ -9,7 +9,6 @@ import { LabelCategory, LabelService } from '../../../core/services/label.servic
 import { LoadingService } from '../../../core/services/loading.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
-import { Saveable } from '../saveable/saveable';
 
 @Component({
   selector: 'app-issue-label',
@@ -17,7 +16,14 @@ import { Saveable } from '../saveable/saveable';
   styleUrls: ['./label.component.css'],
   providers: [LoadingService]
 })
-export class LabelComponent implements OnInit, OnChanges, Saveable {
+export class LabelComponent implements OnInit, OnChanges {
+  // The container of the loading spinner
+  @ViewChild('loadingSpinnerContainer', {
+    read: ViewContainerRef,
+    static: false
+  })
+  loadingSpinnerContainer: ViewContainerRef;
+
   labelValues: Label[];
   labelColor: string;
   labelDefinition?: string;
@@ -39,16 +45,23 @@ export class LabelComponent implements OnInit, OnChanges, Saveable {
   ) {}
 
   showSpinner(): void {
-    this.loadingService.showLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
+    this.loadingService.addViewContainerRef(this.loadingSpinnerContainer).showLoader();
+    this.isSavePending = true;
   }
 
   hideSpinner(): void {
-    this.loadingService.hideLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
+    this.loadingService.hideLoader();
+    this.isSavePending = false;
   }
 
   ngOnInit() {
     // Get the list of labels based on their type (severity, type, response)
     this.labelValues = this.labelService.getLabelList(this.attributeName);
+    // Build the loading service spinner
+    this.loadingService
+      .addAnimationMode('indeterminate')
+      .addSpinnerOptions({ diameter: 15, strokeWidth: 2 })
+      .addCssClasses(['mat-progress-spinner']);
   }
 
   ngOnChanges() {

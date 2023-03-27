@@ -31,13 +31,7 @@
 
     <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary" class="title-button">
       Save
-      <mat-progress-spinner
-        mode="indeterminate"
-        diameter="15"
-        strokeWidth="2"
-        class="mat-progress-spinner"
-        *ngIf="isSavePending"
-      ></mat-progress-spinner>
+      <ng-container #loadingSpinnerContainer></ng-container>
     </button>
     <button
       type="button"

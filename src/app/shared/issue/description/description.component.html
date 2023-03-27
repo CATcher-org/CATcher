@@ -61,14 +61,7 @@
         >
           <mat-button-content>
             {{ submitButtonText }}
-            <mat-progress-spinner
-              mode="indeterminate"
-              diameter="15"
-              strokeWidth="2"
-              class="mat-progress-spinner"
-              *ngIf="isSavePending"
-              color="warn"
-            ></mat-progress-spinner>
+            <ng-container #loadingSpinnerContainer></ng-container>
           </mat-button-content>
         </button>
       </div>

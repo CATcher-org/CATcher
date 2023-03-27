@@ -19,7 +19,7 @@ describe('DescriptionComponent', () => {
   let dialog: any;
   let errorHandlingService: any;
   let dialogService: jasmine.SpyObj<DialogService>;
-  let loader: jasmine.SpyObj<LoadingService>;
+  let loadingService: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -30,7 +30,20 @@ describe('DescriptionComponent', () => {
     errorHandlingService = jasmine.createSpyObj('ErrorHandlingService', ['handleError']);
     issueService = jasmine.createSpyObj('IssueService', ['getIssue', 'getLatestIssue', 'updateIssue']);
     dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
-    loader = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
+    loadingService = jasmine.createSpyObj('LoadingService', [
+      'showLoader',
+      'hideLoader',
+      'addAnimationMode',
+      'addCssClasses',
+      'addSpinnerOptions',
+      'addTheme',
+      'addViewContainerRef'
+    ]);
+    loadingService.addAnimationMode.and.callFake(() => loadingService);
+    loadingService.addCssClasses.and.callFake(() => loadingService);
+    loadingService.addSpinnerOptions.and.callFake(() => loadingService);
+    loadingService.addTheme.and.callFake(() => loadingService);
+    loadingService.addViewContainerRef.and.callFake(() => loadingService);
 
     descriptionComponent = new DescriptionComponent(
       issueService,
@@ -40,7 +53,7 @@ describe('DescriptionComponent', () => {
       phaseService,
       null,
       dialogService,
-      loader
+      loadingService
     );
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     descriptionComponent.issue = thisIssue;
@@ -53,16 +66,16 @@ describe('DescriptionComponent', () => {
 
   it('should mark isSavePending as true if called', () => {
     descriptionComponent.isSavePending = false;
-    loader.show.and.callFake(() => of(true));
-    descriptionComponent.showSavePending();
+    loadingService.showLoader.and.callFake(() => {});
+    descriptionComponent.showSpinner();
 
     expect(descriptionComponent.isSavePending).toEqual(true);
   });
 
   it('should mark isSavePending as false if called', () => {
     descriptionComponent.isSavePending = true;
-    loader.hide.and.callFake(() => of(false));
-    descriptionComponent.hideSavePending();
+    loadingService.hideLoader.and.callFake(() => {});
+    descriptionComponent.hideSpinner();
 
     expect(descriptionComponent.isSavePending).toEqual(false);
   });
@@ -100,8 +113,8 @@ describe('DescriptionComponent', () => {
     issueService.getLatestIssue.and.callFake((x: number) => of(updatedIssue));
     dialog.open.and.callFake((x: any) => {});
     errorHandlingService.handleError.and.callFake((x: any) => {});
-    loader.show.and.callFake(() => of(true));
-    loader.hide.and.callFake(() => of(false));
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     descriptionComponent.updateDescription(form);
 
     expect(viewChangesCall).toHaveBeenCalledTimes(1);
@@ -121,8 +134,8 @@ describe('DescriptionComponent', () => {
 
     issueService.getLatestIssue.and.callFake((x: number) => of(thisIssue));
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
-    loader.show.and.callFake(() => of(true));
-    loader.hide.and.callFake(() => of(false));
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     descriptionComponent.updateDescription(form);
 
     expect(formResetForm).toHaveBeenCalledTimes(1);

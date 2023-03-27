@@ -6,13 +6,7 @@
   mat-icon-button
 >
   <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069" *ngIf="!isSavePending"> edit </mat-icon>
-  <mat-progress-spinner
-    mode="indeterminate"
-    diameter="15"
-    strokeWidth="2"
-    class="mat-progress-spinner"
-    *ngIf="isSavePending"
-  ></mat-progress-spinner>
+  <ng-container #loadingSpinnerContainer></ng-container>
 </button>
 
 <mat-menu #labelList>

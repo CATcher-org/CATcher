@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
@@ -8,7 +8,6 @@ import { IssueService } from '../../../core/services/issue.service';
 import { LoadingService } from '../../../core/services/loading.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
-import { Saveable } from '../saveable/saveable';
 
 @Component({
   selector: 'app-issue-title',
@@ -16,7 +15,14 @@ import { Saveable } from '../saveable/saveable';
   styleUrls: ['./title.component.css'],
   providers: [LoadingService]
 })
-export class TitleComponent implements OnInit, Saveable {
+export class TitleComponent implements OnInit {
+  // The container of the loading spinner
+  @ViewChild('loadingSpinnerContainer', {
+    read: ViewContainerRef,
+    static: false
+  })
+  loadingSpinnerContainer: ViewContainerRef;
+
   isEditing = false;
   isSavePending = false;
   issueTitleForm: FormGroup;
@@ -43,6 +49,11 @@ export class TitleComponent implements OnInit, Saveable {
     this.issueTitleForm = this.formBuilder.group({
       title: new FormControl('', [Validators.required, Validators.maxLength(256)])
     });
+    // Build the loading service spinner
+    this.loadingService
+      .addAnimationMode('indeterminate')
+      .addSpinnerOptions({ diameter: 15, strokeWidth: 2 })
+      .addCssClasses(['mat-progress-spinner']);
   }
 
   changeToEditMode() {
@@ -109,10 +120,12 @@ export class TitleComponent implements OnInit, Saveable {
   }
 
   showSpinner() {
-    this.loadingService.showLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
+    this.loadingService.addViewContainerRef(this.loadingSpinnerContainer).showLoader();
+    this.isSavePending = true;
   }
 
   hideSpinner() {
-    this.loadingService.hideLoader().subscribe((isLoading) => (this.isSavePending = isLoading));
+    this.loadingService.hideLoader();
+    this.isSavePending = false;
   }
 }
