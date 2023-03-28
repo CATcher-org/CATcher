@@ -83,13 +83,28 @@ export class UndoRedo<T> {
    * ignore timeout and forcefuly save the current state
    * @param entry optional parameter for element to be saved
    * @param check dont save if there are no new data
+   * @param isLatest is the current state after the save step the latest
    */
-  forceSave(entry?: T, check: boolean = false): void {
+  forceSave(entry?: T, check: boolean = false, isLatest: boolean = true): void {
     // if the there are unsaved changes, saves it
     clearTimeout(this.timeout);
     if (!check || !this.isSaved) {
-      this.addEntry(entry ?? this.getState(), true);
+      this.addEntry(entry ?? this.getState(), isLatest);
     }
+    this.isSaved = isLatest;
+  }
+
+  /**
+   * Stores the before and after state after running the function
+   * @param check dont do initial save if there are no new data
+   */
+  wrapSave(func: Function, check: boolean = true) {
+    clearTimeout(this.timeout);
+    if (!check || !this.isSaved) {
+      this.addEntry(this.getState(), false);
+    }
+    func();
+    this.addEntry(this.getState(), true);
   }
 
   undo(): T | null {

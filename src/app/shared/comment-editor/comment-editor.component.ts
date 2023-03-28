@@ -106,11 +106,11 @@ export class CommentEditorComponent implements OnInit {
       switch (event.key) {
         case 'b':
           event.preventDefault();
-          this.insertOrRemoveCharsFromHighlightedText('**');
+          this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('**'));
           break;
         case 'i':
           event.preventDefault();
-          this.insertOrRemoveCharsFromHighlightedText('_');
+          this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('_'));
           break;
         default:
           return;
@@ -249,12 +249,15 @@ export class CommentEditorComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  onPaste(event) {
+  onPaste(event: ClipboardEvent) {
+    // the text area is not changed at this point
+    this.history.forceSave(null, true, false);
     const items = event.clipboardData.items;
     let blob = null;
     for (const item of items) {
       if (item.type.indexOf('image') === 0) {
         blob = item.getAsFile();
+        event.stopPropagation();
         break;
       }
     }
@@ -267,11 +270,31 @@ export class CommentEditorComponent implements OnInit {
     switch (event.inputType) {
       case 'historyUndo':
       case 'historyRedo':
-        event.preventDefault();
         // ignore these events that doesn't modify the text
+        event.preventDefault();
         break;
+      case 'insertFromPaste':
+        // paste events will be handled exclusively by onPaste
+        break;
+
       default:
         this.history.updateBeforeChange();
+    }
+  }
+
+  handleInputChange(event: InputEvent): void {
+    switch (event.inputType) {
+      case 'historyUndo':
+      case 'historyRedo':
+        // ignore these events that doesn't modify the text
+        event.preventDefault();
+        break;
+      case 'insertFromPaste':
+        // paste events will be handled exclusively by onPaste
+        break;
+
+      default:
+        this.history.createDelayedSave();
     }
   }
 
@@ -333,7 +356,6 @@ export class CommentEditorComponent implements OnInit {
   }
 
   private isRedo(event: KeyboardEvent) {
-    console.log(event);
     if (navigator.platform.indexOf('Mac') === 0) {
       return event.metaKey && event.shiftKey && event.code === 'KeyZ';
     }
