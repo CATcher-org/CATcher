@@ -26,7 +26,7 @@ export class LoadingService implements OnDestroy {
   private isLoading = new BehaviorSubject<boolean>(false);
   public readonly isLoading$ = this.isLoading.asObservable();
   readonly spinnerFactory: ComponentFactory<MatSpinner>;
-  private spinnerContainerRef: ViewContainerRef | null = null;
+  spinnerContainerRef: ViewContainerRef | null = null;
   spinnerComponentRef: ComponentRef<MatSpinner> | null = null;
 
   private animationMode: ProgressSpinnerMode = 'indeterminate';
@@ -48,6 +48,8 @@ export class LoadingService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.isLoading.complete();
+    this.detachSpinnerFromDom();
+    this.spinnerContainerRef = null;
   }
 
   addAnimationMode(animationMode: ProgressSpinnerMode) {
@@ -89,7 +91,7 @@ export class LoadingService implements OnDestroy {
 
   // Event listener that attaches or detaches the spinner from
   // the DOM based on
-  onIsLoadingChange(previousIsLoading: boolean, currentIsLoading: boolean): void {
+  private onIsLoadingChange(previousIsLoading: boolean, currentIsLoading: boolean): void {
     // No change, don't edit the dom
     if (previousIsLoading === currentIsLoading) {
       return;
@@ -112,14 +114,10 @@ export class LoadingService implements OnDestroy {
 
     const spinnerRef = this.createSpinner(injector);
 
-    if (this.isAttachableToDocument()) {
-      if (spinnerRef.location.nativeElement instanceof Node) {
-        this.document.body.appendChild(spinnerRef.location.nativeElement);
-      } else {
-        return;
-      }
-    } else {
+    if (!this.isAttachableToDocument()) {
       this.spinnerContainerRef.insert(spinnerRef.hostView);
+    } else if (spinnerRef.location.nativeElement instanceof Node) {
+      this.document.body.appendChild(spinnerRef.location.nativeElement);
     }
 
     spinnerRef.changeDetectorRef.detectChanges();
@@ -133,10 +131,13 @@ export class LoadingService implements OnDestroy {
       return;
     }
 
-    this.spinnerComponentRef.destroy();
-    if (this.isAttachableToDocument()) {
+    if (!this.isAttachableToDocument()) {
+      this.spinnerContainerRef.remove();
+    } else if (this.spinnerComponentRef.location.nativeElement instanceof Node) {
       this.document.body.removeChild(this.spinnerComponentRef.location.nativeElement);
     }
+
+    this.spinnerComponentRef.destroy();
     this.spinnerComponentRef = null;
     return;
   }

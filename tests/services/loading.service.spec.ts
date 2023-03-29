@@ -2,30 +2,38 @@ import { DOCUMENT } from '@angular/common';
 import { ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, Renderer2, ViewContainerRef } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { MatSpinner } from '@angular/material/progress-spinner';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { LoadingService } from '../../src/app/core/services/loading.service';
 import { MockMatSpinner } from '../helper/mock.mat.spinner';
+import { MockViewContainerRef } from '../helper/mock.view.container.ref';
 
 describe('LoadingService', () => {
-  let service: LoadingService;
+  let mockMatSpinnerInstance: MockMatSpinner;
+  let mockRenderer: jasmine.SpyObj<Renderer2>;
+  let mockComponentInjector: jasmine.SpyObj<Injector>;
+  let elementRef: ElementRef;
+  let mockComponentRef: ComponentRef<MatSpinner>;
+  let mockInjector: jasmine.SpyObj<Injector>;
+  let loadingService: LoadingService;
   let mockComponentFactory: jasmine.SpyObj<ComponentFactory<MatSpinner>>;
   let mockComponentFactoryResolver: jasmine.SpyObj<ComponentFactoryResolver>;
+  let mockViewContainerRef: MockViewContainerRef;
   let document: Document;
 
   beforeEach(async () => {
-    const mockMatSpinnerInstance = new MockMatSpinner();
+    mockMatSpinnerInstance = new MockMatSpinner();
 
-    const mockRenderer = jasmine.createSpyObj<Renderer2>('Renderer2', ['createElement', 'appendChild', 'setStyle', 'addClass']);
+    mockRenderer = jasmine.createSpyObj<Renderer2>('Renderer2', ['createElement', 'appendChild', 'setStyle', 'addClass']);
     mockRenderer.addClass.and.callFake((el: any, className: string) => {
       // Simulate adding the class by appending it to the element's classList
-      // el.classList.add(className);
+      el.classList.add(className);
     });
 
-    const mockComponentInjector = jasmine.createSpyObj('Injector', {
+    mockComponentInjector = jasmine.createSpyObj('Injector', {
       get: mockRenderer
     });
 
-    const elementRef: ElementRef = {
+    elementRef = {
       nativeElement: {
         classList: {
           add: jasmine.createSpy('classList.add'),
@@ -43,7 +51,7 @@ describe('LoadingService', () => {
       }
     };
 
-    const mockComponentRef: ComponentRef<MatSpinner> = ({
+    mockComponentRef = ({
       location: elementRef,
       changeDetectorRef: jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']),
       hostView: null as any,
@@ -61,9 +69,11 @@ describe('LoadingService', () => {
     mockComponentFactoryResolver = jasmine.createSpyObj<ComponentFactoryResolver>({
       resolveComponentFactory: mockComponentFactory
     });
-    const mockInjector = jasmine.createSpyObj('Injector', {
+    mockInjector = jasmine.createSpyObj('Injector', {
       get: mockRenderer
     });
+
+    mockViewContainerRef = new MockViewContainerRef(mockInjector);
 
     await TestBed.configureTestingModule({
       providers: [
@@ -74,34 +84,197 @@ describe('LoadingService', () => {
       ]
     }).compileComponents();
 
-    service = TestBed.inject(LoadingService);
+    loadingService = TestBed.inject(LoadingService);
     document = TestBed.inject(DOCUMENT);
   });
 
   it('should create', () => {
-    expect(service).toBeTruthy();
+    expect(loadingService).toBeTruthy();
   });
 
   it(
     'should add CSS class to spinner',
     waitForAsync(() => {
-      const testClass = 'test-class';
+      const testClassList = ['test-class-1', 'test-class-2', 'test-class-3'];
 
-      service.addAnimationMode('indeterminate').addSpinnerOptions({ diameter: 42, strokeWidth: 6 }).addCssClasses([testClass]);
+      loadingService.addCssClasses(testClassList);
 
-      service.showLoader();
+      loadingService.showLoader();
 
-      service.isLoading$.subscribe((isLoading) => {
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
         expect(isLoading).toBeTrue();
       });
 
-      setTimeout(() => {
-        if (service.spinnerComponentRef) {
-          const spinnerElement = service.spinnerComponentRef.location.nativeElement;
-          expect(spinnerElement.classList.add).toHaveBeenCalledWith(testClass);
-          expect(spinnerElement.classList.contains(testClass)).toBeTrue();
+      expect(loadingService.spinnerComponentRef).not.toBeNull();
+      if (loadingService.spinnerComponentRef) {
+        const spinnerElement = loadingService.spinnerComponentRef.location.nativeElement;
+        expect(spinnerElement.classList.add).toHaveBeenCalledTimes(testClassList.length);
+        for (const className of testClassList) {
+          expect(spinnerElement.classList.add).toHaveBeenCalledWith(className);
         }
-      }, 1000);
+      }
+    })
+  );
+
+  it(
+    'should add animation mode to spinner',
+    waitForAsync(() => {
+      loadingService.addAnimationMode('determinate');
+
+      loadingService.showLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeTrue();
+      });
+
+      expect(loadingService.spinnerComponentRef).not.toBeNull();
+      if (loadingService.spinnerComponentRef) {
+        const spinnerRef = loadingService.spinnerComponentRef;
+        expect(spinnerRef.instance.mode).toEqual('determinate');
+      }
+    })
+  );
+
+  it(
+    'should add spinner options diameter to spinner',
+    waitForAsync(() => {
+      const testDiameter = 20;
+      loadingService.addSpinnerOptions({ diameter: testDiameter });
+
+      loadingService.showLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeTrue();
+      });
+
+      expect(loadingService.spinnerComponentRef).not.toBeNull();
+      if (loadingService.spinnerComponentRef) {
+        const spinnerRef = loadingService.spinnerComponentRef;
+        expect(spinnerRef.instance.diameter).toEqual(testDiameter);
+      }
+    })
+  );
+
+  it(
+    'should add spinner options strokeWidth to spinner',
+    waitForAsync(() => {
+      const testStrokeWidth = 20;
+      loadingService.addSpinnerOptions({ strokeWidth: testStrokeWidth });
+
+      loadingService.showLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeTrue();
+      });
+
+      expect(loadingService.spinnerComponentRef).not.toBeNull();
+      if (loadingService.spinnerComponentRef) {
+        const spinnerRef = loadingService.spinnerComponentRef;
+        expect(spinnerRef.instance.strokeWidth).toEqual(testStrokeWidth);
+      }
+    })
+  );
+
+  it(
+    'should add a theme to spinner',
+    waitForAsync(() => {
+      const testTheme = 'accent';
+      loadingService.addTheme(testTheme);
+
+      loadingService.showLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeTrue();
+      });
+
+      expect(loadingService.spinnerComponentRef).not.toBeNull();
+      if (loadingService.spinnerComponentRef) {
+        const spinnerRef = loadingService.spinnerComponentRef;
+        expect(spinnerRef.instance.color).toEqual(testTheme);
+      }
+    })
+  );
+
+  it(
+    'should remove the spinner',
+    waitForAsync(() => {
+      loadingService.showLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeTrue();
+      });
+
+      expect(loadingService.spinnerComponentRef).not.toBeNull();
+
+      loadingService.hideLoader();
+
+      loadingService.isLoading$.subscribe((isLoading) => {
+        expect(isLoading).toBeFalse();
+      });
+
+      expect(loadingService.spinnerComponentRef).toBeNull();
+    })
+  );
+
+  it(
+    'should add the view container ref',
+    waitForAsync(() => {
+      loadingService.addViewContainerRef(mockViewContainerRef);
+
+      expect(loadingService.spinnerContainerRef).not.toBeNull();
+
+      expect(loadingService.spinnerContainerRef).toEqual(mockViewContainerRef);
+
+      loadingService.showLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeTrue();
+      });
+
+      expect(mockViewContainerRef._views.length).toBe(1);
+
+      expect(mockViewContainerRef._views[0]).toEqual(loadingService.spinnerComponentRef?.hostView);
+
+      loadingService.hideLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeFalse();
+      });
+
+      expect(mockViewContainerRef._views.length).toBe(0);
+
+      expect(loadingService.spinnerComponentRef).toBeNull();
+    })
+  );
+
+  it(
+    'destroy existing subscriptions and reset spinner refs',
+    waitForAsync(() => {
+      loadingService.addViewContainerRef(mockViewContainerRef);
+
+      loadingService.showLoader();
+
+      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
+        expect(isLoading).toBeTrue();
+      });
+
+      let hasCompleted = false;
+
+      loadingService.isLoading$.subscribe({
+        next: () => {},
+        error: () => {},
+        complete: () => {
+          hasCompleted = true;
+        }
+      });
+
+      loadingService.ngOnDestroy();
+
+      expect(hasCompleted).toBeTrue();
+
+      expect(loadingService.spinnerComponentRef).toBeNull();
+
+      expect(loadingService.spinnerContainerRef).toBeNull();
     })
   );
 });

@@ -1,5 +1,3 @@
-import { ElementRef } from '@angular/core';
-
 export class MockMatSpinner {
   _elementRef = document.createElement('div');
   _document = {
