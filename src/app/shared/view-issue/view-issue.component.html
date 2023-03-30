@@ -15,7 +15,7 @@
         (changeEditState)="updateDescriptionEditState($event)"
         *ngIf="this.isComponentVisible(issueComponentsEnum.TESTER_POST)"
         [issue]="issue"
-        title="Description of Issue"
+        descriptionTitle="Description of Issue"
         (issueUpdated)="updateIssue($event)"
       >
       </app-issue-description>
