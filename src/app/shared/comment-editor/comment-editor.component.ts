@@ -102,13 +102,13 @@ export class CommentEditorComponent implements OnInit {
       return;
     }
 
-    if (this.isControlKeyPressed(event)) {
-      switch (event.key) {
-        case 'b':
+    if (this.isControlKeyPressed(event) && !event.shiftKey) {
+      switch (event.code) {
+        case 'KeyB':
           event.preventDefault();
           this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('**'));
           break;
-        case 'i':
+        case 'KeyI':
           event.preventDefault();
           this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('_'));
           break;

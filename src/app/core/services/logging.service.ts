@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ElectronLog } from 'electron-log';
 import { AppConfig } from '../../../environments/environment';
 import { downloadAsTextFile } from '../../shared/lib/file-download';
-import { ElectronService } from './electron.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +11,7 @@ import { ElectronService } from './electron.service';
  * running to ease debugging for CATcher developers and maintainers.
  */
 export class LoggingService {
-  private logger: ElectronLog | Console;
+  private logger: Console;
   private isInSession = false;
   private readonly LOG_KEY = 'CATcher-Log';
   private readonly LOG_FILE_NAME = 'CATcher-log.txt';
@@ -21,12 +19,8 @@ export class LoggingService {
   public readonly LOG_COUNT_LIMIT = 4;
   public readonly SESSION_LOG_SEPARATOR = '\n'.repeat(2); // More new-lines added for clarity.
 
-  constructor(electronService: ElectronService) {
-    if (electronService.isElectron()) {
-      this.logger = window.require('electron-log');
-    } else {
-      this.logger = console;
-    }
+  constructor() {
+    this.logger = console;
 
     this.startSession();
   }
