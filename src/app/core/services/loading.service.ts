@@ -24,7 +24,6 @@ import { pairwise } from 'rxjs/operators';
 })
 export class LoadingService implements OnDestroy {
   private isLoading = new BehaviorSubject<boolean>(false);
-  public readonly isLoading$ = this.isLoading.asObservable();
   readonly spinnerFactory: ComponentFactory<MatSpinner>;
   spinnerContainerRef: ViewContainerRef | null = null;
   spinnerComponentRef: ComponentRef<MatSpinner> | null = null;

@@ -2,7 +2,6 @@ import { DOCUMENT } from '@angular/common';
 import { ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, Renderer2, ViewContainerRef } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { MatSpinner } from '@angular/material/progress-spinner';
-import { take } from 'rxjs/operators';
 import { LoadingService } from '../../src/app/core/services/loading.service';
 import { MockMatSpinner } from '../helper/mock.mat.spinner';
 import { MockViewContainerRef } from '../helper/mock.view.container.ref';
@@ -101,10 +100,6 @@ describe('LoadingService', () => {
 
       loadingService.showLoader();
 
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
       expect(loadingService.spinnerComponentRef).not.toBeNull();
       if (loadingService.spinnerComponentRef) {
         const spinnerElement = loadingService.spinnerComponentRef.location.nativeElement;
@@ -123,10 +118,6 @@ describe('LoadingService', () => {
 
       loadingService.showLoader();
 
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
       expect(loadingService.spinnerComponentRef).not.toBeNull();
       if (loadingService.spinnerComponentRef) {
         const spinnerRef = loadingService.spinnerComponentRef;
@@ -142,10 +133,6 @@ describe('LoadingService', () => {
       loadingService.addSpinnerOptions({ diameter: testDiameter });
 
       loadingService.showLoader();
-
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
 
       expect(loadingService.spinnerComponentRef).not.toBeNull();
       if (loadingService.spinnerComponentRef) {
@@ -163,10 +150,6 @@ describe('LoadingService', () => {
 
       loadingService.showLoader();
 
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
       expect(loadingService.spinnerComponentRef).not.toBeNull();
       if (loadingService.spinnerComponentRef) {
         const spinnerRef = loadingService.spinnerComponentRef;
@@ -183,10 +166,6 @@ describe('LoadingService', () => {
 
       loadingService.showLoader();
 
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
       expect(loadingService.spinnerComponentRef).not.toBeNull();
       if (loadingService.spinnerComponentRef) {
         const spinnerRef = loadingService.spinnerComponentRef;
@@ -200,17 +179,9 @@ describe('LoadingService', () => {
     waitForAsync(() => {
       loadingService.showLoader();
 
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
       expect(loadingService.spinnerComponentRef).not.toBeNull();
 
       loadingService.hideLoader();
-
-      loadingService.isLoading$.subscribe((isLoading) => {
-        expect(isLoading).toBeFalse();
-      });
 
       expect(loadingService.spinnerComponentRef).toBeNull();
     })
@@ -227,19 +198,11 @@ describe('LoadingService', () => {
 
       loadingService.showLoader();
 
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
       expect(mockViewContainerRef._views.length).toBe(1);
 
       expect(mockViewContainerRef._views[0]).toEqual(loadingService.spinnerComponentRef?.hostView);
 
       loadingService.hideLoader();
-
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeFalse();
-      });
 
       expect(mockViewContainerRef._views.length).toBe(0);
 
@@ -254,23 +217,7 @@ describe('LoadingService', () => {
 
       loadingService.showLoader();
 
-      loadingService.isLoading$.pipe(take(1)).subscribe((isLoading) => {
-        expect(isLoading).toBeTrue();
-      });
-
-      let hasCompleted = false;
-
-      loadingService.isLoading$.subscribe({
-        next: () => {},
-        error: () => {},
-        complete: () => {
-          hasCompleted = true;
-        }
-      });
-
       loadingService.ngOnDestroy();
-
-      expect(hasCompleted).toBeTrue();
 
       expect(loadingService.spinnerComponentRef).toBeNull();
 
