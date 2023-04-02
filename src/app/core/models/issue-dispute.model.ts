@@ -3,7 +3,7 @@ export class IssueDispute {
   readonly TODO_DESCRIPTION = 'Done';
   readonly INITIAL_RESPONSE = '[replace this with your explanation]';
   readonly TITLE_PREFIX = '## :question: ';
-  readonly LINE_BREAK = '-------------------\n';
+  readonly LINE_BREAK = '<catcher-end-of-segment><hr>\n';
   title: string; // e.g Issue severity
   description: string; // e.g Team says: xxx\n Tester says: xxx.
   tutorResponse: string; // e.g Not justified. I've changed it back.

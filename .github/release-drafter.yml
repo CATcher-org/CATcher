@@ -1,0 +1,19 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: 'Features'
+    labels:
+      - 'category.Feature'
+      - 'category.Enhancement'
+  - title: 'Bug Fixes'
+    labels:
+      - 'category.Bug'
+  - title: 'Maintenance'
+    label: 'category.Chore'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+
+template: |
+  ## Changelog
+
+  $CHANGES

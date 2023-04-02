@@ -7,7 +7,6 @@ import { AppConfig } from '../../../environments/environment';
 import { generateSessionId } from '../../shared/lib/session';
 import { uuid } from '../../shared/lib/uuid';
 import { DataService } from './data.service';
-import { ElectronService } from './electron.service';
 import { GithubService } from './github.service';
 import { GithubEventService } from './githubevent.service';
 import { IssueService } from './issue.service';
@@ -39,7 +38,6 @@ export class AuthService {
   ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
 
   constructor(
-    private electronService: ElectronService,
     private router: Router,
     private ngZone: NgZone,
     private githubService: GithubService,
@@ -128,17 +126,13 @@ export class AuthService {
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
-    if (this.electronService.isElectron()) {
-      this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
-    } else {
-      this.generateStateString();
-      this.redirectToOAuthPage(
-        encodeURI(
-          `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
-        )
-      );
-      this.logger.info('AuthService: Redirecting for Github authentication');
-    }
+    this.generateStateString();
+    this.redirectToOAuthPage(
+      encodeURI(
+        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
+      )
+    );
+    this.logger.info('AuthService: Redirecting for Github authentication');
   }
 
   /**
