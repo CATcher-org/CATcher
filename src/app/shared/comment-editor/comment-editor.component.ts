@@ -365,7 +365,7 @@ export class CommentEditorComponent implements OnInit {
   private insertOrRemoveCharsFromHighlightedText(char) {
     const selectionStart = this.commentTextArea.nativeElement.selectionStart;
     const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
-    const currentText = this.commentField.value;
+    const currentText = this.commentTextArea.nativeElement.value;
     const highlightedText = currentText.slice(selectionStart, selectionEnd);
     const highlightedTextTrimmed = highlightedText.trim();
     const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;
