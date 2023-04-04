@@ -8,7 +8,7 @@ test.describe("CATcher's Login Page", () => {
 
   test('displays "CATcher" in header bar', async ({ page }) => {
     const title = await page.locator('app-layout-header').textContent();
-    expect(title).toEqual(`CATcher v${AppConfig.version}receiptmail`);
+    expect(title).toEqual(`CATcher v${AppConfig.version}receiptafadadmail`);
   });
 
   test('allows users to authenticate themselves', async ({ page }) => {
