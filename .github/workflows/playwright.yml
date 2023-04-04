@@ -8,13 +8,20 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm update
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
