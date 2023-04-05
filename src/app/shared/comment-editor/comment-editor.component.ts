@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import * as DOMPurify from 'dompurify';
+import { UndoRedo } from '../../core/models/undoredo.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
@@ -17,6 +18,12 @@ const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_M
 const ISSUE_BODY_SIZE_LIMIT = 40000;
 
 const SPACE = ' ';
+
+type textEntry = {
+  text: string;
+  selectStart: number;
+  selectEnd: number;
+};
 
 @Component({
   selector: 'app-comment-editor',
@@ -47,12 +54,14 @@ export class CommentEditorComponent implements OnInit {
   lastUploadingTime: string;
 
   @ViewChild('dropArea', { static: true }) dropArea;
-  @ViewChild('commentTextArea', { static: true }) commentTextArea;
+  @ViewChild('commentTextArea', { static: true }) commentTextArea: ElementRef<HTMLTextAreaElement>;
   @ViewChild('markdownArea') markdownArea;
 
   dragActiveCounter = 0;
   uploadErrorMessage: string;
   maxLength = ISSUE_BODY_SIZE_LIMIT;
+
+  history: UndoRedo<textEntry>;
 
   formatFileUploadingButtonText(currentButtonText: string) {
     return currentButtonText + ' (Waiting for File Upload to finish...)';
@@ -69,18 +78,39 @@ export class CommentEditorComponent implements OnInit {
 
     this.initialSubmitButtonText = this.submitButtonText;
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
+    this.history = new UndoRedo<textEntry>(
+      75,
+      () => {
+        return {
+          text: this.commentTextArea.nativeElement.value,
+          selectStart: this.commentTextArea.nativeElement.selectionStart,
+          selectEnd: this.commentTextArea.nativeElement.selectionEnd
+        };
+      },
+      500
+    );
   }
 
-  onKeyPress(event) {
+  onKeyPress(event: KeyboardEvent) {
+    if (this.isUndo(event)) {
+      event.preventDefault();
+      this.undo();
+      return;
+    } else if (this.isRedo(event)) {
+      this.redo();
+      event.preventDefault();
+      return;
+    }
+
     if (this.isControlKeyPressed(event) && !event.shiftKey) {
       switch (event.code) {
         case 'KeyB':
           event.preventDefault();
-          this.insertOrRemoveCharsFromHighlightedText('**');
+          this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('**'));
           break;
         case 'KeyI':
           event.preventDefault();
-          this.insertOrRemoveCharsFromHighlightedText('_');
+          this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('_'));
           break;
         default:
           return;
@@ -199,6 +229,7 @@ export class CommentEditorComponent implements OnInit {
           } else {
             insertUploadUrl(filename, response.data.content.download_url, this.commentField, this.commentTextArea);
           }
+          this.history.forceSave();
         },
         (error) => {
           this.handleUploadError(error, insertedText);
@@ -218,18 +249,71 @@ export class CommentEditorComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  onPaste(event) {
+  onPaste(event: ClipboardEvent) {
+    // the text area is not changed at this point
+    this.history.forceSave(null, true, false);
     const items = event.clipboardData.items;
     let blob = null;
     for (const item of items) {
       if (item.type.indexOf('image') === 0) {
         blob = item.getAsFile();
+        event.stopPropagation();
         break;
       }
     }
     if (blob) {
       this.readAndUploadFile(blob);
     }
+  }
+
+  handleBeforeInputChange(event: InputEvent): void {
+    switch (event.inputType) {
+      case 'historyUndo':
+      case 'historyRedo':
+        // ignore these events that doesn't modify the text
+        event.preventDefault();
+        break;
+      case 'insertFromPaste':
+        // paste events will be handled exclusively by onPaste
+        break;
+
+      default:
+        this.history.updateBeforeChange();
+    }
+  }
+
+  handleInputChange(event: InputEvent): void {
+    switch (event.inputType) {
+      case 'historyUndo':
+      case 'historyRedo':
+        // ignore these events that doesn't modify the text
+        event.preventDefault();
+        break;
+      case 'insertFromPaste':
+        // paste events will be handled exclusively by onPaste
+        break;
+
+      default:
+        this.history.createDelayedSave();
+    }
+  }
+
+  private undo(): void {
+    const entry = this.history.undo();
+    if (entry === null) {
+      return;
+    }
+    this.commentField.setValue(entry.text);
+    this.commentTextArea.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
+  }
+
+  private redo(): void {
+    const entry = this.history.redo();
+    if (entry === null) {
+      return;
+    }
+    this.commentTextArea.nativeElement.value = entry.text;
+    this.commentTextArea.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
   }
 
   get isInErrorState(): boolean {
@@ -244,6 +328,7 @@ export class CommentEditorComponent implements OnInit {
       this.uploadErrorMessage = error;
     }
     this.commentField.setValue(this.commentField.value.replace(insertedText, ''));
+    this.history.forceSave();
   }
 
   private removeHighlightBorderStyle() {
@@ -255,17 +340,32 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
-  private isControlKeyPressed(event) {
+  private isControlKeyPressed(event: KeyboardEvent) {
     if (navigator.platform.indexOf('Mac') === 0) {
       return event.metaKey;
     }
     return event.ctrlKey;
   }
 
+  private isUndo(event: KeyboardEvent) {
+    // prevents undo from firing when ctrl shift z is pressed
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey && event.code === 'KeyZ' && !event.shiftKey;
+    }
+    return event.ctrlKey && event.code === 'KeyZ' && !event.shiftKey;
+  }
+
+  private isRedo(event: KeyboardEvent) {
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey && event.shiftKey && event.code === 'KeyZ';
+    }
+    return (event.ctrlKey && event.shiftKey && event.code === 'KeyZ') || (event.ctrlKey && event.code === 'KeyY');
+  }
+
   private insertOrRemoveCharsFromHighlightedText(char) {
     const selectionStart = this.commentTextArea.nativeElement.selectionStart;
     const selectionEnd = this.commentTextArea.nativeElement.selectionEnd;
-    const currentText = this.commentField.value;
+    const currentText = this.commentTextArea.nativeElement.value;
     const highlightedText = currentText.slice(selectionStart, selectionEnd);
     const highlightedTextTrimmed = highlightedText.trim();
     const spacesRemovedLeft = highlightedText.trimRight().length - highlightedTextTrimmed.length;

@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import "./assets/fontawesome/css/fontawesome.min.css";
-@import "./assets/fontawesome/css/solid.min.css";
+@import './assets/fontawesome/css/fontawesome.min.css';
+@import './assets/fontawesome/css/solid.min.css';
 
 html,
 body {
