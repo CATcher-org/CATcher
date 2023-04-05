@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
-import { finalize, map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
+import { LoadingService } from '../../../core/services/loading.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
@@ -16,9 +17,17 @@ import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.comp
 @Component({
   selector: 'app-issue-description',
   templateUrl: './description.component.html',
-  styleUrls: ['./description.component.css']
+  styleUrls: ['./description.component.css'],
+  providers: [LoadingService]
 })
 export class DescriptionComponent implements OnInit {
+  // The container of the loading spinner
+  @ViewChild('loadingSpinnerContainer', {
+    read: ViewContainerRef,
+    static: false
+  })
+  loadingSpinnerContainer: ViewContainerRef;
+
   isSavePending = false;
   issueDescriptionForm: FormGroup;
   conflict: Conflict;
@@ -42,14 +51,31 @@ export class DescriptionComponent implements OnInit {
     private dialog: MatDialog,
     private phaseService: PhaseService,
     public permissions: PermissionService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    public loadingService: LoadingService
   ) {}
+
+  showSpinner(): void {
+    this.loadingService.addViewContainerRef(this.loadingSpinnerContainer).showLoader();
+    this.isSavePending = true;
+  }
+
+  hideSpinner(): void {
+    this.loadingService.hideLoader();
+    this.isSavePending = false;
+  }
 
   ngOnInit() {
     this.issueDescriptionForm = this.formBuilder.group({
       description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
+    // Build the loading service spinner
+    this.loadingService
+      .addAnimationMode('indeterminate')
+      .addSpinnerOptions({ diameter: 15, strokeWidth: 2 })
+      .addTheme('warn')
+      .addCssClasses(['mat-progress-spinner']);
   }
 
   changeToEditMode() {
@@ -64,7 +90,7 @@ export class DescriptionComponent implements OnInit {
       return;
     }
 
-    this.isSavePending = true;
+    this.showSpinner();
     this.issueService
       .getLatestIssue(this.issue.id)
       .pipe(
@@ -80,17 +106,18 @@ export class DescriptionComponent implements OnInit {
             this.viewChanges();
             return throwError('The content you are editing has changed. Please verify the changes and try again.');
           }
-        }),
-        finalize(() => (this.isSavePending = false))
+        })
       )
       .subscribe(
         (editedIssue: Issue) => {
           this.issueUpdated.emit(editedIssue);
           this.resetToDefault();
           form.resetForm();
+          this.hideSpinner();
         },
         (error) => {
           this.errorHandlingService.handleError(error);
+          this.hideSpinner();
         }
       );
   }

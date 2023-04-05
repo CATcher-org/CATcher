@@ -52,14 +52,17 @@
           {{ submitButtonText }}
         </button>
         <button
-          class="editor-action"
+          class="editor-action additional-editor-style"
           *ngIf="!conflict"
           type="submit"
           [disabled]="issueDescriptionForm.invalid || isSavePending"
           mat-stroked-button
           color="primary"
         >
-          {{ submitButtonText }}
+          <mat-button-content>
+            {{ submitButtonText }}
+            <ng-container #loadingSpinnerContainer></ng-container>
+          </mat-button-content>
         </button>
       </div>
     </div>
