@@ -14,6 +14,7 @@
     "test": "npm run codegen:gql && ng test",
     "e2e": "npm run codegen:gql && ng e2e",
     "actions:e2e": "npm run codegen:gql && ng e2e --protractor-config=e2e/protractor.gh-actions.conf --webdriver-update=false",
+    "playwright:e2e": "npx playwright test",
     "webdriver-manager": "webdriver-manager",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
