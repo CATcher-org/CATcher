@@ -1,4 +1,4 @@
-<h3 class="mat-title">{{ title }}</h3>
+<h3 class="mat-title">{{ descriptionTitle }}</h3>
 <form [formGroup]="issueDescriptionForm" #myForm="ngForm" (ngSubmit)="updateDescription(myForm)">
   <div class="timeline-comment">
     <div class="timeline-header">
@@ -52,14 +52,17 @@
           {{ submitButtonText }}
         </button>
         <button
-          class="editor-action"
+          class="editor-action additional-editor-style"
           *ngIf="!conflict"
           type="submit"
           [disabled]="issueDescriptionForm.invalid || isSavePending"
           mat-stroked-button
           color="primary"
         >
-          {{ submitButtonText }}
+          <mat-button-content>
+            {{ submitButtonText }}
+            <ng-container #loadingSpinnerContainer></ng-container>
+          </mat-button-content>
         </button>
       </div>
     </div>
