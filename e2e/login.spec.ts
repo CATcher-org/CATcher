@@ -13,7 +13,7 @@ test.describe("CATcher's Login Page", () => {
 
   test('allows users to authenticate themselves', async ({ page }) => {
     await page.locator('app-profiles').click();
-    await page.locator('mat-option').locator('nth=1').click();
+    await page.locator('mat-option').nth(1).click();
     await page.getByRole('button', { name: 'Submit' }).click();
 
     await expect(page.getByText('Confirm Login Account')).toHaveText('Confirm Login Account');
