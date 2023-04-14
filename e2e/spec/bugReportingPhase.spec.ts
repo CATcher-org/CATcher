@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from './page-objects/login.po';
-import { BugReportingPage } from './page-objects/bugReporting.po';
-import { NewIssuePage } from './page-objects/newIssue.po';
+import { LoginPage } from '../page-objects/login.po';
+import { BugReportingPage } from '../page-objects/bugReporting.po';
+import { NewIssuePage } from '../page-objects/newIssue.po';
 
 test.describe("CATcher's Bug Reporting Phase", () => {
   let bugReportingPage: BugReportingPage;

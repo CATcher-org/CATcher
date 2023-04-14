@@ -1,4 +1,4 @@
-import { AppConfig } from '../src/environments/environment';
+import { AppConfig } from '../../src/environments/environment';
 import { test, expect } from '@playwright/test';
 
 test.describe("CATcher's Login Page", () => {
