@@ -2,7 +2,7 @@ import { DataSource } from '@angular/cdk/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
 import { paginateData } from './issue-paginator';
@@ -49,23 +49,19 @@ export class IssuesDataTable extends DataSource<Issue> {
     ];
 
     this.issueService.startPollIssues();
-    this.issueSubscription = this.issueService.issues$
+    this.issueSubscription = merge(...displayDataChanges)
       .pipe(
-        mergeMap(() => {
-          return merge(...displayDataChanges).pipe(
-            map(() => {
-              let data = <Issue[]>Object.values(this.issueService.issues$.getValue()).reverse();
-              if (this.defaultFilter) {
-                data = data.filter(this.defaultFilter);
-              }
-              data = getSortedData(this.sort, data);
-              data = this.getFilteredTeamData(data);
-              data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
-              data = paginateData(this.paginator, data);
+        map(() => {
+          let data = <Issue[]>Object.values(this.issueService.issues$.getValue()).reverse();
+          if (this.defaultFilter) {
+            data = data.filter(this.defaultFilter);
+          }
+          data = getSortedData(this.sort, data);
+          data = this.getFilteredTeamData(data);
+          data = applySearchFilter(this.filter, this.displayedColumn, this.issueService, data);
+          data = paginateData(this.paginator, data);
 
-              return data;
-            })
-          );
+          return data;
         })
       )
       .subscribe((issues) => {
