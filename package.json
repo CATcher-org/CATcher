@@ -12,7 +12,7 @@
     "ng:serve:test": "npm run ng:serve -- --configuration=test -o",
     "deploy:web": "npm run build:prod:web && ngh --dir=dist --name=CATcher --email=se-edu@comp.nus.edu.sg --no-silent",
     "test": "npm run codegen:gql && ng test",
-    "e2e": "npx playwright test",
+    "e2e": "npx playwright test --headed --project=chromium --workers=1",
     "webdriver-manager": "webdriver-manager",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
