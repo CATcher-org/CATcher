@@ -1,5 +1,11 @@
 import { expect, Page } from '@playwright/test';
 
+interface BugReport {
+  title: string;
+  severityLabel?: string;
+  bugTypeLabel?: string;
+}
+
 export class BugReportingPage {
   readonly page: Page;
 
@@ -22,7 +28,7 @@ export class BugReportingPage {
    * @param bugTypeLabel Bug-Report's Type.
    * @returns true if a unique Bug-Report is present, false otherwise.
    */
-  async isBugReportPresent({ title, severityLabel, bugTypeLabel }: { title: string; severityLabel?: string; bugTypeLabel?: string }) {
+  async isBugReportPresent({ title, severityLabel, bugTypeLabel }: BugReport) {
     let allRows = this.page.locator('.mat-row').filter({ hasText: title });
 
     if (severityLabel != null) {

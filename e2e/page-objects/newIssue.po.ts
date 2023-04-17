@@ -1,5 +1,10 @@
 import { expect, Page } from '@playwright/test';
 
+type DropdownOptionProps = {
+  optionNumber: number;
+  dropdownText: string;
+};
+
 export class NewIssuePage {
   readonly page: Page;
 
@@ -26,7 +31,7 @@ export class NewIssuePage {
     return this.page.locator('.bug-dropdown').click();
   }
 
-  async selectDropDownOption({ optionNumber, dropdownText }: { optionNumber?: number; dropdownText?: string }) {
+  async selectDropDownOption({ optionNumber, dropdownText }: Partial<DropdownOptionProps>) {
     if (optionNumber != null && dropdownText != null) {
       throw new Error('Supply either Dropdown option number or text, not both.');
     } else if (optionNumber == null && dropdownText == null) {
