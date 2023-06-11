@@ -11,7 +11,7 @@
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
     <mat-cell *matCellDef="let issue">
-      <a class="no-underline link-grey-dark" [routerLink]="'issues/' + issue.id"> {{ this.fitTitleText(issue.title) }} </a>
+      <a class="no-underline link-grey-dark title-wrap" [routerLink]="'issues/' + issue.id"> {{ issue.title }} </a>
     </mat-cell>
   </ng-container>
 
