@@ -79,7 +79,7 @@
     "@types/jasminewd2": "2.0.8",
     "@types/node": "^15.6.1",
     "angular-cli-ghpages": "^1.0.0-rc.2",
-    "codelyzer": "^5.1.2",
+    "codelyzer": "^6.0.2",
     "graphql-codegen-fragment-matcher": "^0.18.2",
     "husky": "^4.2.5",
     "jasmine": "^3.9.0",
