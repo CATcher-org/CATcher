@@ -1,0 +1,26 @@
+<form [formGroup]="titleForm">
+  <mat-form-field>
+    <input
+      (paste)="onPaste($event)"
+      (keydown)="onKeyPress($event)"
+      (beforeinput)="handleBeforeInputChange($event)"
+      (input)="handleInputChange($event)"
+      #titleInput 
+      id="{{ this.id }}" 
+      formControlName="{{ this.id }}" 
+      matInput
+      required
+      placeholder="{{ this.placeholderText }}"
+      maxlength="{{ this.maxLength }}"
+    />
+    <mat-error *ngIf="titleField.errors && titleField.errors['required'] && (titleField.touched || titleField.dirty)"> 
+      Title required.
+    </mat-error>
+    <mat-error *ngIf="titleField.errors && titleField.errors['maxlength']">
+      Title cannot exceed {{ maxLength }} characters.
+    </mat-error>
+    <mat-hint *ngIf="titleField.value?.length >= maxLength - 50">
+      {{ maxLength - titleField.value?.length }} characters remaining.
+    </mat-hint>
+  </mat-form-field>
+</form>
