@@ -20,28 +20,30 @@
 
 <div *ngIf="isEditing">
   <form [formGroup]="issueTitleForm" #myForm="ngForm" (ngSubmit)="updateTitle(myForm)">
-    <mat-form-field style="width: 80%">
-      <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256" />
-      <mat-error *ngIf="issueTitleForm.get('title').hasError('required')"> Title is required. </mat-error>
-      <mat-error *ngIf="issueTitleForm.get('title').hasError('maxlength')"> Title cannot exceed 256 characters. </mat-error>
-      <mat-hint *ngIf="issueTitleForm.get('title').value?.length >= 206">
-        {{ 256 - issueTitleForm.get('title').value?.length }} characters remaining.
-      </mat-hint>
-    </mat-form-field>
-
-    <button type="submit" [disabled]="issueTitleForm.invalid || isSavePending" mat-stroked-button color="primary" class="title-button">
-      Save
-      <ng-container #loadingSpinnerContainer></ng-container>
-    </button>
-    <button
-      type="button"
-      [disabled]="isSavePending"
-      mat-stroked-button
-      color="warn"
-      class="title-button"
-      (click)="openCancelDialogIfModified()"
-    >
-      Cancel
-    </button>
+    <div class="row">
+      <app-title-editor
+        [id]="'title'"
+        [titleField]="this.issueTitleForm.get('title')"
+        [titleForm]="this.issueTitleForm"
+      >
+      </app-title-editor>
+      
+      <div>
+        <button type="submit" [disabled]="issueTitleForm.invalid" mat-stroked-button color="primary" class="title-button">
+          Save
+          <ng-container #loadingSpinnerContainer></ng-container>
+        </button>
+        <button
+          type="button"
+          [disabled]="isSavePending"
+          mat-stroked-button
+          color="warn"
+          class="title-button"
+          (click)="openCancelDialogIfModified()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
   </form>
 </div>

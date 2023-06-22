@@ -47,7 +47,7 @@ export class TitleComponent implements OnInit {
 
   ngOnInit() {
     this.issueTitleForm = this.formBuilder.group({
-      title: new FormControl('', [Validators.required, Validators.maxLength(256)])
+      title: ['']
     });
     // Build the loading service spinner
     this.loadingService

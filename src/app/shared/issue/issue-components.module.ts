@@ -4,6 +4,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CommentEditorModule } from '../comment-editor/comment-editor.module';
 import { SharedModule } from '../shared.module';
+import { TitleEditorModule } from '../title-editor/title-editor.module';
 import { AssigneeComponent } from './assignee/assignee.component';
 import { ConflictDialogComponent } from './conflict-dialog/conflict-dialog.component';
 import { DescriptionComponent } from './description/description.component';
@@ -14,7 +15,13 @@ import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
 
 @NgModule({
-  imports: [SharedModule, CommentEditorModule, MatProgressBarModule, NgxMatSelectSearchModule, MarkdownModule.forChild()],
+  imports: [
+    SharedModule,
+    TitleEditorModule,
+    CommentEditorModule,
+    MatProgressBarModule,
+    NgxMatSelectSearchModule,
+    MarkdownModule.forChild()],
   declarations: [
     TitleComponent,
     DescriptionComponent,

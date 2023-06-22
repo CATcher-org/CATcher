@@ -18,6 +18,10 @@
   float: right;
 }
 
+app-title-editor {
+  width: 80%;
+}
+
 :host ::ng-deep .mat-progress-spinner {
   color: rgba(0, 0, 0, 0.5);
   display: inline-block;

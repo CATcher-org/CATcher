@@ -28,7 +28,7 @@ export class NewIssueComponent implements OnInit {
 
   ngOnInit() {
     this.newIssueForm = this.formBuilder.group({
-      title: ['', [Validators.required, Validators.maxLength(256)]],
+      title: [''],
       description: [''],
       severity: ['', Validators.required],
       type: ['', Validators.required]

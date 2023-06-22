@@ -5,6 +5,7 @@ import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
 import { IssueComponentsModule } from '../shared/issue/issue-components.module';
 import { LabelDropdownModule } from '../shared/label-dropdown/label-dropdown.module';
 import { SharedModule } from '../shared/shared.module';
+import { TitleEditorModule } from '../shared/title-editor/title-editor.module';
 import { ViewIssueModule } from '../shared/view-issue/view-issue.module';
 import { IssueComponent } from './issue/issue.component';
 import { NewIssueComponent } from './new-issue/new-issue.component';
@@ -16,6 +17,7 @@ import { PhaseBugReportingComponent } from './phase-bug-reporting.component';
     PhaseBugReportingRoutingModule,
     SharedModule,
     IssueComponentsModule,
+    TitleEditorModule,
     CommentEditorModule,
     ViewIssueModule,
     MarkdownModule.forChild(),

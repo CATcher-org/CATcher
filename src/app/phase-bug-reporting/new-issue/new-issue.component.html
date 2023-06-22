@@ -4,12 +4,12 @@
   <div class="form">
     <div class="row">
       <div class="column left">
-        <mat-form-field>
-          <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256" />
-          <mat-error *ngIf="title.errors && title.errors['required'] && (title.touched || title.dirty)"> Title required. </mat-error>
-          <mat-error *ngIf="title.errors && title.errors['maxlength']"> Title cannot exceed 256 characters. </mat-error>
-          <mat-hint *ngIf="title.value?.length >= 206"> {{ 256 - title.value?.length }} characters remaining. </mat-hint>
-        </mat-form-field>
+        <app-title-editor
+          [id]="'title'"
+          [titleField]="title"
+          [titleForm]="this.newIssueForm"
+        >
+        </app-title-editor>
 
         <div style="margin: 10px 0 10px 0">
           <app-comment-editor
