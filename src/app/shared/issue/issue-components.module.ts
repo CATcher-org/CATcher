@@ -10,9 +10,9 @@ import { DescriptionComponent } from './description/description.component';
 import { DuplicatedIssuesComponent } from './duplicatedIssues/duplicated-issues.component';
 import { DuplicateOfComponent } from './duplicateOf/duplicate-of.component';
 import { LabelComponent } from './label/label.component';
+import { TitleEditorComponent } from './title-editor/title-editor.component';
 import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
-import { TitleEditorComponent } from './title-editor/title-editor.component';
 
 @NgModule({
   imports: [
