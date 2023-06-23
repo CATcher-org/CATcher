@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Apollo } from 'apollo-angular';
 
 import { SharedModule } from '../../../../src/app/shared/shared.module';
 import { TitleEditorComponent } from '../../../../src/app/shared/title-editor/title-editor.component';
@@ -19,7 +18,6 @@ describe('CommentEditor', () => {
     TestBed.configureTestingModule({
       declarations: [TitleEditorComponent],
       imports: [FormsModule, SharedModule, BrowserAnimationsModule],
-      providers: [Apollo],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
 
