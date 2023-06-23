@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SharedModule } from '../../../../src/app/shared/shared.module';
-import { TitleEditorComponent } from '../../../../src/app/shared/title-editor/title-editor.component';
+import { TitleEditorComponent } from '../../../../src/app/shared/issue/title-editor/title-editor.component';
 
 describe('CommentEditor', () => {
   let fixture: ComponentFixture<TitleEditorComponent>;

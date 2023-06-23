@@ -1,7 +1,6 @@
 <form [formGroup]="titleForm">
   <mat-form-field>
     <input
-      (paste)="onPaste($event)"
       (keydown)="onKeyPress($event)"
       (beforeinput)="handleBeforeInputChange($event)"
       (input)="handleInputChange($event)"

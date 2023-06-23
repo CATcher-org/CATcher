@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
-import { UndoRedo } from '../../core/models/undoredo.model';
+import { UndoRedo } from '../../../core/models/undoredo.model';
 
 const ISSUE_BODY_SIZE_LIMIT = 256;
 
@@ -67,11 +67,6 @@ export class TitleEditorComponent implements OnInit {
     }
   }
 
-  onPaste(event: ClipboardEvent) {
-    // the text area is not changed at this point
-    this.history.forceSave(null, true, false);
-  }
-
   handleBeforeInputChange(event: InputEvent): void {
     switch (event.inputType) {
       case 'historyUndo':
@@ -80,7 +75,7 @@ export class TitleEditorComponent implements OnInit {
         event.preventDefault();
         break;
       case 'insertFromPaste':
-        // paste events will be handled exclusively by onPaste
+        this.history.forceSave(null, true, false);
         break;
 
       default:
@@ -96,7 +91,7 @@ export class TitleEditorComponent implements OnInit {
         event.preventDefault();
         break;
       case 'insertFromPaste':
-        // paste events will be handled exclusively by onPaste
+        // paste events will be handled exclusively by handleBeforeInputChange
         break;
 
       default:
