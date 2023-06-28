@@ -20,6 +20,21 @@ export class UndoRedo<T> {
     this.intervalTime = intervalTime;
   }
 
+  public static isUndo(event: KeyboardEvent) {
+    // prevents undo from firing when ctrl shift z is pressed
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey && event.code === 'KeyZ' && !event.shiftKey;
+    }
+    return event.ctrlKey && event.code === 'KeyZ' && !event.shiftKey;
+  }
+
+  public static isRedo(event: KeyboardEvent) {
+    if (navigator.platform.indexOf('Mac') === 0) {
+      return event.metaKey && event.shiftKey && event.code === 'KeyZ';
+    }
+    return (event.ctrlKey && event.shiftKey && event.code === 'KeyZ') || (event.ctrlKey && event.code === 'KeyY');
+  }
+
   /**
    * Function to be called right before a change is made / stores the latest last state
    * preferably to be called with "beforeinput" event

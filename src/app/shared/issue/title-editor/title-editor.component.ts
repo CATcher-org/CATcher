@@ -56,11 +56,11 @@ export class TitleEditorComponent implements OnInit {
   }
 
   onKeyPress(event: KeyboardEvent) {
-    if (this.isUndo(event)) {
+    if (UndoRedo.isUndo(event)) {
       event.preventDefault();
       this.undo();
       return;
-    } else if (this.isRedo(event)) {
+    } else if (UndoRedo.isRedo(event)) {
       this.redo();
       event.preventDefault();
       return;
@@ -115,20 +115,5 @@ export class TitleEditorComponent implements OnInit {
     }
     this.titleInput.nativeElement.value = entry.text;
     this.titleInput.nativeElement.setSelectionRange(entry.selectStart, entry.selectEnd);
-  }
-
-  private isUndo(event: KeyboardEvent) {
-    // prevents undo from firing when ctrl shift z is pressed
-    if (navigator.platform.indexOf('Mac') === 0) {
-      return event.metaKey && event.code === 'KeyZ' && !event.shiftKey;
-    }
-    return event.ctrlKey && event.code === 'KeyZ' && !event.shiftKey;
-  }
-
-  private isRedo(event: KeyboardEvent) {
-    if (navigator.platform.indexOf('Mac') === 0) {
-      return event.metaKey && event.shiftKey && event.code === 'KeyZ';
-    }
-    return (event.ctrlKey && event.shiftKey && event.code === 'KeyZ') || (event.ctrlKey && event.code === 'KeyY');
   }
 }
