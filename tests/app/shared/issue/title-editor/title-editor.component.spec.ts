@@ -4,8 +4,8 @@ import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { TitleEditorComponent } from '../../../../src/app/shared/issue/title-editor/title-editor.component';
-import { SharedModule } from '../../../../src/app/shared/shared.module';
+import { TitleEditorComponent } from '../../../../../src/app/shared/issue/title-editor/title-editor.component';
+import { SharedModule } from '../../../../../src/app/shared/shared.module';
 
 describe('CommentEditor', () => {
   let fixture: ComponentFixture<TitleEditorComponent>;
