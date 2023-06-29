@@ -107,7 +107,7 @@ describe('CommentEditor', () => {
         buttonDe.nativeElement.click();
 
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        await fixture.whenStable().then(() => {
           const textBox: any = debugElement.query(By.css('textarea')).nativeElement;
           expect(textBox.value).toEqual(expectedMarkup);
         });
@@ -157,7 +157,7 @@ describe('CommentEditor', () => {
         buttonDe.nativeElement.click();
         fixture.detectChanges();
 
-        fixture.whenStable().then(() => {
+        await fixture.whenStable().then(() => {
           expect(textBoxDe.nativeElement.value).toEqual(expectedMarkup);
         });
       });
@@ -194,7 +194,7 @@ describe('CommentEditor', () => {
       textBox.value = '123';
       textBox.dispatchEvent(new Event('input'));
 
-      fixture.whenStable().then(() => {
+      await fixture.whenStable().then(() => {
         expect(textBox.value).toEqual('123');
       });
     });
