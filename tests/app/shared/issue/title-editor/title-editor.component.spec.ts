@@ -87,7 +87,11 @@ describe('TitleEditor', () => {
       component.history.forceSave();
 
       // undo to empty state: { text: '', selectStart: 0, selectEnd: 0 }
-      textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', ctrlKey: true}));
+      if (navigator.platform.indexOf('Mac') === 0) {
+        textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', metaKey: true}));
+      } else {
+        textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', ctrlKey: true}));
+      }
 
       fixture.whenStable().then(() => {
         expect(textBox.value).toEqual('');
@@ -107,10 +111,18 @@ describe('TitleEditor', () => {
       component.history.forceSave();
 
       // undo to empty state: { text: '', selectStart: 0, selectEnd: 0 }
-      textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', ctrlKey: true}));
+      if (navigator.platform.indexOf('Mac') === 0) {
+        textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', metaKey: true}));
+      } else {
+        textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', ctrlKey: true}));
+      }
 
       // redo to state: { text: '123', selectStart: 3, selectEnd: 3 }
-      textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'y', code: 'KeyY', ctrlKey: true}));
+      if (navigator.platform.indexOf('Mac') === 0) {
+        textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'y', code: 'KeyY', metaKey: true}));
+      } else {
+        textBox.dispatchEvent(new KeyboardEvent('keydown', {key: 'y', code: 'KeyY', ctrlKey: true}));
+      }
 
       fixture.whenStable().then(() => {
         expect(textBox.value).toEqual('123');
