@@ -3,7 +3,7 @@
   "version": "3.4.7",
   "main": "main.js",
   "engines": {
-    "node": "^14.0.0"
+    "node": ">=14.0.0"
   },
   "scripts": {
     "ng": "ng",
