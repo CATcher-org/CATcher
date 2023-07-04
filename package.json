@@ -2,6 +2,9 @@
   "name": "CATcher",
   "version": "3.4.7",
   "main": "main.js",
+  "engines": {
+    "node": "^14.0.0"
+  },
   "scripts": {
     "ng": "ng",
     "build:staging": "npm run codegen:gql && ng build --c staging --base-href=https://catcher-org.github.io/CATcher-staging/",
