@@ -1,5 +1,5 @@
 overwrite: true
-schema: "graphql/schema/github-schema.ts"
+schema: 'graphql/schema/github-schema.ts'
 documents:
   - graphql/fragments/*.graphql
   - graphql/queries/*.graphql
@@ -7,8 +7,10 @@ documents:
 generates:
   graphql/graphql-types.ts:
     plugins:
-      - "typescript"
-      - "typescript-operations"
-      - "typescript-document-nodes"
-      - "typescript-resolvers"
-      - "fragment-matcher"
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-document-nodes'
+      - 'typescript-resolvers'
+      - 'fragment-matcher'
+    config:
+      apolloClientVersion: 3
