@@ -56,8 +56,6 @@ describe('CommentEditor', () => {
       'md-unordered-list',
       'md-ordered-list',
       'md-task-list',
-      'md-mention',
-      'md-ref'
     ];
 
     it('should render a formatting toolbar', () => {
@@ -92,8 +90,6 @@ describe('CommentEditor', () => {
       'md-unordered-list': '- ',
       'md-ordered-list': '1. ',
       'md-task-list': `- [ ] `,
-      'md-mention': '@',
-      'md-ref': '#'
     };
 
     // simulate each button being clicked and check that the markups added to the text
@@ -133,8 +129,6 @@ describe('CommentEditor', () => {
       'md-unordered-list': `- ${highlightedText}`,
       'md-ordered-list': `1. ${highlightedText}`,
       'md-task-list': `- [ ] ${highlightedText}`,
-      'md-mention': `@${highlightedText}`,
-      'md-ref': `#${highlightedText}`
     };
 
     // simulate each button being clicked and check that the markups added to the text

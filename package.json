@@ -2,6 +2,9 @@
   "name": "CATcher",
   "version": "3.4.7",
   "main": "main.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "scripts": {
     "ng": "ng",
     "build:staging": "npm run codegen:gql && ng build --c staging --base-href=https://catcher-org.github.io/CATcher-staging/",
@@ -73,7 +76,7 @@
     "@graphql-codegen/typescript-operations": "^1.18.4",
     "@graphql-codegen/typescript-resolvers": "^1.20.0",
     "@octokit/graphql-schema": "^8.24.0",
-    "@playwright/test": "^1.32.1",
+    "@playwright/test": "~1.33",
     "@types/dompurify": "^2.3.1",
     "@types/jasmine": "^3.8.2",
     "@types/jasminewd2": "2.0.8",
@@ -86,11 +89,11 @@
     "jasmine-core": "~3.8.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~5.0.0",
-    "karma-chrome-launcher": "~3.1.0",
+    "karma-chrome-launcher": "^3.1.1",
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-firefox-launcher": "^2.1.1",
     "karma-jasmine": "~4.0.0",
-    "karma-jasmine-html-reporter": "^1.5.0",
+    "karma-jasmine-html-reporter": "^1.7.0",
     "npm-run-all": "4.1.5",
     "prettier": "2.2.1",
     "pretty-quick": "^3.1.1",
