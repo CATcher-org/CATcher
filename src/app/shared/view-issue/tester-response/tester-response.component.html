@@ -2,8 +2,8 @@
 <form [formGroup]="testerResponseForm" (ngSubmit)="submitTesterResponseForm()">
   <div class="timeline-comment">
     <div class="timeline-header">
-      <span style="vertical-align: middle; margin-left: 5px" *ngIf="this.isNewResponse()"> Please verify the following item(s). </span>
-      <span style="vertical-align: middle; margin-left: 5px" *ngIf="!this.isNewResponse()"> <strong>Tester</strong> responded. </span>
+      <span *ngIf="this.isNewResponse()"> Please verify the following item(s). </span>
+      <span *ngIf="!this.isNewResponse()"> <strong>Tester</strong> responded. </span>
       <button mat-button style="float: right" *ngIf="!isEditing" (click)="changeToEditMode()">Edit</button>
     </div>
     <div>

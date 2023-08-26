@@ -6,6 +6,9 @@
   color: #586069;
   height: 35px;
   padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .timeline-comment {
