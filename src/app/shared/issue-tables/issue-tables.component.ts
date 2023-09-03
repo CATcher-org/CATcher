@@ -36,6 +36,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
+  @Input() table_name: string;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
