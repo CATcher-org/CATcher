@@ -1,10 +1,10 @@
-import { Directive, Input } from '@angular/core';
+import { Directive, Input, OnInit } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Directive({
   selector: '[itemsPerPage]'
 })
-export class ItemsPerPageDirective {
+export class ItemsPerPageDirective implements OnInit {
   private element: MatPaginator;
   private key: string;
 
