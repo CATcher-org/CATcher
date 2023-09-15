@@ -2,17 +2,17 @@ import { Directive, Input, OnInit } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Directive({
-  selector: '[itemsPerPage]'
+  selector: '[paginatorLocalStorage]'
 })
-export class ItemsPerPageDirective implements OnInit {
+export class PaginatorLocalStorageDirective implements OnInit {
   private element: MatPaginator;
   private key: string;
 
-  @Input('itemsPerPage') id: string;
+  @Input() paginatorLocalStorage: string;
 
   get pageSize() {
     const cachedPageSize = sessionStorage.getItem(this.key) || this.element.pageSize;
-    return +cachedPageSize;
+    return Number(cachedPageSize);
   }
 
   set pageSize(num: number) {
@@ -25,7 +25,7 @@ export class ItemsPerPageDirective implements OnInit {
   }
 
   ngOnInit(): void {
-    this.key = this.id + '-PageSize';
+    this.key = this.paginatorLocalStorage + '-PageSize';
     this.element.pageSize = this.pageSize;
     this.element.page.subscribe((page: PageEvent) => {
       this.pageSize = page.pageSize;
