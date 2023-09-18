@@ -29,6 +29,10 @@ body {
   color: #586069;
   height: 35px;
   padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
 }
 
 .timeline-comment {
