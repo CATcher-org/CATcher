@@ -262,4 +262,4 @@
 <mat-card *ngIf="this.issues.isLoading$ | async" style="display: flex; justify-content: center; align-items: center">
   <mat-progress-spinner color="primary" mode="indeterminate" diameter="50" strokeWidth="5"></mat-progress-spinner>
 </mat-card>
-<mat-paginator [pageSize]="20" [pageSizeOptions]="[10, 20, 50]"></mat-paginator>
+<mat-paginator [paginatorLocalStorage]="this.table_name" [pageSize]="20" [pageSizeOptions]="[10, 20, 50]"></mat-paginator>
