@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ApolloQueryResult } from '@apollo/client/core';
 import { Apollo, QueryRef } from 'apollo-angular';
-import { ApolloQueryResult } from 'apollo-client';
 import { DocumentNode } from 'graphql';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
 import { catchError, filter, map, mergeMap, throwIfEmpty } from 'rxjs/operators';
