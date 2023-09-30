@@ -2,3 +2,10 @@ span {
   vertical-align: middle;
   margin-left: 5px;
 }
+
+:host ::ng-deep .mat-progress-spinner {
+  color: rgba(0, 0, 0, 0.5);
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
+}

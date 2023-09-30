@@ -36,6 +36,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
+  @Input() table_name: string;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -72,27 +73,6 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.issues.loadIssues();
     });
-  }
-
-  /**
-   * Formats the title text to account for those that contain long words.
-   * @param title - Title of Issue that is to be displayed in the Table Row.
-   */
-  fitTitleText(title: string): string {
-    // Arbitrary Length of Characters beyond which an overflow occurs.
-    const MAX_WORD_LENGTH = 43;
-    const SPLITTER_TEXT = ' ';
-    const ELLIPSES = '...';
-
-    return title
-      .split(SPLITTER_TEXT)
-      .map((word) => {
-        if (word.length > MAX_WORD_LENGTH) {
-          return word.substring(0, MAX_WORD_LENGTH - 5).concat(ELLIPSES);
-        }
-        return word;
-      })
-      .join(SPLITTER_TEXT);
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {

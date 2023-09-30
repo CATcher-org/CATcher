@@ -2,7 +2,7 @@
 <form [formGroup]="tutorResponseForm" #tutorForm="ngForm" (ngSubmit)="submitTutorResponseForm(tutorForm)">
   <div class="timeline-comment">
     <div class="timeline-header">
-      <span style="vertical-align: middle; margin-left: 5px"> Post your response here. </span>
+      <span> Post your response here. </span>
       <button mat-button style="float: right" *ngIf="!isEditing" (click)="changeToEditMode()">Edit</button>
     </div>
     <div>

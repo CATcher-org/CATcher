@@ -71,3 +71,7 @@
 .mat-column-type {
   flex-basis: 12px;
 }
+
+.title-wrap {
+  overflow-wrap: anywhere;
+}

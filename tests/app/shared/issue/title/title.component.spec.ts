@@ -5,6 +5,7 @@ import { UserConfirmationComponent } from '../../../../../src/app/core/guards/us
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
 import { DialogService } from '../../../../../src/app/core/services/dialog.service';
+import { LoadingService } from '../../../../../src/app/core/services/loading.service';
 import { PhaseService } from '../../../../../src/app/core/services/phase.service';
 import { TitleComponent } from '../../../../../src/app/shared/issue/title/title.component';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
@@ -16,6 +17,7 @@ describe('TitleComponent', () => {
   let formBuilder: any;
   let phaseService: PhaseService;
   let dialogService: jasmine.SpyObj<DialogService>;
+  let loadingService: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -24,7 +26,21 @@ describe('TitleComponent', () => {
 
     issueService = jasmine.createSpyObj('IssueService', ['updateIssue']);
     dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
-    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService, dialogService);
+    loadingService = jasmine.createSpyObj('LoadingService', [
+      'showLoader',
+      'hideLoader',
+      'addAnimationMode',
+      'addCssClasses',
+      'addSpinnerOptions',
+      'addTheme',
+      'addViewContainerRef'
+    ]);
+    loadingService.addAnimationMode.and.callFake(() => loadingService);
+    loadingService.addCssClasses.and.callFake(() => loadingService);
+    loadingService.addSpinnerOptions.and.callFake(() => loadingService);
+    loadingService.addTheme.and.callFake(() => loadingService);
+    loadingService.addViewContainerRef.and.callFake(() => loadingService);
+    titleComponent = new TitleComponent(issueService, formBuilder, null, null, phaseService, dialogService, loadingService);
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     titleComponent.issue = thisIssue;
   });
@@ -32,6 +48,22 @@ describe('TitleComponent', () => {
   it('should be initialised with an issueTitleForm', () => {
     titleComponent.ngOnInit();
     expect(titleComponent.issueTitleForm.value).toEqual({ title: '' });
+  });
+
+  it('should mark isSavePending as true if called', () => {
+    titleComponent.isSavePending = false;
+    loadingService.showLoader.and.callFake(() => {});
+    titleComponent.showSpinner();
+
+    expect(titleComponent.isSavePending).toEqual(true);
+  });
+
+  it('should mark isSavePending as false if called', () => {
+    titleComponent.isSavePending = true;
+    loadingService.hideLoader.and.callFake(() => {});
+    titleComponent.hideSpinner();
+
+    expect(titleComponent.isSavePending).toEqual(false);
   });
 
   it('should be updated with correct flags and values in editing mode', () => {
@@ -59,11 +91,14 @@ describe('TitleComponent', () => {
     titleComponent.changeToEditMode();
 
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     titleComponent.updateTitle(form);
 
     expect(formResetForm).toHaveBeenCalledTimes(1);
     expect(titleComponentEmitter).toHaveBeenCalledTimes(1);
     expect(titleComponent.isEditing).toEqual(false);
+    expect(titleComponent.isSavePending).toEqual(false);
   });
 
   it('should cancel edit mode only if confirmed in confirmation dialog', () => {

@@ -11,5 +11,10 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <app-issue-tables [headers]="this.displayedColumns" [actions]="this.actionButtons" [filters]="this.filter"></app-issue-tables>
+  <app-issue-tables
+    table_name="tableTeamResponseResponded"
+    [headers]="this.displayedColumns"
+    [actions]="this.actionButtons"
+    [filters]="this.filter"
+  ></app-issue-tables>
 </div>

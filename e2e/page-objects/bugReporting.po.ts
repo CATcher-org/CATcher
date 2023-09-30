@@ -1,12 +1,24 @@
-import { by, element } from 'protractor';
+import { expect, Page } from '@playwright/test';
+
+interface BugReport {
+  title: string;
+  severityLabel?: string;
+  bugTypeLabel?: string;
+}
 
 export class BugReportingPage {
+  readonly page: Page;
+
+  constructor(page: Page) {
+    this.page = page;
+  }
+
   async getPhaseDescription() {
-    return element(by.css('app-root')).element(by.id('phase-descriptor')).getText();
+    return this.page.locator('app-layout-header').textContent();
   }
 
   async accessNewBugReportingPage() {
-    return element(by.className('create-new-bug-report-button')).click();
+    return this.page.getByRole('button', { name: 'New Issue' }).click();
   }
 
   /**
@@ -16,23 +28,17 @@ export class BugReportingPage {
    * @param bugTypeLabel Bug-Report's Type.
    * @returns true if a unique Bug-Report is present, false otherwise.
    */
-  async isBugReportPresent({ title, severityLabel, bugTypeLabel }: { title: string; severityLabel?: string; bugTypeLabel?: string }) {
-    return element
-      .all(by.className('mat-row'))
-      .filter(async (element, index) => {
-        // Obtain Bug-Report Element's data
-        const titleText: string = await element.getText();
-        const severityText = await element.element(by.className('mat-column-severity')).getText();
-        const responseText = await element.element(by.className('mat-column-type')).getText();
+  async isBugReportPresent({ title, severityLabel, bugTypeLabel }: BugReport) {
+    let allRows = this.page.locator('.mat-row').filter({ hasText: title });
 
-        // Compare based on provided information
-        return (
-          titleText.includes(title) &&
-          (severityLabel == null ? severityText.includes(severityLabel) : true) &&
-          (bugTypeLabel == null ? responseText.includes(bugTypeLabel) : true)
-        );
-      })
-      .count()
-      .then((count: number) => count === 1);
+    if (severityLabel != null) {
+      allRows = allRows.filter({ hasText: severityLabel });
+    }
+
+    if (bugTypeLabel != null) {
+      allRows = allRows.filter({ hasText: bugTypeLabel });
+    }
+
+    return allRows.count().then((count: number) => count === 1);
   }
 }

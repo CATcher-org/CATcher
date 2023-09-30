@@ -5,7 +5,8 @@
   [matMenuTriggerFor]="labelList"
   mat-icon-button
 >
-  <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069"> edit </mat-icon>
+  <mat-icon style="font-size: 20px; margin-bottom: 7px; color: #586069" *ngIf="!isSavePending"> edit </mat-icon>
+  <ng-container #loadingSpinnerContainer></ng-container>
 </button>
 
 <mat-menu #labelList>

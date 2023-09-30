@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+@import './assets/fontawesome/css/fontawesome.min.css';
+@import './assets/fontawesome/css/solid.min.css';
+
 html,
 body {
   margin: 0;
@@ -26,6 +29,10 @@ body {
   color: #586069;
   height: 35px;
   padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
 }
 
 .timeline-comment {

@@ -12,7 +12,6 @@ import { FILTER, Issue, Issues, IssuesFilter, STATUS } from '../models/issue.mod
 import { Phase } from '../models/phase.model';
 import { appVersion } from './application.service';
 import { DataService } from './data.service';
-import { ElectronService } from './electron.service';
 import { GithubService } from './github.service';
 import { LoggingService } from './logging.service';
 import { PhaseService } from './phase.service';
@@ -42,7 +41,6 @@ export class IssueService {
     private githubService: GithubService,
     private userService: UserService,
     private phaseService: PhaseService,
-    private electronService: ElectronService,
     private dataService: DataService,
     private logger: LoggingService
   ) {
@@ -125,7 +123,7 @@ export class IssueService {
 
   createIssue(title: string, description: string, severity: string, type: string): Observable<Issue> {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
-    const clientType = this.electronService.isElectron() ? 'Desktop' : 'Web';
+    const clientType = 'Desktop';
     const hiddenData = new Map([
       ['session', this.sessionId],
       ['Version', `${clientType} v${appVersion}`]

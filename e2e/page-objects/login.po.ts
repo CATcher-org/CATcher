@@ -1,37 +1,37 @@
-import { browser, element, by, ExpectedConditions } from 'protractor';
+import { expect, Page } from '@playwright/test';
 
 export class LoginPage {
-  navigateToRoot() {
-    return browser.get('/');
+  readonly page: Page;
+
+  constructor(page: Page) {
+    this.page = page;
   }
 
-  async getTitle() {
-    return element(by.css('app-root')).element(by.css('app-layout-header')).getText();
-  }
-
-  async getConfirmationScreenTitle() {
-    return element(by.className('login-title')).getText();
+  async navigateToRoot() {
+    await this.page.goto('/');
   }
 
   async login() {
     await this.selectSession();
   }
 
-  async confirmUser() {
-    await browser.wait(ExpectedConditions.presenceOf(element(by.className('sign-in-button'))));
-    const confirm = element(by.className('sign-in-button'));
-    await confirm.click();
+  /**
+   * Steps to select session on the login page.
+   */
+  private async selectSession() {
+    await this.page.locator('app-profiles').click();
+    await this.page.locator('mat-option').locator('nth=1').click();
+    await this.page.getByRole('button', { name: 'Submit' }).click();
   }
 
-  private async selectSession() {
-    const profiles = element(by.css('app-root')).element(by.css('app-profiles'));
-
-    await profiles.click();
-    const options = element.all(by.className('mat-option')).get(1);
-    await options.click();
-
-    const button = element(by.className('sign-in-button'));
-    await button.click();
+  /**
+   * Steps to confirm user when redirected back by Github OAuth
+   */
+  async confirmUser() {
+    await expect(this.page.getByText('Confirm Login Account')).toHaveText('Confirm Login Account');
+    const login_button = this.page.getByRole('button', { name: 'github-logo Continue as CAT-Tester' });
+    await expect(login_button).toBeVisible();
+    await login_button.click();
   }
 
   async bypassAuthentication() {
