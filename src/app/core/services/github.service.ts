@@ -36,6 +36,9 @@ const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
 const UNABLE_TO_OPEN_IN_BROWSER = 'Unable to open this issue in Browser';
+function getSettingsUrl(org: string, repoName: string): string {
+  return `https://raw.githubusercontent.com/${org}/${repoName}/master/settings.json`;
+}
 
 let ORG_NAME = '';
 let MOD_ORG = '';
@@ -398,10 +401,8 @@ export class GithubService {
    * @return Observable<SessionData> representing session information.
    */
   fetchSettingsFile(): Observable<SessionData> {
-    return from(
-      octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
-    ).pipe(
-      map((rawData) => JSON.parse(atob(rawData['data']['content']))),
+    return from(fetch(getSettingsUrl(MOD_ORG, DATA_REPO))).pipe(
+      mergeMap((res) => res.json()),
       catchError((err) => throwError('Failed to fetch settings file.'))
     );
   }
