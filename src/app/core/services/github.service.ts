@@ -396,14 +396,29 @@ export class GithubService {
     );
   }
 
+  private fetchSettingsFromRawUrl(): Observable<SessionData> {
+    return from(fetch(getSettingsUrl(MOD_ORG, DATA_REPO))).pipe(
+      mergeMap((res) => res.json()),
+      catchError((err) => throwError('Failed to fetch settings file.'))
+    );
+  }
+
   /**
    * Fetches the data file that is regulates session information.
    * @return Observable<SessionData> representing session information.
    */
   fetchSettingsFile(): Observable<SessionData> {
-    return from(fetch(getSettingsUrl(MOD_ORG, DATA_REPO))).pipe(
-      mergeMap((res) => res.json()),
-      catchError((err) => throwError('Failed to fetch settings file.'))
+    return from(
+      octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
+    ).pipe(
+      map((rawData) => JSON.parse(atob(rawData['data']['content']))),
+      catchError((err) => {
+        this.logger.error(
+          'GithubService: Failed to fetch settings file via REST API. Trying to fetch using raw.githubusercontent.com: ',
+          err
+        );
+        return this.fetchSettingsFromRawUrl();
+      })
     );
   }
 
