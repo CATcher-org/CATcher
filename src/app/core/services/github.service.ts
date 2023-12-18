@@ -360,6 +360,7 @@ export class GithubService {
       octokit.repos.createOrUpdateFile({
         owner: ORG_NAME,
         repo: REPO,
+        branch: 'main',
         path: `files/${filename}`,
         message: 'upload file',
         content: base64String
