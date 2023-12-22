@@ -260,6 +260,10 @@ export class GithubService {
   /**
    * Fetches all labels in the current repository.
    */
+  deleteLabel(labelName: string) {
+    octokit.issues.deleteLabel({ owner: ORG_NAME, repo: REPO, name: labelName });
+  }
+
   fetchAllLabels(): Observable<Array<GithubLabel>> {
     const githubLabels = this.fetchGraphqlList<FetchLabelsQuery, GithubLabel>(
       FetchLabels,
