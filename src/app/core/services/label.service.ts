@@ -61,6 +61,7 @@ const FEATURE_FLAW_DEFINITION =
   "i.e., the feature is not 'complete'.\nIn other words, an acceptance-testing bug that falls within " +
   'the scope of the current version features. These issues are counted against the <i>product design</i> aspect ' +
   'of the project.</p>';
+const UI_FLAW_DEFINITION = '<p>A flaw in the UI design, such as color constranst or font type.</p>';
 const DOCUMENTATION_BUG_DEFINITION =
   '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
 
@@ -83,6 +84,7 @@ export const LABEL_DEFINITIONS = {
   typeFunctionalityBug: FUNCTIONALITY_BUG_DEFINITION,
   typeFeatureFlaw: FEATURE_FLAW_DEFINITION,
   typeDocumentationBug: DOCUMENTATION_BUG_DEFINITION,
+  typeUiFlaw: UI_FLAW_DEFINITION,
   responseAccepted: ACCEPTED_DEFINITION,
   responseNotInScope: NOT_IN_SCOPE_DEFINITION,
   responseRejected: REJECTED_DEFINITION,
@@ -101,7 +103,8 @@ const REQUIRED_LABELS = {
   type: {
     DocumentationBug: new Label('type', 'DocumentationBug', COLOR_PURPLE_LIGHT, DOCUMENTATION_BUG_DEFINITION),
     FeatureFlaw: new Label('type', 'FeatureFlaw', COLOR_PURPLE_LIGHT, FEATURE_FLAW_DEFINITION),
-    FunctionalityBug: new Label('type', 'FunctionalityBug', COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION)
+    FunctionalityBug: new Label('type', 'FunctionalityBug', COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION),
+    UiFlaw: new Label('type', 'UiFlaw', COLOR_PURPLE_LIGHT, UI_FLAW_DEFINITION)
   },
   response: {
     Accepted: new Label('response', 'Accepted', COLOR_GREEN, ACCEPTED_DEFINITION),
