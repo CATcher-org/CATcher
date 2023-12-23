@@ -454,7 +454,10 @@ export class GithubService {
   getProfilesData(): Promise<Response> {
     return fetch(AppConfig.clientDataUrl);
   }
-
+  
+  deleteLabel(labelString: string): void {
+    octokit.issues.deletLabel(labelString);
+  }
   /**
    * Performs an API call to fetch a page of filtered issues with a given pageNumber.
    *

@@ -63,7 +63,8 @@ const FEATURE_FLAW_DEFINITION =
   'of the project.</p>';
 const DOCUMENTATION_BUG_DEFINITION =
   '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
-
+const UI_FLAW_DEFINITION = 
+  '<p>A flaw in the UI</p';
 const ACCEPTED_DEFINITION = '<p>You accept it as a bug.</p>';
 const NOT_IN_SCOPE_DEFINITION =
   '<p>It is a valid issue but not something the team should be penalized for ' +
@@ -83,6 +84,7 @@ export const LABEL_DEFINITIONS = {
   typeFunctionalityBug: FUNCTIONALITY_BUG_DEFINITION,
   typeFeatureFlaw: FEATURE_FLAW_DEFINITION,
   typeDocumentationBug: DOCUMENTATION_BUG_DEFINITION,
+  typeUiFlaw: UI_FLAW_DEFINITION,
   responseAccepted: ACCEPTED_DEFINITION,
   responseNotInScope: NOT_IN_SCOPE_DEFINITION,
   responseRejected: REJECTED_DEFINITION,
@@ -101,7 +103,8 @@ const REQUIRED_LABELS = {
   type: {
     DocumentationBug: new Label('type', 'DocumentationBug', COLOR_PURPLE_LIGHT, DOCUMENTATION_BUG_DEFINITION),
     FeatureFlaw: new Label('type', 'FeatureFlaw', COLOR_PURPLE_LIGHT, FEATURE_FLAW_DEFINITION),
-    FunctionalityBug: new Label('type', 'FunctionalityBug', COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION)
+    FunctionalityBug: new Label('type', 'FunctionalityBug', COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION),
+    UiFlaw: new Label('type', 'UiFlaw', COLOR_PURPLE, FUNCTIONALITY_BUG_DEFINITION)
   },
   response: {
     Accepted: new Label('response', 'Accepted', COLOR_GREEN, ACCEPTED_DEFINITION),
@@ -295,6 +298,11 @@ export class LabelService {
         }
       } else {
         throw new Error('Unexpected error: the repo has multiple labels with the same name ' + label.getFormattedName());
+      }
+    });
+    actualLabels.forEach((label) => {
+      if (requiredLabels.findIndex((requiredLabel) => requiredLabel.getFormattedName() === label.getFormattedName()) === -1) {
+        this.githubService.deleteLabel(label.getFormattedName());
       }
     });
   }
