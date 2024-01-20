@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, Validators, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { Issue } from '../../core/models/issue.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LabelService } from '../../core/services/label.service';
-import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component';
 import { noWhitespace } from '../../validators/noWhitespace.validator';
+import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component';
 
 @Component({
   selector: 'app-new-issue',
