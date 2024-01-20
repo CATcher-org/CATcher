@@ -41,6 +41,10 @@ export class NewIssueComponent implements OnInit {
     if (this.newIssueForm.invalid) {
       return;
     }
+
+    if (this.title.value && this.title.value.trim() === '') {
+      throw new Error('Invalid title: Title cannot contain only whitespaces');
+    }
     this.isFormPending = true;
     this.issueService
       .createIssue(this.title.value, Issue.updateDescription(this.description.value), this.severity.value, this.type.value)
