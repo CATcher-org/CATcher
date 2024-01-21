@@ -6,8 +6,8 @@ import { Issue } from '../../core/models/issue.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LabelService } from '../../core/services/label.service';
-import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component';
 import { noWhitespace } from '../../core/validators/noWhitespace.validator';
+import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component';
 
 @Component({
   selector: 'app-new-issue',
