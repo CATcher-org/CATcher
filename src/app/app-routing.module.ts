@@ -12,7 +12,8 @@ const routes: Routes = [
   { path: 'phaseBugReporting', loadChildren: () => PhaseBugReportingModule, canLoad: [AuthGuard] },
   { path: 'phaseTeamResponse', loadChildren: () => PhaseTeamResponseModule, canLoad: [AuthGuard] },
   { path: 'phaseTesterResponse', loadChildren: () => PhaseTesterResponseModule, canLoad: [AuthGuard] },
-  { path: 'phaseModeration', loadChildren: () => PhaseModerationModule, canLoad: [AuthGuard] }
+  { path: 'phaseModeration', loadChildren: () => PhaseModerationModule, canLoad: [AuthGuard] },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
