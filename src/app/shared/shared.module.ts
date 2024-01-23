@@ -7,12 +7,14 @@ import { FormDisableControlDirective } from '../core/directives/form-disable-con
 import { ActionToasterModule } from './action-toasters/action-toasters.module';
 import { ErrorToasterModule } from './error-toasters/error-toaster.module';
 import { MaterialModule } from './material.module';
+import { InternalLinkDisableDirective } from '../core/directives/internal-link-disable.directive';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, RouterModule, MaterialModule, ErrorToasterModule],
-  declarations: [FormDisableControlDirective],
+  declarations: [FormDisableControlDirective, InternalLinkDisableDirective],
   exports: [
     FormDisableControlDirective,
+    InternalLinkDisableDirective,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
