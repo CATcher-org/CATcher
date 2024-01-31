@@ -36,7 +36,7 @@ import { LoggingService } from './logging.service';
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
-const BRANCH = 'test';
+const BRANCH = 'main';
 const UNABLE_TO_OPEN_IN_BROWSER = 'Unable to open this issue in Browser';
 const BRANCH_CREATION_FAILED = `Unable to create ${BRANCH} branch.`;
 function getSettingsUrl(org: string, repoName: string): string {
