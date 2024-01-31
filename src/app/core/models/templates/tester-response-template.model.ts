@@ -1,7 +1,8 @@
 /**
  * A Tester Response comment has the following format:
  *
- * [IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. You can respond to it using CATcher during the next phase of the PE]
+ * [IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. \
+      You can respond to it using CATcher during the next phase of the PE]
  *
  * # Team's response
  *
@@ -13,7 +14,8 @@
  *
  * A concrete example would be:
  *
- * [IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. You can respond to it using CATcher during the next phase of the PE]
+ * [IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. \
+      You can respond to it using CATcher during the next phase of the PE]
  *
  * # Team's response
  *
