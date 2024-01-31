@@ -1,3 +1,27 @@
+/**
+ * A Tutor Moderation Todo comment has this format:
+ *
+ * # Tutor Moderation
+ *
+ * { 1 or more Tutor Moderation sections, see moderation-section-parser.model.ts }
+ *
+ * A concrete example would be:
+ *
+ * # Tutor Moderation
+ *
+ * ## :question: Issue severity
+ * - [x] Done
+ *
+ * I think it is justified.
+ *
+ * <catcher-end-of-segment><hr>
+ *
+ * ## :question: Issue type
+ * - [ ] Done
+ *
+ * <catcher-end-of-segment><hr>
+ */
+
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { IssueDispute } from '../issue-dispute.model';

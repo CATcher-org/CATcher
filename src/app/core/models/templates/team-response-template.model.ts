@@ -1,3 +1,22 @@
+/**
+ * A Team Response comment has the following format:
+ *
+ * # Team's response
+ *
+ * { team's response }
+ *
+ * ## Duplicate status (if any):
+ * { duplicate issue number, or '--' if not a duplicate }
+ *
+ * A concrete example would be:
+ *
+ * # Team's response
+ *
+ * This is not a bug, it's a feature
+ *
+ * ## Duplicate status (if any):
+ * Duplicate of #42
+ */
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { buildTeamResponseSectionParser } from './section-parsers/common-parsers.model';

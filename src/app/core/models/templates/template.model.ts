@@ -1,3 +1,7 @@
+/**
+ * Comment template formats can be found at https://catcher-org.github.io/dg/user-workflow.html
+ */
+
 import { GithubComment } from '../github/github-comment.model';
 
 export abstract class Template {
