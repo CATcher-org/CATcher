@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { of, throwError } from 'rxjs';
+import { catchError, mergeMap } from 'rxjs/operators';
 import { uuid } from '../../shared/lib/uuid';
 import { GithubService } from './github.service';
-import { catchError, mergeMap } from 'rxjs/operators';
 import { ERRORCODE_NOT_FOUND } from './error-handling.service';
 
 const SUPPORTED_VIDEO_FILE_TYPES = ['mp4', 'mov'];
@@ -59,8 +59,12 @@ export class UploadService {
           }
           return of(false);
         }),
-        mergeMap(() => this.githubService.createBranch()),
-        mergeMap(attemptUploadFile)
+        mergeMap((isBranchPresent) => {
+          if (isBranchPresent) {
+            return of(isBranchPresent);
+          }
+          return this.githubService.createBranch().pipe(mergeMap(attemptUploadFile));
+        })
       );
     } else {
       return throwError(FILE_TYPE_SUPPORT_ERROR);

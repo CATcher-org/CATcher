@@ -16,6 +16,7 @@ import {
   FetchLabelsQuery
 } from '../../../../graphql/graphql-types';
 import { AppConfig } from '../../../environments/environment';
+import { throwIfFalse } from '../../shared/lib/custom-ops';
 import { getNumberOfPages } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { GithubUser } from '../models/github-user.model';
@@ -31,12 +32,11 @@ import { GithubRelease } from '../models/github/github.release';
 import { SessionData } from '../models/session.model';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
-import { throwIfFalse } from '../../shared/lib/custom-ops';
 
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
-const BRANCH = 'main';
+const BRANCH = 'test';
 const UNABLE_TO_OPEN_IN_BROWSER = 'Unable to open this issue in Browser';
 const BRANCH_CREATION_FAILED = `Unable to create ${BRANCH} branch.`;
 function getSettingsUrl(org: string, repoName: string): string {
