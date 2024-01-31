@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { uuid } from '../../shared/lib/uuid';
-import { GithubService } from './github.service';
 import { ERRORCODE_NOT_FOUND } from './error-handling.service';
+import { GithubService } from './github.service';
 
 const SUPPORTED_VIDEO_FILE_TYPES = ['mp4', 'mov'];
 export const SUPPORTED_FILE_TYPES = [
