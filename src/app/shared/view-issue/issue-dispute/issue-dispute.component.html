@@ -9,10 +9,10 @@
       <div class="container" *ngFor="let dispute of issue.issueDisputes; index as i; trackBy: trackDisputeList">
         <div style="display: flex; align-items: center">
           <div class="question-mark">?</div>
-          <markdown [data]="this.getItemTitleText(dispute.title)"></markdown>
+          <markdown [data]="this.getItemTitleText(dispute.title)" disableInternalLink></markdown>
         </div>
         <br />
-        <markdown [data]="dispute.description"></markdown>
+        <markdown [data]="dispute.description" disableInternalLink></markdown>
         <br />
         <div>
           <mat-checkbox
@@ -27,7 +27,7 @@
         <br />
         <div>
           <markdown data="### Tutor's Response: "></markdown>
-          <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing"></markdown>
+          <markdown [data]="dispute.tutorResponse" *ngIf="!isEditing" disableInternalLink></markdown>
         </div>
         <div *ngIf="isEditing">
           <app-comment-editor
