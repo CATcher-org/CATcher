@@ -6,7 +6,7 @@
       <button style="float: right" mat-button *ngIf="canEditIssue() && !isEditing" (click)="changeToEditMode()">Edit</button>
     </div>
     <div *ngIf="!isEditing" class="comment">
-      <markdown [data]="issue.teamResponse"></markdown>
+      <markdown [data]="issue.teamResponse" disableInternalLink></markdown>
     </div>
     <div *ngIf="isEditing">
       <app-comment-editor
