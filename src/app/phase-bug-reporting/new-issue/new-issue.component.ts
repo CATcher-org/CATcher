@@ -6,6 +6,7 @@ import { Issue } from '../../core/models/issue.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LabelService } from '../../core/services/label.service';
+import { noWhitespace } from '../../core/validators/noWhitespace.validator';
 import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component';
 
 @Component({
@@ -28,7 +29,7 @@ export class NewIssueComponent implements OnInit {
 
   ngOnInit() {
     this.newIssueForm = this.formBuilder.group({
-      title: ['', [Validators.required, Validators.maxLength(256)]],
+      title: ['', [Validators.required, Validators.maxLength(256), noWhitespace()]],
       description: [''],
       severity: ['', Validators.required],
       type: ['', Validators.required]
@@ -41,6 +42,7 @@ export class NewIssueComponent implements OnInit {
     if (this.newIssueForm.invalid) {
       return;
     }
+
     this.isFormPending = true;
     this.issueService
       .createIssue(this.title.value, Issue.updateDescription(this.description.value), this.severity.value, this.type.value)
