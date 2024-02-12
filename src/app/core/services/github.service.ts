@@ -16,6 +16,7 @@ import {
   FetchLabelsQuery
 } from '../../../../graphql/graphql-types';
 import { AppConfig } from '../../../environments/environment';
+import { throwIfFalse } from '../../shared/lib/custom-ops';
 import { getNumberOfPages } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { GithubUser } from '../models/github-user.model';
@@ -35,7 +36,9 @@ import { LoggingService } from './logging.service';
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
+const BRANCH = 'main';
 const UNABLE_TO_OPEN_IN_BROWSER = 'Unable to open this issue in Browser';
+const BRANCH_CREATION_FAILED = `Unable to create ${BRANCH} branch.`;
 function getSettingsUrl(org: string, repoName: string): string {
   return `https://raw.githubusercontent.com/${org}/${repoName}/master/settings.json`;
 }
@@ -202,6 +205,84 @@ export class GithubService {
   }
 
   /**
+   * Creates the `main` branch for the current repository.
+   */
+  createBranch() {
+    return this.getDefaultBranch().pipe(
+      mergeMap((res) => this.getBranchHeadInfo(res)),
+      map((res) => res.data.object.sha),
+      mergeMap((sha: string) => this.createBranchFromCommit(sha)),
+      mergeMap(() => this.isMainBranchPresent()),
+      throwIfFalse(
+        (isBranchPresent: boolean) => isBranchPresent,
+        () => new Error(BRANCH_CREATION_FAILED)
+      )
+    );
+  }
+
+  /**
+   * Creates the `main` branch for the current repository,
+   * from the commit with the given SHA.
+   */
+  createBranchFromCommit(commitSha: string) {
+    return from(
+      octokit.git.createRef({
+        owner: ORG_NAME,
+        repo: REPO,
+        ref: `refs/heads/${BRANCH}`,
+        sha: commitSha
+      })
+    );
+  }
+
+  /**
+   * Get the default branch of the specified repository.
+   * @param owner The owner of the repository.
+   * @param repo The name of the repository.
+   */
+  getDefaultBranch(): Observable<string> {
+    return from(
+      octokit.repos.get({
+        owner: ORG_NAME,
+        repo: REPO
+      })
+    ).pipe(map((res: any) => res.data.default_branch));
+  }
+
+  /**
+   * Get information of the head of the given branch name,
+   * in the current repository.
+   * @param branch The name of the branch.
+   */
+  getBranchHeadInfo(branch: string): Observable<any> {
+    return from(
+      octokit.git.getRef({
+        owner: ORG_NAME,
+        repo: REPO,
+        ref: `heads/${branch}`
+      })
+    );
+  }
+
+  /**
+   * Checks if the repo already has the branch `main`.
+   */
+  isMainBranchPresent(): Observable<boolean> {
+    return from(
+      octokit.git.getRef({
+        owner: ORG_NAME,
+        repo: REPO,
+        ref: `heads/${BRANCH}`
+      })
+    ).pipe(
+      map((res: any) => res.status !== ERRORCODE_NOT_FOUND),
+      catchError(() => {
+        return of(false);
+      })
+    );
+  }
+
+  /**
    * Fetches information about an issue using GraphQL.
    *
    * If the issue is not modified, return a `304 - Not Modified` response.
@@ -360,6 +441,7 @@ export class GithubService {
       octokit.repos.createOrUpdateFile({
         owner: ORG_NAME,
         repo: REPO,
+        branch: BRANCH,
         path: `files/${filename}`,
         message: 'upload file',
         content: base64String
