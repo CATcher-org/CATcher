@@ -44,6 +44,10 @@ export class LabelDropdownComponent implements OnInit {
     return this.labelService.getLabelDefinition(label.labelValue, label.labelCategory) !== null;
   }
 
+  getPlainLabelDefinition(value: Label): string {
+    return this.labelService.getPlainLabelDefinition(value.labelValue, value.labelCategory) || '';
+  }
+
   get dropdownTextColor(): string {
     return this.labelService.isDarkColor(this.selectedColor) ? WHITE_TEXT_CLASS : BLACK_TEXT_CLASS;
   }
