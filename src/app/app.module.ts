@@ -36,6 +36,7 @@ import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/l
 import { HeaderComponent } from './shared/layout';
 import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';
+import { IssueTableSettingsService } from './core/services/issue-table-settings.service';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, UserConfirmationComponent, LabelDefinitionPopupComponent, SessionFixConfirmationComponent],
@@ -76,6 +77,9 @@ import { SharedModule } from './shared/shared.module';
     {
       provide: ErrorHandler,
       useClass: ErrorHandlingService
+    },
+    {
+      provide: IssueTableSettingsService
     }
   ],
   bootstrap: [AppComponent]

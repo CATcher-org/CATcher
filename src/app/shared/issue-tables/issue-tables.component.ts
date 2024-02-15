@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { DialogService } from '../../core/services/dialog.service';
@@ -15,6 +15,7 @@ import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { UndoActionComponent } from '../../shared/action-toasters/undo-action/undo-action.component';
 import { IssuesDataTable } from './IssuesDataTable';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -57,6 +58,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     public labelService: LabelService,
     private githubService: GithubService,
     public issueService: IssueService,
+    public issueTableSettingsService: IssueTableSettingsService,
     private phaseService: PhaseService,
     private errorHandlingService: ErrorHandlingService,
     private logger: LoggingService,
@@ -73,6 +75,16 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.issues.loadIssues();
     });
+  }
+
+  sortChange(newSort: Sort) {
+    this.issueTableSettingsService.sortActiveId = newSort.active;
+    this.issueTableSettingsService.sortDirection = newSort.direction;
+  }
+
+  pageChange(pageEvent: PageEvent) {
+    this.issueTableSettingsService.pageSize = pageEvent.pageSize;
+    this.issueTableSettingsService.pageIndex = pageEvent.pageIndex;
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {
