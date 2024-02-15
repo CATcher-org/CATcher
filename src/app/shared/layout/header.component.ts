@@ -14,6 +14,7 @@ import { IssueService } from '../../core/services/issue.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { PhaseDescription, PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 
 const ISSUE_TRACKER_URL = 'https://github.com/CATcher-org/CATcher/issues';
 
@@ -45,7 +46,8 @@ export class HeaderComponent implements OnInit {
     private issueService: IssueService,
     private errorHandlingService: ErrorHandlingService,
     private githubService: GithubService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private issueTableSettingsService: IssueTableSettingsService
   ) {
     router.events
       .pipe(
@@ -80,6 +82,9 @@ export class HeaderComponent implements OnInit {
     this.githubService.reset();
     this.issueService.reset(false);
     this.reload();
+
+    // Reset Issue Table Settings
+    this.issueTableSettingsService.clearTableSettings();
 
     // Route app to new phase.
     this.router.navigateByUrl(this.phaseService.currentPhase);

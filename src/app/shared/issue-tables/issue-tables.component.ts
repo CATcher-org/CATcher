@@ -16,6 +16,7 @@ import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { UndoActionComponent } from '../../shared/action-toasters/undo-action/undo-action.component';
 import { IssuesDataTable } from './IssuesDataTable';
+import { TableSettings } from '../../core/models/table-settings.model';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -45,6 +46,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
 
+  public tableSettings: TableSettings;
+
   public readonly action_buttons = ACTION_BUTTONS;
 
   // Messages for the modal popup window upon deleting an issue
@@ -69,6 +72,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
+    this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
 
   ngAfterViewInit(): void {
@@ -78,13 +82,15 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   sortChange(newSort: Sort) {
-    this.issueTableSettingsService.sortActiveId = newSort.active;
-    this.issueTableSettingsService.sortDirection = newSort.direction;
+    this.tableSettings.sortActiveId = newSort.active;
+    this.tableSettings.sortDirection = newSort.direction;
+    this.issueTableSettingsService.setTableSettings(this.table_name, this.tableSettings);
   }
 
   pageChange(pageEvent: PageEvent) {
-    this.issueTableSettingsService.pageSize = pageEvent.pageSize;
-    this.issueTableSettingsService.pageIndex = pageEvent.pageIndex;
+    this.tableSettings.pageSize = pageEvent.pageSize;
+    this.tableSettings.pageIndex = pageEvent.pageIndex;
+    this.issueTableSettingsService.setTableSettings(this.table_name, this.tableSettings);
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {

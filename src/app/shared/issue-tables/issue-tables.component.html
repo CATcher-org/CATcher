@@ -1,8 +1,8 @@
 <mat-table
   [dataSource]="this.issues"
   matSort
-  [matSortActive]="this.issueTableSettingsService.sortActiveId"
-  [matSortDirection]="this.issueTableSettingsService.sortDirection"
+  [matSortActive]="this.tableSettings.sortActiveId"
+  [matSortDirection]="this.tableSettings.sortDirection"
   (matSortChange)="this.sortChange($event)"
   class="mat-elevation-z8"
 >
@@ -271,8 +271,8 @@
 </mat-card>
 <mat-paginator
   [paginatorLocalStorage]="this.table_name"
-  [pageSize]="this.issueTableSettingsService.pageSize"
+  [pageSize]="this.tableSettings.pageSize"
   [pageSizeOptions]="[10, 20, 50]"
-  [pageIndex]="this.issueTableSettingsService.pageIndex"
+  [pageIndex]="this.tableSettings.pageIndex"
   (page)="this.pageChange($event)"
 ></mat-paginator>

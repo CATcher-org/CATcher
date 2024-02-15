@@ -77,9 +77,6 @@ import { SharedModule } from './shared/shared.module';
     {
       provide: ErrorHandler,
       useClass: ErrorHandlingService
-    },
-    {
-      provide: IssueTableSettingsService
     }
   ],
   bootstrap: [AppComponent]
