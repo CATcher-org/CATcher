@@ -10,11 +10,11 @@ import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
 import { GithubEventService } from '../../core/services/githubevent.service';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { PhaseDescription, PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
-import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 
 const ISSUE_TRACKER_URL = 'https://github.com/CATcher-org/CATcher/issues';
 
