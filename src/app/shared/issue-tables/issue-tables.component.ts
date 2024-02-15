@@ -7,6 +7,7 @@ import { Issue, STATUS } from '../../core/models/issue.model';
 import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LabelService } from '../../core/services/label.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -15,7 +16,6 @@ import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { UndoActionComponent } from '../../shared/action-toasters/undo-action/undo-action.component';
 import { IssuesDataTable } from './IssuesDataTable';
-import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,

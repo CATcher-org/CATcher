@@ -23,6 +23,7 @@ import { GithubServiceFactory } from './core/services/factories/factory.github.s
 import { IssueServiceFactory } from './core/services/factories/factory.issue.service';
 import { GithubService } from './core/services/github.service';
 import { GithubEventService } from './core/services/githubevent.service';
+import { IssueTableSettingsService } from './core/services/issue-table-settings.service';
 import { IssueService } from './core/services/issue.service';
 import { LoggingService } from './core/services/logging.service';
 import { PhaseService } from './core/services/phase.service';
@@ -36,7 +37,6 @@ import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/l
 import { HeaderComponent } from './shared/layout';
 import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';
-import { IssueTableSettingsService } from './core/services/issue-table-settings.service';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, UserConfirmationComponent, LabelDefinitionPopupComponent, SessionFixConfirmationComponent],
