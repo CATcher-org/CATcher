@@ -9,9 +9,10 @@ import { TableSettings } from '../models/table-settings.model';
  * Map is required since there can be multiple tables within the same page
  */
 export class IssueTableSettingsService {
-  private _tableSettingsMap = {};
+  private _tableSettingsMap: { [index: string]: TableSettings } = {};
 
   public getTableSettings(tableName: string) {
+    console.log(this._tableSettingsMap);
     return this._tableSettingsMap[tableName] || new TableSettings();
   }
 
