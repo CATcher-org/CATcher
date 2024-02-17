@@ -11,16 +11,16 @@ import { TableSettings } from '../models/table-settings.model';
 export class IssueTableSettingsService {
   private _tableSettingsMap: { [index: string]: TableSettings } = {};
 
-  public getTableSettings(tableName: string) {
+  public getTableSettings(tableName: string): TableSettings {
     console.log(this._tableSettingsMap);
     return this._tableSettingsMap[tableName] || new TableSettings();
   }
 
-  public setTableSettings(tableName: string, tableSettings: TableSettings) {
+  public setTableSettings(tableName: string, tableSettings: TableSettings): void {
     this._tableSettingsMap[tableName] = tableSettings;
   }
 
-  public clearTableSettings() {
+  public clearTableSettings(): void {
     this._tableSettingsMap = {};
   }
 }
