@@ -52,7 +52,6 @@
     "moment": "^2.24.0",
     "ngx-markdown": "^12.0.1",
     "ngx-mat-select-search": "^3.3.3",
-    "node-fetch": "^2.6.8",
     "rxjs": "6.6.7",
     "tslib": "^2.0.0",
     "uuid": "7.0.3",
