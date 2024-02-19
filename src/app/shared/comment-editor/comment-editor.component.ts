@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
-import * as DOMPurify from 'dompurify';
 import { UndoRedo } from '../../core/models/undoredo.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -133,11 +132,6 @@ export class CommentEditorComponent implements OnInit {
   // Prevent cursor in textarea from moving when file is dragged over it.
   disableCaretMovement(event) {
     event.preventDefault();
-  }
-
-  // Sanitize markdown
-  sanitize(commentFieldValue) {
-    return DOMPurify.sanitize(commentFieldValue);
   }
 
   // To enable file drop in non-input elements, the dragOver event must be cancelled.
