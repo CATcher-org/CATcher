@@ -12,7 +12,6 @@ export class IssueTableSettingsService {
   private _tableSettingsMap: { [index: string]: TableSettings } = {};
 
   public getTableSettings(tableName: string): TableSettings {
-    console.log(this._tableSettingsMap);
     return this._tableSettingsMap[tableName] || new TableSettings();
   }
 
