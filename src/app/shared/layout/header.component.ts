@@ -10,6 +10,7 @@ import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
 import { GithubEventService } from '../../core/services/githubevent.service';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { PhaseDescription, PhaseService } from '../../core/services/phase.service';
@@ -45,7 +46,8 @@ export class HeaderComponent implements OnInit {
     private issueService: IssueService,
     private errorHandlingService: ErrorHandlingService,
     private githubService: GithubService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private issueTableSettingsService: IssueTableSettingsService
   ) {
     router.events
       .pipe(
@@ -80,6 +82,9 @@ export class HeaderComponent implements OnInit {
     this.githubService.reset();
     this.issueService.reset(false);
     this.reload();
+
+    // Reset Issue Table Settings
+    this.issueTableSettingsService.clearTableSettings();
 
     // Route app to new phase.
     this.router.navigateByUrl(this.phaseService.currentPhase);
