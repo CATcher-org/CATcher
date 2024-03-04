@@ -56,9 +56,15 @@ export class IssuesRespondedComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.filter = (issue: Issue) => {
-      const isDuplicateIssue = (issue) => !!issue.duplicateOf;
-      const issueIsDone = (issue: Issue) => issue.status === STATUS.Done;
-      const hasTeamResponse = (issue: Issue) => this.issueService.hasTeamResponse(issue.id);
+      const isDuplicateIssue = (issue) => {
+        return !!issue.duplicateOf;
+      };
+      const issueIsDone = (issue: Issue) => {
+        return issue.status === STATUS.Done;
+      };
+      const hasTeamResponse = (issue: Issue) => {
+        return this.issueService.hasTeamResponse(issue.id);
+      };
       return hasTeamResponse(issue) && !isDuplicateIssue(issue) && issueIsDone(issue);
     };
   }

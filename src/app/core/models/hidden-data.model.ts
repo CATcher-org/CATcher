@@ -17,7 +17,9 @@ export class HiddenData {
     for (const match of matches) {
       let info = match.replace('<!--', '').trim();
       info = info.replace('-->', '').trim();
-      const keyValuePair = info.split(':').map((v) => v.trim());
+      const keyValuePair = info.split(':').map((v) => {
+        return v.trim();
+      });
       if (keyValuePair.length !== 2) {
         this.originalStringWithoutHiddenData += `\n${match}`;
         continue;

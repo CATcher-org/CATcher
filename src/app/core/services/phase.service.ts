@@ -63,7 +63,11 @@ export class PhaseService {
   }
 
   fetchSessionData(): Observable<SessionData> {
-    return this.githubService.fetchSettingsFile().pipe(map((data) => data as SessionData));
+    return this.githubService.fetchSettingsFile().pipe(
+      map((data) => {
+        return data as SessionData;
+      })
+    );
   }
 
   /**
@@ -145,8 +149,12 @@ export class PhaseService {
       this.repoCreatorService.attemptRepoCreation(this.sessionData[this.currentPhase]),
       this.repoCreatorService.verifyRepoCreation(this.getPhaseOwner(this.currentPhase), this.sessionData[this.currentPhase]),
       throwIfFalse(
-        (isSessionCreated: boolean) => isSessionCreated,
-        () => new Error(SESSION_AVALIABILITY_FIX_FAILED)
+        (isSessionCreated: boolean) => {
+          return isSessionCreated;
+        },
+        () => {
+          return new Error(SESSION_AVALIABILITY_FIX_FAILED);
+        }
       ),
       this.labelService.syncLabels(this.isTeamOrModerationPhase()),
       retry(1) // Retry once, to handle edge case where GitHub API cannot immediately confirm existence of the newly created repo.

@@ -20,10 +20,12 @@ export class GithubGraphqlIssue extends GithubIssue {
       },
       assignees: flattenEdges(issue.assignees.edges),
       labels: flattenEdges(issue.labels.edges),
-      comments: flattenEdges(issue.comments.edges, (node) => ({
-        ...node,
-        id: node.databaseId
-      }))
+      comments: flattenEdges(issue.comments.edges, (node) => {
+        return {
+          ...node,
+          id: node.databaseId
+        };
+      })
     });
   }
 }

@@ -16,8 +16,12 @@ export class ProfileService {
   public fetchExternalProfiles(): Promise<Profile[]> {
     return this.githubService
       .getProfilesData()
-      .then((res) => res.json())
-      .then((json) => json.profiles || [])
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+        return json.profiles || [];
+      })
       .then((profiles) => {
         this.validateProfiles(profiles);
         return profiles;

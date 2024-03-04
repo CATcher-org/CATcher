@@ -42,7 +42,9 @@ export class MockIssueService {
         this.isLoading.next(true);
       }
 
-      this.issuesPollSubscription = of(this.reloadAllIssues()).subscribe((result) => this.isLoading.next(false));
+      this.issuesPollSubscription = of(this.reloadAllIssues()).subscribe((result) => {
+        return this.isLoading.next(false);
+      });
     }
   }
 
@@ -88,9 +90,11 @@ export class MockIssueService {
     const labelsArray = [this.createLabel('severity', severity), this.createLabel('type', type)];
     const hiddenData = new Map([['session', this.sessionId]]);
     const issueDescription = HiddenData.embedDataIntoString(description, hiddenData);
-    return this.githubService
-      .createIssue(title, issueDescription, labelsArray)
-      .pipe(map((response: GithubIssue) => this.createIssueModel(response)));
+    return this.githubService.createIssue(title, issueDescription, labelsArray).pipe(
+      map((response: GithubIssue) => {
+        return this.createIssueModel(response);
+      })
+    );
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
@@ -108,7 +112,12 @@ export class MockIssueService {
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
       mergeMap((updatedComment: GithubComment) => {
-        issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
+        issue.githubComments = [
+          updatedComment,
+          ...issue.githubComments.filter((c) => {
+            return c.id !== updatedComment.id;
+          })
+        ];
         return this.updateIssue(issue);
       })
     );
@@ -146,7 +155,12 @@ export class MockIssueService {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
       mergeMap((githubComment: GithubComment) => {
-        issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
+        issue.githubComments = [
+          githubComment,
+          ...issue.githubComments.filter((c) => {
+            return c.id !== githubComment.id;
+          })
+        ];
         return this.updateIssue(issue);
       })
     );

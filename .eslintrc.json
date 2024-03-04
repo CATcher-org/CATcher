@@ -1,8 +1,10 @@
 {
   "root": true,
   "ignorePatterns": ["projects/**/*"],
+  "plugins": ["deprecation"],
   "overrides": [
     {
+      "parser": "@typescript-eslint/parser",
       "files": ["*.ts"],
       "parserOptions": {
         "project": ["tsconfig.json", "e2e/tsconfig.json"],
@@ -10,21 +12,17 @@
       },
       "extends": ["plugin:@angular-eslint/recommended", "plugin:@angular-eslint/template/process-inline-templates"],
       "rules": {
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "prefix": "app",
-            "style": "kebab-case",
-            "type": "element"
-          }
-        ],
-        "@angular-eslint/directive-selector": [
-          "error",
-          {
-            "style": "camelCase",
-            "type": "attribute"
-          }
-        ],
+        "arrow-body-style": ["error", "always"],
+        "@typescript-eslint/prefer-function-type": "error",
+        "@typescript-eslint/naming-convention": ["error", { "selector": "class", "format": ["PascalCase"] }],
+        "spaced-comment": ["error", "always"],
+        "curly": ["error", "all"],
+        "deprecation/deprecation": "warn",
+        "eol-last": ["error", "always"],
+        "guard-for-in": "error",
+        "no-restricted-imports": ["error", "rxjs/Rx"],
+        "indent": "off",
+        "@typescript-eslint/indent": ["error", 2],
         "@angular-eslint/no-empty-lifecycle-method": "off"
       }
     },
