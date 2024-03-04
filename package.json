@@ -47,7 +47,6 @@
     "arcsecond": "^4.1.0",
     "core-js": "^3.16.4",
     "diff-match-patch": "^1.0.4",
-    "dompurify": "^2.3.1",
     "graphql": "^15.0.0",
     "karma-spec-reporter": "0.0.32",
     "moment": "^2.24.0",
