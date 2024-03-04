@@ -1,12 +1,14 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
+import { TableSettings } from '../../core/models/table-settings.model';
 import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LabelService } from '../../core/services/label.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -44,6 +46,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
 
+  public tableSettings: TableSettings;
+
   public readonly action_buttons = ACTION_BUTTONS;
 
   // Messages for the modal popup window upon deleting an issue
@@ -57,6 +61,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     public labelService: LabelService,
     private githubService: GithubService,
     public issueService: IssueService,
+    public issueTableSettingsService: IssueTableSettingsService,
     private phaseService: PhaseService,
     private errorHandlingService: ErrorHandlingService,
     private logger: LoggingService,
@@ -67,12 +72,25 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
+    this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.issues.loadIssues();
     });
+  }
+
+  sortChange(newSort: Sort) {
+    this.tableSettings.sortActiveId = newSort.active;
+    this.tableSettings.sortDirection = newSort.direction;
+    this.issueTableSettingsService.setTableSettings(this.table_name, this.tableSettings);
+  }
+
+  pageChange(pageEvent: PageEvent) {
+    this.tableSettings.pageSize = pageEvent.pageSize;
+    this.tableSettings.pageIndex = pageEvent.pageIndex;
+    this.issueTableSettingsService.setTableSettings(this.table_name, this.tableSettings);
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {
