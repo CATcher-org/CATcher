@@ -5,7 +5,7 @@ export function paginateData(paginator: MatPaginator, data: Issue[]): Issue[] {
   paginator.length = data.length;
   let result = getDataForPage(paginator.pageIndex, paginator.pageSize, data);
   if (result.length === 0) {
-    paginator.pageIndex -= 1;
+    paginator.pageIndex = paginator.pageIndex - 1;
     result = getDataForPage(paginator.pageIndex, paginator.pageSize, data);
   }
   return result;
