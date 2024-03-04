@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
-import { ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, Renderer2, ViewContainerRef } from '@angular/core';
+import { ComponentRef, ElementRef, Injector, Renderer2, ViewContainerRef } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
-import { MatSpinner } from '@angular/material/progress-spinner';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { LoadingService } from '../../src/app/core/services/loading.service';
 import { MockMatSpinner } from '../helper/mock.mat.spinner';
 import { MockViewContainerRef } from '../helper/mock.view.container.ref';
@@ -11,11 +11,9 @@ describe('LoadingService', () => {
   let mockRenderer: jasmine.SpyObj<Renderer2>;
   let mockComponentInjector: jasmine.SpyObj<Injector>;
   let elementRef: ElementRef;
-  let mockComponentRef: ComponentRef<MatSpinner>;
+  let mockComponentRef: ComponentRef<MatProgressSpinner>;
   let mockInjector: jasmine.SpyObj<Injector>;
   let loadingService: LoadingService;
-  let mockComponentFactory: jasmine.SpyObj<ComponentFactory<MatSpinner>>;
-  let mockComponentFactoryResolver: jasmine.SpyObj<ComponentFactoryResolver>;
   let mockViewContainerRef: MockViewContainerRef;
   let document: Document;
 
@@ -58,27 +56,21 @@ describe('LoadingService', () => {
       injector: mockComponentInjector,
       onDestroy: null as any,
       destroy: () => {},
-      componentType: MatSpinner
-    } as unknown) as ComponentRef<MatSpinner>;
+      componentType: MatProgressSpinner
+    } as unknown) as ComponentRef<MatProgressSpinner>;
 
-    mockComponentFactory = jasmine.createSpyObj<ComponentFactory<MatSpinner>>({
-      create: mockComponentRef
-    });
-
-    mockComponentFactoryResolver = jasmine.createSpyObj<ComponentFactoryResolver>({
-      resolveComponentFactory: mockComponentFactory
-    });
     mockInjector = jasmine.createSpyObj('Injector', {
       get: mockRenderer
     });
 
     mockViewContainerRef = new MockViewContainerRef(mockInjector);
+    spyOn(mockViewContainerRef, 'createComponent').and.returnValue(mockComponentRef);
 
     await TestBed.configureTestingModule({
       providers: [
-        { provide: ComponentFactoryResolver, useValue: mockComponentFactoryResolver },
+        { provide: ViewContainerRef, useValue: mockViewContainerRef },
         { provide: Injector, useValue: mockInjector },
-        { provide: MatSpinner, useClass: MockMatSpinner },
+        { provide: MatProgressSpinner, useClass: MockMatSpinner },
         LoadingService
       ]
     }).compileComponents();
