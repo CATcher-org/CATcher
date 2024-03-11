@@ -70,7 +70,7 @@ export class DataService {
    */
   private constructData(allCsvDataWrapper: {}): TabulatedUserData {
     const jsonData: TabulatedUserData = {};
-    const allCsvData: string = allCsvDataWrapper['data'];
+    const allCsvData: string = allCsvDataWrapper.data;
 
     jsonData[DataService.ROLES] = this.parseRolesData(allCsvData);
     jsonData[DataService.TEAM_STRUCTURE] = this.parseTeamStructureData(allCsvData);

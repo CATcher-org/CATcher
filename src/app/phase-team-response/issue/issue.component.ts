@@ -29,7 +29,7 @@ export class IssueComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
-      this.issueId = +params['issue_id'];
+      this.issueId = +params.issue_id;
     });
   }
 

@@ -81,7 +81,7 @@ export class DescriptionComponent implements OnInit {
   changeToEditMode() {
     this.changeEditState.emit(true);
     this.issueDescriptionForm.setValue({
-      description: this.issue['description'] || ''
+      description: this.issue.description || ''
     });
   }
 
