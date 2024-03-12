@@ -161,6 +161,13 @@ export class PhaseService {
     return this.orgName.concat('/').concat(this.repoName);
   }
 
+  /**
+   * Checks whether the given route is allowed in this phase.
+   */
+  isValidRoute(route: string): boolean {
+    return route.startsWith('/' + this.currentPhase);
+  }
+
   reset() {
     this.currentPhase = null;
   }
