@@ -60,14 +60,6 @@ export class AuthService {
   }
 
   /**
-   * Checks if there is a next route to be redirected to after login,
-   * by checking the session storage.
-   */
-  private hasNext(): boolean {
-    return sessionStorage.getItem(AuthService.SESSION_NEXT_KEY) !== null;
-  }
-
-  /**
    * Returns the next route
    */
   private getNext(): string {
