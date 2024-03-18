@@ -1,9 +1,10 @@
 /* SystemJS module definition */
-declare var nodeModule: NodeModule;
+declare let nodeModule: NodeModule;
 interface NodeModule {
   id: string;
 }
 
+// eslint-disable-next-line no-var
 declare var window: Window & typeof globalThis;
 interface Window {
   process: any;

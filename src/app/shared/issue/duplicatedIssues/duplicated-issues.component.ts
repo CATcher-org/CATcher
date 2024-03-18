@@ -31,8 +31,12 @@ export class DuplicatedIssuesComponent implements OnInit {
   removeDuplicateStatus(duplicatedIssue: Issue) {
     const latestIssue = this.getUpdatedIssueWithRemovedDuplicate(duplicatedIssue);
     this.issueService.updateIssueWithComment(latestIssue, latestIssue.issueComment).subscribe(
-      (issue) => this.issueService.updateLocalStore(issue),
-      (error) => this.errorHandlingService.handleError(error)
+      (issue) => {
+        return this.issueService.updateLocalStore(issue);
+      },
+      (error) => {
+        return this.errorHandlingService.handleError(error);
+      }
     );
   }
 

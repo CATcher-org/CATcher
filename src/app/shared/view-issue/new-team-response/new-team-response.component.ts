@@ -54,14 +54,22 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
     });
     this.duplicatedIssueList = this.getDupIssueList();
     // Populate the filtered list with all the issues first
-    this.duplicatedIssueList.pipe(first()).subscribe((issues) => this.filteredDuplicateIssueList.next(issues));
-    this.searchFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe((_) => this.filterIssues());
+    this.duplicatedIssueList.pipe(first()).subscribe((issues) => {
+      return this.filteredDuplicateIssueList.next(issues);
+    });
+    this.searchFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe((_) => {
+      return this.filterIssues();
+    });
     this.newTeamResponseForm = this.formBuilder.group({
       description: [''],
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
       response: [this.issue.response, Validators.required],
-      assignees: [this.issue.assignees.map((a) => a.toLowerCase())],
+      assignees: [
+        this.issue.assignees.map((a) => {
+          return a.toLowerCase();
+        })
+      ],
       duplicated: [false],
       duplicateOf: ['']
     });
@@ -80,9 +88,9 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   }
 
   private filterIssues(): void {
-    this.changeFilter(this.duplicatedIssueList, this.searchFilterCtrl.value).subscribe((issues) =>
-      this.filteredDuplicateIssueList.next(issues)
-    );
+    this.changeFilter(this.duplicatedIssueList, this.searchFilterCtrl.value).subscribe((issues) => {
+      return this.filteredDuplicateIssueList.next(issues);
+    });
   }
 
   private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
@@ -125,7 +133,9 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
             return throwError('A response has been submitted. Please verify the changes and try again.');
           }
         }),
-        finalize(() => (this.isFormPending = false))
+        finalize(() => {
+          return (this.isFormPending = false);
+        })
       )
       .subscribe(
         (updatedIssue: Issue) => {

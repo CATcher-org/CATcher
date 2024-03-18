@@ -126,7 +126,9 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
         this.issue = issue;
         this.pollIssue(id);
       },
-      (err) => this.errorHandlingService.handleError(err)
+      (err) => {
+        return this.errorHandlingService.handleError(err);
+      }
     );
   }
 
@@ -150,7 +152,9 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
         this.isIssueLoading = false;
       },
       (error) => {
-        this.errorHandlingService.handleError(error, () => this.pollIssue(id));
+        this.errorHandlingService.handleError(error, () => {
+          return this.pollIssue(id);
+        });
       }
     );
   }

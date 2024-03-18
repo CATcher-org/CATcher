@@ -75,7 +75,9 @@ export class IssueDisputeComponent implements OnInit, OnChanges {
             return throwError('The content you are editing has changed. Please verify the changes and try again.');
           }
         }),
-        finalize(() => (this.isFormPending = false))
+        finalize(() => {
+          return (this.isFormPending = false);
+        })
       )
       .subscribe(
         (issue: Issue) => {

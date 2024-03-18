@@ -149,8 +149,12 @@ export class DescriptionComponent implements OnInit {
     const isModified = this.dialogService.checkIfFieldIsModified(this.issueDescriptionForm, 'description', 'description', this.issue);
     this.dialogService.performActionIfModified(
       isModified,
-      () => this.openCancelDialog(),
-      () => this.cancelEditMode()
+      () => {
+        return this.openCancelDialog();
+      },
+      () => {
+        return this.cancelEditMode();
+      }
     );
   }
 
