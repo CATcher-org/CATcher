@@ -50,7 +50,23 @@
         "no-trailing-spaces": "error",
         "no-undef-init": "error",
         "no-var": "error",
-        "sort-keys": "off"
+        "sort-keys": "off",
+        "brace-style": "error",
+        "radix": "error",
+        "semi": "error",
+        "eqeqeq": ["error", "always", { "null": "ignore" }],
+        "@typescript-eslint/type-annotation-spacing": "error",
+        "@typescript-eslint/unified-signatures": "error",
+        "@angular-eslint/directive-class-suffix": "error",
+        "@angular-eslint/component-class-suffix": "error",
+        "@angular-eslint/use-pipe-transform-interface": "error",
+        "@angular-eslint/no-output-rename": "error",
+        "@angular-eslint/no-input-rename": "error",
+        "@angular-eslint/no-host-metadata-property": "error",
+        "@angular-eslint/no-outputs-metadata-property": "error",
+        "@angular-eslint/no-inputs-metadata-property": "error",
+        "@angular-eslint/no-output-on-prefix": "error",
+        "@angular-eslint/component-selector": ["error", { "type": "element", "prefix": "app", "style": "kebab-case" }]
       }
     },
     {

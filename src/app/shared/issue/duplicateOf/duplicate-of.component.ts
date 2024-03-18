@@ -55,8 +55,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
   isTooltipNecessary(issue: Issue): boolean {
     // Maximum Possible Title length varies based on whether the issue
     // is a duplicate. (Whether the Duplicate Issue Tag is visible)
-    let maxTitleLength: number;
-    maxTitleLength = issue.duplicated ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
+    const maxTitleLength = issue.duplicated ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
 
     return issue.title.length > maxTitleLength;
   }
