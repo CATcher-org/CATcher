@@ -57,14 +57,25 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.filter = (issue: Issue): boolean => {
-      const hasTeamResponse = (issue: Issue) => this.issueService.hasTeamResponse(issue.id);
-      const isDuplicateIssue = (issue: Issue) => !!issue.duplicateOf;
-      const isDuplicatedBy = (issue: Issue) =>
-            !!this.issueService.issues$.getValue().filter(childIssue => childIssue.duplicateOf === issue.id).length;
+      const hasTeamResponse = (issue: Issue) => {
+        return this.issueService.hasTeamResponse(issue.id);
+      };
+      const isDuplicateIssue = (issue: Issue) => {
+        return !!issue.duplicateOf;
+      };
+      const isDuplicatedBy = (issue: Issue) => {
+        return !!this.issueService.issues$.getValue().filter((childIssue) => {
+          return childIssue.duplicateOf === issue.id;
+        }).length;
+      };
       const isTransitiveDuplicate = hasTeamResponse(issue) && isDuplicateIssue(issue) && isDuplicatedBy(issue);
 
-      const hasStatus = (issue: Issue) => !!issue.status;
-      const hasParseErrors = (issue: Issue) => !!issue.teamResponseError;
+      const hasStatus = (issue: Issue) => {
+        return !!issue.status;
+      };
+      const hasParseErrors = (issue: Issue) => {
+        return !!issue.teamResponseError;
+      };
       const hasWrongHeaders = hasStatus(issue) && hasParseErrors(issue);
 
       return isTransitiveDuplicate || hasWrongHeaders;

@@ -40,9 +40,9 @@ export class LoadingService implements OnDestroy {
   ) {
     this.spinnerFactory = this.componentFactoryResolver.resolveComponentFactory(MatSpinner);
     // Subscribe to changes
-    this.isLoading
-      .pipe(pairwise())
-      .subscribe(([previousIsLoading, currentIsLoading]) => this.onIsLoadingChange(previousIsLoading, currentIsLoading));
+    this.isLoading.pipe(pairwise()).subscribe(([previousIsLoading, currentIsLoading]) => {
+      return this.onIsLoadingChange(previousIsLoading, currentIsLoading);
+    });
   }
 
   ngOnDestroy(): void {

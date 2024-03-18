@@ -47,7 +47,11 @@ export class GithubEventService {
         if (eventResponse['created_at'] !== this.lastModified || eventResponse['issue']['updated_at'] !== this.lastModifiedComment) {
           this.setLastModifiedTime(eventResponse['created_at']);
           this.setLastModifiedCommentTime(eventResponse['issue']['updated_at']);
-          return this.issueService.reloadAllIssues().pipe(map((response: any[]) => true));
+          return this.issueService.reloadAllIssues().pipe(
+            map((response: any[]) => {
+              return true;
+            })
+          );
         }
         return of(false);
       })

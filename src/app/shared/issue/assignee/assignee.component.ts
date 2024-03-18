@@ -35,8 +35,12 @@ export class AssigneeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
-    this.assignees = this.issue.assignees.map((a) => a);
+    this.teamMembers = this.team.teamMembers.map((user) => {
+      return user.loginId;
+    });
+    this.assignees = this.issue.assignees.map((a) => {
+      return a;
+    });
   }
 
   openSelector() {

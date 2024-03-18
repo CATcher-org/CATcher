@@ -58,7 +58,9 @@ export class MockGithubService {
    * Creates a GithubIssue with the specified title / description / labels.
    */
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
-    const githubLabels: GithubLabel[] = labels.map((labelString) => new GithubLabel({ name: labelString }));
+    const githubLabels: GithubLabel[] = labels.map((labelString) => {
+      return new GithubLabel({ name: labelString });
+    });
 
     const githubIssueData = {
       number: this.numIssuesCreated, // Issue's display ID
@@ -148,7 +150,11 @@ export class MockGithubService {
       }
     ];
 
-    const mockResponse: Response = { json: () => Promise.resolve({ profiles: profiles }) } as Response;
+    const mockResponse: Response = {
+      json: () => {
+        return Promise.resolve({ profiles: profiles });
+      }
+    } as Response;
     return Promise.resolve(mockResponse);
   }
 

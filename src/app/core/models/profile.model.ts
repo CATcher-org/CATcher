@@ -16,8 +16,20 @@ export interface Profile {
  */
 
 const profileSchema: Schema = {
-  profileName: { required: true, validate: (value: string) => !!value },
-  repoName: { required: true, validate: (value: string) => !!value.match(/\w+\/\w+/g) } // match strings of the form : string/string
+  profileName: {
+    required: true,
+    validate: (value: string) => {
+      return !!value;
+    }
+  },
+  repoName: {
+    required: true,
+    validate: (value: string) => {
+      return !!value.match(/\w+\/\w+/g);
+    }
+  } // match strings of the form : string/string
 };
 
-export const isValidProfile = (profile: Profile) => isValidObject(profile, profileSchema);
+export const isValidProfile = (profile: Profile) => {
+  return isValidObject(profile, profileSchema);
+};

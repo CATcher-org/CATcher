@@ -211,12 +211,18 @@ export class DataService {
    * @return - Subjects that tracks the parsed data.
    */
   private parseUsersData(csvText: string): ParsedUserData[] {
-    const lines = csvText.split('\n').filter((v) => v.trim());
-    const headers = lines[0].split(',').map((h) => h.trim());
+    const lines = csvText.split('\n').filter((v) => {
+      return v.trim();
+    });
+    const headers = lines[0].split(',').map((h) => {
+      return h.trim();
+    });
     const result: ParsedUserData[] = [];
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
-      const lineValues = line.split(',').map((v) => v.trim());
+      const lineValues = line.split(',').map((v) => {
+        return v.trim();
+      });
       const lineObj: ParsedUserData = {};
       for (let j = 0; j < headers.length; j++) {
         if (!lineValues[j]) {
@@ -247,7 +253,9 @@ export class DataService {
 
     teamIds.forEach((teamId: string) => {
       const teamMemberIds = Object.values(jsonTeamStructure[teamId]);
-      const teamMembers: Array<User> = teamMemberIds.map((teamMemberId: string) => <User>{ loginId: teamMemberId, role: UserRole.Student });
+      const teamMembers: Array<User> = teamMemberIds.map((teamMemberId: string) => {
+        return <User>{ loginId: teamMemberId, role: UserRole.Student };
+      });
 
       teamStructure.set(teamId, new Team({ id: teamId, teamMembers: teamMembers }));
     });

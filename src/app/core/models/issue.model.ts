@@ -71,7 +71,11 @@ export class Issue {
 
     const newLinesRegex = /[\n\r]/gi;
     const textSplitArray = text.split(newLinesRegex);
-    if (textSplitArray.filter((split) => split.trim() !== '').length > 0) {
+    if (
+      textSplitArray.filter((split) => {
+        return split.trim() !== '';
+      }).length > 0
+    ) {
       return `${text}\n\n`;
     } else {
       return text;
@@ -134,7 +138,9 @@ export class Issue {
 
     issue.githubComments = githubIssue.comments;
     issue.teamAssigned = teamData;
-    issue.assignees = githubIssue.assignees.map((assignee) => assignee.login);
+    issue.assignees = githubIssue.assignees.map((assignee) => {
+      return assignee.login;
+    });
 
     issue.teamResponseError = template.parseFailure;
     issue.parseError = template.parseError;
@@ -299,7 +305,9 @@ export class Issue {
       return 0;
     }
 
-    return this.issueDisputes.reduce((prev, current) => prev + Number(!current.isDone()), 0);
+    return this.issueDisputes.reduce((prev, current) => {
+      return prev + Number(!current.isDone());
+    }, 0);
   }
 
   private getTesterResponsesString(testerResponses: TesterResponse[]): string {

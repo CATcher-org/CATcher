@@ -18,7 +18,9 @@ export class IssueAcceptedComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.filter = (issue: Issue) => issue.teamAccepted;
+    this.filter = (issue: Issue) => {
+      return issue.teamAccepted;
+    };
   }
 
   applyFilter(filterValue: string) {
