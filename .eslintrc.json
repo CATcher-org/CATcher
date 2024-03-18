@@ -22,7 +22,6 @@
         "guard-for-in": "error",
         "no-restricted-imports": ["error", "rxjs/Rx"],
         "indent": "off",
-        "@typescript-eslint/indent": ["error", 2],
         "@angular-eslint/no-empty-lifecycle-method": "off",
         "no-labels": ["error", { "allowLoop": true, "allowSwitch": true }],
         "max-len": ["error", { "code": 140 }],
