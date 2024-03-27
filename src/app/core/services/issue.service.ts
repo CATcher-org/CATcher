@@ -145,7 +145,31 @@ export class IssueService {
         }),
         catchError((err) => {
           this.logger.error('IssueService: ', err); // Log full details of error first
-          return throwError(err.response.data.message); // More readable error message
+
+          if (err.code !== 422 || !err.hasOwnProperty('message')) {
+            return throwError(err.response.data.message); // More readable error message
+          }
+
+          // Error code 422 implies that one of the fields are invalid
+          const validationFailedPrefix = 'Validation Failed:';
+          const message: string = err.message;
+          const errorJsonRaw = message.substring(validationFailedPrefix.length);
+          const errorJson = JSON.parse(errorJsonRaw);
+
+          const mandatoryFields = ['field', 'code', 'value'];
+          const hasMandatoryFields = mandatoryFields.every((field) => errorJson.hasOwnProperty(field));
+
+          if (hasMandatoryFields) {
+            if (errorJson['field'] === 'assignees' && errorJson['code'] === 'invalid') {
+              // If assignees are invalid, return a custom error
+              return throwError(
+                `Assignee ${errorJson['value']} has not joined your organization yet. Please remove them from the assignees list.`
+              );
+            }
+          }
+
+          // Generic 422 Validation Failed since it is not an assignees problem
+          return throwError(err.response.data.message);
         })
       );
   }
