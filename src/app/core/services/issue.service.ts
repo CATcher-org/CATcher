@@ -135,18 +135,12 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
-    const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
-    return this.githubService
-      .updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue), this.createLabelsForIssue(issue), assignees)
-      .pipe(
-        map((response: GithubIssue) => {
-          response.comments = issue.githubComments;
-          return this.createIssueModel(response);
-        }),
-        catchError((err) => {
-          return this.parseUpdateIssueResponseError(err);
-        })
-      );
+    return this.updateGithubIssue(issue).pipe(
+      map((githubIssue: GithubIssue) => {
+        githubIssue.comments = issue.githubComments;
+        return this.createIssueModel(githubIssue);
+      })
+    );
   }
 
   /**
@@ -155,7 +149,7 @@ export class IssueService {
    * @param issue current issue model
    * @returns GitHubIssue from the API request
    */
-  updateIssuePure(issue: Issue): Observable<GithubIssue> {
+  updateGithubIssue(issue: Issue): Observable<GithubIssue> {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService
       .updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue), this.createLabelsForIssue(issue), assignees)
@@ -206,7 +200,7 @@ export class IssueService {
   createTeamResponse(issue: Issue): Observable<Issue> {
     // The issue must be updated first to ensure that fields like assignees are valid
     const teamResponse = issue.createGithubTeamResponse();
-    return this.updateIssuePure(issue).pipe(
+    return this.updateGithubIssue(issue).pipe(
       mergeMap((response: GithubIssue) => {
         return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
           map((githubComment: GithubComment) => {
