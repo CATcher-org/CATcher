@@ -1,3 +1,33 @@
+/**
+ * A tester response section generally has this format (apart from the duplicate issue section)
+ *
+ * ## :question: Issue {type of verification}
+ *
+ * Team chose [{ team response }].
+ * Originally [{ tester response }].
+ *
+ * - [ ] I disagree
+ *
+ * **Reason for disagreement:**
+ * { disagreement reason }
+ *
+ * <catcher-end-of-segment><hr>
+ *
+ * A concrete example would be:
+ *
+ * ## :question: Issue severity
+ *
+ * Team chose [`severity.Low`].
+ * Originally [`severity.Medium`].
+ *
+ * - [x] I disagree
+ *
+ * **Reason for disagreement:**
+ * The team is silly and doesn't understand how bad this bug is!!!
+ *
+ * <catcher-end-of-segment><hr>
+ */
+
 import { buildCheckboxParser } from './common-parsers.model';
 
 const {
@@ -24,6 +54,12 @@ const DUPLICATE_STATUS_MESSAGE =
 
 export const DisagreeCheckboxParser = buildCheckboxParser(DISAGREE_CHECKBOX_DESCRIPTION);
 
+/**
+ * This parser extracts the response for the item disagreed on.
+ * E.g. for [`severity.Low`], the category is 'severity' and the parser would return 'Low'
+ * @param category
+ * @returns a string indicating the response in that category
+ */
 function buildExtractResponseParser(category: string) {
   return between(str('[`' + category + '.'))(str('`]'))(letters);
 }
@@ -48,7 +84,21 @@ export const DisagreeReasonParser = coroutine(function* () {
   return reasonForDisagreement.trim();
 });
 
-// Issue duplicate section has a different format than the other three
+/**
+ * The duplicate issue section has a different format than the other three, which is below:
+ *
+ * ## :question: Issue duplicate status
+ *
+ * Team chose to mark this issue as a duplicate of another issue (as explained in the _**Team's response**_ above)
+ *
+ *
+ *
+ * - [ ] I disagree
+ *
+ * **Reason for disagreement:** [replace this with your explanation]
+ *
+ * <catcher-end-of-segment><hr>
+ */
 const DuplicateSectionParser = coroutine(function* () {
   yield str('status');
   yield whitespace;
@@ -93,7 +143,7 @@ export const TesterResponseSectionParser = coroutine(function* () {
 
   const teamChose = yield teamResponseParser;
   yield whitespace;
-  // response section does not have tester response
+  // response section does not have tester response, i.e. no "Originally [`response.Something`]"
   const testerChose = yield possibly(testerResponseParser);
   yield optionalWhitespace;
 
