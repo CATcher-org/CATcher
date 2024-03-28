@@ -135,17 +135,27 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
+    return this.updateGithubIssue(issue).pipe(
+      map((githubIssue: GithubIssue) => {
+        githubIssue.comments = issue.githubComments;
+        return this.createIssueModel(githubIssue);
+      })
+    );
+  }
+
+  /**
+   * Updates an issue without attempting to create an issue model. Used when we want to treat
+   * updateIssue as an atomic operation that only performs an API call.
+   * @param issue current issue model
+   * @returns GitHubIssue from the API request
+   */
+  updateGithubIssue(issue: Issue): Observable<GithubIssue> {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService
       .updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue), this.createLabelsForIssue(issue), assignees)
       .pipe(
-        map((response: GithubIssue) => {
-          response.comments = issue.githubComments;
-          return this.createIssueModel(response);
-        }),
         catchError((err) => {
-          this.logger.error('IssueService: ', err); // Log full details of error first
-          return throwError(err.response.data.message); // More readable error message
+          return this.parseUpdateIssueResponseError(err);
         })
       );
   }
@@ -188,11 +198,17 @@ export class IssueService {
   }
 
   createTeamResponse(issue: Issue): Observable<Issue> {
+    // The issue must be updated first to ensure that fields like assignees are valid
     const teamResponse = issue.createGithubTeamResponse();
-    return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
-      mergeMap((githubComment: GithubComment) => {
-        issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
-        return this.updateIssue(issue);
+    return this.updateGithubIssue(issue).pipe(
+      mergeMap((response: GithubIssue) => {
+        return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
+          map((githubComment: GithubComment) => {
+            issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
+            response.comments = issue.githubComments;
+            return this.createIssueModel(response);
+          })
+        );
       })
     );
   }
@@ -477,6 +493,35 @@ export class IssueService {
       this.logger.error('IssueService: ' + issue.parseError);
     }
     return issue;
+  }
+
+  private parseUpdateIssueResponseError(err: any) {
+    this.logger.error('IssueService: ', err); // Log full details of error first
+
+    if (err.code !== 422 || !err.hasOwnProperty('message')) {
+      return throwError(err.response.data.message); // More readable error message
+    }
+
+    // Error code 422 implies that one of the fields are invalid
+    const validationFailedPrefix = 'Validation Failed:';
+    const message: string = err.message;
+    const errorJsonRaw = message.substring(validationFailedPrefix.length);
+    const errorJson = JSON.parse(errorJsonRaw);
+
+    const mandatoryFields = ['field', 'code', 'value'];
+    const hasMandatoryFields = mandatoryFields.every((field) => errorJson.hasOwnProperty(field));
+
+    if (hasMandatoryFields) {
+      if (errorJson['field'] === 'assignees' && errorJson['code'] === 'invalid') {
+        // If assignees are invalid, return a custom error
+        return throwError(
+          `Assignee ${errorJson['value']} has not joined your organization yet. Please remove them from the assignees list.`
+        );
+      }
+    }
+
+    // Generic 422 Validation Failed since it is not an assignees problem
+    return throwError(err.response.data.message);
   }
 
   setIssueTeamFilter(filterValue: string) {

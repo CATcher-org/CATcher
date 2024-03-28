@@ -108,9 +108,9 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
 
     this.isSafeToSubmit()
       .pipe(
-        mergeMap((isSaveToSubmit: boolean) => {
+        mergeMap((isSafeToSubmit: boolean) => {
           const newCommentDescription = latestIssue.createGithubTeamResponse();
-          if (isSaveToSubmit) {
+          if (isSafeToSubmit) {
             return this.issueService.createTeamResponse(latestIssue);
           } else if (this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             const issueCommentId = this.issueService.issues[this.issue.id].issueComment.id;
