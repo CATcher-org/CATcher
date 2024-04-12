@@ -35,11 +35,7 @@ export class ErrorHandlingService implements ErrorHandler {
   private cleanStack(stacktrace: string): string {
     return stacktrace
       .split('\n')
-      .filter((line) => {
-        return !FILTERABLE.some((word) => {
-          return line.includes(word);
-        });
-      }) // exclude lines that contain words in FILTERABLE
+      .filter((line) => !FILTERABLE.some((word) => line.includes(word))) // exclude lines that contain words in FILTERABLE
       .join('\n');
   }
 

@@ -29,9 +29,7 @@ export const TeamResponseParser = coroutine(function* () {
     // either parse duplicate issue number or '--' if no duplicates
     DuplicateNumberParser,
     str('--')
-  ]).map((num) => {
-    return num === '--' ? null : num;
-  });
+  ]).map((num) => (num === '--' ? null : num));
 
   const result: TeamResponseParseResult = {
     teamResponse: teamResponse,

@@ -62,9 +62,7 @@ export class LoggingService {
     const numberOfSessions: number =
       currentLog == null
         ? 0
-        : currentLog.split('\n').filter((currentLogLine: string) => {
-            return currentLogLine.includes(this.LOG_START_HEADER);
-          }).length;
+        : currentLog.split('\n').filter((currentLogLine: string) => currentLogLine.includes(this.LOG_START_HEADER)).length;
 
     if (numberOfSessions === 0) {
       return logHeaderWithDateTime;
@@ -76,12 +74,8 @@ export class LoggingService {
 
     const separatedSessionLogs: string[] = currentLog
       .split(`${this.LOG_START_HEADER}`)
-      .filter((line: string) => {
-        return !!line;
-      })
-      .map((line: string) => {
-        return `${this.LOG_START_HEADER}\n${line.trim()}`;
-      });
+      .filter((line: string) => !!line)
+      .map((line: string) => `${this.LOG_START_HEADER}\n${line.trim()}`);
 
     separatedSessionLogs.splice(0, separatedSessionLogs.length - sessionCount + 1);
     separatedSessionLogs.push(`${logHeaderWithDateTime}`);

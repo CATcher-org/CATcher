@@ -86,9 +86,7 @@ export class TeamResponseComponent implements OnInit {
             return throwError('The content you are editing has changed. Please verify the changes and try again.');
           }
         }),
-        finalize(() => {
-          return (this.isSavePending = false);
-        })
+        finalize(() => (this.isSavePending = false))
       )
       .subscribe(
         (updatedIssue: Issue) => {
@@ -154,12 +152,8 @@ export class TeamResponseComponent implements OnInit {
     const isModified = this.dialogService.checkIfFieldIsModified(this.responseForm, 'teamResponse', 'description', this.issue);
     this.dialogService.performActionIfModified(
       isModified,
-      () => {
-        return this.openCancelDialog();
-      },
-      () => {
-        return this.cancelEditMode();
-      }
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
     );
   }
 

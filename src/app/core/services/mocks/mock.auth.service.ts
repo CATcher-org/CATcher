@@ -51,9 +51,7 @@ export class MockAuthService {
   reset(): void {
     this.accessToken.next(undefined);
     this.changeAuthState(AuthState.NotAuthenticated);
-    this.ngZone.run(() => {
-      return this.router.navigate(['']);
-    });
+    this.ngZone.run(() => this.router.navigate(['']));
   }
 
   logOut(): void {

@@ -37,12 +37,8 @@ export class UserService {
         this.currentUser = this.createUser(jsonData, userLoginId);
         return this.currentUser;
       }),
-      filter((user) => {
-        return user !== null;
-      }),
-      throwIfEmpty(() => {
-        return new Error('Unauthorized user.');
-      })
+      filter((user) => user !== null),
+      throwIfEmpty(() => new Error('Unauthorized user.'))
     );
   }
 
@@ -62,20 +58,16 @@ export class UserService {
         return <User>{ loginId: userLoginId, role: userRole, team: studentTeam };
 
       case UserRole.Tutor:
-        const tutorTeams: Array<Team> = Object.keys(data[DataService.TUTORS_ALLOCATION][lowerCaseUserLoginId]).map(
-          (allocatedTeamId: string) => {
-            return this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId);
-          }
-        );
+        const tutorTeams: Array<Team> = Object.keys(
+          data[DataService.TUTORS_ALLOCATION][lowerCaseUserLoginId]
+        ).map((allocatedTeamId: string) => this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
 
         return <User>{ loginId: userLoginId, role: userRole, allocatedTeams: tutorTeams };
 
       case UserRole.Admin:
-        const studentTeams: Array<Team> = Object.keys(data[DataService.ADMINS_ALLOCATION][lowerCaseUserLoginId]).map(
-          (allocatedTeamId: string) => {
-            return this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId);
-          }
-        );
+        const studentTeams: Array<Team> = Object.keys(
+          data[DataService.ADMINS_ALLOCATION][lowerCaseUserLoginId]
+        ).map((allocatedTeamId: string) => this.createTeamModel(data[DataService.TEAM_STRUCTURE], allocatedTeamId));
 
         return <User>{ loginId: userLoginId, role: userRole, allocatedTeams: studentTeams };
       default:
@@ -84,9 +76,9 @@ export class UserService {
   }
 
   private createTeamModel(teamData: {}, teamId: string): Team {
-    const teammates: Array<User> = Object.values(teamData[teamId]).map((teammate: string) => {
-      return <User>{ loginId: teammate, role: UserRole.Student };
-    });
+    const teammates: Array<User> = Object.values(teamData[teamId]).map(
+      (teammate: string) => <User>{ loginId: teammate, role: UserRole.Student }
+    );
 
     return new Team({ id: teamId, teamMembers: teammates });
   }

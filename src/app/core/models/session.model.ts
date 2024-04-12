@@ -19,25 +19,13 @@ export const OPENED_PHASE_REPO_UNDEFINED = 'Opened Phase has no repo defined';
 export function assertSessionDataIntegrity() {
   return pipe(
     throwIfFalse(
-      (sessionData) => {
-        return sessionData !== undefined;
-      },
-      () => {
-        return new Error(SESSION_DATA_UNAVAILABLE);
-      }
+      (sessionData) => sessionData !== undefined,
+      () => new Error(SESSION_DATA_UNAVAILABLE)
     ),
-    throwIfFalse(isOpenPhasesKeyPresent, () => {
-      return new Error(SESSION_DATA_MISSING_OPENPHASES_KEY);
-    }),
-    throwIfFalse(hasOpenPhases, () => {
-      return new Error(NO_ACCESSIBLE_PHASES);
-    }),
-    throwIfFalse(areOpenPhasesValid, () => {
-      return new Error(NO_VALID_OPEN_PHASES);
-    }),
-    throwIfFalse(isOpenPhasesRepoDefined, () => {
-      return new Error(OPENED_PHASE_REPO_UNDEFINED);
-    })
+    throwIfFalse(isOpenPhasesKeyPresent, () => new Error(SESSION_DATA_MISSING_OPENPHASES_KEY)),
+    throwIfFalse(hasOpenPhases, () => new Error(NO_ACCESSIBLE_PHASES)),
+    throwIfFalse(areOpenPhasesValid, () => new Error(NO_VALID_OPEN_PHASES)),
+    throwIfFalse(isOpenPhasesRepoDefined, () => new Error(OPENED_PHASE_REPO_UNDEFINED))
   );
 }
 
@@ -54,9 +42,10 @@ function isOpenPhasesKeyPresent(sessionData: SessionData): boolean {
  * @param sessionData
  */
 function areOpenPhasesValid(sessionData: SessionData): boolean {
-  return sessionData.openPhases.reduce((isOpenPhasesValidSoFar: boolean, currentOpenPhase: string) => {
-    return isOpenPhasesValidSoFar && currentOpenPhase in Phase;
-  }, true);
+  return sessionData.openPhases.reduce(
+    (isOpenPhasesValidSoFar: boolean, currentOpenPhase: string) => isOpenPhasesValidSoFar && currentOpenPhase in Phase,
+    true
+  );
 }
 
 /**
@@ -64,9 +53,10 @@ function areOpenPhasesValid(sessionData: SessionData): boolean {
  * @param sessionData
  */
 function isOpenPhasesRepoDefined(sessionData: SessionData): boolean {
-  return sessionData.openPhases.reduce((isOpenPhasesRepoDefinedSoFar: boolean, currentOpenPhase: string) => {
-    return isOpenPhasesRepoDefinedSoFar && !!sessionData[currentOpenPhase];
-  }, true);
+  return sessionData.openPhases.reduce(
+    (isOpenPhasesRepoDefinedSoFar: boolean, currentOpenPhase: string) => isOpenPhasesRepoDefinedSoFar && !!sessionData[currentOpenPhase],
+    true
+  );
 }
 
 function hasOpenPhases(sessionData: SessionData): boolean {

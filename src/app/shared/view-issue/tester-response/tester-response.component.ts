@@ -86,9 +86,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
             return throwError('The content you are editing has changed. Please verify the changes and try again.');
           }
         }),
-        finalize(() => {
-          return (this.isFormPending = false);
-        })
+        finalize(() => (this.isFormPending = false))
       )
       .subscribe(
         (updatedIssue: Issue) => {
@@ -143,18 +141,14 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
   openCancelDialogIfModified(): void {
     const reasonForDisagreementIsModified = this.issue.testerResponses
-      .filter((t: TesterResponse, index: number) => {
-        return this.isResponseDisagreed(index);
-      })
+      .filter((t: TesterResponse, index: number) => this.isResponseDisagreed(index))
       .map((t: TesterResponse, index: number) => {
         const currentValue = this.getTesterResponseText(index);
         const initialValue = t.reasonForDisagreement || '';
 
         return currentValue !== initialValue;
       })
-      .reduce((a, b) => {
-        return a || b;
-      }, false);
+      .reduce((a, b) => a || b, false);
 
     const disagreementIsModified = this.issue.testerResponses
       .map((t: TesterResponse, index: number) => {
@@ -163,20 +157,14 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
         return currentValue !== initialValue;
       })
-      .reduce((a, b) => {
-        return a || b;
-      }, false);
+      .reduce((a, b) => a || b, false);
 
     const isModified = reasonForDisagreementIsModified || disagreementIsModified;
 
     this.dialogService.performActionIfModified(
       isModified,
-      () => {
-        return this.openCancelDialog();
-      },
-      () => {
-        return this.cancelEditMode();
-      }
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
     );
   }
 

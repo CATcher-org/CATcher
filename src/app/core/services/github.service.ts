@@ -75,19 +75,12 @@ export class GithubService {
         return `Token ${accessToken}`;
       },
       log: {
-        debug: (message, ...otherInfo) => {
-          return this.logger.debug('GithubService: ' + message, ...otherInfo);
-        },
+        debug: (message, ...otherInfo) => this.logger.debug('GithubService: ' + message, ...otherInfo),
         // Do not log info for HTTP response 304 due to repeated polling
-        info: (message, ...otherInfo) => {
-          return /304 in \d+ms$/.test(message) ? undefined : this.logger.info('GithubService: ' + message, ...otherInfo);
-        },
-        warn: (message, ...otherInfo) => {
-          return this.logger.warn('GithubService: ' + message, ...otherInfo);
-        },
-        error: (message, ...otherInfo) => {
-          return this.logger.error('GithubService: ' + message, ...otherInfo);
-        }
+        info: (message, ...otherInfo) =>
+          /304 in \d+ms$/.test(message) ? undefined : this.logger.info('GithubService: ' + message, ...otherInfo),
+        warn: (message, ...otherInfo) => this.logger.warn('GithubService: ' + message, ...otherInfo),
+        error: (message, ...otherInfo) => this.logger.error('GithubService: ' + message, ...otherInfo)
       }
     });
   }
@@ -113,9 +106,7 @@ export class GithubService {
   fetchIssuesGraphqlByTeam(tutorial: string, team: string, issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
-      filter((toFetch) => {
-        return toFetch;
-      }),
+      filter((toFetch) => toFetch),
       mergeMap(() => {
         return this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
           FetchIssuesByTeam,
@@ -128,9 +119,7 @@ export class GithubService {
             },
             tutorial
           },
-          (result) => {
-            return result.data.repository.label.issues.edges;
-          },
+          (result) => result.data.repository.label.issues.edges,
           GithubGraphqlIssue
         );
       })
@@ -145,16 +134,12 @@ export class GithubService {
   fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
-      filter((toFetch) => {
-        return toFetch;
-      }),
+      filter((toFetch) => toFetch),
       mergeMap(() => {
         return this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
           FetchIssues,
           { owner: ORG_NAME, name: REPO, filter: graphqlFilter },
-          (result) => {
-            return result.data.repository.issues.edges;
-          },
+          (result) => result.data.repository.issues.edges,
           GithubGraphqlIssue
         );
       })
@@ -186,9 +171,7 @@ export class GithubService {
         const isCached = responses.reduce((result, response) => {
           return result && response.isCached;
         }, true);
-        responses.forEach((resp, index) => {
-          return this.issuesCacheManager.set(index + 1, resp);
-        });
+        responses.forEach((resp, index) => this.issuesCacheManager.set(index + 1, resp));
         return !isCached;
       })
     );
@@ -207,9 +190,7 @@ export class GithubService {
       catchError((err) => {
         return of(false);
       }),
-      catchError((err) => {
-        return throwError('Failed to fetch repo data.');
-      })
+      catchError((err) => throwError('Failed to fetch repo data.'))
     );
   }
 
@@ -228,25 +209,13 @@ export class GithubService {
    */
   createBranch() {
     return this.getDefaultBranch().pipe(
-      mergeMap((res) => {
-        return this.getBranchHeadInfo(res);
-      }),
-      map((res) => {
-        return res.data.object.sha;
-      }),
-      mergeMap((sha: string) => {
-        return this.createBranchFromCommit(sha);
-      }),
-      mergeMap(() => {
-        return this.isMainBranchPresent();
-      }),
+      mergeMap((res) => this.getBranchHeadInfo(res)),
+      map((res) => res.data.object.sha),
+      mergeMap((sha: string) => this.createBranchFromCommit(sha)),
+      mergeMap(() => this.isMainBranchPresent()),
       throwIfFalse(
-        (isBranchPresent: boolean) => {
-          return isBranchPresent;
-        },
-        () => {
-          return new Error(BRANCH_CREATION_FAILED);
-        }
+        (isBranchPresent: boolean) => isBranchPresent,
+        () => new Error(BRANCH_CREATION_FAILED)
       )
     );
   }
@@ -277,11 +246,7 @@ export class GithubService {
         owner: ORG_NAME,
         repo: REPO
       })
-    ).pipe(
-      map((res: any) => {
-        return res.data.default_branch;
-      })
-    );
+    ).pipe(map((res: any) => res.data.default_branch));
   }
 
   /**
@@ -310,9 +275,7 @@ export class GithubService {
         ref: `heads/${BRANCH}`
       })
     ).pipe(
-      map((res: any) => {
-        return res.status !== ERRORCODE_NOT_FOUND;
-      }),
+      map((res: any) => res.status !== ERRORCODE_NOT_FOUND),
       catchError(() => {
         return of(false);
       })
@@ -342,18 +305,12 @@ export class GithubService {
 
     const queryRef = this.issueQueryRefs.get(id);
     return this.toFetchIssue(id).pipe(
-      filter((toFetch) => {
-        return toFetch;
-      }),
-      mergeMap(() => {
-        return from(queryRef.refetch());
-      }),
+      filter((toFetch) => toFetch),
+      mergeMap(() => from(queryRef.refetch())),
       map((value: ApolloQueryResult<FetchIssueQuery>) => {
         return new GithubGraphqlIssue(value.data.repository.issue);
       }),
-      throwIfEmpty(() => {
-        return new HttpErrorResponse({ status: 304 });
-      })
+      throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
     );
   }
 
@@ -377,9 +334,7 @@ export class GithubService {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return true;
       }),
-      catchError((err) => {
-        return throwError('Failed to fetch issue.');
-      })
+      catchError((err) => throwError('Failed to fetch issue.'))
     );
   }
 
@@ -390,17 +345,11 @@ export class GithubService {
     const githubLabels = this.fetchGraphqlList<FetchLabelsQuery, GithubLabel>(
       FetchLabels,
       { owner: ORG_NAME, name: REPO },
-      (result) => {
-        return result.data.repository.labels.edges;
-      },
+      (result) => result.data.repository.labels.edges,
       GithubLabel
     );
 
-    return githubLabels.pipe(
-      catchError((err) => {
-        return throwError('Failed to fetch labels.');
-      })
-    );
+    return githubLabels.pipe(catchError((err) => throwError('Failed to fetch labels.')));
   }
 
   /**
@@ -505,9 +454,7 @@ export class GithubService {
       map((response) => {
         return response.data;
       }),
-      catchError((err) => {
-        return throwError('Failed to fetch events for repo.');
-      })
+      catchError((err) => throwError('Failed to fetch events for repo.'))
     );
   }
 
@@ -518,9 +465,7 @@ export class GithubService {
       map((rawData) => {
         return { data: atob(rawData.data.content) };
       }),
-      catchError((err) => {
-        return throwError('Failed to fetch data file.');
-      })
+      catchError((err) => throwError('Failed to fetch data file.'))
     );
   }
 
@@ -528,23 +473,15 @@ export class GithubService {
     return from(
       octokit.repos.getLatestRelease({ owner: CATCHER_ORG, repo: CATCHER_REPO, headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
-      map((res) => {
-        return res.data;
-      }),
-      catchError((err) => {
-        return throwError('Failed to fetch latest release.');
-      })
+      map((res) => res['data']),
+      catchError((err) => throwError('Failed to fetch latest release.'))
     );
   }
 
   private fetchSettingsFromRawUrl(): Observable<SessionData> {
     return from(fetch(getSettingsUrl(MOD_ORG, DATA_REPO))).pipe(
-      mergeMap((res) => {
-        return res.json();
-      }),
-      catchError((err) => {
-        return throwError('Failed to fetch settings file.');
-      })
+      mergeMap((res) => res.json()),
+      catchError((err) => throwError('Failed to fetch settings file.'))
     );
   }
 
@@ -556,9 +493,7 @@ export class GithubService {
     return from(
       octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
-      map((rawData) => {
-        return JSON.parse(atob(rawData.data.content));
-      }),
+      map((rawData) => JSON.parse(atob(rawData['data']['content']))),
       catchError((err) => {
         this.logger.error(
           'GithubService: Failed to fetch settings file via REST API. Trying to fetch using raw.githubusercontent.com: ',
@@ -574,9 +509,7 @@ export class GithubService {
       map((response) => {
         return response.data;
       }),
-      catchError((err) => {
-        return throwError('Failed to fetch authenticated user.');
-      })
+      catchError((err) => throwError('Failed to fetch authenticated user.'))
     );
   }
 
@@ -651,12 +584,8 @@ export class GithubService {
   ): Observable<Array<M>> {
     return from(this.withPagination<T>(pluckEdges)(query, variables)).pipe(
       map((results: Array<ApolloQueryResult<T>>) => {
-        const issues = results.reduce((accumulated, current) => {
-          return accumulated.concat(pluckEdges(current));
-        }, []);
-        return issues.map((issue) => {
-          return new Model(issue.node);
-        });
+        const issues = results.reduce((accumulated, current) => accumulated.concat(pluckEdges(current)), []);
+        return issues.map((issue) => new Model(issue.node));
       }),
       throwIfEmpty(() => {
         return new HttpErrorResponse({ status: 304 });

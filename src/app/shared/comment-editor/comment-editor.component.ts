@@ -105,15 +105,11 @@ export class CommentEditorComponent implements OnInit {
       switch (event.code) {
         case 'KeyB':
           event.preventDefault();
-          this.history.wrapSave(() => {
-            return this.insertOrRemoveCharsFromHighlightedText('**');
-          });
+          this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('**'));
           break;
         case 'KeyI':
           event.preventDefault();
-          this.history.wrapSave(() => {
-            return this.insertOrRemoveCharsFromHighlightedText('_');
-          });
+          this.history.wrapSave(() => this.insertOrRemoveCharsFromHighlightedText('_'));
           break;
         default:
           return;

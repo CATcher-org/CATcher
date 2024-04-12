@@ -46,11 +46,7 @@ export class NewIssueComponent implements OnInit {
     this.isFormPending = true;
     this.issueService
       .createIssue(this.title.value, Issue.updateDescription(this.description.value), this.severity.value, this.type.value)
-      .pipe(
-        finalize(() => {
-          return (this.isFormPending = false);
-        })
-      )
+      .pipe(finalize(() => (this.isFormPending = false)))
       .subscribe(
         (newIssue) => {
           this.issueService.updateLocalStore(newIssue);

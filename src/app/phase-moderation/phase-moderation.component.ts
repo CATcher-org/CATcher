@@ -42,12 +42,7 @@ export class PhaseModerationComponent implements OnInit {
     const teams = this.dataService.getTeams();
     switch (IssuesFilter[Phase.phaseModeration][this.userService.currentUser.role]) {
       case FILTER.FilterByTeamAssigned:
-        return [
-          'All Teams',
-          ...this.userService.currentUser.allocatedTeams.map((team) => {
-            return team.id;
-          })
-        ];
+        return ['All Teams', ...this.userService.currentUser.allocatedTeams.map((team) => team.id)];
       case FILTER.NoFilter:
         return ['All Teams', ...teams];
       default:

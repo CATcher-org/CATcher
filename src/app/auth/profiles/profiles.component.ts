@@ -73,9 +73,7 @@ export class ProfilesComponent implements OnInit {
         try {
           const { profiles } = JSON.parse(reader.result);
           this.profileService.validateProfiles(profiles);
-          this.profiles = profiles.concat(this.profiles).filter((p) => {
-            return !!p;
-          });
+          this.profiles = profiles.concat(this.profiles).filter((p) => !!p);
           target.value = '';
         } catch (e) {
           this.openErrorDialog();
@@ -92,13 +90,9 @@ export class ProfilesComponent implements OnInit {
     this.profileService
       .fetchExternalProfiles()
       .then((externalProfiles) => {
-        this.profiles = this.profiles.concat(externalProfiles).filter((p) => {
-          return !!p;
-        });
+        this.profiles = this.profiles.concat(externalProfiles).filter((p) => !!p);
       })
-      .then(() => {
-        return this.setUrlEncodedProfile(this.profiles);
-      })
+      .then(() => this.setUrlEncodedProfile(this.profiles))
       .catch((e) => {
         if (e === MALFORMED_PROFILES_ERROR) {
           this.openErrorDialog();
@@ -131,9 +125,7 @@ export class ProfilesComponent implements OnInit {
       return;
     }
 
-    const profile = validProfiles.find((profile) => {
-      return profile.profileName === this.urlEncodedSessionName;
-    });
+    const profile = validProfiles.find((profile) => profile.profileName === this.urlEncodedSessionName);
     if (profile) {
       this.selectedProfile.profileName = this.urlEncodedSessionName;
       this.selectProfile(profile);

@@ -154,9 +154,7 @@ export class LabelService {
     let requiredLabels: Label[] = [];
 
     const labels = needAllLabels ? Object.values(this.allLabelArrays) : Object.values(this.testerLabelArrays);
-    labels.map((label) => {
-      return (requiredLabels = requiredLabels.concat(label));
-    });
+    labels.map((label) => (requiredLabels = requiredLabels.concat(label)));
     return requiredLabels;
   }
 
@@ -167,9 +165,7 @@ export class LabelService {
     const labelArray = LabelService.allLabelArrays[label.labelCategory];
 
     if (labelArray) {
-      const requiredLabel = labelArray.find((requiredLabel: Label) => {
-        return requiredLabel.labelValue === label.labelValue;
-      });
+      const requiredLabel = labelArray.find((requiredLabel: Label) => requiredLabel.labelValue === label.labelValue);
       requiredLabel.labelColor = labelColor;
     }
   }
@@ -180,11 +176,7 @@ export class LabelService {
    * with the remote repository.
    */
   syncLabels(needAllLabels: boolean): UnaryFunction<Observable<boolean>, Observable<any>> {
-    return pipe(
-      mergeMap(() => {
-        return this.synchronizeRemoteLabels(needAllLabels);
-      })
-    );
+    return pipe(mergeMap(() => this.synchronizeRemoteLabels(needAllLabels)));
   }
 
   /**
@@ -192,9 +184,7 @@ export class LabelService {
    */
   synchronizeRemoteLabels(needAllLabels: boolean): Observable<any> {
     return this.githubService.fetchAllLabels().pipe(
-      map((githubLabels) => {
-        return githubLabels.map(this.toLabel);
-      }),
+      map((githubLabels) => githubLabels.map(this.toLabel)),
       map((response) => {
         this.ensureRepoHasRequiredLabels(response, LabelService.getRequiredLabelsAsArray(needAllLabels));
         return response;
@@ -248,9 +238,7 @@ export class LabelService {
       return COLOR_WHITE;
     }
 
-    const existingLabel = LabelService.allLabelArrays[labelCategory].find((label: Label) => {
-      return label.labelValue === labelValue;
-    });
+    const existingLabel = LabelService.allLabelArrays[labelCategory].find((label: Label) => label.labelValue === labelValue);
 
     if (existingLabel === undefined || existingLabel.labelColor === undefined) {
       return COLOR_WHITE;
@@ -270,9 +258,9 @@ export class LabelService {
       return null;
     }
 
-    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find((label) => {
-      return label.labelValue === labelValue && label.labelCategory === labelCategory;
-    });
+    const existingLabel = LabelService.getRequiredLabelsAsArray(true).find(
+      (label) => label.labelValue === labelValue && label.labelCategory === labelCategory
+    );
 
     if (existingLabel === undefined || existingLabel.labelDefinition === undefined) {
       return null;
@@ -293,9 +281,7 @@ export class LabelService {
   private ensureRepoHasRequiredLabels(actualLabels: Label[], requiredLabels: Label[]): void {
     requiredLabels.forEach((label) => {
       // Finds for a label that has the same name as a required label.
-      const nameMatchedLabels: Label[] = actualLabels.filter((remoteLabel) => {
-        return remoteLabel.getFormattedName() === label.getFormattedName();
-      });
+      const nameMatchedLabels: Label[] = actualLabels.filter((remoteLabel) => remoteLabel.getFormattedName() === label.getFormattedName());
 
       if (nameMatchedLabels.length === 0) {
         // Create new Label (Could not find a label with the same name & category)

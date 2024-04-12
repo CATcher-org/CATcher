@@ -60,9 +60,7 @@ export class IssueService {
               catchError(() => {
                 return EMPTY;
               }),
-              finalize(() => {
-                return this.isLoading.next(false);
-              })
+              finalize(() => this.isLoading.next(false))
             );
           })
         )
@@ -131,11 +129,9 @@ export class IssueService {
       ['Version', `${clientType} v${appVersion}`]
     ]);
     const issueDescription = HiddenData.embedDataIntoString(description, hiddenData);
-    return this.githubService.createIssue(title, issueDescription, labelsArray).pipe(
-      map((response: GithubIssue) => {
-        return this.createIssueModel(response);
-      })
-    );
+    return this.githubService
+      .createIssue(title, issueDescription, labelsArray)
+      .pipe(map((response: GithubIssue) => this.createIssueModel(response)));
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
@@ -157,12 +153,7 @@ export class IssueService {
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
       mergeMap((updatedComment: GithubComment) => {
-        issue.githubComments = [
-          updatedComment,
-          ...issue.githubComments.filter((c) => {
-            return c.id !== updatedComment.id;
-          })
-        ];
+        issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
         return this.updateIssue(issue);
       })
     );
@@ -200,12 +191,7 @@ export class IssueService {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
       mergeMap((githubComment: GithubComment) => {
-        issue.githubComments = [
-          githubComment,
-          ...issue.githubComments.filter((c) => {
-            return c.id !== githubComment.id;
-          })
-        ];
+        issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
         return this.updateIssue(issue);
       })
     );
@@ -386,9 +372,7 @@ export class IssueService {
 
   private deleteIssuesFromLocalStore(ids: Array<Number>): void {
     ids.forEach((id: number) => {
-      this.getIssue(id).subscribe((issue) => {
-        return this.deleteFromLocalStore(issue);
-      });
+      this.getIssue(id).subscribe((issue) => this.deleteFromLocalStore(issue));
     });
   }
 
@@ -411,12 +395,8 @@ export class IssueService {
     const fetchedIssueIdsSet = new Set<Number>(fetchedIssueIds);
 
     const result = Object.keys(this.issues)
-      .map((x) => {
-        return +x;
-      })
-      .filter((issueId) => {
-        return !fetchedIssueIdsSet.has(issueId);
-      });
+      .map((x) => +x)
+      .filter((issueId) => !fetchedIssueIdsSet.has(issueId));
 
     return result;
   }

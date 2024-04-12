@@ -23,15 +23,9 @@ export class IssuePendingComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    const hasComment = (issue: Issue) => {
-      return !!issue.issueComment;
-    };
-    const isNotDone = (issue: Issue) => {
-      return !issue.status || issue.status === STATUS.Incomplete;
-    };
-    this.filter = (issue: Issue) => {
-      return isNotDone(issue) && hasComment(issue);
-    };
+    const hasComment = (issue: Issue) => !!issue.issueComment;
+    const isNotDone = (issue: Issue) => !issue.status || issue.status === STATUS.Incomplete;
+    this.filter = (issue: Issue) => isNotDone(issue) && hasComment(issue);
   }
 
   applyFilter(filterValue: string) {

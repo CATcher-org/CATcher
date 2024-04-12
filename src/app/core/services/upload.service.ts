@@ -27,9 +27,7 @@ export const FILE_TYPE_SUPPORT_ERROR = "We don't support that file type." + ' Tr
  * @param fileType Canonical name for file, not to be confused with file extension
  * @param size Number of MBs
  */
-export const getSizeExceedErrorMsg = (fileType: string, size: number): string => {
-  return `Oops, ${fileType} is too big. Keep it under ${size}MiB.`;
-};
+export const getSizeExceedErrorMsg = (fileType: string, size: number): string => `Oops, ${fileType} is too big. Keep it under ${size}MiB.`;
 
 @Injectable({
   providedIn: 'root'
@@ -53,9 +51,7 @@ export class UploadService {
     if (SUPPORTED_FILE_TYPES.includes(fileType.toLowerCase())) {
       base64String = base64String.split(',')[1];
       const onlineFilename = uuid();
-      const attemptUploadFile = () => {
-        return this.githubService.uploadFile(`${onlineFilename}.${fileType}`, base64String);
-      };
+      const attemptUploadFile = () => this.githubService.uploadFile(`${onlineFilename}.${fileType}`, base64String);
       return attemptUploadFile().pipe(
         catchError((err: any) => {
           if (!(err.status === ERRORCODE_NOT_FOUND)) {

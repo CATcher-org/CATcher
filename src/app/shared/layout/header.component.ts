@@ -51,9 +51,7 @@ export class HeaderComponent implements OnInit {
   ) {
     router.events
       .pipe(
-        filter((e: any) => {
-          return e instanceof RoutesRecognized;
-        }),
+        filter((e: any) => e instanceof RoutesRecognized),
         pairwise()
       )
       .subscribe((e) => {
@@ -168,13 +166,9 @@ export class HeaderComponent implements OnInit {
     this.isReloadButtonDisabled = true;
 
     this.githubEventService.reloadPage().subscribe(
-      (success) => {
-        return success;
-      },
+      (success) => success,
       (error) => {
-        this.errorHandlingService.handleError(error, () => {
-          return this.githubEventService.reloadPage();
-        });
+        this.errorHandlingService.handleError(error, () => this.githubEventService.reloadPage());
       }
     );
 

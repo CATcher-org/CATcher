@@ -77,9 +77,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
     fetch(accessTokenUrl)
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         if (data.error) {
           throw new Error(data.error);
@@ -174,12 +172,8 @@ export class AuthComponent implements OnInit, OnDestroy {
   private initAccessTokenSubscription() {
     this.accessTokenSubscription = this.authService.accessToken
       .pipe(
-        filter((token: string) => {
-          return !!token;
-        }),
-        mergeMap(() => {
-          return this.userService.getAuthenticatedUser();
-        })
+        filter((token: string) => !!token),
+        mergeMap(() => this.userService.getAuthenticatedUser())
       )
       .subscribe((user: GithubUser) => {
         this.ngZone.run(() => {

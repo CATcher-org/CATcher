@@ -68,29 +68,21 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.duplicatedIssueList = this.getDupIssueList();
     // Populate the filtered list with all the issues first
-    this.duplicatedIssueList.pipe(first()).subscribe((issues) => {
-      return this.filteredDuplicateIssueList.next(issues);
-    });
-    this.searchFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe((_) => {
-      return this.filterIssues();
-    });
+    this.duplicatedIssueList.pipe(first()).subscribe((issues) => this.filteredDuplicateIssueList.next(issues));
+    this.searchFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe((_) => this.filterIssues());
   }
 
   private filterIssues(): void {
-    this.changeFilter(this.duplicatedIssueList, this.searchFilterCtrl.value).subscribe((issues) => {
-      return this.filteredDuplicateIssueList.next(issues);
-    });
+    this.changeFilter(this.duplicatedIssueList, this.searchFilterCtrl.value).subscribe((issues) =>
+      this.filteredDuplicateIssueList.next(issues)
+    );
   }
 
   updateDuplicateStatus(event: MatSelectChange) {
     const latestIssue = this.getUpdatedIssue(event);
     this.issueService.updateIssueWithComment(latestIssue, latestIssue.issueComment).subscribe(
-      (issue) => {
-        return this.issueUpdated.emit(issue);
-      },
-      (error) => {
-        return this.errorHandlingService.handleError(error);
-      }
+      (issue) => this.issueUpdated.emit(issue),
+      (error) => this.errorHandlingService.handleError(error)
     );
   }
 

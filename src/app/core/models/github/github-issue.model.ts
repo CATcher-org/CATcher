@@ -40,16 +40,12 @@ export class GithubIssue {
    */
   findLabel(name: string, isCategorical: boolean = true): string {
     if (!isCategorical) {
-      const label = this.labels.find((l) => {
-        return !l.isCategorical() && l.name === name;
-      });
+      const label = this.labels.find((l) => !l.isCategorical() && l.name === name);
       return label ? label.getValue() : undefined;
     }
 
     // Find labels with the same category name as what is specified in the parameter.
-    const labels = this.labels.filter((l) => {
-      return l.isCategorical() && l.getCategory() === name;
-    });
+    const labels = this.labels.filter((l) => l.isCategorical() && l.getCategory() === name);
     if (labels.length === 0) {
       return undefined;
     } else if (labels.length === 1) {

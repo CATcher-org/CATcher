@@ -57,12 +57,8 @@ export class ConfirmLoginComponent implements OnInit {
     this.userService
       .createUserModel(this.username)
       .pipe(
-        mergeMap(() => {
-          return this.phaseService.sessionSetup();
-        }),
-        mergeMap(() => {
-          return this.githubEventService.setLatestChangeEvent();
-        })
+        mergeMap(() => this.phaseService.sessionSetup()),
+        mergeMap(() => this.githubEventService.setLatestChangeEvent())
       )
       .subscribe(
         () => {

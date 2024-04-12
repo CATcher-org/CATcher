@@ -103,7 +103,7 @@ export class AppModule {
     });
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        return this.errorHandlingService.clearError();
+        this.errorHandlingService.clearError();
       }
     });
   }

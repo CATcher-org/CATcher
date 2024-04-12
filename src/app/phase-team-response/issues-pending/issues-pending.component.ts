@@ -57,18 +57,11 @@ export class IssuesPendingComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    const isNotDuplicate = (issue: Issue) => {
-      return !issue.duplicateOf;
-    };
-    const doesNotHaveFinalisedResponse = (issue: Issue) => {
-      return !this.issueService.hasTeamResponse(issue.id) || !issue.status || issue.status === STATUS.Incomplete;
-    };
-    const hasNoParseErrors = (issue: Issue) => {
-      return !issue.status || !issue.teamResponseError;
-    };
-    this.filter = (issue: Issue) => {
-      return doesNotHaveFinalisedResponse(issue) && isNotDuplicate(issue) && hasNoParseErrors(issue);
-    };
+    const isNotDuplicate = (issue: Issue) => !issue.duplicateOf;
+    const doesNotHaveFinalisedResponse = (issue: Issue) =>
+      !this.issueService.hasTeamResponse(issue.id) || !issue.status || issue.status === STATUS.Incomplete;
+    const hasNoParseErrors = (issue: Issue) => !issue.status || !issue.teamResponseError;
+    this.filter = (issue: Issue) => doesNotHaveFinalisedResponse(issue) && isNotDuplicate(issue) && hasNoParseErrors(issue);
   }
 
   applyFilter(filterValue: string) {

@@ -72,9 +72,7 @@ export class SessionSelectionComponent implements OnInit {
         this.errorHandlingService.handleError(error);
         this.isSettingUpSession = false;
       },
-      () => {
-        return (this.isSettingUpSession = false);
-      }
+      () => (this.isSettingUpSession = false)
     );
   }
 

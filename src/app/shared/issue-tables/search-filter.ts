@@ -39,23 +39,15 @@ function containsSearchKey(item: string, searchKey: string): boolean {
 }
 
 function duplicatedIssuesContainsSearchKey(duplicatedIssues: Issue[], searchKey: string): boolean {
-  return (
-    duplicatedIssues.filter((el) => {
-      return `#${String(el.id)}`.includes(searchKey);
-    }).length !== 0
-  );
+  return duplicatedIssues.filter((el) => `#${String(el.id)}`.includes(searchKey)).length !== 0;
 }
 
 function matchesAssignee(assignees: string[], searchKey: string): boolean {
-  return assignees.some((assignee) => {
-    return containsSearchKey(assignee.toLowerCase(), searchKey);
-  });
+  return assignees.some((assignee) => containsSearchKey(assignee.toLowerCase(), searchKey));
 }
 
 function matchesDuplicatedIssue(issueService: IssueService, id: number, searchKey: string): boolean {
-  const duplicatedIssues = issueService.issues$.getValue().filter((el) => {
-    return el.duplicateOf === id;
-  });
+  const duplicatedIssues = issueService.issues$.getValue().filter((el) => el.duplicateOf === id);
   return duplicatedIssuesContainsSearchKey(duplicatedIssues, searchKey);
 }
 
