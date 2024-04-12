@@ -79,13 +79,11 @@ export class CommentEditorComponent implements OnInit {
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]);
     this.history = new UndoRedo<textEntry>(
       75,
-      () => {
-        return {
-          text: this.commentTextArea.nativeElement.value,
-          selectStart: this.commentTextArea.nativeElement.selectionStart,
-          selectEnd: this.commentTextArea.nativeElement.selectionEnd
-        };
-      },
+      () => ({
+        text: this.commentTextArea.nativeElement.value,
+        selectStart: this.commentTextArea.nativeElement.selectionStart,
+        selectEnd: this.commentTextArea.nativeElement.selectionEnd
+      }),
       500
     );
   }

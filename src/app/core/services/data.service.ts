@@ -50,9 +50,7 @@ export class DataService {
    */
   getDataFile(): Observable<{}> {
     return this.githubService.fetchDataFile().pipe(
-      map((allCsvDataWrapper: {}) => {
-        return this.constructData(allCsvDataWrapper);
-      }),
+      map((allCsvDataWrapper: {}) => this.constructData(allCsvDataWrapper)),
       map((jsonData: TabulatedUserData) => {
         this.dataFile = <DataFile>{
           teamStructure: this.extractTeamStructure(jsonData)

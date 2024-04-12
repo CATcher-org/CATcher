@@ -89,12 +89,8 @@ export class AppModule {
     private errorHandlingService: ErrorHandlingService
   ) {
     const URI = 'https://api.github.com/graphql';
-    const basic = setContext(() => {
-      return { headers: { Accept: 'charset=utf-8' } };
-    });
-    const auth = setContext(() => {
-      return { headers: { Authorization: `Token ${this.authService.accessToken.getValue()}` } };
-    });
+    const basic = setContext(() => ({ headers: { Accept: 'charset=utf-8' } }));
+    const auth = setContext(() => ({ headers: { Authorization: `Token ${this.authService.accessToken.getValue()}` } }));
     const link = ApolloLink.from([basic, auth, this.httpLink.create({ uri: URI })]);
     const cache = new InMemoryCache({ possibleTypes: graphqlTypes.possibleTypes });
     this.apollo.create({
