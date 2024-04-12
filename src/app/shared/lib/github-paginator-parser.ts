@@ -8,7 +8,7 @@ export function getNumberOfPages<T>(response: GithubResponse<T>): number {
   let numberOfPages = 1;
   if (response.headers.link) {
     const paginatedData = githubPaginatorParser(response.headers.link);
-    numberOfPages = +paginatedData.last || 1;
+    numberOfPages = +paginatedData['last'] || 1;
   }
   return numberOfPages;
 }

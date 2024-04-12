@@ -28,7 +28,7 @@ export class GithubIssue {
   constructor(githubIssue: {}) {
     Object.assign(this, githubIssue);
     this.labels = [];
-    for (const label of githubIssue.labels) {
+    for (const label of githubIssue['labels']) {
       this.labels.push(new GithubLabel(label));
     }
   }

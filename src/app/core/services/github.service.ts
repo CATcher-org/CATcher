@@ -431,7 +431,7 @@ export class GithubService {
 
   fetchEventsForRepo(): Observable<any[]> {
     return from(octokit.issues.listEventsForRepo({ owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY })).pipe(
-      map((response) => response.data),
+      map((response) => response['data']),
       catchError((err) => throwError('Failed to fetch events for repo.'))
     );
   }
@@ -440,7 +440,7 @@ export class GithubService {
     return from(
       octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
-      map((rawData) => ({ data: atob(rawData.data.content) })),
+      map((rawData) => ({ data: atob(rawData['data'].content) })),
       catchError((err) => throwError('Failed to fetch data file.'))
     );
   }
@@ -482,7 +482,7 @@ export class GithubService {
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
     return from(octokit.users.getAuthenticated()).pipe(
-      map((response) => response.data),
+      map((response) => response['data']),
       catchError((err) => throwError('Failed to fetch authenticated user.'))
     );
   }

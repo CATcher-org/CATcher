@@ -4,7 +4,8 @@ interface NodeModule {
   id: string;
 }
 
-declare let window: Window & typeof globalThis;
+// eslint-disable-next-line no-var
+declare var window: Window & typeof globalThis;
 interface Window {
   process: any;
   require: any;
