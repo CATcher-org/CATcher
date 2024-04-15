@@ -128,7 +128,11 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
         this.issue = issue;
         this.pollIssue(id);
       },
-      (err) => this.router.navigateByUrl(this.phaseService.currentPhase)
+      (err) => {
+        this.router.navigateByUrl(this.phaseService.currentPhase).then(() => {
+          this.errorHandlingService.handleError(new Error('Invalid URL provided!'));
+        });
+      }
     );
   }
 
