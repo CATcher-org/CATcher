@@ -148,6 +148,7 @@ export class IssueService {
     return this.githubService.updateIssueComment(issueComment).pipe(
       mergeMap((updatedComment: GithubComment) => {
         issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
+        // eslint-disable-next-line arrow-body-style
         return this.updateIssue(issue);
       })
     );
@@ -196,6 +197,7 @@ export class IssueService {
       map((responses) => {
         const [githubComment, issue] = responses;
         issue.updateDispute(githubComment);
+        // eslint-disable-next-line arrow-body-style
         return issue;
       })
     );
