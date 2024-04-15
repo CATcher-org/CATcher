@@ -145,16 +145,15 @@ export class IssueService {
   }
 
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
-    return this.githubService
-      .updateIssueComment(issueComment)
-      .pipe(
-        mergeMap(
-          (updatedComment: GithubComment) => (
-            (issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)]),
-            this.updateIssue(issue)
-          )
+    return this.githubService.updateIssueComment(issueComment).pipe(
+      mergeMap(
+        // eslint-disable-next-line arrow-body-style
+        (updatedComment: GithubComment) => (
+          (issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)]),
+          this.updateIssue(issue)
         )
-      );
+      )
+    );
   }
 
   updateTesterResponse(issue: Issue, issueComment: IssueComment): Observable<Issue> {
@@ -197,6 +196,7 @@ export class IssueService {
 
   createTutorResponse(issue: Issue, response: string): Observable<Issue> {
     return forkJoin([this.githubService.createIssueComment(issue.id, response), this.updateIssue(issue)]).pipe(
+      // eslint-disable-next-line arrow-body-style
       map((responses) => (responses[1].updateDispute(responses[0]), responses[1]))
     );
   }
