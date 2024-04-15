@@ -26,6 +26,7 @@
             "type": "attribute"
           }
         ],
+        "arrow-body-style": ["error", "as-needed"],
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/naming-convention": ["error", { "selector": "class", "format": ["PascalCase"] }],
         "spaced-comment": ["error", "always"],
