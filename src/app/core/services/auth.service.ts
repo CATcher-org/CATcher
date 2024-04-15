@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { AppConfig } from '../../../environments/environment';
 import { generateSessionId } from '../../shared/lib/session';
@@ -30,6 +30,8 @@ export enum AuthState {
  * updating the application state with regards to authentication.
  */
 export class AuthService {
+  private static readonly SESSION_NEXT_KEY = 'next';
+
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
@@ -49,6 +51,27 @@ export class AuthService {
     private titleService: Title,
     private logger: LoggingService
   ) {}
+
+  /**
+   * Stores the data about the next route in the session storage.
+   */
+  storeNext(next: RouterStateSnapshot) {
+    sessionStorage.setItem(AuthService.SESSION_NEXT_KEY, next.url);
+  }
+
+  /**
+   * Returns the next route
+   */
+  private getNext(): string {
+    return sessionStorage.getItem(AuthService.SESSION_NEXT_KEY);
+  }
+
+  /**
+   * Clears the next route from the session storage.
+   */
+  clearNext() {
+    sessionStorage.removeItem(AuthService.SESSION_NEXT_KEY);
+  }
 
   /**
    * Will store the OAuth token.
@@ -143,5 +166,17 @@ export class AuthService {
       return;
     }
     window.location.href = url;
+  }
+
+  /**
+   * Navigates to next if there is, or default landing page.
+   */
+  navigateToLandingPage() {
+    const nextRoute = this.getNext();
+    if (!nextRoute || !this.phaseService.isValidRoute(nextRoute)) {
+      this.router.navigateByUrl(this.phaseService.currentPhase);
+    } else {
+      this.router.navigateByUrl(nextRoute);
+    }
   }
 }
