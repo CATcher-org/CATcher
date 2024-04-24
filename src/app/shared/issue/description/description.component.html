@@ -8,7 +8,7 @@
       </button>
     </div>
     <div *ngIf="!isEditing" class="comment">
-      <markdown [data]="issue.description"></markdown>
+      <markdown [data]="issue.description" disableInternalLink></markdown>
     </div>
     <div *ngIf="isEditing">
       <app-comment-editor
