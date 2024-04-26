@@ -25,16 +25,16 @@ export function getNumberOfPages<T>(response: GithubResponse<T>): number {
 function githubPaginatorParser(linkStr: string) {
   return linkStr
     .split(',')
-    .map((paginateItem) => {
-      return paginateItem.split(';').map((curr, idx) => {
+    .map((paginateItem) =>
+      paginateItem.split(';').map((curr, idx) => {
         if (idx === 0) {
           return /[^_]page=(\d+)/.exec(curr)[1];
         }
         if (idx === 1) {
           return /rel="(.+)"/.exec(curr)[1];
         }
-      });
-    })
+      })
+    )
     .reduce((obj, curr) => {
       obj[curr[1]] = curr[0];
       return obj;

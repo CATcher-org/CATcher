@@ -58,9 +58,7 @@ export class GithubIssue {
       } else {
         const order = GithubLabel.LABEL_ORDER[name];
         return labels
-          .reduce((result, currLabel) => {
-            return order[currLabel.getValue()] > order[result.getValue()] ? currLabel : result;
-          })
+          .reduce((result, currLabel) => (order[currLabel.getValue()] > order[result.getValue()] ? currLabel : result))
           .getValue();
       }
     }

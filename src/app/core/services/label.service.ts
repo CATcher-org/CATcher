@@ -307,11 +307,11 @@ export class LabelService {
     let labelValue: string;
 
     const containsDotRegex = /\./g;
-    const rawName: string = String(githubLabel.name);
+    const rawName = String(githubLabel.name);
     [labelCategory, labelValue] = containsDotRegex.test(rawName) ? githubLabel.name.split('.') : [undefined, rawName];
 
     const labelColor = githubLabel.color;
-    const labelDefinition: string = String(githubLabel.description);
+    const labelDefinition = String(githubLabel.description);
 
     return new Label(labelCategory, labelValue, labelColor, labelDefinition);
   }
