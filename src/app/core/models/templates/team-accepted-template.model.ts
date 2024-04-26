@@ -1,3 +1,9 @@
+/**
+ * A Team Accepted comment has this format:
+ *
+ * Your response not required for this bug as the team has accepted the bug as it is.
+ */
+
 import { GithubComment } from '../github/github-comment.model';
 import { Template } from './template.model';
 
