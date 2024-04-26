@@ -60,7 +60,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
       const hasTeamResponse = (issue: Issue) => this.issueService.hasTeamResponse(issue.id);
       const isDuplicateIssue = (issue: Issue) => !!issue.duplicateOf;
       const isDuplicatedBy = (issue: Issue) =>
-            !!this.issueService.issues$.getValue().filter(childIssue => childIssue.duplicateOf === issue.id).length;
+        !!this.issueService.issues$.getValue().filter((childIssue) => childIssue.duplicateOf === issue.id).length;
       const isTransitiveDuplicate = hasTeamResponse(issue) && isDuplicateIssue(issue) && isDuplicatedBy(issue);
 
       const hasStatus = (issue: Issue) => !!issue.status;

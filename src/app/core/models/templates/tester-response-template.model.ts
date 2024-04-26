@@ -1,3 +1,53 @@
+/**
+ * A Tester Response comment has the following format:
+ *
+ * [IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. \
+      You can respond to it using CATcher during the next phase of the PE]
+ *
+ * # Team's response
+ *
+ * { team's response }
+ *
+ * # Items for the Tester to Verify
+ *
+ * { 1 or more Tester Response sections, see tester-response-section-parser.model.ts }
+ *
+ * A concrete example would be:
+ *
+ * [IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. \
+      You can respond to it using CATcher during the next phase of the PE]
+ *
+ * # Team's response
+ *
+ * This is not a bug, it's a feature
+ *
+ * # Items for the Tester to Verify
+ *
+ * ## :question: Issue type
+ *
+ * Team chose [`type.DocumentationBug`].
+ * Originally [`type.FunctionalityBug`].
+ *
+ * [x] - I disagree
+ *
+ * **Reason for disagreement:**
+ * It's not a use case, it's a bug! This has nothing to do with the docs.
+ *
+ * <catcher-end-of-segment><hr>
+ *
+ * ## :question: Issue severity
+ *
+ * Team chose [`severity.VeryLow`].
+ * Originally [`severity.High`].
+ *
+ * [x] - I disagree
+ *
+ * **Reason for disagreement:**
+ * You don't understand how frustrating this bug is!!
+ *
+ * <catcher-end-of-segment><hr>
+ */
+
 import { IssueComment } from '../comment.model';
 import { GithubComment } from '../github/github-comment.model';
 import { TesterResponse } from '../tester-response.model';
@@ -16,6 +66,7 @@ interface TesterResponseParseResult {
 }
 
 const GITHUB_UI_EDIT_WARNING =
+  // eslint-disable-next-line max-len
   '[IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. You can respond to it using CATcher during the next phase of the PE]';
 const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
 const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';

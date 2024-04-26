@@ -78,9 +78,7 @@ export class MockIssueService {
         this.createAndSaveIssueModel(response);
         return this.issues[id];
       }),
-      catchError((err) => {
-        return of(this.issues[id]);
-      })
+      catchError((err) => of(this.issues[id]))
     );
   }
 
@@ -229,13 +227,7 @@ export class MockIssueService {
    * Obtain an observable containing an array of issues that are duplicates of the parentIssue.
    */
   getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
-    return this.issues$.pipe(
-      map((issues) => {
-        return issues.filter((issue) => {
-          return issue.duplicateOf === parentIssue.id;
-        });
-      })
-    );
+    return this.issues$.pipe(map((issues) => issues.filter((issue) => issue.duplicateOf === parentIssue.id)));
   }
 
   reset() {

@@ -55,14 +55,12 @@ export class IssueService {
 
       this.issuesPollSubscription = timer(0, IssueService.POLL_INTERVAL)
         .pipe(
-          exhaustMap(() => {
-            return this.reloadAllIssues().pipe(
-              catchError(() => {
-                return EMPTY;
-              }),
+          exhaustMap(() =>
+            this.reloadAllIssues().pipe(
+              catchError(() => EMPTY),
               finalize(() => this.isLoading.next(false))
-            );
-          })
+            )
+          )
         )
         .subscribe();
     }
@@ -82,18 +80,16 @@ export class IssueService {
    */
   pollIssue(issueId: number): Observable<Issue> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
-      exhaustMap(() => {
-        return this.githubService.fetchIssueGraphql(issueId).pipe(
+      exhaustMap(() =>
+        this.githubService.fetchIssueGraphql(issueId).pipe(
           map((response) => {
             const issue = this.createIssueModel(response);
             this.updateLocalStore(issue);
             return issue;
           }),
-          catchError((err) => {
-            return this.getIssue(issueId);
-          })
-        );
-      })
+          catchError((err) => this.getIssue(issueId))
+        )
+      )
     );
   }
 
@@ -115,9 +111,7 @@ export class IssueService {
         this.createAndSaveIssueModel(response);
         return this.issues[id];
       }),
-      catchError((err) => {
-        return of(this.issues[id]);
-      })
+      catchError((err) => of(this.issues[id]))
     );
   }
 
@@ -300,13 +294,7 @@ export class IssueService {
    * Obtain an observable containing an array of issues that are duplicates of the parentIssue.
    */
   getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
-    return this.issues$.pipe(
-      map((issues) => {
-        return issues.filter((issue) => {
-          return issue.duplicateOf === parentIssue.id;
-        });
-      })
-    );
+    return this.issues$.pipe(map((issues) => issues.filter((issue) => issue.duplicateOf === parentIssue.id)));
   }
 
   reset(resetSessionId: boolean) {
