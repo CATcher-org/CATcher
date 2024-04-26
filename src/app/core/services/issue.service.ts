@@ -55,12 +55,14 @@ export class IssueService {
 
       this.issuesPollSubscription = timer(0, IssueService.POLL_INTERVAL)
         .pipe(
-          exhaustMap(() =>
-            this.reloadAllIssues().pipe(
-              catchError(() => EMPTY),
+          exhaustMap(() => {
+            return this.reloadAllIssues().pipe(
+              catchError(() => {
+                return EMPTY;
+              }),
               finalize(() => this.isLoading.next(false))
-            )
-          )
+            );
+          })
         )
         .subscribe();
     }
@@ -80,16 +82,18 @@ export class IssueService {
    */
   pollIssue(issueId: number): Observable<Issue> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
-      exhaustMap(() =>
-        this.githubService.fetchIssueGraphql(issueId).pipe(
+      exhaustMap(() => {
+        return this.githubService.fetchIssueGraphql(issueId).pipe(
           map((response) => {
             const issue = this.createIssueModel(response);
             this.updateLocalStore(issue);
             return issue;
           }),
-          catchError((err) => this.getIssue(issueId))
-        )
-      )
+          catchError((err) => {
+            return this.getIssue(issueId);
+          })
+        );
+      })
     );
   }
 
@@ -111,7 +115,9 @@ export class IssueService {
         this.createAndSaveIssueModel(response);
         return this.issues[id];
       }),
-      catchError((err) => of(this.issues[id]))
+      catchError((err) => {
+        return of(this.issues[id]);
+      })
     );
   }
 
@@ -146,13 +152,10 @@ export class IssueService {
 
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
-      mergeMap(
-        // eslint-disable-next-line arrow-body-style
-        (updatedComment: GithubComment) => (
-          (issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)]),
-          this.updateIssue(issue)
-        )
-      )
+      mergeMap((updatedComment: GithubComment) => {
+        issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
+        return this.updateIssue(issue);
+      })
     );
   }
 
@@ -196,8 +199,11 @@ export class IssueService {
 
   createTutorResponse(issue: Issue, response: string): Observable<Issue> {
     return forkJoin([this.githubService.createIssueComment(issue.id, response), this.updateIssue(issue)]).pipe(
-      // eslint-disable-next-line arrow-body-style
-      map((responses) => (responses[1].updateDispute(responses[0]), responses[1]))
+      map((responses) => {
+        const [githubComment, issue] = responses;
+        issue.updateDispute(githubComment);
+        return issue;
+      })
     );
   }
 
@@ -278,7 +284,13 @@ export class IssueService {
    * Obtain an observable containing an array of issues that are duplicates of the parentIssue.
    */
   getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
-    return this.issues$.pipe(map((issues) => issues.filter((issue) => issue.duplicateOf === parentIssue.id)));
+    return this.issues$.pipe(
+      map((issues) => {
+        return issues.filter((issue) => {
+          return issue.duplicateOf === parentIssue.id;
+        });
+      })
+    );
   }
 
   reset(resetSessionId: boolean) {

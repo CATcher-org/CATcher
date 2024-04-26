@@ -125,12 +125,13 @@ export class PhaseService {
   sessionSetup(): Observable<any> {
     // Permission Caching Mechanism to prevent repeating permission request.
     let isSessionFixPermissionGranted = false;
-    const cacheSessionFixPermission = () =>
-      pipe(
+    const cacheSessionFixPermission = () => {
+      return pipe(
         tap((sessionFixPermission: boolean | null) => {
           isSessionFixPermissionGranted = sessionFixPermission ? sessionFixPermission : false;
         })
       );
+    };
 
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),

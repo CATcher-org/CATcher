@@ -49,7 +49,9 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => member.loginId);
+    this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
+      return member.loginId;
+    });
     this.duplicatedIssueList = this.getDupIssueList();
     // Populate the filtered list with all the issues first
     this.duplicatedIssueList.pipe(first()).subscribe((issues) => this.filteredDuplicateIssueList.next(issues));
@@ -86,7 +88,9 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
     return issuesObservable.pipe(
       first(),
-      map((issues) => applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues))
+      map((issues) => {
+        return applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues);
+      })
     );
   }
 
@@ -139,7 +143,11 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
    * @return - Determines whether it is safe to submit a tester response.
    */
   isSafeToSubmit(): Observable<boolean> {
-    return this.issueService.getLatestIssue(this.issue.id).pipe(map((issue: Issue) => !issue.teamResponse));
+    return this.issueService.getLatestIssue(this.issue.id).pipe(
+      map((issue: Issue) => {
+        return !issue.teamResponse;
+      })
+    );
   }
 
   /**
@@ -201,7 +209,13 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   }
 
   private getDupIssueList(): Observable<Issue[]> {
-    return this.issueService.issues$.pipe(map((issues) => issues.filter((issue) => this.issue.id !== issue.id)));
+    return this.issueService.issues$.pipe(
+      map((issues) => {
+        return issues.filter((issue) => {
+          return this.issue.id !== issue.id;
+        });
+      })
+    );
   }
 
   get description() {

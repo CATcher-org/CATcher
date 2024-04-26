@@ -44,7 +44,6 @@ export function insertUploadUrlVideo(
   commentField: AbstractControl,
   commentTextArea: ElementRef<HTMLTextAreaElement>
 ) {
-  // eslint-disable-next-line max-len
   const insertedString = `<i><video controls><source src="${uploadUrl}" type="video/mp4">Your browser does not support the video tag.</video><br>video:${uploadUrl}</i>`;
 
   replacePlaceholderString(filename, insertedString, commentField, commentTextArea);

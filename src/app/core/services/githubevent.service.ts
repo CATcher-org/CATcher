@@ -23,8 +23,8 @@ export class GithubEventService {
         if (response.length === 0) {
           return response;
         }
-        this.setLastModifiedTime(response[0].created_at);
-        this.setLastModifiedCommentTime(response[0].issue.updated_at);
+        this.setLastModifiedTime(response[0]['created_at']);
+        this.setLastModifiedCommentTime(response[0]['issue']['updated_at']);
         return response;
       })
     );

@@ -55,7 +55,8 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
   isTooltipNecessary(issue: Issue): boolean {
     // Maximum Possible Title length varies based on whether the issue
     // is a duplicate. (Whether the Duplicate Issue Tag is visible)
-    const maxTitleLength = issue.duplicated ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
+    let maxTitleLength: number;
+    maxTitleLength = issue.duplicated ? this.MAX_TITLE_LENGTH_FOR_DUPLICATE_ISSUE : this.MAX_TITLE_LENGTH_FOR_NON_DUPLICATE_ISSUE;
 
     return issue.title.length > maxTitleLength;
   }
@@ -135,13 +136,19 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
   private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
     return issuesObservable.pipe(
       first(),
-      map((issues) => applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues))
+      map((issues) => {
+        return applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues);
+      })
     );
   }
 
   private getDupIssueList(): Observable<Issue[]> {
     return this.issueService.issues$.pipe(
-      map((issues) => issues.filter((issue) => this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id))
+      map((issues) => {
+        return issues.filter((issue) => {
+          return this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id;
+        });
+      })
     );
   }
 }

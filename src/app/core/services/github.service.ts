@@ -107,8 +107,8 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      mergeMap(() =>
-        this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
+      mergeMap(() => {
+        return this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
           FetchIssuesByTeam,
           {
             owner: ORG_NAME,
@@ -121,8 +121,8 @@ export class GithubService {
           },
           (result) => result.data.repository.label.issues.edges,
           GithubGraphqlIssue
-        )
-      )
+        );
+      })
     );
   }
 
@@ -135,14 +135,14 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      mergeMap(() =>
-        this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
+      mergeMap(() => {
+        return this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
           FetchIssues,
           { owner: ORG_NAME, name: REPO, filter: graphqlFilter },
           (result) => result.data.repository.issues.edges,
           GithubGraphqlIssue
-        )
-      )
+        );
+      })
     );
   }
 
@@ -168,7 +168,9 @@ export class GithubService {
       }),
       map((resultArray: GithubResponse<GithubIssue[]>[]) => {
         const responses = [responseInFirstPage, ...resultArray];
-        const isCached = responses.reduce((result, response) => result && response.isCached, true);
+        const isCached = responses.reduce((result, response) => {
+          return result && response.isCached;
+        }, true);
         responses.forEach((resp, index) => this.issuesCacheManager.set(index + 1, resp));
         return !isCached;
       })
@@ -182,8 +184,12 @@ export class GithubService {
    */
   isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
     return from(octokit.repos.get({ owner: owner, repo: repo, headers: GithubService.IF_NONE_MATCH_EMPTY })).pipe(
-      map((rawData: { status: number }) => rawData.status !== ERRORCODE_NOT_FOUND),
-      catchError((err) => of(false)),
+      map((rawData: { status: number }) => {
+        return rawData.status !== ERRORCODE_NOT_FOUND;
+      }),
+      catchError((err) => {
+        return of(false);
+      }),
       catchError((err) => throwError('Failed to fetch repo data.'))
     );
   }
@@ -270,7 +276,9 @@ export class GithubService {
       })
     ).pipe(
       map((res: any) => res.status !== ERRORCODE_NOT_FOUND),
-      catchError(() => of(false))
+      catchError(() => {
+        return of(false);
+      })
     );
   }
 
@@ -299,7 +307,9 @@ export class GithubService {
     return this.toFetchIssue(id).pipe(
       filter((toFetch) => toFetch),
       mergeMap(() => from(queryRef.refetch())),
-      map((value: ApolloQueryResult<FetchIssueQuery>) => new GithubGraphqlIssue(value.data.repository.issue)),
+      map((value: ApolloQueryResult<FetchIssueQuery>) => {
+        return new GithubGraphqlIssue(value.data.repository.issue);
+      }),
       throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
     );
   }
@@ -380,13 +390,17 @@ export class GithubService {
 
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({ owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels })).pipe(
-      map((response: GithubResponse<GithubIssue>) => new GithubIssue(response.data))
+      map((response: GithubResponse<GithubIssue>) => {
+        return new GithubIssue(response.data);
+      })
     );
   }
 
   createIssueComment(issueId: number, description: string): Observable<GithubComment> {
     return from(octokit.issues.createComment({ owner: ORG_NAME, repo: REPO, issue_number: issueId, body: description })).pipe(
-      map((response: GithubResponse<GithubComment>) => response.data)
+      map((response: GithubResponse<GithubComment>) => {
+        return response.data;
+      })
     );
   }
 
@@ -406,14 +420,20 @@ export class GithubService {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return new GithubIssue(response.data);
       }),
-      catchError((err) => throwError(err))
+      catchError((err) => {
+        return throwError(err);
+      })
     );
   }
 
   updateIssueComment(issueComment: IssueComment): Observable<GithubComment> {
     return from(
       octokit.issues.updateComment({ owner: ORG_NAME, repo: REPO, comment_id: issueComment.id, body: issueComment.description })
-    ).pipe(map((response: GithubResponse<GithubComment>) => response.data));
+    ).pipe(
+      map((response: GithubResponse<GithubComment>) => {
+        return response.data;
+      })
+    );
   }
 
   uploadFile(filename: string, base64String: string): Observable<any> {
@@ -431,7 +451,9 @@ export class GithubService {
 
   fetchEventsForRepo(): Observable<any[]> {
     return from(octokit.issues.listEventsForRepo({ owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY })).pipe(
-      map((response) => response['data']),
+      map((response) => {
+        return response['data'];
+      }),
       catchError((err) => throwError('Failed to fetch events for repo.'))
     );
   }
@@ -440,7 +462,9 @@ export class GithubService {
     return from(
       octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
-      map((rawData) => ({ data: atob(rawData['data'].content) })),
+      map((rawData) => {
+        return { data: atob(rawData['data']['content']) };
+      }),
       catchError((err) => throwError('Failed to fetch data file.'))
     );
   }
@@ -482,7 +506,9 @@ export class GithubService {
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
     return from(octokit.users.getAuthenticated()).pipe(
-      map((response) => response['data']),
+      map((response) => {
+        return response['data'];
+      }),
       catchError((err) => throwError('Failed to fetch authenticated user.'))
     );
   }
@@ -534,7 +560,11 @@ export class GithubService {
       headers: { 'If-None-Match': this.issuesCacheManager.getEtagFor(pageNumber) }
     });
     const apiCall$ = from(apiCall);
-    return apiCall$.pipe(catchError((err) => of(this.issuesCacheManager.get(pageNumber))));
+    return apiCall$.pipe(
+      catchError((err) => {
+        return of(this.issuesCacheManager.get(pageNumber));
+      })
+    );
   }
 
   /**
@@ -557,7 +587,9 @@ export class GithubService {
         const issues = results.reduce((accumulated, current) => accumulated.concat(pluckEdges(current)), []);
         return issues.map((issue) => new Model(issue.node));
       }),
-      throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
+      throwIfEmpty(() => {
+        return new HttpErrorResponse({ status: 304 });
+      })
     );
   }
 

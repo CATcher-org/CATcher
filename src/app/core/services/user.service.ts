@@ -24,7 +24,11 @@ export class UserService {
    * Get the authenticated user if it exist.
    */
   getAuthenticatedUser(): Observable<GithubUser> {
-    return this.githubService.fetchAuthenticatedUser().pipe(map((data: GithubUser) => data));
+    return this.githubService.fetchAuthenticatedUser().pipe(
+      map((data: GithubUser) => {
+        return data;
+      })
+    );
   }
 
   createUserModel(userLoginId: string): Observable<User> {
