@@ -98,4 +98,14 @@ export class MockAuthService {
   startOAuthProcess() {
     this.accessToken.next('FabricatedToken');
   }
+
+  navigateToLandingPage() {
+    this.router.navigateByUrl(this.phaseService.currentPhase);
+  }
+
+  clearNext() {}
+
+  getNext() {}
+
+  storeNext(next: any) {}
 }
