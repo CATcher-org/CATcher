@@ -30,11 +30,13 @@ jobs:
       - run: npm test -- "--karma-config=./tests/karma.ci.conf.js"
 
   macos-setup-and-tests:
-    runs-on: macos-latest-large
+    runs-on: macos-latest
     strategy:
       matrix:
         node-version: [16.x]
     steps:
+      - uses: browser-actions/setup-firefox@v1
+      - run: firefox --version
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
