@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationEnd, Router } from '@angular/router';
 import { ApolloLink, InMemoryCache } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
-import { Apollo } from 'apollo-angular';
+import { Apollo, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import 'reflect-metadata';
@@ -55,6 +55,7 @@ import { SharedModule } from './shared/shared.module';
         useFactory: markedOptionsFactory
       }
     }),
+    ApolloModule,
     AppRoutingModule
   ],
   providers: [
