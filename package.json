@@ -74,6 +74,7 @@
     "@graphql-codegen/typescript-operations": "^1.18.4",
     "@graphql-codegen/typescript-resolvers": "^1.20.0",
     "@octokit/graphql-schema": "^8.24.0",
+    "@octokit/core": "^4.2.1",
     "@playwright/test": "~1.33",
     "@types/dompurify": "^2.3.1",
     "@types/jasmine": "^3.8.2",
