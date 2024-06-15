@@ -105,4 +105,12 @@ export class LabelComponent implements OnInit, OnChanges {
   hasLabelDefinition(value: Label): boolean {
     return this.labelService.getLabelDefinition(value.labelValue, value.labelCategory) !== null;
   }
+
+  parseLabelDefinitionMarkdown(definition: string): string {
+    // Replace all <li> tags with commas
+    definition = definition.replace(/<\/li>/g, ', ');
+    // Remove all other html tags
+    definition = definition.replace(/<[^>]*>/g, '');
+    return definition;
+  }
 }
