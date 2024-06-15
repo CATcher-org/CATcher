@@ -11,11 +11,16 @@
 
 <mat-menu #labelList>
   <div mat-menu-item class="labelLine" *ngFor="let value of labelValues" [ngStyle]="{ 'padding-left': '15px', 'padding-right': '15px' }">
-    <button class="labelInfo option" (click)="updateLabel(value.labelValue)" [disabled]="value.labelValue === this.issue[attributeName]">
+    <button
+      class="labelInfo option"
+      (click)="updateLabel(value.labelValue)"
+      [disabled]="value.labelValue === this.issue[attributeName]"
+      [matTooltip]="value.labelDefinition"
+      matTooltipPosition="left"
+    >
       <mat-icon [ngStyle]="{ color: '#' + value.labelColor, 'font-size': '1.8em' }">stop</mat-icon>
       <span> {{ value.labelValue }}</span>
     </button>
-
     <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openDefinitionPage(value); $event.stopPropagation()">
       <mat-icon style="font-size: 20px">info</mat-icon>
     </button>
