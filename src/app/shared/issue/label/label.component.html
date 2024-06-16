@@ -29,4 +29,10 @@
   </div>
 </mat-menu>
 
-<p [ngStyle]="this.labelService.setLabelStyle(this.labelColor)">{{ issue[attributeName] || '-' }}</p>
+<p
+  [ngStyle]="this.labelService.setLabelStyle(this.labelColor)"
+  [matTooltip]="parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue[attributeName], attributeName))"
+  matTooltipShowDelay="1000"
+>
+  {{ issue[attributeName] || '-' }}
+</p>
