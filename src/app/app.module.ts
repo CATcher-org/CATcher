@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule, NgZone } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltipModule, MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/material/tooltip';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationEnd, Router } from '@angular/router';
@@ -37,6 +37,12 @@ import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/l
 import { HeaderComponent } from './shared/layout';
 import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';
+
+export const customTooltipDefaults: MatTooltipDefaultOptions = {
+  showDelay: 1000,
+  hideDelay: 0,
+  touchendHideDelay: 0
+};
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, UserConfirmationComponent, LabelDefinitionPopupComponent, SessionFixConfirmationComponent],
@@ -79,6 +85,10 @@ import { SharedModule } from './shared/shared.module';
     {
       provide: ErrorHandler,
       useClass: ErrorHandlingService
+    },
+    {
+      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+      useValue: customTooltipDefaults
     }
   ],
   bootstrap: [AppComponent]

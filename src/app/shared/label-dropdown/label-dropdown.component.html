@@ -8,12 +8,21 @@
       [ngStyle]="this.labelService.setLabelStyle(this.selectedColor, 'inline-block')"
       required
       disableOptionCentering
+      [matTooltipDisabled]="!dropdownControl.value"
+      [matTooltip]="
+        this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(dropdownControl.value, attributeName))
+      "
     >
       <mat-select-trigger>
         {{ dropdownControl.value }}
       </mat-select-trigger>
       <div mat-menu-item class="labelLine" *ngFor="let value of labelList">
-        <mat-option [value]="value.labelValue" [ngStyle]="{ background: 'transparent' }">
+        <mat-option
+          [value]="value.labelValue"
+          [ngStyle]="{ background: 'transparent' }"
+          [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(value.labelDefinition)"
+          matTooltipPosition="left"
+        >
           <mat-icon [ngStyle]="{ color: '#' + value.labelColor }">stop</mat-icon>
           <span> {{ value.labelValue }}</span>
         </mat-option>

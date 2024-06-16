@@ -15,9 +15,8 @@
     class="labelLine"
     *ngFor="let value of labelValues"
     [ngStyle]="{ 'padding-left': '15px', 'padding-right': '15px' }"
-    [matTooltip]="parseLabelDefinitionMarkdown(value.labelDefinition)"
+    [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(value.labelDefinition)"
     matTooltipPosition="left"
-    matTooltipShowDelay="1000"
   >
     <button class="labelInfo option" (click)="updateLabel(value.labelValue)" [disabled]="value.labelValue === this.issue[attributeName]">
       <mat-icon [ngStyle]="{ color: '#' + value.labelColor, 'font-size': '1.8em' }">stop</mat-icon>
@@ -31,8 +30,7 @@
 
 <p
   [ngStyle]="this.labelService.setLabelStyle(this.labelColor)"
-  [matTooltip]="parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue[attributeName], attributeName))"
-  matTooltipShowDelay="1000"
+  [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue[attributeName], attributeName))"
 >
   {{ issue[attributeName] || '-' }}
 </p>

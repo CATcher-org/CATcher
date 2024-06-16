@@ -31,7 +31,3 @@
   font-size: 1em;
   text-align: left;
 }
-
-::ng-deep .mat-tooltip {
-  font-size: 16px;
-}

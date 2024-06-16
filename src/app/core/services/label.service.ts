@@ -362,4 +362,15 @@ export class LabelService {
 
     return styles;
   }
+
+  parseLabelDefinitionMarkdown(definition: string): string {
+    if (definition === null) {
+      return '';
+    }
+    // Replace all <li> tags with commas
+    definition = definition.replace(/<\/li>/g, ', ');
+    // Remove all other html tags
+    definition = definition.replace(/<[^>]*>/g, '');
+    return definition;
+  }
 }
