@@ -17,12 +17,7 @@
         {{ dropdownControl.value }}
       </mat-select-trigger>
       <div mat-menu-item class="labelLine" *ngFor="let value of labelList">
-        <mat-option
-          [value]="value.labelValue"
-          [ngStyle]="{ background: 'transparent' }"
-          [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(value.labelDefinition)"
-          matTooltipPosition="left"
-        >
+        <mat-option [value]="value.labelValue" [ngStyle]="{ background: 'transparent' }">
           <mat-icon [ngStyle]="{ color: '#' + value.labelColor }">stop</mat-icon>
           <span> {{ value.labelValue }}</span>
         </mat-option>
