@@ -52,6 +52,7 @@
         (click)="$event.stopPropagation()"
         [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('type', issue.teamChosenType))"
         [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue.teamChosenType, 'type'))"
+        matTooltipClass="labelTooltip"
       >
         {{ issue.teamChosenType }}
       </span>
@@ -66,6 +67,7 @@
         (click)="$event.stopPropagation()"
         [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('severity', issue.severity))"
         [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue.severity, 'severity'))"
+        matTooltipClass="labelTooltip"
       >
         {{ issue.severity || '-' }}
       </span>
