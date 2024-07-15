@@ -2,7 +2,3 @@
   padding: 30px;
   min-height: 87.9vh;
 }
-
-::ng-deep .mat-tooltip {
-  font-size: 16px;
-}

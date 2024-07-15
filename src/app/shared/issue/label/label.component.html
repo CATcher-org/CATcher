@@ -24,6 +24,7 @@
 <p
   [ngStyle]="this.labelService.setLabelStyle(this.labelColor)"
   [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue[attributeName], attributeName))"
+  matTooltipClass="labelTooltip"
 >
   {{ issue[attributeName] || '-' }}
 </p>

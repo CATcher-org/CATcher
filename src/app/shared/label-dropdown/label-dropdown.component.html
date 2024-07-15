@@ -12,6 +12,7 @@
       [matTooltip]="
         this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(dropdownControl.value, attributeName))
       "
+      matTooltipClass="labelTooltip"
     >
       <mat-select-trigger>
         {{ dropdownControl.value }}

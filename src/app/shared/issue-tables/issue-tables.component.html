@@ -36,6 +36,7 @@
         (click)="$event.stopPropagation()"
         [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('type', issue.type))"
         [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue.type, 'type'))"
+        matTooltipClass="labelTooltip"
       >
         {{ issue.type || '-' }}
       </span>
