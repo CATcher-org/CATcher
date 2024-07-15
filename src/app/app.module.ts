@@ -38,12 +38,6 @@ import { HeaderComponent } from './shared/layout';
 import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';
 
-export const customTooltipDefaults: MatTooltipDefaultOptions = {
-  showDelay: 1000,
-  hideDelay: 0,
-  touchendHideDelay: 0
-};
-
 @NgModule({
   declarations: [AppComponent, HeaderComponent, UserConfirmationComponent, LabelDefinitionPopupComponent, SessionFixConfirmationComponent],
   imports: [
@@ -85,10 +79,6 @@ export const customTooltipDefaults: MatTooltipDefaultOptions = {
     {
       provide: ErrorHandler,
       useClass: ErrorHandlingService
-    },
-    {
-      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
-      useValue: customTooltipDefaults
     }
   ],
   bootstrap: [AppComponent]
