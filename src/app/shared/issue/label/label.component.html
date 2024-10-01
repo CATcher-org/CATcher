@@ -15,11 +15,16 @@
       <mat-icon [ngStyle]="{ color: '#' + value.labelColor, 'font-size': '1.8em' }">stop</mat-icon>
       <span> {{ value.labelValue }}</span>
     </button>
-
     <button *ngIf="hasLabelDefinition(value)" class="infoPopup" (click)="openDefinitionPage(value); $event.stopPropagation()">
       <mat-icon style="font-size: 20px">info</mat-icon>
     </button>
   </div>
 </mat-menu>
 
-<p [ngStyle]="this.labelService.setLabelStyle(this.labelColor)">{{ issue[attributeName] || '-' }}</p>
+<p
+  [ngStyle]="this.labelService.setLabelStyle(this.labelColor)"
+  [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue[attributeName], attributeName))"
+  matTooltipClass="labelTooltip"
+>
+  {{ issue[attributeName] || '-' }}
+</p>
