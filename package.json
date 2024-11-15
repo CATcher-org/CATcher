@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "3.5.4",
+  "version": "3.5.5",
   "main": "main.js",
   "engines": {
     "node": ">=14.0.0"
