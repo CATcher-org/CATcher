@@ -36,6 +36,8 @@ export class IssueService {
   private issuesPollSubscription: Subscription;
   /** Whether the IssueService is downloading the data from Github*/
   public isLoading = new BehaviorSubject<boolean>(false);
+  /** Whether the IssueService is creating a new team response */
+  private isCreatingTeamResponse = false;
 
   constructor(
     private githubService: GithubService,
@@ -80,15 +82,19 @@ export class IssueService {
    */
   pollIssue(issueId: number): Observable<Issue> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
-      exhaustMap(() =>
-        this.githubService.fetchIssueGraphql(issueId).pipe(
-          map((response) => {
-            const issue = this.createIssueModel(response);
-            this.updateLocalStore(issue);
-            return issue;
-          }),
-          catchError((err) => this.getIssue(issueId))
-        )
+      exhaustMap(() => {
+        if (this.isCreatingTeamResponse) {
+          return EMPTY;
+        }
+        return this.githubService.fetchIssueGraphql(issueId).pipe(
+            map((response) => {
+              const issue = this.createIssueModel(response);
+              this.updateLocalStore(issue);
+              return issue;
+            }),
+            catchError((err) => this.getIssue(issueId))
+          );
+        }
       )
     );
   }
@@ -193,11 +199,13 @@ export class IssueService {
 
   createTeamResponse(issue: Issue): Observable<Issue> {
     // The issue must be updated first to ensure that fields like assignees are valid
+    this.isCreatingTeamResponse = true;
     const teamResponse = issue.createGithubTeamResponse();
     return this.updateGithubIssue(issue).pipe(
       mergeMap((response: GithubIssue) => {
         return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
           map((githubComment: GithubComment) => {
+            this.isCreatingTeamResponse = false;
             issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
             response.comments = issue.githubComments;
             return this.createIssueModel(response);
