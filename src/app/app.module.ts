@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule, NgZone } from '@angular/core';
+import { MatTooltipModule, MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/material/tooltip';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationEnd, Router } from '@angular/router';
@@ -49,6 +50,7 @@ import { SharedModule } from './shared/shared.module';
     PhaseModerationModule,
     SharedModule,
     HttpClientModule,
+    MatTooltipModule,
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,

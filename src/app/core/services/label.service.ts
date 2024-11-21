@@ -38,7 +38,7 @@ const DISPLAY_NAME_RESPONSE = 'Response';
 
 // The HTML template definition of selected labels are hard-coded here, move to a config file in the future
 const VERY_LOW_DEFINITION =
-  '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not affect usage</mark>. For example, ' +
+  '<p>A flaw that is <mark>purely cosmetic</mark> and <mark>does not affect usage</mark>. For example: ' +
   '<ul>' +
   '<li>typo issues</li>' +
   '<li>spacing issues</li>' +
@@ -52,7 +52,7 @@ const LOW_DEFINITION =
   'Appears only in very rare situations and causes a minor inconvenience only.</p>';
 const MEDIUM_DEFINITION = '<p>A flaw that causes occasional inconvenience to some users but they can ' + 'continue to use the product.</p>';
 const HIGH_DEFINITION =
-  '<p>A flaw that affects most users and causes major problems for users.' + 'i.e., makes the product almost unusable for most users.</p>';
+  '<p>A flaw that affects most users and causes major problems for users. ' + 'i.e. makes the product almost unusable for most users.</p>';
 
 const FUNCTIONALITY_BUG_DEFINITION = '<p>A functionality does not work as specified/expected.</p>';
 const FEATURE_FLAW_DEFINITION =
@@ -62,7 +62,7 @@ const FEATURE_FLAW_DEFINITION =
   'the scope of the current version features. These issues are counted against the <i>product design</i> aspect ' +
   'of the project.</p>';
 const DOCUMENTATION_BUG_DEFINITION =
-  '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g., a missing step, a wrong instruction, typos</span></p>';
+  '<p>A flaw in the documentation ' + '<span style="color:grey;">e.g. a missing step, a wrong instruction, typos</span></p>';
 
 const ACCEPTED_DEFINITION = '<p>You accept it as a bug.</p>';
 const NOT_IN_SCOPE_DEFINITION =
@@ -361,5 +361,16 @@ export class LabelService {
     };
 
     return styles;
+  }
+
+  parseLabelDefinitionMarkdown(definition: string): string {
+    if (definition === null) {
+      return '';
+    }
+    // Replace all <li> tags with commas
+    definition = definition.replace(/<\/li>/g, ', ');
+    // Remove all other html tags
+    definition = definition.replace(/<[^>]*>/g, '');
+    return definition;
   }
 }
