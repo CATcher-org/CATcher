@@ -74,7 +74,7 @@ const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 const TeamResponseSectionParser = buildTeamResponseSectionParser(TESTER_RESPONSES_HEADER);
 
 export const TesterResponseParser = coroutine(function* () {
-  yield possibly(str(GITHUB_UI_EDIT_WARNING));
+  yield str(GITHUB_UI_EDIT_WARNING);
   yield optionalWhitespace;
 
   const teamResponse = yield TeamResponseSectionParser;
