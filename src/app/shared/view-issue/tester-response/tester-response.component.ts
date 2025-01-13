@@ -15,6 +15,7 @@ import { UserService } from '../../../core/services/user.service';
 import { CommentEditorComponent } from '../../comment-editor/comment-editor.component';
 import { SUBMIT_BUTTON_TEXT } from '../view-issue.component';
 import { ConflictDialogComponent, TesterResponseConflictData } from './conflict-dialog/conflict-dialog.component';
+import { GITHUB_UI_EDIT_WARNING } from '../../../core/models/templates/tester-response-template.model';
 
 @Component({
   selector: 'app-tester-response',
@@ -78,7 +79,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
           if (isSaveToSubmit || this.isUpdatingDeletedResponse() || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
               ...this.issue.issueComment,
-              description: this.getTesterResponseFromForm()
+              description: GITHUB_UI_EDIT_WARNING + '\n' + this.getTesterResponseFromForm()
             });
           } else {
             this.submitButtonText = SUBMIT_BUTTON_TEXT.OVERWRITE;

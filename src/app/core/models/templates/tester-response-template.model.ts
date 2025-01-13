@@ -65,7 +65,7 @@ interface TesterResponseParseResult {
   teamChosenType: string;
 }
 
-const GITHUB_UI_EDIT_WARNING =
+export const GITHUB_UI_EDIT_WARNING =
   // eslint-disable-next-line max-len
   '[IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. You can respond to it using CATcher during the next phase of the PE]';
 const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
