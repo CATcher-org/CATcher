@@ -332,7 +332,7 @@ export enum ATTRIBUTES {
   Status = 'status',
   Undefined = 'undefined',
   Others = 'others'
-} 
+}
 
 export enum SEVERITY {
   VeryLow = 'VeryLow',
@@ -341,7 +341,7 @@ export enum SEVERITY {
   High = 'High'
 }
 
-export enum BUG {
+export enum BUG_TYPE {
   DocumentationBug = 'DocumentationBug',
   FeatureFlaw = 'FeatureFlaw',
   FunctionalityBug = 'FunctionalityBug'
