@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ApolloQueryResult } from '@apollo/client/core';
 import { Apollo, QueryRef } from 'apollo-angular';
-import { ApolloQueryResult } from 'apollo-client';
 import { DocumentNode } from 'graphql';
 import { forkJoin, from, Observable, of, throwError } from 'rxjs';
-import { catchError, filter, flatMap, map, throwIfEmpty } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, throwIfEmpty } from 'rxjs/operators';
 import {
   FetchIssue,
   FetchIssueQuery,
@@ -16,6 +16,7 @@ import {
   FetchLabelsQuery
 } from '../../../../graphql/graphql-types';
 import { AppConfig } from '../../../environments/environment';
+import { throwIfFalse } from '../../shared/lib/custom-ops';
 import { getNumberOfPages } from '../../shared/lib/github-paginator-parser';
 import { IssueComment } from '../models/comment.model';
 import { GithubUser } from '../models/github-user.model';
@@ -29,14 +30,18 @@ import { GithubLabel } from '../models/github/github-label.model';
 import { GithubResponse } from '../models/github/github-response.model';
 import { GithubRelease } from '../models/github/github.release';
 import { SessionData } from '../models/session.model';
-import { ElectronService } from './electron.service';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
 
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
 const CATCHER_REPO = 'CATcher';
+const BRANCH = 'main';
 const UNABLE_TO_OPEN_IN_BROWSER = 'Unable to open this issue in Browser';
+const BRANCH_CREATION_FAILED = `Unable to create ${BRANCH} branch.`;
+function getSettingsUrl(org: string, repoName: string): string {
+  return `https://raw.githubusercontent.com/${org}/${repoName}/master/settings.json`;
+}
 
 let ORG_NAME = '';
 let MOD_ORG = '';
@@ -62,12 +67,7 @@ export class GithubService {
   private issuesLastModifiedManager = new IssueLastModifiedManagerModel();
   private issueQueryRefs = new Map<Number, QueryRef<FetchIssueQuery>>();
 
-  constructor(
-    private errorHandlingService: ErrorHandlingService,
-    private apollo: Apollo,
-    private electronService: ElectronService,
-    private logger: LoggingService
-  ) {}
+  constructor(private errorHandlingService: ErrorHandlingService, private apollo: Apollo, private logger: LoggingService) {}
 
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
@@ -75,11 +75,12 @@ export class GithubService {
         return `Token ${accessToken}`;
       },
       log: {
-        debug: (message, ...otherInfo) => this.logger.debug(message, ...otherInfo),
+        debug: (message, ...otherInfo) => this.logger.debug('GithubService: ' + message, ...otherInfo),
         // Do not log info for HTTP response 304 due to repeated polling
-        info: (message, ...otherInfo) => (/304 in \d+ms$/.test(message) ? undefined : this.logger.info(message, ...otherInfo)),
-        warn: (message, ...otherInfo) => this.logger.warn(message, ...otherInfo),
-        error: (message, ...otherInfo) => this.logger.error(message, ...otherInfo)
+        info: (message, ...otherInfo) =>
+          /304 in \d+ms$/.test(message) ? undefined : this.logger.info('GithubService: ' + message, ...otherInfo),
+        warn: (message, ...otherInfo) => this.logger.warn('GithubService: ' + message, ...otherInfo),
+        error: (message, ...otherInfo) => this.logger.error('GithubService: ' + message, ...otherInfo)
       }
     });
   }
@@ -106,8 +107,8 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => {
-        return this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
+      mergeMap(() =>
+        this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
           FetchIssuesByTeam,
           {
             owner: ORG_NAME,
@@ -120,8 +121,8 @@ export class GithubService {
           },
           (result) => result.data.repository.label.issues.edges,
           GithubGraphqlIssue
-        );
-      })
+        )
+      )
     );
   }
 
@@ -134,14 +135,14 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => {
-        return this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
+      mergeMap(() =>
+        this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
           FetchIssues,
           { owner: ORG_NAME, name: REPO, filter: graphqlFilter },
           (result) => result.data.repository.issues.edges,
           GithubGraphqlIssue
-        );
-      })
+        )
+      )
     );
   }
 
@@ -158,7 +159,7 @@ export class GithubService {
         responseInFirstPage = response;
         return getNumberOfPages(response);
       }),
-      flatMap((numOfPages: number) => {
+      mergeMap((numOfPages: number) => {
         const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
           apiCalls.push(this.getIssuesAPICall(filter, i));
@@ -167,9 +168,7 @@ export class GithubService {
       }),
       map((resultArray: GithubResponse<GithubIssue[]>[]) => {
         const responses = [responseInFirstPage, ...resultArray];
-        const isCached = responses.reduce((result, response) => {
-          return result && response.isCached;
-        }, true);
+        const isCached = responses.reduce((result, response) => result && response.isCached, true);
         responses.forEach((resp, index) => this.issuesCacheManager.set(index + 1, resp));
         return !isCached;
       })
@@ -183,12 +182,8 @@ export class GithubService {
    */
   isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
     return from(octokit.repos.get({ owner: owner, repo: repo, headers: GithubService.IF_NONE_MATCH_EMPTY })).pipe(
-      map((rawData: { status: number }) => {
-        return rawData.status !== ERRORCODE_NOT_FOUND;
-      }),
-      catchError((err) => {
-        return of(false);
-      }),
+      map((rawData: { status: number }) => rawData.status !== ERRORCODE_NOT_FOUND),
+      catchError((err) => of(false)),
       catchError((err) => throwError('Failed to fetch repo data.'))
     );
   }
@@ -201,6 +196,82 @@ export class GithubService {
    */
   createRepository(name: string): void {
     octokit.repos.createForAuthenticatedUser({ name: name });
+  }
+
+  /**
+   * Creates the `main` branch for the current repository.
+   */
+  createBranch() {
+    return this.getDefaultBranch().pipe(
+      mergeMap((res) => this.getBranchHeadInfo(res)),
+      map((res) => res.data.object.sha),
+      mergeMap((sha: string) => this.createBranchFromCommit(sha)),
+      mergeMap(() => this.isMainBranchPresent()),
+      throwIfFalse(
+        (isBranchPresent: boolean) => isBranchPresent,
+        () => new Error(BRANCH_CREATION_FAILED)
+      )
+    );
+  }
+
+  /**
+   * Creates the `main` branch for the current repository,
+   * from the commit with the given SHA.
+   */
+  createBranchFromCommit(commitSha: string) {
+    return from(
+      octokit.git.createRef({
+        owner: ORG_NAME,
+        repo: REPO,
+        ref: `refs/heads/${BRANCH}`,
+        sha: commitSha
+      })
+    );
+  }
+
+  /**
+   * Get the default branch of the specified repository.
+   * @param owner The owner of the repository.
+   * @param repo The name of the repository.
+   */
+  getDefaultBranch(): Observable<string> {
+    return from(
+      octokit.repos.get({
+        owner: ORG_NAME,
+        repo: REPO
+      })
+    ).pipe(map((res: any) => res.data.default_branch));
+  }
+
+  /**
+   * Get information of the head of the given branch name,
+   * in the current repository.
+   * @param branch The name of the branch.
+   */
+  getBranchHeadInfo(branch: string): Observable<any> {
+    return from(
+      octokit.git.getRef({
+        owner: ORG_NAME,
+        repo: REPO,
+        ref: `heads/${branch}`
+      })
+    );
+  }
+
+  /**
+   * Checks if the repo already has the branch `main`.
+   */
+  isMainBranchPresent(): Observable<boolean> {
+    return from(
+      octokit.git.getRef({
+        owner: ORG_NAME,
+        repo: REPO,
+        ref: `heads/${BRANCH}`
+      })
+    ).pipe(
+      map((res: any) => res.status !== ERRORCODE_NOT_FOUND),
+      catchError(() => of(false))
+    );
   }
 
   /**
@@ -227,10 +298,8 @@ export class GithubService {
     const queryRef = this.issueQueryRefs.get(id);
     return this.toFetchIssue(id).pipe(
       filter((toFetch) => toFetch),
-      flatMap(() => from(queryRef.refetch())),
-      map((value: ApolloQueryResult<FetchIssueQuery>) => {
-        return new GithubGraphqlIssue(value.data.repository.issue);
-      }),
+      mergeMap(() => from(queryRef.refetch())),
+      map((value: ApolloQueryResult<FetchIssueQuery>) => new GithubGraphqlIssue(value.data.repository.issue)),
       throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
     );
   }
@@ -311,17 +380,13 @@ export class GithubService {
 
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({ owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels })).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
-        return new GithubIssue(response.data);
-      })
+      map((response: GithubResponse<GithubIssue>) => new GithubIssue(response.data))
     );
   }
 
   createIssueComment(issueId: number, description: string): Observable<GithubComment> {
     return from(octokit.issues.createComment({ owner: ORG_NAME, repo: REPO, issue_number: issueId, body: description })).pipe(
-      map((response: GithubResponse<GithubComment>) => {
-        return response.data;
-      })
+      map((response: GithubResponse<GithubComment>) => response.data)
     );
   }
 
@@ -341,20 +406,14 @@ export class GithubService {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return new GithubIssue(response.data);
       }),
-      catchError((err) => {
-        return throwError(err);
-      })
+      catchError((err) => throwError(err))
     );
   }
 
   updateIssueComment(issueComment: IssueComment): Observable<GithubComment> {
     return from(
       octokit.issues.updateComment({ owner: ORG_NAME, repo: REPO, comment_id: issueComment.id, body: issueComment.description })
-    ).pipe(
-      map((response: GithubResponse<GithubComment>) => {
-        return response.data;
-      })
-    );
+    ).pipe(map((response: GithubResponse<GithubComment>) => response.data));
   }
 
   uploadFile(filename: string, base64String: string): Observable<any> {
@@ -362,6 +421,7 @@ export class GithubService {
       octokit.repos.createOrUpdateFile({
         owner: ORG_NAME,
         repo: REPO,
+        branch: BRANCH,
         path: `files/${filename}`,
         message: 'upload file',
         content: base64String
@@ -371,9 +431,7 @@ export class GithubService {
 
   fetchEventsForRepo(): Observable<any[]> {
     return from(octokit.issues.listEventsForRepo({ owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY })).pipe(
-      map((response) => {
-        return response['data'];
-      }),
+      map((response) => response['data']),
       catchError((err) => throwError('Failed to fetch events for repo.'))
     );
   }
@@ -398,6 +456,13 @@ export class GithubService {
     );
   }
 
+  private fetchSettingsFromRawUrl(): Observable<SessionData> {
+    return from(fetch(getSettingsUrl(MOD_ORG, DATA_REPO))).pipe(
+      mergeMap((res) => res.json()),
+      catchError((err) => throwError('Failed to fetch settings file.'))
+    );
+  }
+
   /**
    * Fetches the data file that is regulates session information.
    * @return Observable<SessionData> representing session information.
@@ -407,15 +472,19 @@ export class GithubService {
       octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
       map((rawData) => JSON.parse(atob(rawData['data']['content']))),
-      catchError((err) => throwError('Failed to fetch settings file.'))
+      catchError((err) => {
+        this.logger.error(
+          'GithubService: Failed to fetch settings file via REST API. Trying to fetch using raw.githubusercontent.com: ',
+          err
+        );
+        return this.fetchSettingsFromRawUrl();
+      })
     );
   }
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
     return from(octokit.users.getAuthenticated()).pipe(
-      map((response) => {
-        return response['data'];
-      }),
+      map((response) => response['data']),
       catchError((err) => throwError('Failed to fetch authenticated user.'))
     );
   }
@@ -426,7 +495,7 @@ export class GithubService {
 
   viewIssueInBrowser(id: number, event: Event) {
     if (id) {
-      this.electronService.openLink('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
+      window.open('https://github.com/'.concat(this.getRepoURL()).concat('/issues/').concat(String(id)));
     } else {
       this.errorHandlingService.handleError(new Error(UNABLE_TO_OPEN_IN_BROWSER));
     }
@@ -434,6 +503,7 @@ export class GithubService {
   }
 
   reset(): void {
+    this.logger.info(`GithubService: Resetting issues cache`);
     this.issuesCacheManager.clear();
     this.issuesLastModifiedManager.clear();
     this.issueQueryRefs.clear();
@@ -466,11 +536,7 @@ export class GithubService {
       headers: { 'If-None-Match': this.issuesCacheManager.getEtagFor(pageNumber) }
     });
     const apiCall$ = from(apiCall);
-    return apiCall$.pipe(
-      catchError((err) => {
-        return of(this.issuesCacheManager.get(pageNumber));
-      })
-    );
+    return apiCall$.pipe(catchError((err) => of(this.issuesCacheManager.get(pageNumber))));
   }
 
   /**
@@ -493,9 +559,7 @@ export class GithubService {
         const issues = results.reduce((accumulated, current) => accumulated.concat(pluckEdges(current)), []);
         return issues.map((issue) => new Model(issue.node));
       }),
-      throwIfEmpty(() => {
-        return new HttpErrorResponse({ status: 304 });
-      })
+      throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
     );
   }
 

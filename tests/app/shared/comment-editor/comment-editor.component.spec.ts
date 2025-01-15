@@ -56,8 +56,6 @@ describe('CommentEditor', () => {
       'md-unordered-list',
       'md-ordered-list',
       'md-task-list',
-      'md-mention',
-      'md-ref'
     ];
 
     it('should render a formatting toolbar', () => {
@@ -92,8 +90,6 @@ describe('CommentEditor', () => {
       'md-unordered-list': '- ',
       'md-ordered-list': '1. ',
       'md-task-list': `- [ ] `,
-      'md-mention': '@',
-      'md-ref': '#'
     };
 
     // simulate each button being clicked and check that the markups added to the text
@@ -107,7 +103,7 @@ describe('CommentEditor', () => {
         buttonDe.nativeElement.click();
 
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        await fixture.whenStable().then(() => {
           const textBox: any = debugElement.query(By.css('textarea')).nativeElement;
           expect(textBox.value).toEqual(expectedMarkup);
         });
@@ -133,8 +129,6 @@ describe('CommentEditor', () => {
       'md-unordered-list': `- ${highlightedText}`,
       'md-ordered-list': `1. ${highlightedText}`,
       'md-task-list': `- [ ] ${highlightedText}`,
-      'md-mention': `@${highlightedText}`,
-      'md-ref': `#${highlightedText}`
     };
 
     // simulate each button being clicked and check that the markups added to the text
@@ -157,7 +151,7 @@ describe('CommentEditor', () => {
         buttonDe.nativeElement.click();
         fixture.detectChanges();
 
-        fixture.whenStable().then(() => {
+        await fixture.whenStable().then(() => {
           expect(textBoxDe.nativeElement.value).toEqual(expectedMarkup);
         });
       });
@@ -194,7 +188,7 @@ describe('CommentEditor', () => {
       textBox.value = '123';
       textBox.dispatchEvent(new Event('input'));
 
-      fixture.whenStable().then(() => {
+      await fixture.whenStable().then(() => {
         expect(textBox.value).toEqual('123');
       });
     });

@@ -20,7 +20,7 @@ describe('search-filter', () => {
     });
     let searchKey: string;
     const mediumSeverityIssueWithResponse: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
-    mediumSeverityIssueWithResponse.responseTag = 'Accepted';
+    mediumSeverityIssueWithResponse.response = 'Accepted';
     const mediumSeverityIssueWithAssigneee: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_ASSIGNEES, dummyTeam);
     const lowSeverityFeatureFlawIssue: Issue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION_LOW_SEVERITY, dummyTeam);
     const highSeverityDocumentationBugIssue: Issue = Issue.createPhaseTeamResponseIssue(
@@ -45,7 +45,7 @@ describe('search-filter', () => {
       TABLE_COLUMNS.ASSIGNEE,
       TABLE_COLUMNS.DUPLICATED_ISSUES
     ];
-    const issueService: IssueService = new IssueService(null, null, null, null, null, null);
+    const issueService: IssueService = new IssueService(null, null, null, null, null);
 
     beforeEach(() => {
       issueService.updateLocalStore(mediumSeverityIssueWithResponse);
@@ -83,7 +83,7 @@ describe('search-filter', () => {
       expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList)).toEqual([lowSeverityFeatureFlawIssue]);
 
       // Search by response of issue
-      searchKey = mediumSeverityIssueWithResponse.responseTag;
+      searchKey = mediumSeverityIssueWithResponse.response;
       expect(applySearchFilter(searchKey, displayedColumns, issueService, issuesList)).toEqual([mediumSeverityIssueWithResponse]);
     });
   });

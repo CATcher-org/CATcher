@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, pipe } from 'rxjs';
-import { flatMap, map, retry, tap } from 'rxjs/operators';
+import { map, mergeMap, retry, tap } from 'rxjs/operators';
 import { throwIfFalse } from '../../shared/lib/custom-ops';
 import { Phase } from '../models/phase.model';
 import { assertSessionDataIntegrity, SessionData } from '../models/session.model';
@@ -125,17 +125,16 @@ export class PhaseService {
   sessionSetup(): Observable<any> {
     // Permission Caching Mechanism to prevent repeating permission request.
     let isSessionFixPermissionGranted = false;
-    const cacheSessionFixPermission = () => {
-      return pipe(
+    const cacheSessionFixPermission = () =>
+      pipe(
         tap((sessionFixPermission: boolean | null) => {
           isSessionFixPermissionGranted = sessionFixPermission ? sessionFixPermission : false;
         })
       );
-    };
 
     return this.fetchSessionData().pipe(
       assertSessionDataIntegrity(),
-      flatMap((sessionData: SessionData) => {
+      mergeMap((sessionData: SessionData) => {
         this.updateSessionParameters(sessionData);
         return this.verifySessionAvailability(sessionData);
       }),
@@ -159,6 +158,13 @@ export class PhaseService {
 
   public getPhaseDetail() {
     return this.orgName.concat('/').concat(this.repoName);
+  }
+
+  /**
+   * Checks whether the given route is allowed in this phase.
+   */
+  isValidRoute(route: string): boolean {
+    return route.startsWith('/' + this.currentPhase);
   }
 
   reset() {

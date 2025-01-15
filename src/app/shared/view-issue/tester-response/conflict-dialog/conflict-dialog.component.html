@@ -14,7 +14,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title class="response-title">
           <div class="question-mark">?</div>
-          <markdown [data]="data.updatedResponses[i].getTitleInMarkDown()"></markdown>
+          <markdown [data]="data.updatedResponses[i].getTitleInMarkDown()" disableInternalLink></markdown>
         </mat-panel-title>
         <mat-panel-description>
           <mat-chip-list>
@@ -25,7 +25,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <br />
-      <markdown [data]="data.updatedResponses[i].description"></markdown>
+      <markdown [data]="data.updatedResponses[i].description" disableInternalLink></markdown>
       <br />
       <div
         *ngIf="data.updatedResponses[i].isDisagree() === data.outdatedResponses[i].isDisagree() || !showDiff"

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Issue } from '../../../core/models/issue.model';
 import { TesterResponse } from '../../../core/models/tester-response.model';
@@ -74,7 +74,7 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
     this.isSafeToSubmit()
       .pipe(
-        flatMap((isSaveToSubmit: boolean) => {
+        mergeMap((isSaveToSubmit: boolean) => {
           if (isSaveToSubmit || this.isUpdatingDeletedResponse() || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateTesterResponse(this.issue, <IssueComment>{
               ...this.issue.issueComment,
@@ -108,9 +108,10 @@ export class TesterResponseComponent implements OnInit, OnChanges {
         if (!issue.testerResponses) {
           return false;
         }
-        return issue.testerResponses.reduce((result, response, index) => {
-          return result && response.compareTo(this.issue.testerResponses[index]) === 0;
-        }, true);
+        return issue.testerResponses.reduce(
+          (result, response, index) => result && response.compareTo(this.issue.testerResponses[index]) === 0,
+          true
+        );
       })
     );
   }
@@ -161,14 +162,11 @@ export class TesterResponseComponent implements OnInit, OnChanges {
 
     const isModified = reasonForDisagreementIsModified || disagreementIsModified;
 
-    if (isModified) {
-      // if the disagreement decision and/or reason for disagreement of any response has been edited,
-      // request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    this.dialogService.performActionIfModified(
+      isModified,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
   }
 
   openCancelDialog(): void {

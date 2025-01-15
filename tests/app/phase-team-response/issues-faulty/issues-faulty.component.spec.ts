@@ -11,13 +11,13 @@ describe('IssuesFaultyComponent', () => {
     const dummyIssue = Issue.createPhaseTeamResponseIssue(ISSUE_WITH_EMPTY_DESCRIPTION, dummyTeam);
     let issueService: IssueService;
     let issuesFaultyComponent: IssuesFaultyComponent;
-    const userService = new UserService(null, null);
+    const userService = new UserService(null, null, null);
     userService.currentUser = USER_Q;
     const DUMMY_DUPLICATE_ISSUE_ID = 1;
     const DUMMY_RESPONSE = 'dummy response';
 
     beforeEach(() => {
-      issueService = new IssueService(null, null, null, null, null, null);
+      issueService = new IssueService(null, null, null, null, null);
       issueService.updateLocalStore(dummyIssue);
       issuesFaultyComponent = new IssuesFaultyComponent(issueService, userService, null);
       issuesFaultyComponent.ngOnInit();

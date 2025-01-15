@@ -8,7 +8,6 @@
 /release
 main.js
 src/**/*.js
-electron-utils/*.js
 *.js.map
 
 # tests coverage
@@ -32,6 +31,7 @@ CATcher.iml
 !.vscode/launch.json
 
 # misc
+/.angular/cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -53,3 +53,6 @@ Thumbs.db
 
 # graphql types
 graphql/graphql-types.ts
+/test-results/
+/playwright-report/
+/playwright/.cache/

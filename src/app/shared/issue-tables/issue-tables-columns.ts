@@ -4,7 +4,7 @@ export enum TABLE_COLUMNS {
   TEAM_ASSIGNED = 'teamAssigned',
   TYPE = 'type',
   SEVERITY = 'severity',
-  RESPONSE = 'responseTag',
+  RESPONSE = 'response',
   TESTER_DISAGREE = 'testerDisagree',
   ASSIGNEE = 'assignees',
   DUPLICATED_ISSUES = 'duplicatedIssues',

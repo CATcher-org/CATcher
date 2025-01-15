@@ -5,6 +5,7 @@ import { UserConfirmationComponent } from '../../../../../src/app/core/guards/us
 import { Issue } from '../../../../../src/app/core/models/issue.model';
 import { Phase } from '../../../../../src/app/core/models/phase.model';
 import { DialogService } from '../../../../../src/app/core/services/dialog.service';
+import { LoadingService } from '../../../../../src/app/core/services/loading.service';
 import { PhaseService } from '../../../../../src/app/core/services/phase.service';
 import { DescriptionComponent } from '../../../../../src/app/shared/issue/description/description.component';
 import { ISSUE_WITH_EMPTY_DESCRIPTION } from '../../../../constants/githubissue.constants';
@@ -18,6 +19,7 @@ describe('DescriptionComponent', () => {
   let dialog: any;
   let errorHandlingService: any;
   let dialogService: jasmine.SpyObj<DialogService>;
+  let loadingService: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
     formBuilder = new FormBuilder();
@@ -28,6 +30,20 @@ describe('DescriptionComponent', () => {
     errorHandlingService = jasmine.createSpyObj('ErrorHandlingService', ['handleError']);
     issueService = jasmine.createSpyObj('IssueService', ['getIssue', 'getLatestIssue', 'updateIssue']);
     dialogService = jasmine.createSpyObj('DialogService', ['openUserConfirmationModal']);
+    loadingService = jasmine.createSpyObj('LoadingService', [
+      'showLoader',
+      'hideLoader',
+      'addAnimationMode',
+      'addCssClasses',
+      'addSpinnerOptions',
+      'addTheme',
+      'addViewContainerRef'
+    ]);
+    loadingService.addAnimationMode.and.callFake(() => loadingService);
+    loadingService.addCssClasses.and.callFake(() => loadingService);
+    loadingService.addSpinnerOptions.and.callFake(() => loadingService);
+    loadingService.addTheme.and.callFake(() => loadingService);
+    loadingService.addViewContainerRef.and.callFake(() => loadingService);
 
     descriptionComponent = new DescriptionComponent(
       issueService,
@@ -36,7 +52,8 @@ describe('DescriptionComponent', () => {
       dialog,
       phaseService,
       null,
-      dialogService
+      dialogService,
+      loadingService
     );
     thisIssue = Issue.createPhaseBugReportingIssue(ISSUE_WITH_EMPTY_DESCRIPTION);
     descriptionComponent.issue = thisIssue;
@@ -45,6 +62,22 @@ describe('DescriptionComponent', () => {
   it('should be initialised with a FromGroup instance', () => {
     descriptionComponent.ngOnInit();
     expect(descriptionComponent.issueDescriptionForm.value).toEqual({ description: '' });
+  });
+
+  it('should mark isSavePending as true if called', () => {
+    descriptionComponent.isSavePending = false;
+    loadingService.showLoader.and.callFake(() => {});
+    descriptionComponent.showSpinner();
+
+    expect(descriptionComponent.isSavePending).toEqual(true);
+  });
+
+  it('should mark isSavePending as false if called', () => {
+    descriptionComponent.isSavePending = true;
+    loadingService.hideLoader.and.callFake(() => {});
+    descriptionComponent.hideSpinner();
+
+    expect(descriptionComponent.isSavePending).toEqual(false);
   });
 
   it('should update the form value correctly and emit an event when entering edit mode', () => {
@@ -80,11 +113,14 @@ describe('DescriptionComponent', () => {
     issueService.getLatestIssue.and.callFake((x: number) => of(updatedIssue));
     dialog.open.and.callFake((x: any) => {});
     errorHandlingService.handleError.and.callFake((x: any) => {});
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     descriptionComponent.updateDescription(form);
 
     expect(viewChangesCall).toHaveBeenCalledTimes(1);
     expect(descriptionComponent.conflict.outdatedContent).toEqual(thisIssue.description);
     expect(descriptionComponent.conflict.updatedContent).toEqual(updatedIssue.description);
+    expect(descriptionComponent.isSavePending).toEqual(false);
   });
 
   it('should be configured correctly when description is updated', () => {
@@ -98,11 +134,14 @@ describe('DescriptionComponent', () => {
 
     issueService.getLatestIssue.and.callFake((x: number) => of(thisIssue));
     issueService.updateIssue.and.callFake((x: Issue) => of(x));
+    loadingService.showLoader.and.callFake(() => {});
+    loadingService.hideLoader.and.callFake(() => {});
     descriptionComponent.updateDescription(form);
 
     expect(formResetForm).toHaveBeenCalledTimes(1);
     expect(issueUpdatedEmit).toHaveBeenCalledTimes(1);
     expect(resetCall).toHaveBeenCalledTimes(1);
+    expect(descriptionComponent.isSavePending).toEqual(false);
   });
 
   it('should revert edits if edit mode is cancelled', () => {

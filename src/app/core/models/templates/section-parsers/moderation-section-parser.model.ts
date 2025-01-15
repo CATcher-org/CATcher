@@ -1,3 +1,21 @@
+/**
+ * A Tutor Moderation section has this format:
+ *
+ * ## :question: Issue { type of verification }
+ * - [ ] Done
+ *
+ * { tutor response }
+ *
+ * <catcher-end-of-segment><hr>
+ *
+ * A concrete example would be:
+ *
+ * ## :question: Issue type
+ * - [x] Done
+ *
+ * I think it's all cool
+ */
+
 import { Checkbox } from '../../checkbox.model';
 import { IssueDispute } from '../../issue-dispute.model';
 import { buildCheckboxParser } from './common-parsers.model';
@@ -6,7 +24,7 @@ const { coroutine, everyCharUntil, lookAhead, optionalWhitespace, str, whitespac
 
 const SECTION_TITLE_PREFIX = '## :question: ';
 const DONE_CHECKBOX_DESCRIPTION = 'Done';
-const LINE_SEPARATOR = '-------------------';
+const LINE_SEPARATOR = '<catcher-end-of-segment><hr>';
 
 export const DoneCheckboxParser = buildCheckboxParser(DONE_CHECKBOX_DESCRIPTION);
 

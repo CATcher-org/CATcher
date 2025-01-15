@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { AppConfig } from '../../../environments/environment';
 import { generateSessionId } from '../../shared/lib/session';
 import { uuid } from '../../shared/lib/uuid';
 import { DataService } from './data.service';
-import { ElectronService } from './electron.service';
 import { GithubService } from './github.service';
 import { GithubEventService } from './githubevent.service';
 import { IssueService } from './issue.service';
@@ -31,6 +30,8 @@ export enum AuthState {
  * updating the application state with regards to authentication.
  */
 export class AuthService {
+  private static readonly SESSION_NEXT_KEY = 'next';
+
   authStateSource = new BehaviorSubject(AuthState.NotAuthenticated);
   currentAuthState = this.authStateSource.asObservable();
   accessToken = new BehaviorSubject(undefined);
@@ -39,7 +40,6 @@ export class AuthService {
   ENABLE_POPUP_MESSAGE = 'Please enable pop-ups in your browser';
 
   constructor(
-    private electronService: ElectronService,
     private router: Router,
     private ngZone: NgZone,
     private githubService: GithubService,
@@ -53,6 +53,27 @@ export class AuthService {
   ) {}
 
   /**
+   * Stores the data about the next route in the session storage.
+   */
+  storeNext(next: RouterStateSnapshot) {
+    sessionStorage.setItem(AuthService.SESSION_NEXT_KEY, next.url);
+  }
+
+  /**
+   * Returns the next route
+   */
+  private getNext(): string {
+    return sessionStorage.getItem(AuthService.SESSION_NEXT_KEY);
+  }
+
+  /**
+   * Clears the next route from the session storage.
+   */
+  clearNext() {
+    sessionStorage.removeItem(AuthService.SESSION_NEXT_KEY);
+  }
+
+  /**
    * Will store the OAuth token.
    */
   storeOAuthAccessToken(token: string) {
@@ -61,6 +82,7 @@ export class AuthService {
   }
 
   reset(): void {
+    this.logger.info('AuthService: Clearing access token and setting AuthState to NotAuthenticated.');
     this.accessToken.next(undefined);
     this.changeAuthState(AuthState.NotAuthenticated);
     this.ngZone.run(() => this.router.navigate(['']));
@@ -82,12 +104,14 @@ export class AuthService {
   setTitleWithPhaseDetail(): void {
     const appSetting = require('../../../../package.json');
     const title = `${appSetting.name} ${appSetting.version} - ${this.phaseService.getPhaseDetail()}`;
+    this.logger.info(`AuthService: Setting Title as ${title}`);
     this.titleService.setTitle(title);
   }
 
   setLandingPageTitle(): void {
     const appSetting = require('../../../../package.json');
     const title = `${appSetting.name} ${appSetting.version}`;
+    this.logger.info(`AuthService: Setting LandingPageTitle as ${title}`);
     this.titleService.setTitle(title);
   }
 
@@ -99,7 +123,7 @@ export class AuthService {
     if (newAuthState === AuthState.Authenticated) {
       const sessionId = generateSessionId();
       this.issueService.setSessionId(sessionId);
-      this.logger.info(`Successfully authenticated with session: ${sessionId}`);
+      this.logger.info(`AuthService: Successfully authenticated with session: ${sessionId}`);
     }
     this.authStateSource.next(newAuthState);
   }
@@ -121,21 +145,18 @@ export class AuthService {
    * Will start the Github OAuth web flow process.
    */
   startOAuthProcess() {
-    this.logger.info('Starting authentication');
+    this.logger.info('AuthService: Starting authentication');
     const githubRepoPermission = this.phaseService.githubRepoPermissionLevel();
     this.changeAuthState(AuthState.AwaitingAuthentication);
 
-    if (this.electronService.isElectron()) {
-      this.electronService.sendIpcMessage('github-oauth', githubRepoPermission);
-    } else {
-      this.generateStateString();
-      this.redirectToOAuthPage(
-        encodeURI(
-          `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
-        )
-      );
-      this.logger.info('Redirecting for Github authentication');
-    }
+    this.generateStateString();
+    this.redirectToOAuthPage(
+      encodeURI(
+        // eslint-disable-next-line max-len
+        `${AppConfig.githubUrl}/login/oauth/authorize?client_id=${AppConfig.clientId}&scope=${githubRepoPermission},read:user&state=${this.state}`
+      )
+    );
+    this.logger.info('AuthService: Redirecting for Github authentication');
   }
 
   /**
@@ -146,5 +167,17 @@ export class AuthService {
       return;
     }
     window.location.href = url;
+  }
+
+  /**
+   * Navigates to next if there is, or default landing page.
+   */
+  navigateToLandingPage() {
+    const nextRoute = this.getNext();
+    if (!nextRoute || !this.phaseService.isValidRoute(nextRoute)) {
+      this.router.navigateByUrl(this.phaseService.currentPhase);
+    } else {
+      this.router.navigateByUrl(nextRoute);
+    }
   }
 }

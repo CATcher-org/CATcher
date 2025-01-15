@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angula
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, throwError } from 'rxjs';
-import { finalize, first, flatMap, map, takeUntil } from 'rxjs/operators';
+import { finalize, first, map, mergeMap, takeUntil } from 'rxjs/operators';
 import { IssueComment } from '../../../core/models/comment.model';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue, STATUS } from '../../../core/models/issue.model';
@@ -49,9 +49,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => {
-      return member.loginId;
-    });
+    this.teamMembers = this.issue.teamAssigned.teamMembers.map((member) => member.loginId);
     this.duplicatedIssueList = this.getDupIssueList();
     // Populate the filtered list with all the issues first
     this.duplicatedIssueList.pipe(first()).subscribe((issues) => this.filteredDuplicateIssueList.next(issues));
@@ -60,7 +58,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
       description: [''],
       severity: [this.issue.severity, Validators.required],
       type: [this.issue.type, Validators.required],
-      responseTag: [this.issue.responseTag, Validators.required],
+      response: [this.issue.response, Validators.required],
       assignees: [this.issue.assignees.map((a) => a.toLowerCase())],
       duplicated: [false],
       duplicateOf: ['']
@@ -88,9 +86,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
     return issuesObservable.pipe(
       first(),
-      map((issues) => {
-        return applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues);
-      })
+      map((issues) => applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues))
     );
   }
 
@@ -108,9 +104,9 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
 
     this.isSafeToSubmit()
       .pipe(
-        flatMap((isSaveToSubmit: boolean) => {
+        mergeMap((isSafeToSubmit: boolean) => {
           const newCommentDescription = latestIssue.createGithubTeamResponse();
-          if (isSaveToSubmit) {
+          if (isSafeToSubmit) {
             return this.issueService.createTeamResponse(latestIssue);
           } else if (this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             const issueCommentId = this.issueService.issues[this.issue.id].issueComment.id;
@@ -143,11 +139,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
    * @return - Determines whether it is safe to submit a tester response.
    */
   isSafeToSubmit(): Observable<boolean> {
-    return this.issueService.getLatestIssue(this.issue.id).pipe(
-      map((issue: Issue) => {
-        return !issue.teamResponse;
-      })
-    );
+    return this.issueService.getLatestIssue(this.issue.id).pipe(map((issue: Issue) => !issue.teamResponse));
   }
 
   /**
@@ -162,12 +154,12 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
       clone.severity = duplicatedIssue.severity;
       clone.type = duplicatedIssue.type;
       clone.assignees = duplicatedIssue.assignees;
-      clone.responseTag = duplicatedIssue.responseTag;
+      clone.response = duplicatedIssue.response;
     } else {
       clone.severity = this.severity.value;
       clone.type = this.type.value;
       clone.assignees = this.assignees.value;
-      clone.responseTag = this.responseTag.value;
+      clone.response = this.responseTag.value;
     }
     clone.status = STATUS.Done;
     clone.teamResponse = Issue.updateTeamResponse(this.description.value);
@@ -209,13 +201,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   }
 
   private getDupIssueList(): Observable<Issue[]> {
-    return this.issueService.issues$.pipe(
-      map((issues) => {
-        return issues.filter((issue) => {
-          return this.issue.id !== issue.id;
-        });
-      })
-    );
+    return this.issueService.issues$.pipe(map((issues) => issues.filter((issue) => this.issue.id !== issue.id)));
   }
 
   get description() {
@@ -235,7 +221,7 @@ export class NewTeamResponseComponent implements OnInit, OnDestroy {
   }
 
   get responseTag() {
-    return this.newTeamResponseForm.get('responseTag');
+    return this.newTeamResponseForm.get('response');
   }
 
   get duplicated() {

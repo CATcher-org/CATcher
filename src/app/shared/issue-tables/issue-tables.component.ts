@@ -1,12 +1,14 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
+import { TableSettings } from '../../core/models/table-settings.model';
 import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LabelService } from '../../core/services/label.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -36,12 +38,15 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @Input() headers: string[];
   @Input() actions: ACTION_BUTTONS[];
   @Input() filters?: any = undefined;
+  @Input() table_name: string;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
+
+  public tableSettings: TableSettings;
 
   public readonly action_buttons = ACTION_BUTTONS;
 
@@ -56,9 +61,10 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     public labelService: LabelService,
     private githubService: GithubService,
     public issueService: IssueService,
+    public issueTableSettingsService: IssueTableSettingsService,
     private phaseService: PhaseService,
     private errorHandlingService: ErrorHandlingService,
-    private loggingService: LoggingService,
+    private logger: LoggingService,
     private dialogService: DialogService,
     private snackBar: MatSnackBar = null
   ) {}
@@ -66,6 +72,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
+    this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
 
   ngAfterViewInit(): void {
@@ -74,25 +81,16 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /**
-   * Formats the title text to account for those that contain long words.
-   * @param title - Title of Issue that is to be displayed in the Table Row.
-   */
-  fitTitleText(title: string): string {
-    // Arbitrary Length of Characters beyond which an overflow occurs.
-    const MAX_WORD_LENGTH = 43;
-    const SPLITTER_TEXT = ' ';
-    const ELLIPSES = '...';
+  sortChange(newSort: Sort) {
+    this.tableSettings.sortActiveId = newSort.active;
+    this.tableSettings.sortDirection = newSort.direction;
+    this.issueTableSettingsService.setTableSettings(this.table_name, this.tableSettings);
+  }
 
-    return title
-      .split(SPLITTER_TEXT)
-      .map((word) => {
-        if (word.length > MAX_WORD_LENGTH) {
-          return word.substring(0, MAX_WORD_LENGTH - 5).concat(ELLIPSES);
-        }
-        return word;
-      })
-      .join(SPLITTER_TEXT);
+  pageChange(pageEvent: PageEvent) {
+    this.tableSettings.pageSize = pageEvent.pageSize;
+    this.tableSettings.pageIndex = pageEvent.pageIndex;
+    this.issueTableSettingsService.setTableSettings(this.table_name, this.tableSettings);
   }
 
   isActionVisible(action: ACTION_BUTTONS): boolean {
@@ -100,7 +98,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsResponded(issue: Issue, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
+    this.logger.info(`IssueTablesComponent: Marking Issue ${issue.id} as Responded`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Done;
     this.issueService.updateIssue(newIssue).subscribe(
@@ -119,7 +117,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   markAsPending(issue: Issue, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
+    this.logger.info(`IssueTablesComponent: Marking Issue ${issue.id} as Pending`);
     const newIssue = issue.clone(this.phaseService.currentPhase);
     newIssue.status = STATUS.Incomplete;
     this.issueService.updateIssue(newIssue).subscribe(
@@ -134,11 +132,11 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   logIssueRespondRouting(id: number) {
-    this.loggingService.info(`IssueTablesComponent: Proceeding to Respond to Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Proceeding to Respond to Issue ${id}`);
   }
 
   logIssueEditRouting(id: number) {
-    this.loggingService.info(`IssueTablesComponent: Proceeding to Edit Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Proceeding to Edit Issue ${id}`);
   }
 
   /**
@@ -156,12 +154,12 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   viewIssueInBrowser(id: number, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Opening Issue ${id} on Github`);
+    this.logger.info(`IssueTablesComponent: Opening Issue ${id} on Github`);
     this.githubService.viewIssueInBrowser(id, event);
   }
 
   deleteIssue(id: number, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Deleting Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
       [id]: true
@@ -193,7 +191,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   undeleteIssue(id: number, event: Event) {
-    this.loggingService.info(`IssueTablesComponent: Undeleting Issue ${id}`);
+    this.logger.info(`IssueTablesComponent: Undeleting Issue ${id}`);
     this.issueService.undeleteIssue(id).subscribe(
       (reopenedIssue) => {},
       (error) => {
@@ -214,7 +212,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((res) => {
       if (res) {
-        this.loggingService.info(`Deleting issue ${id}`);
+        this.logger.info(`IssueTablesComponent: Deleting issue ${id}`);
         this.deleteIssue(id, event);
       }
     });

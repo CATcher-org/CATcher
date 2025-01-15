@@ -127,7 +127,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
       clone.severity = duplicatedIssue.severity;
       clone.type = duplicatedIssue.type;
       clone.assignees = duplicatedIssue.assignees;
-      clone.responseTag = duplicatedIssue.responseTag;
+      clone.response = duplicatedIssue.response;
     }
     clone.issueComment.description = clone.createGithubTeamResponse();
     return clone;
@@ -136,19 +136,13 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
   private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
     return issuesObservable.pipe(
       first(),
-      map((issues) => {
-        return applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues);
-      })
+      map((issues) => applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues))
     );
   }
 
   private getDupIssueList(): Observable<Issue[]> {
     return this.issueService.issues$.pipe(
-      map((issues) => {
-        return issues.filter((issue) => {
-          return this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id;
-        });
-      })
+      map((issues) => issues.filter((issue) => this.issue.id !== issue.id && this.issue.teamAssigned.id === issue.teamAssigned.id))
     );
   }
 }

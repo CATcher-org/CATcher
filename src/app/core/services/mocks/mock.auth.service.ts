@@ -75,7 +75,7 @@ export class MockAuthService {
     if (newAuthState === AuthState.Authenticated) {
       const sessionId = `${Date.now()}-${uuid()}`;
       this.issueService.setSessionId(sessionId);
-      this.logger.info(`Successfully authenticated with session: ${sessionId}`);
+      this.logger.info(`MockAuthService: Successfully authenticated with session: ${sessionId}`);
     }
     this.authStateSource.next(newAuthState);
   }
@@ -98,4 +98,14 @@ export class MockAuthService {
   startOAuthProcess() {
     this.accessToken.next('FabricatedToken');
   }
+
+  navigateToLandingPage() {
+    this.router.navigateByUrl(this.phaseService.currentPhase);
+  }
+
+  clearNext() {}
+
+  getNext() {}
+
+  storeNext(next: any) {}
 }

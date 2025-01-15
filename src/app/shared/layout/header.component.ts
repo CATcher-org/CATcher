@@ -7,10 +7,10 @@ import { Phase } from '../../core/models/phase.model';
 import { UserRole } from '../../core/models/user.model';
 import { AuthService } from '../../core/services/auth.service';
 import { DialogService } from '../../core/services/dialog.service';
-import { ElectronService } from '../../core/services/electron.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
 import { GithubEventService } from '../../core/services/githubevent.service';
+import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
 import { IssueService } from '../../core/services/issue.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { PhaseDescription, PhaseService } from '../../core/services/phase.service';
@@ -40,14 +40,14 @@ export class HeaderComponent implements OnInit {
     public auth: AuthService,
     public phaseService: PhaseService,
     public userService: UserService,
-    public loggingService: LoggingService,
+    public logger: LoggingService,
     private location: Location,
     private githubEventService: GithubEventService,
     private issueService: IssueService,
     private errorHandlingService: ErrorHandlingService,
     private githubService: GithubService,
-    private electronService: ElectronService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private issueTableSettingsService: IssueTableSettingsService
   ) {
     router.events
       .pipe(
@@ -82,6 +82,9 @@ export class HeaderComponent implements OnInit {
     this.githubService.reset();
     this.issueService.reset(false);
     this.reload();
+
+    // Reset Issue Table Settings
+    this.issueTableSettingsService.clearTableSettings();
 
     // Route app to new phase.
     this.router.navigateByUrl(this.phaseService.currentPhase);
@@ -134,11 +137,11 @@ export class HeaderComponent implements OnInit {
       issueUrl = routerUrl.substring(issueUrlIndex);
     }
     // Open the url in user's preferred browser
-    this.electronService.openLink('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
+    window.open('https://github.com/'.concat(this.githubService.getRepoURL()).concat(issueUrl));
   }
 
   openIssueTracker() {
-    this.electronService.openLink(ISSUE_TRACKER_URL);
+    window.open(ISSUE_TRACKER_URL);
   }
 
   private getTeamFilterString() {
@@ -188,13 +191,13 @@ export class HeaderComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((res) => {
       if (res) {
-        this.loggingService.info(`Logging out from ${this.userService.currentUser.loginId}`);
+        this.logger.info(`HeaderComponent: Logging out from ${this.userService.currentUser.loginId}`);
         this.logOut();
       }
     });
   }
 
   exportLogFile() {
-    this.loggingService.exportLogFile();
+    this.logger.exportLogFile();
   }
 }

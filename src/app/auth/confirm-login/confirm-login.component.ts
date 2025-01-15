@@ -1,8 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { flatMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { AuthService, AuthState } from '../../core/services/auth.service';
-import { ElectronService } from '../../core/services/electron.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubEventService } from '../../core/services/githubevent.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -19,7 +18,6 @@ export class ConfirmLoginComponent implements OnInit {
   @Input() currentSessionOrg: string;
 
   constructor(
-    public electronService: ElectronService,
     private authService: AuthService,
     private phaseService: PhaseService,
     private userService: UserService,
@@ -37,8 +35,7 @@ export class ConfirmLoginComponent implements OnInit {
   }
 
   logIntoAnotherAccount() {
-    this.logger.info('Logging into another account');
-    this.electronService.clearCookies();
+    this.logger.info('ConfirmLoginComponent: Logging into another account');
     this.authService.startOAuthProcess();
   }
 
@@ -47,8 +44,8 @@ export class ConfirmLoginComponent implements OnInit {
    */
   handleAuthSuccess() {
     this.authService.setTitleWithPhaseDetail();
-    this.router.navigateByUrl(this.phaseService.currentPhase);
     this.authService.changeAuthState(AuthState.Authenticated);
+    this.authService.navigateToLandingPage();
   }
 
   /**
@@ -60,8 +57,8 @@ export class ConfirmLoginComponent implements OnInit {
     this.userService
       .createUserModel(this.username)
       .pipe(
-        flatMap(() => this.phaseService.sessionSetup()),
-        flatMap(() => this.githubEventService.setLatestChangeEvent())
+        mergeMap(() => this.phaseService.sessionSetup()),
+        mergeMap(() => this.githubEventService.setLatestChangeEvent())
       )
       .subscribe(
         () => {
@@ -70,7 +67,7 @@ export class ConfirmLoginComponent implements OnInit {
         (error) => {
           this.authService.changeAuthState(AuthState.NotAuthenticated);
           this.errorHandlingService.handleError(error);
-          this.logger.info(`Completion of login process failed with an error: ${error}`);
+          this.logger.info(`ConfirmLoginComponent: Completion of login process failed with an error: ${error}`);
         }
       );
   }

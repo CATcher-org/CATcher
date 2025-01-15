@@ -9,7 +9,6 @@ import { ToasterComponent } from './toaster/toaster.component';
 @NgModule({
   imports: [CommonModule, MaterialModule],
   declarations: [GeneralMessageErrorComponent, FormErrorComponent, InvalidCredentialsErrorComponent, ToasterComponent],
-  exports: [GeneralMessageErrorComponent, FormErrorComponent, InvalidCredentialsErrorComponent],
-  entryComponents: [GeneralMessageErrorComponent, FormErrorComponent, InvalidCredentialsErrorComponent]
+  exports: [GeneralMessageErrorComponent, FormErrorComponent, InvalidCredentialsErrorComponent]
 })
 export class ErrorToasterModule {}

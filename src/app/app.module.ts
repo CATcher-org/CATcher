@@ -3,11 +3,10 @@ import { ErrorHandler, NgModule, NgZone } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationEnd, Router } from '@angular/router';
+import { ApolloLink, InMemoryCache } from '@apollo/client/core';
+import { setContext } from '@apollo/client/link/context';
 import { Apollo, ApolloModule } from 'apollo-angular';
-import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
-import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
-import { ApolloLink } from 'apollo-link';
-import { setContext } from 'apollo-link-context';
+import { HttpLink } from 'apollo-angular/http';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import 'reflect-metadata';
 import graphqlTypes from '../../graphql/graphql-types';
@@ -18,7 +17,6 @@ import { AuthModule } from './auth/auth.module';
 import { UserConfirmationComponent } from './core/guards/user-confirmation/user-confirmation.component';
 import { AuthService } from './core/services/auth.service';
 import { DataService } from './core/services/data.service';
-import { ElectronService } from './core/services/electron.service';
 import { ErrorHandlingService } from './core/services/error-handling.service';
 import { AuthServiceFactory } from './core/services/factories/factory.auth.service';
 import { GithubServiceFactory } from './core/services/factories/factory.github.service';
@@ -57,45 +55,31 @@ import { SharedModule } from './shared/shared.module';
         useFactory: markedOptionsFactory
       }
     }),
-    AppRoutingModule,
     ApolloModule,
-    HttpLinkModule
+    AppRoutingModule
   ],
   providers: [
     {
       provide: GithubService,
       useFactory: GithubServiceFactory,
-      deps: [ErrorHandlingService, Apollo, ElectronService, LoggingService]
+      deps: [ErrorHandlingService, Apollo, LoggingService]
     },
     {
       provide: AuthService,
       useFactory: AuthServiceFactory,
-      deps: [
-        ElectronService,
-        Router,
-        NgZone,
-        GithubService,
-        UserService,
-        IssueService,
-        PhaseService,
-        DataService,
-        GithubEventService,
-        Title,
-        LoggingService
-      ]
+      deps: [Router, NgZone, GithubService, UserService, IssueService, PhaseService, DataService, GithubEventService, Title, LoggingService]
     },
     {
       provide: IssueService,
       useFactory: IssueServiceFactory,
-      deps: [GithubService, UserService, PhaseService, ElectronService, DataService, LoggingService]
+      deps: [GithubService, UserService, PhaseService, DataService, LoggingService]
     },
     {
       provide: ErrorHandler,
       useClass: ErrorHandlingService
     }
   ],
-  bootstrap: [AppComponent],
-  entryComponents: [UserConfirmationComponent, SessionFixConfirmationComponent, LabelDefinitionPopupComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(
@@ -113,10 +97,7 @@ export class AppModule {
       return { headers: { Authorization: `Token ${this.authService.accessToken.getValue()}` } };
     });
     const link = ApolloLink.from([basic, auth, this.httpLink.create({ uri: URI })]);
-    const fragmentMatcher = new IntrospectionFragmentMatcher({
-      introspectionQueryResultData: graphqlTypes
-    });
-    const cache = new InMemoryCache({ fragmentMatcher });
+    const cache = new InMemoryCache({ possibleTypes: graphqlTypes.possibleTypes });
     this.apollo.create({
       link: link,
       cache: cache

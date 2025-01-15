@@ -2,18 +2,18 @@
 <form [formGroup]="testerResponseForm" (ngSubmit)="submitTesterResponseForm()">
   <div class="timeline-comment">
     <div class="timeline-header">
-      <span style="vertical-align: middle; margin-left: 5px" *ngIf="this.isNewResponse()"> Please verify the following item(s). </span>
-      <span style="vertical-align: middle; margin-left: 5px" *ngIf="!this.isNewResponse()"> <strong>Tester</strong> responded. </span>
+      <span *ngIf="this.isNewResponse()"> Please verify the following item(s). </span>
+      <span *ngIf="!this.isNewResponse()"> <strong>Tester</strong> responded. </span>
       <button mat-button style="float: right" *ngIf="!isEditing" (click)="changeToEditMode()">Edit</button>
     </div>
     <div>
       <div class="container" *ngFor="let response of issue.testerResponses; index as i; trackBy: trackDisagreeList">
         <div style="display: flex; align-items: center">
           <div class="question-mark">?</div>
-          <markdown [data]="response.getTitleInMarkDown()"></markdown>
+          <markdown [data]="response.getTitleInMarkDown()" disableInternalLink></markdown>
         </div>
         <br />
-        <markdown [data]="response.description"></markdown>
+        <markdown [data]="response.description" disableInternalLink></markdown>
         <br />
         <div>
           <mat-radio-group
@@ -31,7 +31,7 @@
         <div *ngIf="testerResponseForm.get(getDisagreeRadioFormId(i)).value">
           <div>
             <p style="font-weight: 500">Reason for Disagreement:</p>
-            <markdown [data]="response.reasonForDisagreement" *ngIf="!isEditing"></markdown>
+            <markdown [data]="response.reasonForDisagreement" *ngIf="!isEditing" disableInternalLink></markdown>
           </div>
           <div *ngIf="isEditing">
             <app-comment-editor

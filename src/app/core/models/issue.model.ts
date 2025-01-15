@@ -28,7 +28,7 @@ export class Issue {
   /** Fields derived from Labels */
   severity: SEVERITY;
   type: ATTRIBUTES;
-  responseTag?: string;
+  response?: string;
   duplicated?: boolean;
   status?: STATUS;
   pending?: string;
@@ -118,7 +118,7 @@ export class Issue {
     /** Fields derived from Labels */
     this.severity = SEVERITY[githubIssue.findLabel(GithubLabel.LABELS.severity)];
     this.type = ATTRIBUTES[githubIssue.findLabel(GithubLabel.LABELS.type)];
-    this.responseTag = githubIssue.findLabel(GithubLabel.LABELS.response);
+    this.response = githubIssue.findLabel(GithubLabel.LABELS.response);
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
     this.status = STATUS[githubIssue.findLabel(GithubLabel.LABELS.status)];
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);

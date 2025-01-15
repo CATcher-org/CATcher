@@ -20,7 +20,7 @@ module.exports = function (config) {
       reports: ['html', 'lcovonly', 'text-summary'],
       fixWebpackSourcePaths: true
     },
-    reporters: ['spec'],
+    reporters: ['spec', 'coverage-istanbul'],
     specReporter: {
       maxLogLines: 5, // limit number of lines per test
       suppressErrorSummary: true,

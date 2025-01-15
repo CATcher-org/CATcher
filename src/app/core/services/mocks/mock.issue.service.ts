@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable, of, Subscription } from 'rxjs';
-import { catchError, flatMap, map } from 'rxjs/operators';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { generateIssueWithRandomData } from '../../../../../tests/constants/githubissue.constants';
 import { IssueComment } from '../../models/comment.model';
 import { GithubComment } from '../../models/github/github-comment.model';
@@ -78,9 +78,7 @@ export class MockIssueService {
         this.createAndSaveIssueModel(response);
         return this.issues[id];
       }),
-      catchError((err) => {
-        return of(this.issues[id]);
-      })
+      catchError((err) => of(this.issues[id]))
     );
   }
 
@@ -107,7 +105,7 @@ export class MockIssueService {
 
   updateIssueWithComment(issue: Issue, issueComment: IssueComment): Observable<Issue> {
     return this.githubService.updateIssueComment(issueComment).pipe(
-      flatMap((updatedComment: GithubComment) => {
+      mergeMap((updatedComment: GithubComment) => {
         issue.githubComments = [updatedComment, ...issue.githubComments.filter((c) => c.id !== updatedComment.id)];
         return this.updateIssue(issue);
       })
@@ -145,7 +143,7 @@ export class MockIssueService {
   createTeamResponse(issue: Issue): Observable<Issue> {
     const teamResponse = issue.createGithubTeamResponse();
     return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
-      flatMap((githubComment: GithubComment) => {
+      mergeMap((githubComment: GithubComment) => {
         issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
         return this.updateIssue(issue);
       })
@@ -229,13 +227,7 @@ export class MockIssueService {
    * Obtain an observable containing an array of issues that are duplicates of the parentIssue.
    */
   getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
-    return this.issues$.pipe(
-      map((issues) => {
-        return issues.filter((issue) => {
-          return issue.duplicateOf === parentIssue.id;
-        });
-      })
-    );
+    return this.issues$.pipe(map((issues) => issues.filter((issue) => issue.duplicateOf === parentIssue.id)));
   }
 
   reset() {
@@ -299,8 +291,8 @@ export class MockIssueService {
       result.push(this.createLabel('type', issue.type));
     }
 
-    if (issue.responseTag) {
-      result.push(this.createLabel('response', issue.responseTag));
+    if (issue.response) {
+      result.push(this.createLabel('response', issue.response));
     }
 
     if (issue.duplicated) {

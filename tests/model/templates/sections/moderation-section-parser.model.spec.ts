@@ -3,7 +3,8 @@ import {
   ModerationSectionParser
 } from '../../../../src/app/core/models/templates/section-parsers/moderation-section-parser.model';
 
-const TYPE_DISPUTE = '## :question: Issue Type\n\n' + '- [ ] Done\n\n' + '[replace this with your explanation]\n\n' + '-------------------';
+const TYPE_DISPUTE =
+  '## :question: Issue Type\n\n' + '- [ ] Done\n\n' + '[replace this with your explanation]\n\n' + '<catcher-end-of-segment><hr>';
 
 const EMPTY_DONE_CHECKBOX = '- [ ] Done';
 const FILLED_DONE_CHECKBOX = '- [x] Done';

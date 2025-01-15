@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
-import { finalize, flatMap, map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { Conflict } from '../../../core/models/conflict/conflict.model';
 import { Issue } from '../../../core/models/issue.model';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
+import { LoadingService } from '../../../core/services/loading.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { SUBMIT_BUTTON_TEXT } from '../../view-issue/view-issue.component';
@@ -16,16 +17,24 @@ import { ConflictDialogComponent } from '../conflict-dialog/conflict-dialog.comp
 @Component({
   selector: 'app-issue-description',
   templateUrl: './description.component.html',
-  styleUrls: ['./description.component.css']
+  styleUrls: ['./description.component.css'],
+  providers: [LoadingService]
 })
 export class DescriptionComponent implements OnInit {
+  // The container of the loading spinner
+  @ViewChild('loadingSpinnerContainer', {
+    read: ViewContainerRef,
+    static: false
+  })
+  loadingSpinnerContainer: ViewContainerRef;
+
   isSavePending = false;
   issueDescriptionForm: FormGroup;
   conflict: Conflict;
   submitButtonText: string;
 
   @Input() issue: Issue;
-  @Input() title: string;
+  @Input() descriptionTitle: string;
   @Input() isEditing: boolean;
   @Output() issueUpdated = new EventEmitter<Issue>();
   @Output() changeEditState = new EventEmitter<boolean>();
@@ -42,14 +51,31 @@ export class DescriptionComponent implements OnInit {
     private dialog: MatDialog,
     private phaseService: PhaseService,
     public permissions: PermissionService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    public loadingService: LoadingService
   ) {}
+
+  showSpinner(): void {
+    this.loadingService.addViewContainerRef(this.loadingSpinnerContainer).showLoader();
+    this.isSavePending = true;
+  }
+
+  hideSpinner(): void {
+    this.loadingService.hideLoader();
+    this.isSavePending = false;
+  }
 
   ngOnInit() {
     this.issueDescriptionForm = this.formBuilder.group({
       description: ['']
     });
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SAVE;
+    // Build the loading service spinner
+    this.loadingService
+      .addAnimationMode('indeterminate')
+      .addSpinnerOptions({ diameter: 15, strokeWidth: 2 })
+      .addTheme('warn')
+      .addCssClasses(['mat-progress-spinner']);
   }
 
   changeToEditMode() {
@@ -64,14 +90,12 @@ export class DescriptionComponent implements OnInit {
       return;
     }
 
-    this.isSavePending = true;
+    this.showSpinner();
     this.issueService
       .getLatestIssue(this.issue.id)
       .pipe(
-        map((issue: Issue) => {
-          return issue.description === this.issue.description;
-        }),
-        flatMap((isSaveToUpdate: boolean) => {
+        map((issue: Issue) => issue.description === this.issue.description),
+        mergeMap((isSaveToUpdate: boolean) => {
           if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateIssue(this.getUpdatedIssue());
           } else {
@@ -80,17 +104,18 @@ export class DescriptionComponent implements OnInit {
             this.viewChanges();
             return throwError('The content you are editing has changed. Please verify the changes and try again.');
           }
-        }),
-        finalize(() => (this.isSavePending = false))
+        })
       )
       .subscribe(
         (editedIssue: Issue) => {
           this.issueUpdated.emit(editedIssue);
           this.resetToDefault();
           form.resetForm();
+          this.hideSpinner();
         },
         (error) => {
           this.errorHandlingService.handleError(error);
+          this.hideSpinner();
         }
       );
   }
@@ -119,14 +144,12 @@ export class DescriptionComponent implements OnInit {
   }
 
   openCancelDialogIfModified(): void {
-    const issueDescriptionInitialValue = this.issue.description || '';
-    if (this.issueDescriptionForm.get('description').value !== issueDescriptionInitialValue) {
-      // if the description has been edited, request user to confirm the cancellation
-      this.openCancelDialog();
-    } else {
-      // if no changes have been made, simply cancel edit mode without getting confirmation
-      this.cancelEditMode();
-    }
+    const isModified = this.dialogService.checkIfFieldIsModified(this.issueDescriptionForm, 'description', 'description', this.issue);
+    this.dialogService.performActionIfModified(
+      isModified,
+      () => this.openCancelDialog(),
+      () => this.cancelEditMode()
+    );
   }
 
   openCancelDialog(): void {

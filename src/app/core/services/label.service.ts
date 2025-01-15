@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, pipe, UnaryFunction } from 'rxjs';
-import { flatMap, map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { GithubLabel } from '../models/github/github-label.model';
 import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
+import { LoggingService } from './logging.service';
 
 import { ATTRIBUTES, SEVERITY, BUG, RESPONSE, STATUS, UNDEFINED } from '../models/issue.model'
 
@@ -149,7 +150,7 @@ export class LabelService {
     type: LabelService.typeLabels
   };
 
-  constructor(private githubService: GithubService) {}
+  constructor(private githubService: GithubService, private logger: LoggingService) {}
 
   public static getRequiredLabelsAsArray(needAllLabels: boolean): Label[] {
     let requiredLabels: Label[] = [];
@@ -177,7 +178,7 @@ export class LabelService {
    * with the remote repository.
    */
   syncLabels(needAllLabels: boolean): UnaryFunction<Observable<boolean>, Observable<any>> {
-    return pipe(flatMap(() => this.synchronizeRemoteLabels(needAllLabels)));
+    return pipe(mergeMap(() => this.synchronizeRemoteLabels(needAllLabels)));
   }
 
   /**
@@ -204,10 +205,10 @@ export class LabelService {
         return LabelService.severityLabels;
       case ATTRIBUTES.Type:
         return LabelService.typeLabels;
-      case ATTRIBUTES.ResponseTag:
       case ATTRIBUTES.Response:
         return LabelService.responseLabels;
     }
+    this.logger.info(`LabelService: Unfiltered Attribute ${attributeName} in getLabelList`);
   }
 
   /**
@@ -220,9 +221,10 @@ export class LabelService {
         return DISPLAY_NAME_SEVERITY;
       case ATTRIBUTES.Type:
         return DISPLAY_NAME_BUG_TYPE;
-      case ATTRIBUTES.ResponseTag:
+      case ATTRIBUTES.Response:
         return DISPLAY_NAME_RESPONSE;
     }
+    this.logger.info(`LabelService: Unfiltered Attribute ${attributeName} in getLabelTitle`);
   }
 
   /**
@@ -232,6 +234,8 @@ export class LabelService {
    */
   getColorOfLabel(labelCategory: LabelCategory, labelValue: string): string {
     if (labelValue === '' || !LabelService.allLabelArrays[labelCategory]) {
+      this.logger.info(`LabelService: Unfiltered Attribute, ${labelValue}: ${labelCategory} in getColorOfLabel`);
+
       return COLOR_WHITE;
     }
 
@@ -304,11 +308,11 @@ export class LabelService {
     let labelValue: string;
 
     const containsDotRegex = /\./g;
-    const rawName: string = String(githubLabel.name);
+    const rawName = String(githubLabel.name);
     [labelCategory, labelValue] = containsDotRegex.test(rawName) ? githubLabel.name.split('.') : [undefined, rawName];
 
     const labelColor = githubLabel.color;
-    const labelDefinition: string = String(githubLabel.description);
+    const labelDefinition = String(githubLabel.description);
 
     return new Label(labelCategory, labelValue, labelColor, labelDefinition);
   }

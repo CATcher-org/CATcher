@@ -1,12 +1,11 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { filter, flatMap, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { AppConfig } from '../../environments/environment';
 import { GithubUser } from '../core/models/github-user.model';
 import { ApplicationService } from '../core/services/application.service';
 import { AuthService, AuthState } from '../core/services/auth.service';
-import { ElectronService } from '../core/services/electron.service';
 import { ErrorHandlingService } from '../core/services/error-handling.service';
 import { GithubService } from '../core/services/github.service';
 import { LoggingService } from '../core/services/logging.service';
@@ -30,7 +29,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   constructor(
     public appService: ApplicationService,
-    public electronService: ElectronService,
     private githubService: GithubService,
     private authService: AuthService,
     private userService: UserService,
@@ -40,20 +38,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private activatedRoute: ActivatedRoute,
     private logger: LoggingService
-  ) {
-    this.electronService.registerIpcListener('github-oauth-reply', (event, { token, error, isWindowClosed }) => {
-      this.ngZone.run(() => {
-        if (error) {
-          if (!isWindowClosed) {
-            this.errorHandlingService.handleError(error);
-          }
-          this.goToSessionSelect();
-          return;
-        }
-        this.authService.storeOAuthAccessToken(token);
-      });
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.logger.startSession();
@@ -72,7 +57,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       // runs upon receiving oauthCode from the redirect
       this.authService.changeAuthState(AuthState.AwaitingAuthentication);
       this.restoreOrgDetailsFromLocalStorage();
-      this.logger.info('Obtained authorisation code from Github');
+      this.logger.info('AuthComponent: Obtained authorisation code from Github');
       this.fetchAccessToken(oauthCode, state);
     }
   }
@@ -84,11 +69,11 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   fetchAccessToken(oauthCode: string, state: string) {
     if (!this.authService.isReturnedStateSame(state)) {
-      this.logger.info(`Received incorrect state ${state}, continue waiting for correct state`);
+      this.logger.info(`AuthComponent: Received incorrect state ${state}, continue waiting for correct state`);
       return;
     }
 
-    this.logger.info('Retrieving access token from Github');
+    this.logger.info('AuthComponent: Retrieving access token from Github');
 
     const accessTokenUrl = `${AppConfig.accessTokenUrl}/${oauthCode}/client_id/${AppConfig.clientId}`;
     fetch(accessTokenUrl)
@@ -98,17 +83,16 @@ export class AuthComponent implements OnInit, OnDestroy {
           throw new Error(data.error);
         }
         this.authService.storeOAuthAccessToken(data.token);
-        this.logger.info('Sucessfully obtained access token');
+        this.logger.info('AuthComponent: Sucessfully obtained access token');
       })
       .catch((err) => {
-        this.logger.info(`Error in data fetched from access token URL: ${err}`);
+        this.logger.info(`AuthComponent: Error in data fetched from access token URL: ${err}`);
         this.errorHandlingService.handleError(err);
         this.authService.changeAuthState(AuthState.NotAuthenticated);
       });
   }
 
   ngOnDestroy() {
-    this.electronService.removeIpcListeners('github-oauth-reply');
     if (this.authStateSubscription) {
       this.authStateSubscription.unsubscribe();
     }
@@ -189,7 +173,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.accessTokenSubscription = this.authService.accessToken
       .pipe(
         filter((token: string) => !!token),
-        flatMap(() => this.userService.getAuthenticatedUser())
+        mergeMap(() => this.userService.getAuthenticatedUser())
       )
       .subscribe((user: GithubUser) => {
         this.ngZone.run(() => {
