@@ -116,14 +116,20 @@ describe('Issue', () => {
     phaseTesterResponseIssue.teamResponse = 'Sample Text';
     phaseTesterResponseIssue.testerResponses = [];
     expect(phaseTesterResponseIssue.createGithubTesterResponse()).toEqual(
-      `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n` + `# Items for the Tester to Verify\n${''}`
+      `[IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. ` +
+        `You can respond to it using CATcher during the next phase of the PE]\n` +
+        `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n` +
+        `# Items for the Tester to Verify\n${''}`
     );
 
     const phaseTesterResponseIssue2 = dummyIssueWithTeam.clone(Phase.phaseTesterResponse);
     phaseTesterResponseIssue2.teamResponse = 'Sample Text';
     phaseTesterResponseIssue2.testerResponses = [newTesterResponse];
     expect(phaseTesterResponseIssue2.createGithubTesterResponse()).toEqual(
-      `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n` + `# Items for the Tester to Verify\n${newTesterResponse.toString()}`
+      `[IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. ` +
+        `You can respond to it using CATcher during the next phase of the PE]\n` +
+        `# Team\'s Response\n${phaseTesterResponseIssue.teamResponse}\n` +
+        `# Items for the Tester to Verify\n${newTesterResponse.toString()}`
     );
   });
 
