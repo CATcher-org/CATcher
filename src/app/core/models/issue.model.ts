@@ -27,7 +27,7 @@ export class Issue {
 
   /** Fields derived from Labels */
   severity: SEVERITY;
-  type: ATTRIBUTES;
+  type: BUG_TYPE;
   response?: string;
   duplicated?: boolean;
   status?: STATUS;
@@ -160,8 +160,8 @@ export class Issue {
     issue.testerResponses = testerResponseTemplate.testerResponses;
     issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
-    issue.teamChosenSeverity = testerResponseTemplate.teamChosenSeverity || null;
-    issue.teamChosenType = testerResponseTemplate.teamChosenType || null;
+    issue.teamChosenSeverity = (testerResponseTemplate.teamChosenSeverity as SEVERITY) || null;
+    issue.teamChosenType = (testerResponseTemplate.teamChosenType as BUG_TYPE) || null;
 
     return issue;
   }
@@ -315,10 +315,6 @@ export interface Issues {
   [id: number]: Issue;
 }
 
-export const SEVERITY_ORDER = { '-': 0, VeryLow: 1, Low: 2, Medium: 3, High: 4 };
-
-export const ISSUE_TYPE_ORDER = { '-': 0, DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3 };
-
 export enum STATUS {
   Incomplete = 'Incomplete',
   Done = 'Done'
@@ -328,13 +324,12 @@ export enum ATTRIBUTES {
   Severity = 'severity',
   Type = 'type',
   Response = 'response',
-  ResponseTag = 'responseTag',
   Status = 'status',
-  Undefined = 'undefined',
   Others = 'others'
 }
 
 export enum SEVERITY {
+  None = '-',
   VeryLow = 'VeryLow',
   Low = 'Low',
   Medium = 'Medium',
@@ -342,6 +337,7 @@ export enum SEVERITY {
 }
 
 export enum BUG_TYPE {
+  None = '-',
   DocumentationBug = 'DocumentationBug',
   FeatureFlaw = 'FeatureFlaw',
   FunctionalityBug = 'FunctionalityBug'
@@ -355,7 +351,7 @@ export enum RESPONSE {
   Rejected = 'Rejected'
 }
 
-export enum UNDEFINED {
+export enum OTHERS {
   Duplicate = 'Duplicate'
 }
 
@@ -388,4 +384,19 @@ export const IssuesFilter = {
     Tutor: FILTER.FilterByTeamAssigned,
     Admin: FILTER.NoFilter
   }
+};
+
+export const SEVERITY_ORDER = {
+  [SEVERITY.None]: 0,
+  [SEVERITY.VeryLow]: 1,
+  [SEVERITY.Low]: 2,
+  [SEVERITY.Medium]: 3,
+  [SEVERITY.High]: 4
+};
+
+export const ISSUE_TYPE_ORDER = {
+  [BUG_TYPE.None]: 0,
+  [BUG_TYPE.DocumentationBug]: 1,
+  [BUG_TYPE.FeatureFlaw]: 2,
+  [BUG_TYPE.FunctionalityBug]: 3
 };

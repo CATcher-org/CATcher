@@ -6,7 +6,7 @@ import { Label } from '../models/label.model';
 import { GithubService } from './github.service';
 import { LoggingService } from './logging.service';
 
-import { ATTRIBUTES, SEVERITY, BUG_TYPE, RESPONSE, STATUS, UNDEFINED } from '../models/issue.model';
+import { ATTRIBUTES, SEVERITY, BUG_TYPE, RESPONSE, STATUS, OTHERS } from '../models/issue.model';
 
 /* The threshold to decide if color is dark or light.
 A higher threshold value will result in more colors determined to be "dark".
@@ -117,7 +117,7 @@ const REQUIRED_LABELS = {
     Incomplete: new Label(ATTRIBUTES.Status, STATUS.Incomplete, COLOR_BLACK)
   },
   others: {
-    duplicate: new Label(ATTRIBUTES.Undefined, UNDEFINED.Duplicate, COLOR_BLUE)
+    duplicate: new Label(undefined, OTHERS.Duplicate, COLOR_BLUE)
   }
 };
 
@@ -215,7 +215,7 @@ export class LabelService {
    * Returns a title for the label type
    * @param attributeName: the type of the label
    */
-  getLabelTitle(attributeName: string | ATTRIBUTES): string {
+  getLabelTitle(attributeName: ATTRIBUTES): string {
     switch (attributeName) {
       case ATTRIBUTES.Severity:
         return DISPLAY_NAME_SEVERITY;
