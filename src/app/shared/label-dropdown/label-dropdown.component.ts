@@ -26,7 +26,7 @@ export class LabelDropdownComponent implements OnInit {
 
   ngOnInit() {
     this.selectedColor = this.labelService.getColorOfLabel(this.attributeName, this.initialValue);
-    this.labelList = this.labelService.getLabelList(ATTRIBUTES[this.attributeName]);
+    this.labelList = this.labelService.getLabelList(this.attributeName as ATTRIBUTES);
     this.dropdownControl = this.dropdownForm.get(this.attributeName);
   }
 
