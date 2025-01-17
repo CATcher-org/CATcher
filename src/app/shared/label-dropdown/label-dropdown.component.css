@@ -6,10 +6,6 @@
   color: black !important;
 }
 
-::ng-deep .labelTooltip {
-  font-size: 1em;
-}
-
 .infoPopup {
   background: transparent;
   border: none;
