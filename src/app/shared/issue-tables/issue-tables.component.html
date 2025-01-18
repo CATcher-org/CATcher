@@ -35,6 +35,8 @@
       <span
         (click)="$event.stopPropagation()"
         [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('type', issue.type))"
+        [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue.type, 'type'))"
+        matTooltipClass="labelTooltip"
       >
         {{ issue.type || '-' }}
       </span>
@@ -49,6 +51,8 @@
         *ngIf="issue.teamChosenType && issue.teamChosenType != issue.type"
         (click)="$event.stopPropagation()"
         [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('type', issue.teamChosenType))"
+        [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue.teamChosenType, 'type'))"
+        matTooltipClass="labelTooltip"
       >
         {{ issue.teamChosenType }}
       </span>
@@ -62,6 +66,8 @@
       <span
         (click)="$event.stopPropagation()"
         [ngStyle]="this.labelService.setLabelStyle(this.labelService.getColorOfLabel('severity', issue.severity))"
+        [matTooltip]="this.labelService.parseLabelDefinitionMarkdown(this.labelService.getLabelDefinition(issue.severity, 'severity'))"
+        matTooltipClass="labelTooltip"
       >
         {{ issue.severity || '-' }}
       </span>
