@@ -26,11 +26,11 @@ export class Issue {
   hiddenDataInDescription: HiddenData;
 
   /** Fields derived from Labels */
-  severity: SEVERITY;
-  type: BUG_TYPE;
+  severity: Severity;
+  type: BugType;
   response?: string;
   duplicated?: boolean;
-  status?: STATUS;
+  status?: Status;
   pending?: string;
   unsure?: boolean;
   teamAssigned?: Team;
@@ -45,8 +45,8 @@ export class Issue {
   testerDisagree?: boolean; // whether tester agrees or disagree to teams reponse
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
-  teamChosenSeverity?: string;
-  teamChosenType?: string;
+  teamChosenSeverity?: Severity;
+  teamChosenType?: BugType;
   teamAccepted?: boolean;
 
   /** Fields for error messages during parsing of Github's issue description */
@@ -116,11 +116,11 @@ export class Issue {
     this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
-    this.severity = SEVERITY[githubIssue.findLabel(GithubLabel.LABELS.severity)];
-    this.type = ATTRIBUTES[githubIssue.findLabel(GithubLabel.LABELS.type)];
+    this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity) as Severity;
+    this.type = githubIssue.findLabel(GithubLabel.LABELS.type) as BugType;
     this.response = githubIssue.findLabel(GithubLabel.LABELS.response);
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
-    this.status = STATUS[githubIssue.findLabel(GithubLabel.LABELS.status)];
+    this.status = githubIssue.findLabel(GithubLabel.LABELS.status) as Status;
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
@@ -160,8 +160,8 @@ export class Issue {
     issue.testerResponses = testerResponseTemplate.testerResponses;
     issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
-    issue.teamChosenSeverity = (testerResponseTemplate.teamChosenSeverity as SEVERITY) || null;
-    issue.teamChosenType = (testerResponseTemplate.teamChosenType as BUG_TYPE) || null;
+    issue.teamChosenSeverity = (testerResponseTemplate.teamChosenSeverity as Severity) || null;
+    issue.teamChosenType = (testerResponseTemplate.teamChosenType as BugType) || null;
 
     return issue;
   }
@@ -315,45 +315,55 @@ export interface Issues {
   [id: number]: Issue;
 }
 
-export enum STATUS {
-  Incomplete = 'Incomplete',
-  Done = 'Done'
-}
+export const STATUS = {
+  Incomplete: 'Incomplete',
+  Done: 'Done'
+} as const;
 
-export enum ATTRIBUTES {
-  Severity = 'severity',
-  Type = 'type',
-  Response = 'response',
-  Status = 'status',
-  Others = 'others'
-}
+export type Status = typeof STATUS[keyof typeof STATUS];
 
-export enum SEVERITY {
-  None = '-',
-  VeryLow = 'VeryLow',
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High'
-}
+export const ATTRIBUTE = {
+  Severity: 'severity',
+  Type: 'type',
+  Response: 'response',
+  Status: 'status',
+  Others: 'others'
+} as const;
 
-export enum BUG_TYPE {
-  None = '-',
-  DocumentationBug = 'DocumentationBug',
-  FeatureFlaw = 'FeatureFlaw',
-  FunctionalityBug = 'FunctionalityBug'
-}
+export type Attribute = typeof ATTRIBUTE[keyof typeof ATTRIBUTE];
 
-export enum RESPONSE {
-  Accepted = 'Accepted',
-  CannotReproduce = 'CannotReproduce',
-  IssueUnclear = 'IssueUnclear',
-  NotInScope = 'NotInScope',
-  Rejected = 'Rejected'
-}
+export const SEVERITY = {
+  None: '-',
+  VeryLow: 'VeryLow',
+  Low: 'Low',
+  Medium: 'Medium',
+  High: 'High'
+} as const;
 
-export enum OTHERS {
-  Duplicate = 'Duplicate'
-}
+export type Severity = typeof SEVERITY[keyof typeof SEVERITY];
+
+export const BUG_TYPE = {
+  None: '-',
+  DocumentationBug: 'DocumentationBug',
+  FeatureFlaw: 'FeatureFlaw',
+  FunctionalityBug: 'FunctionalityBug'
+} as const;
+
+export type BugType = typeof BUG_TYPE[keyof typeof BUG_TYPE];
+
+export const RESPONSE = {
+  Accepted: 'Accepted',
+  CannotReproduce: 'CannotReproduce',
+  IssueUnclear: 'IssueUnclear',
+  NotInScope: 'NotInScope',
+  Rejected: 'Rejected'
+} as const;
+
+export type Response = typeof RESPONSE[keyof typeof RESPONSE];
+
+export const OTHER = {
+  Duplicate: 'Duplicate'
+} as const;
 
 export enum FILTER {
   NoFilter = 'NoFilter',

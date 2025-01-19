@@ -1,10 +1,12 @@
+import { Attribute } from './issue.model';
+
 export class Label {
-  labelCategory: string;
+  labelCategory: Attribute;
   labelValue: string;
   labelColor: string;
   labelDefinition?: string;
 
-  constructor(labelCategory: string, labelValue: string, labelColor: string, labelDefinition?: string) {
+  constructor(labelCategory: Attribute, labelValue: string, labelColor: string, labelDefinition?: string) {
     this.labelValue = labelValue;
     this.labelColor = labelColor;
     this.labelCategory = labelCategory;
@@ -17,9 +19,7 @@ export class Label {
    * 'value' if the category does not exist.
    */
   public getFormattedName(): string {
-    return this.labelCategory === undefined || this.labelCategory === ''
-      ? this.labelValue
-      : this.labelCategory.concat('.', this.labelValue);
+    return this.labelCategory === undefined ? this.labelValue : this.labelCategory.concat('.', this.labelValue);
   }
 
   public equals(label: Label) {

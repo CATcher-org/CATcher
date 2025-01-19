@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { DialogService } from '../../..//core/services/dialog.service';
-import { ATTRIBUTES, Issue } from '../../../core/models/issue.model';
+import { Attribute, Issue } from '../../../core/models/issue.model';
 import { Label } from '../../../core/models/label.model';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 import { IssueService } from '../../../core/services/issue.service';
-import { LabelCategory, LabelService } from '../../../core/services/label.service';
+import { LabelService } from '../../../core/services/label.service';
 import { LoadingService } from '../../../core/services/loading.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { PhaseService } from '../../../core/services/phase.service';
@@ -30,7 +30,7 @@ export class LabelComponent implements OnInit, OnChanges {
   isSavePending: boolean;
 
   @Input() issue: Issue;
-  @Input() attributeName: LabelCategory;
+  @Input() attributeName: Attribute;
 
   @Output() issueUpdated = new EventEmitter<Issue>();
 
@@ -56,7 +56,7 @@ export class LabelComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     // Get the list of labels based on their type (severity, type, response)
-    this.labelValues = this.labelService.getLabelList(ATTRIBUTES[this.attributeName]);
+    this.labelValues = this.labelService.getLabelList(this.attributeName);
     // Build the loading service spinner
     this.loadingService
       .addAnimationMode('indeterminate')
