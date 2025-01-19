@@ -8,9 +8,9 @@
 >
   <!-- ID Column -->
   <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
-    <mat-cell *matCellDef="let issue">
-      <span (click)="$event.stopPropagation()" style="cursor: default">{{ issue.id }}</span>
+    <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+    <mat-cell *matCellDef="let issue; let i = index">
+      <span (click)="$event.stopPropagation()" style="cursor: default">{{ totalIssues - i }}</span>
     </mat-cell>
   </ng-container>
 
@@ -18,7 +18,7 @@
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
     <mat-cell *matCellDef="let issue">
-      <a class="no-underline link-grey-dark title-wrap" [routerLink]="'issues/' + issue.id"> {{ issue.title }} </a>
+      <a class="no-underline link-grey-dark title-wrap" [routerLink]="'issues/' + issue.id"> {{ issue.title + ' #' + issue.id }} </a>
     </mat-cell>
   </ng-container>
 

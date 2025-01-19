@@ -81,6 +81,10 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     });
   }
 
+  get totalIssues(): number {
+    return this.issues.totalIssues;
+  }
+
   sortChange(newSort: Sort) {
     this.tableSettings.sortActiveId = newSort.active;
     this.tableSettings.sortDirection = newSort.direction;

@@ -27,6 +27,10 @@ export class IssuesDataTable extends DataSource<Issue> {
     super();
   }
 
+  get totalIssues(): number {
+    return Object.values(this.issueService.issues$.getValue()).length;
+  }
+
   connect(): Observable<Issue[]> {
     return this.issuesSubject.asObservable();
   }
