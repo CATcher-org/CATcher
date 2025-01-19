@@ -6,11 +6,11 @@
   (matSortChange)="this.sortChange($event)"
   class="mat-elevation-z8"
 >
-  <!-- ID Column -->
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+  <!-- No. Column -->
+  <ng-container matColumnDef="no">
+    <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
     <mat-cell *matCellDef="let issue; let i = index">
-      <span (click)="$event.stopPropagation()" style="cursor: default">{{ totalIssues - i }}</span>
+      <span (click)="$event.stopPropagation()" style="cursor: default">{{ globalTableIndex(i) + 1 }}</span>
     </mat-cell>
   </ng-container>
 

@@ -81,8 +81,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  get totalIssues(): number {
-    return this.issues.totalIssues;
+  globalTableIndex(localTableIndex: number) {
+    return this.issues.globalTableIndex(localTableIndex);
   }
 
   sortChange(newSort: Sort) {

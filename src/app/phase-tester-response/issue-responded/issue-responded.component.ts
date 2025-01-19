@@ -11,7 +11,7 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/
 export class IssueRespondedComponent implements OnInit {
   @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
   readonly displayedColumns = [
-    TABLE_COLUMNS.ID,
+    TABLE_COLUMNS.NO,
     TABLE_COLUMNS.TITLE,
     TABLE_COLUMNS.TYPE,
     TABLE_COLUMNS.SEVERITY,

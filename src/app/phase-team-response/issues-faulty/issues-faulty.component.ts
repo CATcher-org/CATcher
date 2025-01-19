@@ -25,7 +25,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
   constructor(public issueService: IssueService, public userService: UserService, public permissions: PermissionService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = [
-        TABLE_COLUMNS.ID,
+        TABLE_COLUMNS.NO,
         TABLE_COLUMNS.TITLE,
         TABLE_COLUMNS.TYPE,
         TABLE_COLUMNS.SEVERITY,
@@ -36,7 +36,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
       ];
     } else {
       this.displayedColumns = [
-        TABLE_COLUMNS.ID,
+        TABLE_COLUMNS.NO,
         TABLE_COLUMNS.TITLE,
         TABLE_COLUMNS.TEAM_ASSIGNED,
         TABLE_COLUMNS.TYPE,
