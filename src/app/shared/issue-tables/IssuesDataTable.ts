@@ -27,7 +27,7 @@ export class IssuesDataTable extends DataSource<Issue> {
     super();
   }
 
-  globalTableIndex(localTableIndex: number) {
+  getGlobalTableIndex(localTableIndex: number) {
     const currentPage = this.paginator.pageIndex;
     const pageSize = this.paginator.pageSize;
     return currentPage * pageSize + localTableIndex;

@@ -82,7 +82,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   }
 
   globalTableIndex(localTableIndex: number) {
-    return this.issues.globalTableIndex(localTableIndex);
+    return this.issues.getGlobalTableIndex(localTableIndex);
   }
 
   sortChange(newSort: Sort) {
