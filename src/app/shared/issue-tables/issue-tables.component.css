@@ -1,3 +1,7 @@
+::ng-deep .labelTooltip {
+  font-size: 1rem;
+}
+
 .mat-table {
   display: flex;
   flex-wrap: wrap;
