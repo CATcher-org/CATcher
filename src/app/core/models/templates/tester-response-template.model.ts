@@ -25,25 +25,23 @@
  *
  * ## :question: Issue type
  *
- * Team chose [`type.DocumentationBug`].
- * Originally [`type.FunctionalityBug`].
+ * Team chose [`type.DocumentationBug`]
+ * Originally [`type.FunctionalityBug`]
  *
  * [x] - I disagree
  *
- * **Reason for disagreement:**
- * It's not a use case, it's a bug! This has nothing to do with the docs.
+ * **Reason for disagreement:** It's not a use case, it's a bug! This has nothing to do with the docs.
  *
  * <catcher-end-of-segment><hr>
  *
  * ## :question: Issue severity
  *
- * Team chose [`severity.VeryLow`].
- * Originally [`severity.High`].
+ * Team chose [`severity.VeryLow`]
+ * Originally [`severity.High`]
  *
  * [x] - I disagree
  *
- * **Reason for disagreement:**
- * You don't understand how frustrating this bug is!!
+ * **Reason for disagreement:** You don't understand how frustrating this bug is!!
  *
  * <catcher-end-of-segment><hr>
  */
