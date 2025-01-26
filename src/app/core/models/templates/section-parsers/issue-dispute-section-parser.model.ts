@@ -19,8 +19,8 @@
  *
  * ### Team says:
  *
- * Team chose [`type.DocumentationBug`].
- * Originally [`type.FunctionalityBug`].
+ * Team chose [`type.DocumentationBug`]
+ * Originally [`type.FunctionalityBug`]
  *
  * This use case is just not in the docs.
  *
