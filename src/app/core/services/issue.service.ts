@@ -87,14 +87,15 @@ export class IssueService {
           return EMPTY;
         }
         return this.githubService.fetchIssueGraphql(issueId).pipe(
-          map((response) => {
-            const issue = this.createIssueModel(response);
-            this.updateLocalStore(issue);
-            return issue;
-          }),
-          catchError((err) => this.getIssue(issueId))
-        );
-      })
+            map((response) => {
+              const issue = this.createIssueModel(response);
+              this.updateLocalStore(issue);
+              return issue;
+            }),
+            catchError((err) => this.getIssue(issueId))
+          );
+        }
+      ) 
     );
   }
 
