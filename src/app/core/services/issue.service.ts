@@ -95,7 +95,7 @@ export class IssueService {
             catchError((err) => this.getIssue(issueId))
           );
         }
-      ) 
+      )
     );
   }
 
