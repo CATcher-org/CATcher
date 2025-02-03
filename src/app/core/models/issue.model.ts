@@ -129,6 +129,10 @@ export class Issue {
     return new Issue(githubIssue);
   }
 
+  public static createPhaseBugTrimmingIssue(githubIssue: GithubIssue): Issue {
+    return new Issue(githubIssue);
+  }
+
   public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const template = new TeamResponseTemplate(githubIssue.comments);
@@ -337,6 +341,11 @@ export enum FILTER {
 
 export const IssuesFilter = {
   phaseBugReporting: {
+    Student: FILTER.FilterByCreator,
+    Tutor: FILTER.NoFilter,
+    Admin: FILTER.NoFilter
+  },
+  phaseBugTrimming: {
     Student: FILTER.FilterByCreator,
     Tutor: FILTER.NoFilter,
     Admin: FILTER.NoFilter

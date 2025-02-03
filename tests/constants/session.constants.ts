@@ -4,6 +4,7 @@ import { SessionData } from '../../src/app/core/models/session.model';
 export const BUG_REPORTING_PHASE_SESSION_DATA: SessionData = {
   openPhases: [Phase.phaseBugReporting],
   [Phase.phaseBugReporting]: 'bugreporting',
+  [Phase.phaseBugTrimming]: 'bugtrimming',
   [Phase.phaseTeamResponse]: 'pe-results',
   [Phase.phaseTesterResponse]: 'testerresponse',
   [Phase.phaseModeration]: 'pe-evaluation'
