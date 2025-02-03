@@ -8,8 +8,7 @@
  *
  * - [ ] I disagree
  *
- * **Reason for disagreement:**
- * { disagreement reason }
+ * **Reason for disagreement:** { disagreement reason }
  *
  * <catcher-end-of-segment><hr>
  *
@@ -17,13 +16,12 @@
  *
  * ## :question: Issue severity
  *
- * Team chose [`severity.Low`].
- * Originally [`severity.Medium`].
+ * Team chose [`severity.Low`]
+ * Originally [`severity.Medium`]
  *
  * - [x] I disagree
  *
- * **Reason for disagreement:**
- * The team is silly and doesn't understand how bad this bug is!!!
+ * **Reason for disagreement:** The team is silly and doesn't understand how bad this bug is!!!
  *
  * <catcher-end-of-segment><hr>
  */

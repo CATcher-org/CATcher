@@ -25,25 +25,23 @@
  *
  * ## :question: Issue type
  *
- * Team chose [`type.DocumentationBug`].
- * Originally [`type.FunctionalityBug`].
+ * Team chose [`type.DocumentationBug`]
+ * Originally [`type.FunctionalityBug`]
  *
  * [x] - I disagree
  *
- * **Reason for disagreement:**
- * It's not a use case, it's a bug! This has nothing to do with the docs.
+ * **Reason for disagreement:** It's not a use case, it's a bug! This has nothing to do with the docs.
  *
  * <catcher-end-of-segment><hr>
  *
  * ## :question: Issue severity
  *
- * Team chose [`severity.VeryLow`].
- * Originally [`severity.High`].
+ * Team chose [`severity.VeryLow`]
+ * Originally [`severity.High`]
  *
  * [x] - I disagree
  *
- * **Reason for disagreement:**
- * You don't understand how frustrating this bug is!!
+ * **Reason for disagreement:** You don't understand how frustrating this bug is!!
  *
  * <catcher-end-of-segment><hr>
  */
@@ -65,7 +63,7 @@ interface TesterResponseParseResult {
   teamChosenType: string;
 }
 
-const GITHUB_UI_EDIT_WARNING =
+export const GITHUB_UI_EDIT_WARNING =
   // eslint-disable-next-line max-len
   '[IMPORTANT!: Please do not edit or reply to this comment using the GitHub UI. You can respond to it using CATcher during the next phase of the PE]';
 const TESTER_RESPONSES_HEADER = '# Items for the Tester to Verify';
@@ -74,7 +72,7 @@ const DISAGREE_CHECKBOX_DESCRIPTION = 'I disagree';
 const TeamResponseSectionParser = buildTeamResponseSectionParser(TESTER_RESPONSES_HEADER);
 
 export const TesterResponseParser = coroutine(function* () {
-  yield possibly(str(GITHUB_UI_EDIT_WARNING));
+  yield str(GITHUB_UI_EDIT_WARNING);
   yield optionalWhitespace;
 
   const teamResponse = yield TeamResponseSectionParser;
