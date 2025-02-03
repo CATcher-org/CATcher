@@ -22,6 +22,11 @@ export function applySearchFilter(filter: string, displayedColumn: string[], iss
             return true;
           }
           break;
+        case TABLE_COLUMNS.TITLE:
+          if (matchesTitle(issue, searchKey)) {
+            return true;
+          }
+          break;
         default:
           if (matchesOtherColumns(issue, column, searchKey)) {
             return true;
@@ -49,6 +54,11 @@ function matchesAssignee(assignees: string[], searchKey: string): boolean {
 function matchesDuplicatedIssue(issueService: IssueService, id: number, searchKey: string): boolean {
   const duplicatedIssues = issueService.issues$.getValue().filter((el) => el.duplicateOf === id);
   return duplicatedIssuesContainsSearchKey(duplicatedIssues, searchKey);
+}
+
+function matchesTitle(issue: Issue, searchKey: string): boolean {
+  const searchStr = (issue.title + ' #' + issue.id).toLowerCase();
+  return containsSearchKey(searchStr, searchKey);
 }
 
 function matchesOtherColumns(issue: Issue, column: string, searchKey: string): boolean {

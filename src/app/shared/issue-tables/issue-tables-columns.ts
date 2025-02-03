@@ -1,5 +1,5 @@
 export enum TABLE_COLUMNS {
-  ID = 'id',
+  NO = 'no',
   TITLE = 'title',
   TEAM_ASSIGNED = 'teamAssigned',
   TYPE = 'type',

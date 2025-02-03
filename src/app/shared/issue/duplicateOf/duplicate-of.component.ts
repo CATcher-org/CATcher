@@ -136,7 +136,7 @@ export class DuplicateOfComponent implements OnInit, OnDestroy {
   private changeFilter(issuesObservable: Observable<Issue[]>, searchInputString): Observable<Issue[]> {
     return issuesObservable.pipe(
       first(),
-      map((issues) => applySearchFilter(searchInputString, [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE], this.issueService, issues))
+      map((issues) => applySearchFilter(searchInputString, [TABLE_COLUMNS.NO, TABLE_COLUMNS.TITLE], this.issueService, issues))
     );
   }
 
