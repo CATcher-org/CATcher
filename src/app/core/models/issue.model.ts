@@ -13,6 +13,7 @@ import { TesterResponseTemplate } from './templates/tester-response-template.mod
 import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue-template.model';
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import { TesterResponse } from './tester-response.model';
+import { GITHUB_UI_EDIT_WARNING } from './templates/tester-response-template.model';
 
 export class Issue {
   /** Basic Fields */
@@ -286,6 +287,8 @@ export class Issue {
   // Template url: https://github.com/CATcher-org/templates#teams-response-1
   createGithubTesterResponse(): string {
     return (
+      GITHUB_UI_EDIT_WARNING +
+      '\n' +
       `# Team\'s Response\n${this.teamResponse}\n` +
       `# Items for the Tester to Verify\n${this.getTesterResponsesString(this.testerResponses)}`
     );
