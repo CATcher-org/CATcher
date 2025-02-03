@@ -37,9 +37,17 @@ import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/l
 import { HeaderComponent } from './shared/layout';
 import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';
+import { PhaseBugTrimmingComponent } from './phase-bug-trimming/phase-bug-trimming.component';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, UserConfirmationComponent, LabelDefinitionPopupComponent, SessionFixConfirmationComponent],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    UserConfirmationComponent,
+    LabelDefinitionPopupComponent,
+    SessionFixConfirmationComponent,
+    PhaseBugTrimmingComponent
+  ],
   imports: [
     BrowserModule,
     PhaseTesterResponseModule,
