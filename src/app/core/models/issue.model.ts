@@ -318,7 +318,7 @@ export class Issue {
    * Returns true if this issue is opened, false if this issue is closed.
    */
   isIssueOpened(): boolean {
-    return this.githubIssue.state == IssueState.Open;
+    return this.githubIssue.state === IssueState.Open;
   }
 }
 
