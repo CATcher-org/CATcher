@@ -24,7 +24,8 @@ export enum ACTION_BUTTONS {
   MARK_AS_PENDING,
   RESPOND_TO_ISSUE,
   FIX_ISSUE,
-  DELETE_ISSUE
+  DELETE_ISSUE,
+  RESTORE_ISSUE
 }
 
 @Component({
@@ -45,6 +46,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
+  issuesPendingRestore: { [id: number]: boolean };
 
   public tableSettings: TableSettings;
 
@@ -72,6 +74,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
+    this.issuesPendingRestore = {};
     this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
 
