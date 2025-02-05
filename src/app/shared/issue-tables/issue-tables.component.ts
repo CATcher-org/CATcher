@@ -5,7 +5,6 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { TableSettings } from '../../core/models/table-settings.model';
-import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
 import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
@@ -52,11 +51,6 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   public readonly action_buttons = ACTION_BUTTONS;
 
-  // Messages for the modal popup window upon deleting an issue
-  private readonly deleteIssueModalMessages = ['Do you wish to delete this issue?', 'This action is irreversible!'];
-  private readonly yesButtonModalMessage = 'Yes, I wish to delete this issue';
-  private readonly noButtonModalMessage = "No, I don't wish to delete this issue";
-
   constructor(
     public userService: UserService,
     public permissions: PermissionService,
@@ -67,7 +61,6 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     private phaseService: PhaseService,
     private errorHandlingService: ErrorHandlingService,
     private logger: LoggingService,
-    private dialogService: DialogService,
     private snackBar: MatSnackBar = null
   ) {}
 
@@ -161,7 +154,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.githubService.viewIssueInBrowser(id, event);
   }
 
-  deleteIssue(id: number, event: Event, shouldShowSnackBar: boolean = true) {
+  deleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
     this.logger.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
@@ -183,7 +176,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       );
     event.stopPropagation();
 
-    if (!shouldShowSnackBar) {
+    if (!actionUndoable) {
       return;
     }
 
@@ -197,7 +190,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  undeleteIssue(id: number, event: Event, shouldShowSnackBar: boolean = true) {
+  undeleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
     this.logger.info(`IssueTablesComponent: Undeleting Issue ${id}`);
     this.issuesPendingRestore = {
       ...this.issuesPendingRestore,
@@ -220,7 +213,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       );
     event.stopPropagation();
 
-    if (!shouldShowSnackBar) {
+    if (!actionUndoable) {
       return;
     }
 
