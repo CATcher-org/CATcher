@@ -161,7 +161,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.githubService.viewIssueInBrowser(id, event);
   }
 
-  deleteIssue(id: number, event: Event) {
+  deleteIssue(id: number, event: Event, shouldShowSnackBar: boolean = true) {
     this.logger.info(`IssueTablesComponent: Deleting Issue ${id}`);
     this.issuesPendingDeletion = {
       ...this.issuesPendingDeletion,
@@ -183,41 +183,54 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       );
     event.stopPropagation();
 
+    if (!shouldShowSnackBar) {
+      return;
+    }
+
     let snackBarRef = null;
     snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
       data: { message: `Deleted issue ${id}` },
       duration: this.snackBarAutoCloseTime
     });
     snackBarRef.onAction().subscribe(() => {
-      this.undeleteIssue(id, event);
+      this.undeleteIssue(id, event, false);
     });
   }
 
-  undeleteIssue(id: number, event: Event) {
+  undeleteIssue(id: number, event: Event, shouldShowSnackBar: boolean = true) {
     this.logger.info(`IssueTablesComponent: Undeleting Issue ${id}`);
-    this.issueService.undeleteIssue(id).subscribe(
-      (reopenedIssue) => {},
-      (error) => {
-        this.errorHandlingService.handleError(error);
-      }
-    );
+    this.issuesPendingRestore = {
+      ...this.issuesPendingRestore,
+      [id]: true
+    };
+
+    this.issueService
+      .undeleteIssue(id)
+      .pipe(
+        finalize(() => {
+          const { [id]: issueRestored, ...theRest } = this.issuesPendingRestore;
+          this.issuesPendingRestore = theRest;
+        })
+      )
+      .subscribe(
+        (reopenedIssue) => {},
+        (error) => {
+          this.errorHandlingService.handleError(error);
+        }
+      );
     event.stopPropagation();
 
-    this.snackBar.open(`Restored issue ${id}`, '', { duration: this.snackBarAutoCloseTime });
-  }
+    if (!shouldShowSnackBar) {
+      return;
+    }
 
-  openDeleteDialog(id: number, event: Event) {
-    const dialogRef = this.dialogService.openUserConfirmationModal(
-      this.deleteIssueModalMessages,
-      this.yesButtonModalMessage,
-      this.noButtonModalMessage
-    );
-
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.logger.info(`IssueTablesComponent: Deleting issue ${id}`);
-        this.deleteIssue(id, event);
-      }
+    let snackBarRef = null;
+    snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
+      data: { message: `Restored issue ${id}` },
+      duration: this.snackBarAutoCloseTime
+    });
+    snackBarRef.onAction().subscribe(() => {
+      this.deleteIssue(id, event, false);
     });
   }
 }

@@ -264,7 +264,7 @@ export class IssueService {
     return this.githubService.reopenIssue(id).pipe(
       map((response: GithubIssue) => {
         const reopenedIssue = this.createIssueModel(response);
-        this.updateLocalStore(reopenedIssue);
+        this.deleteFromLocalStore(reopenedIssue);
         return reopenedIssue;
       })
     );
