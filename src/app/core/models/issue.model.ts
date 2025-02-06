@@ -201,6 +201,8 @@ export class Issue {
     switch (phase) {
       case Phase.phaseBugReporting:
         return Issue.createPhaseBugReportingIssue(this.githubIssue);
+      case Phase.phaseBugTrimming:
+        return Issue.createPhaseBugTrimmingIssue(this.githubIssue);
       case Phase.phaseTeamResponse:
         return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.teamAssigned);
       case Phase.phaseTesterResponse:
@@ -224,6 +226,9 @@ export class Issue {
     this.githubComments = issue.githubComments;
     switch (phase) {
       case Phase.phaseBugReporting:
+        this.description = issue.description;
+        break;
+      case Phase.phaseBugTrimming:
         this.description = issue.description;
         break;
       case Phase.phaseTeamResponse:

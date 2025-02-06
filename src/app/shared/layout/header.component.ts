@@ -101,6 +101,7 @@ export class HeaderComponent implements OnInit {
   isOpenUrlButtonShown(): boolean {
     return (
       this.phaseService.currentPhase === Phase.phaseBugReporting ||
+      this.phaseService.currentPhase === Phase.phaseBugTrimming ||
       this.userService.currentUser.role === UserRole.Student ||
       this.issueService.getIssueTeamFilter() !== 'All Teams' ||
       this.router.url.includes('/issues')
@@ -146,7 +147,11 @@ export class HeaderComponent implements OnInit {
 
   private getTeamFilterString() {
     // First Phase does not need team filtering
-    if (this.phaseService.currentPhase === Phase.phaseBugReporting || this.phaseService.currentPhase === Phase.phaseTesterResponse) {
+    if (
+      this.phaseService.currentPhase === Phase.phaseBugReporting ||
+      this.phaseService.currentPhase === Phase.phaseBugTrimming ||
+      this.phaseService.currentPhase === Phase.phaseTesterResponse
+    ) {
       return '';
     }
 
