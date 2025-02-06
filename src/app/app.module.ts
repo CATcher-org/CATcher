@@ -30,6 +30,7 @@ import { PhaseService } from './core/services/phase.service';
 import { SessionFixConfirmationComponent } from './core/services/session-fix-confirmation/session-fix-confirmation.component';
 import { UserService } from './core/services/user.service';
 import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporting.module';
+import { PhaseBugTrimmingModule } from './phase-bug-trimming/phase-bug-trimming.module';
 import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
 import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
@@ -46,6 +47,7 @@ import { SharedModule } from './shared/shared.module';
     BrowserAnimationsModule,
     AuthModule,
     PhaseBugReportingModule,
+    PhaseBugTrimmingModule,
     PhaseTeamResponseModule,
     PhaseModerationModule,
     SharedModule,

@@ -278,7 +278,11 @@ export class MockIssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phaseBugReporting && this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
+    if (
+      this.phaseService.currentPhase !== Phase.phaseBugReporting &&
+      this.phaseService.currentPhase !== Phase.phaseBugTrimming &&
+      this.phaseService.currentPhase !== Phase.phaseTesterResponse
+    ) {
       const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', `${studentTeam[0]}-${studentTeam[1]}`), this.createLabel('team', studentTeam[2]));
     }
@@ -328,6 +332,8 @@ export class MockIssueService {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseBugReporting:
         return Issue.createPhaseBugReportingIssue(githubIssue);
+      case Phase.phaseBugTrimming:
+        return Issue.createPhaseBugTrimmingIssue(githubIssue);
       case Phase.phaseTeamResponse:
         return Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
       case Phase.phaseTesterResponse:
