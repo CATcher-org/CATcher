@@ -5,6 +5,7 @@ import { Phase } from './phase.model';
 export interface SessionData {
   openPhases: Phase[];
   [Phase.phaseBugReporting]: string;
+  [Phase.phaseBugTrimming]: string;
   [Phase.phaseTeamResponse]: string;
   [Phase.phaseTesterResponse]: string;
   [Phase.phaseModeration]: string;

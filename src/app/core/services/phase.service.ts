@@ -12,6 +12,7 @@ export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.
 
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',
+  [Phase.phaseBugTrimming]: 'Bug Trimming Phase',
   [Phase.phaseTeamResponse]: "Team's Response Phase",
   [Phase.phaseTesterResponse]: "Tester's Response Phase",
   [Phase.phaseModeration]: 'Moderation Phase'
@@ -34,6 +35,7 @@ export class PhaseService {
 
   private phaseRepoOwners = {
     phaseBugReporting: '',
+    phaseBugTrimming: '',
     phaseTeamResponse: '',
     phaseTesterResponse: '',
     phaseModeration: ''
@@ -49,6 +51,7 @@ export class PhaseService {
   setPhaseOwners(org: string, user: string): void {
     this.orgName = org;
     this.phaseRepoOwners.phaseBugReporting = user;
+    this.phaseRepoOwners.phaseBugTrimming = user;
     this.phaseRepoOwners.phaseTeamResponse = org;
     this.phaseRepoOwners.phaseTesterResponse = user;
     this.phaseRepoOwners.phaseModeration = org;
