@@ -247,13 +247,7 @@ export class IssueService {
   }
 
   deleteIssue(id: number): Observable<Issue> {
-    return this.githubService.closeIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const deletedIssue = this.createIssueModel(response);
-        this.updateLocalStore(deletedIssue);
-        return deletedIssue;
-      })
-    );
+    return this.githubService.closeIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
   /*
@@ -263,13 +257,7 @@ export class IssueService {
   Refer to issue: https://github.com/CATcher-org/CATcher/issues/1314
    */
   undeleteIssue(id: number): Observable<Issue> {
-    return this.githubService.reopenIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const reopenedIssue = this.createIssueModel(response);
-        this.updateLocalStore(reopenedIssue);
-        return reopenedIssue;
-      })
-    );
+    return this.githubService.reopenIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
   /**
