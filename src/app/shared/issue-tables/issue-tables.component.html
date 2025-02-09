@@ -218,6 +218,7 @@
           color="accent"
           style="transform: scale(0.8)"
           matTooltip="Edit this issue"
+          data-testid="edit_issue_button"
         >
           <mat-icon>edit</mat-icon>
         </button>
@@ -252,6 +253,7 @@
         (click)="openDeleteDialog(issue.id, $event); $event.stopPropagation()"
         matTooltip="Delete this issue"
         style="transform: scale(0.8)"
+        data-testid="delete_issue_button"
       >
         <mat-icon>delete_outline</mat-icon>
       </button>

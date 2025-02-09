@@ -12,7 +12,7 @@ import { SessionData } from '../../models/session.model';
 import { LabelService } from '../label.service';
 import { generateIssueWithRandomData } from '../../../../../tests/constants/githubissue.constants';
 import RestGithubIssueFilter from '../../models/github/github-issue-filter.model';
-
+import { IssueState } from '../../../../../graphql/graphql-types';
 const { Octokit } = require('@octokit/rest');
 
 let ORG_NAME = '';
@@ -94,6 +94,14 @@ export class MockGithubService {
     return of(githubIssue);
   }
 
+  updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
+    const githubIssue = this.githubIssues[id];
+    githubIssue.title = title;
+    githubIssue.body = description;
+    githubIssue.labels = labels.map((labelString) => new GithubLabel({ name: labelString }));
+    return of(githubIssue);
+  }
+
   /**
    * Creates a fabricated object that matches the structure of that
    * returned by the Github API which always results in the required labels
@@ -112,11 +120,30 @@ export class MockGithubService {
 
   /**
    * Fetches an array of filtered GitHubIssues stored in the service. (Currently does not apply any filter)
+   *
+   * If there have been no modifications, return nothing
+   *
    * @param issuesFilter - The issue filter.
    * @returns An observable array of filtered GithubIssues
    */
   fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
-    return of(Object.values(this.githubIssues));
+    return of(Object.values(this.githubIssues).filter((githubIssue) => githubIssue.state === IssueState.Open));
+  }
+
+  fetchIssuesGraphqlByTeam(tutorial: string, team: string, issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
+    return this.fetchIssuesGraphql(issuesFilter);
+  }
+
+  /**
+   * Fetches information about an issue stored in the service.
+   *
+   * If there have been no modifications, return nothing
+   *
+   * @param id - The issue id.
+   * @returns Observable<GithubIssue> that represents the response object.
+   */
+  fetchIssueGraphql(id: number): Observable<GithubIssue> {
+    return of(this.githubIssues[id]);
   }
 
   /**
@@ -131,7 +158,10 @@ export class MockGithubService {
    */
   fetchDataFile(): Observable<{}> {
     return of({
-      data: 'role,name,team\n' + `${AppConfig.role},${AppConfig.username},${AppConfig.team}\n`
+      data:
+        'role,name,team\n' +
+        `${AppConfig.role},${AppConfig.username},${AppConfig.team}\n` +
+        `${AppConfig.role},CATcher-Tester-Friend,${AppConfig.team}\n`
     });
   }
 
@@ -182,6 +212,28 @@ export class MockGithubService {
 
     const mockResponse: Response = { json: () => Promise.resolve({ profiles: profiles }) } as Response;
     return Promise.resolve(mockResponse);
+  }
+
+  /**
+   * Sets the issue state to closed
+   * @param id Number of the issue to be closed
+   * @returns The closed issue as an observable
+   */
+  closeIssue(id: number): Observable<GithubIssue> {
+    const githubIssue = this.githubIssues[id];
+    this.githubIssues[id].state = IssueState.Closed;
+    return of(githubIssue);
+  }
+
+  /**
+   * Sets the issue state to open
+   * @param id Number of the issue to be opened
+   * @returns The reopened issue as an observable
+   */
+  reopenIssue(id: number): Observable<GithubIssue> {
+    const githubIssue = this.githubIssues[id];
+    this.githubIssues[id].state = IssueState.Open;
+    return of(githubIssue);
   }
 
   reset(): void {
