@@ -87,11 +87,7 @@ export class IssueService {
           return EMPTY;
         }
         return this.githubService.fetchIssueGraphql(issueId).pipe(
-          map((response) => {
-            const issue = this.createIssueModel(response);
-            this.updateLocalStore(issue);
-            return issue;
-          }),
+          map((response) => this.createAndSaveIssueModel(response)),
           catchError((err) => this.getIssue(issueId))
         );
       })
@@ -386,10 +382,10 @@ export class IssueService {
     );
   }
 
-  private createAndSaveIssueModel(githubIssue: GithubIssue): boolean {
+  private createAndSaveIssueModel(githubIssue: GithubIssue): Issue {
     const issue = this.createIssueModel(githubIssue);
     this.updateLocalStore(issue);
-    return true;
+    return issue;
   }
 
   private deleteIssuesFromLocalStore(ids: Array<Number>): void {
