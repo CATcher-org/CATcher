@@ -154,10 +154,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.githubService.viewIssueInBrowser(id, event);
   }
 
-  private handleIssueDeletionFinalization(id: number, event: Event, actionUndoable: boolean) {
-    const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
-    this.issuesPendingDeletion = theRest;
-
+  private handleIssueDeletionSuccess(id: number, event: Event, actionUndoable: boolean) {
     if (!actionUndoable) {
       return;
     }
@@ -177,20 +174,20 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.issuesPendingDeletion = { ...this.issuesPendingDeletion, [id]: true };
     this.issueService
       .deleteIssue(id)
-      .pipe(finalize(() => this.handleIssueDeletionFinalization(id, event, actionUndoable)))
+      .pipe(
+        finalize(() => {
+          const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
+          this.issuesPendingDeletion = theRest;
+        })
+      )
       .subscribe(
-        (removedIssue) => {},
-        (error) => {
-          this.errorHandlingService.handleError(error);
-        }
+        (removedIssue) => this.handleIssueDeletionSuccess(id, event, actionUndoable),
+        (error) => this.errorHandlingService.handleError(error)
       );
     event.stopPropagation();
   }
 
-  private handleIssueRestorationFinalization(id: number, event: Event, actionUndoable: boolean) {
-    const { [id]: issueRestored, ...theRest } = this.issuesPendingRestore;
-    this.issuesPendingRestore = theRest;
-
+  private handleIssueRestorationSuccess(id: number, event: Event, actionUndoable: boolean) {
     if (!actionUndoable) {
       return;
     }
@@ -210,12 +207,15 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.issuesPendingRestore = { ...this.issuesPendingRestore, [id]: true };
     this.issueService
       .undeleteIssue(id)
-      .pipe(finalize(() => this.handleIssueRestorationFinalization(id, event, actionUndoable)))
+      .pipe(
+        finalize(() => {
+          const { [id]: issueRestored, ...theRest } = this.issuesPendingRestore;
+          this.issuesPendingRestore = theRest;
+        })
+      )
       .subscribe(
-        (restoredIssue) => {},
-        (error) => {
-          this.errorHandlingService.handleError(error);
-        }
+        (restoredIssue) => this.handleIssueRestorationSuccess(id, event, actionUndoable),
+        (error) => this.errorHandlingService.handleError(error)
       );
     event.stopPropagation();
   }
