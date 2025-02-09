@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ISSUE_COMPONENTS, ViewIssueComponent } from '../../shared/view-issue/view-issue.component';
 
 @Component({
   selector: 'app-issue',
@@ -6,7 +8,25 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./issue.component.css']
 })
 export class IssueComponent implements OnInit {
-  constructor() {}
+  issueId: number;
 
-  ngOnInit(): void {}
+  readonly issueComponents: ISSUE_COMPONENTS[] = [
+    ISSUE_COMPONENTS.TESTER_POST,
+    ISSUE_COMPONENTS.SEVERITY_LABEL,
+    ISSUE_COMPONENTS.TYPE_LABEL
+  ];
+
+  @ViewChild(ViewIssueComponent, { static: true }) viewIssue: ViewIssueComponent;
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.route.params.subscribe((params) => {
+      this.issueId = +params['issue_id'];
+    });
+  }
+
+  canDeactivate(): boolean {
+    return !this.viewIssue.isEditing();
+  }
 }
