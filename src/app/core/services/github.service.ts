@@ -154,20 +154,20 @@ export class GithubService {
    * @returns Observable<boolean> that returns true if there are pages that do not exist in the cache model.
    */
   private toFetchIssues(filter: RestGithubIssueFilter): Observable<boolean> {
-    let responseInFirstPage: GithubResponse<GithubIssue[]>;
+    let responseInFirstPage: GithubResponse<GithubRestIssue[]>;
     return this.getIssuesAPICall(filter, 1).pipe(
-      map((response: GithubResponse<GithubIssue[]>) => {
+      map((response: GithubResponse<GithubRestIssue[]>) => {
         responseInFirstPage = response;
         return getNumberOfPages(response);
       }),
       mergeMap((numOfPages: number) => {
-        const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
+        const apiCalls: Observable<GithubResponse<GithubRestIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
           apiCalls.push(this.getIssuesAPICall(filter, i));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
-      map((resultArray: GithubResponse<GithubIssue[]>[]) => {
+      map((resultArray: GithubResponse<GithubRestIssue[]>[]) => {
         const responses = [responseInFirstPage, ...resultArray];
         const isCached = responses.reduce((result, response) => result && response.isCached, true);
         responses.forEach((resp, index) => this.issuesCacheManager.set(index + 1, resp));
@@ -321,7 +321,7 @@ export class GithubService {
         headers: { 'If-Modified-Since': this.issuesLastModifiedManager.get(id) }
       })
     ).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return true;
       }),
@@ -525,8 +525,8 @@ export class GithubService {
    * @param pageNumber - The page to be fetched
    * @returns An observable representing the response containing a single page of filtered issues
    */
-  private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {
-    const apiCall: Promise<GithubResponse<GithubIssue[]>> = octokit.issues.listForRepo({
+  private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubRestIssue[]>> {
+    const apiCall: Promise<GithubResponse<GithubRestIssue[]>> = octokit.issues.listForRepo({
       ...filter,
       owner: ORG_NAME,
       repo: REPO,
