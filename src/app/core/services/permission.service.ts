@@ -189,6 +189,11 @@ export class PermissionService {
     return this.askForPermission(PermissionLevel.User, 'isIssueDeletable');
   }
 
+  // should only have restore permission if have delete permission
+  isIssueRestorable(): boolean {
+    return this.isIssueDeletable();
+  }
+
   isIssueTitleEditable(): boolean {
     return this.askForPermission(PermissionLevel.User, 'isIssueTitleEditable');
   }

@@ -14,6 +14,7 @@ import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import { TesterResponse } from './tester-response.model';
 import { GITHUB_UI_EDIT_WARNING } from './templates/tester-response-template.model';
+import { IssueState } from '../../../../graphql/graphql-types';
 
 export class Issue {
   /** Basic Fields */
@@ -320,6 +321,13 @@ export class Issue {
       testerResponsesString += testerResponse.toString();
     }
     return testerResponsesString;
+  }
+
+  /**
+   * Returns true if this issue is opened, false if this issue is closed.
+   */
+  isIssueOpened(): boolean {
+    return this.githubIssue.state === IssueState.Open;
   }
 }
 
