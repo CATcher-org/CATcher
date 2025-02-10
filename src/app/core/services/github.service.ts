@@ -32,6 +32,7 @@ import { GithubRelease } from '../models/github/github.release';
 import { SessionData } from '../models/session.model';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
+import { GithubRestIssue } from '../models/github/github-rest-issue';
 
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -362,25 +363,25 @@ export class GithubService {
 
   closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed' })).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubIssue(response.data);
+        return GithubIssue.fromRestGithubIssue(response.data);
       })
     );
   }
 
   reopenIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open' })).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubIssue(response.data);
+        return GithubIssue.fromRestGithubIssue(response.data);
       })
     );
   }
 
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({ owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels })).pipe(
-      map((response: GithubResponse<GithubIssue>) => new GithubIssue(response.data))
+      map((response: GithubResponse<GithubRestIssue>) => GithubIssue.fromRestGithubIssue(response.data))
     );
   }
 
@@ -402,9 +403,9 @@ export class GithubService {
         assignees: assignees
       })
     ).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubIssue(response.data);
+        return GithubIssue.fromRestGithubIssue(response.data);
       }),
       catchError((err) => throwError(err))
     );

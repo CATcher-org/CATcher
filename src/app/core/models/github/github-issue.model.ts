@@ -1,6 +1,7 @@
 import { IssueState } from '../../../../../graphql/graphql-types';
 import { GithubComment } from './github-comment.model';
 import { GithubLabel } from './github-label.model';
+import { GithubRestIssue } from './github-rest-issue';
 
 export class GithubIssue {
   id: string; // Github's backend's id
@@ -66,5 +67,12 @@ export class GithubIssue {
 
   findTeamId(): string {
     return `${this.findLabel('team')}.${this.findLabel('tutorial')}`;
+  }
+
+  static fromRestGithubIssue(restGithubIssue: GithubRestIssue): GithubIssue {
+    return new GithubIssue({
+      ...restGithubIssue,
+      state: restGithubIssue.state.toUpperCase()
+    });
   }
 }
