@@ -27,11 +27,11 @@ export class Issue {
   hiddenDataInDescription: HiddenData;
 
   /** Fields derived from Labels */
-  severity: string;
-  type: string;
-  response?: string; // all instance of this should be renamed to response
+  severity: Severity;
+  type: BugType;
+  response?: string;
   duplicated?: boolean;
-  status?: string;
+  status?: Status;
   pending?: string;
   unsure?: boolean;
   teamAssigned?: Team;
@@ -46,8 +46,8 @@ export class Issue {
   testerDisagree?: boolean; // whether tester agrees or disagree to teams reponse
   issueComment?: IssueComment; // Issue comment is used for Tutor Response and Tester Response
   issueDisputes?: IssueDispute[];
-  teamChosenSeverity?: string;
-  teamChosenType?: string;
+  teamChosenSeverity?: Severity;
+  teamChosenType?: BugType;
   teamAccepted?: boolean;
 
   /** Fields for error messages during parsing of Github's issue description */
@@ -117,11 +117,11 @@ export class Issue {
     this.githubIssue = githubIssue;
 
     /** Fields derived from Labels */
-    this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity);
-    this.type = githubIssue.findLabel(GithubLabel.LABELS.type);
+    this.severity = githubIssue.findLabel(GithubLabel.LABELS.severity) as Severity;
+    this.type = githubIssue.findLabel(GithubLabel.LABELS.type) as BugType;
     this.response = githubIssue.findLabel(GithubLabel.LABELS.response);
     this.duplicated = !!githubIssue.findLabel(GithubLabel.LABELS.duplicated, false);
-    this.status = githubIssue.findLabel(GithubLabel.LABELS.status);
+    this.status = githubIssue.findLabel(GithubLabel.LABELS.status) as Status;
     this.pending = githubIssue.findLabel(GithubLabel.LABELS.pending);
   }
 
@@ -161,8 +161,8 @@ export class Issue {
     issue.testerResponses = testerResponseTemplate.testerResponses;
     issue.testerDisagree = testerResponseTemplate.testerDisagree;
 
-    issue.teamChosenSeverity = testerResponseTemplate.teamChosenSeverity || null;
-    issue.teamChosenType = testerResponseTemplate.teamChosenType || null;
+    issue.teamChosenSeverity = (testerResponseTemplate.teamChosenSeverity as Severity) || null;
+    issue.teamChosenType = (testerResponseTemplate.teamChosenType as BugType) || null;
 
     return issue;
   }
@@ -318,14 +318,55 @@ export interface Issues {
   [id: number]: Issue;
 }
 
-export const SEVERITY_ORDER = { '-': 0, VeryLow: 1, Low: 2, Medium: 3, High: 4 };
+export const STATUS = {
+  Incomplete: 'Incomplete',
+  Done: 'Done'
+} as const;
 
-export const ISSUE_TYPE_ORDER = { '-': 0, DocumentationBug: 1, FeatureFlaw: 2, FunctionalityBug: 3 };
+export type Status = typeof STATUS[keyof typeof STATUS];
 
-export enum STATUS {
-  Incomplete = 'Incomplete',
-  Done = 'Done'
-}
+export const ATTRIBUTE = {
+  Severity: 'severity',
+  Type: 'type',
+  Response: 'response',
+  Status: 'status',
+  Others: 'others'
+} as const;
+
+export type Attribute = typeof ATTRIBUTE[keyof typeof ATTRIBUTE];
+
+export const SEVERITY = {
+  None: '-',
+  VeryLow: 'VeryLow',
+  Low: 'Low',
+  Medium: 'Medium',
+  High: 'High'
+} as const;
+
+export type Severity = typeof SEVERITY[keyof typeof SEVERITY];
+
+export const BUG_TYPE = {
+  None: '-',
+  DocumentationBug: 'DocumentationBug',
+  FeatureFlaw: 'FeatureFlaw',
+  FunctionalityBug: 'FunctionalityBug'
+} as const;
+
+export type BugType = typeof BUG_TYPE[keyof typeof BUG_TYPE];
+
+export const RESPONSE = {
+  Accepted: 'Accepted',
+  CannotReproduce: 'CannotReproduce',
+  IssueUnclear: 'IssueUnclear',
+  NotInScope: 'NotInScope',
+  Rejected: 'Rejected'
+} as const;
+
+export type Response = typeof RESPONSE[keyof typeof RESPONSE];
+
+export const OTHER = {
+  Duplicate: 'Duplicate'
+} as const;
 
 export enum FILTER {
   NoFilter = 'NoFilter',
@@ -356,4 +397,19 @@ export const IssuesFilter = {
     Tutor: FILTER.FilterByTeamAssigned,
     Admin: FILTER.NoFilter
   }
+};
+
+export const SEVERITY_ORDER = {
+  [SEVERITY.None]: 0,
+  [SEVERITY.VeryLow]: 1,
+  [SEVERITY.Low]: 2,
+  [SEVERITY.Medium]: 3,
+  [SEVERITY.High]: 4
+};
+
+export const ISSUE_TYPE_ORDER = {
+  [BUG_TYPE.None]: 0,
+  [BUG_TYPE.DocumentationBug]: 1,
+  [BUG_TYPE.FeatureFlaw]: 2,
+  [BUG_TYPE.FunctionalityBug]: 3
 };

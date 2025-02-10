@@ -1,5 +1,5 @@
 import { MatSort } from '@angular/material/sort';
-import { Issue, ISSUE_TYPE_ORDER, SEVERITY_ORDER } from '../../core/models/issue.model';
+import { BugType, Issue, ISSUE_TYPE_ORDER, Severity, SEVERITY_ORDER } from '../../core/models/issue.model';
 
 export function getSortedData(sort: MatSort, data: Issue[]): Issue[] {
   if (!sort.active) {
@@ -29,14 +29,14 @@ export function getSortedData(sort: MatSort, data: Issue[]): Issue[] {
   });
 }
 
-function compareBySeverity(severityA: string, severityB: string): number {
+function compareBySeverity(severityA: Severity, severityB: Severity): number {
   const orderA = SEVERITY_ORDER[severityA];
   const orderB = SEVERITY_ORDER[severityB];
 
   return compareByIntegerValue(orderA, orderB);
 }
 
-function compareByIssueType(issueTypeA: string, issueTypeB: string): number {
+function compareByIssueType(issueTypeA: BugType, issueTypeB: BugType): number {
   const orderA = ISSUE_TYPE_ORDER[issueTypeA];
   const orderB = ISSUE_TYPE_ORDER[issueTypeB];
 
