@@ -41,11 +41,9 @@ export class PhaseService {
     phaseModeration: ''
   };
 
-  private phasesRequiringClosedIssues: Set<Phase>;
+  private phasesRequiringClosedIssues = [Phase.phaseBugReporting, Phase.phaseBugTrimming];
 
-  constructor(private githubService: GithubService, private labelService: LabelService, private repoCreatorService: RepoCreatorService) {
-    this.phasesRequiringClosedIssues = new Set<Phase>([Phase.phaseBugReporting, Phase.phaseBugTrimming]);
-  }
+  constructor(private githubService: GithubService, private labelService: LabelService, private repoCreatorService: RepoCreatorService) {}
   /**
    * Stores the location of the repositories belonging to
    * each phase of the application.
@@ -178,7 +176,7 @@ export class PhaseService {
    * Checks whether the given phase requires closed issues to be loaded.
    */
   requireLoadClosedIssues(): boolean {
-    return this.phasesRequiringClosedIssues.has(this.currentPhase);
+    return this.phasesRequiringClosedIssues.includes(this.currentPhase);
   }
 
   reset() {
