@@ -174,7 +174,7 @@ export class PhaseService {
    * Checks whether the given phase requires closed issues to be loaded.
    */
   requireLoadClosedIssues(): boolean {
-    return this.currentPhase === Phase.phaseBugReporting;
+    return this.currentPhase === Phase.phaseBugReporting || this.currentPhase === Phase.phaseBugTrimming;
   }
 
   reset() {
