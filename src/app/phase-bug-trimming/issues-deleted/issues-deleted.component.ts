@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { PermissionService } from '../../core/services/permission.service';
+import { UserService } from '../../core/services/user.service';
+import { TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables-columns';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
+import { Issue } from '../../core/models/issue.model';
 
 @Component({
   selector: 'app-issues-deleted',
@@ -6,7 +11,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./issues-deleted.component.css']
 })
 export class IssuesDeletedComponent implements OnInit {
-  constructor() {}
+  readonly displayedColumns = [TABLE_COLUMNS.ID, TABLE_COLUMNS.TITLE, TABLE_COLUMNS.TYPE, TABLE_COLUMNS.SEVERITY, TABLE_COLUMNS.ACTIONS];
+  readonly actionButtons: ACTION_BUTTONS[] = [ACTION_BUTTONS.VIEW_IN_WEB, ACTION_BUTTONS.FIX_ISSUE, ACTION_BUTTONS.RESTORE_ISSUE];
+  filter: (issue: Issue) => boolean;
 
-  ngOnInit(): void {}
+  @ViewChild(IssueTablesComponent, { static: true }) table: IssueTablesComponent;
+
+  constructor(public permissions: PermissionService, public userService: UserService) {}
+
+  ngOnInit() {
+    this.filter = (issue: Issue): boolean => {
+      return !issue.isIssueOpened();
+    };
+  }
+
+  applyFilter(filterValue: string) {
+    this.table.issues.filter = filterValue;
+  }
 }
