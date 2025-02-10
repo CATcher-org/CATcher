@@ -1,6 +1,7 @@
 import { GithubComment } from './github-comment.model';
-import { RestGithubIssueState } from './github-issue-filter.model';
 import { GithubLabel } from './github-label.model';
+
+export type RestGithubIssueState = 'open' | 'closed' | 'all';
 
 export type GithubRestIssue = {
   id: string; // Github's backend's id

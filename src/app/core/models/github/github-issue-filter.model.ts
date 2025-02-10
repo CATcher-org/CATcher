@@ -1,6 +1,6 @@
 import { IssueFilters, IssueState } from '../../../../../graphql/graphql-types';
+import { RestGithubIssueState } from './github-rest-issue';
 
-export type RestGithubIssueState = 'open' | 'closed' | 'all';
 export type RestGithubSortBy = 'created' | 'updated' | 'comments';
 export type RestGithubSortDir = 'asc' | 'desc';
 
