@@ -10,6 +10,8 @@ import { RepoCreatorService } from './repo-creator.service';
 
 export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.';
 
+export const phasesRequiringClosedIssues = [Phase.phaseBugReporting, Phase.phaseBugTrimming];
+
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',
   [Phase.phaseBugTrimming]: 'Bug Trimming Phase',
@@ -40,8 +42,6 @@ export class PhaseService {
     phaseTesterResponse: '',
     phaseModeration: ''
   };
-
-  private phasesRequiringClosedIssues = [Phase.phaseBugReporting, Phase.phaseBugTrimming];
 
   constructor(private githubService: GithubService, private labelService: LabelService, private repoCreatorService: RepoCreatorService) {}
   /**
@@ -176,7 +176,7 @@ export class PhaseService {
    * Checks whether the given phase requires closed issues to be loaded.
    */
   requireLoadClosedIssues(): boolean {
-    return this.phasesRequiringClosedIssues.includes(this.currentPhase);
+    return phasesRequiringClosedIssues.includes(this.currentPhase);
   }
 
   reset() {
