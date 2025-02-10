@@ -26,6 +26,13 @@ export class GithubIssue {
   };
   comments: Array<GithubComment>;
 
+  static fromRestGithubIssue(restGithubIssue: GithubRestIssue): GithubIssue {
+    return new GithubIssue({
+      ...restGithubIssue,
+      state: restGithubIssue.state.toUpperCase()
+    });
+  }
+
   constructor(githubIssue: {}) {
     Object.assign(this, githubIssue);
     this.labels = [];
@@ -67,12 +74,5 @@ export class GithubIssue {
 
   findTeamId(): string {
     return `${this.findLabel('team')}.${this.findLabel('tutorial')}`;
-  }
-
-  static fromRestGithubIssue(restGithubIssue: GithubRestIssue): GithubIssue {
-    return new GithubIssue({
-      ...restGithubIssue,
-      state: restGithubIssue.state.toUpperCase()
-    });
   }
 }
