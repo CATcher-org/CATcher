@@ -87,15 +87,10 @@ export class IssueService {
           return EMPTY;
         }
         return this.githubService.fetchIssueGraphql(issueId).pipe(
-            map((response) => {
-              const issue = this.createIssueModel(response);
-              this.updateLocalStore(issue);
-              return issue;
-            }),
-            catchError((err) => this.getIssue(issueId))
-          );
-        }
-      )
+          map((response) => this.createAndSaveIssueModel(response)),
+          catchError((err) => this.getIssue(issueId))
+        );
+      })
     );
   }
 
@@ -252,23 +247,17 @@ export class IssueService {
   }
 
   deleteIssue(id: number): Observable<Issue> {
-    return this.githubService.closeIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const deletedIssue = this.createIssueModel(response);
-        this.deleteFromLocalStore(deletedIssue);
-        return deletedIssue;
-      })
-    );
+    return this.githubService.closeIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
+  /*
+  There is a bug here regarding inconsistent github issue representation(some are
+  using GraphQl while some are using REST) that will cause the update of restoration
+  not reflect immediately.
+  Refer to issue: https://github.com/CATcher-org/CATcher/issues/1314
+   */
   undeleteIssue(id: number): Observable<Issue> {
-    return this.githubService.reopenIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const reopenedIssue = this.createIssueModel(response);
-        this.updateLocalStore(reopenedIssue);
-        return reopenedIssue;
-      })
-    );
+    return this.githubService.reopenIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
   /**
@@ -321,18 +310,23 @@ export class IssueService {
   private initializeData(): Observable<Issue[]> {
     const issuesAPICallsByFilter: Array<Observable<Array<GithubIssue>>> = [];
 
+    let filter: RestGithubIssueFilter = new RestGithubIssueFilter({});
+    if (this.phaseService.requireLoadClosedIssues()) {
+      filter.state = 'all';
+    }
+
     switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
-      case FILTER.FilterByCreator:
-        issuesAPICallsByFilter.push(
-          this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
-        );
+      case FILTER.FilterByCreator: {
+        filter.creator = this.userService.currentUser.loginId;
+        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(filter));
         break;
+      }
       case FILTER.FilterByTeam: // Only student has this filter
         issuesAPICallsByFilter.push(
           this.githubService.fetchIssuesGraphqlByTeam(
             this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
             this.createLabel('team', this.userService.currentUser.team.teamId),
-            new RestGithubIssueFilter({})
+            filter
           )
         );
         break;
@@ -343,13 +337,13 @@ export class IssueService {
             this.githubService.fetchIssuesGraphqlByTeam(
               this.createLabel('tutorial', team.tutorialClassId),
               this.createLabel('team', team.teamId),
-              new RestGithubIssueFilter({})
+              filter
             )
           );
         });
         break;
       case FILTER.NoFilter:
-        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({})));
+        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(filter));
         break;
       case FILTER.NoAccess:
       default:
@@ -376,10 +370,10 @@ export class IssueService {
     );
   }
 
-  private createAndSaveIssueModel(githubIssue: GithubIssue): boolean {
+  private createAndSaveIssueModel(githubIssue: GithubIssue): Issue {
     const issue = this.createIssueModel(githubIssue);
     this.updateLocalStore(issue);
-    return true;
+    return issue;
   }
 
   private deleteIssuesFromLocalStore(ids: Array<Number>): void {

@@ -170,6 +170,13 @@ export class PhaseService {
     return route.startsWith('/' + this.currentPhase);
   }
 
+  /**
+   * Checks whether the given phase requires closed issues to be loaded.
+   */
+  requireLoadClosedIssues(): boolean {
+    return this.currentPhase === Phase.phaseBugReporting;
+  }
+
   reset() {
     this.currentPhase = null;
   }
