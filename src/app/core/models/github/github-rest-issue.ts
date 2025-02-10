@@ -1,4 +1,5 @@
 import { GithubComment } from './github-comment.model';
+import { RestGithubIssueState } from './github-issue-filter.model';
 import { GithubLabel } from './github-label.model';
 
 export type GithubRestIssue = {
@@ -12,7 +13,7 @@ export type GithubRestIssue = {
   body: string;
   created_at: string;
   labels: Array<GithubLabel>;
-  state: 'open' | 'closed';
+  state: RestGithubIssueState;
   title: string;
   updated_at: string;
   url: string;
