@@ -1,7 +1,6 @@
 import { Issue } from '../../core/models/issue.model';
 import { IssueService } from '../../core/services/issue.service';
 import { TABLE_COLUMNS } from './issue-tables-columns';
-import { getTitleColumnContent } from './issue-title-column';
 
 /**
  * This module serves to improve separation of concerns in IssuesDataTable.ts module by containing the logic for
@@ -58,7 +57,7 @@ function matchesDuplicatedIssue(issueService: IssueService, id: number, searchKe
 }
 
 function matchesTitle(issue: Issue, searchKey: string): boolean {
-  const searchStr = getTitleColumnContent(issue).toLowerCase();
+  const searchStr = (issue.title + ' #' + issue.id).toLowerCase();
   return containsSearchKey(searchStr, searchKey);
 }
 

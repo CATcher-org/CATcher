@@ -2,7 +2,6 @@ import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/cor
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { TableSettings } from '../../core/models/table-settings.model';
@@ -18,7 +17,6 @@ import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { UndoActionComponent } from '../../shared/action-toasters/undo-action/undo-action.component';
 import { IssuesDataTable } from './IssuesDataTable';
-import { getTitleColumnHTML } from './issue-title-column';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -68,8 +66,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     private errorHandlingService: ErrorHandlingService,
     private logger: LoggingService,
     private dialogService: DialogService,
-    private snackBar: MatSnackBar = null,
-    private sanitizer: DomSanitizer
+    private snackBar: MatSnackBar = null
   ) {}
 
   ngOnInit() {
@@ -86,10 +83,6 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   globalTableIndex(localTableIndex: number) {
     return this.issues.getGlobalTableIndex(localTableIndex);
-  }
-
-  getTitleColumnHTML(issue: Issue): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(getTitleColumnHTML(issue));
   }
 
   sortChange(newSort: Sort) {
