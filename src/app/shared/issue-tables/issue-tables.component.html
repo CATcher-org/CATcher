@@ -6,11 +6,11 @@
   (matSortChange)="this.sortChange($event)"
   class="mat-elevation-z8"
 >
-  <!-- ID Column -->
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
-    <mat-cell *matCellDef="let issue">
-      <span (click)="$event.stopPropagation()" style="cursor: default">{{ issue.id }}</span>
+  <!-- No. Column -->
+  <ng-container matColumnDef="no">
+    <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
+    <mat-cell *matCellDef="let issue; let i = index">
+      <span (click)="$event.stopPropagation()" style="cursor: default">{{ globalTableIndex(i) + 1 }}</span>
     </mat-cell>
   </ng-container>
 
@@ -18,7 +18,13 @@
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
     <mat-cell *matCellDef="let issue">
-      <a class="no-underline link-grey-dark title-wrap" [routerLink]="'issues/' + issue.id"> {{ issue.title }} </a>
+      <!--
+        IMPORTANT: The filter logic relies on the structure of this DOM element.
+        If you modify the structure, make sure to update the filter logic in the component to match the new structure.
+      -->
+      <a class="no-underline link-grey-dark title-wrap" [routerLink]="'issues/' + issue.id">
+        {{ issue.title }} <span style="color: #a3aab1">#{{ issue.id }}</span></a
+      >
     </mat-cell>
   </ng-container>
 

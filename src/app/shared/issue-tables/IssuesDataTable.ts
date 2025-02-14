@@ -27,6 +27,12 @@ export class IssuesDataTable extends DataSource<Issue> {
     super();
   }
 
+  getGlobalTableIndex(localTableIndex: number) {
+    const currentPage = this.paginator.pageIndex;
+    const pageSize = this.paginator.pageSize;
+    return currentPage * pageSize + localTableIndex;
+  }
+
   connect(): Observable<Issue[]> {
     return this.issuesSubject.asObservable();
   }

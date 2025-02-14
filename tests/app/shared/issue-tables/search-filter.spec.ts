@@ -37,7 +37,7 @@ describe('search-filter', () => {
       highSeverityDocumentationBugIssue
     ];
     const displayedColumns: string[] = [
-      TABLE_COLUMNS.ID,
+      TABLE_COLUMNS.NO,
       TABLE_COLUMNS.TITLE,
       TABLE_COLUMNS.TYPE,
       TABLE_COLUMNS.SEVERITY,
