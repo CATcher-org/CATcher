@@ -1,6 +1,5 @@
 ::ng-deep .text-strike-through > mat-table {
   box-shadow: none;
-  border: 1px solid #f44336;
 
   mat-row {
     text-decoration: line-through;
