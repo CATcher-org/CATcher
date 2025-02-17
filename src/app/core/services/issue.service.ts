@@ -250,12 +250,6 @@ export class IssueService {
     return this.githubService.closeIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
-  /*
-  There is a bug here regarding inconsistent github issue representation(some are
-  using GraphQl while some are using REST) that will cause the update of restoration
-  not reflect immediately.
-  Refer to issue: https://github.com/CATcher-org/CATcher/issues/1314
-   */
   undeleteIssue(id: number): Observable<Issue> {
     return this.githubService.reopenIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
