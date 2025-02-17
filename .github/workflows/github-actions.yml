@@ -6,9 +6,9 @@ name: Setup Builds and Tests
 
 on:
   push:
-    branches: [master, release, feature-bug-trimming]
+    branches: [master, release]
   pull_request:
-    branches: [master, release, feature-bug-trimming]
+    branches: [master, release]
 
 jobs:
   linux-setup-and-tests:
