@@ -1,0 +1,5 @@
+::ng-deep .text-strike-through > mat-table {
+  mat-row {
+    text-decoration: line-through;
+  }
+}
