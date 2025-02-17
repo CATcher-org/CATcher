@@ -10,6 +10,8 @@ import { Phase } from '../../models/phase.model';
 import { Profile } from '../../models/profile.model';
 import { SessionData } from '../../models/session.model';
 import { LabelService } from '../label.service';
+import { generateIssueWithRandomData } from '../../../../../tests/constants/githubissue.constants';
+import RestGithubIssueFilter from '../../models/github/github-issue-filter.model';
 
 const { Octokit } = require('@octokit/rest');
 
@@ -22,9 +24,25 @@ let octokit = new Octokit();
 @Injectable()
 export class MockGithubService {
   numIssuesCreated: number; // tracks the number of GithubIssues created by this mock service
+  githubIssues: { [id: number]: GithubIssue }; // stores the issues that are supposedly in the repository
 
   constructor() {
     this.numIssuesCreated = 0;
+    this.githubIssues = {};
+    this.initializeRandomData();
+  }
+
+  private initializeRandomData() {
+    const NUM_ISSUES = 10;
+
+    for (let i = 0; i < NUM_ISSUES; i++) {
+      const githubIssue = generateIssueWithRandomData();
+      // override the number with a custom number to keep the tally
+      githubIssue.number = this.numIssuesCreated;
+      githubIssue.id = this.numIssuesCreated.toString();
+      this.numIssuesCreated++;
+      this.githubIssues[githubIssue.number] = githubIssue;
+    }
   }
 
   storeOAuthAccessToken(accessToken: string) {
@@ -62,13 +80,18 @@ export class MockGithubService {
 
     const githubIssueData = {
       number: this.numIssuesCreated, // Issue's display ID
+      id: this.numIssuesCreated,
       title: title,
       body: description,
       labels: githubLabels
     };
 
     this.numIssuesCreated++;
-    return of(new GithubIssue(githubIssueData));
+
+    const githubIssue = new GithubIssue(githubIssueData);
+    this.githubIssues[githubIssue.number] = githubIssue;
+
+    return of(githubIssue);
   }
 
   /**
@@ -85,6 +108,15 @@ export class MockGithubService {
         };
       })
     );
+  }
+
+  /**
+   * Fetches an array of filtered GitHubIssues stored in the service. (Currently does not apply any filter)
+   * @param issuesFilter - The issue filter.
+   * @returns An observable array of filtered GithubIssues
+   */
+  fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
+    return of(Object.values(this.githubIssues));
   }
 
   /**

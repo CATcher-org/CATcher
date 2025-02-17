@@ -14,7 +14,7 @@ import { ACTION_BUTTONS, IssueTablesComponent } from '../shared/issue-tables/iss
 })
 export class PhaseModerationComponent implements OnInit {
   displayedColumns = [
-    TABLE_COLUMNS.ID,
+    TABLE_COLUMNS.NO,
     TABLE_COLUMNS.TITLE,
     TABLE_COLUMNS.TYPE,
     TABLE_COLUMNS.SEVERITY,
