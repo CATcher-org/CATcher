@@ -13,12 +13,17 @@
       "type": "volume"
     }
   ],
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
+  "runArgs": [
+    "--name=CATcher-development" // Set the container name
+  ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
+  "forwardPorts": [
+    4200, // Angular browser port
+    9876 // Karma port
+  ],
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "yarn install",
+  "postCreateCommand": "bash /CATcher/.devcontainer/setup_chrome.sh", // Run the setup script
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
