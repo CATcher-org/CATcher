@@ -7,23 +7,14 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/CATcher,type=bind",
   "workspaceFolder": "/CATcher", // Set the workspace folder
   "mounts": [
-    {
-      "source": "catcher-development_catcher_node_modules", // This hides the node_modules folder in the workspace
-      "target": "/CATcher/node_modules", // Mount to the node_modules folder
-      "type": "volume"
-    }
+      "source=catcher-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
   ],
   "runArgs": [
     "--name=CATcher-development" // Set the container name
   ],
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [
-    4200, // Angular browser port
-    9876 // Karma port
-  ],
   // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "yarn install",
-  "postCreateCommand": "bash /CATcher/.devcontainer/setup_chrome.sh", // Run the setup script
+  "onCreateCommand": "bash /CATcher/.devcontainer/setup_chrome.sh", // Install chrome dependencies for playwright
+  "postCreateCommand": "npm install --verbose", // Install dependencies
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {

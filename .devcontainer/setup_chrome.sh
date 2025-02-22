@@ -31,6 +31,3 @@ sudo apt-get update && sudo apt-get install -y google-chrome-stable
 
 # Clean up
 sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
-
-# Verify installation
-google-chrome --version
