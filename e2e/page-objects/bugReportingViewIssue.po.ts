@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-export class ViewIssuePage {
+export class BugReportingViewIssuePage {
   readonly page: Page;
 
   constructor(page: Page) {

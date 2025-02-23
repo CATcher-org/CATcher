@@ -13,6 +13,11 @@ import { LabelService } from '../label.service';
 import { generateIssueWithRandomData } from '../../../../../tests/constants/githubissue.constants';
 import RestGithubIssueFilter from '../../models/github/github-issue-filter.model';
 import { IssueState } from '../../../../../graphql/graphql-types';
+import { GITHUB_LABEL_TEAM_LABEL, GITHUB_LABEL_TUTORIAL_LABEL } from '../../../../../tests/constants/githublabel.constants';
+import { GithubComment } from '../../models/github/github-comment.model';
+import { uuid } from '../../../../../src/app/shared/lib/uuid';
+import { IssueComment } from '../../models/comment.model';
+
 const { Octokit } = require('@octokit/rest');
 
 let ORG_NAME = '';
@@ -25,6 +30,7 @@ let octokit = new Octokit();
 export class MockGithubService {
   numIssuesCreated: number; // tracks the number of GithubIssues created by this mock service
   githubIssues: { [id: number]: GithubIssue }; // stores the issues that are supposedly in the repository
+  githubIssueComments: { [id: number]: GithubComment }; // stores references to the comments that can be tracked with id
 
   constructor() {
     this.numIssuesCreated = 0;
@@ -77,21 +83,38 @@ export class MockGithubService {
    */
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     const githubLabels: GithubLabel[] = labels.map((labelString) => new GithubLabel({ name: labelString }));
+    githubLabels.push(new GithubLabel(GITHUB_LABEL_TUTORIAL_LABEL), new GithubLabel(GITHUB_LABEL_TEAM_LABEL));
 
-    const githubIssueData = {
-      number: this.numIssuesCreated, // Issue's display ID
-      id: this.numIssuesCreated,
-      title: title,
-      body: description,
-      labels: githubLabels
-    };
+    const githubIssue = generateIssueWithRandomData();
+
+    githubIssue.number = this.numIssuesCreated;
+    githubIssue.state = IssueState.Open;
+    githubIssue.title = title;
+    githubIssue.body = description;
+    githubIssue.labels = githubLabels;
 
     this.numIssuesCreated++;
 
-    const githubIssue = new GithubIssue(githubIssueData);
     this.githubIssues[githubIssue.number] = githubIssue;
 
     return of(githubIssue);
+  }
+
+  createIssueComment(issueId: number, description: string): Observable<GithubComment> {
+    const githubIssue = this.githubIssues[issueId];
+    const githubComment = {
+      body: description,
+      created_at: new Date().toISOString(),
+      id: uuid(),
+      issue_url: githubIssue.url,
+      updated_at: new Date().toISOString(),
+      url: githubIssue.url,
+      user: { ...githubIssue.user, id: 0 }
+    };
+    githubIssue.comments.push(githubComment);
+    githubComment[githubComment.id] = githubComment;
+
+    return of(githubComment);
   }
 
   updateIssue(id: number, title: string, description: string, labels: string[], assignees?: string[]): Observable<GithubIssue> {
@@ -99,7 +122,26 @@ export class MockGithubService {
     githubIssue.title = title;
     githubIssue.body = description;
     githubIssue.labels = labels.map((labelString) => new GithubLabel({ name: labelString }));
+
+    if (assignees) {
+      githubIssue.assignees = assignees.map((assignee) => {
+        return {
+          id: 0,
+          login: assignee,
+          url: ''
+        };
+      });
+    }
+
     return of(githubIssue);
+  }
+
+  updateIssueComment(issueComment: IssueComment): Observable<GithubComment> {
+    const githubComment = this.githubIssueComments[issueComment.id];
+
+    githubComment.body = issueComment.description;
+
+    return of(githubComment);
   }
 
   /**
@@ -127,7 +169,9 @@ export class MockGithubService {
    * @returns An observable array of filtered GithubIssues
    */
   fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
-    return of(Object.values(this.githubIssues).filter((githubIssue) => githubIssue.state === IssueState.Open));
+    console.log('Returning all GithubIssues');
+    console.log(this.githubIssues);
+    return of(Object.values(this.githubIssues));
   }
 
   fetchIssuesGraphqlByTeam(tutorial: string, team: string, issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {

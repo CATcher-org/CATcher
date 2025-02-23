@@ -1,131 +1,83 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../page-objects/login.po';
 import { BugReportingPage } from '../page-objects/bugReporting.po';
-import { NewIssuePage } from '../page-objects/newIssue.po';
-import { ViewIssuePage } from '../page-objects/viewIssue.po';
+import { BugReportingViewIssuePage } from '../page-objects/bugReportingViewIssue.po';
+import { Header } from '../page-objects/header.po';
+import { Table } from '../page-objects/table.po';
+import { BUG_REPORT_1, BUG_REPORT_2 } from '../constants/bugreports.constants';
 
 test.describe("CATcher's Bug Reporting Phase", () => {
   let bugReportingPage: BugReportingPage;
   let loginPage: LoginPage;
-  let newIssuePage: NewIssuePage;
-  let viewIssuePage: ViewIssuePage;
+  let header: Header;
+  let viewIssuePage: BugReportingViewIssuePage;
+  let bugReportingTable: Table;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
+    header = new Header(page);
     bugReportingPage = new BugReportingPage(page);
-    newIssuePage = new NewIssuePage(page);
-    viewIssuePage = new ViewIssuePage(page);
+    viewIssuePage = new BugReportingViewIssuePage(page);
 
     await loginPage.navigateToRoot();
     await loginPage.bypassAuthentication();
+
+    bugReportingTable = new Table(page, page.getByTestId('app-issues-posted'));
   });
 
   test(`displays "Bug Reporting Phase" in header bar`, async ({ page }) => {
-    expect(await bugReportingPage.getPhaseDescription()).toContain('Bug Reporting Phase');
+    expect(await header.getPhaseDescription()).toContain('Bug Reporting Phase');
   });
 
   test(`creates new bug report`, async ({ page }) => {
-    const testIssueCreationTitle = 'Test Issue Creation Title';
-    const testIssueCreationBody = 'Test Issue Creation Text';
-    const testIssueCreationSeverity = 'Medium';
-    const testIssueCreationType = 'DocumentationBug';
+    await bugReportingPage.createBugReport(BUG_REPORT_1);
 
-    await bugReportingPage.createBugReport({
-      title: testIssueCreationTitle,
-      body: testIssueCreationBody,
-      severityLabel: testIssueCreationSeverity,
-      bugTypeLabel: testIssueCreationType
-    });
-
-    const isBugReportCorrectlyCreated: boolean = await bugReportingPage.isBugReportPresent({
-      title: testIssueCreationTitle,
-      severityLabel: testIssueCreationSeverity,
-      bugTypeLabel: testIssueCreationType
-    });
+    const isBugReportCorrectlyCreated: boolean = await bugReportingTable.hasRow(BUG_REPORT_1);
 
     expect(isBugReportCorrectlyCreated).toEqual(true);
   });
 
   test.describe('with a pre-existing issue', () => {
-    const preexistingIssueTitle = 'Preexisting Issue Title';
-    const preexistingIssueBody = 'Preexisting Issue Body';
-    const preexistingIssueSeverity = 'Low';
-    const preexistingIssueType = 'FeatureFlaw';
-
     test.beforeEach(async ({ page }) => {
-      await bugReportingPage.createBugReport({
-        title: preexistingIssueTitle,
-        body: preexistingIssueBody,
-        severityLabel: preexistingIssueSeverity,
-        bugTypeLabel: preexistingIssueType
-      });
+      await bugReportingPage.createBugReport(BUG_REPORT_1);
     });
 
     test(`edits a bug report`, async ({ page }) => {
-      const edittedIssueTitle = 'Editted Issue Title';
-      const edittedIssueBody = 'Editted Issue Body';
-      const edittedIssueSeverity = 'High';
-      const edittedIssueType = 'FunctionalityBug';
+      await bugReportingTable.clickRow(BUG_REPORT_1);
 
-      await bugReportingPage.accessViewIssuePage({
-        title: preexistingIssueTitle,
-        severityLabel: preexistingIssueSeverity,
-        bugTypeLabel: preexistingIssueType
-      });
-
-      await viewIssuePage.editIssueTitle(edittedIssueTitle);
-      await viewIssuePage.editIssueSeverity(edittedIssueSeverity);
-      await viewIssuePage.editIssueType(edittedIssueType);
-      await viewIssuePage.editIssueDescription(edittedIssueBody);
+      await viewIssuePage.editIssueTitle(BUG_REPORT_2.title);
+      await viewIssuePage.editIssueSeverity(BUG_REPORT_2.severityLabel);
+      await viewIssuePage.editIssueType(BUG_REPORT_2.bugTypeLabel);
+      await viewIssuePage.editIssueDescription(BUG_REPORT_2.body!);
 
       await page.locator('.back-button').click();
 
-      const isBugReportCorrectlyEditted: boolean = await bugReportingPage.isBugReportPresent({
-        title: edittedIssueTitle,
-        severityLabel: edittedIssueSeverity,
-        bugTypeLabel: edittedIssueType
-      });
+      const isBugReportCorrectlyEditted: boolean = await bugReportingTable.hasRow(BUG_REPORT_2);
 
       expect(isBugReportCorrectlyEditted).toEqual(true);
     });
 
     test(`closes a bug report`, async ({ page }) => {
-      await bugReportingPage.deleteBugReport({
-        title: preexistingIssueTitle,
-        severityLabel: preexistingIssueSeverity,
-        bugTypeLabel: preexistingIssueType
-      });
+      await bugReportingTable.deleteBugReport(BUG_REPORT_1);
 
-      const isBugReportDeleted: boolean = !(await bugReportingPage.isBugReportPresent({
-        title: preexistingIssueTitle,
-        severityLabel: preexistingIssueSeverity,
-        bugTypeLabel: preexistingIssueType
-      }));
+      const isBugReportDeleted: boolean = !(await bugReportingTable.hasRow(BUG_REPORT_2));
 
       expect(isBugReportDeleted).toEqual(true);
     });
 
     test(`search finds bug report`, async ({ page }) => {
-      await bugReportingPage.search(preexistingIssueTitle);
+      await bugReportingTable.search(BUG_REPORT_1.title);
 
-      const isBugReportFound: boolean = await bugReportingPage.isBugReportPresent({
-        title: preexistingIssueTitle,
-        severityLabel: preexistingIssueSeverity,
-        bugTypeLabel: preexistingIssueType
-      });
+      const isBugReportFound: boolean = await bugReportingTable.hasRow(BUG_REPORT_1);
 
       expect(isBugReportFound).toEqual(true);
     });
 
     test(`search does not find bug report`, async ({ page }) => {
       const otherIssueTitle = 'Other Issue Title';
-      await bugReportingPage.search(otherIssueTitle);
+      await bugReportingTable.search(otherIssueTitle);
 
-      const isBugReportNotFound: boolean = !(await bugReportingPage.isBugReportPresent({
-        title: preexistingIssueTitle,
-        severityLabel: preexistingIssueSeverity,
-        bugTypeLabel: preexistingIssueType
-      }));
+      const isBugReportNotFound: boolean = !(await bugReportingTable.hasRow(BUG_REPORT_1));
 
       expect(isBugReportNotFound).toEqual(true);
     });
