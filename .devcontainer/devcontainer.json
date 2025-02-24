@@ -21,7 +21,15 @@
   "postCreateCommand": "npm config set registry https://registry.npmmirror.com && npm install", // Install dependencies
   "customizations": {
     "vscode": {
-      "extensions": ["graphql.vscode-graphql-syntax", "github.vscode-github-actions", "eamodio.gitlens", "esbenp.prettier-vscode"],
+      "extensions": [
+        "graphql.vscode-graphql-syntax",
+        "github.vscode-github-actions",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "pflannery.vscode-versionlens",
+        "Angular.ng-template",
+        "johnpapa.Angular2"
+      ],
       "settings": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
       }
