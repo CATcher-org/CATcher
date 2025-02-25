@@ -14,6 +14,7 @@ import { TutorModerationIssueTemplate } from './templates/tutor-moderation-issue
 import { TutorModerationTodoTemplate } from './templates/tutor-moderation-todo-template.model';
 import { TesterResponse } from './tester-response.model';
 import { GITHUB_UI_EDIT_WARNING } from './templates/tester-response-template.model';
+import { IssueState } from '../../../../graphql/graphql-types';
 
 export class Issue {
   /** Basic Fields */
@@ -129,6 +130,10 @@ export class Issue {
     return new Issue(githubIssue);
   }
 
+  public static createPhaseBugTrimmingIssue(githubIssue: GithubIssue): Issue {
+    return new Issue(githubIssue);
+  }
+
   public static createPhaseTeamResponseIssue(githubIssue: GithubIssue, teamData: Team): Issue {
     const issue = new Issue(githubIssue);
     const template = new TeamResponseTemplate(githubIssue.comments);
@@ -197,6 +202,8 @@ export class Issue {
     switch (phase) {
       case Phase.phaseBugReporting:
         return Issue.createPhaseBugReportingIssue(this.githubIssue);
+      case Phase.phaseBugTrimming:
+        return Issue.createPhaseBugTrimmingIssue(this.githubIssue);
       case Phase.phaseTeamResponse:
         return Issue.createPhaseTeamResponseIssue(this.githubIssue, this.teamAssigned);
       case Phase.phaseTesterResponse:
@@ -220,6 +227,9 @@ export class Issue {
     this.githubComments = issue.githubComments;
     switch (phase) {
       case Phase.phaseBugReporting:
+        this.description = issue.description;
+        break;
+      case Phase.phaseBugTrimming:
         this.description = issue.description;
         break;
       case Phase.phaseTeamResponse:
@@ -312,6 +322,13 @@ export class Issue {
     }
     return testerResponsesString;
   }
+
+  /**
+   * Returns true if this issue is opened, false if this issue is closed.
+   */
+  isIssueOpened(): boolean {
+    return this.githubIssue.state === IssueState.Open;
+  }
 }
 
 export interface Issues {
@@ -337,6 +354,11 @@ export enum FILTER {
 
 export const IssuesFilter = {
   phaseBugReporting: {
+    Student: FILTER.FilterByCreator,
+    Tutor: FILTER.NoFilter,
+    Admin: FILTER.NoFilter
+  },
+  phaseBugTrimming: {
     Student: FILTER.FilterByCreator,
     Tutor: FILTER.NoFilter,
     Admin: FILTER.NoFilter
