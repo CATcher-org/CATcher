@@ -1,0 +1,43 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+  "name": "CATcher-development",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-16",
+  "features": {
+    "ghcr.io/kreemer/features/chrometesting:1": {}
+  },
+  "workspaceFolder": "/CATcher", // Set the workspace folder
+  "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
+  "mounts": ["source=CATcher-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"],
+  "runArgs": [
+    "--name=CATcher-development" // Set the container name
+  ],
+  "onCreateCommand": {
+    "Giving rw permissions to mounted dir": "sudo chown -R node:node ${containerWorkspaceFolder}/*",
+    "Adding CATcher as upstream": "git remote add upstream https://github.com/CATcher-org/CATcher.git || echo 'already exists'"
+  },
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // npm with default registry seems to hang frequently, thus a more reliable mirror is used.
+  "postCreateCommand": "npm config set registry https://registry.npmmirror.com && npm install", // Install dependencies
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "graphql.vscode-graphql-syntax",
+        "github.vscode-github-actions",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "pflannery.vscode-versionlens",
+        "Angular.ng-template",
+        "johnpapa.Angular2"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
+    }
+  },
+  "containerEnv": {
+    "CHROME_BIN": "/usr/local/bin/chrome"
+  }
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}
