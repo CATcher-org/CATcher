@@ -36,6 +36,8 @@ export class IssueService {
   private issuesPollSubscription: Subscription;
   /** Whether the IssueService is downloading the data from Github*/
   public isLoading = new BehaviorSubject<boolean>(false);
+  /** Whether the IssueService is creating a new team response */
+  private isCreatingTeamResponse = false;
 
   constructor(
     private githubService: GithubService,
@@ -55,14 +57,12 @@ export class IssueService {
 
       this.issuesPollSubscription = timer(0, IssueService.POLL_INTERVAL)
         .pipe(
-          exhaustMap(() => {
-            return this.reloadAllIssues().pipe(
-              catchError(() => {
-                return EMPTY;
-              }),
+          exhaustMap(() =>
+            this.reloadAllIssues().pipe(
+              catchError(() => EMPTY),
               finalize(() => this.isLoading.next(false))
-            );
-          })
+            )
+          )
         )
         .subscribe();
     }
@@ -83,15 +83,12 @@ export class IssueService {
   pollIssue(issueId: number): Observable<Issue> {
     return timer(0, IssueService.POLL_INTERVAL).pipe(
       exhaustMap(() => {
+        if (this.isCreatingTeamResponse) {
+          return EMPTY;
+        }
         return this.githubService.fetchIssueGraphql(issueId).pipe(
-          map((response) => {
-            const issue = this.createIssueModel(response);
-            this.updateLocalStore(issue);
-            return issue;
-          }),
-          catchError((err) => {
-            return this.getIssue(issueId);
-          })
+          map((response) => this.createAndSaveIssueModel(response)),
+          catchError((err) => this.getIssue(issueId))
         );
       })
     );
@@ -115,9 +112,7 @@ export class IssueService {
         this.createAndSaveIssueModel(response);
         return this.issues[id];
       }),
-      catchError((err) => {
-        return of(this.issues[id]);
-      })
+      catchError((err) => of(this.issues[id]))
     );
   }
 
@@ -135,17 +130,27 @@ export class IssueService {
   }
 
   updateIssue(issue: Issue): Observable<Issue> {
+    return this.updateGithubIssue(issue).pipe(
+      map((githubIssue: GithubIssue) => {
+        githubIssue.comments = issue.githubComments;
+        return this.createIssueModel(githubIssue);
+      })
+    );
+  }
+
+  /**
+   * Updates an issue without attempting to create an issue model. Used when we want to treat
+   * updateIssue as an atomic operation that only performs an API call.
+   * @param issue current issue model
+   * @returns GitHubIssue from the API request
+   */
+  updateGithubIssue(issue: Issue): Observable<GithubIssue> {
     const assignees = this.phaseService.currentPhase === Phase.phaseModeration ? [] : issue.assignees;
     return this.githubService
       .updateIssue(issue.id, issue.title, this.createGithubIssueDescription(issue), this.createLabelsForIssue(issue), assignees)
       .pipe(
-        map((response: GithubIssue) => {
-          response.comments = issue.githubComments;
-          return this.createIssueModel(response);
-        }),
         catchError((err) => {
-          this.logger.error('IssueService: ', err); // Log full details of error first
-          return throwError(err.response.data.message); // More readable error message
+          return this.parseUpdateIssueResponseError(err);
         })
       );
   }
@@ -188,11 +193,19 @@ export class IssueService {
   }
 
   createTeamResponse(issue: Issue): Observable<Issue> {
+    // The issue must be updated first to ensure that fields like assignees are valid
+    this.isCreatingTeamResponse = true;
     const teamResponse = issue.createGithubTeamResponse();
-    return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
-      mergeMap((githubComment: GithubComment) => {
-        issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
-        return this.updateIssue(issue);
+    return this.updateGithubIssue(issue).pipe(
+      mergeMap((response: GithubIssue) => {
+        return this.githubService.createIssueComment(issue.id, teamResponse).pipe(
+          map((githubComment: GithubComment) => {
+            this.isCreatingTeamResponse = false;
+            issue.githubComments = [githubComment, ...issue.githubComments.filter((c) => c.id !== githubComment.id)];
+            response.comments = issue.githubComments;
+            return this.createIssueModel(response);
+          })
+        );
       })
     );
   }
@@ -234,23 +247,11 @@ export class IssueService {
   }
 
   deleteIssue(id: number): Observable<Issue> {
-    return this.githubService.closeIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const deletedIssue = this.createIssueModel(response);
-        this.deleteFromLocalStore(deletedIssue);
-        return deletedIssue;
-      })
-    );
+    return this.githubService.closeIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
   undeleteIssue(id: number): Observable<Issue> {
-    return this.githubService.reopenIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const reopenedIssue = this.createIssueModel(response);
-        this.updateLocalStore(reopenedIssue);
-        return reopenedIssue;
-      })
-    );
+    return this.githubService.reopenIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
   /**
@@ -284,13 +285,7 @@ export class IssueService {
    * Obtain an observable containing an array of issues that are duplicates of the parentIssue.
    */
   getDuplicateIssuesFor(parentIssue: Issue): Observable<Issue[]> {
-    return this.issues$.pipe(
-      map((issues) => {
-        return issues.filter((issue) => {
-          return issue.duplicateOf === parentIssue.id;
-        });
-      })
-    );
+    return this.issues$.pipe(map((issues) => issues.filter((issue) => issue.duplicateOf === parentIssue.id)));
   }
 
   reset(resetSessionId: boolean) {
@@ -309,18 +304,23 @@ export class IssueService {
   private initializeData(): Observable<Issue[]> {
     const issuesAPICallsByFilter: Array<Observable<Array<GithubIssue>>> = [];
 
+    let filter: RestGithubIssueFilter = new RestGithubIssueFilter({});
+    if (this.phaseService.requireLoadClosedIssues()) {
+      filter.state = 'all';
+    }
+
     switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
-      case FILTER.FilterByCreator:
-        issuesAPICallsByFilter.push(
-          this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
-        );
+      case FILTER.FilterByCreator: {
+        filter.creator = this.userService.currentUser.loginId;
+        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(filter));
         break;
+      }
       case FILTER.FilterByTeam: // Only student has this filter
         issuesAPICallsByFilter.push(
           this.githubService.fetchIssuesGraphqlByTeam(
             this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
             this.createLabel('team', this.userService.currentUser.team.teamId),
-            new RestGithubIssueFilter({})
+            filter
           )
         );
         break;
@@ -331,13 +331,13 @@ export class IssueService {
             this.githubService.fetchIssuesGraphqlByTeam(
               this.createLabel('tutorial', team.tutorialClassId),
               this.createLabel('team', team.teamId),
-              new RestGithubIssueFilter({})
+              filter
             )
           );
         });
         break;
       case FILTER.NoFilter:
-        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({})));
+        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(filter));
         break;
       case FILTER.NoAccess:
       default:
@@ -364,10 +364,10 @@ export class IssueService {
     );
   }
 
-  private createAndSaveIssueModel(githubIssue: GithubIssue): boolean {
+  private createAndSaveIssueModel(githubIssue: GithubIssue): Issue {
     const issue = this.createIssueModel(githubIssue);
     this.updateLocalStore(issue);
-    return true;
+    return issue;
   }
 
   private deleteIssuesFromLocalStore(ids: Array<Number>): void {
@@ -407,7 +407,11 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phaseBugReporting && this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
+    if (
+      this.phaseService.currentPhase !== Phase.phaseBugReporting &&
+      this.phaseService.currentPhase !== Phase.phaseBugTrimming &&
+      this.phaseService.currentPhase !== Phase.phaseTesterResponse
+    ) {
       const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', `${studentTeam[0]}-${studentTeam[1]}`), this.createLabel('team', studentTeam[2]));
     }
@@ -460,6 +464,9 @@ export class IssueService {
       case Phase.phaseBugReporting:
         issue = Issue.createPhaseBugReportingIssue(githubIssue);
         break;
+      case Phase.phaseBugTrimming:
+        issue = Issue.createPhaseBugTrimmingIssue(githubIssue);
+        break;
       case Phase.phaseTeamResponse:
         issue = Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));
         break;
@@ -477,6 +484,35 @@ export class IssueService {
       this.logger.error('IssueService: ' + issue.parseError);
     }
     return issue;
+  }
+
+  private parseUpdateIssueResponseError(err: any) {
+    this.logger.error('IssueService: ', err); // Log full details of error first
+
+    if (err.code !== 422 || !err.hasOwnProperty('message')) {
+      return throwError(err.response.data.message); // More readable error message
+    }
+
+    // Error code 422 implies that one of the fields are invalid
+    const validationFailedPrefix = 'Validation Failed:';
+    const message: string = err.message;
+    const errorJsonRaw = message.substring(validationFailedPrefix.length);
+    const errorJson = JSON.parse(errorJsonRaw);
+
+    const mandatoryFields = ['field', 'code', 'value'];
+    const hasMandatoryFields = mandatoryFields.every((field) => errorJson.hasOwnProperty(field));
+
+    if (hasMandatoryFields) {
+      if (errorJson['field'] === 'assignees' && errorJson['code'] === 'invalid') {
+        // If assignees are invalid, return a custom error
+        return throwError(
+          `Assignee ${errorJson['value']} has not joined your organization yet. Please remove them from the assignees list.`
+        );
+      }
+    }
+
+    // Generic 422 Validation Failed since it is not an assignees problem
+    return throwError(err.response.data.message);
   }
 
   setIssueTeamFilter(filterValue: string) {

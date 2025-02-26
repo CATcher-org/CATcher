@@ -32,6 +32,7 @@ import { GithubRelease } from '../models/github/github.release';
 import { SessionData } from '../models/session.model';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
+import { GithubRestIssue } from '../models/github/github-rest-issue';
 
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -107,8 +108,8 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      mergeMap(() => {
-        return this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
+      mergeMap(() =>
+        this.fetchGraphqlList<FetchIssuesByTeamQuery, GithubGraphqlIssue>(
           FetchIssuesByTeam,
           {
             owner: ORG_NAME,
@@ -121,8 +122,8 @@ export class GithubService {
           },
           (result) => result.data.repository.label.issues.edges,
           GithubGraphqlIssue
-        );
-      })
+        )
+      )
     );
   }
 
@@ -135,14 +136,14 @@ export class GithubService {
     const graphqlFilter = issuesFilter.convertToGraphqlFilter();
     return this.toFetchIssues(issuesFilter).pipe(
       filter((toFetch) => toFetch),
-      mergeMap(() => {
-        return this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
+      mergeMap(() =>
+        this.fetchGraphqlList<FetchIssuesQuery, GithubGraphqlIssue>(
           FetchIssues,
           { owner: ORG_NAME, name: REPO, filter: graphqlFilter },
           (result) => result.data.repository.issues.edges,
           GithubGraphqlIssue
-        );
-      })
+        )
+      )
     );
   }
 
@@ -153,24 +154,22 @@ export class GithubService {
    * @returns Observable<boolean> that returns true if there are pages that do not exist in the cache model.
    */
   private toFetchIssues(filter: RestGithubIssueFilter): Observable<boolean> {
-    let responseInFirstPage: GithubResponse<GithubIssue[]>;
+    let responseInFirstPage: GithubResponse<GithubRestIssue[]>;
     return this.getIssuesAPICall(filter, 1).pipe(
-      map((response: GithubResponse<GithubIssue[]>) => {
+      map((response: GithubResponse<GithubRestIssue[]>) => {
         responseInFirstPage = response;
         return getNumberOfPages(response);
       }),
       mergeMap((numOfPages: number) => {
-        const apiCalls: Observable<GithubResponse<GithubIssue[]>>[] = [];
+        const apiCalls: Observable<GithubResponse<GithubRestIssue[]>>[] = [];
         for (let i = 2; i <= numOfPages; i++) {
           apiCalls.push(this.getIssuesAPICall(filter, i));
         }
         return apiCalls.length === 0 ? of([]) : forkJoin(apiCalls);
       }),
-      map((resultArray: GithubResponse<GithubIssue[]>[]) => {
+      map((resultArray: GithubResponse<GithubRestIssue[]>[]) => {
         const responses = [responseInFirstPage, ...resultArray];
-        const isCached = responses.reduce((result, response) => {
-          return result && response.isCached;
-        }, true);
+        const isCached = responses.reduce((result, response) => result && response.isCached, true);
         responses.forEach((resp, index) => this.issuesCacheManager.set(index + 1, resp));
         return !isCached;
       })
@@ -184,12 +183,8 @@ export class GithubService {
    */
   isRepositoryPresent(owner: string, repo: string): Observable<boolean> {
     return from(octokit.repos.get({ owner: owner, repo: repo, headers: GithubService.IF_NONE_MATCH_EMPTY })).pipe(
-      map((rawData: { status: number }) => {
-        return rawData.status !== ERRORCODE_NOT_FOUND;
-      }),
-      catchError((err) => {
-        return of(false);
-      }),
+      map((rawData: { status: number }) => rawData.status !== ERRORCODE_NOT_FOUND),
+      catchError((err) => of(false)),
       catchError((err) => throwError('Failed to fetch repo data.'))
     );
   }
@@ -276,9 +271,7 @@ export class GithubService {
       })
     ).pipe(
       map((res: any) => res.status !== ERRORCODE_NOT_FOUND),
-      catchError(() => {
-        return of(false);
-      })
+      catchError(() => of(false))
     );
   }
 
@@ -307,9 +300,7 @@ export class GithubService {
     return this.toFetchIssue(id).pipe(
       filter((toFetch) => toFetch),
       mergeMap(() => from(queryRef.refetch())),
-      map((value: ApolloQueryResult<FetchIssueQuery>) => {
-        return new GithubGraphqlIssue(value.data.repository.issue);
-      }),
+      map((value: ApolloQueryResult<FetchIssueQuery>) => new GithubGraphqlIssue(value.data.repository.issue)),
       throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
     );
   }
@@ -330,7 +321,7 @@ export class GithubService {
         headers: { 'If-Modified-Since': this.issuesLastModifiedManager.get(id) }
       })
     ).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
         return true;
       }),
@@ -372,35 +363,31 @@ export class GithubService {
 
   closeIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'closed' })).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubIssue(response.data);
+        return GithubIssue.fromRestGithubIssue(response.data);
       })
     );
   }
 
   reopenIssue(id: number): Observable<GithubIssue> {
     return from(octokit.issues.update({ owner: ORG_NAME, repo: REPO, issue_number: id, state: 'open' })).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubIssue(response.data);
+        return GithubIssue.fromRestGithubIssue(response.data);
       })
     );
   }
 
   createIssue(title: string, description: string, labels: string[]): Observable<GithubIssue> {
     return from(octokit.issues.create({ owner: ORG_NAME, repo: REPO, title: title, body: description, labels: labels })).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
-        return new GithubIssue(response.data);
-      })
+      map((response: GithubResponse<GithubRestIssue>) => GithubIssue.fromRestGithubIssue(response.data))
     );
   }
 
   createIssueComment(issueId: number, description: string): Observable<GithubComment> {
     return from(octokit.issues.createComment({ owner: ORG_NAME, repo: REPO, issue_number: issueId, body: description })).pipe(
-      map((response: GithubResponse<GithubComment>) => {
-        return response.data;
-      })
+      map((response: GithubResponse<GithubComment>) => response.data)
     );
   }
 
@@ -416,24 +403,18 @@ export class GithubService {
         assignees: assignees
       })
     ).pipe(
-      map((response: GithubResponse<GithubIssue>) => {
+      map((response: GithubResponse<GithubRestIssue>) => {
         this.issuesLastModifiedManager.set(id, response.headers['last-modified']);
-        return new GithubIssue(response.data);
+        return GithubIssue.fromRestGithubIssue(response.data);
       }),
-      catchError((err) => {
-        return throwError(err);
-      })
+      catchError((err) => throwError(err))
     );
   }
 
   updateIssueComment(issueComment: IssueComment): Observable<GithubComment> {
     return from(
       octokit.issues.updateComment({ owner: ORG_NAME, repo: REPO, comment_id: issueComment.id, body: issueComment.description })
-    ).pipe(
-      map((response: GithubResponse<GithubComment>) => {
-        return response.data;
-      })
-    );
+    ).pipe(map((response: GithubResponse<GithubComment>) => response.data));
   }
 
   uploadFile(filename: string, base64String: string): Observable<any> {
@@ -451,9 +432,7 @@ export class GithubService {
 
   fetchEventsForRepo(): Observable<any[]> {
     return from(octokit.issues.listEventsForRepo({ owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY })).pipe(
-      map((response) => {
-        return response['data'];
-      }),
+      map((response) => response['data']),
       catchError((err) => throwError('Failed to fetch events for repo.'))
     );
   }
@@ -506,9 +485,7 @@ export class GithubService {
 
   fetchAuthenticatedUser(): Observable<GithubUser> {
     return from(octokit.users.getAuthenticated()).pipe(
-      map((response) => {
-        return response['data'];
-      }),
+      map((response) => response['data']),
       catchError((err) => throwError('Failed to fetch authenticated user.'))
     );
   }
@@ -548,8 +525,8 @@ export class GithubService {
    * @param pageNumber - The page to be fetched
    * @returns An observable representing the response containing a single page of filtered issues
    */
-  private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubIssue[]>> {
-    const apiCall: Promise<GithubResponse<GithubIssue[]>> = octokit.issues.listForRepo({
+  private getIssuesAPICall(filter: RestGithubIssueFilter, pageNumber: number): Observable<GithubResponse<GithubRestIssue[]>> {
+    const apiCall: Promise<GithubResponse<GithubRestIssue[]>> = octokit.issues.listForRepo({
       ...filter,
       owner: ORG_NAME,
       repo: REPO,
@@ -560,11 +537,7 @@ export class GithubService {
       headers: { 'If-None-Match': this.issuesCacheManager.getEtagFor(pageNumber) }
     });
     const apiCall$ = from(apiCall);
-    return apiCall$.pipe(
-      catchError((err) => {
-        return of(this.issuesCacheManager.get(pageNumber));
-      })
-    );
+    return apiCall$.pipe(catchError((err) => of(this.issuesCacheManager.get(pageNumber))));
   }
 
   /**
@@ -587,9 +560,7 @@ export class GithubService {
         const issues = results.reduce((accumulated, current) => accumulated.concat(pluckEdges(current)), []);
         return issues.map((issue) => new Model(issue.node));
       }),
-      throwIfEmpty(() => {
-        return new HttpErrorResponse({ status: 304 });
-      })
+      throwIfEmpty(() => new HttpErrorResponse({ status: 304 }))
     );
   }
 

@@ -1,17 +1,7 @@
 import { DOCUMENT } from '@angular/common';
-import {
-  ComponentFactory,
-  ComponentFactoryResolver,
-  ComponentRef,
-  Inject,
-  Injectable,
-  Injector,
-  OnDestroy,
-  Renderer2,
-  ViewContainerRef
-} from '@angular/core';
+import { ComponentRef, Inject, Injectable, Injector, OnDestroy, Renderer2, ViewContainerRef } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
-import { MatProgressSpinnerDefaultOptions, MatSpinner, ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerDefaultOptions, MatProgressSpinner, ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { BehaviorSubject } from 'rxjs';
 import { pairwise } from 'rxjs/operators';
 
@@ -24,21 +14,14 @@ import { pairwise } from 'rxjs/operators';
 })
 export class LoadingService implements OnDestroy {
   private isLoading = new BehaviorSubject<boolean>(false);
-  readonly spinnerFactory: ComponentFactory<MatSpinner>;
-  spinnerContainerRef: ViewContainerRef | null = null;
-  spinnerComponentRef: ComponentRef<MatSpinner> | null = null;
+  spinnerComponentRef: ComponentRef<MatProgressSpinner> | null = null;
 
   private animationMode: ProgressSpinnerMode = 'indeterminate';
   private options?: MatProgressSpinnerDefaultOptions;
   private spinnerTheme: ThemePalette = 'primary';
   private classList: string[] = [];
 
-  constructor(
-    readonly componentFactoryResolver: ComponentFactoryResolver,
-    readonly injector: Injector,
-    @Inject(DOCUMENT) private document: Document
-  ) {
-    this.spinnerFactory = this.componentFactoryResolver.resolveComponentFactory(MatSpinner);
+  constructor(public spinnerContainerRef: ViewContainerRef, readonly injector: Injector, @Inject(DOCUMENT) private document: Document) {
     // Subscribe to changes
     this.isLoading
       .pipe(pairwise())
@@ -157,7 +140,7 @@ export class LoadingService implements OnDestroy {
 
   // Creates and formats the spinner to the specification provided
   private createSpinner(injector: Injector) {
-    const spinnerRef = this.spinnerFactory.create(injector);
+    const spinnerRef = this.spinnerContainerRef.createComponent(MatProgressSpinner, { injector });
     if (this.options) {
       spinnerRef.instance.diameter = this.options.diameter;
       spinnerRef.instance.strokeWidth = this.options.strokeWidth;

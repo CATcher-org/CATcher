@@ -1,4 +1,14 @@
-import { ComponentRef, ElementRef, EmbeddedViewRef, Injector, TemplateRef, ViewContainerRef, ViewRef } from '@angular/core';
+import {
+  ComponentRef,
+  ElementRef,
+  EmbeddedViewRef,
+  Injector,
+  NgModuleRef,
+  TemplateRef,
+  Type,
+  ViewContainerRef,
+  ViewRef
+} from '@angular/core';
 
 export class MockViewContainerRef implements ViewContainerRef {
   element: ElementRef;
@@ -16,8 +26,7 @@ export class MockViewContainerRef implements ViewContainerRef {
     return null as any;
   }
 
-  createComponent<C>(componentFactory: any, index?: number, injector?: any, projectableNodes?: any[], ngModuleRef?: any): ComponentRef<C> {
-    // Implement the required method with a fake return value or logic.
+  createComponent<C>(componentType: any, options?: any): ComponentRef<C> {
     return null as any;
   }
 

@@ -1,6 +1,7 @@
 import { IssueState } from '../../../../../graphql/graphql-types';
 import { GithubComment } from './github-comment.model';
 import { GithubLabel } from './github-label.model';
+import { GithubRestIssue } from './github-rest-issue';
 
 export class GithubIssue {
   id: string; // Github's backend's id
@@ -24,6 +25,13 @@ export class GithubIssue {
     url: string;
   };
   comments: Array<GithubComment>;
+
+  static fromRestGithubIssue(restGithubIssue: GithubRestIssue): GithubIssue {
+    return new GithubIssue({
+      ...restGithubIssue,
+      state: restGithubIssue.state.toUpperCase()
+    });
+  }
 
   constructor(githubIssue: {}) {
     Object.assign(this, githubIssue);
@@ -58,9 +66,7 @@ export class GithubIssue {
       } else {
         const order = GithubLabel.LABEL_ORDER[name];
         return labels
-          .reduce((result, currLabel) => {
-            return order[currLabel.getValue()] > order[result.getValue()] ? currLabel : result;
-          })
+          .reduce((result, currLabel) => (order[currLabel.getValue()] > order[result.getValue()] ? currLabel : result))
           .getValue();
       }
     }

@@ -7,6 +7,7 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
+    "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "target": "es2015",

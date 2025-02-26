@@ -8,6 +8,10 @@
   vertical-align: middle;
 }
 
+::ng-deep .labelTooltip {
+  font-size: 1rem;
+}
+
 .option {
   background-color: Transparent;
   border: none;

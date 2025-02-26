@@ -94,9 +94,7 @@ export class DescriptionComponent implements OnInit {
     this.issueService
       .getLatestIssue(this.issue.id)
       .pipe(
-        map((issue: Issue) => {
-          return issue.description === this.issue.description;
-        }),
+        map((issue: Issue) => issue.description === this.issue.description),
         mergeMap((isSaveToUpdate: boolean) => {
           if (isSaveToUpdate || this.submitButtonText === SUBMIT_BUTTON_TEXT.OVERWRITE) {
             return this.issueService.updateIssue(this.getUpdatedIssue());

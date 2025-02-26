@@ -13,14 +13,14 @@ module.exports = function (config) {
       require('@angular-devkit/build-angular/plugins/karma')
     ],
     client: {
-      clearContext: false // leave Jasmine Spec Runner output visible in browser
+      clearContext: true
     },
     coverageIstanbulReporter: {
       dir: require('path').join(__dirname, './coverage/CATcher'),
       reports: ['html', 'lcovonly', 'text-summary'],
       fixWebpackSourcePaths: true
     },
-    reporters: ['spec'],
+    reporters: ['spec', 'coverage-istanbul'],
     specReporter: {
       maxLogLines: 5, // limit number of lines per test
       suppressErrorSummary: true,

@@ -1,11 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule, NgZone } from '@angular/core';
+import { MatTooltipModule, MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/material/tooltip';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationEnd, Router } from '@angular/router';
 import { ApolloLink, InMemoryCache } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
-import { Apollo } from 'apollo-angular';
+import { Apollo, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import 'reflect-metadata';
@@ -29,6 +30,7 @@ import { PhaseService } from './core/services/phase.service';
 import { SessionFixConfirmationComponent } from './core/services/session-fix-confirmation/session-fix-confirmation.component';
 import { UserService } from './core/services/user.service';
 import { PhaseBugReportingModule } from './phase-bug-reporting/phase-bug-reporting.module';
+import { PhaseBugTrimmingModule } from './phase-bug-trimming/phase-bug-trimming.module';
 import { PhaseModerationModule } from './phase-moderation/phase-moderation.module';
 import { PhaseTeamResponseModule } from './phase-team-response/phase-team-response.module';
 import { PhaseTesterResponseModule } from './phase-tester-response/phase-tester-response.module';
@@ -45,16 +47,19 @@ import { SharedModule } from './shared/shared.module';
     BrowserAnimationsModule,
     AuthModule,
     PhaseBugReportingModule,
+    PhaseBugTrimmingModule,
     PhaseTeamResponseModule,
     PhaseModerationModule,
     SharedModule,
     HttpClientModule,
+    MatTooltipModule,
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,
         useFactory: markedOptionsFactory
       }
     }),
+    ApolloModule,
     AppRoutingModule
   ],
   providers: [

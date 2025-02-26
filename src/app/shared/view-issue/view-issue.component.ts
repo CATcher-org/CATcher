@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Issue } from '../../core/models/issue.model';
 import { UserRole } from '../../core/models/user.model';
@@ -53,7 +54,8 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
     public permissions: PermissionService,
     public userService: UserService,
     public issueService: IssueService,
-    private phaseService: PhaseService
+    private phaseService: PhaseService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -126,7 +128,11 @@ export class ViewIssueComponent implements OnInit, OnDestroy, OnChanges {
         this.issue = issue;
         this.pollIssue(id);
       },
-      (err) => this.errorHandlingService.handleError(err)
+      (err) => {
+        this.router.navigateByUrl(this.phaseService.currentPhase).then(() => {
+          this.errorHandlingService.handleError(new Error('Invalid URL provided!'));
+        });
+      }
     );
   }
 

@@ -2,21 +2,22 @@ import { GithubIssue } from '../github/github-issue.model';
 
 export default function generateGithubIssuesArray(numberOfElements: number = 1): Array<GithubIssue> {
   const created_and_updated_date: string = getRandomDate().toISOString();
-  return new Array<GithubIssue>(10).map((value: GithubIssue, index: number, array: GithubIssue[]) => {
-    return new GithubIssue({
-      id: index,
-      number: Math.random(),
-      assignees: undefined,
-      body: `Automatically Generated Issue No id: ${index}.`,
-      created_at: created_and_updated_date,
-      labels: undefined,
-      title: `Autogen Issue ${index}`,
-      updated_at: created_and_updated_date,
-      url: '',
-      user: undefined,
-      comments: undefined
-    });
-  });
+  return new Array<GithubIssue>(10).map(
+    (value: GithubIssue, index: number, array: GithubIssue[]) =>
+      new GithubIssue({
+        id: index,
+        number: Math.random(),
+        assignees: undefined,
+        body: `Automatically Generated Issue No id: ${index}.`,
+        created_at: created_and_updated_date,
+        labels: undefined,
+        title: `Autogen Issue ${index}`,
+        updated_at: created_and_updated_date,
+        url: '',
+        user: undefined,
+        comments: undefined
+      })
+  );
 }
 
 /**

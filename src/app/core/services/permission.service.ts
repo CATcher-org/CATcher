@@ -42,7 +42,38 @@ const PERMISSIONS = {
       isTutorResponseEditable: false
     }
   },
-
+  [Phase.phaseBugTrimming]: {
+    [UserRole.Student]: {
+      isIssueCreatable: false,
+      isIssueDeletable: true,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
+    },
+    [UserRole.Tutor]: {
+      isIssueCreatable: false,
+      isIssueDeletable: false,
+      isIssueTitleEditable: false,
+      isIssueDescriptionEditable: false,
+      isIssueLabelsEditable: false,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
+    },
+    [UserRole.Admin]: {
+      isIssueCreatable: true,
+      isIssueDeletable: true,
+      isIssueTitleEditable: true,
+      isIssueDescriptionEditable: true,
+      isIssueLabelsEditable: true,
+      isTeamResponseEditable: false,
+      isTesterResponseEditable: false,
+      isTutorResponseEditable: false
+    }
+  },
   [Phase.phaseTeamResponse]: {
     [UserRole.Student]: {
       isIssueCreatable: false,
@@ -156,6 +187,11 @@ export class PermissionService {
 
   isIssueDeletable(): boolean {
     return this.askForPermission(PermissionLevel.User, 'isIssueDeletable');
+  }
+
+  // should only have restore permission if have delete permission
+  isIssueRestorable(): boolean {
+    return this.isIssueDeletable();
   }
 
   isIssueTitleEditable(): boolean {

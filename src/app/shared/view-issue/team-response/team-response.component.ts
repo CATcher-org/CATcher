@@ -104,11 +104,7 @@ export class TeamResponseComponent implements OnInit {
    * @return - Determines whether it is safe to updated an existing team response.
    */
   isSafeToUpdate(): Observable<boolean> {
-    return this.issueService.getLatestIssue(this.issue.id).pipe(
-      map((issue: Issue) => {
-        return issue.teamResponse === this.issue.teamResponse;
-      })
-    );
+    return this.issueService.getLatestIssue(this.issue.id).pipe(map((issue: Issue) => issue.teamResponse === this.issue.teamResponse));
   }
 
   /**

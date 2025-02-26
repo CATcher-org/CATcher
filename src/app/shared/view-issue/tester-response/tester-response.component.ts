@@ -108,9 +108,10 @@ export class TesterResponseComponent implements OnInit, OnChanges {
         if (!issue.testerResponses) {
           return false;
         }
-        return issue.testerResponses.reduce((result, response, index) => {
-          return result && response.compareTo(this.issue.testerResponses[index]) === 0;
-        }, true);
+        return issue.testerResponses.reduce(
+          (result, response, index) => result && response.compareTo(this.issue.testerResponses[index]) === 0,
+          true
+        );
       })
     );
   }

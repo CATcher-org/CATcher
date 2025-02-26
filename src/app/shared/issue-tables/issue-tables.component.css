@@ -1,3 +1,7 @@
+::ng-deep .labelTooltip {
+  font-size: 1rem;
+}
+
 .mat-table {
   display: flex;
   flex-wrap: wrap;
@@ -11,7 +15,7 @@
 .mat-column {
 }
 
-.mat-column-id {
+.mat-column-no {
   flex: 0 1 5%;
 }
 
