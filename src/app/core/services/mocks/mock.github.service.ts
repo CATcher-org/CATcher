@@ -154,8 +154,15 @@ export class MockGithubService {
    */
   fetchSettingsFile(): Observable<SessionData> {
     return of({
-      openPhases: [Phase.phaseBugReporting, Phase.phaseTeamResponse, Phase.phaseTesterResponse, Phase.phaseModeration],
+      openPhases: [
+        Phase.phaseBugReporting,
+        Phase.phaseBugTrimming,
+        Phase.phaseTeamResponse,
+        Phase.phaseTesterResponse,
+        Phase.phaseModeration
+      ],
       [Phase.phaseBugReporting]: 'undefined',
+      [Phase.phaseBugTrimming]: 'undefined',
       [Phase.phaseTeamResponse]: 'undefined',
       [Phase.phaseTesterResponse]: 'undefined',
       [Phase.phaseModeration]: 'undefined'

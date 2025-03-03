@@ -64,6 +64,9 @@ describe('Issue', () => {
     const phaseBugReportingIssue = dummyIssue.clone(Phase.phaseBugReporting);
     expect(phaseBugReportingIssue).toEqual(dummyIssue);
 
+    const phaseBugTrimmingIssue = dummyIssue.clone(Phase.phaseBugTrimming);
+    expect(phaseBugTrimmingIssue).toEqual(dummyIssue);
+
     const phaseTeamResponseIssue = dummyIssueWithTeam.clone(Phase.phaseTeamResponse);
     expect(phaseTeamResponseIssue.githubComments).toEqual(dummyIssueWithTeam.githubComments);
     expect(phaseTeamResponseIssue.teamAssigned).toEqual(dummyTeam);

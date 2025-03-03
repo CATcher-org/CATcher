@@ -1,6 +1,6 @@
 import { IssueFilters, IssueState } from '../../../../../graphql/graphql-types';
+import { RestGithubIssueState } from './github-rest-issue';
 
-export type RestGithubIssueState = 'open' | 'close';
 export type RestGithubSortBy = 'created' | 'updated' | 'comments';
 export type RestGithubSortDir = 'asc' | 'desc';
 
@@ -42,7 +42,8 @@ export default class RestGithubIssueFilter implements RestGithubIssueFilterData 
       mentioned: this.mentioned,
       milestone: this.milestone,
       since: this.since,
-      states: [this.state === 'close' ? IssueState.Closed : IssueState.Open]
+      states:
+        this.state === 'all' ? [IssueState.Closed, IssueState.Open] : this.state === 'closed' ? [IssueState.Closed] : [IssueState.Open]
     };
   }
 }

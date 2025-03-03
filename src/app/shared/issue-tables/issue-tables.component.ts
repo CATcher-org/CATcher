@@ -5,7 +5,6 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { finalize } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { TableSettings } from '../../core/models/table-settings.model';
-import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { GithubService } from '../../core/services/github.service';
 import { IssueTableSettingsService } from '../../core/services/issue-table-settings.service';
@@ -24,7 +23,8 @@ export enum ACTION_BUTTONS {
   MARK_AS_PENDING,
   RESPOND_TO_ISSUE,
   FIX_ISSUE,
-  DELETE_ISSUE
+  DELETE_ISSUE,
+  RESTORE_ISSUE
 }
 
 @Component({
@@ -45,15 +45,11 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
+  issuesPendingRestore: { [id: number]: boolean };
 
   public tableSettings: TableSettings;
 
   public readonly action_buttons = ACTION_BUTTONS;
-
-  // Messages for the modal popup window upon deleting an issue
-  private readonly deleteIssueModalMessages = ['Do you wish to delete this issue?', 'This action is irreversible!'];
-  private readonly yesButtonModalMessage = 'Yes, I wish to delete this issue';
-  private readonly noButtonModalMessage = "No, I don't wish to delete this issue";
 
   constructor(
     public userService: UserService,
@@ -65,13 +61,13 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     private phaseService: PhaseService,
     private errorHandlingService: ErrorHandlingService,
     private logger: LoggingService,
-    private dialogService: DialogService,
     private snackBar: MatSnackBar = null
   ) {}
 
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
+    this.issuesPendingRestore = {};
     this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
 
@@ -162,12 +158,24 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.githubService.viewIssueInBrowser(id, event);
   }
 
-  deleteIssue(id: number, event: Event) {
+  private handleIssueDeletionSuccess(id: number, event: Event, actionUndoable: boolean) {
+    if (!actionUndoable) {
+      return;
+    }
+    let snackBarRef = null;
+    snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
+      data: { message: `Deleted issue ${id}` },
+      duration: this.snackBarAutoCloseTime
+    });
+    snackBarRef.onAction().subscribe(() => {
+      this.undeleteIssue(id, event, false);
+    });
+  }
+
+  deleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
     this.logger.info(`IssueTablesComponent: Deleting Issue ${id}`);
-    this.issuesPendingDeletion = {
-      ...this.issuesPendingDeletion,
-      [id]: true
-    };
+
+    this.issuesPendingDeletion = { ...this.issuesPendingDeletion, [id]: true };
     this.issueService
       .deleteIssue(id)
       .pipe(
@@ -177,48 +185,42 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
         })
       )
       .subscribe(
-        (removedIssue) => {},
-        (error) => {
-          this.errorHandlingService.handleError(error);
-        }
+        (removedIssue) => this.handleIssueDeletionSuccess(id, event, actionUndoable),
+        (error) => this.errorHandlingService.handleError(error)
       );
     event.stopPropagation();
+  }
 
+  private handleIssueRestorationSuccess(id: number, event: Event, actionUndoable: boolean) {
+    if (!actionUndoable) {
+      return;
+    }
     let snackBarRef = null;
     snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
-      data: { message: `Deleted issue ${id}` },
+      data: { message: `Restored issue ${id}` },
       duration: this.snackBarAutoCloseTime
     });
     snackBarRef.onAction().subscribe(() => {
-      this.undeleteIssue(id, event);
+      this.deleteIssue(id, event, false);
     });
   }
 
-  undeleteIssue(id: number, event: Event) {
+  undeleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
     this.logger.info(`IssueTablesComponent: Undeleting Issue ${id}`);
-    this.issueService.undeleteIssue(id).subscribe(
-      (reopenedIssue) => {},
-      (error) => {
-        this.errorHandlingService.handleError(error);
-      }
-    );
+
+    this.issuesPendingRestore = { ...this.issuesPendingRestore, [id]: true };
+    this.issueService
+      .undeleteIssue(id)
+      .pipe(
+        finalize(() => {
+          const { [id]: issueRestored, ...theRest } = this.issuesPendingRestore;
+          this.issuesPendingRestore = theRest;
+        })
+      )
+      .subscribe(
+        (restoredIssue) => this.handleIssueRestorationSuccess(id, event, actionUndoable),
+        (error) => this.errorHandlingService.handleError(error)
+      );
     event.stopPropagation();
-
-    this.snackBar.open(`Restored issue ${id}`, '', { duration: this.snackBarAutoCloseTime });
-  }
-
-  openDeleteDialog(id: number, event: Event) {
-    const dialogRef = this.dialogService.openUserConfirmationModal(
-      this.deleteIssueModalMessages,
-      this.yesButtonModalMessage,
-      this.noButtonModalMessage
-    );
-
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.logger.info(`IssueTablesComponent: Deleting issue ${id}`);
-        this.deleteIssue(id, event);
-      }
-    });
   }
 }

@@ -3,12 +3,12 @@ import { PermissionService } from '../core/services/permission.service';
 import { UserService } from '../core/services/user.service';
 
 @Component({
-  selector: 'app-phase-bug-reporting',
-  templateUrl: './phase-bug-reporting.component.html',
-  styleUrls: ['./phase-bug-reporting.component.css']
+  selector: 'app-phase-bug-trimming',
+  templateUrl: './phase-bug-trimming.component.html',
+  styleUrls: ['./phase-bug-trimming.component.css']
 })
-export class PhaseBugReportingComponent implements OnInit {
+export class PhaseBugTrimmingComponent implements OnInit {
   constructor(public permissions: PermissionService, public userService: UserService) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }
