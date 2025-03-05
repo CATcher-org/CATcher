@@ -12,7 +12,7 @@
     </mat-menu>
   </div>
 
-  <app-issues-pending [teamFilter]="teamFilter"></app-issues-pending>
-  <app-issues-responded [teamFilter]="teamFilter"></app-issues-responded>
-  <app-issues-faulty [teamFilter]="teamFilter"></app-issues-faulty>
+  <app-issues-pending data-testid="issues-pending-table" [teamFilter]="teamFilter"></app-issues-pending>
+  <app-issues-responded data-testid="issues-responded-table" [teamFilter]="teamFilter"></app-issues-responded>
+  <app-issues-faulty data-testid="issues-faulty-table" [teamFilter]="teamFilter"></app-issues-faulty>
 </div>

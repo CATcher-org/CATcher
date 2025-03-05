@@ -224,6 +224,7 @@
           color="accent"
           style="transform: scale(0.8)"
           matTooltip="Edit this issue"
+          data-testid="edit_issue_button"
         >
           <mat-icon>edit</mat-icon>
         </button>
@@ -235,6 +236,7 @@
         (click)="markAsResponded(issue, $event)"
         style="transform: scale(0.8)"
         matTooltip="Mark this issue as Responded"
+        data-testid="mark_responded_button"
       >
         <mat-icon>check_circle</mat-icon>
       </button>
@@ -248,6 +250,7 @@
           (userService.currentUser.role === 'Student' || userService.currentUser.role === 'Admin') &&
           this.isActionVisible(action_buttons.MARK_AS_PENDING)
         "
+        data-testid="mark_pending_button"
       >
         <mat-icon>cancel</mat-icon>
       </button>
@@ -258,6 +261,7 @@
         (click)="deleteIssue(issue.id, $event); $event.stopPropagation()"
         matTooltip="Delete this issue"
         style="transform: scale(0.8)"
+        data-testid="delete_issue_button"
       >
         <mat-icon>delete_outline</mat-icon>
       </button>
