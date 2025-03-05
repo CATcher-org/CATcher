@@ -34,6 +34,10 @@ export class Table {
     return (await this.findRow(bugReport)).click();
   }
 
+  async clearSearch() {
+    return this.table.getByLabel('Search').clear();
+  }
+
   async search(searchString: string) {
     return this.table.getByLabel('Search').type(searchString);
   }

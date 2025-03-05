@@ -34,7 +34,7 @@ test.describe("CATcher's Team Response Phase", () => {
     faultyTable = new Table(page, page.getByTestId('issues-faulty-table'));
   });
 
-  test(`displays "Team's Response Phase" in header bar`, async ({ page }) => {
+  test(`displays "Team's Response Phase" in header bar`, async () => {
     expect(await header.getPhaseDescription()).toContain("Team's Response Phase");
   });
 
@@ -47,7 +47,7 @@ test.describe("CATcher's Team Response Phase", () => {
       await header.navigateToPhase("Team's Response Phase");
     });
 
-    test(`displays the pre-existing issue under pending`, async ({ page }) => {
+    test(`displays the pre-existing issue under pending`, async () => {
       const isBugReportPresent = await pendingTable.hasRow(BUG_REPORT_1);
       expect(isBugReportPresent).toBe(true);
     });
@@ -77,7 +77,7 @@ test.describe("CATcher's Team Response Phase", () => {
         await page.locator('.back-button').click();
       });
 
-      test(`marks issue as pending then as responded`, async ({ page }) => {
+      test(`marks issue as pending then as responded`, async () => {
         const bugReportAfterResponse: BugReport = {
           title: BUG_REPORT_1.title,
           severityLabel: BUG_RESPONSE_1.severityLabel,
