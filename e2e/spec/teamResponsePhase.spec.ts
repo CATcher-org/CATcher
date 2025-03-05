@@ -49,7 +49,7 @@ test.describe("CATcher's Team Response Phase", () => {
 
     test(`displays the pre-existing issue under pending`, async () => {
       const isBugReportPresent = await pendingTable.hasRow(BUG_REPORT_1);
-      expect(isBugReportPresent).toBe(true);
+      expect(isBugReportPresent).toEqual(true);
     });
 
     test(`responding to issue moves issue to responded`, async ({ page }) => {
@@ -88,13 +88,13 @@ test.describe("CATcher's Team Response Phase", () => {
         await markAsPendingButton.click();
 
         const isBugReportCorrectlyMovedToPendingTable = await pendingTable.hasRow(bugReportAfterResponse);
-        expect(isBugReportCorrectlyMovedToPendingTable).toBe(true);
+        expect(isBugReportCorrectlyMovedToPendingTable).toEqual(true);
 
         const markAsRespondedButton = (await pendingTable.findRow(bugReportAfterResponse)).getByTestId('mark_responded_button');
         await markAsRespondedButton.click();
 
         const isBugReportCorrectlyMovedToReportedTable = await respondedTable.hasRow(bugReportAfterResponse);
-        expect(isBugReportCorrectlyMovedToReportedTable).toBe(true);
+        expect(isBugReportCorrectlyMovedToReportedTable).toEqual(true);
       });
     });
   });
