@@ -16,7 +16,8 @@ export class Table {
   }
 
   async hasRow(bugReport: TableBugReport) {
-    await this.page.waitForTimeout(100);
+    // it seems that webkit and firefox require this timeout. If not, the table will not be loaded by the time we are searching for the rows.
+    await this.page.waitForTimeout(500);
     const filteredRows = await this.findRow(bugReport);
     return filteredRows.count().then((count: number) => count === 1);
   }
