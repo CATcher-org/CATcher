@@ -22,7 +22,7 @@ export class BugReportingViewIssuePage {
    */
   async editIssueSeverity(severityLabel: string) {
     await this.page.locator('app-issue-label').filter({ hasText: 'Severity' }).getByRole('button').click();
-    return this.page.getByRole('button', { name: severityLabel }).click();
+    return this.page.getByRole('button', { name: severityLabel, exact: true }).click();
   }
 
   /**

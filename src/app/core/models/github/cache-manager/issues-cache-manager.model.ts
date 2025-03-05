@@ -1,5 +1,5 @@
-import { GithubIssue } from '../github-issue.model';
 import { GithubResponse } from '../github-response.model';
+import { GithubRestIssue } from '../github-rest-issue';
 
 /**
  * A model that is used to manage the cache of multiple list of issues paginated by pages.
@@ -8,7 +8,7 @@ import { GithubResponse } from '../github-response.model';
 export class IssuesCacheManager {
   // An array of cache github responses containing the array of GithubIssue as its data
   // The index in this array represents (page number - 1)
-  private issuesCache: GithubResponse<GithubIssue[]>[];
+  private issuesCache: GithubResponse<GithubRestIssue[]>[];
 
   constructor() {
     this.issuesCache = [];
@@ -23,11 +23,11 @@ export class IssuesCacheManager {
     return latestEtag;
   }
 
-  get(pageNumber: number): GithubResponse<GithubIssue[]> {
+  get(pageNumber: number): GithubResponse<GithubRestIssue[]> {
     return this.issuesCache[pageNumber - 1];
   }
 
-  set(pageNumber: number, response: GithubResponse<GithubIssue[]>): void {
+  set(pageNumber: number, response: GithubResponse<GithubRestIssue[]>): void {
     response.isCached = true;
     this.issuesCache[pageNumber - 1] = response;
   }

@@ -10,8 +10,11 @@ import { RepoCreatorService } from './repo-creator.service';
 
 export const SESSION_AVALIABILITY_FIX_FAILED = 'Session Availability Fix failed.';
 
+export const phasesRequiringClosedIssues = [Phase.phaseBugReporting, Phase.phaseBugTrimming];
+
 export const PhaseDescription = {
   [Phase.phaseBugReporting]: 'Bug Reporting Phase',
+  [Phase.phaseBugTrimming]: 'Bug Trimming Phase',
   [Phase.phaseTeamResponse]: "Team's Response Phase",
   [Phase.phaseTesterResponse]: "Tester's Response Phase",
   [Phase.phaseModeration]: 'Moderation Phase'
@@ -34,6 +37,7 @@ export class PhaseService {
 
   private phaseRepoOwners = {
     phaseBugReporting: '',
+    phaseBugTrimming: '',
     phaseTeamResponse: '',
     phaseTesterResponse: '',
     phaseModeration: ''
@@ -49,6 +53,7 @@ export class PhaseService {
   setPhaseOwners(org: string, user: string): void {
     this.orgName = org;
     this.phaseRepoOwners.phaseBugReporting = user;
+    this.phaseRepoOwners.phaseBugTrimming = user;
     this.phaseRepoOwners.phaseTeamResponse = org;
     this.phaseRepoOwners.phaseTesterResponse = user;
     this.phaseRepoOwners.phaseModeration = org;
@@ -165,6 +170,13 @@ export class PhaseService {
    */
   isValidRoute(route: string): boolean {
     return route.startsWith('/' + this.currentPhase);
+  }
+
+  /**
+   * Checks whether the given phase requires closed issues to be loaded.
+   */
+  requireLoadClosedIssues(): boolean {
+    return phasesRequiringClosedIssues.includes(this.currentPhase);
   }
 
   reset() {

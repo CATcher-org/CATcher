@@ -12,8 +12,8 @@ export const BUG_REPORT_1: BugReport = {
 export const BUG_REPORT_2: BugReport = {
   title: 'The font size is too small.',
   body: 'I cannot read the words on the screen!',
-  severityLabel: 'High',
-  bugTypeLabel: 'FeatureFlaw'
+  severityLabel: 'Low',
+  bugTypeLabel: 'FunctionalityBug'
 };
 
 export const BUG_REPORT_3: BugReport = {

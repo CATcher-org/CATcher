@@ -87,15 +87,10 @@ export class IssueService {
           return EMPTY;
         }
         return this.githubService.fetchIssueGraphql(issueId).pipe(
-            map((response) => {
-              const issue = this.createIssueModel(response);
-              this.updateLocalStore(issue);
-              return issue;
-            }),
-            catchError((err) => this.getIssue(issueId))
-          );
-        }
-      )
+          map((response) => this.createAndSaveIssueModel(response)),
+          catchError((err) => this.getIssue(issueId))
+        );
+      })
     );
   }
 
@@ -252,23 +247,11 @@ export class IssueService {
   }
 
   deleteIssue(id: number): Observable<Issue> {
-    return this.githubService.closeIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const deletedIssue = this.createIssueModel(response);
-        this.deleteFromLocalStore(deletedIssue);
-        return deletedIssue;
-      })
-    );
+    return this.githubService.closeIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
   undeleteIssue(id: number): Observable<Issue> {
-    return this.githubService.reopenIssue(id).pipe(
-      map((response: GithubIssue) => {
-        const reopenedIssue = this.createIssueModel(response);
-        this.updateLocalStore(reopenedIssue);
-        return reopenedIssue;
-      })
-    );
+    return this.githubService.reopenIssue(id).pipe(map((response: GithubIssue) => this.createAndSaveIssueModel(response)));
   }
 
   /**
@@ -321,18 +304,23 @@ export class IssueService {
   private initializeData(): Observable<Issue[]> {
     const issuesAPICallsByFilter: Array<Observable<Array<GithubIssue>>> = [];
 
+    let filter: RestGithubIssueFilter = new RestGithubIssueFilter({});
+    if (this.phaseService.requireLoadClosedIssues()) {
+      filter.state = 'all';
+    }
+
     switch (IssuesFilter[this.phaseService.currentPhase][this.userService.currentUser.role]) {
-      case FILTER.FilterByCreator:
-        issuesAPICallsByFilter.push(
-          this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({ creator: this.userService.currentUser.loginId }))
-        );
+      case FILTER.FilterByCreator: {
+        filter.creator = this.userService.currentUser.loginId;
+        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(filter));
         break;
+      }
       case FILTER.FilterByTeam: // Only student has this filter
         issuesAPICallsByFilter.push(
           this.githubService.fetchIssuesGraphqlByTeam(
             this.createLabel('tutorial', this.userService.currentUser.team.tutorialClassId),
             this.createLabel('team', this.userService.currentUser.team.teamId),
-            new RestGithubIssueFilter({})
+            filter
           )
         );
         break;
@@ -343,13 +331,13 @@ export class IssueService {
             this.githubService.fetchIssuesGraphqlByTeam(
               this.createLabel('tutorial', team.tutorialClassId),
               this.createLabel('team', team.teamId),
-              new RestGithubIssueFilter({})
+              filter
             )
           );
         });
         break;
       case FILTER.NoFilter:
-        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(new RestGithubIssueFilter({})));
+        issuesAPICallsByFilter.push(this.githubService.fetchIssuesGraphql(filter));
         break;
       case FILTER.NoAccess:
       default:
@@ -376,10 +364,10 @@ export class IssueService {
     );
   }
 
-  private createAndSaveIssueModel(githubIssue: GithubIssue): boolean {
+  private createAndSaveIssueModel(githubIssue: GithubIssue): Issue {
     const issue = this.createIssueModel(githubIssue);
     this.updateLocalStore(issue);
-    return true;
+    return issue;
   }
 
   private deleteIssuesFromLocalStore(ids: Array<Number>): void {
@@ -419,7 +407,11 @@ export class IssueService {
   private createLabelsForIssue(issue: Issue): string[] {
     const result = [];
 
-    if (this.phaseService.currentPhase !== Phase.phaseBugReporting && this.phaseService.currentPhase !== Phase.phaseTesterResponse) {
+    if (
+      this.phaseService.currentPhase !== Phase.phaseBugReporting &&
+      this.phaseService.currentPhase !== Phase.phaseBugTrimming &&
+      this.phaseService.currentPhase !== Phase.phaseTesterResponse
+    ) {
       const studentTeam = issue.teamAssigned.id.split('-');
       result.push(this.createLabel('tutorial', `${studentTeam[0]}-${studentTeam[1]}`), this.createLabel('team', studentTeam[2]));
     }
@@ -471,6 +463,9 @@ export class IssueService {
     switch (this.phaseService.currentPhase) {
       case Phase.phaseBugReporting:
         issue = Issue.createPhaseBugReportingIssue(githubIssue);
+        break;
+      case Phase.phaseBugTrimming:
+        issue = Issue.createPhaseBugTrimmingIssue(githubIssue);
         break;
       case Phase.phaseTeamResponse:
         issue = Issue.createPhaseTeamResponseIssue(githubIssue, this.dataService.getTeam(this.extractTeamIdFromGithubIssue(githubIssue)));

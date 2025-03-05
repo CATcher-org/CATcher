@@ -29,6 +29,12 @@ describe('Test a few permissions for each role in each phase', () => {
     mockUserService.currentUser = testStudent;
     expect(permissionService.isIssueCreatable()).toBe(true);
     expect(permissionService.isTutorResponseEditable()).toBe(false);
+    mockPhaseService.currentPhase = Phase.phaseBugTrimming;
+    expect(permissionService.isIssueCreatable()).toBe(false);
+    expect(permissionService.isIssueDeletable()).toBe(true);
+    expect(permissionService.isIssueTitleEditable()).toBe(false);
+    expect(permissionService.isIssueDescriptionEditable()).toBe(false);
+    expect(permissionService.isIssueLabelsEditable()).toBe(true);
     mockPhaseService.currentPhase = Phase.phaseTeamResponse;
     expect(permissionService.isIssueLabelsEditable()).toBe(true);
     expect(permissionService.isTeamResponseEditable()).toBe(true);
@@ -44,6 +50,10 @@ describe('Test a few permissions for each role in each phase', () => {
     mockPhaseService.currentPhase = Phase.phaseBugReporting;
     mockUserService.currentUser = testTutor;
     expect(permissionService.isIssueCreatable()).toBe(false);
+    expect(permissionService.isIssueTitleEditable()).toBe(false);
+    mockPhaseService.currentPhase = Phase.phaseBugTrimming;
+    expect(permissionService.isIssueCreatable()).toBe(false);
+    expect(permissionService.isIssueDeletable()).toBe(false);
     expect(permissionService.isIssueTitleEditable()).toBe(false);
     mockPhaseService.currentPhase = Phase.phaseTeamResponse;
     expect(permissionService.isIssueLabelsEditable()).toBe(false);
@@ -61,6 +71,10 @@ describe('Test a few permissions for each role in each phase', () => {
     mockUserService.currentUser = testAdmin;
     expect(permissionService.isIssueCreatable()).toBe(true);
     expect(permissionService.isTutorResponseEditable()).toBe(false);
+    mockPhaseService.currentPhase = Phase.phaseBugTrimming;
+    expect(permissionService.isIssueCreatable()).toBe(true);
+    expect(permissionService.isIssueLabelsEditable()).toBe(true);
+    expect(permissionService.isTeamResponseEditable()).toBe(false);
     mockPhaseService.currentPhase = Phase.phaseTeamResponse;
     expect(permissionService.isIssueLabelsEditable()).toBe(true);
     expect(permissionService.isTeamResponseEditable()).toBe(true);

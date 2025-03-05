@@ -11,7 +11,8 @@ test.describe("CATcher's Bug Reporting Phase", () => {
   let loginPage: LoginPage;
   let header: Header;
   let viewIssuePage: BugReportingViewIssuePage;
-  let bugReportingTable: Table;
+  let postedTable: Table;
+  let deletedTable: Table;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
@@ -22,7 +23,7 @@ test.describe("CATcher's Bug Reporting Phase", () => {
     await loginPage.navigateToRoot();
     await loginPage.bypassAuthentication();
 
-    bugReportingTable = new Table(page, page.getByTestId('app-issues-posted'));
+    postedTable = new Table(page, page.getByTestId('app-issues-posted'));
   });
 
   test(`displays "Bug Reporting Phase" in header bar`, async ({ page }) => {
@@ -32,7 +33,7 @@ test.describe("CATcher's Bug Reporting Phase", () => {
   test(`creates new bug report`, async ({ page }) => {
     await bugReportingPage.createBugReport(BUG_REPORT_1);
 
-    const isBugReportCorrectlyCreated: boolean = await bugReportingTable.hasRow(BUG_REPORT_1);
+    const isBugReportCorrectlyCreated: boolean = await postedTable.hasRow(BUG_REPORT_1);
 
     expect(isBugReportCorrectlyCreated).toEqual(true);
   });
@@ -43,7 +44,7 @@ test.describe("CATcher's Bug Reporting Phase", () => {
     });
 
     test(`edits a bug report`, async ({ page }) => {
-      await bugReportingTable.clickRow(BUG_REPORT_1);
+      await postedTable.clickRow(BUG_REPORT_1);
 
       await viewIssuePage.editIssueTitle(BUG_REPORT_2.title);
       await viewIssuePage.editIssueSeverity(BUG_REPORT_2.severityLabel);
@@ -52,32 +53,32 @@ test.describe("CATcher's Bug Reporting Phase", () => {
 
       await page.locator('.back-button').click();
 
-      const isBugReportCorrectlyEditted: boolean = await bugReportingTable.hasRow(BUG_REPORT_2);
+      const isBugReportCorrectlyEditted: boolean = await postedTable.hasRow(BUG_REPORT_2);
 
       expect(isBugReportCorrectlyEditted).toEqual(true);
     });
 
     test(`closes a bug report`, async ({ page }) => {
-      await bugReportingTable.deleteBugReport(BUG_REPORT_1);
+      await postedTable.deleteBugReport(BUG_REPORT_1);
 
-      const isBugReportDeleted: boolean = !(await bugReportingTable.hasRow(BUG_REPORT_2));
+      const isBugReportDeleted: boolean = !(await postedTable.hasRow(BUG_REPORT_2));
 
       expect(isBugReportDeleted).toEqual(true);
     });
 
     test(`search finds bug report`, async ({ page }) => {
-      await bugReportingTable.search(BUG_REPORT_1.title);
+      await postedTable.search(BUG_REPORT_1.title);
 
-      const isBugReportFound: boolean = await bugReportingTable.hasRow(BUG_REPORT_1);
+      const isBugReportFound: boolean = await postedTable.hasRow(BUG_REPORT_1);
 
       expect(isBugReportFound).toEqual(true);
     });
 
     test(`search does not find bug report`, async ({ page }) => {
       const otherIssueTitle = 'Other Issue Title';
-      await bugReportingTable.search(otherIssueTitle);
+      await postedTable.search(otherIssueTitle);
 
-      const isBugReportNotFound: boolean = !(await bugReportingTable.hasRow(BUG_REPORT_1));
+      const isBugReportNotFound: boolean = !(await postedTable.hasRow(BUG_REPORT_1));
 
       expect(isBugReportNotFound).toEqual(true);
     });

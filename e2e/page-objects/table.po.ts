@@ -43,7 +43,6 @@ export class Table {
    */
   async deleteBugReport(bugReport: TableBugReport) {
     const tableEntry = await this.findRow(bugReport);
-    await tableEntry.getByTestId('delete_issue_button').click();
-    return this.page.getByRole('button', { name: 'Yes, I wish to delete this' }).click();
+    return tableEntry.getByTestId('delete_issue_button').click();
   }
 }
