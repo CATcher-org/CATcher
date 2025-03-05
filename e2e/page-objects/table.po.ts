@@ -16,6 +16,7 @@ export class Table {
   }
 
   async hasRow(bugReport: TableBugReport) {
+    await this.page.waitForTimeout(100);
     const filteredRows = await this.findRow(bugReport);
     return filteredRows.count().then((count: number) => count === 1);
   }
