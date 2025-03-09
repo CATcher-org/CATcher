@@ -169,8 +169,6 @@ export class MockGithubService {
    * @returns An observable array of filtered GithubIssues
    */
   fetchIssuesGraphql(issuesFilter: RestGithubIssueFilter): Observable<Array<GithubIssue>> {
-    console.log('Returning all GithubIssues');
-    console.log(this.githubIssues);
     return of(Object.values(this.githubIssues));
   }
 
