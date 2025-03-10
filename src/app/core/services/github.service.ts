@@ -33,6 +33,7 @@ import { SessionData } from '../models/session.model';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
 import { GithubRestIssue } from '../models/github/github-rest-issue';
+import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -72,8 +73,9 @@ export class GithubService {
 
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
-      auth() {
-        return `Token ${accessToken}`;
+      authStrategy: createOAuthUserAuth,
+      auth: {
+        token: accessToken
       },
       log: {
         debug: (message, ...otherInfo) => this.logger.debug('GithubService: ' + message, ...otherInfo),

@@ -1,6 +1,6 @@
 {
   "name": "CATcher",
-  "version": "3.6.0",
+  "version": "3.5.5",
   "main": "main.js",
   "engines": {
     "node": ">=14.0.0"
@@ -42,8 +42,9 @@
     "@angular/router": "^13.4.0",
     "@apollo/client": "3.3.0",
     "@github/markdown-toolbar-element": "^2.1.1",
-    "@octokit/rest": "^16.37.0",
+    "@octokit/auth-oauth-user": "^2.1.2",
     "@octokit/core": "^4.2.1",
+    "@octokit/rest": "^17.11.0",
     "apollo-angular": "^3.0.1",
     "arcsecond": "^4.1.0",
     "core-js": "^3.16.4",
@@ -60,14 +61,14 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.11",
-    "@angular/cli": "^13.3.11",
-    "@angular/compiler-cli": "^13.4.0",
-    "@angular/language-service": "^13.4.0",
     "@angular-eslint/builder": "12.7.0",
     "@angular-eslint/eslint-plugin": "13.5.0",
     "@angular-eslint/eslint-plugin-template": "13.5.0",
     "@angular-eslint/schematics": "13.5.0",
     "@angular-eslint/template-parser": "13.5.0",
+    "@angular/cli": "^13.3.11",
+    "@angular/compiler-cli": "^13.4.0",
+    "@angular/language-service": "^13.4.0",
     "@graphql-codegen/cli": "2.16.4",
     "@graphql-codegen/fragment-matcher": "^1.17.7",
     "@graphql-codegen/typescript": "1.17.7",
@@ -83,6 +84,7 @@
     "@typescript-eslint/eslint-plugin": "5.0.0",
     "@typescript-eslint/parser": "5.0.0",
     "angular-cli-ghpages": "^1.0.0-rc.2",
+    "engine.io": "6.6.2",
     "eslint": "^8.57.0",
     "husky": "^4.2.5",
     "jasmine": "^3.9.0",
@@ -100,7 +102,6 @@
     "scuri": "^0.9.4",
     "ts-node": "^10.9.2",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "4.6.4",
-    "engine.io": "6.6.2"
+    "typescript": "4.6.4"
   }
 }
