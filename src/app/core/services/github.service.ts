@@ -441,7 +441,7 @@ export class GithubService {
 
   fetchDataFile(): Observable<{}> {
     return from(
-      octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv', headers: GithubService.IF_NONE_MATCH_EMPTY })
+      octokit.repos.getContent({ owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
       map((rawData) => {
         return { data: atob(rawData['data']['content']) };
@@ -472,7 +472,7 @@ export class GithubService {
    */
   fetchSettingsFile(): Observable<SessionData> {
     return from(
-      octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
+      octokit.repos.getContent({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
       map((rawData) => JSON.parse(atob(rawData['data']['content']))),
       catchError((err) => {
