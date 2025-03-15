@@ -33,6 +33,7 @@ import { SessionData } from '../models/session.model';
 import { ERRORCODE_NOT_FOUND, ErrorHandlingService } from './error-handling.service';
 import { LoggingService } from './logging.service';
 import { GithubRestIssue } from '../models/github/github-rest-issue';
+import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 
 const { Octokit } = require('@octokit/rest');
 const CATCHER_ORG = 'CATcher-org';
@@ -72,8 +73,9 @@ export class GithubService {
 
   storeOAuthAccessToken(accessToken: string) {
     octokit = new Octokit({
-      auth() {
-        return `Token ${accessToken}`;
+      authStrategy: createOAuthUserAuth,
+      auth: {
+        token: accessToken
       },
       log: {
         debug: (message, ...otherInfo) => this.logger.debug('GithubService: ' + message, ...otherInfo),
@@ -439,7 +441,7 @@ export class GithubService {
 
   fetchDataFile(): Observable<{}> {
     return from(
-      octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv', headers: GithubService.IF_NONE_MATCH_EMPTY })
+      octokit.repos.getContent({ owner: MOD_ORG, repo: DATA_REPO, path: 'data.csv', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
       map((rawData) => {
         return { data: atob(rawData['data']['content']) };
@@ -470,7 +472,7 @@ export class GithubService {
    */
   fetchSettingsFile(): Observable<SessionData> {
     return from(
-      octokit.repos.getContents({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
+      octokit.repos.getContent({ owner: MOD_ORG, repo: DATA_REPO, path: 'settings.json', headers: GithubService.IF_NONE_MATCH_EMPTY })
     ).pipe(
       map((rawData) => JSON.parse(atob(rawData['data']['content']))),
       catchError((err) => {
