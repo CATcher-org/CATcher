@@ -1,10 +1,6 @@
-import { expect, Page } from '@playwright/test';
-
-interface BugReport {
-  title: string;
-  severityLabel?: string;
-  bugTypeLabel?: string;
-}
+import { Page } from '@playwright/test';
+import { NewIssuePage } from './newIssue.po';
+import { BugReport } from './header.po';
 
 export class BugReportingPage {
   readonly page: Page;
@@ -13,32 +9,28 @@ export class BugReportingPage {
     this.page = page;
   }
 
-  async getPhaseDescription() {
-    return this.page.locator('app-layout-header').textContent();
-  }
-
   async accessNewBugReportingPage() {
     return this.page.getByRole('button', { name: 'New Issue' }).click();
   }
 
   /**
-   * Identifies a Bug-Report based on the provided parameters.
-   * @param title Title of Bug-Report.
-   * @param severityLabel Severity assigned to Bug-Report.
-   * @param bugTypeLabel Bug-Report's Type.
-   * @returns true if a unique Bug-Report is present, false otherwise.
+   * Creates a bug report
    */
-  async isBugReportPresent({ title, severityLabel, bugTypeLabel }: BugReport) {
-    let allRows = this.page.locator('.mat-row').filter({ hasText: title });
+  async createBugReport({ title, body, severityLabel, bugTypeLabel }: BugReport) {
+    const newIssuePage = new NewIssuePage(this.page);
 
-    if (severityLabel != null) {
-      allRows = allRows.filter({ hasText: severityLabel });
+    await this.accessNewBugReportingPage();
+    await newIssuePage.enterNewIssueTitle(title);
+
+    if (body) {
+      await newIssuePage.enterNewBugReportDescription(body);
     }
 
-    if (bugTypeLabel != null) {
-      allRows = allRows.filter({ hasText: bugTypeLabel });
-    }
-
-    return allRows.count().then((count: number) => count === 1);
+    await newIssuePage.selectSeverityDropdown();
+    await newIssuePage.selectDropDownOption({ dropdownText: severityLabel });
+    await newIssuePage.selectBugTypeDropdown();
+    await newIssuePage.selectDropDownOption({ dropdownText: bugTypeLabel });
+    await newIssuePage.submitBugReport();
+    return this.page.locator('.back-button').click();
   }
 }

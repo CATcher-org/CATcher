@@ -50,7 +50,7 @@ export class NewIssuePage {
   }
 
   private selectDropdownByText(dropdownText: string) {
-    return this.page.locator('mat-option').filter({ hasText: dropdownText });
+    return this.page.locator('mat-option').getByText(dropdownText, { exact: true });
   }
 
   async submitBugReport() {
