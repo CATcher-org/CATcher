@@ -83,7 +83,7 @@ export class AuthComponent implements OnInit, OnDestroy {
           throw new Error(data.error);
         }
         this.authService.storeOAuthAccessToken(data.token);
-        this.logger.info('AuthComponent: Sucessfully obtained access token');
+        this.logger.info('AuthComponent: Successfully octained access token');
       })
       .catch((err) => {
         this.logger.info(`AuthComponent: Error in data fetched from access token URL: ${err}`);
