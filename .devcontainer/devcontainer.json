@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
   "name": "CATcher-development",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-16",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-16-bullseye",
   "features": {
     "ghcr.io/kreemer/features/chrometesting:1": {}
   },
@@ -14,7 +14,8 @@
   ],
   "onCreateCommand": {
     "Giving rw permissions to mounted dir": "sudo chown -R node:node ${containerWorkspaceFolder}/*",
-    "Adding CATcher as upstream": "git remote add upstream https://github.com/CATcher-org/CATcher.git || echo 'already exists'"
+    "Adding CATcher as upstream": "git remote add upstream https://github.com/CATcher-org/CATcher.git || echo 'already exists'",
+    "Installing playwright browsers...": "sudo npx playwright install-deps && npx playwright install firefox webkit chromium"
   },
   // Use 'postCreateCommand' to run commands after the container is created.
   // npm with default registry seems to hang frequently, thus a more reliable mirror is used.
