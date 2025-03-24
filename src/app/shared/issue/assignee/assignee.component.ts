@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import { first } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
@@ -14,7 +14,7 @@ import { PhaseService } from '../../../core/services/phase.service';
   styleUrls: ['./assignee.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class AssigneeComponent implements OnInit {
+export class AssigneeComponent implements OnInit, OnChanges {
   teamMembers: string[];
   isInEditMode = false;
   assignees: string[];
