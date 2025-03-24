@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import { first } from 'rxjs/operators';
 import { Issue } from '../../../core/models/issue.model';
@@ -37,6 +37,12 @@ export class AssigneeComponent implements OnInit {
   ngOnInit(): void {
     this.teamMembers = this.team.teamMembers.map((user) => user.loginId);
     this.assignees = this.issue.assignees.map((a) => a);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['issue']) {
+      this.assignees = [...(this.issue?.assignees || [])];
+    }
   }
 
   openSelector() {
