@@ -13,6 +13,7 @@ import { LabelComponent } from './label/label.component';
 import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
 import { IssueComponent } from './issue.component';
+import { IssuesDeletedComponent } from './issues-deleted.component';
 
 @NgModule({
   imports: [SharedModule, CommentEditorModule, MatProgressBarModule, NgxMatSelectSearchModule, MarkdownModule.forChild()],
@@ -25,7 +26,8 @@ import { IssueComponent } from './issue.component';
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
     ConflictDialogComponent,
-    IssueComponent
+    IssueComponent,
+    IssuesDeletedComponent
   ],
   exports: [
     TitleComponent,
@@ -36,7 +38,8 @@ import { IssueComponent } from './issue.component';
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
     ConflictDialogComponent,
-    IssueComponent
+    IssueComponent,
+    IssuesDeletedComponent
   ]
 })
 export class IssueComponentsModule {}

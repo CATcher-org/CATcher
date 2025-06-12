@@ -10,7 +10,6 @@ import { NewIssueComponent } from './new-issue/new-issue.component';
 import { PhaseBugReportingRoutingModule } from './phase-bug-reporting-routing.module';
 import { PhaseBugReportingComponent } from './phase-bug-reporting.component';
 import { IssuesPostedComponent } from './issues-posted/issues-posted.component';
-import { IssuesDeletedComponent } from './issues-deleted/issues-deleted.component';
 
 @NgModule({
   imports: [
@@ -23,6 +22,6 @@ import { IssuesDeletedComponent } from './issues-deleted/issues-deleted.componen
     IssueTablesModule,
     LabelDropdownModule
   ],
-  declarations: [PhaseBugReportingComponent, NewIssueComponent, IssuesPostedComponent, IssuesDeletedComponent]
+  declarations: [PhaseBugReportingComponent, NewIssueComponent, IssuesPostedComponent]
 })
 export class PhaseBugReportingModule {}

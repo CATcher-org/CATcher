@@ -9,6 +9,6 @@ import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
 
 @NgModule({
   imports: [PhaseBugTrimmingRoutingModule, SharedModule, ViewIssueModule, IssueTablesModule],
-  declarations: [PhaseBugTrimmingComponent, IssuesDeletedComponent, IssuesPostedComponent]
+  declarations: [PhaseBugTrimmingComponent, IssuesPostedComponent]
 })
 export class PhaseBugTrimmingModule {}
