@@ -1,4 +1,4 @@
-import { IssueComponent } from './issue/issue.component';
+import { IssueComponent } from '../shared/issue/issue/issue.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../core/guards/auth.guard';

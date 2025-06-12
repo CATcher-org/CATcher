@@ -3,12 +3,12 @@ import { SharedModule } from '../shared/shared.module';
 import { PhaseBugTrimmingRoutingModule } from './phase-bug-trimming-routing.module';
 import { PhaseBugTrimmingComponent } from './phase-bug-trimming.component';
 import { ViewIssueModule } from '../shared/view-issue/view-issue.module';
-import { IssuesDeletedComponent } from './issues-deleted/issues-deleted.component';
-import { IssuesPostedComponent } from './issues-posted/issues-posted.component';
 import { IssueTablesModule } from '../shared/issue-tables/issue-tables.module';
+import { IssueComponentsModule } from '../shared/issue/issue-components.module';
+import { IssueViewModule } from '../shared/issue-view/issue-view.module';
 
 @NgModule({
-  imports: [PhaseBugTrimmingRoutingModule, SharedModule, ViewIssueModule, IssueTablesModule],
+  imports: [PhaseBugTrimmingRoutingModule, SharedModule, ViewIssueModule, IssueTablesModule, IssueComponentsModule, IssueViewModule],
   declarations: [PhaseBugTrimmingComponent]
 })
 export class PhaseBugTrimmingModule {}
