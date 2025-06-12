@@ -12,6 +12,7 @@ import { DuplicateOfComponent } from './duplicateOf/duplicate-of.component';
 import { LabelComponent } from './label/label.component';
 import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
+import { IssueComponent } from './issue.component';
 
 @NgModule({
   imports: [SharedModule, CommentEditorModule, MatProgressBarModule, NgxMatSelectSearchModule, MarkdownModule.forChild()],
@@ -23,7 +24,8 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
-    ConflictDialogComponent
+    ConflictDialogComponent,
+    IssueComponent
   ],
   exports: [
     TitleComponent,
@@ -33,7 +35,8 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
-    ConflictDialogComponent
+    ConflictDialogComponent,
+    IssueComponent
   ]
 })
 export class IssueComponentsModule {}
