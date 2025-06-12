@@ -14,6 +14,7 @@ import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
 import { IssueComponent } from './issue.component';
 import { IssuesDeletedComponent } from './issues-deleted.component';
+import { IssuesPostedComponent } from './issues-posted.component';
 
 @NgModule({
   imports: [SharedModule, CommentEditorModule, MatProgressBarModule, NgxMatSelectSearchModule, MarkdownModule.forChild()],
@@ -27,7 +28,8 @@ import { IssuesDeletedComponent } from './issues-deleted.component';
     UnsureCheckboxComponent,
     ConflictDialogComponent,
     IssueComponent,
-    IssuesDeletedComponent
+    IssuesDeletedComponent,
+    IssuesPostedComponent
   ],
   exports: [
     TitleComponent,
@@ -39,7 +41,8 @@ import { IssuesDeletedComponent } from './issues-deleted.component';
     UnsureCheckboxComponent,
     ConflictDialogComponent,
     IssueComponent,
-    IssuesDeletedComponent
+    IssuesDeletedComponent,
+    IssuesPostedComponent
   ]
 })
 export class IssueComponentsModule {}
