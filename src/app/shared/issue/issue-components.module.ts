@@ -12,9 +12,9 @@ import { DuplicateOfComponent } from './duplicateOf/duplicate-of.component';
 import { LabelComponent } from './label/label.component';
 import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
-import { IssueComponent } from './issue.component';
-import { IssuesDeletedComponent } from './issues-deleted.component';
-import { IssuesPostedComponent } from './issues-posted.component';
+import { IssueComponent } from './issue/issue.component';
+import { IssuesDeletedComponent } from './issues-deleted/issues-deleted.component';
+import { IssuesPostedComponent } from './issues-posted/issues-posted.component';
 
 @NgModule({
   imports: [SharedModule, CommentEditorModule, MatProgressBarModule, NgxMatSelectSearchModule, MarkdownModule.forChild()],
