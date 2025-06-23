@@ -25,7 +25,6 @@ import { ViewIssueComponent } from './view-issue.component';
     IssueDisputeModule,
     TesterResponseModule,
     SharedModule,
-    IssueComponentsModule,
     LabelDropdownModule,
     MarkdownModule.forChild(),
     TeamAcceptedModule

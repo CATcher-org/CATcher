@@ -12,9 +12,19 @@ import { DuplicateOfComponent } from './duplicateOf/duplicate-of.component';
 import { LabelComponent } from './label/label.component';
 import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
+import { IssuesDeletedComponent } from './issues-deleted/issues-deleted.component';
+import { IssuesPostedComponent } from './issues-posted/issues-posted.component';
+import { IssueTablesModule } from '../issue-tables/issue-tables.module';
 
 @NgModule({
-  imports: [SharedModule, CommentEditorModule, MatProgressBarModule, NgxMatSelectSearchModule, MarkdownModule.forChild()],
+  imports: [
+    SharedModule,
+    CommentEditorModule,
+    MatProgressBarModule,
+    NgxMatSelectSearchModule,
+    MarkdownModule.forChild(),
+    IssueTablesModule
+  ],
   declarations: [
     TitleComponent,
     DescriptionComponent,
@@ -23,7 +33,9 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
-    ConflictDialogComponent
+    ConflictDialogComponent,
+    IssuesDeletedComponent,
+    IssuesPostedComponent
   ],
   exports: [
     TitleComponent,
@@ -33,7 +45,9 @@ import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.compo
     DuplicateOfComponent,
     DuplicatedIssuesComponent,
     UnsureCheckboxComponent,
-    ConflictDialogComponent
+    ConflictDialogComponent,
+    IssuesDeletedComponent,
+    IssuesPostedComponent
   ]
 })
 export class IssueComponentsModule {}

@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { PermissionService } from '../../core/services/permission.service';
-import { UserService } from '../../core/services/user.service';
-import { TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables-columns';
-import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
-import { Issue } from '../../core/models/issue.model';
+import { PermissionService } from '../../../core/services/permission.service';
+import { UserService } from '../../../core/services/user.service';
+import { TABLE_COLUMNS } from '../../issue-tables/issue-tables-columns';
+import { ACTION_BUTTONS, IssueTablesComponent } from '../../issue-tables/issue-tables.component';
+import { Issue } from '../../../core/models/issue.model';
 
 @Component({
   selector: 'app-issues-posted',
