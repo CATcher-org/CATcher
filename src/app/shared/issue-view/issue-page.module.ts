@@ -8,4 +8,4 @@ import { ViewIssueModule } from '../view-issue/view-issue.module';
   declarations: [IssueComponent],
   exports: [IssueComponent]
 })
-export class IssueViewModule {}
+export class IssuePageModule {}
