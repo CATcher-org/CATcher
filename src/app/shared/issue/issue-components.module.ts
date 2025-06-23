@@ -14,9 +14,17 @@ import { TitleComponent } from './title/title.component';
 import { UnsureCheckboxComponent } from './unsure-checkbox/unsure-checkbox.component';
 import { IssuesDeletedComponent } from './issues-deleted/issues-deleted.component';
 import { IssuesPostedComponent } from './issues-posted/issues-posted.component';
+import { IssueTablesModule } from '../issue-tables/issue-tables.module';
 
 @NgModule({
-  imports: [SharedModule, CommentEditorModule, MatProgressBarModule, NgxMatSelectSearchModule, MarkdownModule.forChild()],
+  imports: [
+    SharedModule,
+    CommentEditorModule,
+    MatProgressBarModule,
+    NgxMatSelectSearchModule,
+    MarkdownModule.forChild(),
+    IssueTablesModule
+  ],
   declarations: [
     TitleComponent,
     DescriptionComponent,

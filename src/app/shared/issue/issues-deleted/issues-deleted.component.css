@@ -3,3 +3,7 @@
   color: #b71c1c;
   font-weight: bold;
 }
+
+::ng-deep .text-strike-through > mat-table > mat-row {
+  text-decoration: line-through;
+}
