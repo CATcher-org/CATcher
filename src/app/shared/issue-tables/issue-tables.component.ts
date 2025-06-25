@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/cor
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
-import { finalize } from 'rxjs/operators';
+import { finalize, take } from 'rxjs/operators';
 import { Issue, STATUS } from '../../core/models/issue.model';
 import { TableSettings } from '../../core/models/table-settings.model';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
@@ -46,6 +46,8 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
   issuesPendingRestore: { [id: number]: boolean };
+
+  selectedIssues: Issue[] = [];
 
   public tableSettings: TableSettings;
 
@@ -188,6 +190,13 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
         (removedIssue) => this.handleIssueDeletionSuccess(id, event, actionUndoable),
         (error) => this.errorHandlingService.handleError(error)
       );
+
+    // Deselect deleted issue
+    const index = this.selectedIssues.findIndex((issue) => issue.id === id);
+    if (index > -1) {
+      this.selectedIssues.splice(index, 1);
+    }
+
     event.stopPropagation();
   }
 
@@ -221,6 +230,73 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
         (restoredIssue) => this.handleIssueRestorationSuccess(id, event, actionUndoable),
         (error) => this.errorHandlingService.handleError(error)
       );
+    event.stopPropagation();
+  }
+
+  private isIssueSelected(issue: Issue): boolean {
+    return this.selectedIssues.some((i) => i.id === issue.id);
+  }
+
+  toggleAllIssueSelection() {
+    if (this.selectedIssues.length > 0) {
+      this.selectedIssues = [];
+    } else {
+      this.issues
+        .connect()
+        .pipe(take(1))
+        .subscribe((issues: Issue[]) => {
+          this.selectedIssues = [...issues];
+        });
+    }
+  }
+
+  toggleIssueSelection(issue: Issue) {
+    const index = this.selectedIssues.indexOf(issue);
+    if (index > -1) {
+      this.selectedIssues.splice(index, 1);
+    } else {
+      this.selectedIssues.push(issue);
+    }
+  }
+
+  deleteSelectedIssues(event: Event, actionUndoable: boolean = true) {
+    this.logger.info(`IssueTablesComponent: Deleting selected issues`);
+
+    // Add all issues into pending first
+    const newPending: Record<number, boolean> = {};
+    this.selectedIssues.forEach((issue) => {
+      newPending[issue.id] = true;
+    });
+    this.issuesPendingDeletion = {
+      ...this.issuesPendingDeletion,
+      ...newPending
+    };
+
+    // Then delete all in parallel
+    this.selectedIssues.map((issue) => {
+      const id = issue.id;
+
+      return this.issueService
+        .deleteIssue(id)
+        .pipe(
+          finalize(() => {
+            const { [id]: _, ...rest } = this.issuesPendingDeletion;
+            this.issuesPendingDeletion = rest;
+          })
+        )
+        .toPromise()
+        .then(() => {
+          this.handleIssueDeletionSuccess(id, event, actionUndoable);
+          const index = this.selectedIssues.findIndex((issue) => issue.id === id);
+          if (index > -1) {
+            this.selectedIssues.splice(index, 1);
+          }
+        })
+        .catch((error) => {
+          this.errorHandlingService.handleError(error);
+        });
+    });
+
     event.stopPropagation();
   }
 }

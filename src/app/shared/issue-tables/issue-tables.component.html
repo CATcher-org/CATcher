@@ -195,7 +195,18 @@
 
   <!-- Action Buttons Column -->
   <ng-container matColumnDef="actions">
-    <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+    <mat-header-cell *matHeaderCellDef>
+      Actions
+      <mat-checkbox
+        *ngIf="this.table_name === 'tableIssuesPosted'"
+        style="margin-left: 147px"
+        (click)="$event.stopPropagation()"
+        (change)="toggleAllIssueSelection()"
+        [checked]="selectedIssues.length > 0"
+        [disabled]="issues.length === 0"
+      >
+      </mat-checkbox>
+    </mat-header-cell>
     <mat-cell *matCellDef="let issue">
       <button
         mat-button
@@ -275,6 +286,20 @@
       >
         <mat-icon>restore_from_trash</mat-icon>
       </button>
+      <mat-checkbox
+        *ngIf="
+          this.table_name === 'tableIssuesPosted' &&
+          !(
+            (issuesPendingDeletion[issue.id] && this.isActionVisible(action_buttons.DELETE_ISSUE)) ||
+            (issuesPendingRestore[issue.id] && this.isActionVisible(action_buttons.RESTORE_ISSUE))
+          )
+        "
+        style="margin-left: 20px"
+        (click)="$event.stopPropagation()"
+        (change)="toggleIssueSelection(issue)"
+        [checked]="isIssueSelected(issue)"
+      >
+      </mat-checkbox>
       <mat-spinner
         color="warn"
         [diameter]="25"
@@ -299,6 +324,17 @@
   <mat-progress-spinner color="primary" mode="indeterminate" diameter="50" strokeWidth="5"></mat-progress-spinner>
 </mat-card>
 <br />
+<div *ngIf="this.table_name === 'tableIssuesPosted'" class="bulk-actions">
+  <button
+    mat-raised-button
+    color="primary"
+    *ngIf="selectedIssues.length > 0"
+    matTooltip="Delete selected issues"
+    (click)="this.deleteSelectedIssues($event)"
+  >
+    Delete Selected
+  </button>
+</div>
 <mat-paginator
   [paginatorLocalStorage]="this.table_name"
   [pageSize]="this.tableSettings.pageSize"
