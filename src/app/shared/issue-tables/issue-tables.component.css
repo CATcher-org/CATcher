@@ -79,3 +79,8 @@
 .title-wrap {
   overflow-wrap: anywhere;
 }
+
+.loading-card {
+  border-radius: 0% !important;
+  border-top: 1px solid transparent;
+}
