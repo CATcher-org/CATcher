@@ -212,4 +212,18 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     }
     return this.permissions.isIssueRestorable();
   }
+
+  shouldEnablePendingButton() {
+    return (
+      (this.userService.currentUser.role === 'Student' || this.userService.currentUser.role === 'Admin') &&
+      this.isActionVisible(this.action_buttons.MARK_AS_PENDING)
+    );
+  }
+
+  shouldEnablePendingActionSpinner(id: number) {
+    return (
+      this.issuesPendingAction[id] &&
+      (this.isActionVisible(this.action_buttons.DELETE_ISSUE) || this.isActionVisible(this.action_buttons.RESTORE_ISSUE))
+    );
+  }
 }

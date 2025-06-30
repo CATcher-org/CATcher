@@ -246,10 +246,7 @@
         mat-button
         (click)="markAsPending(issue, $event)"
         style="transform: scale(0.8)"
-        *ngIf="
-          (userService.currentUser.role === 'Student' || userService.currentUser.role === 'Admin') &&
-          this.isActionVisible(action_buttons.MARK_AS_PENDING)
-        "
+        *ngIf="shouldEnablePendingButton()"
         data-testid="mark_pending_button"
       >
         <mat-icon>cancel</mat-icon>
@@ -279,10 +276,7 @@
         color="warn"
         [diameter]="25"
         style="display: inline; padding-right: 30px; margin-left: 5px"
-        *ngIf="
-          issuesPendingAction[issue.id] &&
-          (this.isActionVisible(action_buttons.DELETE_ISSUE) || this.isActionVisible(action_buttons.RESTORE_ISSUE))
-        "
+        *ngIf="shouldEnablePendingActionSpinner(issue.id)"
       ></mat-spinner>
     </mat-cell>
   </ng-container>
