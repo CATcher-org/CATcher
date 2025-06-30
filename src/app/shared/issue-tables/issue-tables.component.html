@@ -207,7 +207,7 @@
         <mat-icon>open_in_new</mat-icon>
       </button>
       <button
-        *ngIf="this.isResponseEditable() && !issue.status && this.isActionVisible(action_buttons.RESPOND_TO_ISSUE); else tryEditIssue"
+        *ngIf="shouldEnableRespondToIssue(issue); else tryEditIssue"
         [routerLink]="'issues/' + issue.id"
         mat-button
         color="accent"
@@ -219,7 +219,7 @@
       </button>
       <ng-template #tryEditIssue>
         <button
-          *ngIf="permissions.isIssueEditable() && this.isActionVisible(action_buttons.FIX_ISSUE)"
+          *ngIf="shouldEnableEditIssue()"
           mat-button
           color="accent"
           style="transform: scale(0.8)"
@@ -230,7 +230,7 @@
         </button>
       </ng-template>
       <button
-        *ngIf="this.isResponseEditable() && issue.status && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
+        *ngIf="shouldEnableMarkAsResponded(issue)"
         mat-button
         color="primary"
         (click)="markAsResponded(issue, $event)"

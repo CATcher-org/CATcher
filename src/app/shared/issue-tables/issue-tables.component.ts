@@ -226,4 +226,16 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
       (this.isActionVisible(this.action_buttons.DELETE_ISSUE) || this.isActionVisible(this.action_buttons.RESTORE_ISSUE))
     );
   }
+
+  shouldEnableRespondToIssue(issue: Issue) {
+    return this.isResponseEditable() && !issue.status && this.isActionVisible(this.action_buttons.RESPOND_TO_ISSUE);
+  }
+
+  shouldEnableMarkAsResponded(issue: Issue) {
+    return this.isResponseEditable() && issue.status && this.isActionVisible(this.action_buttons.MARK_AS_RESPONDED);
+  }
+
+  shouldEnableEditIssue() {
+    return this.permissions.isIssueEditable() && this.isActionVisible(this.action_buttons.FIX_ISSUE);
+  }
 }
