@@ -45,8 +45,6 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   issues: IssuesDataTable;
-  issuesPendingDeletion: { [id: number]: boolean };
-  issuesPendingRestore: { [id: number]: boolean };
   issuesPendingAction: { [id: number]: boolean };
 
   public tableSettings: TableSettings;
@@ -68,8 +66,6 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
-    this.issuesPendingDeletion = {};
-    this.issuesPendingRestore = {};
     this.issuesPendingAction = {};
     this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
@@ -202,5 +198,18 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     snackBarRef.onAction().subscribe(() => {
       this.deleteOrRestoreIssue(!isDeleteAction, id, event, false);
     });
+  }
+
+  isActionPerformAllowed(isDeleteAction: boolean, id: number) {
+    const actionButton = isDeleteAction ? this.action_buttons.DELETE_ISSUE : this.action_buttons.RESTORE_ISSUE;
+    const isPermissionGranted = this.isIssueActionPermitted(isDeleteAction);
+    return isPermissionGranted && !this.issuesPendingAction[id] && this.isActionVisible(actionButton);
+  }
+
+  private isIssueActionPermitted(isDeleteAction: boolean) {
+    if (isDeleteAction) {
+      return this.permissions.isIssueDeletable();
+    }
+    return this.permissions.isIssueRestorable();
   }
 }

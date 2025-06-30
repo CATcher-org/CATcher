@@ -257,7 +257,7 @@
       <button
         mat-button
         color="warn"
-        *ngIf="permissions.isIssueDeletable() && !issuesPendingDeletion[issue.id] && this.isActionVisible(action_buttons.DELETE_ISSUE)"
+        *ngIf="isActionPerformAllowed(true, issue.id)"
         (click)="deleteOrRestoreIssue(true, issue.id, $event); $event.stopPropagation()"
         matTooltip="Delete this issue"
         style="transform: scale(0.8)"
@@ -268,7 +268,7 @@
       <button
         mat-button
         color="primary"
-        *ngIf="permissions.isIssueRestorable() && !issuesPendingRestore[issue.id] && this.isActionVisible(action_buttons.RESTORE_ISSUE)"
+        *ngIf="isActionPerformAllowed(false, issue.id)"
         (click)="deleteOrRestoreIssue(false, issue.id, $event); $event.stopPropagation()"
         matTooltip="Restore this issue"
         style="transform: scale(0.8)"
