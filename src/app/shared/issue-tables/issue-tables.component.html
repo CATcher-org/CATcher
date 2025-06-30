@@ -258,7 +258,7 @@
         mat-button
         color="warn"
         *ngIf="permissions.isIssueDeletable() && !issuesPendingDeletion[issue.id] && this.isActionVisible(action_buttons.DELETE_ISSUE)"
-        (click)="deleteIssue(issue.id, $event); $event.stopPropagation()"
+        (click)="deleteOrRestoreIssue(true, issue.id, $event); $event.stopPropagation()"
         matTooltip="Delete this issue"
         style="transform: scale(0.8)"
         data-testid="delete_issue_button"
@@ -269,7 +269,7 @@
         mat-button
         color="primary"
         *ngIf="permissions.isIssueRestorable() && !issuesPendingRestore[issue.id] && this.isActionVisible(action_buttons.RESTORE_ISSUE)"
-        (click)="undeleteIssue(issue.id, $event); $event.stopPropagation()"
+        (click)="deleteOrRestoreIssue(false, issue.id, $event); $event.stopPropagation()"
         matTooltip="Restore this issue"
         style="transform: scale(0.8)"
       >
@@ -280,8 +280,8 @@
         [diameter]="25"
         style="display: inline; padding-right: 30px; margin-left: 5px"
         *ngIf="
-          (issuesPendingDeletion[issue.id] && this.isActionVisible(action_buttons.DELETE_ISSUE)) ||
-          (issuesPendingRestore[issue.id] && this.isActionVisible(action_buttons.RESTORE_ISSUE))
+          issuesPendingAction[issue.id] &&
+          (this.isActionVisible(action_buttons.DELETE_ISSUE) || this.isActionVisible(action_buttons.RESTORE_ISSUE))
         "
       ></mat-spinner>
     </mat-cell>

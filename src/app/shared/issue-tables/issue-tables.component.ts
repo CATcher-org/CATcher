@@ -161,37 +161,23 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.githubService.viewIssueInBrowser(id, event);
   }
 
-  private handleIssueDeletionSuccess(id: number, event: Event, actionUndoable: boolean) {
-    if (!actionUndoable) {
-      return;
-    }
-    let snackBarRef = null;
-    snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
-      data: { message: `Deleted issue ${id}` },
-      duration: this.snackBarAutoCloseTime
-    });
-    snackBarRef.onAction().subscribe(() => {
-      this.undeleteIssue(id, event, false);
-    });
-  }
-
   deleteOrRestoreIssue(isDeleteAction: boolean, id: number, event: Event, actionUndoable: boolean = true) {
     const deletingKeyword = 'Deleting';
     const undeletingKeyword = 'Undeleting';
     this.logger.info(`IssueTablesComponent: ${isDeleteAction ? deletingKeyword : undeletingKeyword} Issue ${id}`);
 
-    this.issuesPendingDeletion = { ...this.issuesPendingDeletion, [id]: true };
+    this.issuesPendingAction = { ...this.issuesPendingAction, [id]: true };
 
-    let observableIssue: Observable<Issue>;
+    let observableActionedIssue: Observable<Issue>;
     if (isDeleteAction) {
-      observableIssue = this.issueService.deleteIssue(id);
+      observableActionedIssue = this.issueService.deleteIssue(id);
     } else {
-      observableIssue = this.issueService.undeleteIssue(id);
+      observableActionedIssue = this.issueService.undeleteIssue(id);
     }
-    observableIssue
+    observableActionedIssue
       .pipe(
         finalize(() => {
-          const { [id]: issueDeletedOrRestored, ...theRest } = this.issuesPendingDeletion;
+          const { [id]: issueDeletedOrRestored, ...theRest } = this.issuesPendingAction;
           this.issuesPendingAction = theRest;
         })
       )
@@ -216,57 +202,5 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     snackBarRef.onAction().subscribe(() => {
       this.deleteOrRestoreIssue(!isDeleteAction, id, event, false);
     });
-  }
-
-  deleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
-    this.logger.info(`IssueTablesComponent: Deleting Issue ${id}`);
-
-    this.issuesPendingDeletion = { ...this.issuesPendingDeletion, [id]: true };
-    this.issueService
-      .deleteIssue(id)
-      .pipe(
-        finalize(() => {
-          const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
-          this.issuesPendingDeletion = theRest;
-        })
-      )
-      .subscribe(
-        (removedIssue) => this.handleIssueDeletionSuccess(id, event, actionUndoable),
-        (error) => this.errorHandlingService.handleError(error)
-      );
-    event.stopPropagation();
-  }
-
-  private handleIssueRestorationSuccess(id: number, event: Event, actionUndoable: boolean) {
-    if (!actionUndoable) {
-      return;
-    }
-    let snackBarRef = null;
-    snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
-      data: { message: `Restored issue ${id}` },
-      duration: this.snackBarAutoCloseTime
-    });
-    snackBarRef.onAction().subscribe(() => {
-      this.deleteIssue(id, event, false);
-    });
-  }
-
-  undeleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
-    this.logger.info(`IssueTablesComponent: Undeleting Issue ${id}`);
-
-    this.issuesPendingRestore = { ...this.issuesPendingRestore, [id]: true };
-    this.issueService
-      .undeleteIssue(id)
-      .pipe(
-        finalize(() => {
-          const { [id]: issueRestored, ...theRest } = this.issuesPendingRestore;
-          this.issuesPendingRestore = theRest;
-        })
-      )
-      .subscribe(
-        (restoredIssue) => this.handleIssueRestorationSuccess(id, event, actionUndoable),
-        (error) => this.errorHandlingService.handleError(error)
-      );
-    event.stopPropagation();
   }
 }
