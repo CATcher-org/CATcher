@@ -16,6 +16,7 @@ import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { UndoActionComponent } from '../../shared/action-toasters/undo-action/undo-action.component';
 import { IssuesDataTable } from './IssuesDataTable';
+import { Observable } from 'rxjs';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -46,6 +47,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   issues: IssuesDataTable;
   issuesPendingDeletion: { [id: number]: boolean };
   issuesPendingRestore: { [id: number]: boolean };
+  issuesPendingAction: { [id: number]: boolean };
 
   public tableSettings: TableSettings;
 
@@ -68,6 +70,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
     this.issuesPendingDeletion = {};
     this.issuesPendingRestore = {};
+    this.issuesPendingAction = {};
     this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
 
@@ -169,6 +172,49 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     });
     snackBarRef.onAction().subscribe(() => {
       this.undeleteIssue(id, event, false);
+    });
+  }
+
+  deleteOrRestoreIssue(isDeleteAction: boolean, id: number, event: Event, actionUndoable: boolean = true) {
+    const deletingKeyword = 'Deleting';
+    const undeletingKeyword = 'Undeleting';
+    this.logger.info(`IssueTablesComponent: ${isDeleteAction ? deletingKeyword : undeletingKeyword} Issue ${id}`);
+
+    this.issuesPendingDeletion = { ...this.issuesPendingDeletion, [id]: true };
+
+    let observableIssue: Observable<Issue>;
+    if (isDeleteAction) {
+      observableIssue = this.issueService.deleteIssue(id);
+    } else {
+      observableIssue = this.issueService.undeleteIssue(id);
+    }
+    observableIssue
+      .pipe(
+        finalize(() => {
+          const { [id]: issueDeletedOrRestored, ...theRest } = this.issuesPendingDeletion;
+          this.issuesPendingAction = theRest;
+        })
+      )
+      .subscribe(
+        (actionedIssue) => this.handleIssueActionPerformedSuccess(isDeleteAction, id, event, actionUndoable),
+        (error) => this.errorHandlingService.handleError(error)
+      );
+    event.stopPropagation();
+  }
+
+  private handleIssueActionPerformedSuccess(isDeleteAction: boolean, id: number, event: Event, actionUndoable: boolean) {
+    const deletedKeyword = 'Deleted';
+    const restoredKeyword = 'Restored';
+    if (!actionUndoable) {
+      return;
+    }
+    let snackBarRef = null;
+    snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
+      data: { message: `${isDeleteAction ? deletedKeyword : restoredKeyword} issue ${id}` },
+      duration: this.snackBarAutoCloseTime
+    });
+    snackBarRef.onAction().subscribe(() => {
+      this.deleteOrRestoreIssue(!isDeleteAction, id, event, false);
     });
   }
 
