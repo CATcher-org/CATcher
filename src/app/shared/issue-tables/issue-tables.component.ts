@@ -178,7 +178,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
         })
       )
       .subscribe(
-        (actionedIssue) => this.handleIssueActionPerformedSuccess(isDeleteAction, id, event, actionUndoable),
+        () => this.handleIssueActionPerformedSuccess(isDeleteAction, id, event, actionUndoable),
         (error) => this.errorHandlingService.handleError(error)
       );
     event.stopPropagation();

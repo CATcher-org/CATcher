@@ -255,7 +255,7 @@
         mat-button
         color="warn"
         *ngIf="isActionPerformAllowed(true, issue.id)"
-        (click)="deleteOrRestoreIssue(true, issue.id, $event); $event.stopPropagation()"
+        (click)="deleteOrRestoreIssue(true, issue.id, $event)"
         matTooltip="Delete this issue"
         style="transform: scale(0.8)"
         data-testid="delete_issue_button"
@@ -266,7 +266,7 @@
         mat-button
         color="primary"
         *ngIf="isActionPerformAllowed(false, issue.id)"
-        (click)="deleteOrRestoreIssue(false, issue.id, $event); $event.stopPropagation()"
+        (click)="deleteOrRestoreIssue(false, issue.id, $event)"
         matTooltip="Restore this issue"
         style="transform: scale(0.8)"
       >
