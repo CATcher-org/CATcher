@@ -5,7 +5,7 @@
     <div class="row">
       <div class="column left">
         <mat-form-field>
-          <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256" />
+          <input id="title" formControlName="title" matInput placeholder="Title" required maxlength="256" tabindex="1"/>
           <mat-error *ngIf="title.errors && title.errors['required'] && (title.touched || title.dirty)"> Title required. </mat-error>
           <mat-error *ngIf="title.errors && title.errors['whitespace']"> Title cannot contain only whitespaces. </mat-error>
           <mat-error *ngIf="title.errors && title.errors['maxlength']"> Title cannot exceed 256 characters. </mat-error>
@@ -30,6 +30,7 @@
           mat-stroked-button
           color="primary"
           [disabled]="!newIssueForm.valid || isFormPending"
+          tabindex="4"
         >
           {{ this.submitButtonText }}
         </button>

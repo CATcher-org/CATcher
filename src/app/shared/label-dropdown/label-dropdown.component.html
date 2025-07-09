@@ -1,6 +1,7 @@
 <form [formGroup]="dropdownForm">
   <mat-form-field style="width: 100%">
     <mat-select
+      tabindex="3"
       [ngClass]="dropdownTextColor"
       formControlName="{{ attributeName }}"
       placeholder="{{ this.labelService.getLabelTitle(attributeName) }}"
