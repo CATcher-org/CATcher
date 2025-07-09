@@ -16,6 +16,7 @@ import { PhaseService } from '../../core/services/phase.service';
 import { UserService } from '../../core/services/user.service';
 import { UndoActionComponent } from '../../shared/action-toasters/undo-action/undo-action.component';
 import { IssuesDataTable } from './IssuesDataTable';
+import { Observable } from 'rxjs';
 
 export enum ACTION_BUTTONS {
   VIEW_IN_WEB,
@@ -44,8 +45,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   issues: IssuesDataTable;
-  issuesPendingDeletion: { [id: number]: boolean };
-  issuesPendingRestore: { [id: number]: boolean };
+  issuesPendingAction: { [id: number]: boolean };
 
   public tableSettings: TableSettings;
 
@@ -66,8 +66,7 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.issues = new IssuesDataTable(this.issueService, this.sort, this.paginator, this.headers, this.filters);
-    this.issuesPendingDeletion = {};
-    this.issuesPendingRestore = {};
+    this.issuesPendingAction = {};
     this.tableSettings = this.issueTableSettingsService.getTableSettings(this.table_name);
   }
 
@@ -158,69 +157,85 @@ export class IssueTablesComponent implements OnInit, AfterViewInit {
     this.githubService.viewIssueInBrowser(id, event);
   }
 
-  private handleIssueDeletionSuccess(id: number, event: Event, actionUndoable: boolean) {
-    if (!actionUndoable) {
-      return;
+  deleteOrRestoreIssue(isDeleteAction: boolean, id: number, event: Event, actionUndoable: boolean = true) {
+    const deletingKeyword = 'Deleting';
+    const undeletingKeyword = 'Undeleting';
+    this.logger.info(`IssueTablesComponent: ${isDeleteAction ? deletingKeyword : undeletingKeyword} Issue ${id}`);
+
+    this.issuesPendingAction = { ...this.issuesPendingAction, [id]: true };
+
+    let observableActionedIssue: Observable<Issue>;
+    if (isDeleteAction) {
+      observableActionedIssue = this.issueService.deleteIssue(id);
+    } else {
+      observableActionedIssue = this.issueService.undeleteIssue(id);
     }
-    let snackBarRef = null;
-    snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
-      data: { message: `Deleted issue ${id}` },
-      duration: this.snackBarAutoCloseTime
-    });
-    snackBarRef.onAction().subscribe(() => {
-      this.undeleteIssue(id, event, false);
-    });
-  }
-
-  deleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
-    this.logger.info(`IssueTablesComponent: Deleting Issue ${id}`);
-
-    this.issuesPendingDeletion = { ...this.issuesPendingDeletion, [id]: true };
-    this.issueService
-      .deleteIssue(id)
+    observableActionedIssue
       .pipe(
         finalize(() => {
-          const { [id]: issueRemoved, ...theRest } = this.issuesPendingDeletion;
-          this.issuesPendingDeletion = theRest;
+          const { [id]: issueDeletedOrRestored, ...theRest } = this.issuesPendingAction;
+          this.issuesPendingAction = theRest;
         })
       )
       .subscribe(
-        (removedIssue) => this.handleIssueDeletionSuccess(id, event, actionUndoable),
+        () => this.handleIssueActionPerformedSuccess(isDeleteAction, id, event, actionUndoable),
         (error) => this.errorHandlingService.handleError(error)
       );
     event.stopPropagation();
   }
 
-  private handleIssueRestorationSuccess(id: number, event: Event, actionUndoable: boolean) {
+  private handleIssueActionPerformedSuccess(isDeleteAction: boolean, id: number, event: Event, actionUndoable: boolean) {
+    const deletedKeyword = 'Deleted';
+    const restoredKeyword = 'Restored';
     if (!actionUndoable) {
       return;
     }
     let snackBarRef = null;
     snackBarRef = this.snackBar.openFromComponent(UndoActionComponent, {
-      data: { message: `Restored issue ${id}` },
+      data: { message: `${isDeleteAction ? deletedKeyword : restoredKeyword} issue ${id}` },
       duration: this.snackBarAutoCloseTime
     });
     snackBarRef.onAction().subscribe(() => {
-      this.deleteIssue(id, event, false);
+      this.deleteOrRestoreIssue(!isDeleteAction, id, event, false);
     });
   }
 
-  undeleteIssue(id: number, event: Event, actionUndoable: boolean = true) {
-    this.logger.info(`IssueTablesComponent: Undeleting Issue ${id}`);
+  isActionPerformAllowed(isDeleteAction: boolean, id: number) {
+    const actionButton = isDeleteAction ? this.action_buttons.DELETE_ISSUE : this.action_buttons.RESTORE_ISSUE;
+    const isPermissionGranted = this.isIssueActionPermitted(isDeleteAction);
+    return isPermissionGranted && !this.issuesPendingAction[id] && this.isActionVisible(actionButton);
+  }
 
-    this.issuesPendingRestore = { ...this.issuesPendingRestore, [id]: true };
-    this.issueService
-      .undeleteIssue(id)
-      .pipe(
-        finalize(() => {
-          const { [id]: issueRestored, ...theRest } = this.issuesPendingRestore;
-          this.issuesPendingRestore = theRest;
-        })
-      )
-      .subscribe(
-        (restoredIssue) => this.handleIssueRestorationSuccess(id, event, actionUndoable),
-        (error) => this.errorHandlingService.handleError(error)
-      );
-    event.stopPropagation();
+  private isIssueActionPermitted(isDeleteAction: boolean) {
+    if (isDeleteAction) {
+      return this.permissions.isIssueDeletable();
+    }
+    return this.permissions.isIssueRestorable();
+  }
+
+  shouldEnablePendingButton() {
+    return (
+      (this.userService.currentUser.role === 'Student' || this.userService.currentUser.role === 'Admin') &&
+      this.isActionVisible(this.action_buttons.MARK_AS_PENDING)
+    );
+  }
+
+  shouldEnablePendingActionSpinner(id: number) {
+    return (
+      this.issuesPendingAction[id] &&
+      (this.isActionVisible(this.action_buttons.DELETE_ISSUE) || this.isActionVisible(this.action_buttons.RESTORE_ISSUE))
+    );
+  }
+
+  shouldEnableRespondToIssue(issue: Issue) {
+    return this.isResponseEditable() && !issue.status && this.isActionVisible(this.action_buttons.RESPOND_TO_ISSUE);
+  }
+
+  shouldEnableMarkAsResponded(issue: Issue) {
+    return this.isResponseEditable() && issue.status && this.isActionVisible(this.action_buttons.MARK_AS_RESPONDED);
+  }
+
+  shouldEnableEditIssue() {
+    return this.permissions.isIssueEditable() && this.isActionVisible(this.action_buttons.FIX_ISSUE);
   }
 }
