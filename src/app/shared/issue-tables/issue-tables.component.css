@@ -81,6 +81,10 @@
 }
 
 .loading-card {
-  border-radius: 0% !important;
-  border-top: 1px solid transparent;
+  clip-path: inset(0px -20px -20px -20px);
+  border-radius: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: none;
 }
