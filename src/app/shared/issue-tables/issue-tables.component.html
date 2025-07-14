@@ -207,7 +207,7 @@
         <mat-icon>open_in_new</mat-icon>
       </button>
       <button
-        *ngIf="this.isResponseEditable() && !issue.status && this.isActionVisible(action_buttons.RESPOND_TO_ISSUE); else tryEditIssue"
+        *ngIf="shouldEnableRespondToIssue(issue); else tryEditIssue"
         [routerLink]="'issues/' + issue.id"
         mat-button
         color="accent"
@@ -219,7 +219,7 @@
       </button>
       <ng-template #tryEditIssue>
         <button
-          *ngIf="permissions.isIssueEditable() && this.isActionVisible(action_buttons.FIX_ISSUE)"
+          *ngIf="shouldEnableEditIssue()"
           mat-button
           color="accent"
           style="transform: scale(0.8)"
@@ -230,7 +230,7 @@
         </button>
       </ng-template>
       <button
-        *ngIf="this.isResponseEditable() && issue.status && this.isActionVisible(action_buttons.MARK_AS_RESPONDED)"
+        *ngIf="shouldEnableMarkAsResponded(issue)"
         mat-button
         color="primary"
         (click)="markAsResponded(issue, $event)"
@@ -246,10 +246,7 @@
         mat-button
         (click)="markAsPending(issue, $event)"
         style="transform: scale(0.8)"
-        *ngIf="
-          (userService.currentUser.role === 'Student' || userService.currentUser.role === 'Admin') &&
-          this.isActionVisible(action_buttons.MARK_AS_PENDING)
-        "
+        *ngIf="shouldEnablePendingButton()"
         data-testid="mark_pending_button"
       >
         <mat-icon>cancel</mat-icon>
@@ -257,8 +254,8 @@
       <button
         mat-button
         color="warn"
-        *ngIf="permissions.isIssueDeletable() && !issuesPendingDeletion[issue.id] && this.isActionVisible(action_buttons.DELETE_ISSUE)"
-        (click)="deleteIssue(issue.id, $event); $event.stopPropagation()"
+        *ngIf="isActionPerformAllowed(true, issue.id)"
+        (click)="deleteOrRestoreIssue(true, issue.id, $event)"
         matTooltip="Delete this issue"
         style="transform: scale(0.8)"
         data-testid="delete_issue_button"
@@ -268,8 +265,8 @@
       <button
         mat-button
         color="primary"
-        *ngIf="permissions.isIssueRestorable() && !issuesPendingRestore[issue.id] && this.isActionVisible(action_buttons.RESTORE_ISSUE)"
-        (click)="undeleteIssue(issue.id, $event); $event.stopPropagation()"
+        *ngIf="isActionPerformAllowed(false, issue.id)"
+        (click)="deleteOrRestoreIssue(false, issue.id, $event)"
         matTooltip="Restore this issue"
         style="transform: scale(0.8)"
       >
@@ -279,10 +276,7 @@
         color="warn"
         [diameter]="25"
         style="display: inline; padding-right: 30px; margin-left: 5px"
-        *ngIf="
-          (issuesPendingDeletion[issue.id] && this.isActionVisible(action_buttons.DELETE_ISSUE)) ||
-          (issuesPendingRestore[issue.id] && this.isActionVisible(action_buttons.RESTORE_ISSUE))
-        "
+        *ngIf="shouldEnablePendingActionSpinner(issue.id)"
       ></mat-spinner>
     </mat-cell>
   </ng-container>
